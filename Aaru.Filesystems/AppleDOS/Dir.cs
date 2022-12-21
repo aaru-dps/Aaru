@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
@@ -47,6 +48,39 @@ public sealed partial class AppleDOS
         dest = null;
 
         return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        List<string> contents = _catalogCache.Keys.ToList();
+
+        if(_debug)
+        {
+            contents.Add("$");
+            contents.Add("$Boot");
+            contents.Add("$Vtoc");
+        }
+
+        contents.Sort();
+
+        node = new AppleDosDirNode
+        {
+            Path      = path,
+            _position = 0,
+            _contents = contents.ToArray()
+        };
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />

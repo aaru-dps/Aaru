@@ -114,4 +114,12 @@ public sealed partial class ISO9660
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class Iso9660DirNode : IDirNode
+    {
+        internal DecodedDirectoryEntry[] _entries;
+        internal int                     _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

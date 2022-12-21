@@ -401,13 +401,20 @@ public sealed partial class LisaFS
 
     sealed class LisaFileNode : IFileNode
     {
+        internal short _fileId;
         /// <inheritdoc />
         public string Path { get; init; }
         /// <inheritdoc />
         public long Length { get; init; }
         /// <inheritdoc />
         public long Offset { get; set; }
+    }
 
-        internal short _fileId;
+    sealed class LisaDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
     }
 }

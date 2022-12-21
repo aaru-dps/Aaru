@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
@@ -38,6 +39,42 @@ namespace Aaru.Filesystems;
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        List<string> contents = _idToFilename.Select(kvp => kvp.Value).ToList();
+
+        if(_debug)
+        {
+            contents.Add("$");
+            contents.Add("$Bitmap");
+            contents.Add("$MDB");
+
+            if(_bootBlocks != null)
+                contents.Add("$Boot");
+        }
+
+        contents.Sort();
+
+        node = new AppleMfsDirNode
+        {
+            Path     = path,
+            _position   = 0,
+            contents = contents.ToArray()
+        };
+
+        return ErrorNumber.NoError;
+    }
+
     /// <inheritdoc />
     public ErrorNumber ReadDir(string path, out List<string> contents)
     {

@@ -124,4 +124,12 @@ public sealed partial class OperaFS
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class OperaDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

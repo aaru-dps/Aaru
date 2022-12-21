@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
@@ -41,6 +42,39 @@ namespace Aaru.Filesystems;
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        List<string> contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).
+                                             ToList();
+
+        if(_debug)
+        {
+            contents.Add("$");
+            contents.Add("$Boot");
+        }
+
+        contents.Sort();
+
+        node = new PascalDirDone
+        {
+            Path      = path,
+            _contents = contents.ToArray(),
+            _position = 0
+        };
+
+        return ErrorNumber.NoError;
+    }
+
     /// <inheritdoc />
     public ErrorNumber ReadDir(string path, out List<string> contents)
     {

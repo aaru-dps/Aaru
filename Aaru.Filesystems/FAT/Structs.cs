@@ -987,13 +987,20 @@ public sealed partial class FAT
 
     sealed class FatFileNode : IFileNode
     {
+        internal uint[] _clusters;
         /// <inheritdoc />
         public string Path { get; init; }
         /// <inheritdoc />
         public long Length { get; init; }
         /// <inheritdoc />
         public long Offset { get; set; }
+    }
 
-        internal uint[] _clusters;
+    sealed class FatDirNode : IDirNode
+    {
+        internal CompleteDirectoryEntry[] _entries;
+        internal int                      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
     }
 }

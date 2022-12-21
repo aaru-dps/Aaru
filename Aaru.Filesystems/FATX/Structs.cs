@@ -73,4 +73,12 @@ public sealed partial class XboxFatPlugin
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class FatxDirNode : IDirNode
+    {
+        internal DirectoryEntry[] _entries;
+        internal int              _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

@@ -378,4 +378,12 @@ public sealed partial class CPM
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class CpmDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

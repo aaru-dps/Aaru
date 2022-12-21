@@ -119,4 +119,13 @@ public sealed partial class AppleMFS
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class AppleMfsDirNode : IDirNode
+    {
+        internal string[] contents;
+
+        internal int _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

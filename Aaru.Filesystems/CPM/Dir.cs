@@ -34,12 +34,35 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) &&
+           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        node = new CpmDirNode
+        {
+            Path      = path,
+            _position = 0,
+            _contents = _dirList.ToArray()
+        };
+
+        return ErrorNumber.NoError;
+    }
+
     /// <inheritdoc />
     public ErrorNumber ReadDir(string path, out List<string> contents)
     {

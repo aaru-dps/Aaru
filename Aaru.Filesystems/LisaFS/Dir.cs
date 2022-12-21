@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders;
 using Aaru.Helpers;
@@ -49,6 +50,49 @@ public sealed partial class LisaFS
 
         // LisaFS does not support symbolic links (afaik)
         return ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+        ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        if(!isDir)
+            return ErrorNumber.NotDirectory;
+
+        /*List<CatalogEntry> catalog;
+        error = ReadCatalog(fileId, out catalog);
+        if(error != ErrorNumber.NoError)
+            return error;*/
+
+        ReadDir(fileId, out List<string> contents);
+
+        // On debug add system files as readable files
+        // Syntax similar to NTFS
+        if(_debug && fileId == DIRID_ROOT)
+        {
+            contents.Add("$MDDF");
+            contents.Add("$Boot");
+            contents.Add("$Loader");
+            contents.Add("$Bitmap");
+            contents.Add("$S-Record");
+            contents.Add("$");
+        }
+
+        contents.Sort();
+
+        node = new LisaDirNode
+        {
+            Path      = path,
+            _contents = contents.ToArray(),
+            _position = 0
+        };
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />

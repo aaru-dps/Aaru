@@ -87,4 +87,12 @@ public sealed partial class PascalPlugin
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class PascalDirDone : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }

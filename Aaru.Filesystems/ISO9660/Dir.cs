@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
@@ -41,6 +42,112 @@ namespace Aaru.Filesystems;
 public sealed partial class ISO9660
 {
     Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
+
+    /// <inheritdoc />
+    public ErrorNumber OpenDir(string path, out IDirNode node)
+    {
+        node = null;
+
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(string.IsNullOrWhiteSpace(path) ||
+           path == "/")
+        {
+            node = new Iso9660DirNode
+            {
+                Path      = path,
+                _position = 0,
+                _entries  = _rootDirectoryCache.Values.ToArray()
+            };
+
+            return ErrorNumber.NoError;
+        }
+
+        string cutPath = path.StartsWith("/", StringComparison.Ordinal)
+                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
+                             : path.ToLower(CultureInfo.CurrentUICulture);
+
+        if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
+        {
+            node = new Iso9660DirNode
+            {
+                Path      = path,
+                _position = 0,
+                _entries  = currentDirectory.Values.ToArray()
+            };
+
+            return ErrorNumber.NoError;
+        }
+
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
+
+        KeyValuePair<string, DecodedDirectoryEntry> entry =
+            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+
+        if(string.IsNullOrEmpty(entry.Key))
+            return ErrorNumber.NoSuchFile;
+
+        if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
+            return ErrorNumber.NotDirectory;
+
+        string currentPath = pieces[0];
+
+        currentDirectory = _rootDirectoryCache;
+
+        for(int p = 0; p < pieces.Length; p++)
+        {
+            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
+
+            if(string.IsNullOrEmpty(entry.Key))
+                return ErrorNumber.NoSuchFile;
+
+            if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
+                return ErrorNumber.NotDirectory;
+
+            currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
+
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
+                continue;
+
+            if(entry.Value.Extents.Count == 0)
+                return ErrorNumber.InvalidArgument;
+
+            currentDirectory = _cdi
+                                   ? DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                        entry.Value.Extents[0].size)
+                                   : _highSierra
+                                       ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                                   entry.Value.Extents[0].size)
+                                       : DecodeIsoDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                            entry.Value.Extents[0].size);
+
+            if(_usePathTable)
+                foreach(DecodedDirectoryEntry subDirectory in _cdi
+                                                                  ? GetSubdirsFromCdiPathTable(currentPath)
+                                                                  : _highSierra
+                                                                      ? GetSubdirsFromHighSierraPathTable(currentPath)
+                                                                      : GetSubdirsFromIsoPathTable(currentPath))
+                    currentDirectory[subDirectory.Filename] = subDirectory;
+
+            _directoryCache.Add(currentPath, currentDirectory);
+        }
+
+        if(currentDirectory is null)
+            return ErrorNumber.NoSuchFile;
+
+        node = new Iso9660DirNode
+        {
+            Path      = path,
+            _position = 0,
+            _entries  = currentDirectory.Values.ToArray()
+        };
+
+        return ErrorNumber.NoError;
+    }
 
     /// <inheritdoc />
     public ErrorNumber ReadDir(string path, out List<string> contents)
@@ -983,7 +1090,8 @@ public sealed partial class ISO9660
                     errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
 
                     // TODO: Check continuation area definition, this is not a proper fix
-                    if(errno == ErrorNumber.NoError && caData.Length > 0)
+                    if(errno         == ErrorNumber.NoError &&
+                       caData.Length > 0)
                         DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                     systemAreaOff += ceLength;

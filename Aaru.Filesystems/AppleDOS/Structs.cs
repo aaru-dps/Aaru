@@ -114,4 +114,12 @@ public sealed partial class AppleDOS
         /// <inheritdoc />
         public long Offset { get; set; }
     }
+
+    sealed class AppleDosDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+        /// <inheritdoc />
+        public string Path { get; init; }
+    }
 }
