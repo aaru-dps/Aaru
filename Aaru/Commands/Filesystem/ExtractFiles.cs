@@ -394,7 +394,7 @@ sealed class ExtractFilesCommand : Command
         if(path.StartsWith('/'))
             path = path[1..];
 
-        ErrorNumber error = fs.ReadDir(path, out List<string> directory);
+        ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
         if(error != ErrorNumber.NoError)
         {
@@ -403,7 +403,8 @@ sealed class ExtractFilesCommand : Command
             return;
         }
 
-        foreach(string entry in directory)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
+              entry is not null)
         {
             FileEntryInfo stat = new();
 
@@ -679,5 +680,7 @@ sealed class ExtractFilesCommand : Command
             else
                 AaruConsole.ErrorWriteLine(UI.Error_reading_file_0, Markup.Escape(entry));
         }
+
+        fs.CloseDir(node);
     }
 }

@@ -67,7 +67,7 @@ public sealed class SubdirectoryViewModel
         _model              = model;
         _view               = view;
 
-        ErrorNumber errno = model.Plugin.ReadDir(model.Path, out List<string> dirents);
+        ErrorNumber errno = model.Plugin.OpenDir(model.Path, out IDirNode node);
 
         if(errno != ErrorNumber.NoError)
         {
@@ -80,7 +80,8 @@ public sealed class SubdirectoryViewModel
             return;
         }
 
-        foreach(string dirent in dirents)
+        while(model.Plugin.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
+              dirent is not null)
         {
             errno = model.Plugin.Stat(model.Path + "/" + dirent, out FileEntryInfo stat);
 
@@ -112,6 +113,8 @@ public sealed class SubdirectoryViewModel
                 Stat = stat
             });
         }
+
+        model.Plugin.CloseDir(node);
     }
 
     public ObservableCollection<FileModel> Entries             { get; }

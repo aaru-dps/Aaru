@@ -96,37 +96,23 @@ public sealed partial class LisaFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
-        ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
+        filename = null;
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-        if(!isDir)
-            return ErrorNumber.NotDirectory;
+        if(node is not LisaDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        /*List<CatalogEntry> catalog;
-        error = ReadCatalog(fileId, out catalog);
-        if(error != ErrorNumber.NoError)
-            return error;*/
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
 
-        ReadDir(fileId, out contents);
+        if(mynode._position >= mynode._contents.Length)
+            return ErrorNumber.NoError;
 
-        // On debug add system files as readable files
-        // Syntax similar to NTFS
-        if(_debug && fileId == DIRID_ROOT)
-        {
-            contents.Add("$MDDF");
-            contents.Add("$Boot");
-            contents.Add("$Loader");
-            contents.Add("$Bitmap");
-            contents.Add("$S-Record");
-            contents.Add("$");
-        }
-
-        contents.Sort();
+        filename = mynode._contents[mynode._position++];
 
         return ErrorNumber.NoError;
     }

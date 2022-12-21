@@ -212,10 +212,12 @@ public sealed partial class OperaFS
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {
-            ErrorNumber err = ReadDir(parentPath, out _);
+            ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
             if(err != ErrorNumber.NoError)
                 return err;
+
+            CloseDir(node);
         }
 
         Dictionary<string, DirectoryEntryWithPointers> parent;

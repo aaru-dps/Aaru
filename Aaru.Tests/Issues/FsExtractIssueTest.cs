@@ -129,12 +129,13 @@ public abstract class FsExtractIssueTest
         if(path.StartsWith('/'))
             path = path[1..];
 
-        ErrorNumber error = fs.ReadDir(path, out List<string> directory);
+        ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
         Assert.AreEqual(ErrorNumber.NoError, error,
                         string.Format(Localization.Error_0_reading_root_directory_0, error.ToString()));
 
-        foreach(string entry in directory)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
+              entry is not null)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
@@ -183,5 +184,7 @@ public abstract class FsExtractIssueTest
                             string.Format(Localization.Error_0_reading_file_1, readBytes, stat.Length,
                                           path + "/" + entry));
         }
+
+        fs.CloseDir(node);
     }
 }

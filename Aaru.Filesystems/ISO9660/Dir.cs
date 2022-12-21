@@ -150,89 +150,41 @@ public sealed partial class ISO9660
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
-        {
-            contents = GetFilenames(_rootDirectoryCache);
+        if(node is not Iso9660DirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
+
+        if(mynode._position >= mynode._entries.Length)
             return ErrorNumber.NoError;
+
+        switch(_namespace)
+        {
+            case Namespace.Normal:
+                filename = mynode._entries[mynode._position].Filename.EndsWith(";1", StringComparison.Ordinal)
+                               ? mynode._entries[mynode._position].Filename[..^2]
+                               : mynode._entries[mynode._position].Filename;
+
+                break;
+            case Namespace.Vms:
+            case Namespace.Joliet:
+            case Namespace.Rrip:
+            case Namespace.Romeo:
+                filename = mynode._entries[mynode._position].Filename;
+
+                break;
+            default: return ErrorNumber.InvalidArgument;
         }
 
-        string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
-                             : path.ToLower(CultureInfo.CurrentUICulture);
-
-        if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
-        {
-            contents = currentDirectory.Keys.ToList();
-
-            return ErrorNumber.NoError;
-        }
-
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
-
-        KeyValuePair<string, DecodedDirectoryEntry> entry =
-            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
-
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
-
-        if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
-            return ErrorNumber.NotDirectory;
-
-        string currentPath = pieces[0];
-
-        currentDirectory = _rootDirectoryCache;
-
-        for(int p = 0; p < pieces.Length; p++)
-        {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
-
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
-
-            if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
-                return ErrorNumber.NotDirectory;
-
-            currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
-
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
-
-            if(entry.Value.Extents.Count == 0)
-                return ErrorNumber.InvalidArgument;
-
-            currentDirectory = _cdi
-                                   ? DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                                        entry.Value.Extents[0].size)
-                                   : _highSierra
-                                       ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                                                   entry.Value.Extents[0].size)
-                                       : DecodeIsoDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                                            entry.Value.Extents[0].size);
-
-            if(_usePathTable)
-                foreach(DecodedDirectoryEntry subDirectory in _cdi
-                                                                  ? GetSubdirsFromCdiPathTable(currentPath)
-                                                                  : _highSierra
-                                                                      ? GetSubdirsFromHighSierraPathTable(currentPath)
-                                                                      : GetSubdirsFromIsoPathTable(currentPath))
-                    currentDirectory[subDirectory.Filename] = subDirectory;
-
-            _directoryCache.Add(currentPath, currentDirectory);
-        }
-
-        contents = GetFilenames(currentDirectory);
+        mynode._position++;
 
         return ErrorNumber.NoError;
     }
@@ -247,31 +199,6 @@ public sealed partial class ISO9660
         mynode._entries  = null;
 
         return ErrorNumber.NoError;
-    }
-
-    List<string> GetFilenames(Dictionary<string, DecodedDirectoryEntry> dirents)
-    {
-        List<string> contents = new();
-
-        foreach(DecodedDirectoryEntry entry in dirents.Values)
-            switch(_namespace)
-            {
-                case Namespace.Normal:
-                    contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal) ? entry.Filename[..^2]
-                                     : entry.Filename);
-
-                    break;
-                case Namespace.Vms:
-                case Namespace.Joliet:
-                case Namespace.Rrip:
-                case Namespace.Romeo:
-                    contents.Add(entry.Filename);
-
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-
-        return contents;
     }
 
     Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size)

@@ -84,27 +84,23 @@ public sealed partial class AppleDOS
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-            return ErrorNumber.NotSupported;
+        if(node is not AppleDosDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        contents = _catalogCache.Keys.ToList();
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
 
-        if(_debug)
-        {
-            contents.Add("$");
-            contents.Add("$Boot");
-            contents.Add("$Vtoc");
-        }
+        if(mynode._position >= mynode._contents.Length)
+            return ErrorNumber.NoError;
 
-        contents.Sort();
+        filename = mynode._contents[mynode._position++];
 
         return ErrorNumber.NoError;
     }
@@ -120,7 +116,6 @@ public sealed partial class AppleDOS
 
         return ErrorNumber.NoError;
     }
-
 
     ErrorNumber ReadCatalog()
     {

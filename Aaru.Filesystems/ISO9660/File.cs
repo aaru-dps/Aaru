@@ -481,10 +481,12 @@ public sealed partial class ISO9660
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {
-            ErrorNumber err = ReadDir(parentPath, out _);
+            ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
             if(err != ErrorNumber.NoError)
                 return err;
+
+            CloseDir(node);
         }
 
         Dictionary<string, DecodedDirectoryEntry> parent;

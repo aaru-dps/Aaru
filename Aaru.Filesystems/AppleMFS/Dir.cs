@@ -76,30 +76,23 @@ public sealed partial class AppleMFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-            return ErrorNumber.NotSupported;
+        if(node is not AppleMfsDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        contents = _idToFilename.Select(kvp => kvp.Value).ToList();
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
 
-        if(_debug)
-        {
-            contents.Add("$");
-            contents.Add("$Bitmap");
-            contents.Add("$MDB");
+        if(mynode._position >= mynode._contents.Length)
+            return ErrorNumber.NoError;
 
-            if(_bootBlocks != null)
-                contents.Add("$Boot");
-        }
-
-        contents.Sort();
+        filename = mynode._contents[mynode._position++];
 
         return ErrorNumber.NoError;
     }

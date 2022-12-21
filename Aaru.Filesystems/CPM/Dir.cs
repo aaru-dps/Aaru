@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -64,18 +63,23 @@ public sealed partial class CPM
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-            return ErrorNumber.NotSupported;
+        if(node is not CpmDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        contents = new List<string>(_dirList);
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
+
+        if(mynode._position >= mynode._contents.Length)
+            return ErrorNumber.NoError;
+
+        filename = mynode._contents[mynode._position++];
 
         return ErrorNumber.NoError;
     }

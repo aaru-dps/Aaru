@@ -276,10 +276,12 @@ public sealed partial class XboxFatPlugin
 
         string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
-        ErrorNumber err = ReadDir(parentPath, out _);
+        ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
         if(err != ErrorNumber.NoError)
             return err;
+
+        CloseDir(node);
 
         Dictionary<string, DirectoryEntry> parent;
 

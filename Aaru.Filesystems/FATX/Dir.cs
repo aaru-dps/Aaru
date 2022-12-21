@@ -167,112 +167,26 @@ public sealed partial class XboxFatPlugin
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
-        {
-            contents = _rootDirectory.Keys.ToList();
+        if(node is not FatxDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
+
+        if(mynode._position >= mynode._entries.Length)
             return ErrorNumber.NoError;
-        }
 
-        string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
+        filename = _encoding.GetString(mynode._entries[mynode._position].filename, 0,
+                                       mynode._entries[mynode._position].filenameSize);
 
-        if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
-        {
-            contents = currentDirectory.Keys.ToList();
-
-            return ErrorNumber.NoError;
-        }
-
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
-
-        KeyValuePair<string, DirectoryEntry> entry =
-            _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
-
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
-
-        if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-            return ErrorNumber.NotDirectory;
-
-        string currentPath = pieces[0];
-
-        currentDirectory = _rootDirectory;
-
-        for(int p = 0; p < pieces.Length; p++)
-        {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
-
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
-
-            if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-                return ErrorNumber.NotDirectory;
-
-            currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
-            uint currentCluster = entry.Value.firstCluster;
-
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
-
-            uint[] clusters = GetClusters(currentCluster);
-
-            if(clusters is null)
-                return ErrorNumber.InvalidArgument;
-
-            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
-
-            for(int i = 0; i < clusters.Length; i++)
-            {
-                ErrorNumber errno =
-                    _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
-                                             _sectorsPerCluster, out byte[] buffer);
-
-                if(errno != ErrorNumber.NoError)
-                    return errno;
-
-                Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
-            }
-
-            currentDirectory = new Dictionary<string, DirectoryEntry>();
-
-            int pos = 0;
-
-            while(pos < directoryBuffer.Length)
-            {
-                DirectoryEntry dirent = _littleEndian
-                                            ? Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer,
-                                                pos, Marshal.SizeOf<DirectoryEntry>())
-                                            : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
-                                                pos, Marshal.SizeOf<DirectoryEntry>());
-
-                pos += Marshal.SizeOf<DirectoryEntry>();
-
-                if(dirent.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY)
-                    break;
-
-                if(dirent.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
-                    continue;
-
-                string filename = _encoding.GetString(dirent.filename, 0, dirent.filenameSize);
-
-                currentDirectory.Add(filename, dirent);
-            }
-
-            _directoryCache.Add(currentPath, currentDirectory);
-        }
-
-        contents = currentDirectory?.Keys.ToList();
+        mynode._position++;
 
         return ErrorNumber.NoError;
     }

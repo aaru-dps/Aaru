@@ -47,7 +47,7 @@ public sealed partial class Sidecar
     {
         var contents = new FilesystemContents();
 
-        ErrorNumber ret = filesystem.ReadDir("/", out List<string> dirents);
+        ErrorNumber ret = filesystem.OpenDir("/", out IDirNode node);
 
         if(ret != ErrorNumber.NoError)
             return null;
@@ -55,7 +55,8 @@ public sealed partial class Sidecar
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
 
-        foreach(string dirent in dirents)
+        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
+              dirent is not null)
         {
             ret = filesystem.Stat(dirent, out FileEntryInfo stat);
 
@@ -75,6 +76,8 @@ public sealed partial class Sidecar
 
             files.Add(SidecarFile(filesystem, "", dirent, stat));
         }
+
+        filesystem.CloseDir(node);
 
         if(files.Count > 0)
             contents.Files = files.OrderBy(f => f.Name).ToList();
@@ -104,7 +107,7 @@ public sealed partial class Sidecar
             StatusChangeTime = stat.StatusChangeTimeUtc
         };
 
-        ErrorNumber ret = filesystem.ReadDir(path + "/" + filename, out List<string> dirents);
+        ErrorNumber ret = filesystem.OpenDir(path + "/" + filename, out IDirNode node);
 
         if(ret != ErrorNumber.NoError)
             return null;
@@ -112,7 +115,8 @@ public sealed partial class Sidecar
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
 
-        foreach(string dirent in dirents)
+        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
+              dirent is not null)
         {
             ret = filesystem.Stat(path + "/" + filename + "/" + dirent, out FileEntryInfo entryStat);
 

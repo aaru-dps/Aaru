@@ -267,12 +267,13 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             path = "";
 
         Dictionary<string, FileData> children = new();
-        fs.ReadDir(path, out List<string> contents);
+        ErrorNumber                  ret      = fs.OpenDir(path, out IDirNode node);
 
-        if(contents is null)
+        if(ret != ErrorNumber.NoError)
             return children;
 
-        foreach(string child in contents)
+        while(fs.ReadDir(node, out string child) == ErrorNumber.NoError &&
+              child is not null)
         {
             string childPath = $"{path}/{child}";
             fs.Stat(childPath, out FileEntryInfo stat);
@@ -302,6 +303,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             children[child] = data;
         }
+
+        fs.CloseDir(node);
 
         return children;
     }
@@ -351,7 +354,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
     {
         currentDepth++;
         nextLevels = new List<NextLevel>();
-        ErrorNumber ret = fs.ReadDir(path, out List<string> contents);
+        ErrorNumber ret = fs.OpenDir(path, out IDirNode node);
 
         // Directory is not readable, probably filled the volume, just ignore it
         if(ret == ErrorNumber.InvalidArgument)
@@ -363,6 +366,14 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(ret != ErrorNumber.NoError)
             return;
+
+        List<string> contents = new();
+
+        while(fs.ReadDir(node, out string filename) == ErrorNumber.NoError &&
+              filename is not null)
+            contents.Add(filename);
+
+        fs.CloseDir(node);
 
         if(children.Count == 0 &&
            contents.Count == 0)

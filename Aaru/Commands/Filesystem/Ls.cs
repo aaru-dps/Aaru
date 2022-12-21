@@ -353,8 +353,8 @@ sealed class LsCommand : Command
 
     static void ListFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, bool longFormat)
     {
-        ErrorNumber  error     = ErrorNumber.InvalidArgument;
-        List<string> directory = new();
+        ErrorNumber error = ErrorNumber.InvalidArgument;
+        IDirNode    node  = null;
 
         if(path.StartsWith('/'))
             path = path[1..];
@@ -365,7 +365,7 @@ sealed class LsCommand : Command
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Reading_directory).IsIndeterminate();
-            error = fs.ReadDir(path, out directory);
+            error = fs.OpenDir(path, out node);
         });
 
         if(error != ErrorNumber.NoError)
@@ -377,20 +377,20 @@ sealed class LsCommand : Command
 
         Dictionary<string, FileEntryInfo> stats = new();
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
-                    {
-                        ProgressTask task = ctx.AddTask(UI.Retrieving_file_information);
-                        task.MaxValue = directory.Count;
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
 
-                        foreach(string entry in directory)
-                        {
-                            task.Increment(1);
-                            fs.Stat(path + "/" + entry, out FileEntryInfo stat);
+            while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
+                  entry is not null)
+            {
+                fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-                            stats.Add(entry, stat);
-                        }
-                    });
+                stats.Add(entry, stat);
+            }
+
+            fs.CloseDir(node);
+        });
 
         foreach(KeyValuePair<string, FileEntryInfo> entry in
                 stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))

@@ -76,26 +76,23 @@ public sealed partial class PascalPlugin
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
     {
-        contents = null;
+        filename = null;
 
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-            return ErrorNumber.NotSupported;
+        if(node is not PascalDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).ToList();
+        if(mynode._position < 0)
+            return ErrorNumber.InvalidArgument;
 
-        if(_debug)
-        {
-            contents.Add("$");
-            contents.Add("$Boot");
-        }
+        if(mynode._position >= mynode._contents.Length)
+            return ErrorNumber.NoError;
 
-        contents.Sort();
+        filename = mynode._contents[mynode._position++];
 
         return ErrorNumber.NoError;
     }
