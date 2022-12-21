@@ -121,7 +121,7 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <returns>Error number</returns>
     ErrorNumber OpenFile(string path, out IFileNode node);
 
-    /// <summary>Closes an file, freeing any private data allocated on opening.</summary>
+    /// <summary>Closes a file, freeing any private data allocated on opening.</summary>
     /// <param name="node">The file node.</param>
     /// <returns>Error number.</returns>
     ErrorNumber CloseFile(IFileNode node);
@@ -160,6 +160,12 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="buffer">Buffer. Must exist and be of size equal or bigger than <see cref="length" /></param>
     /// <param name="read">How many bytes were read into the buffer</param>
     ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read);
+
+    /// <summary>Opens a directory for listing.</summary>
+    /// <param name="path">Path to the directory.</param>
+    /// <param name="node">Represents the opened directory and is needed for other directory-related operations.</param>
+    /// <returns>Error number</returns>
+    ErrorNumber OpenDir(string path, out IDirNode node);
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
@@ -171,4 +177,11 @@ public interface IFileNode
     long Length { get; }
     /// <summary>Current position in file</summary>
     long Offset { get; set; }
+}
+
+/// <summary>Represents an opened directory from a filesystem</summary>
+public interface IDirNode
+{
+    /// <summary>Path to the directory</summary>
+    string Path { get; }
 }
