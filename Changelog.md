@@ -7,6 +7,12 @@
 - Parent block identifier in AaruFormat.
 - Track indexes in when a disc contains a hidden track.
 
+### - Apple DOS filesystem
+- Calculation of file sizes
+
+### - Apple Macintosh filesystem
+- Calculation of file sizes
+
 ### - BlindWrite 5/6/7 disc images
 - Opening split images in Windows
 
