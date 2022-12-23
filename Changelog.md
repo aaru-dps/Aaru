@@ -1,4 +1,4 @@
-# [5.3.2-rc1] - 2022-12-06
+# [5.3.2] - 2022-12-23
 
 ## Fixed
 
@@ -7,6 +7,18 @@
 - Parent block identifier in AaruFormat.
 - Track indexes in when a disc contains a hidden track.
 
+### - Apple DOS filesystem
+- Calculation of file sizes
+
+### - Apple Macintosh filesystem
+- Calculation of file sizes
+
+### - BlindWrite 5/6/7 disc images
+- Opening split images in Windows
+
+### - CDRWin cuesheet disc images
+- Do not report ISRC as present if no tracks contain ISRC data.
+
 ### - Device report
 - Add workaround for device report the AccessTek/Optorite DD0203 drive.
 
@@ -14,7 +26,18 @@
 - Add transfer size to ATA(PI) IDENTIFY (PACKET) DEVICE commands as required by a recent change in the Linux kernel API.
 
 ### - Dumping
+- Correct offset fixing when trimming or re-reading errored audio sectors.
 - Do not set INDEX 1 to a value higher than what the TOC already said.
+
+### - FAT filesystem
+- Fix that first 2 FAT entries are not considered part of the allocation ones, allocating two more.
+- Return current clusters when a file overflows the FAT.
+
+### - ISO9660 filesystem
+- Do not try to interpret an 0-length Continuation Area.
+
+### - SGI Volume Header
+- Partition types not properly interpreted.
 
 ## Changes
 
@@ -50,13 +73,11 @@
 ### - Dumping
 
 - Fix detecting errors from OS buffered reads in Linux.
-- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential
-  commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
+- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
 
 ### - ISO9660 filesystem
 
-- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector
-  read.
+- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector read.
 - Do not try to decode empty path table in ISO9660/CD-i/HighSierra.
 
 ### - Media detection
@@ -211,6 +232,7 @@
 ### - RAW (sector by sector) disk image
 
 - Support setting sector size in raw image when the extension describes it.
+- Recognize Toast disc images by extension.
 
 ### - SCSI response decoders
 
@@ -331,6 +353,7 @@
 ### - Dumping
 
 - Creating sidecar from MMC trying to hash non-existing SD registers.
+- Non-CD optical media when drive does not return track list.
 - Pregap calculation on first tracks of each session when dumping CDs.
 - Re-setting track end when correctly reading a new subchannel that changes the next track start.
 - Speed calculations for very fast devices.
@@ -474,7 +497,8 @@
 - In image information, only show indexes if there's any index to show.
 - Move IRC to Libera.
 - Reduce seek times to 100 when scanning MMC/SD cards.
-- Rename *filesystem analyze* command to *filesystem info*.
+- Rename *image analyze* command to *filesystem info*.
+- Use ATA Pass Through Direct API in Windows.
 - Use same codepath for calculating optical media tag sidecar fields dumping or from image.
 - Use SCSI reader detection of maximum supporter blocks to read at once when scanning non-CD media.
 
@@ -2275,7 +2299,7 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[5.3.2-rc1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2-rc1
+[5.3.2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2
 
 [5.3.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.1
 
