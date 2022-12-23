@@ -1,4 +1,4 @@
-Aaru Data Preservation Suite v5.3.2-rc2
+Aaru Data Preservation Suite v5.3.2
 
 Aaru
 

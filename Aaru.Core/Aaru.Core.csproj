@@ -9,7 +9,7 @@
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.3.2-rc2</Version>
+    <Version>5.3.2</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
