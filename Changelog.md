@@ -1,4 +1,4 @@
-# [5.3.2-rc2] - 2022-12-14
+# [5.3.2] - 2022-12-23
 
 ## Fixed
 
@@ -2299,7 +2299,7 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[5.3.2-rc2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2-rc
+[5.3.2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2
 
 [5.3.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.1
 
