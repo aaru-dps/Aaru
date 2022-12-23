@@ -4,16 +4,16 @@ _netcoretarget='net7.0'
 _aarubase='Aaru'
 packager='Natalia Portillo <claunia@claunia.com>'
 pkgname='aaru'
-pkgver=5.3.2
+pkgver=6.0.0~alpha9
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.aaru.app'
 license=('GPL')
-source=('aaru-src-5.3.2.tar.xz::local://aaru-src-5.3.2.tar.xz'
-        'aaru-src-5.3.2.tar.xz.asc::local://aaru-src-5.3.2.tar.xz.asc')
-makedepends=('dotnet-sdk-3.1-bin>=3.1.0')
-options=('staticlibs')
+source=('aaru-src-6.0.0-alpha9.tar.xz::local://aaru-src-6.0.0-alpha9.tar.xz'
+        'aaru-src-6.0.0-alpha9.tar.xz.asc::local://aaru-src-6.0.0-alpha9.tar.xz.asc')
+makedepends=('dotnet-sdk>=7.0.0')
+options=('!strip' 'staticlibs')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
 provides=('aaru')
 conflicts=('aaru')

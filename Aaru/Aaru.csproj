@@ -9,7 +9,7 @@
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>6.0.0-alpha8</Version>
+    <Version>6.0.0~alpha9</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -22,11 +22,12 @@
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
   <PropertyGroup>
-    <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>false</NrtShowRevision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugPackage>-dbg</DebugPackage>
     <NoWarn>CS1591;CS1574</NoWarn>
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -119,7 +120,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PackageVersion>6.0.0-alpha3</PackageVersion>
+    <PackageVersion>6.0.0-alpha9</PackageVersion>
     <PackagePrefix>aaru</PackagePrefix>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <Section>net</Section>
@@ -132,6 +133,14 @@
     </Content>
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
   </PropertyGroup>
@@ -143,7 +152,6 @@
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
   </PropertyGroup>
