@@ -1,3 +1,122 @@
+# [6.0.0-alpha9] - 2022-12-23
+
+## Added
+
+### - Adler checksum
+- SSSE3 implementation if supported by running host.
+
+### - Apple Data Compression algorithm
+- Use faster native library if supported by running host.
+
+### - Apple RLE compression algorithm
+- Use faster native library if supported by running host.
+
+### - Apple Universal Disk Image Format
+- Support for LZFSE compressed images (ULFO).
+- Support for XZ compressed images (ULMO).
+
+### - Atari Lynx cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+
+### - BZIP2 compression algorithm
+- Faster non-native implementation.
+- Use faster native library if supported by running host.
+
+### - Console
+- Use new console system that allows to show colors, tables and progress bars in command line.
+
+### - CRC32 checksum
+- ARM specific instructions if supported by running host.
+- PCLMUL implementation if supported by running host.
+
+### - CRC64 checksum
+- PCLMUL implementation if supported by running host.
+
+### - Dumping
+- Draw the MHDD log as an image.
+- For most spiral media (CD/DVD/BD) draw a graph with the dump status.
+- For non-spiral media draw a block map.
+
+### - FLAC compression algorithm
+- Use faster native library if supported by running host.
+
+### - LZFSE compression algorithm
+- Now available if native library is supported by running host.
+
+### - LZMA compression algorithm
+- Use faster native library if supported by running host.
+
+### - LZIP compression algorithm
+- Use faster native library if supported by running host.
+
+### - NES / Famicom cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Support for iNES and NES 2.0 formats
+
+### - Nintendo 64 cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Support for `z64` and `n64` formats.
+
+### - Nintendo Game Boy cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+
+### - Nintendo Game Boy Advance cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+
+### - Nintendo Game Boy Color cartridge dumps
+- Dumping by supported hardware.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+
+### - Retrode cartridge dumping hardware
+- Dumping Nintendo 64 cartridges.
+- Dumping Nintendo Game Boy cartridges.
+- Dumping Nintendo Game Boy Advance cartridges.
+- Dumping Nintendo Game Boy Color cartridges.
+- Dumping Sega Game Gear cartridges.
+- Dumping Sega Master System / Mark III cartridges.
+- Dumping Sega Mega Drive / Genesis cartridges.
+- Dumping Super Nintendo / Super Famicom cartridges.
+
+### - Sega 32X cartridge dumps
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - Sega Game Gear cartridge dumps
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - Sega Master System / Mark III cartridge dumps
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - Sega Mega Drive / Genesis cartridge dumps
+- Full support for converting between `smd` and `bin` formats.
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - Sega Pico cartridge dumps
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - Super Nintendo / Super Famicom cartridge dumps
+- Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
+- Dumping by supported hardware.
+
+### - ZSTD compression algorithm
+- Now available if native library is supported by running host.
+
+## Changes
+- All used checksums now call a much faster native library if supported.
+- CICM metadata XML sidecars are deprecated, new more complete JSON format is used instead.
+- Remove FreeBSD support code. Use `aaruremote` for dumping devices connected to FreeBSD systems.
+- Resume file is now in JSON format. XML resumes will be automatically replaced.
+- Use APTD for accessing ATA devices in Windows.
+
 # [5.3.2] - 2022-12-23
 
 ## Fixed
@@ -2298,6 +2417,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[6.0.0-alpha9]: https://github.com/aaru-dps/Aaru/releases/tag/v6.0.0-alpha9
 
 [5.3.2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2
 
