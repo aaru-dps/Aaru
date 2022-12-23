@@ -1,21 +1,21 @@
-# Built packages tested for Aaru 5.3.2-rc1 (2022-12-06)
+# Built packages tested for Aaru 5.3.2 (2022-12-23)
 
 |          RID | Distribution     |   Version   | Status | Notes                                    |
 |-------------:|------------------|:-----------:|:------:|------------------------------------------|
 |   alpine-x64 | Alpine Linux     |   3.17.0    |   ❎    | Requires `openssl1.1-compat`             |
-|   debian-arm |                  |             |   ❓    |                                          |
-| debian-arm64 |                  |             |   ❓    |                                          |
+|   debian-arm | Raspbian         |    11.5     |   ✅    |                                          |
+| debian-arm64 | Raspbian         |    11.5     |   ✅    |                                          |
 |   debian-x64 | Debian GNU/Linux |    10.13    |   ✅    |                                          |
 |              | Debian GNU/Linux |    11.5     |   ✅    |                                          |
 |              | Ubuntu           | 16.04.7 LTS |   ✅    |                                          |
 |              | Ubuntu           | 18.04.6 LTS |   ✅    |                                          |
 |              | Ubuntu           | 20.04.5 LTS |   ✅    |                                          |
 |              | Ubuntu           | 22.04.1 LTS |   ❎    | Needs manual installation of `libssl1.1` |
-|  linux-arm64 |                  |             |   ❓    |                                          |
-|    linux-arm |                  |             |   ❓    |                                          |
+|  linux-arm64 | ArchLinux        |   rolling   |   ✅    |                                          |
+|    linux-arm | ArchLinux        |   rolling   |   ✅    |                                          |
 |    linux-x64 | ArchLinux        |   rolling   |   ✅    |                                          |
 |      osx-x64 | macOS            |    13.0     |   ✅    |                                          |
-|   rhel-arm64 |                  |             |   ❓    |                                          |
+|   rhel-arm64 | CentOS           |      8      |   ✅    |                                          |
 |     rhel-x64 | CentOS           |      7      |   ✅    |                                          |
 |              | CentOS           |      8      |   ✅    |                                          |
 |     sles-x64 | openSUSE         |  Leap 15.2  |   ✅    |                                          |
