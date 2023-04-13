@@ -46,4 +46,11 @@ public sealed partial class SuperCardPro
     {
         0x54, 0x52, 0x4B
     };
+
+    /// <summary>SuperCardPro device default capture resolution: 25 nanoseconds.</summary>
+    const ushort DEFAULT_RESOLUTION = 25000;
+    /// <summary>SuperCardPro format full (with track offsets) header length.</summary>
+    const uint FULL_HEADER_OFFSET = 0x2b0;
+    /// <summary>SuperCardPro format header length (without track offsets).</summary>
+    const byte HEADER_OFFSET = 0x10;
 }
