@@ -3502,4 +3502,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
   <data name="Output_format_does_not_support_hidden_tracks" xml:space="preserve">
     <value>Output format does not properly support storing hidden tracks, this will end in a loss of data, not continuing...</value>
   </data>
+  <data name="Image_flux_captures" xml:space="preserve">
+    <value>This image contains low-level flux captures.</value>
+  </data>
 </root>

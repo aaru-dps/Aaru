@@ -805,6 +805,9 @@ public static class ImageInfo
             }
         }
 
+        if(imageFormat is IFluxImage fluxImage)
+            AaruConsole.WriteLine(Localization.Core.Image_flux_captures);
+
         if(imageFormat is not IOpticalMediaImage opticalImage)
             return;
 

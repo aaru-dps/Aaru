@@ -6881,5 +6881,11 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Output_format_does_not_support_hidden_tracks", resourceCulture);
             }
         }
+        
+        public static string Image_flux_captures {
+            get {
+                return ResourceManager.GetString("Image_flux_captures", resourceCulture);
+            }
+        }
     }
 }

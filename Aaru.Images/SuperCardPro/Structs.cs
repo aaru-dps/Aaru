@@ -47,10 +47,10 @@ public sealed partial class SuperCardPro
         public byte        start;
         public byte        end;
         public ScpFlags    flags;
-        public byte        bitCellEncoding;
-        public byte        heads;
-        public byte        reserved;
-        public uint        checksum;
+        public byte        bitCellEncoding; // 0 = 16 bit, otherwise value represent bits
+        public byte        heads;           // 1 = bottom side, 2 = top side, 0 = both
+        public byte        resolution;      // 25ns increments, ergo algorithm is 25ns + resolution * 25ns
+        public uint        checksum;        // for data starting at 0x10
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
         public uint[] offsets;
     }

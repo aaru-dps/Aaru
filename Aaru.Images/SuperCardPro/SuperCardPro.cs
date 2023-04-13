@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
@@ -40,10 +41,14 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading SuperCardPro flux images</summary>
-public sealed partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
+public sealed partial class SuperCardPro : IFluxImage, IMediaImage, IWritableImage, IVerifiableImage,
+                                           IVerifiableSectorsImage, IWritableFluxImage
 {
-    ImageInfo _imageInfo;
-    Stream    _scpStream;
+    ImageInfo  _imageInfo;
+    Stream     _scpStream;
+    IFilter    _scpFilter;
+    FileStream _writingStream;
+    uint       _trackOffset;
 
     // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
     public ScpHeader                     Header;
