@@ -1388,8 +1388,6 @@ sealed class ConvertImageCommand : Command
 
                                 while(doneSectors < inputFormat.Info.Sectors)
                                 {
-                                    byte[] sector;
-
                                     uint sectorsToDo;
 
                                     if(inputFormat.Info.Sectors - doneSectors >= (ulong)count)
@@ -1403,7 +1401,8 @@ sealed class ConvertImageCommand : Command
 
                                     bool result;
 
-                                    errno = sectorsToDo == 1 ? inputFormat.ReadSectorTag(doneSectors, tag, out sector)
+                                    errno = sectorsToDo == 1
+                                                ? inputFormat.ReadSectorTag(doneSectors, tag, out byte[] sector)
                                                 : inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag, out sector);
 
                                     if(errno == ErrorNumber.NoError)
@@ -1445,6 +1444,43 @@ sealed class ConvertImageCommand : Command
                                 }
 
                                 tagsTask.StopTask();
+                            }
+
+                            if(inputFormat is IFluxImage inputFlux &&
+                               outputFormat is IWritableFluxImage outputFlux)
+                            {
+                                for(ushort track = 0; track < inputFlux.Info.Cylinders; track++)
+                                {
+                                    for(uint head = 0; head < inputFlux.Info.Heads; head++)
+                                    {
+                                        ErrorNumber error = inputFlux.SubTrackLength(head, track, out byte subTrackLen);
+
+                                        if(error != ErrorNumber.NoError)
+                                            continue;
+
+                                        for(byte subTrackIndex = 0; subTrackIndex < subTrackLen; subTrackIndex++)
+                                        {
+                                            error = inputFlux.CapturesLength(head, track, subTrackIndex,
+                                                                             out uint capturesLen);
+
+                                            if(error != ErrorNumber.NoError)
+                                                continue;
+
+                                            for(uint captureIndex = 0; captureIndex < capturesLen; captureIndex++)
+                                            {
+                                                inputFlux.ReadFluxCapture(head, track, subTrackIndex, captureIndex,
+                                                                          out ulong indexResolution,
+                                                                          out ulong dataResolution,
+                                                                          out byte[] indexBuffer,
+                                                                          out byte[] dataBuffer);
+
+                                                outputFlux.WriteFluxCapture(indexResolution, dataResolution,
+                                                                            indexBuffer, dataBuffer, head, track, 0,
+                                                                            captureIndex);
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
                             if(inputTape  == null ||
