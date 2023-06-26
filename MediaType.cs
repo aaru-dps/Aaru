@@ -1042,6 +1042,10 @@ public enum MediaType : uint
     #region More floppy formats, types 820 to deprecated
     /// <summary>5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, MFM, 48 tpi, ???rpm</summary>
     MetaFloppy_Mod_I = 820,
+    /// <summary>HyperFlex (12Mb), 5.25", DS, 301 tracks, 78 spt, 256 bytes/sector, MFM, 333 tpi, 600rpm</summary>
+    HF12 = 823,
+    /// <summary>HyperFlex (24Mb), 5.25", DS, 506 tracks, 78 spt, 256 bytes/sector, MFM, 666 tpi, 720rpm</summary>
+    HF24 = 824,
     #endregion
 
     AtariLynxCard = 821, AtariJaguarCartridge = 822

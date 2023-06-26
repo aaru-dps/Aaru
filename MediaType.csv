@@ -538,3 +538,5 @@ Enum,Value,Summary
 "MetaFloppy_Mod_I",820,"5.25"", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, MFM, 48 tpi, ???rpm"
 "AtariLynxCard",821,
 "AtariJaguarCartridge",822,
+"HF12",823,"HyperFlex (12Mb), 5.25"", DS, 301 tracks, 78 spt, 256 bytes/sector, MFM, 333 tpi, 600rpm",
+"HF24",824,"HyperFlex (24Mb), 5.25"", DS, 506 tracks, 78 spt, 256 bytes/sector, MFM, 666 tpi, 720rpm",

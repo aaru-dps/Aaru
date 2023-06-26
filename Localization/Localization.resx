@@ -627,4 +627,10 @@
   <data name="Exception_0" xml:space="preserve">
     <value>Exception {0}</value>
   </data>
+  <data name="SCSI_Media_Type_Description_HF12" xml:space="preserve">
+    <value>Media has 46956 blocks of 256 bytes, setting media type to 12Mb HyperFlex.</value>
+  </data>
+  <data name="SCSI_Media_Type_Description_HF24" xml:space="preserve">
+    <value>Media has 78936 blocks of 256 bytes, setting media type to 24Mb HyperFlex.</value>
+  </data>
 </root>

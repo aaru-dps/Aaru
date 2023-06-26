@@ -1113,6 +1113,15 @@ public class Dimensions
                 dmns.Thickness = 4;
 
                 return dmns;
+            case MediaType.HF12:
+            case MediaType.HF24:
+                dmns.Height = 137.5;
+
+                dmns.Width = 135.9;
+
+                dmns.Thickness = 5.64;
+
+                return dmns;
             default: return null;
         }
     }

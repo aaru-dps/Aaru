@@ -2546,6 +2546,16 @@ public static class MediaType
                 discSubType = "Micropolis MetaFloppy Mod II";
 
                 break;
+            case CommonTypes.MediaType.HF12:
+                discType    = "HyperFlex";
+                discSubType = "HyperFlex (12Mb)";
+
+                break;
+            case CommonTypes.MediaType.HF24:
+                discType    = "HyperFlex";
+                discSubType = "HyperFlex (24Mb)";
+
+                break;
             default:
                 discType    = "Unknown";
                 discSubType = "Unknown";

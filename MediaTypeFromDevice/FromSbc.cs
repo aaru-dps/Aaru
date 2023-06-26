@@ -319,6 +319,14 @@ public static partial class MediaTypeFromDevice
                                                    Localization.SCSI_Media_Type_Description_Bernoulli10, blocks);
 
                         return MediaType.Bernoulli10;
+                    case 46956:
+                        AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_HF12);
+
+                        return MediaType.HF12;
+                    case 78936:
+                        AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_HF24);
+
+                        return MediaType.HF12;
                 }
 
                 break;
