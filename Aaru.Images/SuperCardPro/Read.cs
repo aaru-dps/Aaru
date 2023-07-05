@@ -255,13 +255,12 @@ public sealed partial class SuperCardPro
                 _imageInfo.SectorsPerTrack = 18;
 
                 break;
-            case ScpDiskType.TandySSSD:  break;
-            case ScpDiskType.TandySSDD:  break;
-            case ScpDiskType.TandyDSSD:  break;
-            case ScpDiskType.TandyDSDD:  break;
-            case ScpDiskType.Ti994A:     break;
-            case ScpDiskType.RolandD20:  break;
-            case ScpDiskType.AmstradCPC: break;
+            case ScpDiskType.TandySSDD:  return ErrorNumber.NotImplemented;
+            case ScpDiskType.TandyDSSD:  return ErrorNumber.NotImplemented;
+            case ScpDiskType.TandyDSDD:  return ErrorNumber.NotImplemented;
+            case ScpDiskType.Ti994A:     return ErrorNumber.NotImplemented;
+            case ScpDiskType.RolandD20:  return ErrorNumber.NotImplemented;
+            case ScpDiskType.AmstradCPC: return ErrorNumber.NotImplemented;
             case ScpDiskType.Generic360K:
                 _imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
                 _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);

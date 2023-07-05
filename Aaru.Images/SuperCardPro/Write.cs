@@ -223,7 +223,7 @@ public sealed partial class SuperCardPro
             IsRevolutionsSet   = true;
         }
 
-        // SCP can only have the same number of revolutions for every tracks
+        // SCP can only have the same number of revolutions for all tracks
         if(Header.revolutions != scpIndices.Count)
             return ErrorNumber.NotSupported;
 

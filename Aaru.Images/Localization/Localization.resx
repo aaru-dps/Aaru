@@ -2912,4 +2912,7 @@
   <data name="Writing_Aaru_Metadata_block_to_position_0" xml:space="preserve">
     <value>Writing Aaru Metadata block to position {0}</value>
   </data>
+  <data name="A2R_Name" xml:space="preserve">
+    <value>A2R</value>
+  </data>
 </root>
