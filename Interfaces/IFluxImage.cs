@@ -115,4 +115,13 @@ public interface IFluxImage : IBaseImage
     /// <param name="captureIndex">Which capture to read. See also <see cref="CapturesLength" /></param>
     /// <param name="buffer">Buffer to store the data in</param>
     ErrorNumber ReadFluxDataCapture(uint head, ushort track, byte subTrack, uint captureIndex, out byte[] buffer);
+
+    /// <summary>
+    ///     An image may have tracks split into sub-steps. This returns the highest sub-step index for the track.
+    /// </summary>
+    /// <returns>Error number</returns>
+    /// <param name="head">Physical head (0-based)</param>
+    /// <param name="track">Physical track (position of the heads over the floppy media, 0-based)</param>
+    /// <param name="length">The number of captures</param>
+    ErrorNumber SubTrackLength(uint head, ushort track, out byte length);
 }
