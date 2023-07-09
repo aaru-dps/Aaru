@@ -2,10 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Authors.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
+// Filename       : Constants.cs
+// Author(s)      : Rebecca Wallander <sakcheen@gmail.com>
 //
 // Component      : Disk image plugins.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Contains constants for A2R flux images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -23,17 +27,45 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
-
-using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages;
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-static class Authors
+public sealed partial class A2R
 {
-    internal const string MichaelDruing    = "Michael Drüing";
-    internal const string NataliaPortillo  = "Natalia Portillo";
-    internal const string RebeccaWallander = "Rebecca Wallander";
+    readonly byte[] _a2rV2Signature =
+    {
+        0x41, 0x32, 0x52, 0x32 // A2R2
+    };
+
+    readonly byte[] _a2rV3Signature =
+    {
+        0x41, 0x32, 0x52, 0x33 // A2R3
+    };
+
+    readonly byte[] _infoChunkSignature =
+    {
+        0x49, 0x4E, 0x46, 0x4F // INFO
+    };
+
+    readonly byte[] _rwcpChunkSignature =
+    {
+        0x52, 0x57, 0x43, 0x50 // RWCP
+    };
+
+    readonly byte[] _slvdChunkSignature =
+    {
+        0x53, 0x4C, 0x56, 0x44 // SLVD
+    };
+
+    readonly byte[] _metaChunkSignature =
+    {
+        0x4D, 0x45, 0x54, 0x41 // META
+    };
+
+    readonly byte[] _strmChunkSignature =
+    {
+        0x53, 0x54, 0x52, 0x4D // STRM
+    };
 }

@@ -1475,7 +1475,7 @@ sealed class ConvertImageCommand : Command
                                                                           out byte[] dataBuffer);
 
                                                 outputFlux.WriteFluxCapture(indexResolution, dataResolution,
-                                                                            indexBuffer, dataBuffer, head, track, 0,
+                                                                            indexBuffer, dataBuffer, head, track, subTrackIndex,
                                                                             captureIndex);
                                             }
                                         }

@@ -2,10 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Authors.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
+// Filename       : Enums.cs
+// Author(s)      : Rebecca Wallander <sakcheen@gmail.com>
 //
 // Component      : Disk image plugins.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Contains enumerations for A2R flux images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -23,17 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages;
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-static class Authors
+public sealed partial class A2R
 {
-    internal const string MichaelDruing    = "Michael Drüing";
-    internal const string NataliaPortillo  = "Natalia Portillo";
-    internal const string RebeccaWallander = "Rebecca Wallander";
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum A2rDriveType : byte
+    {
+        SS_525_40trk_quarterStep = 0x1, DS_35_80trk_appleCLV = 0x2, DS_525_80trk = 0x3,
+        DS_525_40trk             = 0x4, DS_35_80trk          = 0x5, DS_8         = 0x6
+    }
+
+    public enum A2rDiskType : byte
+    {
+        _525 = 0x01, _35 = 0x2,
+    }
 }
