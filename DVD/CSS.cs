@@ -44,7 +44,12 @@
 //  libdvdcss (https://www.videolan.org/developers/libdvdcss.html)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
 
 namespace Aaru.Decryption.DVD;
@@ -544,11 +549,11 @@ public class CSS
     }
 
     /// <summary>Takes an encrypted key and its crypto and returns the key decrypted.</summary>
-    /// <param name="invert"></param>
+    /// <param name="invert">For disc keys, invert is <c>0x00</c>. For title keys, invert if <c>0xff</c>.</param>
     /// <param name="cryptoKey">The key used to encrypt the data.</param>
     /// <param name="encryptedKey">The encrypted data.</param>
     /// <param name="decryptedKey">The decrypted data.</param>
-    public static void DecryptKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey)
+    static void DecryptKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey)
     {
         decryptedKey = new byte[5];
         byte[] k = new byte[5];
@@ -590,8 +595,8 @@ public class CSS
         decryptedKey[0] = (byte)(k[0] ^ _cssTable1[decryptedKey[0]]);
     }
 
-    public static void DecryptTitleKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey) =>
-        DecryptKey(invert, cryptoKey, encryptedKey, out decryptedKey);
+    public static void DecryptTitleKey(byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey) =>
+        DecryptKey(0xff, cryptoKey, encryptedKey, out decryptedKey);
 
     /// <summary>Takes an bytearray of encrypted keys, decrypts them and returns the correctly decrypted key.</summary>
     /// <param name="encryptedKeys">Encrypted keys to try to decrypt.</param>
@@ -630,63 +635,113 @@ public class CSS
     /// <param name="blocks">Number of sectors in <c>sectorData</c>.</param>
     /// <param name="blockSize">Size of one sector.</param>
     /// <returns>The decrypted sector.</returns>
-    public static byte[] DecryptSector(byte[] sectorData, byte[] cmiData, byte[] keyData, uint blocks = 1,
+    public static byte[] DecryptSector(byte[] sectorData, byte[] keyData, byte[]? cmiData, uint blocks = 1,
                                        uint blockSize = 2048)
     {
-        if(cmiData.All(cmi => (cmi & 0x80) >> 7 == 0) ||
-           keyData.All(k => k                   == 0))
+        // None of the sectors are encrypted
+        if((cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0)) ||
+           keyData.All(static k => k == 0))
             return sectorData;
 
         byte[] decryptedBuffer = new byte[sectorData.Length];
 
-        for(uint j = 0; j < blocks; j++)
+        for(uint i = 0; i < blocks; i++)
         {
-            byte[] currentKey    = keyData.Skip((int)(j    * 5)).Take(5).ToArray();
-            byte[] currentSector = sectorData.Skip((int)(j * blockSize)).Take((int)blockSize).ToArray();
+            byte[] currentKey    = keyData.Skip((int)(i    * 5)).Take(5).ToArray();
+            byte[] currentSector = sectorData.Skip((int)(i * blockSize)).Take((int)blockSize).ToArray();
 
-            // If the CMI tells use the sector isn't encrypted or
-            // if the key is all zeroes or
-            // if the MPEG Packetized Elementary Stream scrambling control value tells us the packet is not scrambled
-            if((cmiData[j] & 0x80) >> 7 == 0 ||
-               currentKey.All(k => k == 0)   ||
-               (currentSector[20] & 0x30) >> 4 == 0)
+            if(!IsEncrypted(cmiData?[i], currentKey, currentSector))
             {
-                // Sector is not encrypted
-                Array.Copy(currentSector, 0, decryptedBuffer, (int)(j * blockSize), blockSize);
+                Array.Copy(currentSector, 0, decryptedBuffer, (int)(i * blockSize), blockSize);
 
                 continue;
             }
 
-            uint lfsr1Lo = (uint)(currentKey[0] ^ currentSector[0x54]) | 0x100;
-            uint lfsr1Hi = (uint)currentKey[1] ^ currentSector[0x55];
-
-            uint lfsr0 = (uint)((currentKey[2]    | (currentKey[3]    << 8) | (currentKey[4]    << 16)) ^
-                                (sectorData[0x56] | (sectorData[0x57] << 8) | (sectorData[0x58] << 16)));
-
-            uint oLfsr1 = lfsr0 & 7;
-            lfsr0 = (lfsr0 * 2) + 8 - oLfsr1;
-
-            uint combined = 0;
-
-            for(uint i = 128; i < blockSize; i++)
-            {
-                oLfsr1  = (uint)(_cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo]);
-                lfsr1Hi = lfsr1Lo >> 1;
-                lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
-                oLfsr1  = _cssTable5[oLfsr1];
-                uint oLfsr0 = (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
-                lfsr0            =   (lfsr0 >> 8) | (oLfsr0 << 24);
-                lfsr0            =   (lfsr0 << 8) | oLfsr0;
-                oLfsr0           =   _cssTable4[oLfsr0];
-                combined         +=  oLfsr0 + oLfsr1;
-                currentSector[i] =   (byte)(_cssTable1[currentSector[i]] ^ (combined & 0xff));
-                combined         >>= 8;
-            }
-
-            Array.Copy(currentSector, 0, decryptedBuffer, (int)(j * blockSize), blockSize);
+            Array.Copy(UnscrambleSector(currentKey, currentSector), 0, decryptedBuffer, (int)(i * blockSize),
+                       blockSize);
         }
 
         return decryptedBuffer;
+    }
+
+    /// <summary>
+    /// Unscrambles a DVD sector with a title key.
+    /// </summary>
+    /// <param name="key">The title key.</param>
+    /// <param name="sector">The scrambled sector.</param>
+    /// <returns>The unscrambled sector.</returns>
+    static byte[] UnscrambleSector(IReadOnlyList<byte> key, byte[] sector)
+    {
+        long lfsr1Lo = (key[0] ^ sector[0x54]) | 0x100;
+        long lfsr1Hi = key[1] ^ sector[0x55];
+
+        long lfsr0 = (key[2]       | (key[3]       << 8) | (key[4]       << 16)) ^
+                     (sector[0x56] | (sector[0x57] << 8) | (sector[0x58] << 16));
+
+        long oLfsr1 = lfsr0 & 7;
+        lfsr0 = (lfsr0 * 2) + 8 - oLfsr1;
+
+        long combined = 0;
+
+        for(uint i = 0x80; i < 2048; i++)
+        {
+            oLfsr1  = _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
+            lfsr1Hi = lfsr1Lo >> 1;
+            lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+            oLfsr1  = _cssTable5[oLfsr1];
+            long oLfsr0 = (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
+            lfsr0     =   (lfsr0 << 8) | oLfsr0;
+            oLfsr0    =   _cssTable4[oLfsr0];
+            combined  +=  oLfsr0 + oLfsr1;
+            sector[i] =   (byte)(_cssTable1[sector[i]] ^ (combined & 0xff));
+            combined  >>= 8;
+        }
+
+        // Since we unscrambled the sector, we need to set the MPEG Packetized Elementary Stream
+        // scrambling control value to "not scrambled".
+        sector[20] ^= 1 << 4;
+
+        return sector;
+    }
+
+    /// <summary>
+    /// Analyzes data to try to figure out if the sector is encrypted, including
+    /// <list type="bullet">
+    /// <item>If the packet is not an MPEG packet</item>
+    /// <item>If the CMI tells us the sector isn't encrypted</item>
+    /// <item>If the key is all zeroes</item>
+    /// <item>If the MPEG Packetized Elementary Stream scrambling control value tells us the packet is not scrambled</item>
+    /// <item>If if the packet is system_header, padding_stream or private_stream2 (cannot be encrypted according to libdvdcss)</item>
+    /// </list>
+    /// </summary>
+    /// <param name="cmi">The Copyright Management Information.</param>
+    /// <param name="key">The title key.</param>
+    /// <param name="sector">The sector data.</param>
+    /// <returns><c>True</c> if encrypted</returns>
+    static bool IsEncrypted(byte? cmi, byte[]? key, IReadOnlyList<byte> sector)
+    {
+        // Only MPEG packets can be encrypted.
+        if(!MPEG.IsMpegPacket(sector))
+            return false;
+
+        // The CMI tells us the sector is not encrypted.
+        if(cmi               != null &&
+           (cmi & 0x80) >> 7 == 0)
+            return false;
+
+        // We have the key but it's all zeroes, so sector is unencrypted.
+        if(key != null &&
+           key.All(static k => k == 0))
+            return false;
+
+        // These packet types cannot be encrypted
+        if(sector[17] == (byte)MPEG.Mpeg2StreamId.SystemHeader  ||
+           sector[17] == (byte)MPEG.Mpeg2StreamId.PaddingStream ||
+           sector[17] == (byte)MPEG.Mpeg2StreamId.PrivateStream2)
+            return false;
+
+        // MPEG Packetized Elementary Stream scrambling control value
+        return (sector[20] & 0x30) >> 4 == 1;
     }
 
     /// <summary>Takes an RPC state from the drive and a CMI from a disc and checks if the regions are compatible.</summary>
@@ -707,5 +762,264 @@ public class CSS
                ((rpc.RegionMask & 0x20) == (cmi.RegionInformation & 0x20) && (rpc.RegionMask & 0x20) != 0x20) ||
                ((rpc.RegionMask & 0x40) == (cmi.RegionInformation & 0x40) && (rpc.RegionMask & 0x40) != 0x40) ||
                ((rpc.RegionMask & 0x80) == (cmi.RegionInformation & 0x80) && (rpc.RegionMask & 0x80) != 0x80);
+    }
+
+    /// <summary>
+    /// This tries to find a title key for a range of sectors by doing a brute force pattern search developed by
+    /// Ethan Hawke of DeCSSPlus. CSS encrypted sectors have parts of them that are unencrypted (byte 0x0 - 0x80).
+    /// We try to find a long pattern of repeated bytes just before the encryption starts. If we assume this
+    /// pattern continues into the encrypted part, we can force keys until one of them satisfies this condition.
+    /// </summary>
+    /// <param name="sector">The sector to analyze.</param>
+    /// <param name="key">The key found.</param>
+    /// <returns><c>true</c> if a key was found.</returns>
+    static bool AttackPattern(byte[] sector, out byte[] key)
+    {
+        uint bestPatternLength = 0;
+        uint bestPattern       = 0;
+        key = new byte[5];
+
+        for(uint i = 2; i < 0x30; i++)
+        {
+            // Find the number of bytes that repeats in cycles.
+            for(uint j = i + 1; j < 0x80 && sector[0x7F - (j % i)] == sector[0x7F - j]; j++)
+            {
+                if(j <= bestPatternLength)
+                    continue;
+
+                bestPatternLength = j;
+                bestPattern       = i;
+            }
+        }
+
+        // If we found an adequate pattern.
+        if(bestPattern                     <= 0 ||
+           bestPatternLength               <= 3 ||
+           bestPatternLength / bestPattern < 2)
+            return false;
+
+        int offset = (int)(0x80 - ((bestPatternLength / bestPattern) * bestPattern));
+
+        int result = RecoverTitleKey(0, sector.Skip(0x80).Take(sector.Length - 0x80).ToArray(),
+                                     sector.Skip(offset).Take((int)(sector.Length - offset)).ToArray(),
+                                     sector.Skip(0x54).Take(5).ToArray(), out key);
+
+        return result >= 0;
+    }
+
+    /// <summary>
+    /// Takes a guessed plain text and a encrypted bytes and tries to recover the title key
+    /// from those. Attack developed by Frank Stevenson.
+    /// </summary>
+    /// <param name="start">Start position.</param>
+    /// <param name="encryptedBytes">Buffer with encrypted bytes.</param>
+    /// <param name="decryptedBytes">Buffer with decrypted bytes.</param>
+    /// <param name="sectorSeed">This sector's seed values.</param>
+    /// <param name="key">The title key.</param>
+    /// <returns>Positive values on success.</returns>
+    static int RecoverTitleKey(uint start, byte[] encryptedBytes, byte[] decryptedBytes, byte[] sectorSeed,
+                               out byte[] key)
+    {
+        byte[] buffer = new byte[10];
+        long   oLfsr1;
+        long   oLfsr0;
+        long   iTry;
+        uint   i;
+        int    exit = -1;
+        key = new byte[5];
+
+        for(i = 0; i < 10; i++)
+            buffer[i] = (byte)(_cssTable1[encryptedBytes[i]] ^ decryptedBytes[i]);
+
+        for(iTry = start; iTry < 0x10000; iTry++)
+        {
+            long lfsr1Lo  = (iTry >> 8) | 0x100;
+            long lfsr1Hi  = iTry & 0xff;
+            long lfsr0    = 0;
+            long combined = 0;
+
+            // Iterate cipher 4 times to reconstruct LFSR2
+            for(i = 0; i < 4; i++)
+            {
+                // Advance LFSR1 normally 
+                oLfsr1  = _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
+                lfsr1Hi = lfsr1Lo >> 1;
+                lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+                oLfsr1  = _cssTable5[oLfsr1];
+                oLfsr0  = buffer[i];
+
+                if(combined > 0)
+                    oLfsr0 = (oLfsr0 + 0xff) & 0x0ff;
+
+                if(oLfsr0 < oLfsr1)
+                    oLfsr0 += 0x100;
+
+                oLfsr0   -=  oLfsr1;
+                combined +=  oLfsr0 + oLfsr1;
+                oLfsr0   =   _cssTable4[oLfsr0];
+                lfsr0    =   (lfsr0 << 8) | oLfsr0;
+                combined >>= 8;
+            }
+
+            long candidate = lfsr0;
+
+            // Iterate 6 more times to validate candidate key
+            for(; i < 10; i++)
+            {
+                oLfsr1   =  _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
+                lfsr1Hi  =  lfsr1Lo >> 1;
+                lfsr1Lo  =  ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+                oLfsr1   =  _cssTable5[oLfsr1];
+                oLfsr0   =  (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
+                lfsr0    =  (lfsr0                                                    << 8) | oLfsr0;
+                oLfsr0   =  _cssTable4[oLfsr0];
+                combined += oLfsr0 + oLfsr1;
+
+                if((combined & 0xff) != buffer[i])
+                    break;
+
+                combined >>= 8;
+            }
+
+            if(i != 10)
+                continue;
+
+            lfsr0 = candidate;
+
+            for(i = 0; i < 4; i++)
+            {
+                lfsr1Lo = lfsr0 & 0xff;
+                lfsr0   = (lfsr0 >> 8);
+
+                for(uint j = 0; j < 256; j++)
+                {
+                    lfsr0  = (lfsr0 & 0x1ffff) | (j                                    << 17);
+                    oLfsr0 = (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
+
+                    if(oLfsr0 == lfsr1Lo)
+                        break;
+                }
+            }
+
+            oLfsr1 = (lfsr0 >> 1) - 4;
+
+            for(combined = 0; combined < 8; combined++)
+            {
+                if(((oLfsr1 + combined) * 2) + 8 - ((oLfsr1 + combined) & 7) != lfsr0)
+                    continue;
+
+                key[0] = (byte)(iTry >> 8);
+                key[1] = (byte)(iTry                        & 0xFF);
+                key[2] = (byte)(((oLfsr1 + combined) >> 0)  & 0xFF);
+                key[3] = (byte)(((oLfsr1 + combined) >> 8)  & 0xFF);
+                key[4] = (byte)(((oLfsr1 + combined) >> 16) & 0xFF);
+                exit   = (int)(iTry + 1);
+            }
+        }
+
+        if(exit < 0)
+            return exit;
+
+        key[0] ^= sectorSeed[0];
+        key[1] ^= sectorSeed[1];
+        key[2] ^= sectorSeed[2];
+        key[3] ^= sectorSeed[3];
+        key[4] ^= sectorSeed[4];
+
+        return exit;
+    }
+
+    /// <summary>
+    /// Tries to find a title key by attacking CSS vulnerabilities.
+    /// </summary>
+    /// <param name="input"><c>IOpticalMediaImage</c> to find the title key in.</param>
+    /// <param name="startSector">Sector index to begin search.</param>
+    /// <param name="sectorsToSearch">Amount of sectors to search before giving up.</param>
+    /// <returns>The title key.</returns>
+    static byte[] FindTitleKey(IOpticalMediaImage input, ulong startSector, ulong sectorsToSearch = 20000)
+    {
+        byte[] titleKey = new byte[5];
+
+        for(ulong i = 0; i < sectorsToSearch; i++)
+        {
+            input.ReadSector(startSector + i, out byte[] sector);
+
+            if(!IsEncrypted(null, null, sector))
+                continue;
+
+            if(AttackPattern(sector, out byte[] key))
+                return key;
+        }
+
+        return titleKey;
+    }
+
+    /// <summary>
+    /// Generates title keys for all sectors in a track.
+    /// </summary>
+    /// <param name="input"><c>IOpticalMediaImage</c> to generate keys for.</param>
+    /// <param name="partitions">List of <c>Partition</c> to analyze.</param>
+    /// <param name="trackSectors">Total number of sectors for track.</param>
+    /// <param name="pluginType"></param>
+    /// <returns>A byte array with keys for every sector in the track. One key is 5 bytes.</returns>
+    public static byte[] GenerateTitleKeys(IOpticalMediaImage input, List<Partition> partitions, ulong trackSectors,
+                                           Type pluginType)
+    {
+        byte[] keys = new byte[trackSectors * 5];
+
+        foreach(Partition partition in partitions)
+        {
+            if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                continue;
+
+            if(!HasVideoTsFolder(input, fs, partition))
+                continue;
+
+            if(fs.Mount(input, partition, null, null, null) != ErrorNumber.NoError)
+                continue;
+
+            if(fs.OpenDir("VIDEO_TS", out IDirNode node) == ErrorNumber.NoError)
+            {
+                while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
+                      entry is not null)
+                {
+                    if(!entry.ToLower().EndsWith(".vob"))
+                        continue;
+
+                    fs.Stat("VIDEO_TS" + "/" + entry, out FileEntryInfo stat);
+
+                    byte[] key = FindTitleKey(input, stat.Inode);
+
+                    for(long i = 0; i < stat.Blocks; i++)
+                        key.CopyTo(keys, (long)(5 * (stat.Inode + (ulong)i)));
+                }
+
+                fs.CloseDir(node);
+            }
+
+            fs.Unmount();
+        }
+
+        return keys;
+    }
+
+    /// <summary>
+    /// DVD video discs always have a <c>VIDEO_TS</c> folder. If it doesn't have one, it's not a DVD video.
+    /// </summary>
+    /// <param name="input"><c>IOpticalMediaImage</c> to check for <c>VIDEO_TS</c> folder in.</param>
+    /// <param name="fs"><c>IReadOnlyFilesystem</c> to check in.</param>
+    /// <param name="partition"><c>Partition</c> to check in.</param>
+    /// <returns><c>true</c> if <c>VIDEO_TS</c> folder was found.</returns>
+    static bool HasVideoTsFolder(IOpticalMediaImage input, IReadOnlyFilesystem fs, Partition partition)
+    {
+        ErrorNumber error = fs.Mount(input, partition, null, null, null);
+
+        if(error != ErrorNumber.NoError)
+            return false;
+
+        error = fs.Stat("VIDEO_TS", out FileEntryInfo stat);
+        fs.Unmount();
+
+        return error == ErrorNumber.NoError && stat.Attributes == FileAttributes.Directory;
     }
 }
