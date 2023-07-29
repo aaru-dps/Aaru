@@ -1759,9 +1759,6 @@ public sealed partial class AaruFormat
                trk.EndSector   == 0)
                 return ErrorNumber.SectorNotFound;
 
-            if(trk.Type == TrackType.Data)
-                return ErrorNumber.NotSupported;
-
             switch(tag)
             {
                 case SectorTagType.CdSectorEcc:

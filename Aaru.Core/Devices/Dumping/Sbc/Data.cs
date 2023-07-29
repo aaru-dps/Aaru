@@ -181,7 +181,7 @@ partial class Dump
                         outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
                         _resume.MissingTitleKeys.Remove(i                 + j);
 
-                        CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
+                        CSS.DecryptTitleKey(discKey, titleKey.Value.Key, out tmpBuf);
                         outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
                     }
 
@@ -203,7 +203,7 @@ partial class Dump
                                 ErrorMessage?.
                                     Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0, i));
                             else
-                                buffer = CSS.DecryptSector(buffer, cmi, titleKey, blocksToRead, blockSize);
+                                buffer = CSS.DecryptSector(buffer, titleKey, cmi, blocksToRead, blockSize);
                         }
                     }
                 }
