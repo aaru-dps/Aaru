@@ -959,6 +959,9 @@ In you are unsure, please press N to not continue.</value>
   <data name="Generates_subchannels_help" xml:space="preserve">
     <value>Generates missing subchannels.</value>
   </data>
+  <data name="Decrypt_sectors_help" xml:space="preserve">
+    <value>Try to decrypt encrypted sectors.</value>
+  </data>
   <data name="Input_image_path" xml:space="preserve">
     <value>Input image path</value>
   </data>
@@ -3011,5 +3014,8 @@ Do you want to continue?</value>
   </data>
   <data name="Dump_graph_dimensions_argument_help" xml:space="preserve">
     <value>Dimensions in pixels of the square that will contain the graph of dumped media.</value>
+  </data>
+  <data name="Generating_decryption_keys" xml:space="preserve">
+    <value>Decryption keys not found. Trying to generate keys.</value>
   </data>
 </root>

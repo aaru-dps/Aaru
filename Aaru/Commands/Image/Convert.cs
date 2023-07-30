@@ -47,6 +47,7 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media;
+using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using Aaru.Localization;
 using Schemas;
@@ -54,6 +55,7 @@ using Spectre.Console;
 using File = System.IO.File;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
+using Partition = Aaru.CommonTypes.Partition;
 using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
 using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 using Track = Aaru.CommonTypes.Structs.Track;
@@ -143,6 +145,11 @@ sealed class ConvertImageCommand : Command
         {
             "--generate-subchannels"
         }, () => false, UI.Generates_subchannels_help));
+        
+        Add(new Option<bool>(new[]
+        {
+            "--decrypt"
+        }, () => false, UI.Decrypt_sectors_help));
 
         Add(new Option<string>(new[]
         {
@@ -173,7 +180,7 @@ sealed class ConvertImageCommand : Command
                              int mediaSequence, string mediaSerialNumber, string mediaTitle, string outputPath,
                              string options, string resumeFile, string format, string geometry,
                              bool fixSubchannelPosition, bool fixSubchannel, bool fixSubchannelCrc,
-                             bool generateSubchannels, string aaruMetadata)
+                             bool generateSubchannels, bool decrypt, string aaruMetadata)
     {
         MainClass.PrintCopyright();
 
@@ -239,6 +246,7 @@ sealed class ConvertImageCommand : Command
         AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel={0}", fixSubchannel);
         AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
         AaruConsole.DebugWriteLine("Image convert command", "--generate-subchannels={0}", generateSubchannels);
+        AaruConsole.DebugWriteLine("Image convert command", "--decrypt={0}", decrypt);
         AaruConsole.DebugWriteLine("Image convert command", "--aaru-metadata={0}", aaruMetadata);
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
@@ -765,6 +773,9 @@ sealed class ConvertImageCommand : Command
             }
 
             ErrorNumber errno = ErrorNumber.NoError;
+            
+            if(decrypt)
+                AaruConsole.WriteLine("Decrypting encrypted sectors.");
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -772,6 +783,7 @@ sealed class ConvertImageCommand : Command
                         {
                             ProgressTask discTask = ctx.AddTask(UI.Converting_disc);
                             discTask.MaxValue = inputOptical.Tracks.Count;
+                            byte[] generatedTitleKeys = null;
 
                             foreach(Track track in inputOptical.Tracks)
                             {
@@ -860,6 +872,104 @@ sealed class ConvertImageCommand : Command
                                                                               out sector)
                                                     : inputOptical.ReadSectors(doneSectors + track.StartSector,
                                                                                sectorsToDo, out sector);
+
+                                        // TODO: Move to generic place when anything but CSS DVDs can be decrypted 
+                                        if(inputOptical.Info.MediaType is MediaType.DVDROM or MediaType.DVDR
+                                               or MediaType.DVDRDL or MediaType.DVDPR or MediaType.DVDPRDL && decrypt)
+                                        {
+                                            // Only sectors which are MPEG packets can be encrypted.
+                                            if(MPEG.ContainsMpegPackets(sector, sectorsToDo))
+                                            {
+                                                byte[] cmi, titleKey;
+
+                                                if(sectorsToDo == 1)
+                                                {
+                                                    if(inputOptical.ReadSectorTag(doneSectors + track.StartSector,
+                                                           SectorTagType.DvdCmi, out cmi) == ErrorNumber.NoError &&
+                                                       inputOptical.ReadSectorTag(doneSectors + track.StartSector,
+                                                           SectorTagType.DvdTitleKeyDecrypted, out titleKey) ==
+                                                       ErrorNumber.NoError)
+                                                        sector = CSS.DecryptSector(sector, titleKey, cmi);
+                                                    else
+                                                    {
+                                                        if(generatedTitleKeys == null)
+                                                        {
+                                                            List<Partition> partitions =
+                                                                Aaru.Core.Partitions.GetAll(inputOptical);
+
+                                                            partitions = partitions.FindAll(p =>
+                                                            {
+                                                                Core.Filesystems.Identify(inputOptical,
+                                                                    out List<string> idPlugins, p);
+
+                                                                return idPlugins.Contains("iso9660 filesystem");
+                                                            });
+
+                                                            if(plugins.ReadOnlyFilesystems.
+                                                                       TryGetValue("iso9660 filesystem",
+                                                                           out Type pluginType))
+                                                            {
+                                                                AaruConsole.DebugWriteLine("Convert-image command",
+                                                                    UI.Generating_decryption_keys);
+
+                                                                generatedTitleKeys = CSS.GenerateTitleKeys(inputOptical,
+                                                                    partitions, trackSectors, pluginType);
+                                                            }
+                                                        }
+
+                                                        if(generatedTitleKeys != null)
+                                                            sector = CSS.DecryptSector(sector,
+                                                                generatedTitleKeys.
+                                                                    Skip((int)(5 * (doneSectors + track.StartSector))).
+                                                                    Take(5).ToArray(), null);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if(inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
+                                                           sectorsToDo, SectorTagType.DvdCmi, out cmi) ==
+                                                       ErrorNumber.NoError &&
+                                                       inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
+                                                           sectorsToDo, SectorTagType.DvdTitleKeyDecrypted,
+                                                           out titleKey) == ErrorNumber.NoError)
+                                                        sector = CSS.DecryptSector(sector, titleKey, cmi, sectorsToDo);
+                                                    else
+                                                    {
+                                                        if(generatedTitleKeys == null)
+                                                        {
+                                                            List<Partition> partitions =
+                                                                Aaru.Core.Partitions.GetAll(inputOptical);
+
+                                                            partitions = partitions.FindAll(p =>
+                                                            {
+                                                                Core.Filesystems.Identify(inputOptical,
+                                                                    out List<string> idPlugins, p);
+
+                                                                return idPlugins.Contains("iso9660 filesystem");
+                                                            });
+
+                                                            if(plugins.ReadOnlyFilesystems.
+                                                                       TryGetValue("iso9660 filesystem",
+                                                                           out Type pluginType))
+                                                            {
+                                                                AaruConsole.DebugWriteLine("Convert-image command",
+                                                                    UI.Generating_decryption_keys);
+
+                                                                generatedTitleKeys = CSS.GenerateTitleKeys(inputOptical,
+                                                                    partitions, trackSectors, pluginType);
+                                                            }
+                                                        }
+
+                                                        if(generatedTitleKeys != null)
+                                                            sector = CSS.DecryptSector(sector,
+                                                                generatedTitleKeys.
+                                                                    Skip((int)(5 * (doneSectors + track.StartSector))).
+                                                                    Take((int)(5 * sectorsToDo)).ToArray(), null,
+                                                                sectorsToDo);
+                                                    }
+                                                }
+                                            }
+                                        }
 
                                         if(errno == ErrorNumber.NoError)
                                             result = sectorsToDo == 1

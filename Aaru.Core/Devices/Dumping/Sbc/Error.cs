@@ -409,7 +409,7 @@ partial class Dump
 
                 if(discKey != null)
                 {
-                    CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
+                    CSS.DecryptTitleKey(discKey, titleKey.Value.Key, out buffer);
                     outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                 }
 
