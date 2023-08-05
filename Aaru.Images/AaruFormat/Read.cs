@@ -2009,8 +2009,8 @@ public sealed partial class AaruFormat
         }
 
         for(int i = 0; i < length; i++)
-            Array.Copy(dataSource, (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), buffer,
-                       i * sectorSize, sectorSize);
+            Array.Copy(dataSource, (long)((sectorAddress * (sectorOffset + sectorSize + sectorSkip)) + sectorOffset),
+                       buffer, i * sectorSize, sectorSize);
 
         return ErrorNumber.NoError;
     }
