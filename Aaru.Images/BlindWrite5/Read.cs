@@ -49,6 +49,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Filters;
 using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Sector = Aaru.Decoders.CD.Sector;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages;

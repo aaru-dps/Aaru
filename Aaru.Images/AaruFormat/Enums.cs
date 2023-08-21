@@ -214,10 +214,16 @@ public sealed partial class AaruFormat
         CompactDiscLeadIn = 79,
         /// <summary>Decrypted DVD Disc Key</summary>
         DvdDiscKeyDecrypted = 80,
-        /// <summary>DVD CPI_MAI</summary>
-        DvdSectorCpiMai = 81,
+        /// <summary>DVD Copyright Management Information (CPR_MAI)</summary>
+        DvdSectorCprMai = 81,
         /// <summary>Decrypted DVD Title Key</summary>
-        DvdSectorTitleKeyDecrypted = 82
+        DvdSectorTitleKeyDecrypted = 82,
+        /// <summary>DVD Identification Data (ID)</summary>
+        DvdSectorId = 83,
+        /// <summary>DVD ID Error Detection Code (IED)</summary>
+        DvdSectorIed = 84,
+        /// <summary>DVD Error Detection Code (EDC)</summary>
+        DvdSectorEdc = 85
     }
 
     /// <summary>List of known blocks types</summary>

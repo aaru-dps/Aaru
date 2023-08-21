@@ -48,6 +48,7 @@ using Aaru.Decoders.Sega;
 using Aaru.Devices;
 using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Sector = Aaru.Decoders.CD.Sector;
 
 namespace Aaru.Core.Media.Detection;
 

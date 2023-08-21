@@ -789,15 +789,51 @@ namespace Aaru.DiscImages {
             }
         }
         
-        internal static string Writing_DVD_CPI_MAI_block_to_position_0 {
+        internal static string Writing_DVD_CPR_MAI_block_to_position_0 {
             get {
-                return ResourceManager.GetString("Writing_DVD_CPI_MAI_block_to_position_0", resourceCulture);
+                return ResourceManager.GetString("Writing_DVD_CPR_MAI_block_to_position_0", resourceCulture);
             }
         }
         
-        internal static string Took_0_seconds_to_compress_CPI_MAI {
+        internal static string Took_0_seconds_to_compress_CPR_MAI {
             get {
-                return ResourceManager.GetString("Took_0_seconds_to_compress_CPI_MAI", resourceCulture);
+                return ResourceManager.GetString("Took_0_seconds_to_compress_CPR_MAI", resourceCulture);
+            }
+        }
+        
+        internal static string Writing_DVD_ID_block_to_position_0 {
+            get {
+                return ResourceManager.GetString("Writing_DVD_ID_block_to_position_0", resourceCulture);
+            }
+        }
+        
+        internal static string Took_0_seconds_to_compress_ID {
+            get {
+                return ResourceManager.GetString("Took_0_seconds_to_compress_ID", resourceCulture);
+            }
+        }
+        
+        internal static string Writing_DVD_IED_block_to_position_0 {
+            get {
+                return ResourceManager.GetString("Writing_DVD_IED_block_to_position_0", resourceCulture);
+            }
+        }
+        
+        internal static string Took_0_seconds_to_compress_IED {
+            get {
+                return ResourceManager.GetString("Took_0_seconds_to_compress_IED", resourceCulture);
+            }
+        }
+        
+        internal static string Writing_DVD_EDC_block_to_position_0 {
+            get {
+                return ResourceManager.GetString("Writing_DVD_EDC_block_to_position_0", resourceCulture);
+            }
+        }
+        
+        internal static string Took_0_seconds_to_compress_EDC {
+            get {
+                return ResourceManager.GetString("Took_0_seconds_to_compress_EDC", resourceCulture);
             }
         }
         
@@ -888,6 +924,30 @@ namespace Aaru.DiscImages {
         internal static string Incorrect_data_size_for_title_key {
             get {
                 return ResourceManager.GetString("Incorrect_data_size_for_title_key", resourceCulture);
+            }
+        }
+        
+        internal static string Incorrect_data_size_for_dvd_id_information {
+            get {
+                return ResourceManager.GetString("Incorrect_data_size_for_dvd_id_information", resourceCulture);
+            }
+        }
+        
+        internal static string Incorrect_data_size_for_dvd_id_number {
+            get {
+                return ResourceManager.GetString("Incorrect_data_size_for_dvd_id_number", resourceCulture);
+            }
+        }
+        
+        internal static string Incorrect_data_size_for_ied {
+            get {
+                return ResourceManager.GetString("Incorrect_data_size_for_ied", resourceCulture);
+            }
+        }
+        
+        internal static string Incorrect_data_size_for_edc {
+            get {
+                return ResourceManager.GetString("Incorrect_data_size_for_edc", resourceCulture);
             }
         }
         

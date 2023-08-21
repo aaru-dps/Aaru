@@ -36,6 +36,7 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.DVD;
 
 namespace Aaru.DiscImages;
 
@@ -53,8 +54,10 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     bool                             _mode2;
     bool                             _toastXa;
     bool                             _rawCompactDisc;
+    bool                             _rawDvd;
     IFilter                          _rawImageFilter;
     FileStream                       _writingStream;
+    Sector                           _decoding = new Sector();
 
     /// <summary>Implements reading and writing raw (sector by sector) images</summary>
     public ZZZRawImage() => _imageInfo = new ImageInfo

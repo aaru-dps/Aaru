@@ -59,6 +59,7 @@ public sealed partial class ZZZRawImage
             case ".256":                                               return imageFilter.DataForkLength % 256 == 0;
             case ".toast" when imageFilter.DataForkLength % 2048 == 0: return true;
             case ".toast" when imageFilter.DataForkLength % 2056 == 0: return true;
+            case ".raw" when imageFilter.DataForkLength   % 2064 == 0: return true;
 
             // Handle this properly on Open()
             //case ".toast" when imageFilter.DataForkLength % 2336 == 0: return true;
