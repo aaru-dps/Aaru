@@ -93,7 +93,7 @@ public partial class Device
     ///     If set to <c>true</c> requested blocks shall be assigned the lowest retention priority on cache
     ///     fetch/retain.
     /// </param>
-    /// <param name="fua">If set to <c>true</c> requested blocks MUST bu read from medium and not the cache.</param>
+    /// <param name="fua">If set to <c>true</c> requested blocks MUST be read from medium and not the cache.</param>
     /// <param name="fuaNv">
     ///     If set to <c>true</c> requested blocks will be returned from non-volatile cache. If they're not
     ///     present they shall be stored there.

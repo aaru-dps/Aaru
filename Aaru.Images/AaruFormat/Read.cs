@@ -382,14 +382,47 @@ public sealed partial class AaruFormat
                                                        GC.GetTotalMemory(false));
 
                             break;
-                        case DataType.DvdSectorCpiMai:
-                            _sectorCpiMai = data;
+                        case DataType.DvdSectorCprMai:
+                            _sectorCprMai = data;
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdCmi))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdCmi);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorCmi))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorCmi);
 
-                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKey))
-                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKey);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorTitleKey))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorTitleKey);
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                       GC.GetTotalMemory(false));
+
+                            break;
+                        case DataType.DvdSectorId:
+                            _sectorId = data;
+
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorInformation))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorInformation);
+
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorNumber))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorNumber);
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                       GC.GetTotalMemory(false));
+
+                            break;
+                        case DataType.DvdSectorIed:
+                            _sectorDecryptedTitleKey = data;
+
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorIed))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorIed);
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                       GC.GetTotalMemory(false));
+
+                            break;
+                        case DataType.DvdSectorEdc:
+                            _sectorDecryptedTitleKey = data;
+
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
                                                        GC.GetTotalMemory(false));
@@ -1769,8 +1802,12 @@ public sealed partial class AaruFormat
                 case SectorTagType.CdSectorSubchannel:
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync:
-                case SectorTagType.DvdCmi:
-                case SectorTagType.DvdTitleKey:
+                case SectorTagType.DvdSectorCmi:
+                case SectorTagType.DvdSectorTitleKey:
+                case SectorTagType.DvdSectorInformation:
+                case SectorTagType.DvdSectorNumber:
+                case SectorTagType.DvdSectorIed:
+                case SectorTagType.DvdSectorEdc:
                 case SectorTagType.DvdTitleKeyDecrypted: break;
                 case SectorTagType.CdTrackFlags:
                     if(!_trackFlags.TryGetValue((byte)sectorAddress, out byte flags))
@@ -1954,21 +1991,57 @@ public sealed partial class AaruFormat
                     if(_imageInfo.MediaType == MediaType.DVDROM)
                         switch(tag)
                         {
-                            case SectorTagType.DvdCmi:
+                            case SectorTagType.DvdSectorCmi:
                             {
                                 sectorOffset = 0;
                                 sectorSize   = 1;
                                 sectorSkip   = 5;
-                                dataSource   = _sectorCpiMai;
+                                dataSource   = _sectorCprMai;
 
                                 break;
                             }
-                            case SectorTagType.DvdTitleKey:
+                            case SectorTagType.DvdSectorTitleKey:
                             {
                                 sectorOffset = 1;
                                 sectorSize   = 5;
                                 sectorSkip   = 0;
-                                dataSource   = _sectorCpiMai;
+                                dataSource   = _sectorCprMai;
+
+                                break;
+                            }
+                            case SectorTagType.DvdSectorInformation:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 1;
+                                sectorSkip   = 3;
+                                dataSource   = _sectorId;
+
+                                break;
+                            }
+                            case SectorTagType.DvdSectorNumber:
+                            {
+                                sectorOffset = 1;
+                                sectorSize   = 3;
+                                sectorSkip   = 0;
+                                dataSource   = _sectorId;
+
+                                break;
+                            }
+                            case SectorTagType.DvdSectorIed:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 2;
+                                sectorSkip   = 0;
+                                dataSource   = _sectorIed;
+
+                                break;
+                            }
+                            case SectorTagType.DvdSectorEdc:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 4;
+                                sectorSkip   = 0;
+                                dataSource   = _sectorEdc;
 
                                 break;
                             }

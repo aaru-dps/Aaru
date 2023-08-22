@@ -136,7 +136,7 @@ partial class Dump
                             outputFormat.WriteSectorTag(new[]
                             {
                                 titleKey.Value.CMI
-                            }, i + j, SectorTagType.DvdCmi);
+                            }, i + j, SectorTagType.DvdSectorCmi);
                         else
                             continue;
 
@@ -147,7 +147,7 @@ partial class Dump
                             outputFormat.WriteSectorTag(new byte[]
                             {
                                 0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKey);
+                            }, i + j, SectorTagType.DvdSectorTitleKey);
 
                             outputFormat.WriteSectorTag(new byte[]
                             {
@@ -166,7 +166,7 @@ partial class Dump
                             outputFormat.WriteSectorTag(new byte[]
                             {
                                 0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKey);
+                            }, i + j, SectorTagType.DvdSectorTitleKey);
 
                             outputFormat.WriteSectorTag(new byte[]
                             {
@@ -178,7 +178,7 @@ partial class Dump
                             continue;
                         }
 
-                        outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
+                        outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdSectorTitleKey);
                         _resume.MissingTitleKeys.Remove(i                 + j);
 
                         CSS.DecryptTitleKey(discKey, titleKey.Value.Key, out tmpBuf);
@@ -190,7 +190,7 @@ partial class Dump
                         // Todo: Flag in the outputFormat that a sector has been decrypted
                     {
                         ErrorNumber errno =
-                            outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi, out byte[] cmi);
+                            outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdSectorCmi, out byte[] cmi);
 
                         if(errno != ErrorNumber.NoError)
                             ErrorMessage?.Invoke(string.Format(Localization.Core.Error_retrieving_CMI_for_sector_0, i));

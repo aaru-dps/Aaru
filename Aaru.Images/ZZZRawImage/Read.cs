@@ -51,6 +51,7 @@ using Schemas;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using File = System.IO.File;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Sector = Aaru.Decoders.CD.Sector;
 using Session = Aaru.CommonTypes.Structs.Session;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
@@ -142,6 +143,11 @@ public sealed partial class ZZZRawImage
                 break;
             case ".d81" when imageFilter.DataForkLength == 819200:
                 _imageInfo.SectorSize = 256;
+
+                break;
+            case ".raw" when imageFilter.DataForkLength % 2064 == 0:
+                _imageInfo.SectorSize = 2048;
+                _rawDvd               = true;
 
                 break;
             default:
@@ -377,6 +383,9 @@ public sealed partial class ZZZRawImage
         if(_toastXa)
             _imageInfo.MediaType = MediaType.CD;
 
+        if(_rawDvd)
+            _imageInfo.Sectors = _imageInfo.ImageSize / 2064;
+        
         // Sharp X68000 SASI hard disks
         if(_extension == ".hdf")
             if(_imageInfo.ImageSize % 256 == 0)
@@ -1163,6 +1172,27 @@ public sealed partial class ZZZRawImage
         }
 
         _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
+        
+        if(_rawDvd)
+        {
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorInformation))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorInformation);
+            
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorNumber))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorNumber);
+            
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorIed))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorIed);
+            
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorCmi))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorCmi);
+            
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorTitleKey))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorTitleKey);
+            
+            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorEdc))
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
+        }
 
         if(!_rawCompactDisc &&
            !_toastXa)
@@ -1254,6 +1284,13 @@ public sealed partial class ZZZRawImage
         if(_hasSubchannel)
             sectorSkip += 96;
 
+        if(_rawDvd)
+        {
+            sectorOffset = 12;
+            sectorSize   = 2048;
+            sectorSkip   = 4;
+        }
+
         buffer = new byte[sectorSize * length];
 
         var br = new BinaryReader(stream);
@@ -1281,10 +1318,19 @@ public sealed partial class ZZZRawImage
         else
             for(int i = 0; i < length; i++)
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                if(_rawDvd)
+                {
+                    byte[] sector = br.ReadBytes((int)(sectorSize + sectorSkip + sectorOffset));
+                    sector = _decoding.Scramble(sector);
+                    Array.Copy(sector, sectorOffset, buffer, i * sectorSize, sectorSize);
+                }
+                else
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                }
             }
 
         return ErrorNumber.NoError;
@@ -1418,7 +1464,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc ||
-           (!_rawCompactDisc && !_toastXa && tag != SectorTagType.CdTrackFlags))
+           (!_rawCompactDisc && !_toastXa && !_rawDvd && tag != SectorTagType.CdTrackFlags))
             return ErrorNumber.NotSupported;
 
         if(tag == SectorTagType.CdTrackFlags)
@@ -1534,6 +1580,60 @@ public sealed partial class ZZZRawImage
                     break;
                 }
 
+                case SectorTagType.DvdSectorNumber:
+                {
+                    sectorOffset = 1;
+                    sectorSize   = 3;
+                    sectorSkip   = 2060;
+
+                    break;
+                }
+                
+                case SectorTagType.DvdSectorInformation:
+                {
+                    sectorOffset = 0;
+                    sectorSize   = 1;
+                    sectorSkip   = 2063;
+
+                    break;
+                }
+                
+                case SectorTagType.DvdSectorIed:
+                {
+                    sectorOffset = 4;
+                    sectorSize   = 2;
+                    sectorSkip   = 2058;
+
+                    break;
+                }
+                
+                case SectorTagType.DvdSectorCmi:
+                {
+                    sectorOffset = 6;
+                    sectorSize   = 1;
+                    sectorSkip   = 2057;
+
+                    break;
+                }
+                
+                case SectorTagType.DvdSectorTitleKey:
+                {
+                    sectorOffset = 7;
+                    sectorSize   = 5;
+                    sectorSkip   = 2052;
+
+                    break;
+                }
+                
+                case SectorTagType.DvdSectorEdc:
+                {
+                    sectorOffset = 2060;
+                    sectorSize   = 4;
+                    sectorSkip   = 0;
+
+                    break;
+                }
+
                 default: return ErrorNumber.NotSupported;
             }
 
@@ -1568,7 +1668,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc ||
-           (!_rawCompactDisc && !_toastXa))
+           (!_rawCompactDisc && !_toastXa && !_rawDvd))
             return ErrorNumber.NotSupported;
 
         if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1577,7 +1677,14 @@ public sealed partial class ZZZRawImage
         if(sectorAddress + length > _imageInfo.Sectors)
             return ErrorNumber.OutOfRange;
 
-        uint sectorSize = _toastXa ? 2056u : 2352u;
+        uint sectorSize = 2352u;
+
+        if(_toastXa)
+            sectorSize = 2056u;
+
+        if(_rawDvd)
+            sectorSize = 2064u;
+
         uint sectorSkip = 0;
 
         if(_hasSubchannel)
@@ -1602,6 +1709,15 @@ public sealed partial class ZZZRawImage
                 sb.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + length));
                 sb.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
                 Array.Copy(fullSector, 0, buffer, i * 2352, 2352);
+            }
+        }
+        else if(_rawDvd)
+        {
+            for(int i = 0; i < length; i++)
+            {
+                byte[] sector = br.ReadBytes((int)(sectorSize));
+                sector = _decoding.Scramble(sector);
+                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
         }
         else if(sectorSkip == 0)

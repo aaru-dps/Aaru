@@ -378,7 +378,7 @@ partial class Dump
             outputFormat.WriteSectorTag(new[]
             {
                 titleKey.Value.CMI
-            }, missingKey, SectorTagType.DvdCmi);
+            }, missingKey, SectorTagType.DvdSectorCmi);
 
             // If the CMI bit is 1, the sector is using copy protection, else it is not
             // If the decoded title key is zeroed, there should be no copy protection
@@ -388,7 +388,7 @@ partial class Dump
                 outputFormat.WriteSectorTag(new byte[]
                 {
                     0, 0, 0, 0, 0
-                }, missingKey, SectorTagType.DvdTitleKey);
+                }, missingKey, SectorTagType.DvdSectorTitleKey);
 
                 outputFormat.WriteSectorTag(new byte[]
                 {
@@ -404,7 +404,7 @@ partial class Dump
             }
             else
             {
-                outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
+                outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdSectorTitleKey);
                 _resume.MissingTitleKeys.Remove(missingKey);
 
                 if(discKey != null)

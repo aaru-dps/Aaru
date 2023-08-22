@@ -38,6 +38,12 @@ public sealed partial class ZZZRawImage
 {
     MediaType CalculateDiskType()
     {
+        if(_rawDvd)
+        {
+            // TODO: Add all types
+            return MediaType.DVDROM;
+        }
+        
         if(_imageInfo.SectorSize == 2048)
             return _imageInfo.Sectors switch
             {

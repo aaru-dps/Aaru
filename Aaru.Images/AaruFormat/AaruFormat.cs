@@ -128,7 +128,10 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
     /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
     long _outMemoryDdtPosition;
     bool   _rewinded;
-    byte[] _sectorCpiMai;
+    byte[] _sectorCprMai;
+    byte[] _sectorIed;
+    byte[] _sectorId;
+    byte[] _sectorEdc;
     byte[] _sectorDecryptedTitleKey;
     /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
     byte[] _sectorPrefix;

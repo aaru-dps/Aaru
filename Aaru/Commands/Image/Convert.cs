@@ -885,7 +885,7 @@ sealed class ConvertImageCommand : Command
                                                 if(sectorsToDo == 1)
                                                 {
                                                     if(inputOptical.ReadSectorTag(doneSectors + track.StartSector,
-                                                           SectorTagType.DvdCmi, out cmi) == ErrorNumber.NoError &&
+                                                           SectorTagType.DvdSectorCmi, out cmi) == ErrorNumber.NoError &&
                                                        inputOptical.ReadSectorTag(doneSectors + track.StartSector,
                                                            SectorTagType.DvdTitleKeyDecrypted, out titleKey) ==
                                                        ErrorNumber.NoError)
@@ -927,7 +927,7 @@ sealed class ConvertImageCommand : Command
                                                 else
                                                 {
                                                     if(inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
-                                                           sectorsToDo, SectorTagType.DvdCmi, out cmi) ==
+                                                           sectorsToDo, SectorTagType.DvdSectorCmi, out cmi) ==
                                                        ErrorNumber.NoError &&
                                                        inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
                                                            sectorsToDo, SectorTagType.DvdTitleKeyDecrypted,
@@ -1100,6 +1100,12 @@ sealed class ConvertImageCommand : Command
                     case SectorTagType.CdSectorEccP:
                     case SectorTagType.CdSectorEccQ:
                     case SectorTagType.CdSectorEcc:
+                    case SectorTagType.DvdSectorCmi:
+                    case SectorTagType.DvdSectorTitleKey:
+                    case SectorTagType.DvdSectorEdc:
+                    case SectorTagType.DvdSectorIed:
+                    case SectorTagType.DvdSectorInformation:
+                    case SectorTagType.DvdSectorNumber:
                         // This tags are inline in long sector
                         continue;
                 }

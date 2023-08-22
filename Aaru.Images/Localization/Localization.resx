@@ -397,11 +397,29 @@
   <data name="Took_0_seconds_to_compress_subchannel" xml:space="preserve">
     <value>Took {0} seconds to compress subchannel</value>
   </data>
-  <data name="Writing_DVD_CPI_MAI_block_to_position_0" xml:space="preserve">
-    <value>Writing DVD CPI_MAI block to position {0}</value>
+  <data name="Writing_DVD_CPR_MAI_block_to_position_0" xml:space="preserve">
+    <value>Writing DVD CPR_MAI block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_CPI_MAI" xml:space="preserve">
-    <value>Took {0} seconds to compress CPI_MAI</value>
+  <data name="Took_0_seconds_to_compress_CPR_MAI" xml:space="preserve">
+    <value>Took {0} seconds to compress CPR_MAI</value>
+  </data>
+  <data name="Writing_DVD_ID_block_to_position_0" xml:space="preserve">
+    <value>Writing DVD ID block to position {0}</value>
+  </data>
+  <data name="Took_0_seconds_to_compress_ID" xml:space="preserve">
+    <value>Took {0} seconds to compress ID</value>
+  </data>
+  <data name="Writing_DVD_IED_block_to_position_0" xml:space="preserve">
+    <value>Writing DVD IED block to position {0}</value>
+  </data>
+  <data name="Took_0_seconds_to_compress_IED" xml:space="preserve">
+    <value>Took {0} seconds to compress IED</value>
+  </data>
+  <data name="Writing_DVD_EDC_block_to_position_0" xml:space="preserve">
+    <value>Writing DVD EDC block to position {0}</value>
+  </data>
+  <data name="Took_0_seconds_to_compress_EDC" xml:space="preserve">
+    <value>Took {0} seconds to compress EDC</value>
   </data>
   <data name="Writing_decrypted_DVD_title_key_block_to_position_0" xml:space="preserve">
     <value>Writing decrypted DVD title key block to position {0}</value>
@@ -447,6 +465,18 @@
   </data>
   <data name="Incorrect_data_size_for_title_key" xml:space="preserve">
     <value>Incorrect data size for title key</value>
+  </data>
+  <data name="Incorrect_data_size_for_dvd_id_information" xml:space="preserve">
+    <value>Incorrect data size for DVD ID information</value>
+  </data>
+  <data name="Incorrect_data_size_for_dvd_id_number" xml:space="preserve">
+    <value>Incorrect data size for DVD ID number</value>
+  </data>
+  <data name="Incorrect_data_size_for_ied" xml:space="preserve">
+    <value>Incorrect data size for IED</value>
+  </data>
+  <data name="Incorrect_data_size_for_edc" xml:space="preserve">
+    <value>Incorrect data size for EDC</value>
   </data>
   <data name="Incorrect_data_size_for_decrypted_title_key" xml:space="preserve">
     <value>Incorrect data size for decrypted title key</value>
