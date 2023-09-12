@@ -226,4 +226,18 @@ public sealed class Sector
 
         return cipher == null ? sector : UnscrambleSector(sector, cipher);
     }
+
+    public byte[] Scramble(byte[] sector, uint transferLength)
+    {
+        byte[] scrambled = new byte[sector.Length];
+
+        if(sector.Length % 2064 != 0 ||
+           sector.Length / 2064 != transferLength)
+            return sector;
+        
+        for(uint i = 0; i < transferLength; i++)
+            Array.Copy(Scramble(sector.Skip((int)(i * 2064)).Take(2064).ToArray()), 0, scrambled, i * 2064, 2064);
+
+        return scrambled;
+    }
 }
