@@ -266,6 +266,13 @@ partial class Dump
                                                           pass));
             }
 
+            if(scsiReader.HldtstReadRaw)
+                // The HL-DT-ST buffer is stored and read in 96-sector chunks. If we start to read at an LBA which is
+                // not modulo 96, the data will not be correctly fetched. Therefore, we begin every recovery read with
+                // filling the buffer at a known offset.
+                // TODO: This is very ugly and there probably exist a more elegant way to solve this issue.
+                scsiReader.ReadBlock(out _, badSector - (badSector % 96) + 1, out _, out _, out _);
+
             sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
                                          out blankCheck);
 

@@ -159,7 +159,7 @@ partial class Dump
 
                         // According to libdvdcss, if the key is all zeroes, the sector is actually
                         // not encrypted even if the CMI says it is.
-                        if(titleKey.Value.Key.All(k => k == 0))
+                        if(titleKey.Value.Key.All(static k => k == 0))
                         {
                             outputFormat.WriteSectorTag(new byte[]
                             {
