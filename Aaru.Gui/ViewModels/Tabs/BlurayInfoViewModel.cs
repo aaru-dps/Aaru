@@ -156,7 +156,7 @@ public sealed class BlurayInfoViewModel
     public bool                        SaveBlurayRawDflVisible               { get; }
     public bool                        SaveBlurayPacVisible                  { get; }
 
-    public string DiscinformationLabel                => UI.Disc_information;
+    public string DiscInformationLabel                => UI.Disc_information;
     public string BurstCuttingAreaLabel               => UI.Burst_Cutting_Area;
     public string DiscDefinitionStructureLabel        => UI.Disc_Definition_Structure;
     public string CartridgeStatusLabel                => UI.Cartridge_Status;
