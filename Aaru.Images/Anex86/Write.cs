@@ -227,7 +227,7 @@ public sealed partial class Anex86
         }
 
         byte[] hdr = new byte[Marshal.SizeOf<Header>()];
-        MemoryMarshal.Write(hdr, ref _header);
+        MemoryMarshal.Write(hdr, in _header);
 
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(hdr, 0, hdr.Length);

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <OutputType>Library</OutputType>
@@ -15,7 +15,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Localization</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <Description>Language resources for the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>

@@ -16,8 +16,8 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru Data Preservation Suite</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>11</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
     <Description>Compression algorithms used by the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
@@ -80,7 +80,7 @@
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="SharpCompress" Version="0.32.2" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>

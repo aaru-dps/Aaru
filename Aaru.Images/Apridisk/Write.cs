@@ -199,7 +199,7 @@ public sealed partial class Apridisk
                         cylinder    = c
                     };
 
-                    MemoryMarshal.Write(hdr, ref record);
+                    MemoryMarshal.Write(hdr, in record);
 
                     _writingStream.Write(hdr, 0, hdr.Length);
                     _writingStream.Write(_sectorsData[c][h][s], 0, _sectorsData[c][h][s].Length);
@@ -222,7 +222,7 @@ public sealed partial class Apridisk
                 cylinder    = 0
             };
 
-            MemoryMarshal.Write(hdr, ref creatorRecord);
+            MemoryMarshal.Write(hdr, in creatorRecord);
 
             _writingStream.Write(hdr, 0, hdr.Length);
             _writingStream.Write(creatorBytes, 0, creatorBytes.Length);
@@ -244,7 +244,7 @@ public sealed partial class Apridisk
                 cylinder    = 0
             };
 
-            MemoryMarshal.Write(hdr, ref commentRecord);
+            MemoryMarshal.Write(hdr, in commentRecord);
 
             _writingStream.Write(hdr, 0, hdr.Length);
             _writingStream.Write(commentBytes, 0, commentBytes.Length);

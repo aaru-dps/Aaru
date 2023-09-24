@@ -14,9 +14,9 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.DiscImages</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <NoWarn>CS0649</NoWarn>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <Description>Media image formats used by the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
@@ -49,7 +49,7 @@
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="plist-cil" Version="2.2.0" />
     <PackageReference Include="SharpCompress" Version="0.32.2" />
-    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
   </ItemGroup>

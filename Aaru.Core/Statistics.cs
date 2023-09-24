@@ -225,7 +225,7 @@ public static class Statistics
                                 dto.Medias.Add(new MediaStats
                                 {
                                     real  = true,
-                                    type  = media,
+                                    MediaType  = media,
                                     Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
                                 });
 
@@ -233,7 +233,7 @@ public static class Statistics
                                 dto.Medias.Add(new MediaStats
                                 {
                                     real  = false,
-                                    type  = media,
+                                    MediaType  = media,
                                     Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
                                 });
                         }

@@ -7,7 +7,7 @@
     <RootNamespace>Aaru</RootNamespace>
     <AssemblyName>aaru</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>6.0.0~alpha9</Version>
     <Company>Claunia.com</Company>
@@ -15,11 +15,13 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
+    <!-- TODO win-arm doesn't seem to work in RC1, try again in final -->
+    <RuntimeIdentifiers>linux-musl-arm;linux-musl-arm64;linux-musl-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-x64;win-x86</RuntimeIdentifiers>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
@@ -92,7 +94,7 @@
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.1.23419.6" />
     <PackageReference Include="Spectre.Console" Version="0.45.0" />
     <PackageReference Include="Spectre.Console.Analyzer" Version="0.45.0">
       <PrivateAssets>all</PrivateAssets>
@@ -100,8 +102,8 @@
     </PackageReference>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
       <PrivateAssets>all</PrivateAssets>
@@ -132,16 +134,16 @@
       <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
     </Content>
   </ItemGroup>
-
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-arm64'">
+  
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_aarch64$(DebugPackage)</PackageName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-arm'">
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_armhf$(DebugPackage)</PackageName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-x64'">
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
   </PropertyGroup>
 
@@ -180,6 +182,7 @@
     <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
   </PropertyGroup>
 
+<!-- TODO: Distribution specific RIDs where removed in .NET 8.0. We need to detect packaging in another way
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm64'">
     <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
   </PropertyGroup>
@@ -203,4 +206,5 @@
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
   </PropertyGroup>
+-->
 </Project>

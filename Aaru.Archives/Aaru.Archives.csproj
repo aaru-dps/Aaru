@@ -14,8 +14,8 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Archives</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>11</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
     <Description>Archive implementations used by the Aaru Data Preservation Suite.</Description>
     <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
     <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>

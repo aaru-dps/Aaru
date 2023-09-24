@@ -10,9 +10,9 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru Data Preservation Suite</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <NoWarn>CS0649,CS0169</NoWarn>
-    <LangVersion>11</LangVersion>
+    <LangVersion>12</LangVersion>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
@@ -35,7 +35,7 @@
     <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
     <PackageReference Include="MessageBox.Avalonia" Version="2.1.0"/>
     <PackageReference Include="OxyPlot.Avalonia-alpha-2020-04-15" Version="1.0.0"/>
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0"/>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

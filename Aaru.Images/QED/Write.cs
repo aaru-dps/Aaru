@@ -291,7 +291,7 @@ public sealed partial class Qed
         }
 
         byte[] hdr = new byte[Marshal.SizeOf<QedHeader>()];
-        MemoryMarshal.Write(hdr, ref _qHdr);
+        MemoryMarshal.Write(hdr, in _qHdr);
 
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(hdr, 0, hdr.Length);

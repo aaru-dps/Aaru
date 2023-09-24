@@ -1676,7 +1676,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                MemoryMarshal.Write(_structureBytes, ref ddtHeader);
+                MemoryMarshal.Write(_structureBytes, in ddtHeader);
                 _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                 _structureBytes = null;
 
@@ -1895,7 +1895,7 @@ public sealed partial class AaruFormat
             });
 
             _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref _currentBlockHeader);
+            MemoryMarshal.Write(_structureBytes, in _currentBlockHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _structureBytes = null;
 
@@ -2650,7 +2650,7 @@ public sealed partial class AaruFormat
             });
 
             _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref _currentBlockHeader);
+            MemoryMarshal.Write(_structureBytes, in _currentBlockHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _structureBytes = null;
 
@@ -2758,7 +2758,7 @@ public sealed partial class AaruFormat
             }
 
             _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref tagBlock);
+            MemoryMarshal.Write(_structureBytes, in tagBlock);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
             if(tagBlock.compression == CompressionType.Lzma)
@@ -2785,7 +2785,7 @@ public sealed partial class AaruFormat
                                        idxEntry.offset);
 
             _structureBytes = new byte[Marshal.SizeOf<GeometryBlock>()];
-            MemoryMarshal.Write(_structureBytes, ref _geometryBlock);
+            MemoryMarshal.Write(_structureBytes, in _geometryBlock);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
             _index.RemoveAll(t => t is { blockType: BlockType.GeometryBlock, dataType: DataType.NoData });
@@ -2847,7 +2847,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<DumpHardwareEntry>()];
-                MemoryMarshal.Write(_structureBytes, ref dumpEntry);
+                MemoryMarshal.Write(_structureBytes, in dumpEntry);
                 dumpMs.Write(_structureBytes, 0, _structureBytes.Length);
 
                 if(dumpManufacturer != null)
@@ -2926,7 +2926,7 @@ public sealed partial class AaruFormat
             };
 
             _structureBytes = new byte[Marshal.SizeOf<DumpHardwareHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref dumpBlock);
+            MemoryMarshal.Write(_structureBytes, in dumpBlock);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _imageStream.Write(dumpMs.ToArray(), 0, (int)dumpMs.Length);
 
@@ -2962,7 +2962,7 @@ public sealed partial class AaruFormat
             };
 
             _structureBytes = new byte[Marshal.SizeOf<AaruMetadataJsonBlock>()];
-            MemoryMarshal.Write(_structureBytes, ref jsonBlock);
+            MemoryMarshal.Write(_structureBytes, in jsonBlock);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _imageStream.Write(jsonMs.ToArray(), 0, (int)jsonMs.Length);
 
@@ -2997,7 +2997,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                MemoryMarshal.Write(_structureBytes, ref md5Entry);
+                MemoryMarshal.Write(_structureBytes, in md5Entry);
                 chkMs.Write(_structureBytes, 0, _structureBytes.Length);
                 chkMs.Write(md5, 0, md5.Length);
                 chkHeader.entries++;
@@ -3014,7 +3014,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                MemoryMarshal.Write(_structureBytes, ref sha1Entry);
+                MemoryMarshal.Write(_structureBytes, in sha1Entry);
                 chkMs.Write(_structureBytes, 0, _structureBytes.Length);
                 chkMs.Write(sha1, 0, sha1.Length);
                 chkHeader.entries++;
@@ -3031,7 +3031,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                MemoryMarshal.Write(_structureBytes, ref sha256Entry);
+                MemoryMarshal.Write(_structureBytes, in sha256Entry);
                 chkMs.Write(_structureBytes, 0, _structureBytes.Length);
                 chkMs.Write(sha256, 0, sha256.Length);
                 chkHeader.entries++;
@@ -3048,7 +3048,7 @@ public sealed partial class AaruFormat
                 };
 
                 _structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                MemoryMarshal.Write(_structureBytes, ref spamsumEntry);
+                MemoryMarshal.Write(_structureBytes, in spamsumEntry);
                 chkMs.Write(_structureBytes, 0, _structureBytes.Length);
                 chkMs.Write(spamsum, 0, spamsum.Length);
                 chkHeader.entries++;
@@ -3069,7 +3069,7 @@ public sealed partial class AaruFormat
                                            idxEntry.offset);
 
                 _structureBytes = new byte[Marshal.SizeOf<ChecksumHeader>()];
-                MemoryMarshal.Write(_structureBytes, ref chkHeader);
+                MemoryMarshal.Write(_structureBytes, in chkHeader);
                 _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                 _imageStream.Write(chkMs.ToArray(), 0, (int)chkMs.Length);
 
@@ -3126,7 +3126,7 @@ public sealed partial class AaruFormat
             tapePartitionHeader.crc64 = BitConverter.ToUInt64(_crc64.Final(), 0);
 
             _structureBytes = new byte[Marshal.SizeOf<TapePartitionHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref tapePartitionHeader);
+            MemoryMarshal.Write(_structureBytes, in tapePartitionHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _structureBytes = null;
             _imageStream.Write(tapePartitionEntriesData, 0, tapePartitionEntriesData.Length);
@@ -3168,7 +3168,7 @@ public sealed partial class AaruFormat
             tapeFileHeader.crc64 = BitConverter.ToUInt64(_crc64.Final(), 0);
 
             _structureBytes = new byte[Marshal.SizeOf<TapeFileHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref tapeFileHeader);
+            MemoryMarshal.Write(_structureBytes, in tapeFileHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _structureBytes = null;
             _imageStream.Write(tapeFileEntriesData, 0, tapeFileEntriesData.Length);
@@ -3243,7 +3243,7 @@ public sealed partial class AaruFormat
             ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
             _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref ddtHeader);
+            MemoryMarshal.Write(_structureBytes, in ddtHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
             _structureBytes = null;
 
@@ -3347,7 +3347,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref prefixBlock);
+                    MemoryMarshal.Write(_structureBytes, in prefixBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(prefixBlock.compression == CompressionType.Lzma)
@@ -3436,7 +3436,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref prefixBlock);
+                    MemoryMarshal.Write(_structureBytes, in prefixBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(prefixBlock.compression == CompressionType.Lzma)
@@ -3599,7 +3599,7 @@ public sealed partial class AaruFormat
                     ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                     _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref ddtHeader);
+                    MemoryMarshal.Write(_structureBytes, in ddtHeader);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                     _structureBytes = null;
 
@@ -3674,7 +3674,7 @@ public sealed partial class AaruFormat
                     ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
                     _structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref ddtHeader);
+                    MemoryMarshal.Write(_structureBytes, in ddtHeader);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                     _structureBytes = null;
 
@@ -3769,7 +3769,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref prefixBlock);
+                    MemoryMarshal.Write(_structureBytes, in prefixBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(prefixBlock.compression == CompressionType.Lzma)
@@ -3863,7 +3863,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref suffixBlock);
+                    MemoryMarshal.Write(_structureBytes, in suffixBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(suffixBlock.compression == CompressionType.Lzma)
@@ -3962,7 +3962,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref subheaderBlock);
+                    MemoryMarshal.Write(_structureBytes, in subheaderBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(subheaderBlock.compression == CompressionType.Lzma)
@@ -4064,7 +4064,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref subchannelBlock);
+                    MemoryMarshal.Write(_structureBytes, in subchannelBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(subchannelBlock.compression is CompressionType.Lzma
@@ -4162,7 +4162,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref cprMaiBlock);
+                    MemoryMarshal.Write(_structureBytes, in cprMaiBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(cprMaiBlock.compression is CompressionType.Lzma
@@ -4257,7 +4257,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref idBlock);
+                    MemoryMarshal.Write(_structureBytes, in idBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(idBlock.compression is CompressionType.Lzma
@@ -4352,7 +4352,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref iedBlock);
+                    MemoryMarshal.Write(_structureBytes, in iedBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(iedBlock.compression is CompressionType.Lzma
@@ -4447,7 +4447,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref edcBlock);
+                    MemoryMarshal.Write(_structureBytes, in edcBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(edcBlock.compression is CompressionType.Lzma
@@ -4543,7 +4543,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref titleKeyBlock);
+                    MemoryMarshal.Write(_structureBytes, in titleKeyBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(titleKeyBlock.compression is CompressionType.Lzma
@@ -4649,7 +4649,7 @@ public sealed partial class AaruFormat
                     });
 
                     _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref trkHeader);
+                    MemoryMarshal.Write(_structureBytes, in trkHeader);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                     _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                     blockStream.Close();
@@ -4703,7 +4703,7 @@ public sealed partial class AaruFormat
                     });
 
                     _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref cdixHeader);
+                    MemoryMarshal.Write(_structureBytes, in cdixHeader);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
                     _imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                     blockStream.Close();
@@ -4815,7 +4815,7 @@ public sealed partial class AaruFormat
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                    MemoryMarshal.Write(_structureBytes, ref subchannelBlock);
+                    MemoryMarshal.Write(_structureBytes, in subchannelBlock);
                     _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
 
                     if(subchannelBlock.compression == CompressionType.Lzma)
@@ -5022,7 +5022,7 @@ public sealed partial class AaruFormat
 
             metadataBlock.blockSize = (uint)blockStream.Length;
             _structureBytes         = new byte[Marshal.SizeOf<MetadataBlock>()];
-            MemoryMarshal.Write(_structureBytes, ref metadataBlock);
+            MemoryMarshal.Write(_structureBytes, in metadataBlock);
             blockStream.Position = 0;
             blockStream.Write(_structureBytes, 0, _structureBytes.Length);
             _index.RemoveAll(t => t is { blockType: BlockType.MetadataBlock, dataType: DataType.NoData });
@@ -5049,7 +5049,7 @@ public sealed partial class AaruFormat
         {
             _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
             IndexEntry indexEntry = entry;
-            MemoryMarshal.Write(_structureBytes, ref indexEntry);
+            MemoryMarshal.Write(_structureBytes, in indexEntry);
             blockStream.Write(_structureBytes, 0, _structureBytes.Length);
         }
 
@@ -5068,7 +5068,7 @@ public sealed partial class AaruFormat
 
             // Write index header to disk
             _structureBytes = new byte[Marshal.SizeOf<IndexHeader2>()];
-            MemoryMarshal.Write(_structureBytes, ref idxHeader);
+            MemoryMarshal.Write(_structureBytes, in idxHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
         }
         else
@@ -5082,7 +5082,7 @@ public sealed partial class AaruFormat
 
             // Write index header to disk
             _structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
-            MemoryMarshal.Write(_structureBytes, ref idxHeader);
+            MemoryMarshal.Write(_structureBytes, in idxHeader);
             _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
         }
 
