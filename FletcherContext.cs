@@ -40,6 +40,7 @@ using System.Text;
 using Aaru.Checksums.Fletcher32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Ssse3 = System.Runtime.Intrinsics.X86.Ssse3;
 
 namespace Aaru.Checksums;
 
@@ -130,6 +131,13 @@ public sealed class Fletcher32Context : IChecksum
         if(useNative)
         {
             fletcher32_update(nativeContext, data, len);
+
+            return;
+        }
+
+        if(Ssse3.IsSupported)
+        {
+            Fletcher32.Ssse3.Step(ref previousSum1, ref previousSum2, data, len);
 
             return;
         }
