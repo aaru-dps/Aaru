@@ -264,8 +264,9 @@ public class MediaStats
     [XmlAttribute]
     public bool real;
     /// <summary>Media type</summary>
-    [XmlAttribute]
-    public string type;
+    [XmlAttribute(AttributeName = "type")]
+    [JsonPropertyName("type")]
+    public string MediaType;
     /// <summary>Number of times it has been found</summary>
     [XmlText]
     public long Value;
