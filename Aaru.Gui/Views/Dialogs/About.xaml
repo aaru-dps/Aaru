@@ -92,7 +92,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding LibrariesLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Assemblies}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Assemblies}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Name}" Width="Auto" IsReadOnly="True">
                                 <DataGridTextColumn.Header>

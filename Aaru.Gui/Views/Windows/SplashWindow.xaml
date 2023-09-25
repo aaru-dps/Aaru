@@ -36,7 +36,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
         d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.SplashWindow" Icon="/Assets/aaru-logo.png" Title="Aaru"
-        HasSystemDecorations="False">
+        SystemDecorations="BorderOnly">
     <Design.DataContext>
         <windows:SplashWindowViewModel />
     </Design.DataContext>

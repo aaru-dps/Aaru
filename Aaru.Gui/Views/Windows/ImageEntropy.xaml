@@ -58,7 +58,7 @@
             <TextBlock Text="{Binding MediaEntropyText}" IsVisible="{Binding MediaEntropyVisible}" />
             <TextBlock Text="{Binding MediaUniqueSectorsText}" IsVisible="{Binding MediaUniqueSectorsVisible}" />
             <TextBlock Text="{Binding TrackEntropyLabel}" IsVisible="{Binding SeparatedTracksEnabled}" />
-            <DataGrid IsVisible="{Binding SeparatedTracksEnabled}" Items="{Binding TrackEntropy}">
+            <DataGrid IsVisible="{Binding SeparatedTracksEnabled}" ItemsSource="{Binding TrackEntropy}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
                     <DataGridTextColumn Header="{Binding EntropyLabel}" Binding="{Binding Entropy}" />

@@ -90,7 +90,7 @@
         <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
             <StackPanel Orientation="Vertical" IsVisible="{Binding TrackChecksumsVisible}">
                 <TextBlock Text="{Binding TrackChecksumsLabel}" />
-                <DataGrid Items="{Binding TrackChecksums}">
+                <DataGrid ItemsSource="{Binding TrackChecksums}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
                         <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
@@ -100,7 +100,7 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" IsVisible="{Binding MediaChecksumsVisible}">
                 <TextBlock Text="{Binding MediaChecksumsLabel}" />
-                <DataGrid Items="{Binding MediaChecksums}">
+                <DataGrid ItemsSource="{Binding MediaChecksums}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
                         <DataGridTextColumn Header="{Binding HashLabel}" Binding="{Binding Value}" />

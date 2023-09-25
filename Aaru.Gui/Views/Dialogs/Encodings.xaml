@@ -45,7 +45,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="260" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <DataGrid Items="{Binding Encodings}" HorizontalScrollBarVisibility="Visible">
+            <DataGrid ItemsSource="{Binding Encodings}" HorizontalScrollBarVisibility="Visible">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{Binding CodeLabel}" Binding="{Binding Name}" Width="Auto"
                                         IsReadOnly="True" />

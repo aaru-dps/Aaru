@@ -34,16 +34,17 @@ using System;
 using Aaru.Gui.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Markup.Xaml.Templates;
 using JetBrains.Annotations;
 
 namespace Aaru.Gui;
 
-public sealed class ViewLocator : IDataTemplate
+public sealed class ViewLocator : DataTemplate
 {
     public bool SupportsRecycling => false;
 
     [CanBeNull]
-    public IControl Build([NotNull] object data)
+    public Control Build([NotNull] object data)
     {
         string name = data.GetType().FullName?.Replace("ViewModel", "View");
 

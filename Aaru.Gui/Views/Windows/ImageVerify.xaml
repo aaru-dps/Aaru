@@ -54,7 +54,7 @@
             <StackPanel Orientation="Horizontal">
                 <StackPanel Orientation="Vertical" IsVisible="{Binding SectorErrorsVisible}">
                     <TextBlock Text="{Binding SectorErrorsText}" />
-                    <DataGrid Items="{Binding ErrorList}">
+                    <DataGrid ItemsSource="{Binding ErrorList}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding LBALabel}" Binding="{Binding Lba}" />
                         </DataGrid.Columns>
@@ -62,7 +62,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" IsVisible="{Binding SectorsUnknownsVisible}">
                     <TextBlock Text="{Binding SectorsUnknownsText}" />
-                    <DataGrid Items="{Binding UnknownList}">
+                    <DataGrid ItemsSource="{Binding UnknownList}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding LBALabel}" Binding="{Binding Lba}" />
                         </DataGrid.Columns>

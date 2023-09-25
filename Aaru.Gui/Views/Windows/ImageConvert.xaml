@@ -43,7 +43,7 @@
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding SourceImageLabel}" /> <TextBox Text="{Binding SourceText}" IsReadOnly="True" />
         <TextBlock Text="{Binding OutputFormatLabel}" />
-        <ComboBox Items="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
+        <ComboBox ItemsSource="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
                   IsEnabled="{Binding FormatReadOnly}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>

@@ -1754,7 +1754,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         if(_cancel)
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () =>
+            await Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 await MessageBoxManager.
                       GetMessageBoxStandardWindow(UI.Title_Error, UI.Operation_canceled_the_output_file_is_not_correct,
@@ -1770,7 +1770,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         if(!outputFormat.Close())
         {
-            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+            await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                             GetMessageBoxStandardWindow(UI.Title_Error,
                                                                                 string.
                                                                                     Format(UI.Error_0_closing_output_image_Contents_are_not_correct,
@@ -1782,7 +1782,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(action: async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             await MessageBoxManager.
                   GetMessageBoxStandardWindow(warning ? UI.Title_Warning : UI.Title_Conversion_success,

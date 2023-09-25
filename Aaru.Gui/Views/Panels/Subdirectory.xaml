@@ -39,7 +39,7 @@
     <Design.DataContext>
         <panels:SubdirectoryViewModel />
     </Design.DataContext>
-    <DataGrid Items="{Binding Entries}" IsReadOnly="True" SelectionMode="Extended"> <!-- TODO: SelectedItems="{Binding SelectedEntries}" -->
+    <DataGrid ItemsSource="{Binding Entries}" IsReadOnly="True" SelectionMode="Extended"> <!-- TODO: SelectedItemsSource="{Binding SelectedEntries}" -->
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <Button Command="{Binding ExtractFilesCommand}">

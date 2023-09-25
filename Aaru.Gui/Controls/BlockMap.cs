@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+/* TODO: Doesn't compile with Avalonia 11.0, but it didn't work previously so pending rewriting
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -486,3 +487,4 @@ public sealed class BlockMap : ItemsControl
         base.OnDetachedFromLogicalTree(e);
     }
 }
+*/

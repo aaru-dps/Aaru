@@ -50,7 +50,7 @@ public sealed class ImageVerify : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         (DataContext as ImageVerifyViewModel)?.ExecuteStopCommand();
         base.OnClosing(e);

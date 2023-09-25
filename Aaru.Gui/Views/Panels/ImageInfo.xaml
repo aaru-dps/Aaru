@@ -84,7 +84,7 @@
                     <TextBlock Text="{Binding MediaGeometryText}" IsVisible="{Binding !!MediaGeometryText}" />
                     <TextBlock Text="{Binding ReadableMediaTagsLabel}" FontWeight="Bold"
                                IsVisible="{Binding !!MediaTagsList.Count}" />
-                    <DataGrid Items="{Binding MediaTagsList}" IsVisible="{Binding !!MediaTagsList.Count}"
+                    <DataGrid ItemsSource="{Binding MediaTagsList}" IsVisible="{Binding !!MediaTagsList.Count}"
                               IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding TagLabel}" Binding="{Binding .}" Width="Auto"
@@ -93,7 +93,7 @@
                     </DataGrid>
                     <TextBlock Text="{Binding ReadableSectorTagsLabel}" FontWeight="Bold"
                                IsVisible="{Binding !!SectorTagsList.Count}" />
-                    <DataGrid Items="{Binding SectorTagsList}" IsVisible="{Binding !!SectorTagsList.Count}"
+                    <DataGrid ItemsSource="{Binding SectorTagsList}" IsVisible="{Binding !!SectorTagsList.Count}"
                               IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding TagLabel}" Binding="{Binding .}" Width="Auto"
@@ -106,7 +106,7 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding SessionsLabel}" />
                 </TabItem.Header>
-                <DataGrid Items="{Binding Sessions}" IsVisible="{Binding !!Sessions.Count}" IsReadOnly="True">
+                <DataGrid ItemsSource="{Binding Sessions}" IsVisible="{Binding !!Sessions.Count}" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding SessionLabel}" Binding="{Binding SessionSequence}"
                                             Width="Auto" />
@@ -122,7 +122,7 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding TracksLabel}" />
                 </TabItem.Header>
-                <DataGrid Items="{Binding Tracks}" IsVisible="{Binding !!Tracks.Count}" IsReadOnly="True">
+                <DataGrid ItemsSource="{Binding Tracks}" IsVisible="{Binding !!Tracks.Count}" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Sequence}" Width="Auto" />
                         <DataGridTextColumn Header="{Binding TypeLabel}" Binding="{Binding Type}" Width="Auto" />
@@ -141,7 +141,7 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding DumpHardwareLabel}" />
                 </TabItem.Header>
-                <DataGrid Items="{Binding DumpHardwareList}" IsVisible="{Binding !!DumpHardwareList.Count}"
+                <DataGrid ItemsSource="{Binding DumpHardwareList}" IsVisible="{Binding !!DumpHardwareList.Count}"
                           IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding ManufacturerLabel}" Binding="{Binding Manufacturer}"

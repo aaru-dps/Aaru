@@ -43,7 +43,7 @@
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding TagLabel}" />
-            <ComboBox Items="{Binding TagsList}" SelectedItem="{Binding SelectedTag}">
+            <ComboBox ItemsSource="{Binding TagsList}" SelectedItem="{Binding SelectedTag}">
                 <ComboBox.DataTemplates>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />

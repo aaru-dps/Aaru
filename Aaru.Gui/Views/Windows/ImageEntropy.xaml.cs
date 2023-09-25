@@ -50,7 +50,7 @@ public sealed class ImageEntropy : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         (DataContext as ImageEntropyViewModel)?.ExecuteStopCommand();
         base.OnClosing(e);

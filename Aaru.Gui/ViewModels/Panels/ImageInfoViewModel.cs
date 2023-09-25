@@ -80,7 +80,6 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imagePath   = imagePath;
         _filter      = filter;
         _imageFormat = imageFormat;
-        IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
         MediaTagsList         = new ObservableCollection<string>();
         SectorTagsList        = new ObservableCollection<string>();
         Sessions              = new ObservableCollection<Session>();
@@ -95,18 +94,18 @@ public sealed class ImageInfoViewModel : ViewModelBase
         DecodeMediaTagCommand = ReactiveCommand.Create(ExecuteDecodeMediaTagCommand);
 
         var genericHddIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
 
         var genericOpticalIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
 
         var genericFolderIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{imageFormat.Info.MediaType}.png");
 
-        MediaLogo = assets.Exists(mediaResource)
-                        ? new Bitmap(assets.Open(mediaResource))
+        MediaLogo = AssetLoader.Exists(mediaResource)
+                        ? new Bitmap(AssetLoader.Open(mediaResource))
                         : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                             ? genericHddIcon
                             : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc

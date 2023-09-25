@@ -50,7 +50,7 @@ public sealed class ImageConvert : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         (DataContext as ImageConvertViewModel)?.ExecuteStopCommand();
         base.OnClosing(e);

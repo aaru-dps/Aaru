@@ -50,7 +50,7 @@ public sealed class MediaDump : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         (DataContext as MediaDumpViewModel)?.ExecuteStopCommand();
         base.OnClosing(e);

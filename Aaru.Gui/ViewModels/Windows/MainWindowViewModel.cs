@@ -72,7 +72,6 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    readonly IAssetLoader     _assets;
     readonly DevicesRootModel _devicesRoot;
     readonly Bitmap           _ejectIcon;
     readonly Bitmap           _genericFolderIcon;
@@ -109,7 +108,6 @@ public sealed class MainWindowViewModel : ViewModelBase
         RefreshDevicesCommand       = ReactiveCommand.Create(ExecuteRefreshDevicesCommand);
         _view                       = view;
         TreeRoot                    = new ObservableCollection<RootModel>();
-        _assets                     = AvaloniaLocator.Current.GetService<IAssetLoader>();
         ContentPanel                = Greeting;
 
         _imagesRoot = new ImagesRootModel
@@ -135,32 +133,29 @@ public sealed class MainWindowViewModel : ViewModelBase
                 break;
         }
 
-        if(_assets == null)
-            return;
-
         _genericHddIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
 
         _genericOpticalIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
 
         _genericTapeIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-tape.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-tape.png")));
 
         _genericFolderIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         _usbIcon =
             new
-                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+                Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
 
-        _ejectIcon = new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
+        _ejectIcon = new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
 
     public string FileLabel                 => UI.Menu_File;
@@ -321,7 +316,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 deviceModel.Media.Add(new MediaModel
                                 {
                                     DevicePath = deviceModel.Path,
-                                    Icon = _assets.Exists(mediaResource) ? new Bitmap(_assets.Open(mediaResource))
+                                    Icon = AssetLoader.Exists(mediaResource) ? new Bitmap(AssetLoader.Open(mediaResource))
                                                : null,
                                     Name      = $"{scsiInfo.MediaType}",
                                     ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
@@ -575,8 +570,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                 var imageModel = new ImageModel
                 {
                     Path = result[0],
-                    Icon = _assets.Exists(mediaResource)
-                               ? new Bitmap(_assets.Open(mediaResource))
+                    Icon = AssetLoader.Exists(mediaResource)
+                               ? new Bitmap(AssetLoader.Open(mediaResource))
                                : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                                    ? _genericHddIcon
                                    : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc

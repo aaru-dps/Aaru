@@ -50,7 +50,7 @@ public sealed class ImageChecksum : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing(CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         (DataContext as ImageChecksumViewModel)?.ExecuteStopCommand();
         base.OnClosing(e);

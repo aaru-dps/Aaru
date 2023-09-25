@@ -45,7 +45,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <DataGrid Items="{Binding Entries}">
+            <DataGrid ItemsSource="{Binding Entries}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{Binding TimeLabel}" Binding="{Binding Timestamp}" Width="Auto"
                                         IsReadOnly="True" />

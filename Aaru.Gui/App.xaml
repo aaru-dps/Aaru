@@ -37,16 +37,16 @@
         <gui:ViewLocator />
     </Application.DataTemplates>
     <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
-        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml" />
+        <FluentTheme />
+        <!-- TODO: Abandoned project need to find replacement
         <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia" />
+        -->
     </Application.Styles>
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="_About" Clicked="OnAboutClicked" />
-            <NativeMenuItem Header="_Preferences" Clicked="OnPreferencesClicked" />
-            <NativeMenuItem Header="_Quit" Clicked="OnQuitClicked" />
+            <NativeMenuItem Header="_About" Click="OnAboutClicked" />
+            <NativeMenuItem Header="_Preferences" Click="OnPreferencesClicked" />
+            <NativeMenuItem Header="_Quit" Click="OnQuitClicked" />
         </NativeMenu>
     </NativeMenu.Menu>
 </Application>

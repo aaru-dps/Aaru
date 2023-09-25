@@ -93,13 +93,12 @@ public sealed class MediaInfoViewModel : ViewModelBase
         SaveMediumSupportCommand          = ReactiveCommand.Create(ExecuteSaveMediumSupportCommand);
         DumpCommand                       = ReactiveCommand.Create(ExecuteDumpCommand);
         ScanCommand                       = ReactiveCommand.Create(ExecuteScanCommand);
-        IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
         _devicePath = devicePath;
         _scsiInfo   = scsiInfo;
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
 
-        MediaLogo = assets?.Exists(mediaResource) == true ? new Bitmap(assets.Open(mediaResource)) : null;
+        MediaLogo = AssetLoader.Exists(mediaResource) ? new Bitmap(AssetLoader.Open(mediaResource)) : null;
 
         MediaType = scsiInfo.MediaType.ToString();
 

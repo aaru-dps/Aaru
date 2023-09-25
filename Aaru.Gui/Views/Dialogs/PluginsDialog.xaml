@@ -49,7 +49,7 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding FiltersLabel}" />
                 </TabItem.Header>
-                <DataGrid Items="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
+                <DataGrid ItemsSource="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                             IsReadOnly="True" />
@@ -66,7 +66,7 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding PartitionsLabel}" />
                 </TabItem.Header>
-                <DataGrid Items="{Binding PartitionSchemes}" HorizontalScrollBarVisibility="Visible">
+                <DataGrid ItemsSource="{Binding PartitionSchemes}" HorizontalScrollBarVisibility="Visible">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                             IsReadOnly="True" />
@@ -89,7 +89,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding IdentifyLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="1" Items="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
@@ -102,7 +102,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBlock Grid.Row="2" Text="{Binding ReadableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="3" Items="{Binding ReadOnlyFilesystems}"
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding ReadOnlyFilesystems}"
                               HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
@@ -127,7 +127,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding ReadableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="1" Items="{Binding Images}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Images}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
@@ -140,7 +140,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBlock Grid.Row="2" Text="{Binding WritableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="3" Items="{Binding WritableImages}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding WritableImages}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
@@ -164,7 +164,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" Text="{Binding ReadableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="1" Items="{Binding FloppyImages}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding FloppyImages}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
@@ -177,7 +177,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBlock Grid.Row="2" Text="{Binding WritableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="3" Items="{Binding WritableFloppyImages}"
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding WritableFloppyImages}"
                               HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"

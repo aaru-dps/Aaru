@@ -50,7 +50,7 @@ public sealed class Console : Window
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-    protected override void OnClosing([NotNull] CancelEventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
         e.Cancel = true;
         Hide();

@@ -43,7 +43,7 @@
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Vertical" IsVisible="{Binding OptionsVisible}">
             <TextBlock Text="{Binding OutputFormatLabel}" />
-            <ComboBox Items="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
+            <ComboBox ItemsSource="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
                       IsEnabled="{Binding FormatReadOnly}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -85,7 +85,7 @@
             </CheckBox>
             <StackPanel IsVisible="{Binding EncodingVisible}">
                 <TextBox Text="{Binding EncodingLabel}" />
-                <ComboBox Items="{Binding Encodings}" SelectedItem="{Binding SelectedEncoding}"
+                <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding SelectedEncoding}"
                           IsEnabled="{Binding EncodingEnabled}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>

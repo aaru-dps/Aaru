@@ -73,7 +73,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding FiltersLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding FilterLabel}" Binding="{Binding Name}" Width="Auto"
@@ -87,7 +87,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding FormatsLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Formats}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Formats}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding FormatLabel}" Binding="{Binding Name}" Width="Auto"
@@ -101,7 +101,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding PartitionsLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Partitions}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Partitions}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding PartitionLabel}" Binding="{Binding Name}" Width="Auto"
@@ -115,7 +115,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding FilesystemsLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding FilesystemLabel}" Binding="{Binding Name}"
@@ -129,7 +129,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding DevicesLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Devices}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Devices}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding DeviceLabel}" Binding="{Binding Model}" Width="Auto"
@@ -147,7 +147,7 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding MediasLabel}" />
                     </TabItem.Header>
-                    <DataGrid Items="{Binding Medias}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Medias}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
                             <DataGridTextColumn Header="{Binding MediaLabel}" Binding="{Binding Name}" Width="Auto"

@@ -45,7 +45,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
-using OxyPlot;
+//using OxyPlot;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows;
@@ -105,7 +105,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         StartVisible = true;
         CloseVisible = true;
         BlockMapList = new ObservableCollection<(ulong block, double duration)>();
-        ChartPoints  = new ObservableCollection<DataPoint>();
+//        ChartPoints  = new ObservableCollection<DataPoint>();
         StepsX       = double.NaN;
         StepsY       = double.NaN;
         AxesColor    = Colors.Black;
@@ -132,7 +132,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     }
 
     public ObservableCollection<(ulong block, double duration)> BlockMapList { get; }
-    public ObservableCollection<DataPoint>                      ChartPoints  { get; }
+//    public ObservableCollection<DataPoint>                      ChartPoints  { get; }
 
     public ulong Blocks
     {
@@ -325,7 +325,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         CloseVisible    = false;
         ProgressVisible = true;
         ResultsVisible  = true;
-        ChartPoints.Clear();
+//        ChartPoints.Clear();
         new Thread(DoWork).Start();
     }
 
@@ -437,10 +437,12 @@ public sealed class MediaScanViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
+        /*  TODO: Abandoned project need to find replacement
         if(ChartPoints.Count == 0)
             ChartPoints.Add(new DataPoint(0, currentSpeed));
 
         ChartPoints.Add(new DataPoint(sector, currentSpeed));
+        */
 
         if(currentSpeed > MaxY)
             MaxY = currentSpeed + (currentSpeed / 10d);
@@ -589,7 +591,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
 
     // ReSharper disable once AsyncVoidLambda
-    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(action: async () =>
+    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(async () =>
     {
         ProgressText = text;
 

@@ -69,7 +69,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" /><ColumnDefinition Width="5" /><ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
-            <TreeView Items="{Binding TreeRoot}" SelectedItem="{Binding TreeViewSelectedItem}">
+            <TreeView ItemsSource="{Binding TreeRoot}" SelectedItem="{Binding TreeViewSelectedItem}">
                 <TreeView.DataTemplates>
                     <TreeDataTemplate DataType="models:DevicesRootModel" ItemsSource="{Binding Devices}">
                         <StackPanel Orientation="Horizontal">

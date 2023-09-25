@@ -116,7 +116,7 @@
                 </StackPanel>
                 <StackPanel IsVisible="{Binding !!IsrcList.Count}">
                     <TextBlock Text="{Binding ISRCsLabel}" />
-                    <DataGrid Items="{Binding IsrcList}">
+                    <DataGrid ItemsSource="{Binding IsrcList}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Track}" Header="{Binding TrackLabel}" />
                             <DataGridTextColumn Binding="{Binding ISRC}" Header="{Binding ISRCLabel}" />
