@@ -35,7 +35,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
     <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
-    <PackageReference Include="MessageBox.Avalonia" Version="2.1.0"/>
+    <PackageReference Include="MessageBox.Avalonia" Version="3.1.4" />
     <!-- TODO: Abandoned project need to find replacement
     <PackageReference Include="OxyPlot.Avalonia-alpha-2020-04-15" Version="1.0.0"/>
     -->
