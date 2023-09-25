@@ -76,7 +76,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha9" />
+    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha.10" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpCompress" Version="0.34.0" />
