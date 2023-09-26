@@ -49,6 +49,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Humanizer;
 using Humanizer.Bytes;
+using Humanizer.Localisation;
 using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -278,7 +279,8 @@ public partial class Dump
         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
+                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -288,7 +290,8 @@ public partial class Dump
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                     Per(imageWriteDuration.Seconds())));
 
-        _dumpLog.WriteLine(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds);
+        _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
+                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -342,7 +345,9 @@ public partial class Dump
 
             EndProgress?.Invoke();
             end = DateTime.UtcNow;
-            _dumpLog.WriteLine(Localization.Core.Trimming_finished_in_0_seconds, (end - start).TotalSeconds);
+
+            _dumpLog.WriteLine(string.Format(Localization.Core.Trimming_finished_in_0,
+                                             (end - start).Humanize(minUnit: TimeUnit.Second)));
         }
         #endregion Trimming
 
@@ -580,10 +585,10 @@ public partial class Dump
         outputFormat.Close();
         DateTime closeEnd = DateTime.Now;
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0_seconds,
-                                           (closeEnd - closeStart).TotalSeconds));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0,
+                                           (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
 
-        _dumpLog.WriteLine(Localization.Core.Closed_in_0_seconds, (closeEnd - closeStart).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0, (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second));
 
         if(_aborted)
         {
@@ -627,14 +632,15 @@ public partial class Dump
             {
                 totalChkDuration = (end - chkStart).TotalMilliseconds;
 
-                UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0_seconds,
-                                                   (end - chkStart).TotalSeconds));
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0,
+                                                   (end - chkStart).Humanize(minUnit: TimeUnit.Second)));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
                                                    ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                             Per(totalChkDuration.Milliseconds())));
 
-                _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0_seconds, (end - chkStart).TotalSeconds);
+                _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
+                                   (end - chkStart).Humanize(minUnit: TimeUnit.Second));
 
                 _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
                                    ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));
@@ -701,9 +707,12 @@ public partial class Dump
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000,
-                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds));
+            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                 (end - start).Humanize(minUnit: TimeUnit.Second),
+                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                 (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).

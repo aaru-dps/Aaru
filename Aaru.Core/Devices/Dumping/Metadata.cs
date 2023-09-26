@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Humanizer;
 using Humanizer.Bytes;
+using Humanizer.Localisation;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -98,7 +99,7 @@ partial class Dump
             return;
 
         totalChkDuration = (end - chkStart).TotalMilliseconds;
-        _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0_seconds, (end - chkStart).TotalSeconds);
+        _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0, (end - chkStart).Humanize(minUnit: TimeUnit.Second));
 
         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
                            ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));

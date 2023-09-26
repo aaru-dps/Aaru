@@ -153,17 +153,17 @@
   <data name="Drive_has_loaded_a_total_of_0_discs" xml:space="preserve">
     <value>Drive has loaded a total of {0} discs</value>
   </data>
-  <data name="Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_CDs" xml:space="preserve">
-    <value>Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs</value>
+  <data name="Drive_has_spent_0_reading_CDs" xml:space="preserve">
+    <value>Drive has spent {0} reading CDs</value>
   </data>
-  <data name="Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_CDs" xml:space="preserve">
-    <value>Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs</value>
+  <data name="Drive_has_spent_0_writing_CDs" xml:space="preserve">
+    <value>Drive has spent {0} writing CDs</value>
   </data>
-  <data name="Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_DVDs" xml:space="preserve">
-    <value>Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs</value>
+  <data name="Drive_has_spent_0_reading_DVDs" xml:space="preserve">
+    <value>Drive has spent {0} reading DVDs</value>
   </data>
-  <data name="Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_DVDs" xml:space="preserve">
-    <value>Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs</value>
+  <data name="Drive_has_spent_0_writing_DVDs" xml:space="preserve">
+    <value>Drive has spent {0} writing DVDs</value>
   </data>
   <data name="Drive_supports_PoweRec_is_enabled_and_recommends_0" xml:space="preserve">
     <value>Drive supports PoweRec, is enabled and recommends {0} Kb/sec.</value>
@@ -396,8 +396,8 @@
   <data name="Combined_offset_is_0_bytes_1_samples" xml:space="preserve">
     <value>Combined offset is {0} bytes ({1} samples).</value>
   </data>
-  <data name="Took_a_total_of_0_seconds_1_processing_commands" xml:space="preserve">
-    <value>Took a total of {0} seconds ({1} processing commands).</value>
+  <data name="Took_a_total_of_0_1_processing_commands" xml:space="preserve">
+    <value>Took a total of {0} ({1} processing commands).</value>
   </data>
   <data name="Average_speed_0" xml:space="preserve">
     <value>Average speed: {0}.</value>
@@ -899,8 +899,8 @@
   <data name="There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_you_can_ignore_them" xml:space="preserve">
     <value>There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.</value>
   </data>
-  <data name="Dump_finished_in_0_seconds" xml:space="preserve">
-    <value>Dump finished in {0} seconds.</value>
+  <data name="Dump_finished_in_0" xml:space="preserve">
+    <value>Dump finished in {0}.</value>
   </data>
   <data name="Average_dump_speed_0" xml:space="preserve">
     <value>Average dump speed {0}.</value>
@@ -926,11 +926,11 @@
   <data name="Closing_output_file" xml:space="preserve">
     <value>Closing output file.</value>
   </data>
-  <data name="Closed_in_0_seconds" xml:space="preserve">
-    <value>Closed in {0} seconds.</value>
+  <data name="Closed_in_0" xml:space="preserve">
+    <value>Closed in {0}.</value>
   </data>
-  <data name="Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing" xml:space="preserve">
-    <value>Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).</value>
+  <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing" xml:space="preserve">
+    <value>Took a total of {0} ({1} processing commands, {2} checksumming, {3} writing, {4} closing).</value>
   </data>
   <data name="_0_subchannels_could_not_be_read" xml:space="preserve">
     <value>{0} subchannels could not be read.</value>
@@ -1100,8 +1100,8 @@
   <data name="Trimming_sector_0" xml:space="preserve">
     <value>Trimming sector {0}</value>
   </data>
-  <data name="Trimming_finished_in_0_seconds" xml:space="preserve">
-    <value>Trimming finished in {0} seconds.</value>
+  <data name="Trimming_finished_in_0" xml:space="preserve">
+    <value>Trimming finished in {0}.</value>
   </data>
   <data name="Could_not_read" xml:space="preserve">
     <value>Could not read...</value>
@@ -1166,8 +1166,8 @@
   <data name="Error_0_opening_created_image" xml:space="preserve">
     <value>Error {0} opening created image.</value>
   </data>
-  <data name="Sidecar_created_in_0_seconds" xml:space="preserve">
-    <value>Sidecar created in {0} seconds.</value>
+  <data name="Sidecar_created_in_0" xml:space="preserve">
+    <value>Sidecar created in {0}.</value>
   </data>
   <data name="Average_checksum_speed_0" xml:space="preserve">
     <value>Average checksum speed {0}.</value>

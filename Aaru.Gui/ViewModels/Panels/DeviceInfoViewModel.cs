@@ -41,6 +41,8 @@ using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Humanizer;
+using Humanizer.Localisation;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
@@ -207,17 +209,20 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 {
                     PlextorEepromVisible = true;
                     PlextorDiscs         = $"{devInfo.PlextorFeatures.Discs}";
-                    PlextorCdReadTime    = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdReadTime).ToString();
+                    PlextorCdReadTime = devInfo.PlextorFeatures.CdReadTime.Seconds().Humanize(minUnit: TimeUnit.Second);
 
-                    PlextorCdWriteTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdWriteTime).ToString();
+                    PlextorCdWriteTime =
+                        devInfo.PlextorFeatures.CdWriteTime.Seconds().Humanize(minUnit: TimeUnit.Second);
 
                     if(devInfo.PlextorFeatures.IsDvd)
                     {
                         PlextorDvdTimesVisible = true;
 
-                        PlextorDvdReadTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdReadTime).ToString();
+                        PlextorDvdReadTime = devInfo.PlextorFeatures.DvdReadTime.Seconds().
+                                                     Humanize(minUnit: TimeUnit.Second);
 
-                        PlextorDvdWriteTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdWriteTime).ToString();
+                        PlextorDvdWriteTime = devInfo.PlextorFeatures.DvdWriteTime.Seconds().
+                                                      Humanize(minUnit: TimeUnit.Second);
                     }
                 }
 

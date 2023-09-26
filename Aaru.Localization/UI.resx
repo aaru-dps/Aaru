@@ -1376,8 +1376,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="Disc_image_does_not_contain_checksums" xml:space="preserve">
     <value>Disc image does not contain checksums</value>
   </data>
-  <data name="Checking_disc_image_checksums_took_0_seconds" xml:space="preserve">
-    <value>Checking disc image checksums took {0} seconds</value>
+  <data name="Checking_disc_image_checksums_took_0" xml:space="preserve">
+    <value>Checking disc image checksums took {0}</value>
   </data>
   <data name="Checking_tracks" xml:space="preserve">
     <value>Checking tracks...</value>
@@ -1406,8 +1406,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="All_sector_checksums_are_correct" xml:space="preserve">
     <value>All sector checksums are correct</value>
   </data>
-  <data name="Checking_sector_checksums_took_0_seconds" xml:space="preserve">
-    <value>Checking sector checksums took {0} seconds</value>
+  <data name="Checking_sector_checksums_took_0" xml:space="preserve">
+    <value>Checking sector checksums took {0}</value>
   </data>
   <data name="LBAs_with_error" xml:space="preserve">
     <value>LBAs with error:</value>

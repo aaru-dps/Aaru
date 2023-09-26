@@ -1212,11 +1212,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closed in {0} seconds..
+        ///   Looks up a localized string similar to Closed in {0}..
         /// </summary>
-        public static string Closed_in_0_seconds {
+        public static string Closed_in_0 {
             get {
-                return ResourceManager.GetString("Closed_in_0_seconds", resourceCulture);
+                return ResourceManager.GetString("Closed_in_0", resourceCulture);
             }
         }
         
@@ -2541,38 +2541,38 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs.
+        ///   Looks up a localized string similar to Drive has spent {0} reading CDs.
         /// </summary>
-        public static string Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_CDs {
+        public static string Drive_has_spent_0_reading_CDs {
             get {
-                return ResourceManager.GetString("Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_CDs", resourceCulture);
+                return ResourceManager.GetString("Drive_has_spent_0_reading_CDs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs.
+        ///   Looks up a localized string similar to Drive has spent {0} reading DVDs.
         /// </summary>
-        public static string Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_DVDs {
+        public static string Drive_has_spent_0_reading_DVDs {
             get {
-                return ResourceManager.GetString("Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_DVDs", resourceCulture);
+                return ResourceManager.GetString("Drive_has_spent_0_reading_DVDs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs.
+        ///   Looks up a localized string similar to Drive has spent {0} writing CDs.
         /// </summary>
-        public static string Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_CDs {
+        public static string Drive_has_spent_0_writing_CDs {
             get {
-                return ResourceManager.GetString("Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_CDs", resourceCulture);
+                return ResourceManager.GetString("Drive_has_spent_0_writing_CDs", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs.
+        ///   Looks up a localized string similar to Drive has spent {0} writing DVDs.
         /// </summary>
-        public static string Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_DVDs {
+        public static string Drive_has_spent_0_writing_DVDs {
             get {
-                return ResourceManager.GetString("Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_DVDs", resourceCulture);
+                return ResourceManager.GetString("Drive_has_spent_0_writing_DVDs", resourceCulture);
             }
         }
         
@@ -2884,11 +2884,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dump finished in {0} seconds..
+        ///   Looks up a localized string similar to Dump finished in {0}..
         /// </summary>
-        public static string Dump_finished_in_0_seconds {
+        public static string Dump_finished_in_0 {
             get {
-                return ResourceManager.GetString("Dump_finished_in_0_seconds", resourceCulture);
+                return ResourceManager.GetString("Dump_finished_in_0", resourceCulture);
             }
         }
         
@@ -8154,11 +8154,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sidecar created in {0} seconds..
+        ///   Looks up a localized string similar to Sidecar created in {0}..
         /// </summary>
-        public static string Sidecar_created_in_0_seconds {
+        public static string Sidecar_created_in_0 {
             get {
-                return ResourceManager.GetString("Sidecar_created_in_0_seconds", resourceCulture);
+                return ResourceManager.GetString("Sidecar_created_in_0", resourceCulture);
             }
         }
         
@@ -8789,21 +8789,20 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Took a total of {0} seconds ({1} processing commands)..
+        ///   Looks up a localized string similar to Took a total of {0} ({1} processing commands)..
         /// </summary>
-        public static string Took_a_total_of_0_seconds_1_processing_commands {
+        public static string Took_a_total_of_0_1_processing_commands {
             get {
-                return ResourceManager.GetString("Took_a_total_of_0_seconds_1_processing_commands", resourceCulture);
+                return ResourceManager.GetString("Took_a_total_of_0_1_processing_commands", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing)..
+        ///   Looks up a localized string similar to Took a total of {0} ({1} processing commands, {2} checksumming, {3} writing, {4} closing)..
         /// </summary>
-        public static string Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closing {
+        public static string Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing {
             get {
-                return ResourceManager.GetString("Took_a_total_of_0_seconds_1_processing_commands_2_checksumming_3_writing_4_closin" +
-                        "g", resourceCulture);
+                return ResourceManager.GetString("Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing", resourceCulture);
             }
         }
         
@@ -8979,11 +8978,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trimming finished in {0} seconds..
+        ///   Looks up a localized string similar to Trimming finished in {0}..
         /// </summary>
-        public static string Trimming_finished_in_0_seconds {
+        public static string Trimming_finished_in_0 {
             get {
-                return ResourceManager.GetString("Trimming_finished_in_0_seconds", resourceCulture);
+                return ResourceManager.GetString("Trimming_finished_in_0", resourceCulture);
             }
         }
         

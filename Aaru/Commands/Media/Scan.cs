@@ -39,6 +39,7 @@ using Aaru.Core.Devices.Scanning;
 using Aaru.Localization;
 using Humanizer;
 using Humanizer.Bytes;
+using Humanizer.Localisation;
 using Spectre.Console;
 
 namespace Aaru.Commands.Media;
@@ -206,8 +207,9 @@ sealed class MediaScanCommand : Command
                         results = scanner.Scan();
                     });
 
-        AaruConsole.WriteLine(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands, results.TotalTime,
-                              results.ProcessingTime);
+        AaruConsole.WriteLine(Localization.Core.Took_a_total_of_0_1_processing_commands,
+                              results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
+                              results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
         AaruConsole.WriteLine(Localization.Core.Average_speed_0, ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));
 

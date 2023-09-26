@@ -52,6 +52,8 @@ using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
 using Aaru.Localization;
+using Humanizer;
+using Humanizer.Localisation;
 using Spectre.Console;
 using Command = System.CommandLine.Command;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
@@ -852,29 +854,21 @@ sealed class DeviceInfoCommand : Command
                 AaruConsole.WriteLine(Localization.Core.Drive_has_loaded_a_total_of_0_discs,
                                       devInfo.PlextorFeatures.Discs);
 
-                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_CDs,
-                                      devInfo.PlextorFeatures.CdReadTime      / 3600,
-                                      devInfo.PlextorFeatures.CdReadTime / 60 % 60,
-                                      devInfo.PlextorFeatures.CdReadTime      % 60);
+                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_reading_CDs,
+                                      devInfo.PlextorFeatures.CdReadTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
-                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_CDs,
-                                      devInfo.PlextorFeatures.CdWriteTime      / 3600,
-                                      devInfo.PlextorFeatures.CdWriteTime / 60 % 60,
-                                      devInfo.PlextorFeatures.CdWriteTime      % 60);
+                AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_writing_CDs,
+                                      devInfo.PlextorFeatures.CdWriteTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
                 if(devInfo.PlextorFeatures.IsDvd)
                 {
-                    AaruConsole.
-                        WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_reading_DVDs,
-                                  devInfo.PlextorFeatures.DvdReadTime      / 3600,
-                                  devInfo.PlextorFeatures.DvdReadTime / 60 % 60,
-                                  devInfo.PlextorFeatures.DvdReadTime      % 60);
+                    AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_reading_DVDs,
+                                          devInfo.PlextorFeatures.DvdReadTime.Seconds().
+                                                  Humanize(minUnit: TimeUnit.Second));
 
-                    AaruConsole.
-                        WriteLine(Localization.Core.Drive_has_spent_0_hours_1_minutes_and_2_seconds_writing_DVDs,
-                                  devInfo.PlextorFeatures.DvdWriteTime      / 3600,
-                                  devInfo.PlextorFeatures.DvdWriteTime / 60 % 60,
-                                  devInfo.PlextorFeatures.DvdWriteTime      % 60);
+                    AaruConsole.WriteLine(Localization.Core.Drive_has_spent_0_writing_DVDs,
+                                          devInfo.PlextorFeatures.DvdWriteTime.Seconds().
+                                                  Humanize(minUnit: TimeUnit.Second));
                 }
             }
 

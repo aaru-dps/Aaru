@@ -43,6 +43,8 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Graphics;
 using Aaru.Localization;
+using Humanizer;
+using Humanizer.Localisation;
 using Spectre.Console;
 
 namespace Aaru.Commands.Image;
@@ -220,7 +222,7 @@ sealed class VerifyCommand : Command
             }
 
             correctImage = discCheckStatus;
-            AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0_seconds, checkTime.TotalSeconds);
+            AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0, checkTime.Humanize(minUnit: TimeUnit.Second));
         }
 
         if(!verifySectors)
@@ -422,7 +424,7 @@ sealed class VerifyCommand : Command
            failingLbas.Count == 0)
             AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
 
-        AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0_seconds, checkTime.TotalSeconds);
+        AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0, checkTime.Humanize(minUnit: TimeUnit.Second));
 
         if(verbose)
         {

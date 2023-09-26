@@ -44,6 +44,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Humanizer;
+using Humanizer.Localisation;
 using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -293,9 +295,10 @@ partial class Dump
         EndProgress?.Invoke();
         end = DateTime.UtcNow;
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Trimming_finished_in_0_seconds,
-                                           (end - start).TotalSeconds));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Trimming_finished_in_0,
+                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
 
-        _dumpLog.WriteLine(Localization.Core.Trimming_finished_in_0_seconds, (end - start).TotalSeconds);
+        _dumpLog.WriteLine(string.Format(Localization.Core.Trimming_finished_in_0,
+                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
     }
 }

@@ -45,6 +45,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Humanizer;
 using Humanizer.Bytes;
+using Humanizer.Localisation;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 
@@ -398,8 +399,9 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            TotalTime = string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands,
-                                      results.TotalTime, results.ProcessingTime);
+            TotalTime = string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands,
+                                      results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                      results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
             AvgSpeed = string.Format(Localization.Core.Average_speed_0,
                                      ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));

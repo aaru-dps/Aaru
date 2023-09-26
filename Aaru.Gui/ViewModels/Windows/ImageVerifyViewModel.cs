@@ -44,6 +44,8 @@ using Aaru.Gui.Models;
 using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Humanizer;
+using Humanizer.Localisation;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows;
@@ -437,7 +439,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     };
                 });
 
-                AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0_seconds, checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0,
+                                             checkTime.Humanize(minUnit: TimeUnit.Second));
             }
         }
 
@@ -589,7 +592,9 @@ public sealed class ImageVerifyViewModel : ViewModelBase
             }
 
             TimeSpan checkTime = endCheck - startCheck;
-            AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0_seconds, checkTime.TotalSeconds);
+
+            AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,
+                                         checkTime.Humanize(minUnit: TimeUnit.Second));
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
