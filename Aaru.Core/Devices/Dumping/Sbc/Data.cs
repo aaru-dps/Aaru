@@ -35,6 +35,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
+using Humanizer;
+using Humanizer.Bytes;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -99,7 +101,7 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
                        (long)i, (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);

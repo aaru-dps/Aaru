@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
+using Humanizer;
+using Humanizer.Bytes;
 
 namespace Aaru.Core.Devices.Scanning;
 
@@ -150,7 +152,7 @@ public sealed partial class MediaScan
                         results.MinSpeed = currentSpeed;
 
                     UpdateProgress?.
-                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, results.Blocks, currentSpeed),
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
                                (long)i, (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
@@ -281,9 +283,9 @@ public sealed partial class MediaScan
                                currentSpeed > 0)
                                 results.MinSpeed = currentSpeed;
 
-                            PulseProgress?.
-                                Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3_MiB_sec, cy,
-                                                     hd, sc, currentSpeed));
+                            PulseProgress?.Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3,
+                                                                cy, hd, sc,
+                                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
 
                             bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
 

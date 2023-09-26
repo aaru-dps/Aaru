@@ -37,6 +37,8 @@ using System.Collections.Generic;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Aaru.Decoders.SecureDigital;
+using Humanizer;
+using Humanizer.Bytes;
 using CSD = Aaru.Decoders.MMC.CSD;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 
@@ -243,7 +245,7 @@ public sealed partial class MediaScan
                 results.MinSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, results.Blocks, currentSpeed),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromBytes(currentSpeed).Per(_oneSecond)),
                        (long)i, (long)results.Blocks);
 
             bool error;

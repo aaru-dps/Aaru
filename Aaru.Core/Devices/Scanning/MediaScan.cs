@@ -34,18 +34,20 @@ using System;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.Devices;
+using Humanizer;
 
 namespace Aaru.Core.Devices.Scanning;
 
 public sealed partial class MediaScan
 {
-    readonly Device _dev;
-    readonly string _devicePath;
-    readonly string _ibgLogPath;
-    readonly string _mhddLogPath;
-    readonly bool   _seekTest;
-    readonly bool   _useBufferedReads;
-    bool            _aborted;
+    readonly Device          _dev;
+    readonly string          _devicePath;
+    readonly string          _ibgLogPath;
+    readonly string          _mhddLogPath;
+    readonly bool            _seekTest;
+    readonly bool            _useBufferedReads;
+    bool                     _aborted;
+    static readonly TimeSpan _oneSecond = 1.Seconds();
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
     /// <param name="ibgLogPath">Path to a IMGBurn log file</param>

@@ -44,6 +44,8 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core.Logging;
 using Aaru.Devices;
+using Humanizer;
+using Humanizer.Bytes;
 using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -119,8 +121,8 @@ partial class Dump
                    currentSpeed > 0)
                     minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1_MiB_sec, i,
-                                                    currentSpeed));
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
 
                 if(readcd)
                 {
@@ -291,8 +293,8 @@ partial class Dump
                    currentSpeed > 0)
                     minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1_MiB_sec, i,
-                                                    currentSpeed));
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
 
                 if(readcd)
                 {

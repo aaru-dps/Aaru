@@ -37,6 +37,8 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Localization;
+using Humanizer;
+using Humanizer.Bytes;
 using Spectre.Console;
 
 namespace Aaru.Commands.Media;
@@ -207,9 +209,14 @@ sealed class MediaScanCommand : Command
         AaruConsole.WriteLine(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands, results.TotalTime,
                               results.ProcessingTime);
 
-        AaruConsole.WriteLine(Localization.Core.Average_speed_0_MiB_sec, results.AvgSpeed);
-        AaruConsole.WriteLine(Localization.Core.Fastest_speed_burst_0_MiB_sec, results.MaxSpeed);
-        AaruConsole.WriteLine(Localization.Core.Slowest_speed_burst_0_MiB_sec, results.MinSpeed);
+        AaruConsole.WriteLine(Localization.Core.Average_speed_0, ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));
+
+        AaruConsole.WriteLine(Localization.Core.Fastest_speed_burst_0,
+                              ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()));
+
+        AaruConsole.WriteLine(Localization.Core.Slowest_speed_burst_0,
+                              ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()));
+
         AaruConsole.WriteLine();
         AaruConsole.WriteLine($"[bold]{Localization.Core.Summary}:[/]");
         AaruConsole.WriteLine($"[lime]{string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A)}[/]");

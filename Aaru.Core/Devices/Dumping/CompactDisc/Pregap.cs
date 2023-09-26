@@ -45,6 +45,8 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Devices;
+using Humanizer;
+using Humanizer.Bytes;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -85,8 +87,9 @@ partial class Dump
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format(Localization.Core.Trying_to_read_first_track_pregap_sector_0_1_MiB_sec,
-                                                firstTrackPregapBlock, currentSpeed));
+            PulseProgress?.Invoke(string.Format(Localization.Core.Trying_to_read_first_track_pregap_sector_0_1,
+                                                firstTrackPregapBlock,
+                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
 
             // ReSharper disable IntVariableOverflowInUncheckedContext
             sense = _dev.ReadCd(out cmdBuf, out _, (uint)firstTrackPregapBlock, blockSize, 1, MmcSectorTypes.AllTypes,

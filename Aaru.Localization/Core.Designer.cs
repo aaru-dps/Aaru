@@ -456,38 +456,38 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average checksum speed {0:F3} KiB/sec..
+        ///   Looks up a localized string similar to Average checksum speed {0}..
         /// </summary>
-        public static string Average_checksum_speed_0_KiB_sec {
+        public static string Average_checksum_speed_0 {
             get {
-                return ResourceManager.GetString("Average_checksum_speed_0_KiB_sec", resourceCulture);
+                return ResourceManager.GetString("Average_checksum_speed_0", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average dump speed {0:F3} KiB/sec..
+        ///   Looks up a localized string similar to Average dump speed {0}..
         /// </summary>
-        public static string Average_dump_speed_0_KiB_sec {
+        public static string Average_dump_speed_0 {
             get {
-                return ResourceManager.GetString("Average_dump_speed_0_KiB_sec", resourceCulture);
+                return ResourceManager.GetString("Average_dump_speed_0", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average speed: {0:F3} MiB/sec..
+        ///   Looks up a localized string similar to Average speed: {0}..
         /// </summary>
-        public static string Average_speed_0_MiB_sec {
+        public static string Average_speed_0 {
             get {
-                return ResourceManager.GetString("Average_speed_0_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Average_speed_0", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average write speed {0:F3} KiB/sec..
+        ///   Looks up a localized string similar to Average write speed {0}..
         /// </summary>
-        public static string Average_write_speed_0_KiB_sec {
+        public static string Average_write_speed_0 {
             get {
-                return ResourceManager.GetString("Average_write_speed_0_KiB_sec", resourceCulture);
+                return ResourceManager.GetString("Average_write_speed_0", resourceCulture);
             }
         }
         
@@ -3380,11 +3380,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fastest speed burst: {0:F3} MiB/sec..
+        ///   Looks up a localized string similar to Fastest speed burst: {0}..
         /// </summary>
-        public static string Fastest_speed_burst_0_MiB_sec {
+        public static string Fastest_speed_burst_0 {
             get {
-                return ResourceManager.GetString("Fastest_speed_burst_0_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Fastest_speed_burst_0", resourceCulture);
             }
         }
         
@@ -6568,11 +6568,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading block {0} ({1:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Reading block {0} ({1}).
         /// </summary>
-        public static string Reading_block_0_1_MiB_sec {
+        public static string Reading_block_0_1 {
             get {
-                return ResourceManager.GetString("Reading_block_0_1_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Reading_block_0_1", resourceCulture);
             }
         }
         
@@ -6586,11 +6586,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading byte {0} of {1} ({2:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Reading byte {0} of {1} ({2}).
         /// </summary>
-        public static string Reading_byte_0_of_1_2_MiB_sec_ {
+        public static string Reading_byte_0_of_1_2 {
             get {
-                return ResourceManager.GetString("Reading_byte_0_of_1_2_MiB_sec_", resourceCulture);
+                return ResourceManager.GetString("Reading_byte_0_of_1_2", resourceCulture);
             }
         }
         
@@ -6622,11 +6622,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Reading cylinder {0} head {1} sector {2} ({3}).
         /// </summary>
-        public static string Reading_cylinder_0_head_1_sector_2_3_MiB_sec {
+        public static string Reading_cylinder_0_head_1_sector_2_3 {
             get {
-                return ResourceManager.GetString("Reading_cylinder_0_head_1_sector_2_3_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Reading_cylinder_0_head_1_sector_2_3", resourceCulture);
             }
         }
         
@@ -7180,20 +7180,20 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading sector {0} at lead-out ({1:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Reading sector {0} at lead-out ({1}).
         /// </summary>
-        public static string Reading_sector_0_at_lead_out_1_MiB_sec {
+        public static string Reading_sector_0_at_lead_out_1 {
             get {
-                return ResourceManager.GetString("Reading_sector_0_at_lead_out_1_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Reading_sector_0_at_lead_out_1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reading sector {0} of {1} ({2:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Reading sector {0} of {1} ({2}).
         /// </summary>
-        public static string Reading_sector_0_of_1_2_MiB_sec {
+        public static string Reading_sector_0_of_1_2 {
             get {
-                return ResourceManager.GetString("Reading_sector_0_of_1_2_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Reading_sector_0_of_1_2", resourceCulture);
             }
         }
         
@@ -8199,11 +8199,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Slowest speed burst: {0:F3} MiB/sec..
+        ///   Looks up a localized string similar to Slowest speed burst: {0}..
         /// </summary>
-        public static string Slowest_speed_burst_0_MiB_sec {
+        public static string Slowest_speed_burst_0 {
             get {
-                return ResourceManager.GetString("Slowest_speed_burst_0_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Slowest_speed_burst_0", resourceCulture);
             }
         }
         
@@ -9465,11 +9465,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trying to read first track pregap sector {0} ({1:F3} MiB/sec.).
+        ///   Looks up a localized string similar to Trying to read first track pregap sector {0} ({1}).
         /// </summary>
-        public static string Trying_to_read_first_track_pregap_sector_0_1_MiB_sec {
+        public static string Trying_to_read_first_track_pregap_sector_0_1 {
             get {
-                return ResourceManager.GetString("Trying_to_read_first_track_pregap_sector_0_1_MiB_sec", resourceCulture);
+                return ResourceManager.GetString("Trying_to_read_first_track_pregap_sector_0_1", resourceCulture);
             }
         }
         

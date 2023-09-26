@@ -48,6 +48,8 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Helpers;
+using Humanizer;
+using Humanizer.Bytes;
 using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
 using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -894,8 +896,8 @@ partial class Dump
                currentSpeed > 0)
                 minSpeed = currentSpeed;
 
-            PulseProgress?.Invoke(string.Format(Localization.Core.Reading_block_0_1_MiB_sec, currentBlock,
-                                                currentSpeed));
+            PulseProgress?.Invoke(string.Format(Localization.Core.Reading_block_0_1, currentBlock,
+                                                ByteSize.FromBytes(currentSpeed).Per(_oneSecond)));
 
             sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
                                out duration);
@@ -1104,19 +1106,23 @@ partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0_KiB_sec,
-                                           blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000)));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
+                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                    Per(totalDuration.Milliseconds())));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0_KiB_sec,
-                                           blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
+                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                    Per(imageWriteDuration.Seconds())));
 
         _dumpLog.WriteLine(Localization.Core.Dump_finished_in_0_seconds, (end - start).TotalSeconds);
 
-        _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0_KiB_sec,
-                           blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+        _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
+                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                  Per(totalDuration.Milliseconds())));
 
-        _dumpLog.WriteLine(Localization.Core.Average_write_speed_0_KiB_sec,
-                           blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+        _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
+                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                  Per(imageWriteDuration.Seconds())));
 
         #region Error handling
         if(_resume.BadBlocks.Count > 0 &&
@@ -1376,14 +1382,14 @@ partial class Dump
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0_seconds,
                                                    (end - chkStart).TotalSeconds));
 
-                UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0_KiB_sec,
-                                                   blockSize * (double)(blocks + 1) / 1024 /
-                                                   (totalChkDuration / 1000)));
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
+                                                   ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                            Per(totalChkDuration.Milliseconds())));
 
                 _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0_seconds, (end - chkStart).TotalSeconds);
 
-                _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0_KiB_sec,
-                                   blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+                _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
+                                   ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));
 
                 if(_preSidecar != null)
                 {
@@ -1463,14 +1469,16 @@ partial class Dump
                                  (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000,
                                  imageWriteDuration, (closeEnd - closeStart).TotalSeconds));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0_MiB_sec,
-                                           blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000)));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
+                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                    Per(totalDuration.Milliseconds())));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0_MiB_sec, maxSpeed));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0, ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond)));
 
         if(minSpeed is > 0 and < double.MaxValue)
-            UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0_MiB_sec, minSpeed));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
+                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");

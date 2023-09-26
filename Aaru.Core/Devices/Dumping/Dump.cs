@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,7 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
+using Humanizer;
 using File = System.IO.File;
 
 namespace Aaru.Core.Devices.Dumping;
@@ -112,6 +114,7 @@ public partial class Dump
     int                                 _speedMultiplier;
     bool                                _supportsPlextorD8;
     bool                                _useBufferedReads;
+    static readonly TimeSpan            _oneSecond = 1.Seconds();
 
     /// <summary>Initializes dumpers</summary>
     /// <param name="doResume">Should resume?</param>

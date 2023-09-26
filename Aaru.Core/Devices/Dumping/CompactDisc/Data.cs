@@ -47,6 +47,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Humanizer;
+using Humanizer.Bytes;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
@@ -271,7 +273,7 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
                        (long)i, (long)blocks);
 
             if(crossingLeadOut       &&
@@ -423,7 +425,7 @@ partial class Dump
                 for(uint r = 0; r < blocksToRead; r++)
                 {
                     UpdateProgress?.
-                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i + r, blocks, currentSpeed),
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
                                (long)i + r, (long)blocks);
 
                     if(_supportsPlextorD8)

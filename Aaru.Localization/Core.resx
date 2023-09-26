@@ -399,14 +399,14 @@
   <data name="Took_a_total_of_0_seconds_1_processing_commands" xml:space="preserve">
     <value>Took a total of {0} seconds ({1} processing commands).</value>
   </data>
-  <data name="Average_speed_0_MiB_sec" xml:space="preserve">
-    <value>Average speed: {0:F3} MiB/sec.</value>
+  <data name="Average_speed_0" xml:space="preserve">
+    <value>Average speed: {0}.</value>
   </data>
-  <data name="Fastest_speed_burst_0_MiB_sec" xml:space="preserve">
-    <value>Fastest speed burst: {0:F3} MiB/sec.</value>
+  <data name="Fastest_speed_burst_0" xml:space="preserve">
+    <value>Fastest speed burst: {0}.</value>
   </data>
-  <data name="Slowest_speed_burst_0_MiB_sec" xml:space="preserve">
-    <value>Slowest speed burst: {0:F3} MiB/sec.</value>
+  <data name="Slowest_speed_burst_0" xml:space="preserve">
+    <value>Slowest speed burst: {0}.</value>
   </data>
   <data name="Summary" xml:space="preserve">
     <value>Summary</value>
@@ -648,8 +648,8 @@
   <data name="Aborted" xml:space="preserve">
     <value>Aborted!</value>
   </data>
-  <data name="Reading_sector_0_of_1_2_MiB_sec" xml:space="preserve">
-    <value>Reading sector {0} of {1} ({2:F3} MiB/sec.)</value>
+  <data name="Reading_sector_0_of_1_2" xml:space="preserve">
+    <value>Reading sector {0} of {1} ({2})</value>
   </data>
   <data name="Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive" xml:space="preserve">
     <value>Adding CD-i Ready hole from LBA {0} to {1} inclusive.</value>
@@ -902,11 +902,11 @@
   <data name="Dump_finished_in_0_seconds" xml:space="preserve">
     <value>Dump finished in {0} seconds.</value>
   </data>
-  <data name="Average_dump_speed_0_KiB_sec" xml:space="preserve">
-    <value>Average dump speed {0:F3} KiB/sec.</value>
+  <data name="Average_dump_speed_0" xml:space="preserve">
+    <value>Average dump speed {0}.</value>
   </data>
-  <data name="Average_write_speed_0_KiB_sec" xml:space="preserve">
-    <value>Average write speed {0:F3} KiB/sec.</value>
+  <data name="Average_write_speed_0" xml:space="preserve">
+    <value>Average write speed {0}.</value>
   </data>
   <data name="Error_Tag_type_0_is_null_skipping" xml:space="preserve">
     <value>Error: Tag type {0} is null, skipping...</value>
@@ -980,14 +980,14 @@
   <data name="Reading_lead_outs" xml:space="preserve">
     <value>Reading lead-outs</value>
   </data>
-  <data name="Reading_sector_0_at_lead_out_1_MiB_sec" xml:space="preserve">
-    <value>Reading sector {0} at lead-out ({1:F3} MiB/sec.)</value>
+  <data name="Reading_sector_0_at_lead_out_1" xml:space="preserve">
+    <value>Reading sector {0} at lead-out ({1})</value>
   </data>
   <data name="Reading_first_track_pregap" xml:space="preserve">
     <value>Reading first track pregap</value>
   </data>
-  <data name="Trying_to_read_first_track_pregap_sector_0_1_MiB_sec" xml:space="preserve">
-    <value>Trying to read first track pregap sector {0} ({1:F3} MiB/sec.)</value>
+  <data name="Trying_to_read_first_track_pregap_sector_0_1" xml:space="preserve">
+    <value>Trying to read first track pregap sector {0} ({1})</value>
   </data>
   <data name="Got_0_first_track_pregap_sectors" xml:space="preserve">
     <value>Got {0} first track pregap sectors.</value>
@@ -1133,8 +1133,8 @@
   <data name="Error_0_creating_output_image_not_continuing" xml:space="preserve">
     <value>Error {0} creating output image, not continuing.</value>
   </data>
-  <data name="Reading_byte_0_of_1_2_MiB_sec_" xml:space="preserve">
-    <value>Reading byte {0} of {1} ({2:F3} MiB/sec.)</value>
+  <data name="Reading_byte_0_of_1_2" xml:space="preserve">
+    <value>Reading byte {0} of {1} ({2})</value>
   </data>
   <data name="Skipping_0_bytes_from_errored_byte_1" xml:space="preserve">
     <value>Skipping {0} bytes from errored byte {1}.</value>
@@ -1169,8 +1169,8 @@
   <data name="Sidecar_created_in_0_seconds" xml:space="preserve">
     <value>Sidecar created in {0} seconds.</value>
   </data>
-  <data name="Average_checksum_speed_0_KiB_sec" xml:space="preserve">
-    <value>Average checksum speed {0:F3} KiB/sec.</value>
+  <data name="Average_checksum_speed_0" xml:space="preserve">
+    <value>Average checksum speed {0}.</value>
   </data>
   <data name="Found_filesystem_0_at_sector_1" xml:space="preserve">
     <value>Found filesystem {0} at sector {1}</value>
@@ -1373,8 +1373,8 @@
   <data name="Dump_Ata_Output_format_does_not_support_ATA_IDENTIFY_" xml:space="preserve">
     <value>Output format does not support ATA IDENTIFY.</value>
   </data>
-  <data name="Reading_cylinder_0_head_1_sector_2_3_MiB_sec" xml:space="preserve">
-    <value>Reading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)</value>
+  <data name="Reading_cylinder_0_head_1_sector_2_3" xml:space="preserve">
+    <value>Reading cylinder {0} head {1} sector {2} ({3})</value>
   </data>
   <data name="Error_reading_cylinder_0_head_1_sector_2" xml:space="preserve">
     <value>Error reading cylinder {0} head {1} sector {2}.</value>
@@ -1662,8 +1662,8 @@
   <data name="Seeking_to_partition_0" xml:space="preserve">
     <value>Seeking to partition {0}</value>
   </data>
-  <data name="Reading_block_0_1_MiB_sec" xml:space="preserve">
-    <value>Reading block {0} ({1:F3} MiB/sec.)</value>
+  <data name="Reading_block_0_1" xml:space="preserve">
+    <value>Reading block {0} ({1})</value>
   </data>
   <data name="Cannot_dump_a_blank_tape" xml:space="preserve">
     <value>Cannot dump a blank tape...</value>

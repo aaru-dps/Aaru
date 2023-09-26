@@ -11,6 +11,8 @@ using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
+using Humanizer;
+using Humanizer.Bytes;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -206,7 +208,7 @@ partial class Dump
                     minSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2_MiB_sec, i, blocks, currentSpeed),
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
                            (long)i, (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);

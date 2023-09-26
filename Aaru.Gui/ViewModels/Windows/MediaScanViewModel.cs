@@ -43,6 +43,8 @@ using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Humanizer;
+using Humanizer.Bytes;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 
@@ -399,9 +401,15 @@ public sealed class MediaScanViewModel : ViewModelBase
             TotalTime = string.Format(Localization.Core.Took_a_total_of_0_seconds_1_processing_commands,
                                       results.TotalTime, results.ProcessingTime);
 
-            AvgSpeed = string.Format(Localization.Core.Average_speed_0_MiB_sec, results.AvgSpeed);
-            MaxSpeed = string.Format(Localization.Core.Fastest_speed_burst_0_MiB_sec, results.MaxSpeed);
-            MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0_MiB_sec, results.MinSpeed);
+            AvgSpeed = string.Format(Localization.Core.Average_speed_0,
+                                     ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));
+
+            MaxSpeed = string.Format(Localization.Core.Fastest_speed_burst_0,
+                                     ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()));
+
+            MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0,
+                                     ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()));
+
             A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A);
             B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B);
             C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C);

@@ -39,6 +39,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Humanizer;
+using Humanizer.Bytes;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -98,8 +100,8 @@ partial class Dump
         totalChkDuration = (end - chkStart).TotalMilliseconds;
         _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0_seconds, (end - chkStart).TotalSeconds);
 
-        _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0_KiB_sec,
-                           blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+        _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
+                           ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));
 
         if(_preSidecar != null)
         {
