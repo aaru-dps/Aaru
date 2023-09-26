@@ -60,8 +60,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using ImageInfo = Aaru.Gui.Views.Panels.ImageInfo;
@@ -480,8 +480,8 @@ public sealed class MainWindowViewModel : ViewModelBase
            !ctx.Partitions.Any()   &&
            !ctx.SeenDevices.Any())
         {
-            MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Warning, UI.There_are_no_statistics).
-                              ShowDialog(_view);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Warning, UI.There_are_no_statistics).
+                              ShowWindowDialogAsync(_view);
 
             return;
         }
@@ -531,7 +531,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         if(inputFilter == null)
         {
-            MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Cannot_open_specified_file, ButtonEnum.Ok,
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Cannot_open_specified_file, ButtonEnum.Ok,
                                                           Icon.Error);
 
             return;
@@ -541,7 +541,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Image_format_not_identified,
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Image_format_not_identified,
                                                               ButtonEnum.Ok, Icon.Error);
 
                 return;
@@ -555,7 +555,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error,
+                    MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                                   string.Format(UI.Error_0_opening_image_format,
                                                                                     opened), ButtonEnum.Ok, Icon.Error);
 
@@ -763,7 +763,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Unable_to_open_image_format,
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Unable_to_open_image_format,
                                                               ButtonEnum.Ok, Icon.Error);
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
@@ -773,7 +773,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
         catch(Exception ex)
         {
-            MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, UI.Exception_reading_file, ButtonEnum.Ok,
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Exception_reading_file, ButtonEnum.Ok,
                                                           Icon.Error);
 
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));

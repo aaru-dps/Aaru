@@ -57,8 +57,8 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using Dump = Aaru.Core.Devices.Dumping.Dump;
@@ -546,8 +546,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 _ = MessageBoxManager.
 
                     // ReSharper restore AssignmentIsFullyDiscarded
-                    GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_metadata_sidecar_file, ButtonEnum.Ok,
-                                                Icon.Error).ShowDialog(_view).Result;
+                    GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_metadata_sidecar_file, ButtonEnum.Ok,
+                                          Icon.Error).ShowWindowDialogAsync(_view).Result;
 
                 ExistingMetadata = false;
             }
@@ -736,8 +736,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
         catch
         {
             await MessageBoxManager.
-                  GetMessageBoxStandardWindow(UI.Title_Error, UI.Incorrect_resume_file_cannot_use_it, ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+                  GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_resume_file_cannot_use_it, ButtonEnum.Ok,
+                                              Icon.Error).ShowWindowDialogAsync(_view);
 
             Resume = false;
 
@@ -750,9 +750,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
             return;
 
         await MessageBoxManager.
-              GetMessageBoxStandardWindow(UI.Title_Warning,
+              GetMessageBoxStandard(UI.Title_Warning,
                                           UI.Media_already_dumped_correctly_please_choose_another_destination,
-                                          ButtonEnum.Ok, Icon.Warning).ShowDialog(_view);
+                                          ButtonEnum.Ok, Icon.Warning).ShowWindowDialogAsync(_view);
 
         Resume = false;
     }
@@ -956,8 +956,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
     {
         ErrorMessage(text);
 
-        await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
-                                ShowDialog(_view);
+        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
+                                ShowWindowDialogAsync(_view);
 
         await WorkFinished();
     });

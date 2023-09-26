@@ -43,8 +43,9 @@ using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+
 //using OxyPlot;
 using ReactiveUI;
 
@@ -345,8 +346,8 @@ public sealed class MediaScanViewModel : ViewModelBase
         {
             case null:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                      GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
+                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -365,8 +366,8 @@ public sealed class MediaScanViewModel : ViewModelBase
         if(dev.Error)
         {
             await MessageBoxManager.
-                  GetMessageBoxStandardWindow(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
-                                              ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                  GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
+                                              ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
             StopVisible     = false;
             StartVisible    = true;
@@ -595,8 +596,8 @@ public sealed class MediaScanViewModel : ViewModelBase
     {
         ProgressText = text;
 
-        await MessageBoxManager.GetMessageBoxStandardWindow(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
-                                ShowDialog(_view);
+        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
+                                ShowWindowDialogAsync(_view);
 
         await WorkFinished();
     });

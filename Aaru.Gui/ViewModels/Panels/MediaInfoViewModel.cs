@@ -45,8 +45,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
 
@@ -415,17 +415,17 @@ public sealed class MediaInfoViewModel : ViewModelBase
         {
             case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow(UI.Title_Error,
+                      GetMessageBoxStandard(UI.Title_Error,
                                                   Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
             case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
                 when _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow(UI.Title_Error,
+                      GetMessageBoxStandard(UI.Title_Error,
                                                   Localization.Core.Dumping_Xbox_discs_require_a_Kreon_drive,
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
         }
@@ -446,9 +446,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDR:
             case CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
-                      GetMessageBoxStandardWindow(UI.Title_Error,
+                      GetMessageBoxStandard(UI.Title_Error,
                                                   Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
 
@@ -456,10 +456,10 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.XGD:
             case CommonTypes.MediaType.XGD2:
             case CommonTypes.MediaType.XGD3:
-                await MessageBoxManager.
-                      GetMessageBoxStandardWindow(UI.Title_Error,
-                                                  Localization.Core.Scanning_Xbox_discs_is_not_yet_supported,
-                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+                await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                              Localization.Core.
+                                                                           Scanning_Xbox_discs_is_not_yet_supported,
+                                                              ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
         }

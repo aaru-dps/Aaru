@@ -42,8 +42,8 @@ using Aaru.Console;
 using Aaru.Localization;
 using Avalonia.Controls;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -153,12 +153,11 @@ public sealed class ConsoleViewModel : ViewModelBase
         }
         catch(Exception exception)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow(UI.Title_Error,
-                                              string.
-                                                  Format(UI.Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
-                                                         exception.Message), ButtonEnum.Ok, Icon.Error).
-                  ShowDialog(_view);
+            await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                          string.
+                                                              Format(UI.Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
+                                                                     exception.Message), ButtonEnum.Ok, Icon.Error).
+                                    ShowWindowDialogAsync(_view);
 
             AaruConsole.ErrorWriteLine("Console", exception.Message);
             AaruConsole.ErrorWriteLine("Console", exception.StackTrace);
