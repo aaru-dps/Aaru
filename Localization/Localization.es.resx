@@ -1,0 +1,92 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Assertion_failed" xml:space="preserve">
+    <value>Error de aserción</value>
+  </data>
+  <data name="CD_Text_Pack_four_CRC_0_expected_1" xml:space="preserve">
+    <value>CRC del paquete 4 de CD-Text es 0x{0:X4} se esperaba 0x{1:X4}</value>
+  </data>
+  <data name="CD_Text_Pack_one_CRC_0_expected_1" xml:space="preserve">
+    <value>CRC del paquete 1 de CD-Text es 0x{0:X4} se esperaba 0x{1:X4}</value>
+  </data>
+  <data name="CD_Text_Pack_three_CRC_0_expected_1" xml:space="preserve">
+    <value>CRC del paquete 3 de CD-Text es 0x{0:X4} se esperaba 0x{1:X4}</value>
+  </data>
+  <data name="CD_Text_Pack_two_CRC_0_expected_1" xml:space="preserve">
+    <value>CRC del paquete 4 de CD-Text es 0x{0:X4} se esperaba 0x{1:X4}</value>
+  </data>
+  <data name="Cyclic_CDTP2_0_Calc_CDTP2_1" xml:space="preserve">
+    <value>CDTP2 cíclico 0x{0:X4}, CDTP2 calculado {0x1:X4}</value>
+  </data>
+  <data name="Cyclic_CDTP3_0_Calc_CDTP3_1" xml:space="preserve">
+    <value>CDTP3 cíclico 0x{0:X4}, CDTP3 calculado {0x1:X4}</value>
+  </data>
+  <data name="Cyclic_CDTP4_0_Calc_CDTP4_1" xml:space="preserve">
+    <value>CDTP4 cíclico 0x{0:X4}, CDTP4 calculado {0x1:X4}</value>
+  </data>
+  <data name="Detected_CD_EG_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete CD+EG en el subcanal</value>
+  </data>
+  <data name="Detected_CD_G_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete CD+G en el subcanal</value>
+  </data>
+  <data name="Detected_CD_MIDI_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete CD+MIDI en el subcanal</value>
+  </data>
+  <data name="Detected_CD_TEXT_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete CD-TEXT en el subcanal</value>
+  </data>
+  <data name="Detected_Line_Graphics_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete de gráficos lineales en el subcanal</value>
+  </data>
+  <data name="Detected_unknown_Pack_type_in_subchannel_mode_0_item_1" xml:space="preserve">
+    <value>Detectado paquete de tipo desconocido en el subcanal: modo {0}, elemento {1}</value>
+  </data>
+  <data name="Detected_User_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete de usuario en el subcanal</value>
+  </data>
+  <data name="Detected_Zero_Pack_in_subchannel" xml:space="preserve">
+    <value>Detectado paquete cero en el subcanal</value>
+  </data>
+  <data name="Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly" xml:space="preserve">
+    <value>Posiciones de borrado determinadas por el polinomio:</value>
+  </data>
+  <data name="ERROR_denominator_equals_zero" xml:space="preserve">
+    <value>ERROR: denominador = 0</value>
+  </data>
+  <data name="Final_error_positions" xml:space="preserve">
+    <value>Posiciones finales de error:</value>
+  </data>
+  <data name="lambda_is_wrong" xml:space="preserve">
+    <value>lambda(x) es INCORRECTO</value>
+  </data>
+  <data name="m_must_be_between_2_and_16_inclusive" xml:space="preserve">
+    <value>m debe estar entre 2 y 16 inclusivos</value>
+  </data>
+  <data name="Not_yet_implemented" xml:space="preserve">
+    <value>Aún no implementado.</value>
+  </data>
+  <data name="Q_subchannel_CRC_0_expected_1" xml:space="preserve">
+    <value>CRC del subcanal Q es 0x{0:X4}, se esperaba 0x{1:X4}</value>
+  </data>
+  <data name="SpamSum_does_not_have_a_binary_representation" xml:space="preserve">
+    <value>SpamSum no posee una representación binaria.</value>
+  </data>
+  <data name="The_input_exceeds_data_types" xml:space="preserve">
+    <value>La entrada excede los tipos de datos</value>
+  </data>
+  <data name="Trying_to_calculate_RS_without_initializing" xml:space="preserve">
+    <value>¡Intentando calcular RS sin inicializar!</value>
+  </data>
+</root>
