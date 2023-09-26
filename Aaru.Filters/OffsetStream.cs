@@ -652,7 +652,7 @@ namespace Aaru.Filters
             {
                 case SeekOrigin.Begin:
                     if(offset + _streamStart > _streamEnd)
-                        throw new IOException(Localization.Cannot_seek_past_stream_end);
+                        throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                     return _baseStream.Seek(offset + _streamStart, SeekOrigin.Begin) - _streamStart;
                 case SeekOrigin.End:
@@ -662,7 +662,7 @@ namespace Aaru.Filters
                     return _baseStream.Seek(offset - (_baseStream.Length - _streamEnd), SeekOrigin.End) - _streamStart;
                 default:
                     if(offset + _baseStream.Position > _streamEnd)
-                        throw new IOException(Localization.Cannot_seek_past_stream_end);
+                        throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                     return _baseStream.Seek(offset, SeekOrigin.Current) - _streamStart;
             }

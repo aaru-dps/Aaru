@@ -343,7 +343,7 @@ public class SplitJoinStream : Stream
         {
             case SeekOrigin.Begin:
                 if(offset >= _streamLength)
-                    throw new IOException(Localization.Cannot_seek_past_stream_end);
+                    throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                 _position = offset;
 
@@ -357,7 +357,7 @@ public class SplitJoinStream : Stream
                 break;
             default:
                 if(_position + offset >= _streamLength)
-                    throw new IOException(Localization.Cannot_seek_past_stream_end);
+                    throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                 _position += offset;
 

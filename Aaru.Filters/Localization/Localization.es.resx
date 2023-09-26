@@ -1,0 +1,80 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppleDouble_Name" xml:space="preserve">
+    <value>AppleDouble</value>
+  </data>
+  <data name="AppleSingle_Name" xml:space="preserve">
+    <value>AppleSingle</value>
+  </data>
+  <data name="Asynchronous_IO_is_not_supported" xml:space="preserve">
+    <value>E/S asíncrona no soportada.</value>
+  </data>
+  <data name="BZip2_Name" xml:space="preserve">
+    <value>BZip2</value>
+  </data>
+  <data name="Cannot_read_past_stream_end" xml:space="preserve">
+    <value>No se puede leer más allá del final de la secuencia.</value>
+  </data>
+  <data name="Cannot_seek_after_stream_end" xml:space="preserve">
+    <value>No se puede posicionar después del final de la secuencia.</value>
+  </data>
+  <data name="Cannot_seek_before_stream_start" xml:space="preserve">
+    <value>No se puede posicionar antes del comienzo de la secuencia.</value>
+  </data>
+  <data name="Cannot_set_position_past_stream_end" xml:space="preserve">
+    <value>No se puede establecer la posición más allá del final de la secuencia.</value>
+  </data>
+  <data name="Cannot_write_past_stream_end" xml:space="preserve">
+    <value>No se puede escribir después del final de la secuencia.</value>
+  </data>
+  <data name="End_cant_be_a_negative_number" xml:space="preserve">
+    <value>El final no puede ser un número negativo.</value>
+  </data>
+  <data name="End_is_after_stream_end" xml:space="preserve">
+    <value>El final está después del final de la secuencia.</value>
+  </data>
+  <data name="Growing_OffsetStream_is_not_supported" xml:space="preserve">
+    <value>No se puede agrandar un OffsetStream.</value>
+  </data>
+  <data name="GZip_Name" xml:space="preserve">
+    <value>GZip</value>
+  </data>
+  <data name="LZip_Name" xml:space="preserve">
+    <value>LZip</value>
+  </data>
+  <data name="MacBinary_Name" xml:space="preserve">
+    <value>MacBinary</value>
+  </data>
+  <data name="Non_readable_streams_are_not_supported" xml:space="preserve">
+    <value>Las secuencias no legíbles no están soportadas.</value>
+  </data>
+  <data name="Non_seekable_streams_are_not_supported" xml:space="preserve">
+    <value>Las secuencias no posicionables no están soportadas.</value>
+  </data>
+  <data name="PcExchange_Name" xml:space="preserve">
+    <value>PCExchange</value>
+  </data>
+  <data name="Start_cant_be_a_negative_number" xml:space="preserve">
+    <value>El comienzo no puede ser un número negativo.</value>
+  </data>
+  <data name="This_stream_is_read_only" xml:space="preserve">
+    <value>Esta secuencia es de sólo lectura.</value>
+  </data>
+  <data name="XZ_Name" xml:space="preserve">
+    <value>XZ</value>
+  </data>
+  <data name="ZZZNoFilter_Name" xml:space="preserve">
+    <value>Sin filtro</value>
+  </data>
+</root>

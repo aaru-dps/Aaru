@@ -63,9 +63,6 @@
   <data name="Cannot_write_past_stream_end" xml:space="preserve">
     <value>Cannot write past stream end.</value>
   </data>
-  <data name="Cannot_seek_past_stream_end" xml:space="preserve">
-    <value>Cannot seek past stream end.</value>
-  </data>
   <data name="Growing_OffsetStream_is_not_supported" xml:space="preserve">
     <value>Growing OffsetStream is not supported.</value>
   </data>
