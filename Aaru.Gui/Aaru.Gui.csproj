@@ -34,6 +34,7 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="11.0.4"/>
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
     <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.1.4" />
     <!-- TODO: Abandoned project need to find replacement

@@ -59,6 +59,7 @@ using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Session = Aaru.Decoders.CD.Session;
 using Spare = Aaru.Decoders.DVD.Spare;
+using Humanizer.Bytes;
 
 namespace Aaru.Commands.Media;
 
@@ -229,43 +230,9 @@ sealed class MediaInfoCommand : Command
 
                 if(scsiInfo.Blocks    != 0 &&
                    scsiInfo.BlockSize != 0)
-                {
-                    ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
-
-                    switch(totalSize)
-                    {
-                        case > 1099511627776:
-                            AaruConsole.
-                                WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_TiB,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d);
-
-                            break;
-                        case > 1073741824:
-                            AaruConsole.
-                                WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d);
-
-                            break;
-                        case > 1048576:
-                            AaruConsole.
-                                WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d);
-
-                            break;
-                        case > 1024:
-                            AaruConsole.
-                                WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d);
-
-                            break;
-                        default:
-                            AaruConsole.
-                                WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize, totalSize);
-
-                            break;
-                    }
-                }
+                    AaruConsole.WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                          scsiInfo.Blocks, scsiInfo.BlockSize,
+                                          ByteSize.FromBytes(scsiInfo.Blocks * scsiInfo.BlockSize).ToString("0.000"));
 
                 break;
             case PeripheralDeviceTypes.SequentialAccess:

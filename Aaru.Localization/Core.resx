@@ -285,24 +285,8 @@
   <data name="Stack_trace_0" xml:space="preserve">
     <value>Stack trace: {0}</value>
   </data>
-  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_TiB" xml:space="preserve">
-    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} TiB)</value>
-    <comment>TiB = tebibyte</comment>
-  </data>
-  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB" xml:space="preserve">
-    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} GiB)</value>
-    <comment>GiB = gibibyte</comment>
-  </data>
-  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB" xml:space="preserve">
-    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} MiB)</value>
-    <comment>MiB = mebibyte</comment>
-  </data>
-  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB" xml:space="preserve">
-    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} KiB)</value>
-    <comment>KiB = kibibyte</comment>
-  </data>
-  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes" xml:space="preserve">
-    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)</value>
+  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2" xml:space="preserve">
+    <value>Media has {0} blocks of {1} bytes/each. (for a total of {2})</value>
   </data>
   <data name="Xbox_DMI" xml:space="preserve">
     <value>Xbox DMI</value>

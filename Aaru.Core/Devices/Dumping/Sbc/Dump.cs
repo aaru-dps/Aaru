@@ -52,6 +52,7 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+using Humanizer.Bytes;
 using DVDDecryption = Aaru.Decryption.DVD.Dump;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
@@ -223,41 +224,9 @@ partial class Dump
         {
             blocks++;
 
-            ulong totalSize = blocks * blockSize;
-
-            switch(totalSize)
-            {
-                case > 1099511627776:
-                    UpdateStatus?.
-                        Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_TiB,
-                                             blocks, blockSize, totalSize / 1099511627776d));
-
-                    break;
-                case > 1073741824:
-                    UpdateStatus?.
-                        Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
-                                             blocks, blockSize, totalSize / 1073741824d));
-
-                    break;
-                case > 1048576:
-                    UpdateStatus?.
-                        Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
-                                             blocks, blockSize, totalSize / 1048576d));
-
-                    break;
-                case > 1024:
-                    UpdateStatus?.
-                        Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
-                                             blocks, blockSize, totalSize / 1024d));
-
-                    break;
-                default:
-                    UpdateStatus?.
-                        Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
-                                             blocks, blockSize, totalSize));
-
-                    break;
-            }
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                               blocks, blockSize,
+                                               ByteSize.FromBytes(blocks * blockSize).ToString("0.000")));
         }
 
         // Check how many blocks to read, if error show and return

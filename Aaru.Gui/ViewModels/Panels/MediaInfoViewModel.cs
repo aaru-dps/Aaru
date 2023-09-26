@@ -45,6 +45,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Humanizer.Bytes;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -104,24 +105,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         if(scsiInfo.Blocks    != 0 &&
            scsiInfo.BlockSize != 0)
-        {
-            ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
-
-            MediaSize = totalSize switch
-            {
-                > 1099511627776 =>
-                    string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_TiB,
-                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d),
-                > 1073741824 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
-                                              scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d),
-                > 1048576 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
-                                           scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d),
-                > 1024 => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
-                                        scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d),
-                _ => string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
-                                   scsiInfo.Blocks, scsiInfo.BlockSize, totalSize)
-            };
-        }
+            MediaSize = string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                      scsiInfo.Blocks, scsiInfo.BlockSize,
+                                      ByteSize.FromBytes(scsiInfo.Blocks * scsiInfo.BlockSize).ToString("0.000"));
 
         if(scsiInfo.MediaSerialNumber != null)
         {

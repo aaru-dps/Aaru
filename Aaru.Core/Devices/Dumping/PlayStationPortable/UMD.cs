@@ -45,6 +45,7 @@ using Aaru.Core.Graphics;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Humanizer.Bytes;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -109,35 +110,9 @@ public partial class Dump
         ulong  blocks          = umdSizeInBytes / blockSize;
         string mediaPartNumber = Encoding.ASCII.GetString(readBuffer, 0, 11).Trim();
 
-        ulong totalSize = blocks * blockSize;
-
-        switch(totalSize)
-        {
-            case > 1073741824:
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_GiB,
-                                         blocks, blockSize, totalSize / 1073741824d));
-
-                break;
-            case > 1048576:
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_MiB,
-                                         blocks, blockSize, totalSize / 1048576d));
-
-                break;
-            case > 1024:
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_KiB,
-                                         blocks, blockSize, totalSize / 1024d));
-
-                break;
-            default:
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2_bytes,
-                                         blocks, blockSize, totalSize));
-
-                break;
-        }
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                           blocks, blockSize,
+                                           ByteSize.FromBytes(blocks * blockSize).ToString("0.000")));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes, blocks,
                                            blocks * blockSize));
