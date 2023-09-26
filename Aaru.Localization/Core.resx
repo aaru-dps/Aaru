@@ -517,7 +517,7 @@
     <value>Image without headers is {0} bytes long</value>
   </data>
   <data name="Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc" xml:space="preserve">
-    <value>Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes)</value>
+    <value>Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2})</value>
   </data>
   <data name="Contains_a_media_of_type_0_and_XML_type_1" xml:space="preserve">
     <value>Contains a media of type {0} and XML type {1}</value>

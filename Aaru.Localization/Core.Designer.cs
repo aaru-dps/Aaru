@@ -1338,7 +1338,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes).
+        ///   Looks up a localized string similar to Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2}).
         /// </summary>
         public static string Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc {
             get {

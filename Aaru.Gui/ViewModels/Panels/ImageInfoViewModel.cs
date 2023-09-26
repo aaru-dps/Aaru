@@ -54,6 +54,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Humanizer.Bytes;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -126,7 +127,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         SectorsText =
             string.Format(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
                           imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
-                          imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
+                          ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize));
 
         MediaTypeText = string.Format(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1,
                                       imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
