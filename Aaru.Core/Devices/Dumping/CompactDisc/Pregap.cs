@@ -89,7 +89,7 @@ partial class Dump
 
             PulseProgress?.Invoke(string.Format(Localization.Core.Trying_to_read_first_track_pregap_sector_0_1,
                                                 firstTrackPregapBlock,
-                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
+                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
             // ReSharper disable IntVariableOverflowInUncheckedContext
             sense = _dev.ReadCd(out cmdBuf, out _, (uint)firstTrackPregapBlock, blockSize, 1, MmcSectorTypes.AllTypes,

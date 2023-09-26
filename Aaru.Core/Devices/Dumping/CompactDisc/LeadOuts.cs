@@ -122,7 +122,7 @@ partial class Dump
                     minSpeed = currentSpeed;
 
                 PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
-                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {
@@ -294,7 +294,7 @@ partial class Dump
                     minSpeed = currentSpeed;
 
                 PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
-                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {

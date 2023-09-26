@@ -211,13 +211,14 @@ sealed class MediaScanCommand : Command
                               results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
                               results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
-        AaruConsole.WriteLine(Localization.Core.Average_speed_0, ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));
+        AaruConsole.WriteLine(Localization.Core.Average_speed_0,
+                              ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()).Humanize());
 
         AaruConsole.WriteLine(Localization.Core.Fastest_speed_burst_0,
-                              ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()));
+                              ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()).Humanize());
 
         AaruConsole.WriteLine(Localization.Core.Slowest_speed_burst_0,
-                              ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()));
+                              ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()).Humanize());
 
         AaruConsole.WriteLine();
         AaruConsole.WriteLine($"[bold]{Localization.Core.Summary}:[/]");

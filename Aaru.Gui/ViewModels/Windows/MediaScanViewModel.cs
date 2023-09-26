@@ -48,9 +48,9 @@ using Humanizer.Bytes;
 using Humanizer.Localisation;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
+using ReactiveUI;
 
 //using OxyPlot;
-using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
@@ -404,13 +404,13 @@ public sealed class MediaScanViewModel : ViewModelBase
                                       results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
             AvgSpeed = string.Format(Localization.Core.Average_speed_0,
-                                     ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()));
+                                     ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()).Humanize());
 
             MaxSpeed = string.Format(Localization.Core.Fastest_speed_burst_0,
-                                     ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()));
+                                     ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()).Humanize());
 
             MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0,
-                                     ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()));
+                                     ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()).Humanize());
 
             A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A);
             B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B);

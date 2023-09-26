@@ -101,7 +101,7 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);

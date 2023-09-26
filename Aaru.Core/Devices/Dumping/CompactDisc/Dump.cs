@@ -1474,14 +1474,15 @@ sealed partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds())));
+                                                    Per(totalDuration.Milliseconds()).Humanize()));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0, ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond)));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
+                                               ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
 
         if(minSpeed is > 0 and < double.MaxValue)
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
-                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond)));
+                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
 

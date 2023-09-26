@@ -326,7 +326,7 @@ public partial class Dump
                             minSpeed = currentSpeed;
 
                         UpdateProgress?.
-                            Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                            Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                                    (long)i, (long)blocks);
 
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
@@ -397,11 +397,12 @@ public partial class Dump
                                                      (end - start).Humanize(minUnit: TimeUnit.Second)));
 
                     _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalDuration.Milliseconds()));
+                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalDuration.Milliseconds()).
+                                                Humanize());
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
                                                      ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                              Per(imageWriteDuration.Seconds())));
+                                                              Per(imageWriteDuration.Seconds()).Humanize()));
 
                     #region Trimming
                     if(_resume.BadBlocks.Count > 0 &&
@@ -592,7 +593,9 @@ public partial class Dump
 
                                 PulseProgress?.
                                     Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3, cy, hd,
-                                                         sc, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)));
+                                                         sc,
+                                                         ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).
+                                                                  Humanize()));
 
                                 bool error =
                                     ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out recoveredError);
@@ -668,10 +671,12 @@ public partial class Dump
                                                      (end - start).Humanize(minUnit: TimeUnit.Second)));
 
                     _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalDuration.Milliseconds()));
+                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalDuration.Milliseconds()).
+                                                Humanize());
 
                     _dumpLog.WriteLine(Localization.Core.Average_write_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(imageWriteDuration.Seconds()));
+                                       ByteSize.FromBytes(blockSize * (blocks + 1)).Per(imageWriteDuration.Seconds()).
+                                                Humanize());
                 }
 
                 foreach(ulong bad in _resume.BadBlocks)
@@ -866,7 +871,8 @@ public partial class Dump
                                            (chkEnd - chkStart).Humanize(minUnit: TimeUnit.Second));
 
                         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                                    Per(totalChkDuration.Milliseconds()).Humanize());
 
                         List<(ulong start, string type)> filesystems = new();
 
@@ -940,15 +946,15 @@ public partial class Dump
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                                    ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                            Per(totalDuration.Milliseconds())));
+                                                            Per(totalDuration.Milliseconds()).Humanize()));
 
                 if(maxSpeed > 0)
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
-                                                       ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond)));
+                                                       ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
 
                 if(minSpeed is > 0 and < double.MaxValue)
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
-                                                       ByteSize.FromMegabytes(minSpeed).Per(_oneSecond)));
+                                                       ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read,
                                                    _resume.BadBlocks.Count));

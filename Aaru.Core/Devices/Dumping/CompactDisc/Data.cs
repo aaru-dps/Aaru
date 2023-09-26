@@ -273,7 +273,7 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
 
             if(crossingLeadOut       &&
@@ -425,7 +425,7 @@ partial class Dump
                 for(uint r = 0; r < blocksToRead; r++)
                 {
                     UpdateProgress?.
-                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                                (long)i + r, (long)blocks);
 
                     if(_supportsPlextorD8)
@@ -673,10 +673,10 @@ partial class Dump
                     }
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
-                        _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                        out List<ulong> newPregapSectors);
+                                                                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.Sequence, ref mcn,
+                                                                             tracks, subchannelExtents, _fixSubchannelPosition, outputFormat as IWritableOpticalImage,
+                                                                             _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                                                                             out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
                     if(indexesChanged)

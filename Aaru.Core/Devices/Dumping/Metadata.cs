@@ -102,7 +102,8 @@ partial class Dump
         _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0, (end - chkStart).Humanize(minUnit: TimeUnit.Second));
 
         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                           ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()));
+                           ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()).
+                                    Humanize());
 
         if(_preSidecar != null)
         {

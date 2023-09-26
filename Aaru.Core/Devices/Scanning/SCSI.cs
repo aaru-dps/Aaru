@@ -364,7 +364,7 @@ public sealed partial class MediaScan
                     results.MinSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                            (long)i, (long)results.Blocks);
 
                 if(readcd)
@@ -521,7 +521,7 @@ public sealed partial class MediaScan
                     results.MinSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                            (long)i, (long)results.Blocks);
 
                 sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);

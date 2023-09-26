@@ -649,7 +649,7 @@ partial class Dump
                     minSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                            (long)i, (long)totalSize);
 
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize, 0,
@@ -781,7 +781,7 @@ partial class Dump
                 blocksToRead = (uint)(middleZone - 1 - middle);
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, middle + currentSector, totalSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, middle + currentSector, totalSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)(middle + currentSector), (long)totalSize);
 
             mhddLog.Write(middle + currentSector, cmdDuration, blocksToRead);
@@ -850,7 +850,7 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, currentSector, totalSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, currentSector, totalSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)currentSector, (long)totalSize);
 
             sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, blockSize, 0,
@@ -1332,15 +1332,15 @@ partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds())));
+                                                    Per(totalDuration.Milliseconds()).Humanize()));
 
         if(maxSpeed > 0)
             UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
-                                               ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond)));
+                                               ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
 
         if(minSpeed is > 0 and < double.MaxValue)
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
-                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond)));
+                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");

@@ -321,7 +321,7 @@ public partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, i * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, i * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i * 512, romSize);
 
             sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(startSector + i),
@@ -373,7 +373,7 @@ public partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, romSectors * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond)),
+                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, romSectors * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)romSectors * 512, romSize);
 
             sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, romSectors, 512, 0, 1,
@@ -417,10 +417,12 @@ public partial class Dump
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0, (end - start).Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
-                                         ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds())));
+                                         ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds()).
+                                                  Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
-                                         ByteSize.FromBytes(512 * (romSectors + 1)).Per(imageWriteDuration.Seconds())));
+                                         ByteSize.FromBytes(512 * (romSectors + 1)).Per(imageWriteDuration.Seconds()).
+                                                  Humanize()));
 
         var metadata = new CommonTypes.Structs.ImageInfo
         {
@@ -470,15 +472,16 @@ public partial class Dump
                                  (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(512 * (romSectors + 1)).
-                                                    Per(totalDuration.Milliseconds())));
+                                           ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds()).
+                                                    Humanize()));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0, ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond)));
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
+                                               ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
 
         if(minSpeed is > 0 and < double.MaxValue)
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
-                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond)));
+                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
 
         UpdateStatus?.Invoke("");
 
