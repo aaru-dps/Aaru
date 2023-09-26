@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -46,7 +47,7 @@ sealed class IbgLog
     readonly string        _ibgMediaType;
     readonly StringBuilder _ibgSb;
     readonly string        _logFile;
-    DateTime               _ibgDatePoint;
+    readonly Stopwatch     _ibgStopwatch;
     ulong                  _ibgIntSector;
     double                 _ibgIntSpeed;
     double                 _ibgMaxSpeed;
@@ -65,13 +66,15 @@ sealed class IbgLog
 
         _logFile      = outputFile;
         _ibgSb        = new StringBuilder();
-        _ibgDatePoint = DateTime.Now;
+        _ibgStopwatch = new Stopwatch();
         _ibgCulture   = new CultureInfo("en-US");
         _ibgStartSet  = false;
         _ibgMaxSpeed  = 0;
         _ibgIntSpeed  = 0;
         _ibgSnaps     = 0;
         _ibgIntSector = 0;
+
+        _ibgStopwatch.Start();
 
         switch(currentProfile)
         {
@@ -240,7 +243,7 @@ sealed class IbgLog
             return;
 
         _ibgIntSpeed   += currentSpeed;
-        _ibgSampleRate += (int)Math.Floor((DateTime.Now - _ibgDatePoint).TotalMilliseconds);
+        _ibgSampleRate += (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
         _ibgSnaps++;
 
         if(_ibgSampleRate < 100)
@@ -259,7 +262,7 @@ sealed class IbgLog
         if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed)
             _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
 
-        _ibgDatePoint  = DateTime.Now;
+        _ibgStopwatch.Restart();
         _ibgIntSpeed   = 0;
         _ibgSampleRate = 0;
         _ibgSnaps      = 0;
@@ -279,6 +282,8 @@ sealed class IbgLog
     {
         if(_logFile == null)
             return;
+
+        _ibgStopwatch.Stop();
 
         var    ibgFs     = new FileStream(_logFile, FileMode.Create);
         var    ibgHeader = new StringBuilder();

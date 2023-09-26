@@ -30,9 +30,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
@@ -421,11 +421,10 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     Progress2Indeterminate = true;
                 });
 
-                DateTime startCheck      = DateTime.UtcNow;
+                var chkStopwatch = new Stopwatch();
+                chkStopwatch.Start();
                 bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
-                DateTime endCheck        = DateTime.UtcNow;
-
-                TimeSpan checkTime = endCheck - startCheck;
+                chkStopwatch.Stop();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -440,16 +439,15 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                 });
 
                 AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0,
-                                             checkTime.Humanize(minUnit: TimeUnit.Second));
+                                             chkStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
             }
         }
 
         if(VerifySectorsChecked)
         {
-            DateTime    startCheck  = DateTime.Now;
-            DateTime    endCheck    = startCheck;
-            List<ulong> failingLbas = new();
-            List<ulong> unknownLbas = new();
+            var         chkStopwatch = new Stopwatch();
+            List<ulong> failingLbas  = new();
+            List<ulong> unknownLbas  = new();
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -463,7 +461,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
             {
                 ulong currentSectorAll = 0;
 
-                startCheck = DateTime.UtcNow;
+                chkStopwatch.Restart();
 
                 foreach(Track currentTrack in inputOptical.Tracks)
                 {
@@ -531,14 +529,14 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     }
                 }
 
-                endCheck = DateTime.UtcNow;
+                chkStopwatch.Stop();
             }
             else if(verifiableSectorsImage is not null)
             {
                 ulong remainingSectors = _inputFormat.Info.Sectors;
                 ulong currentSector    = 0;
 
-                startCheck = DateTime.UtcNow;
+                chkStopwatch.Restart();
 
                 while(remainingSectors > 0)
                 {
@@ -588,13 +586,11 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     }
                 }
 
-                endCheck = DateTime.UtcNow;
+                chkStopwatch.Stop();
             }
 
-            TimeSpan checkTime = endCheck - startCheck;
-
             AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,
-                                         checkTime.Humanize(minUnit: TimeUnit.Second));
+                                         chkStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {

@@ -30,10 +30,10 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.Diagnostics;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -188,21 +188,19 @@ sealed class VerifyCommand : Command
             return (int)ErrorNumber.NotVerifiable;
         }
 
-        TimeSpan checkTime;
+        var chkWatch = new Stopwatch();
 
         if(verifyDisc && verifiableImage != null)
         {
             bool? discCheckStatus = null;
-            checkTime = new TimeSpan();
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
                 ctx.AddTask(UI.Verifying_image_checksums).IsIndeterminate();
 
-                DateTime startCheck = DateTime.UtcNow;
+                chkWatch.Start();
                 discCheckStatus = verifiableImage.VerifyMediaImage();
-                DateTime endCheck = DateTime.UtcNow;
-                checkTime = endCheck - startCheck;
+                chkWatch.Stop();
             });
 
             switch(discCheckStatus)
@@ -222,7 +220,9 @@ sealed class VerifyCommand : Command
             }
 
             correctImage = discCheckStatus;
-            AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0, checkTime.Humanize(minUnit: TimeUnit.Second));
+
+            AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0,
+                                         chkWatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
         }
 
         if(!verifySectors)
@@ -233,8 +233,7 @@ sealed class VerifyCommand : Command
                 true  => (int)ErrorNumber.CorrectImageSectorsNotVerified
             };
 
-        DateTime    startCheck  = DateTime.Now;
-        DateTime    endCheck    = startCheck;
+        var         stopwatch   = new Stopwatch();
         List<ulong> failingLbas = new();
         List<ulong> unknownLbas = new();
         IMediaGraph mediaGraph  = null;
@@ -255,7 +254,7 @@ sealed class VerifyCommand : Command
             List<Track> inputTracks      = opticalMediaImage.Tracks;
             ulong       currentSectorAll = 0;
 
-            startCheck = DateTime.UtcNow;
+            stopwatch.Start();
 
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
@@ -340,7 +339,7 @@ sealed class VerifyCommand : Command
                                 discTask.Increment(1);
                             }
 
-                            endCheck = DateTime.UtcNow;
+                            stopwatch.Stop();
                         });
         }
         else if(verifiableSectorsImage != null)
@@ -355,7 +354,7 @@ sealed class VerifyCommand : Command
                             ProgressTask diskTask = ctx.AddTask(UI.Checking_sectors);
                             diskTask.MaxValue = inputFormat.Info.Sectors;
 
-                            startCheck = DateTime.UtcNow;
+                            stopwatch.Restart();
 
                             while(remainingSectors > 0)
                             {
@@ -408,11 +407,9 @@ sealed class VerifyCommand : Command
                                 }
                             }
 
-                            endCheck = DateTime.UtcNow;
+                            stopwatch.Stop();
                         });
         }
-
-        checkTime = endCheck - startCheck;
 
         if(unknownLbas.Count > 0)
             AaruConsole.WriteLine(UI.There_is_at_least_one_sector_that_does_not_contain_a_checksum);
@@ -424,7 +421,8 @@ sealed class VerifyCommand : Command
            failingLbas.Count == 0)
             AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
 
-        AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0, checkTime.Humanize(minUnit: TimeUnit.Second));
+        AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,
+                                     stopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         if(verbose)
         {

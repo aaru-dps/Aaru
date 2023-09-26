@@ -65,7 +65,6 @@ partial class Dump
         bool     sense;                           // Sense indicator
         byte[]   cmdBuf;                          // Data buffer
         double   cmdDuration;                     // Command execution time
-        DateTime timeSpeedStart;                  // Time of start for speed calculation
         ulong    sectorSpeedStart            = 0; // Used to calculate correct speed
         bool     gotFirstTrackPregap         = false;
         int      firstTrackPregapSectorsGood = 0;
@@ -74,7 +73,7 @@ partial class Dump
         _dumpLog.WriteLine(Localization.Core.Reading_first_track_pregap);
         UpdateStatus?.Invoke(Localization.Core.Reading_first_track_pregap);
         InitProgress?.Invoke();
-        timeSpeedStart = DateTime.UtcNow;
+        _speedStopwatch.Restart();
 
         for(int firstTrackPregapBlock = -150; firstTrackPregapBlock < 0 && _resume.NextBlock == 0;
             firstTrackPregapBlock++)
@@ -115,15 +114,17 @@ partial class Dump
 
             sectorSpeedStart++;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
+
+        _speedStopwatch.Stop();
 
         if(firstTrackPregapSectorsGood > 0)
             mediaTags.Add(MediaTagType.CD_FirstTrackPregap, firstTrackPregapMs.ToArray());

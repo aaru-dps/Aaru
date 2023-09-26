@@ -292,10 +292,10 @@ public partial class Dump
         if(_createGraph)
             _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, romSectors);
 
-        DateTime start              = DateTime.UtcNow;
+        _dumpStopwatch.Restart();
         double   imageWriteDuration = 0;
 
-        DateTime timeSpeedStart   = DateTime.UtcNow;
+        _speedStopwatch.Restart();
         ulong    sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
@@ -329,12 +329,13 @@ public partial class Dump
 
             totalDuration += cmdDuration;
 
+            _writeStopwatch.Restart();
+
             if(!sense &&
                !_dev.Error)
             {
-                DateTime writeStart = DateTime.Now;
                 outputBai.WriteBytes(readBuffer, 0, readBuffer.Length, out _);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 _mediaGraph.PaintSectorsGood(i, blocksToRead);
             }
             else
@@ -349,17 +350,21 @@ public partial class Dump
                 i += _skip - blocksToRead;
             }
 
+            _writeStopwatch.Stop();
+
             sectorSpeedStart += blocksToRead;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = sectorSpeedStart * 512 / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
+
+        _speedStopwatch.Stop();
 
         if(romRemaining > 0 &&
            !_aborted)
@@ -384,9 +389,10 @@ public partial class Dump
             if(!sense &&
                !_dev.Error)
             {
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputBai.WriteBytes(readBuffer, 0, (int)romRemaining, out _);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+                _writeStopwatch.Stop();
             }
             else
             {
@@ -401,10 +407,10 @@ public partial class Dump
             }
         }
 
-        DateTime end = DateTime.UtcNow;
         EndProgress?.Invoke();
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0, (end - start).Humanize(minUnit: TimeUnit.Second)));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(512 * (romSectors + 1)).
@@ -414,7 +420,8 @@ public partial class Dump
                                            ByteSize.FromBytes(512 * (romSectors + 1)).
                                                     Per(imageWriteDuration.Seconds())));
 
-        _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0, (end - start).Humanize(minUnit: TimeUnit.Second)));
+        _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
+                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds()).
@@ -442,10 +449,12 @@ public partial class Dump
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
-        DateTime closeStart = DateTime.Now;
+        _imageCloseStopwatch.Restart();
         outputBai.Close();
-        DateTime closeEnd = DateTime.Now;
-        _dumpLog.WriteLine(Localization.Core.Closed_in_0, (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second));
+        _imageCloseStopwatch.Stop();
+
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0,
+                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         if(_aborted)
         {
@@ -465,11 +474,11 @@ public partial class Dump
 
         UpdateStatus?.
             Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 (end - start).Humanize(minUnit: TimeUnit.Second),
+                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
                                  totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds()).

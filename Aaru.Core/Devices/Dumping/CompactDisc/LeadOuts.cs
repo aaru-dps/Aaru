@@ -151,7 +151,7 @@ partial class Dump
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -184,7 +184,7 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 }
                 else
                 {
@@ -195,7 +195,7 @@ partial class Dump
                         return; // TODO: Return more cleanly
 
                     // Write empty data
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -207,13 +207,14 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                     ibgLog.Write(i, 0);
                 }
 
+                _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
                 if(!double.IsInfinity(newSpeed))
@@ -323,7 +324,7 @@ partial class Dump
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -356,7 +357,7 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 }
                 else
                 {
@@ -367,7 +368,7 @@ partial class Dump
                         return; // TODO: Return more cleanly
 
                     // Write empty data
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -380,13 +381,14 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);
                 }
 
+                _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
                 if(!double.IsInfinity(newSpeed))

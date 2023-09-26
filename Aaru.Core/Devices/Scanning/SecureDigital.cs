@@ -196,8 +196,6 @@ public sealed partial class MediaScan
         results.E       = 0; // >=150ms, <500ms
         results.F       = 0; // >=500ms
         results.Errored = 0;
-        DateTime start;
-        DateTime end;
         results.ProcessingTime = 0;
         double currentSpeed = 0;
         results.MaxSpeed          = double.MinValue;
@@ -223,8 +221,8 @@ public sealed partial class MediaScan
         var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
         var ibgLog  = new IbgLog(_ibgLogPath, sdProfile);
 
-        start = DateTime.UtcNow;
-        DateTime timeSpeedStart   = DateTime.UtcNow;
+        _scanStopwatch.Restart();
+        _speedStopwatch.Restart();
         ulong    sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
@@ -311,7 +309,7 @@ public sealed partial class MediaScan
 
             sectorSpeedStart += blocksToRead;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
@@ -319,14 +317,15 @@ public sealed partial class MediaScan
             currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
             ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
 
-        end = DateTime.UtcNow;
+        _speedStopwatch.Stop();
+        _scanStopwatch.Stop();
         EndProgress?.Invoke();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+        ibgLog.Close(_dev, results.Blocks, blockSize, _scanStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000), _devicePath);
 
         InitProgress?.Invoke();
@@ -357,7 +356,7 @@ public sealed partial class MediaScan
         EndProgress?.Invoke();
 
         results.ProcessingTime /= 1000;
-        results.TotalTime      =  (end - start).TotalSeconds;
+        results.TotalTime      =  _scanStopwatch.Elapsed.TotalSeconds;
         results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
         results.SeekTimes      =  seekTimes;
 

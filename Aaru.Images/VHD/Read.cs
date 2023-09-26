@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -475,7 +476,8 @@ public sealed partial class Vhd
                 return ErrorNumber.InvalidArgument;
             }
 
-            DateTime startTime = DateTime.UtcNow;
+            var batStopwatch = new Stopwatch();
+            batStopwatch.Start();
 
             _blockAllocationTable = new uint[_thisDynamic.MaxTableEntries];
 
@@ -490,10 +492,10 @@ public sealed partial class Vhd
             for(int i = 0; i < _blockAllocationTable.Length; i++)
                 _blockAllocationTable[i] = Swapping.Swap(_blockAllocationTable[i]);
 
-            DateTime endTime = DateTime.UtcNow;
+            batStopwatch.Stop();
 
             AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Filling_the_BAT_took_0_seconds,
-                                       (endTime - startTime).TotalSeconds);
+                                       batStopwatch.Elapsed.TotalSeconds);
 
             _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize / 512
 

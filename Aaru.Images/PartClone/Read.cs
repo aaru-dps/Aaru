@@ -30,8 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
@@ -90,7 +90,8 @@ public sealed partial class PartClone
         AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", _dataOff);
 
         AaruConsole.DebugWriteLine("PartClone plugin", Localization.Filling_extents);
-        DateTime start = DateTime.Now;
+        var extentFillStopwatch = new Stopwatch();
+        extentFillStopwatch.Start();
         _extents    = new ExtentsULong();
         _extentsOff = new Dictionary<ulong, ulong>();
         bool  current     = _byteMap[0] > 0;
@@ -120,10 +121,10 @@ public sealed partial class PartClone
             current = next;
         }
 
-        DateTime end = DateTime.Now;
+        extentFillStopwatch.Stop();
 
         AaruConsole.DebugWriteLine("PartClone plugin", Localization.Took_0_seconds_to_fill_extents,
-                                   (end - start).TotalSeconds);
+                                   extentFillStopwatch.Elapsed.TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 

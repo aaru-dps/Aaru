@@ -101,7 +101,6 @@ partial class Dump
                     Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
         ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
-        DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
         uint       blocksToRead;                       // How many sectors to read at once
         bool       sense       = true;                 // Sense indicator
         byte[]     cmdBuf      = null;                 // Data buffer
@@ -129,6 +128,8 @@ partial class Dump
 
         for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
         {
+            _speedStopwatch.Restart();
+
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -422,6 +423,8 @@ partial class Dump
                !nextData &&
                sense)
             {
+                _speedStopwatch.Restart();
+
                 for(uint r = 0; r < blocksToRead; r++)
                 {
                     UpdateProgress?.
@@ -481,7 +484,7 @@ partial class Dump
                         mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
-                        DateTime writeStart = DateTime.Now;
+                        _writeStopwatch.Restart();
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
@@ -559,14 +562,14 @@ partial class Dump
 
                         _mediaGraph?.PaintSectorGood(i + r);
 
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                     }
                     else
                     {
                         _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf);
 
                         // Write empty data
-                        DateTime writeStart = DateTime.Now;
+                        _writeStopwatch.Restart();
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
@@ -589,7 +592,7 @@ partial class Dump
                             }
                         }
 
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                         _mediaGraph?.PaintSectorBad(i + r);
 
@@ -605,18 +608,20 @@ partial class Dump
                         newTrim = true;
                     }
 
+                    _writeStopwatch.Stop();
+
                     sectorSpeedStart += r;
 
                     _resume.NextBlock = i + r;
 
-                    elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
                     if(elapsed <= 0)
                         continue;
 
                     currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
+                    _speedStopwatch.Restart();
                 }
 
                 continue;
@@ -641,7 +646,7 @@ partial class Dump
                 mhddLog.Write(i, cmdDuration, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
@@ -722,7 +727,7 @@ partial class Dump
 
                 _mediaGraph?.PaintSectorsGood(i, blocksToRead);
 
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
             }
             else
             {
@@ -747,7 +752,7 @@ partial class Dump
                     _skip = (uint)(blocks - i);
 
                 // Write empty data
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
@@ -770,7 +775,7 @@ partial class Dump
                     }
                 }
 
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                 for(ulong b = i; b < i + _skip; b++)
                     _resume.BadBlocks.Add(b);
@@ -784,20 +789,23 @@ partial class Dump
                 newTrim =  true;
             }
 
+            _writeStopwatch.Stop();
+
             sectorSpeedStart += blocksToRead;
 
             _resume.NextBlock = i + blocksToRead;
 
-            elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
 
+        _speedStopwatch.Stop();
         EndProgress?.Invoke();
 
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();

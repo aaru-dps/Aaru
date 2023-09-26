@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.Decoders.ATA;
@@ -88,13 +89,14 @@ partial class Device
 
         Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         bool hasError = !Extern.DeviceIoControlScsi(_fileHandle, WindowsIoctl.IoctlScsiPassThroughDirect, ref sptdSb,
                                                     (uint)Marshal.SizeOf(sptdSb), ref sptdSb,
                                                     (uint)Marshal.SizeOf(sptdSb), ref k, IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(hasError)
             error = Marshal.GetLastWin32Error();
@@ -106,7 +108,7 @@ partial class Device
         senseBuffer = new byte[64];
         Array.Copy(sptdSb.SenseBuf, senseBuffer, 32);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(sptdSb.sptd.DataBuffer);
 
@@ -183,20 +185,21 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
             error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.CylinderHigh = aptd.CurrentTaskFile.CylinderHigh;
         errorRegisters.CylinderLow  = aptd.CurrentTaskFile.CylinderLow;
@@ -283,20 +286,21 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
             error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.LbaHigh     = aptd.CurrentTaskFile.CylinderHigh;
         errorRegisters.LbaMid      = aptd.CurrentTaskFile.CylinderLow;
@@ -392,20 +396,21 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
                                            (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
             error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.SectorCount = (ushort)((aptd.PreviousTaskFile.SectorCount << 8) +
                                               aptd.CurrentTaskFile.SectorCount);
@@ -447,57 +452,56 @@ partial class Device
                                        uint argument, uint blockSize, uint blocks, ref byte[] buffer,
                                        out uint[] response, out double duration, out bool sense, uint timeout = 15)
     {
-        DateTime start;
-        DateTime end;
+        var cmdStopwatch = new Stopwatch();
 
         switch(command)
         {
             case MmcCommands.SendCid when _cachedCid != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCid.Length];
                 Array.Copy(_cachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case MmcCommands.SendCsd when _cachedCid != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCsd.Length];
                 Array.Copy(_cachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedScr.Length];
                 Array.Copy(_cachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
             case MmcCommands.SendOpCond when _cachedOcr                                    != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedOcr.Length];
                 Array.Copy(_cachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
@@ -559,12 +563,12 @@ partial class Device
         Marshal.FreeHGlobal(hBuf);
 
         int error = 0;
-        start = DateTime.Now;
+        cmdStopwatch.Restart();
 
         sense = !Extern.DeviceIoControl(_fileHandle, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
                                         (uint)commandB.Length, commandB, (uint)commandB.Length, out _, IntPtr.Zero);
 
-        end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
             error = Marshal.GetLastWin32Error();
@@ -573,7 +577,7 @@ partial class Device
         Buffer.BlockCopy(commandB, commandB.Length - buffer.Length, buffer, 0, buffer.Length);
 
         response = new uint[4];
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         return error;
     }
@@ -644,15 +648,17 @@ partial class Device
     {
         buffer = new byte[length];
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         bool sense = !Extern.SetFilePointerEx(_fileHandle, offset, out _, MoveMethod.Begin);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
         {
-            duration = (end - start).TotalMilliseconds;
+            cmdStopwatch.Stop();
+            duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
             LastError = Marshal.GetLastWin32Error();
             Error     = true;
@@ -662,8 +668,8 @@ partial class Device
 
         sense = !Extern.ReadFile(_fileHandle, buffer, length, out _, IntPtr.Zero);
 
-        end      = DateTime.Now;
-        duration = (end - start).TotalMilliseconds;
+        cmdStopwatch.Stop();
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         if(sense)
         {

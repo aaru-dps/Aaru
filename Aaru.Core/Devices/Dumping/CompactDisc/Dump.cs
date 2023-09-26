@@ -75,9 +75,7 @@ sealed partial class Dump
         DumpHardware             currentTry   = null; // Current dump hardware try
         double                   currentSpeed = 0; // Current read speed
         int?                     discOffset   = null; // Disc write offset
-        DateTime                 dumpStart    = DateTime.UtcNow; // Time of dump start
-        DateTime                 end; // Time of operation end
-        ExtentsULong             extents = null; // Extents
+        ExtentsULong             extents      = null; // Extents
         bool                     hiddenData; // Hidden track is data
         IbgLog                   ibgLog; // IMGBurn log
         double                   imageWriteDuration = 0; // Duration of image write
@@ -99,7 +97,6 @@ sealed partial class Dump
         int                      sectorsForOffset = 0; // Sectors needed to fix offset
         bool                     sense            = true; // Sense indicator
         int                      sessions; // Number of sessions in disc
-        DateTime                 start; // Start of operation
         SubchannelLog            subLog              = null; // Subchannel log
         uint                     subSize             = 0; // Subchannel size in bytes
         TrackSubchannelType      subType             = TrackSubchannelType.None; // Track subchannel type
@@ -1167,7 +1164,7 @@ sealed partial class Dump
         }
 
         // Start reading
-        start = DateTime.UtcNow;
+        _dumpStopwatch.Restart();
 
         if(dskType == MediaType.CDIREADY || cdiWithHiddenTrack1)
         {
@@ -1289,14 +1286,14 @@ sealed partial class Dump
                        smallestPregapLbaPerTrack);
         */
 
-        end = DateTime.UtcNow;
+        _dumpStopwatch.Stop();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+        ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
-                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -1307,7 +1304,7 @@ sealed partial class Dump
                                                     Per(imageWriteDuration.Seconds())));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
-                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -1439,12 +1436,12 @@ sealed partial class Dump
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
-        DateTime closeStart = DateTime.Now;
+        _imageCloseStopwatch.Restart();
         outputOptical.Close();
-        DateTime closeEnd = DateTime.Now;
+        _imageCloseStopwatch.Stop();
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0,
-                                           (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         subLog?.Close();
 
@@ -1461,16 +1458,16 @@ sealed partial class Dump
             WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration,
                                 discOffset);
 
-        end = DateTime.UtcNow;
+        _dumpStopwatch.Stop();
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
             Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 (end - start).Humanize(minUnit: TimeUnit.Second),
+                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
                                  totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).

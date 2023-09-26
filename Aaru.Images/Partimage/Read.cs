@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -325,7 +326,8 @@ public sealed partial class Partimage
         }
 
         AaruConsole.DebugWriteLine("Partimage plugin", Localization.Filling_extents);
-        DateTime start = DateTime.Now;
+        var extentsFillStopwatch = new Stopwatch();
+        extentsFillStopwatch.Start();
         _extents    = new ExtentsULong();
         _extentsOff = new Dictionary<ulong, ulong>();
         bool  current     = (_bitmap[0] & (1 << (0 % 8))) != 0;
@@ -355,10 +357,10 @@ public sealed partial class Partimage
             current = next;
         }
 
-        DateTime end = DateTime.Now;
+        extentsFillStopwatch.Stop();
 
         AaruConsole.DebugWriteLine("Partimage plugin", Localization.Took_0_seconds_to_fill_extents,
-                                   (end - start).TotalSeconds);
+                                   extentsFillStopwatch.Elapsed.TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 

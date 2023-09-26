@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -240,9 +241,10 @@ public sealed partial class AaruFormat
                             break;
                         }
 
-                        DateTime startDecompress = DateTime.Now;
-                        byte[]   compressedTag   = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                        byte[]   lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
+                        var decompressStopwatch = new Stopwatch();
+                        decompressStopwatch.Start();
+                        byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                        byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                         _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                         _imageStream.EnsureRead(compressedTag, 0, compressedTag.Length);
                         data = new byte[blockHeader.length];
@@ -261,11 +263,11 @@ public sealed partial class AaruFormat
                         if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
                             data = ClauniaSubchannelUntransform(data);
 
-                        DateTime endDecompress = DateTime.Now;
+                        decompressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_decompress_block,
-                                                   (endDecompress - startDecompress).TotalSeconds);
+                                                   decompressStopwatch.Elapsed.TotalSeconds);
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
                                                    GC.GetTotalMemory(false));
@@ -483,7 +485,8 @@ public sealed partial class AaruFormat
                             {
                                 case CompressionType.Lzma:
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Decompressing_DDT);
-                                    DateTime ddtStart       = DateTime.UtcNow;
+                                    var ddtStopwatch = new Stopwatch();
+                                    ddtStopwatch.Start();
                                     byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                     _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
@@ -504,12 +507,12 @@ public sealed partial class AaruFormat
                                     }
 
                                     _userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
-                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    ddtStopwatch.Stop();
                                     _inMemoryDdt = true;
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Took_0_seconds_to_decompress_DDT,
-                                                               (ddtEnd - ddtStart).TotalSeconds);
+                                                               ddtStopwatch.Elapsed.TotalSeconds);
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Memory_snapshot_0_bytes,
@@ -550,7 +553,8 @@ public sealed partial class AaruFormat
                             {
                                 case CompressionType.Lzma:
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Decompressing_DDT);
-                                    DateTime ddtStart       = DateTime.UtcNow;
+                                    var ddtStopwatch = new Stopwatch();
+                                    ddtStopwatch.Start();
                                     byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                     _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
@@ -559,7 +563,7 @@ public sealed partial class AaruFormat
                                     ulong decompressedLength =
                                         (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
 
-                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    ddtStopwatch.Stop();
 
                                     if(decompressedLength != ddtHeader.length)
                                     {
@@ -573,7 +577,7 @@ public sealed partial class AaruFormat
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Took_0_seconds_to_decompress_DDT,
-                                                               (ddtEnd - ddtStart).TotalSeconds);
+                                                               ddtStopwatch.Elapsed.TotalSeconds);
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Memory_snapshot_0_bytes,

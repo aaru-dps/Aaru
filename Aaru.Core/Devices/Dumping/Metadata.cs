@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -81,7 +80,7 @@ partial class Dump
             return;
         }
 
-        DateTime chkStart = DateTime.UtcNow;
+        _sidecarStopwatch.Restart();
 
         // ReSharper disable once UseObjectOrCollectionInitializer
         _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
@@ -93,13 +92,15 @@ partial class Dump
         _sidecarClass.EndProgressEvent2    += EndProgress2;
         _sidecarClass.UpdateStatusEvent    += UpdateStatus;
         Metadata sidecar = _sidecarClass.Create();
-        DateTime end     = DateTime.UtcNow;
+        _sidecarStopwatch.Stop();
 
         if(_aborted)
             return;
 
-        totalChkDuration = (end - chkStart).TotalMilliseconds;
-        _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0, (end - chkStart).Humanize(minUnit: TimeUnit.Second));
+        totalChkDuration = _sidecarStopwatch.Elapsed.TotalMilliseconds;
+
+        _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
+                           _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
                            ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()).

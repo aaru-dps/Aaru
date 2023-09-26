@@ -157,7 +157,6 @@ partial class Dump
                       Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
         ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
-        DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
         bool       sense;                              // Sense indicator
         byte[]     cmdBuf;                             // Data buffer
         byte[]     senseBuf;                           // Sense buffer
@@ -247,7 +246,7 @@ partial class Dump
                         mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
-                        DateTime writeStart = DateTime.Now;
+                        _writeStopwatch.Restart();
 
                         if(cdiReadyReadAsAudio)
                             FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
@@ -285,7 +284,7 @@ partial class Dump
                         else
                             outputOptical.WriteSectorsLong(cmdBuf, i + r, 1);
 
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                         _mediaGraph?.PaintSectorGood(i + r);
                     }
@@ -305,19 +304,22 @@ partial class Dump
                         break;
                     }
 
+                    _writeStopwatch.Stop();
                     sectorSpeedStart += r;
 
                     _resume.NextBlock = i + r;
 
-                    elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
                     if(elapsed <= 0)
                         continue;
 
                     currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
+                    _speedStopwatch.Restart();
                 }
+
+            _speedStopwatch.Restart();
 
             if(!sense &&
                !_dev.Error)
@@ -329,7 +331,7 @@ partial class Dump
                 mhddLog.Write(i, cmdDuration);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
@@ -398,7 +400,7 @@ partial class Dump
                         outputOptical.WriteSectorsLong(cmdBuf, i, blocksToRead);
                 }
 
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                 _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
@@ -411,20 +413,22 @@ partial class Dump
                 break;
             }
 
+            _writeStopwatch.Stop();
             sectorSpeedStart += blocksToRead;
 
             _resume.NextBlock = i + blocksToRead;
 
-            elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
 
+        _speedStopwatch.Stop();
         EndProgress?.Invoke();
     }
 }

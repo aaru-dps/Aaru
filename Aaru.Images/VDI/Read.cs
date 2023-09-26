@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
@@ -96,16 +97,17 @@ public sealed partial class Vdi
             return ErrorNumber.InvalidArgument;
         }
 
-        DateTime start = DateTime.UtcNow;
+        var blockMapStopwatch = new Stopwatch();
+        blockMapStopwatch.Start();
         AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map);
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
         byte[] ibmB = new byte[_vHdr.blocks * 4];
         stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
-        DateTime end = DateTime.UtcNow;
+        blockMapStopwatch.Stop();
 
         AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map_took_0_ms,
-                                   (end - start).TotalMilliseconds);
+                                   blockMapStopwatch.Elapsed.TotalMilliseconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 

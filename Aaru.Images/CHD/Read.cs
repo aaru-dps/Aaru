@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -75,7 +76,8 @@ public sealed partial class Chd
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, (int)length);
 
-        ulong nextMetaOff = 0;
+        ulong nextMetaOff      = 0;
+        var   hunkMapStopwatch = new Stopwatch();
 
         switch(version)
         {
@@ -103,8 +105,8 @@ public sealed partial class Chd
                                                : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
-                DateTime start = DateTime.UtcNow;
 
+                hunkMapStopwatch.Restart();
                 _hunkTable = new ulong[hdrV1.totalhunks];
 
                 uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
@@ -128,8 +130,10 @@ public sealed partial class Chd
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
                 }
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 _imageInfo.MediaType         = MediaType.GENERIC_HDD;
                 _imageInfo.Sectors           = hdrV1.hunksize * hdrV1.totalhunks;
@@ -177,7 +181,7 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
 
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
-                DateTime start = DateTime.UtcNow;
+                hunkMapStopwatch.Restart();
 
                 _hunkTable = new ulong[hdrV2.totalhunks];
 
@@ -203,8 +207,10 @@ public sealed partial class Chd
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
                 }
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 _imageInfo.MediaType         = MediaType.GENERIC_HDD;
                 _imageInfo.Sectors           = hdrV2.hunksize * hdrV2.totalhunks;
@@ -256,13 +262,15 @@ public sealed partial class Chd
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
-                DateTime start = DateTime.UtcNow;
+                hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV3.totalhunks * 16];
                 stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV3.metaoffset;
 
@@ -304,13 +312,15 @@ public sealed partial class Chd
                                            ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
                 AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
-                DateTime start = DateTime.UtcNow;
+                hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV4.totalhunks * 16];
                 stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV4.metaoffset;
 
@@ -370,7 +380,7 @@ public sealed partial class Chd
                 if(hdrV5.compressor0 == 0)
                 {
                     AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
-                    DateTime start = DateTime.UtcNow;
+                    hunkMapStopwatch.Restart();
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
@@ -400,8 +410,10 @@ public sealed partial class Chd
                                        _hunkTableSmall.Length - (i * 512 / 4));
                     }
 
-                    DateTime end = DateTime.UtcNow;
-                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds, (end - start).TotalSeconds);
+                    hunkMapStopwatch.Stop();
+
+                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                                               hunkMapStopwatch.Elapsed.TotalSeconds);
                 }
                 else
                 {

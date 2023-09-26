@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
 
@@ -98,54 +99,56 @@ public partial class Device
         if(timeout == 0)
             timeout = Timeout > 0 ? Timeout : 15;
 
+        var cmdStopwatch = new Stopwatch();
+
         switch(command)
         {
             case MmcCommands.SendCid when _cachedCid != null:
             {
-                DateTime start = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCid.Length];
                 Array.Copy(_cachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                DateTime end = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case MmcCommands.SendCsd when _cachedCid != null:
             {
-                DateTime start = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCsd.Length];
                 Array.Copy(_cachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                DateTime end = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
             {
-                DateTime start = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedScr.Length];
                 Array.Copy(_cachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                DateTime end = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
             case MmcCommands.SendOpCond when _cachedOcr                                    != null:
             {
-                DateTime start = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedOcr.Length];
                 Array.Copy(_cachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                DateTime end = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }

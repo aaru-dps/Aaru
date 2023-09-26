@@ -25,7 +25,6 @@
 // Copyright © 2020-2023 Rebecca Wallander
 // ****************************************************************************/
 
-using System;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -71,7 +70,6 @@ partial class Dump
     {
         ulong    sectorSpeedStart = 0;
         bool     sense;
-        DateTime timeSpeedStart = DateTime.UtcNow;
         byte[]   buffer;
         uint     blocksToRead = maxBlocksToRead;
         var      outputFormat = _outputPlugin as IWritableImage;
@@ -212,9 +210,9 @@ partial class Dump
 
                 mhddLog.Write(i, cmdDuration, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputFormat.WriteSectors(buffer, i, blocksToRead);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 extents.Add(i, blocksToRead, true);
                 _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
@@ -244,9 +242,9 @@ partial class Dump
                     _skip = (uint)(blocks - i);
 
                 // Write empty data
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                 for(ulong b = i; b < i + _skip; b++)
                     _resume.BadBlocks.Add(b);
@@ -259,19 +257,21 @@ partial class Dump
                 newTrim =  true;
             }
 
+            _writeStopwatch.Stop();
             sectorSpeedStart  += blocksToRead;
             _resume.NextBlock =  i + blocksToRead;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
 
+        _speedStopwatch.Stop();
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
 
         EndProgress?.Invoke();

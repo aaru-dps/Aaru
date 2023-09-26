@@ -80,13 +80,11 @@ partial class Dump
         byte               scsiDensityCode    = 0;
         bool               containsFloppyPage = false;
         const ushort       sbcProfile         = 0x0001;
-        DateTime           start;
-        DateTime           end;
-        double             totalDuration = 0;
-        double             currentSpeed  = 0;
-        double             maxSpeed      = double.MinValue;
-        double             minSpeed      = double.MaxValue;
-        Modes.DecodedMode? decMode       = null;
+        double             totalDuration      = 0;
+        double             currentSpeed       = 0;
+        double             maxSpeed           = double.MinValue;
+        double             minSpeed           = double.MaxValue;
+        Modes.DecodedMode? decMode            = null;
         bool               ret;
         ExtentsULong       blankExtents = null;
         var                outputFormat = _outputPlugin as IWritableImage;
@@ -363,7 +361,7 @@ partial class Dump
             imageCreated = true;
         }
 
-        start = DateTime.UtcNow;
+        _dumpStopwatch.Restart();
         double imageWriteDuration      = 0;
         bool   writeSingleOpticalTrack = true;
 
@@ -759,14 +757,14 @@ partial class Dump
                         mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted)
                             ? mediaTags[MediaTagType.DVD_DiscKey_Decrypted] : null);
 
-        end = DateTime.UtcNow;
+        _dumpStopwatch.Stop();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+        ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
-                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -777,7 +775,7 @@ partial class Dump
                                                     Per(imageWriteDuration.Seconds())));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
-                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -793,7 +791,7 @@ partial class Dump
            _trim                       &&
            newTrim)
         {
-            start = DateTime.UtcNow;
+            _trimStopwatch.Restart();
             UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
             _dumpLog.WriteLine(Localization.Core.Trimming_skipped_sectors);
 
@@ -802,13 +800,15 @@ partial class Dump
             TrimSbcData(scsiReader, extents, currentTry, blankExtents);
 
             EndProgress?.Invoke();
-            end = DateTime.UtcNow;
+            _trimStopwatch.Stop();
 
             UpdateStatus?.Invoke(string.Format(Localization.Core.Trimming_finished_in_0,
-                                               (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                               _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
             _dumpLog.WriteLine(string.Format(Localization.Core.Trimming_finished_in_0,
-                                             (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                             _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+
+            _trimStopwatch.Stop();
         }
         #endregion Trimming
 
@@ -1010,14 +1010,15 @@ partial class Dump
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
-        DateTime closeStart = DateTime.Now;
+        _imageCloseStopwatch.Restart();
         outputFormat.Close();
-        DateTime closeEnd = DateTime.Now;
+        _imageCloseStopwatch.Stop();
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0,
-                                           (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        _dumpLog.WriteLine(Localization.Core.Closed_in_0, (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second));
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0,
+                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         if(_aborted)
         {
@@ -1051,7 +1052,7 @@ partial class Dump
                     return;
                 }
 
-                DateTime chkStart = DateTime.UtcNow;
+                _sidecarStopwatch.Restart();
                 _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
                 _sidecarClass.InitProgressEvent    += InitProgress;
                 _sidecarClass.UpdateProgressEvent  += UpdateProgress;
@@ -1061,21 +1062,21 @@ partial class Dump
                 _sidecarClass.EndProgressEvent2    += EndProgress2;
                 _sidecarClass.UpdateStatusEvent    += UpdateStatus;
                 Metadata sidecar = _sidecarClass.Create();
-                end = DateTime.UtcNow;
+                _sidecarStopwatch.Stop();
 
                 if(!_aborted)
                 {
-                    totalChkDuration = (end - chkStart).TotalMilliseconds;
+                    totalChkDuration = _sidecarStopwatch.Elapsed.TotalMilliseconds;
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0,
-                                                       (end - chkStart).Humanize(minUnit: TimeUnit.Second)));
+                                                       _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
                                                        ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                                 Per(totalChkDuration.Milliseconds())));
 
                     _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
-                                       (end - chkStart).Humanize(minUnit: TimeUnit.Second));
+                                       _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
                     _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
                                        ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -1295,11 +1296,11 @@ partial class Dump
 
         UpdateStatus?.
             Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 (end - start).Humanize(minUnit: TimeUnit.Second),
+                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
                                  totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).

@@ -67,8 +67,6 @@ partial class Dump
         uint          blockSize;
         ulong         blocks = 0;
         MediaType     dskType;
-        DateTime      start;
-        DateTime      end;
         double        totalDuration = 0;
         double        currentSpeed  = 0;
         double        maxSpeed      = double.MinValue;
@@ -796,7 +794,7 @@ partial class Dump
             return;
         }
 
-        start = DateTime.UtcNow;
+        _dumpStopwatch.Restart();
         var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, 1, _private);
         var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
@@ -832,11 +830,12 @@ partial class Dump
         if(mode10Data != null)
             outputTape.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
 
-        DateTime timeSpeedStart     = DateTime.UtcNow;
         ulong    currentSpeedSize   = 0;
         double   imageWriteDuration = 0;
 
         InitProgress?.Invoke();
+
+        _speedStopwatch.Restart();
 
         while(currentPartition < totalPartitions)
         {
@@ -1053,9 +1052,9 @@ partial class Dump
                     return; // TODO: Return more cleanly
 
                 // Write empty data
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputTape.WriteSector(new byte[blockSize], currentBlock);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                 mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
                 ibgLog.Write(currentBlock, 0);
@@ -1065,29 +1064,31 @@ partial class Dump
             {
                 mhddLog.Write(currentBlock, duration);
                 ibgLog.Write(currentBlock, currentSpeed * 1024);
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputTape.WriteSector(cmdBuf, currentBlock);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 extents.Add(currentBlock, 1, true);
             }
 
+            _writeStopwatch.Stop();
             currentBlock++;
             _resume.NextBlock++;
             currentSpeedSize += blockSize;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
             if(elapsed <= 0)
                 continue;
 
             currentSpeed     = currentSpeedSize / (1048576 * elapsed);
             currentSpeedSize = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Restart();
         }
 
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
         blocks            = currentBlock + 1;
-        end               = DateTime.UtcNow;
+        _speedStopwatch.Stop();
+        _dumpStopwatch.Stop();
 
         // If not aborted this is added at the end of medium
         if(_aborted)
@@ -1102,11 +1103,11 @@ partial class Dump
         EndProgress?.Invoke();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+        ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
-                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -1117,7 +1118,7 @@ partial class Dump
                                                     Per(imageWriteDuration.Seconds())));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
-                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
@@ -1323,14 +1324,15 @@ partial class Dump
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
-        DateTime closeStart = DateTime.Now;
+        _imageCloseStopwatch.Restart();
         outputTape.Close();
-        DateTime closeEnd = DateTime.Now;
+        _imageCloseStopwatch.Stop();
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Closed_in_0,
-                                           (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        _dumpLog.WriteLine(Localization.Core.Closed_in_0, (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second));
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0,
+                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         if(_aborted)
         {
@@ -1366,7 +1368,7 @@ partial class Dump
                 return;
             }
 
-            DateTime chkStart = DateTime.UtcNow;
+            _sidecarStopwatch.Restart();
             _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
             _sidecarClass.InitProgressEvent    += InitProgress;
             _sidecarClass.UpdateProgressEvent  += UpdateProgress;
@@ -1376,21 +1378,21 @@ partial class Dump
             _sidecarClass.EndProgressEvent2    += EndProgress2;
             _sidecarClass.UpdateStatusEvent    += UpdateStatus;
             Metadata sidecar = _sidecarClass.Create();
-            end = DateTime.UtcNow;
+            _sidecarStopwatch.Stop();
 
             if(!_aborted)
             {
-                totalChkDuration = (end - chkStart).TotalMilliseconds;
+                totalChkDuration = _sidecarStopwatch.ElapsedMilliseconds;
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0,
-                                                   (end - chkStart).Humanize(minUnit: TimeUnit.Second)));
+                                                   _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
                                                    ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                             Per(totalChkDuration.Milliseconds())));
 
                 _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
-                                   (end - chkStart).Humanize(minUnit: TimeUnit.Second));
+                                   _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
                 _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
                                    ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()).
@@ -1471,11 +1473,11 @@ partial class Dump
 
         UpdateStatus?.
             Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 (end - start).Humanize(minUnit: TimeUnit.Second),
+                                 _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
                                  totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
                                  imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 (closeEnd - closeStart).Humanize(minUnit: TimeUnit.Second)));
+                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).

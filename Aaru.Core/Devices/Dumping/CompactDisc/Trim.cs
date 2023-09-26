@@ -83,8 +83,6 @@ partial class Dump
                         Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                         Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        DateTime          start;
-        DateTime          end;
         bool              sense       = true; // Sense indicator
         byte[]            cmdBuf      = null; // Data buffer
         double            cmdDuration = 0;    // Command execution time
@@ -107,10 +105,10 @@ partial class Dump
            !newTrim)
             return;
 
-        start = DateTime.UtcNow;
         UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
         _dumpLog.WriteLine(Localization.Core.Trimming_skipped_sectors);
         InitProgress?.Invoke();
+        _trimStopwatch.Restart();
 
         trimStart:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
@@ -292,13 +290,13 @@ partial class Dump
                 outputOptical.WriteSector(Sector.GetUserData(cmdBuf), badSector);
         }
 
+        _trimStopwatch.Stop();
         EndProgress?.Invoke();
-        end = DateTime.UtcNow;
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Trimming_finished_in_0,
-                                           (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                           _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Trimming_finished_in_0,
-                                         (end - start).Humanize(minUnit: TimeUnit.Second)));
+                                         _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
     }
 }

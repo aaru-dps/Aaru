@@ -33,7 +33,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -115,6 +115,12 @@ public partial class Dump
     bool                                _supportsPlextorD8;
     bool                                _useBufferedReads;
     static readonly TimeSpan            _oneSecond = 1.Seconds();
+    readonly        Stopwatch           _dumpStopwatch;
+    readonly        Stopwatch           _sidecarStopwatch;
+    readonly        Stopwatch           _speedStopwatch;
+    readonly        Stopwatch           _trimStopwatch;
+    readonly        Stopwatch           _writeStopwatch;
+    readonly        Stopwatch           _imageCloseStopwatch;
 
     /// <summary>Initializes dumpers</summary>
     /// <param name="doResume">Should resume?</param>
@@ -207,6 +213,12 @@ public partial class Dump
         _ignoreCdrRunOuts      = ignoreCdrRunOuts;
         _createGraph           = createGraph;
         _dimensions            = dimensions;
+        _dumpStopwatch         = new Stopwatch();
+        _sidecarStopwatch      = new Stopwatch();
+        _speedStopwatch        = new Stopwatch();
+        _trimStopwatch         = new Stopwatch();
+        _writeStopwatch        = new Stopwatch();
+        _imageCloseStopwatch   = new Stopwatch();
     }
 
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>

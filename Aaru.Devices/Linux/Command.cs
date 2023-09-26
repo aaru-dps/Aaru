@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interop;
@@ -84,9 +85,10 @@ partial class Device
         Marshal.Copy(cdb, 0, ioHdr.cmdp, cdb.Length);
         Marshal.Copy(senseBuffer, 0, ioHdr.sbp, senseBuffer.Length);
 
-        DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
-        DateTime end   = DateTime.UtcNow;
+        var cmdStopWatch = new Stopwatch();
+        cmdStopWatch.Start();
+        int error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
+        cmdStopWatch.Stop();
 
         if(error < 0)
             error = Marshal.GetLastWin32Error();
@@ -97,7 +99,7 @@ partial class Device
 
         sense |= (ioHdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-        duration = ioHdr.duration > 0 ? ioHdr.duration : (end - start).TotalMilliseconds;
+        duration = ioHdr.duration > 0 ? ioHdr.duration : cmdStopWatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(ioHdr.dxferp);
         Marshal.FreeHGlobal(ioHdr.cmdp);
@@ -366,57 +368,56 @@ partial class Device
         if(timeout == 0)
             timeout = Timeout > 0 ? Timeout : 15;
 
-        DateTime start;
-        DateTime end;
+        var cmdStopwatch = new Stopwatch();
 
         switch(command)
         {
             case MmcCommands.SendCid when _cachedCid != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCid.Length];
                 Array.Copy(_cachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case MmcCommands.SendCsd when _cachedCid != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedCsd.Length];
                 Array.Copy(_cachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedScr.Length];
                 Array.Copy(_cachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
             case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
             case MmcCommands.SendOpCond when _cachedOcr                                    != null:
             {
-                start  = DateTime.Now;
+                cmdStopwatch.Restart();
                 buffer = new byte[_cachedOcr.Length];
                 Array.Copy(_cachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
@@ -451,9 +452,10 @@ partial class Device
 
         Marshal.Copy(buffer, 0, bufPtr, buffer.Length);
 
-        start = DateTime.UtcNow;
+        var stopWatch = new Stopwatch();
+        stopWatch.Restart();
         int error = Extern.ioctlMmc(_fileDescriptor, LinuxIoctl.MmcIocCmd, ref ioCmd);
-        end = DateTime.UtcNow;
+        stopWatch.Stop();
 
         sense |= error < 0;
 
@@ -463,7 +465,7 @@ partial class Device
         Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
 
         response = ioCmd.response;
-        duration = (end - start).TotalMilliseconds;
+        duration = stopWatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(bufPtr);
 
@@ -535,16 +537,17 @@ partial class Device
         Marshal.Copy(ioMultiCmd, 0, ioMultiCmdPtr, ioMultiCmd.Length);
 
         // Send command
-        DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlMmcMulti(_fileDescriptor, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
-        DateTime end   = DateTime.UtcNow;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
+        int error = Extern.ioctlMmcMulti(_fileDescriptor, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
+        cmdStopwatch.Stop();
 
         sense |= error < 0;
 
         if(error < 0)
             error = Marshal.GetLastWin32Error();
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         off = sizeof(ulong);
 
@@ -670,15 +673,15 @@ partial class Device
     {
         buffer = new byte[length];
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         long sense = Extern.lseek(_fileDescriptor, offset, SeekWhence.Begin);
 
-        DateTime end = DateTime.Now;
-
         if(sense < 0)
         {
-            duration = (end - start).TotalMilliseconds;
+            cmdStopwatch.Stop();
+            duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
             Error     = true;
             LastError = Marshal.GetLastWin32Error();
@@ -689,8 +692,8 @@ partial class Device
         sense = DetectOS.Is64Bit ? Extern.read64(_fileDescriptor, buffer, length)
                     : Extern.read(_fileDescriptor, buffer, (int)length);
 
-        end      = DateTime.Now;
-        duration = (end - start).TotalMilliseconds;
+        cmdStopwatch.Stop();
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         int errno = Marshal.GetLastWin32Error();
 

@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -412,7 +413,8 @@ public sealed partial class AaruFormat
                                 break;
                             }
 
-                            DateTime startDecompress = DateTime.Now;
+                            var decompressStopwatch = new Stopwatch();
+                            decompressStopwatch.Restart();
                             byte[]   compressedTag   = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                             byte[]   lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                             _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
@@ -433,11 +435,11 @@ public sealed partial class AaruFormat
                             if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
                                 data = ClauniaSubchannelUntransform(data);
 
-                            DateTime endDecompress = DateTime.Now;
+                            decompressStopwatch.Stop();
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                        Localization.Took_0_seconds_to_decompress_block,
-                                                       (endDecompress - startDecompress).TotalSeconds);
+                                                       decompressStopwatch.Elapsed.TotalSeconds);
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
                                                        GC.GetTotalMemory(false));
@@ -629,7 +631,8 @@ public sealed partial class AaruFormat
                                 case CompressionType.Lzma:
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Decompressing_DDT);
 
-                                    DateTime ddtStart = DateTime.UtcNow;
+                                    var ddtStopwatch = new Stopwatch();
+                                    ddtStopwatch.Start();
 
                                     byte[] compressedDdt = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
 
@@ -652,12 +655,12 @@ public sealed partial class AaruFormat
                                     }
 
                                     _userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
-                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    ddtStopwatch.Stop();
                                     _inMemoryDdt = true;
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Took_0_seconds_to_decompress_DDT,
-                                                               (ddtEnd - ddtStart).TotalSeconds);
+                                                               ddtStopwatch.Elapsed.TotalSeconds);
 
                                     break;
                                 case CompressionType.None:
@@ -711,7 +714,8 @@ public sealed partial class AaruFormat
                                 case CompressionType.Lzma:
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Decompressing_DDT);
 
-                                    DateTime ddtStart = DateTime.UtcNow;
+                                    var ddtStopwatch = new Stopwatch();
+                                    ddtStopwatch.Start();
 
                                     byte[] compressedDdt = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
 
@@ -732,11 +736,11 @@ public sealed partial class AaruFormat
                                         return false;
                                     }
 
-                                    DateTime ddtEnd = DateTime.UtcNow;
+                                    ddtStopwatch.Stop();
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                                Localization.Took_0_seconds_to_decompress_DDT,
-                                                               (ddtEnd - ddtStart).TotalSeconds);
+                                                               ddtStopwatch.Elapsed.TotalSeconds);
 
                                     break;
                                 case CompressionType.None:
@@ -3262,8 +3266,7 @@ public sealed partial class AaruFormat
         switch(_imageInfo.MetadataMediaType)
         {
             case MetadataMediaType.OpticalDisc when Tracks is { Count: > 0 }:
-                DateTime startCompress;
-                DateTime endCompress;
+                var compressStopwatch = new Stopwatch();
 
                 // Old format
                 if(_sectorPrefix != null &&
@@ -3302,7 +3305,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorPrefix.Length + 262144];
 
@@ -3340,10 +3343,10 @@ public sealed partial class AaruFormat
                         prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         prefixBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_seconds_to_compress_prefix,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -3391,7 +3394,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorSuffix.Length + 262144];
 
@@ -3429,10 +3432,10 @@ public sealed partial class AaruFormat
                         prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         prefixBlock.compression = CompressionType.Lzma;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_seconds_to_compress_suffix,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -3725,7 +3728,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] sectorPrefixBuffer = _sectorPrefixMs.ToArray();
                         cmpBuffer = new byte[sectorPrefixBuffer.Length + 262144];
@@ -3762,10 +3765,10 @@ public sealed partial class AaruFormat
                         prefixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         prefixBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_seconds_to_compress_prefix,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -3819,7 +3822,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] sectorSuffixBuffer = _sectorPrefixMs.ToArray();
                         cmpBuffer = new byte[sectorSuffixBuffer.Length + 262144];
@@ -3856,10 +3859,10 @@ public sealed partial class AaruFormat
                         suffixBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         suffixBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_seconds_to_compress_suffix,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -3916,7 +3919,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_mode2Subheaders.Length + 262144];
 
@@ -3954,11 +3957,11 @@ public sealed partial class AaruFormat
                         subheaderBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         subheaderBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_MODE2_subheaders,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4014,7 +4017,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
                         byte[] transformedSubchannel = ClauniaSubchannelTransform(_sectorSubchannel);
 
                         byte[] cmpBuffer = new byte[transformedSubchannel.Length + 262144];
@@ -4056,11 +4059,11 @@ public sealed partial class AaruFormat
                                                           ? CompressionType.LzmaClauniaSubchannelTransform
                                                           : _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_subchannel,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4116,7 +4119,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorCprMai.Length + 262144];
 
@@ -4154,11 +4157,11 @@ public sealed partial class AaruFormat
                         cprMaiBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         cprMaiBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_CPR_MAI,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4211,7 +4214,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorId.Length + 262144];
 
@@ -4249,11 +4252,11 @@ public sealed partial class AaruFormat
                         idBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         idBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_ID,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4306,7 +4309,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorIed.Length + 262144];
 
@@ -4344,11 +4347,11 @@ public sealed partial class AaruFormat
                         iedBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         iedBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_IED,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4401,7 +4404,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorEdc.Length + 262144];
 
@@ -4439,11 +4442,11 @@ public sealed partial class AaruFormat
                         edcBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         edcBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_EDC,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -4497,7 +4500,7 @@ public sealed partial class AaruFormat
                     }
                     else
                     {
-                        startCompress = DateTime.Now;
+                        compressStopwatch.Restart();
 
                         byte[] cmpBuffer = new byte[_sectorDecryptedTitleKey.Length + 262144];
 
@@ -4535,11 +4538,11 @@ public sealed partial class AaruFormat
                         titleKeyBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
                         titleKeyBlock.compression = _compressionAlgorithm;
 
-                        endCompress = DateTime.Now;
+                        compressStopwatch.Stop();
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                    Localization.Took_0_seconds_to_compress_decrypted_DVD_title_keys,
-                                                   (endCompress - startCompress).TotalSeconds);
+                                                   compressStopwatch.Elapsed.TotalSeconds);
                     }
 
                     _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];

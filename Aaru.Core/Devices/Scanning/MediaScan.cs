@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.Devices;
@@ -40,14 +41,16 @@ namespace Aaru.Core.Devices.Scanning;
 
 public sealed partial class MediaScan
 {
-    readonly Device          _dev;
-    readonly string          _devicePath;
-    readonly string          _ibgLogPath;
-    readonly string          _mhddLogPath;
-    readonly bool            _seekTest;
-    readonly bool            _useBufferedReads;
-    bool                     _aborted;
-    static readonly TimeSpan _oneSecond = 1.Seconds();
+    readonly Device           _dev;
+    readonly string           _devicePath;
+    readonly string           _ibgLogPath;
+    readonly string           _mhddLogPath;
+    readonly bool             _seekTest;
+    readonly bool             _useBufferedReads;
+    bool                      _aborted;
+    static readonly TimeSpan  _oneSecond = 1.Seconds();
+    readonly        Stopwatch _scanStopwatch;
+    readonly        Stopwatch _speedStopwatch;
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
     /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
@@ -68,6 +71,8 @@ public sealed partial class MediaScan
         _aborted          = false;
         _seekTest         = seekTest;
         _useBufferedReads = useBufferedReads;
+        _scanStopwatch    = new Stopwatch();
+        _speedStopwatch   = new Stopwatch();
     }
 
     /// <summary>Starts a media scan</summary>
