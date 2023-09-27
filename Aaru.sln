@@ -49,6 +49,54 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Generators", "Aaru.Generators\Aaru.Generators.csproj", "{BCF89E9A-ADE9-40FD-B892-54D11882558E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AF25D4CD-0DA5-4595-99BD-FA4ADB844FD2}"
+	ProjectSection(SolutionItems) = preProject
+		build.sh = build.sh
+		Changelog.md = Changelog.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		GOVERNANCE.md = GOVERNANCE.md
+		LICENSE = LICENSE
+		LICENSE.LGPL = LICENSE.LGPL
+		LICENSE.MIT = LICENSE.MIT
+		MAINTAINERS.md = MAINTAINERS.md
+		NEEDED.md = NEEDED.md
+		README.md = README.md
+		azure-pipelines.yml = azure-pipelines.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODE_OF_CONDUCT.md = .github\CODE_OF_CONDUCT.md
+		.github\FUNDING.yml = .github\FUNDING.yml
+		.github\PULL_REQUEST_TEMPLATE.md = .github\PULL_REQUEST_TEMPLATE.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{1E5E8A51-06D1-41B5-A876-4ED523707D16}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report_general.yaml = .github\ISSUE_TEMPLATE\bug_report_general.yaml
+		.github\ISSUE_TEMPLATE\bug_report_image.yaml = .github\ISSUE_TEMPLATE\bug_report_image.yaml
+		.github\ISSUE_TEMPLATE\bug_report_media.yaml = .github\ISSUE_TEMPLATE\bug_report_media.yaml
+		.github\ISSUE_TEMPLATE\feature_request.yaml = .github\ISSUE_TEMPLATE\feature_request.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflow", "workflow", "{84A9AF00-ACCD-47D0-B2F9-C9129938962C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pkg", "pkg", "{FB145464-E2A7-40EF-8C53-70FB4786FF26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pacman", "pacman", "{C938FE79-90D2-45ED-9768-732E420E921D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rolling", "rolling", "{5827065B-75F0-4B53-973B-0E896ED893AB}"
+	ProjectSection(SolutionItems) = preProject
+		pkg\pacman\rolling\PKGBUILD = pkg\pacman\rolling\PKGBUILD
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stable", "stable", "{AC22A12F-C037-41B8-B082-008CCF060C87}"
+	ProjectSection(SolutionItems) = preProject
+		pkg\pacman\stable\PKGBUILD = pkg\pacman\stable\PKGBUILD
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -278,5 +326,14 @@ Global
 		$8.NamingRule = $28
 		description = Aaru Data Preservation Suite.
 		version = 4.0.99.0
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4877DD55-10BF-42D2-8FA5-984A9D4F9B0E} = {AF25D4CD-0DA5-4595-99BD-FA4ADB844FD2}
+		{1E5E8A51-06D1-41B5-A876-4ED523707D16} = {4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}
+		{84A9AF00-ACCD-47D0-B2F9-C9129938962C} = {4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}
+		{FB145464-E2A7-40EF-8C53-70FB4786FF26} = {AF25D4CD-0DA5-4595-99BD-FA4ADB844FD2}
+		{C938FE79-90D2-45ED-9768-732E420E921D} = {FB145464-E2A7-40EF-8C53-70FB4786FF26}
+		{5827065B-75F0-4B53-973B-0E896ED893AB} = {C938FE79-90D2-45ED-9768-732E420E921D}
+		{AC22A12F-C037-41B8-B082-008CCF060C87} = {C938FE79-90D2-45ED-9768-732E420E921D}
 	EndGlobalSection
 EndGlobal
