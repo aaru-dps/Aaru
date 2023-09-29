@@ -39,12 +39,7 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT
 {
-    readonly Guid _oemFlashParameterGuid = new("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
-
-    readonly byte[] _signature =
-    {
-        0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20
-    };
-
+    readonly Guid   _oemFlashParameterGuid = new("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
+    readonly byte[] _signature             = "EXFAT   "u8.ToArray();
     const string FS_TYPE = "exfat";
 }

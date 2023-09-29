@@ -34,14 +34,8 @@ public sealed partial class HPOFS
     {
         0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
     };
-    readonly byte[] _medinfoSignature =
-    {
-        0x4D, 0x45, 0x44, 0x49, 0x4E, 0x46, 0x4F, 0x20
-    };
-    readonly byte[] _volinfoSignature =
-    {
-        0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
-    };
+    readonly byte[] _medinfoSignature = "MEDINFO "u8.ToArray();
+    readonly byte[] _volinfoSignature = "VOLINFO "u8.ToArray();
 
     // Do not translate
     const string FS_TYPE = "hpofs";

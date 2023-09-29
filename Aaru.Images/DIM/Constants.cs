@@ -36,8 +36,5 @@ public sealed partial class Dim
 {
     /// <summary>Start of data sectors in disk image, should be 0x100</summary>
     const uint DATA_OFFSET = 0x100;
-    readonly byte[] _headerId =
-    {
-        0x44, 0x49, 0x46, 0x43, 0x20, 0x48, 0x45, 0x41, 0x44, 0x45, 0x52, 0x20, 0x20
-    };
+    readonly byte[] _headerId = "DIFC HEADER  "u8.ToArray();
 }

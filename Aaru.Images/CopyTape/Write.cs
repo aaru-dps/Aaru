@@ -177,7 +177,7 @@ public sealed partial class CopyTape
             return false;
         }
 
-        byte[] footer = Encoding.ASCII.GetBytes("CPTP:EOT\n");
+        byte[] footer = "CPTP:EOT\n"u8.ToArray();
 
         _dataStream.Write(footer, 0, footer.Length);
         _dataStream.Flush();
@@ -231,7 +231,7 @@ public sealed partial class CopyTape
             return false;
         }
 
-        byte[] marker = Encoding.ASCII.GetBytes("CPTP:MRK\n");
+        byte[] marker = "CPTP:MRK\n"u8.ToArray();
 
         _dataStream.Write(marker, 0, marker.Length);
 

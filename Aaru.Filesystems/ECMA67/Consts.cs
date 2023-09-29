@@ -36,9 +36,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
 public sealed partial class ECMA67
 {
-    const string FS_TYPE = "ecma67";
-    readonly byte[] _magic =
-    {
-        0x56, 0x4F, 0x4C
-    };
+    const    string FS_TYPE = "ecma67";
+    readonly byte[] _magic  = "VOL"u8.ToArray();
 }

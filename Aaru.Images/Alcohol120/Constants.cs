@@ -34,9 +34,6 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
-    const byte MAXIMUM_SUPPORTED_VERSION = 1;
-    readonly byte[] _alcoholSignature =
-    {
-        0x4d, 0x45, 0x44, 0x49, 0x41, 0x20, 0x44, 0x45, 0x53, 0x43, 0x52, 0x49, 0x50, 0x54, 0x4f, 0x52
-    };
+    const    byte   MAXIMUM_SUPPORTED_VERSION = 1;
+    readonly byte[] _alcoholSignature         = "MEDIA DESCRIPTOR"u8.ToArray();
 }

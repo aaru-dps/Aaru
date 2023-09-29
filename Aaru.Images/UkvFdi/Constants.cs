@@ -34,8 +34,5 @@ namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
-    readonly byte[] _signature =
-    {
-        0x46, 0x44, 0x49
-    };
+    readonly byte[] _signature = "FDI"u8.ToArray();
 }

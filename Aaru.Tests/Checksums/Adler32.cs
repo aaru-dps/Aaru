@@ -44,6 +44,7 @@ public class Adler32
     };
     static readonly byte[] _expectedRandom =
     {
+        // ReSharper disable once UseUtf8StringLiteral
         0x37, 0x28, 0xd1, 0x86
     };
 

@@ -4,6 +4,8 @@ using Aaru.Helpers;
 using FluentAssertions.Execution;
 using NUnit.Framework;
 
+// ReSharper disable UseUtf8StringLiteral
+
 namespace Aaru.Tests.Devices.MultiMediaCard;
 
 [TestFixture]

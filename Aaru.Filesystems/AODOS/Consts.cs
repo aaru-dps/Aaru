@@ -38,9 +38,6 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the AO-DOS filesystem</summary>
 public sealed partial class AODOS
 {
-    const string FS_TYPE = "aodos";
-    readonly byte[] _identifier =
-    {
-        0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20
-    };
+    const    string FS_TYPE     = "aodos";
+    readonly byte[] _identifier = " AO-DOS "u8.ToArray();
 }

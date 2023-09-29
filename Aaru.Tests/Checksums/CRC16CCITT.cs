@@ -43,6 +43,7 @@ public class Crc16Ccitt
     };
     static readonly byte[] _expectedRandom =
     {
+        // ReSharper disable once UseUtf8StringLiteral
         0x36, 0x40
     };
     static readonly byte[] _expectedRandom15 =

@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -109,7 +108,7 @@ public sealed partial class DriDiskCopy
             }
         };
 
-        Array.Copy(Encoding.ASCII.GetBytes("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"), 0, _footer.signature,
+        Array.Copy("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"u8.ToArray(), 0, _footer.signature,
                    0, 49);
 
         _footer.bpbcopy = _footer.bpb;

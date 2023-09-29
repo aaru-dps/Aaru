@@ -42,14 +42,8 @@ namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
-    static readonly byte[] _fatSignature =
-    {
-        0x46, 0x41, 0x54, 0x31, 0x36, 0x20, 0x20, 0x20
-    };
-    static readonly byte[] _isoExtension =
-    {
-        0x49, 0x53, 0x4F
-    };
+    static readonly byte[] _fatSignature = "FAT16   "u8.ToArray();
+    static readonly byte[] _isoExtension = "ISO"u8.ToArray();
 
     /// <summary>Dumps a CFW PlayStation Portable UMD</summary>
     void PlayStationPortable()

@@ -47,40 +47,21 @@ namespace Aaru.Filters;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed class AppleSingle : IFilter
 {
-    const uint MAGIC    = 0x00051600;
-    const uint VERSION  = 0x00010000;
-    const uint VERSION2 = 0x00020000;
-    readonly byte[] _dosHome =
-    {
-        0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-
-    readonly byte[] _macintoshHome =
-    {
-        0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _osxHome =
-    {
-        0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _proDosHome =
-    {
-        0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _unixHome =
-    {
-        0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _vmsHome =
-    {
-        0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    byte[] _bytes;
-    Entry  _dataFork;
-    Header _header;
-    bool   _isBytes, _isStream, _isPath;
-    Entry  _rsrcFork;
-    Stream _stream;
+    const    uint   MAGIC          = 0x00051600;
+    const    uint   VERSION        = 0x00010000;
+    const    uint   VERSION2       = 0x00020000;
+    readonly byte[] _dosHome       = "MS-DOS          "u8.ToArray();
+    readonly byte[] _macintoshHome = "Macintosh       "u8.ToArray();
+    readonly byte[] _osxHome       = "Mac OS X        "u8.ToArray();
+    readonly byte[] _proDosHome    = "ProDOS          "u8.ToArray();
+    readonly byte[] _unixHome      = "Unix            "u8.ToArray();
+    readonly byte[] _vmsHome       = "VAX VMS         "u8.ToArray();
+    byte[]          _bytes;
+    Entry           _dataFork;
+    Header          _header;
+    bool            _isBytes, _isStream, _isPath;
+    Entry           _rsrcFork;
+    Stream          _stream;
 
     /// <inheritdoc />
     public string Name => Localization.AppleSingle_Name;

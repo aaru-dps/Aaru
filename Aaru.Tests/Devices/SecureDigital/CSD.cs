@@ -42,6 +42,7 @@ public class CSD
 
     readonly byte[] speeds =
     {
+        // ReSharper disable once UseUtf8StringLiteral
         50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
     };
 

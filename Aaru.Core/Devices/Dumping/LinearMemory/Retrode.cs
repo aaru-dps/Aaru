@@ -45,40 +45,13 @@ namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
-    static readonly byte[] _sfcExtension =
-    {
-        0x53, 0x46, 0x43
-    };
-
-    static readonly byte[] _genesisExtension =
-    {
-        0x42, 0x49, 0x4E
-    };
-
-    static readonly byte[] _smsExtension =
-    {
-        0x53, 0x4D, 0x53
-    };
-
-    static readonly byte[] _z64Extension =
-    {
-        0x5A, 0x36, 0x34
-    };
-
-    static readonly byte[] _gbExtension =
-    {
-        0x47, 0x42, 0x20
-    };
-
-    static readonly byte[] _gbcExtension =
-    {
-        0x47, 0x42, 0x43
-    };
-
-    static readonly byte[] _gbaExtension =
-    {
-        0x47, 0x42, 0x41
-    };
+    static readonly byte[] _sfcExtension     = "SFC"u8.ToArray();
+    static readonly byte[] _genesisExtension = "BIN"u8.ToArray();
+    static readonly byte[] _smsExtension     = "SMS"u8.ToArray();
+    static readonly byte[] _z64Extension     = "Z64"u8.ToArray();
+    static readonly byte[] _gbExtension      = "GB "u8.ToArray();
+    static readonly byte[] _gbcExtension     = "GBC"u8.ToArray();
+    static readonly byte[] _gbaExtension     = "GBA"u8.ToArray();
 
     /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()

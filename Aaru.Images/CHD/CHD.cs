@@ -48,10 +48,7 @@ namespace Aaru.DiscImages;
 public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
 {
     /// <summary>"MComprHD"</summary>
-    readonly byte[] _chdTag =
-    {
-        0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
-    };
+    readonly byte[] _chdTag = "MComprHD"u8.ToArray();
     SectorBuilder             _sectorBuilder;
     uint                      _bytesPerHunk;
     byte[]                    _cis;
