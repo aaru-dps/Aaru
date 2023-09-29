@@ -246,10 +246,7 @@ public struct Inquiry
     public byte[] HiMDSpecific;
     #endregion Sony Hi-MD data
 
-    static readonly byte[] HiMDSignatureContents =
-    {
-        0x48, 0x69, 0x2D, 0x4D, 0x44, 0x20, 0x20, 0x20
-    };
+    static readonly byte[] HiMDSignatureContents = "Hi-MD   "u8.ToArray();
 
     /// <summary>Decodes a SCSI INQUIRY response</summary>
     /// <param name="SCSIInquiryResponse">INQUIRY raw response data</param>
@@ -389,10 +386,7 @@ public struct Inquiry
             Array.Copy(SCSIInquiryResponse, 42, decoded.KreonVersion, 0, 5);
 
             if(decoded.KreonSpace == 0x20 &&
-               decoded.KreonIdentifier.SequenceEqual(new byte[]
-               {
-                   0x4B, 0x52, 0x45, 0x4F, 0x4E
-               }))
+               decoded.KreonIdentifier.SequenceEqual("KREON"u8.ToArray()))
                 decoded.KreonPresent = true;
         }
 
