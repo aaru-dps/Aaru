@@ -2176,7 +2176,7 @@ public static class EVPD
                     decoded.Copyright = Encoding.ASCII.GetBytes(str);
                 else if(fwMatch.Success)
                 {
-                    decoded.Component = Encoding.ASCII.GetBytes("Firmware");
+                    decoded.Component = "Firmware"u8.ToArray();
                     decoded.Version   = Encoding.ASCII.GetBytes(fwMatch.Groups["fw"].Value);
                     decoded.Date      = Encoding.ASCII.GetBytes(fwMatch.Groups["date"].Value);
                 }
@@ -2184,7 +2184,7 @@ public static class EVPD
                     decoded.Variant = Encoding.ASCII.GetBytes(fwMatch.Groups["value"].Value);
                 else if(servoMatch.Success)
                 {
-                    decoded.Component = Encoding.ASCII.GetBytes("Servo");
+                    decoded.Component = "Servo"u8.ToArray();
                     decoded.Version   = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
                 }
 

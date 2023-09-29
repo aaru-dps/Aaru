@@ -41,11 +41,7 @@ namespace Aaru.Decoders.SCSI;
 public static partial class Modes
 {
     #region Apple Mode Page 0x30: Apple OEM String
-    static readonly byte[] AppleOEMString =
-    {
-        0x41, 0x50, 0x50, 0x4C, 0x45, 0x20, 0x43, 0x4F, 0x4D, 0x50, 0x55, 0x54, 0x45, 0x52, 0x2C, 0x20, 0x49, 0x4E,
-        0x43, 0x2E
-    };
+    static readonly byte[] AppleOEMString = "APPLE COMPUTER, INC."u8.ToArray();
 
     public static bool IsAppleModePage_30(byte[] pageResponse)
     {

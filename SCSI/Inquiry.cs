@@ -2400,10 +2400,7 @@ public static class Inquiry
             if(response.HP_WORM)
                 sb.AppendFormat(Localization.Device_supports_WORM_version_0, response.HP_WORMVersion).AppendLine();
 
-            byte[] OBDRSign =
-            {
-                0x24, 0x44, 0x52, 0x2D, 0x31, 0x30
-            };
+            byte[] OBDRSign = "$DR-10"u8.ToArray();
 
             if(OBDRSign.SequenceEqual(response.HP_OBDR))
                 sb.AppendLine(Localization.Device_supports_Tape_Disaster_Recovery);
