@@ -2479,12 +2479,6 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string DDS_has_ben_updated_0_times {
-            get {
-                return ResourceManager.GetString("DDS_has_ben_updated_0_times", resourceCulture);
-            }
-        }
-        
         internal static string First_PSN_of_Drive_Area_0 {
             get {
                 return ResourceManager.GetString("First_PSN_of_Drive_Area_0", resourceCulture);
@@ -3043,9 +3037,9 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Disc_is_medium_type__high_beta_category__CD_R {
+        internal static string Disc_is_medium_type_B_high_beta_category__CD_R {
             get {
-                return ResourceManager.GetString("Disc_is_medium_type__high_beta_category__CD_R", resourceCulture);
+                return ResourceManager.GetString("Disc_is_medium_type_B_high_beta_category__CD_R", resourceCulture);
             }
         }
         
@@ -4925,12 +4919,6 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Disc_has_a_burst_cutting_area {
-            get {
-                return ResourceManager.GetString("Disc_has_a_burst_cutting_area", resourceCulture);
-            }
-        }
-        
         internal static string Media_attribute_is_0 {
             get {
                 return ResourceManager.GetString("Media_attribute_is_0", resourceCulture);
@@ -4982,12 +4970,6 @@ namespace Aaru.Decoders {
         internal static string Disc_contains_extended_information_for_VCPS {
             get {
                 return ResourceManager.GetString("Disc_contains_extended_information_for_VCPS", resourceCulture);
-            }
-        }
-        
-        internal static string Disc_application_code_is_0 {
-            get {
-                return ResourceManager.GetString("Disc_application_code_is_0", resourceCulture);
             }
         }
         
@@ -8457,12 +8439,6 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Drive_can_write_CD_RWs {
-            get {
-                return ResourceManager.GetString("Drive_can_write_CD_RWs", resourceCulture);
-            }
-        }
-        
         internal static string Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet {
             get {
                 return ResourceManager.GetString("Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet", resourceCulture);
@@ -9199,12 +9175,6 @@ namespace Aaru.Decoders {
         internal static string CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition {
             get {
                 return ResourceManager.GetString("CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition", resourceCulture);
-            }
-        }
-        
-        internal static string Software_write_protect_is_active {
-            get {
-                return ResourceManager.GetString("Software_write_protect_is_active", resourceCulture);
             }
         }
         
@@ -11191,9 +11161,9 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Spindle_synchronization_is_disable_or_unsupported {
+        internal static string Spindle_synchronization_is_disabled_or_unsupported {
             get {
-                return ResourceManager.GetString("Spindle_synchronization_is_disable_or_unsupported", resourceCulture);
+                return ResourceManager.GetString("Spindle_synchronization_is_disabled_or_unsupported", resourceCulture);
             }
         }
         
@@ -12163,9 +12133,9 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Power_On_Self_Test_is_disable {
+        internal static string Power_On_Self_Test_is_disabled {
             get {
-                return ResourceManager.GetString("Power_On_Self_Test_is_disable", resourceCulture);
+                return ResourceManager.GetString("Power_On_Self_Test_is_disabled", resourceCulture);
             }
         }
         
@@ -12296,9 +12266,9 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Port_A_uses_Parallel_SCSI_Ultra160_interface {
+        internal static string Port_A_uses_Parallel_SCSI_Ultra_160_interface {
             get {
-                return ResourceManager.GetString("Port_A_uses_Parallel_SCSI_Ultra160_interface", resourceCulture);
+                return ResourceManager.GetString("Port_A_uses_Parallel_SCSI_Ultra_160_interface", resourceCulture);
             }
         }
         
@@ -13976,12 +13946,6 @@ namespace Aaru.Decoders {
             }
         }
         
-        internal static string Identifier_has_unknown_association_with_code__0_ {
-            get {
-                return ResourceManager.GetString("Identifier_has_unknown_association_with_code__0_", resourceCulture);
-            }
-        }
-        
         internal static string Automation_Drive_Interface_Transport {
             get {
                 return ResourceManager.GetString("Automation_Drive_Interface_Transport", resourceCulture);
@@ -14834,12 +14798,6 @@ namespace Aaru.Decoders {
         internal static string Port_A_link_is_down {
             get {
                 return ResourceManager.GetString("Port_A_link_is_down", resourceCulture);
-            }
-        }
-        
-        internal static string Port_A_uses_Parallel_SCSI_Ultra_160_interface {
-            get {
-                return ResourceManager.GetString("Port_A_uses_Parallel_SCSI_Ultra_160_interface", resourceCulture);
             }
         }
         

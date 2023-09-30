@@ -4009,7 +4009,7 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
 
         if(ftr.CDRW)
-            sb.AppendLine("\t" + Localization.Drive_can_write_CD_RWs);
+            sb.AppendLine("\t" + Localization.Drive_can_write_CD_RW);
 
         if(ftr.TestWrite)
             sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);

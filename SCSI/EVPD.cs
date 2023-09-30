@@ -469,7 +469,7 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\t" + Localization.Identifier_has_unknown_association_with_code__0_,
+                    sb.AppendFormat("\t" + Localization.Identifier_has_unknown_association_with_code_0,
                                     (byte)descriptor.Association).AppendLine();
 
                     break;

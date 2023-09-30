@@ -138,7 +138,7 @@ public static partial class Modes
         switch(page.RPL)
         {
             case 0:
-                sb.AppendLine("\t" + Localization.Spindle_synchronization_is_disable_or_unsupported);
+                sb.AppendLine("\t" + Localization.Spindle_synchronization_is_disabled_or_unsupported);
 
                 break;
             case 1:

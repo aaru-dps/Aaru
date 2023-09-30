@@ -141,7 +141,7 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.Power_On_Self_Test_is_disable);
+                sb.AppendLine("\t" + Localization.Power_On_Self_Test_is_disabled);
 
                 break;
             default:

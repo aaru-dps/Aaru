@@ -145,13 +145,13 @@
     <value>ATA/ATAPI-6 published, ANSI INCITS 361-2002</value>
   </data>
   <data name="ATA8_ACS_revision_3c" xml:space="preserve">
-    <value>ATA8-ACS revision 3c</value>
+    <value>ATA8-ACS Revision 3c</value>
   </data>
   <data name="ATA8_ACS_revision_6" xml:space="preserve">
-    <value>ATA8-ACS revision 6</value>
+    <value>ATA8-ACS Revision 6</value>
   </data>
   <data name="ATA8_ACS_revision_4" xml:space="preserve">
-    <value>ATA8-ACS revision 4</value>
+    <value>ATA8-ACS Revision 4</value>
   </data>
   <data name="ACS_2_Revision_2" xml:space="preserve">
     <value>ACS-2 Revision 2</value>
@@ -166,7 +166,7 @@
     <value>ATA8-ACS Revision 3f</value>
   </data>
   <data name="ATA8_ACS_revision_3b" xml:space="preserve">
-    <value>ATA8-ACS revision 3b</value>
+    <value>ATA8-ACS Revision 3b</value>
   </data>
   <data name="ACS_3_Revision_5" xml:space="preserve">
     <value>ACS-3 Revision 5</value>
@@ -175,7 +175,7 @@
     <value>ACS-2 published, ANSI INCITS 482-2012</value>
   </data>
   <data name="ATA8_ACS_revision_2d" xml:space="preserve">
-    <value>ATA8-ACS revision 2d</value>
+    <value>ATA8-ACS Revision 2d</value>
   </data>
   <data name="ACS_2_Revision_3" xml:space="preserve">
     <value>ACS-2 Revision 3</value>
@@ -322,7 +322,7 @@
     <value>Data strobe offset option is available</value>
   </data>
   <data name="Rotational_speed_tolerance_is_higher_than_0_5_percent" xml:space="preserve">
-    <value>Rotational speed tolerance is higher than 0,5%</value>
+    <value>Rotational speed tolerance is higher than 0.5%</value>
   </data>
   <data name="Spindle_motor_control_is_implemented" xml:space="preserve">
     <value>Spindle motor control is implemented</value>
@@ -1239,9 +1239,6 @@
   <data name="DDS_Format_0" xml:space="preserve">
     <value>DDS Format: 0x{0:X2}</value>
   </data>
-  <data name="DDS_has_ben_updated_0_times" xml:space="preserve">
-    <value>DDS has ben updated {0} times</value>
-  </data>
   <data name="First_PSN_of_Drive_Area_0" xml:space="preserve">
     <value>First PSN of Drive Area: 0x{0:X8}</value>
   </data>
@@ -1521,7 +1518,7 @@
   <data name="Disc_is_medium_type_B_low_beta_category_CD_R" xml:space="preserve">
     <value>Disc is medium type B, low beta category (B-) CD-R</value>
   </data>
-  <data name="Disc_is_medium_type__high_beta_category__CD_R" xml:space="preserve">
+  <data name="Disc_is_medium_type_B_high_beta_category__CD_R" xml:space="preserve">
     <value>Disc is medium type B, high beta category (B+) CD-R</value>
   </data>
   <data name="Disc_is_medium_type_C_low_beta_category__CD_R" xml:space="preserve">
@@ -1726,16 +1723,16 @@
     <value>Last track number: {0} (</value>
   </data>
   <data name="Lead_out_start_position_3_0_1_2" xml:space="preserve">
-    <value>Lead-out start position: {3:D2}:{0:D2}:{1:D2}:{2:D2}</value>
+    <value>Lead-Out start position: {3:D2}:{0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Lead_out_start_position_0_1_2" xml:space="preserve">
-    <value>Lead-out start position: {0:D2}:{1:D2}:{2:D2}</value>
+    <value>Lead-Out start position: {0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Lead_out_is_audio_type" xml:space="preserve">
-    <value>Lead-out is audio type</value>
+    <value>Lead-Out is audio type</value>
   </data>
   <data name="Lead_out_is_data_type" xml:space="preserve">
-    <value>Lead-out is data type</value>
+    <value>Lead-Out is data type</value>
   </data>
   <data name="Book_type_0" xml:space="preserve">
     <value>Book type: 0x{0:X2}</value>
@@ -1771,13 +1768,13 @@
     <value>Start of next possible program in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2" xml:space="preserve">
-    <value>Maximum start of outermost Lead-out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}</value>
+    <value>Maximum start of outermost Lead-Out in the recordable area of the disc: {3:D2}:{0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2" xml:space="preserve">
     <value>Start of next possible program in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2" xml:space="preserve">
-    <value>Maximum start of outermost Lead-out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}</value>
+    <value>Maximum start of outermost Lead-Out in the recordable area of the disc: {0:D2}:{1:D2}:{2:D2}</value>
   </data>
   <data name="Number_of_skip_interval_pointers_0" xml:space="preserve">
     <value>Number of skip interval pointers: {0}</value>
@@ -2150,7 +2147,7 @@
     <value>{0:D2}:{1:D2}:{2:D2} - LBA {3,6}: {4} area, {5}, {6}, {7}, Q mode {8}, tracks {9} to be skipped, CRC 0x{10:X2}{11:X2} ({12}), R-W {13}</value>
   </data>
   <data name="Subchannel_PrettifyQ_Lead_out" xml:space="preserve">
-    <value>Lead-out</value>
+    <value>Lead-Out</value>
   </data>
   <data name="Subchannel_PrettifyQ_Program" xml:space="preserve">
     <value>Program</value>
@@ -2398,19 +2395,19 @@
     <value>Disc book type is {0}</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_2_52_Mbit_sec" xml:space="preserve">
-    <value>Disc maximum transfer rate is 2,52 Mbit/sec.</value>
+    <value>Disc maximum transfer rate is 2.52 Mbit/sec.</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_5_04_Mbit_sec" xml:space="preserve">
-    <value>Disc maximum transfer rate is 5,04 Mbit/sec.</value>
+    <value>Disc maximum transfer rate is 5.04 Mbit/sec.</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_10_08_Mbit_sec" xml:space="preserve">
-    <value>Disc maximum transfer rate is 10,08 Mbit/sec.</value>
+    <value>Disc maximum transfer rate is 10.08 Mbit/sec.</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_20_16_Mbit_sec" xml:space="preserve">
-    <value>Disc maximum transfer rate is 20,16 Mbit/sec.</value>
+    <value>Disc maximum transfer rate is 20.16 Mbit/sec.</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_30_24_Mbit_sec" xml:space="preserve">
-    <value>Disc maximum transfer rate is 30,24 Mbit/sec.</value>
+    <value>Disc maximum transfer rate is 30.24 Mbit/sec.</value>
   </data>
   <data name="Disc_maximum_transfer_rate_is_unspecified" xml:space="preserve">
     <value>Disc maximum transfer rate is unspecified.</value>
@@ -2428,43 +2425,43 @@
     <value>Layers are in opposite track path</value>
   </data>
   <data name="Pitch_size_is_0_267_μm_bit" xml:space="preserve">
-    <value>Pitch size is 0,267 μm/bit</value>
+    <value>Pitch size is 0.267 μm/bit</value>
   </data>
   <data name="Pitch_size_is_0_147_μm_bit" xml:space="preserve">
-    <value>Pitch size is 0,147 μm/bit</value>
+    <value>Pitch size is 0.147 μm/bit</value>
   </data>
   <data name="Pitch_size_is_between_0_409_μm_bit_and_0_435_μm_bit" xml:space="preserve">
-    <value>Pitch size is between 0,409 μm/bit and 0,435 μm/bit</value>
+    <value>Pitch size is between 0.409 μm/bit and 0.435 μm/bit</value>
   </data>
   <data name="Pitch_size_is_between_0_140_μm_bit_and_0_148_μm_bit" xml:space="preserve">
-    <value>Pitch size is between 0,140 μm/bit and 0,148 μm/bit</value>
+    <value>Pitch size is between 0.140 μm/bit and 0.148 μm/bit</value>
   </data>
   <data name="Pitch_size_is_0_153_μm_bit" xml:space="preserve">
-    <value>Pitch size is 0,153 μm/bit</value>
+    <value>Pitch size is 0.153 μm/bit</value>
   </data>
   <data name="Pitch_size_is_between_0_130_μm_bit_and_0_140_μm_bit" xml:space="preserve">
-    <value>Pitch size is between 0,130 μm/bit and 0,140 μm/bit</value>
+    <value>Pitch size is between 0.130 μm/bit and 0.140 μm/bit</value>
   </data>
   <data name="Pitch_size_is_0_353_μm_bit" xml:space="preserve">
-    <value>Pitch size is 0,353 μm/bit</value>
+    <value>Pitch size is 0.353 μm/bit</value>
   </data>
   <data name="Unknown_pitch_size_key_0" xml:space="preserve">
     <value>Unknown pitch size key {0}</value>
   </data>
   <data name="Track_size_is_0_74_μm" xml:space="preserve">
-    <value>Track size is 0,74 μm</value>
+    <value>Track size is 0.74 μm</value>
   </data>
   <data name="Track_size_is_0_80_μm" xml:space="preserve">
-    <value>Track size is 0,80 μm</value>
+    <value>Track size is 0.80 μm</value>
   </data>
   <data name="Track_size_is_0_615_μm" xml:space="preserve">
-    <value>Track size is 0,615 μm</value>
+    <value>Track size is 0.615 μm</value>
   </data>
   <data name="Track_size_is_0_40_μm" xml:space="preserve">
-    <value>Track size is 0,40 μm</value>
+    <value>Track size is 0.40 μm</value>
   </data>
   <data name="Track_size_is_0_34_μm" xml:space="preserve">
-    <value>Track size is 0,34 μm</value>
+    <value>Track size is 0.34 μm</value>
   </data>
   <data name="Unknown_track_size_key__0_" xml:space="preserve">
     <value>Unknown track size key {0}</value>
@@ -2480,9 +2477,6 @@
   </data>
   <data name="Disc_is_empty" xml:space="preserve">
     <value>Disc is empty</value>
-  </data>
-  <data name="Disc_has_a_burst_cutting_area" xml:space="preserve">
-    <value>Disc has a burst cutting area</value>
   </data>
   <data name="Media_attribute_is_0" xml:space="preserve">
     <value>Media attribute is {0}</value>
@@ -2510,9 +2504,6 @@
   </data>
   <data name="Disc_contains_extended_information_for_VCPS" xml:space="preserve">
     <value>Disc contains extended information for VCPS</value>
-  </data>
-  <data name="Disc_application_code_is_0" xml:space="preserve">
-    <value>Disc application code is {0}</value>
   </data>
   <data name="Disc_media_type_is_0" xml:space="preserve">
     <value>Disc media type is {0}</value>
@@ -2554,13 +2545,13 @@
     <value>General purpose disc for use in general purpose drives</value>
   </data>
   <data name="Disc_track_pitch_is_0_74_μm" xml:space="preserve">
-    <value>Disc track pitch is 0,74 μm</value>
+    <value>Disc track pitch is 0.74 μm</value>
   </data>
   <data name="Unknown_track_pitch" xml:space="preserve">
     <value>Unknown track pitch</value>
   </data>
   <data name="Reference_velocity_is_3_49_m_s" xml:space="preserve">
-    <value>Reference velocity is 3,49 m/s</value>
+    <value>Reference velocity is 3.49 m/s</value>
   </data>
   <data name="Unknown_reference_velocity" xml:space="preserve">
     <value>Unknown reference velocity</value>
@@ -4252,9 +4243,6 @@
   <data name="Drive_can_write_multi_session_CDs_in_raw_mode" xml:space="preserve">
     <value>Drive can write multi-session CDs in raw mode</value>
   </data>
-  <data name="Drive_can_write_CD_RWs" xml:space="preserve">
-    <value>Drive can write CD-RWs</value>
-  </data>
   <data name="Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet" xml:space="preserve">
     <value>Drive supports a maximum of {0} bytes in a single cue sheet</value>
   </data>
@@ -4626,9 +4614,6 @@
   </data>
   <data name="CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition" xml:space="preserve">
     <value>CHECK CONDITION should be reported rather than a long busy condition</value>
-  </data>
-  <data name="Software_write_protect_is_active" xml:space="preserve">
-    <value>Software write protect is active</value>
   </data>
   <data name="Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED" xml:space="preserve">
     <value>Tasks aborted by other initiator's actions should be terminated with TASK ABORTED</value>
@@ -5347,7 +5332,7 @@
     <value>Drive supports writing at {0} Kbyte/sec. in CLV mode</value>
   </data>
   <data name="Drive_supports_writing_at_is_0_Kbyte_sec_in_pure_CAV_mode" xml:space="preserve">
-    <value>Drive supports writing at is {0} Kbyte/sec. in pure CAV mode</value>
+    <value>Drive supports writing at {0} Kbyte/sec. in pure CAV mode</value>
   </data>
   <data name="Drive_supports_test_writing" xml:space="preserve">
     <value>Drive supports test writing</value>
@@ -5359,7 +5344,7 @@
     <value>Drive can read both sides of a disc</value>
   </data>
   <data name="Drive_an_read_raw_R_W_subchannel_from_the_Lead_In" xml:space="preserve">
-    <value>Drive an read raw R-W subchannel from the Lead-In</value>
+    <value>Drive can read raw R-W subchannel from the Lead-In</value>
   </data>
   <data name="Drive_supports_DVD_CSS_and_or_DVD_CPPM" xml:space="preserve">
     <value>Drive supports DVD CSS and/or DVD CPPM</value>
@@ -5407,13 +5392,13 @@
     <value>Unknown sense data behaviour code {0}</value>
   </data>
   <data name="Drive_will_set_Check_Condition_when_cleaning_is_needed" xml:space="preserve">
-    <value>Drive will set Check Condition when cleaning is needed</value>
+    <value>Drive will set CHECK CONDITION when cleaning is needed</value>
   </data>
   <data name="No_deferred_error_will_be_reported_to_a_rewind_command" xml:space="preserve">
     <value>No deferred error will be reported to a rewind command</value>
   </data>
   <data name="Drive_will_set_Check_Condition_when_the_criteria_for_Dead_Media_is_met" xml:space="preserve">
-    <value>Drive will set Check Condition when the criteria for Dead Media is met</value>
+    <value>Drive will set CHECK CONDITION when the criteria for Dead Media is met</value>
   </data>
   <data name="Drive_will_not_accept_downlevel_firmware_via_an_FMR_tape" xml:space="preserve">
     <value>Drive will not accept downlevel firmware via an FMR tape</value>
@@ -5630,8 +5615,8 @@
   <data name="Medium_rotates_at_0_rpm" xml:space="preserve">
     <value>Medium rotates at {0} rpm</value>
   </data>
-  <data name="Spindle_synchronization_is_disable_or_unsupported" xml:space="preserve">
-    <value>Spindle synchronization is disable or unsupported</value>
+  <data name="Spindle_synchronization_is_disabled_or_unsupported" xml:space="preserve">
+    <value>Spindle synchronization is disabled or unsupported</value>
   </data>
   <data name="Target_operates_as_a_synchronized_spindle_slave" xml:space="preserve">
     <value>Target operates as a synchronized-spindle slave</value>
@@ -6121,8 +6106,8 @@
   <data name="Power_On_Self_Test_is_enabled" xml:space="preserve">
     <value>Power-On Self-Test is enabled</value>
   </data>
-  <data name="Power_On_Self_Test_is_disable" xml:space="preserve">
-    <value>Power-On Self-Test is disable</value>
+  <data name="Power_On_Self_Test_is_disabled" xml:space="preserve">
+    <value>Power-On Self-Test is disabled</value>
   </data>
   <data name="Unknown_Power_On_Self_Test_code_0" xml:space="preserve">
     <value>Unknown Power-On Self-Test code {0}</value>
@@ -6188,7 +6173,7 @@
   <data name="Library_interface_transmits_1_stop_bits_per_byte" xml:space="preserve">
     <value>Library interface transmits 1 stop bits per byte</value>
   </data>
-  <data name="Port_A_uses_Parallel_SCSI_Ultra160_interface" xml:space="preserve">
+  <data name="Port_A_uses_Parallel_SCSI_Ultra_160_interface" xml:space="preserve">
     <value>Port A uses Parallel SCSI Ultra-160 interface</value>
   </data>
   <data name="Drive_will_respond_to_SCSI_ID_0_on_Port_A_enabling" xml:space="preserve">
@@ -6237,25 +6222,25 @@
     <value>ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side</value>
   </data>
   <data name="GetMediumTypeDescription_ECMA_70" xml:space="preserve">
-    <value>ECMA-70 &amp; ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1,9 Tracks per mm</value>
+    <value>ECMA-70 &amp; ANSI X3.125-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 1.9 Tracks per mm</value>
   </data>
   <data name="GetMediumTypeDescription_ECMA_78" xml:space="preserve">
-    <value>ECMA-78 &amp; ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3,8 Tracks per mm</value>
+    <value>ECMA-78 &amp; ANSI X3.126-1986: 130 mm Flexible Disk Cartridge using MFM Recording at 7958 ftprad on Both Sides; 3.8 Tracks per mm</value>
   </data>
   <data name="GetMediumTypeDescription_ECMA_99" xml:space="preserve">
-    <value>ECMA-99 &amp; ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3,8 Tracks per mm</value>
+    <value>ECMA-99 &amp; ISO 8630-1985: 130 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides; 3.8 Tracks per mm</value>
   </data>
   <data name="GetMediumTypeDescription_ECMA_100" xml:space="preserve">
-    <value>ECMA-100 &amp; ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5,3 Tracks per mm</value>
+    <value>ECMA-100 &amp; ANSI X3.137: 90 mm Flexible Disk Cartridge using MFM Recording at 7859 ftprad on Both Sides; 5.3 Tracks per mm</value>
   </data>
   <data name="GetMediumTypeDescription_X3_73" xml:space="preserve">
-    <value>ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side</value>
+    <value>ANSI X3.73-1980: 200 mm, 6631 ftprad, 1.9 Tracks per mm, 1 side</value>
   </data>
   <data name="GetMediumTypeDescription_X3_73_DS" xml:space="preserve">
-    <value>ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides</value>
+    <value>ANSI X3.73-1980: 200 mm, 6631 ftprad, 1.9 Tracks per mm, 2 sides</value>
   </data>
   <data name="GetMediumTypeDescription_X3_82" xml:space="preserve">
-    <value>ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side</value>
+    <value>ANSI X3.80-1980: 130 mm, 3979 ftprad, 1.9 Tracks per mm, 1 side</value>
   </data>
   <data name="GetMediumTypeDescription_Type3Floppy" xml:space="preserve">
     <value>3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)</value>
@@ -6339,10 +6324,10 @@
     <value>undefined</value>
   </data>
   <data name="MediumType_Tape12" xml:space="preserve">
-    <value>6,3 mm tape with 12 tracks at 394 ftpmm or DC-9250</value>
+    <value>6.3 mm tape with 12 tracks at 394 ftpmm or DC-9250</value>
   </data>
   <data name="MediumType_Tape24" xml:space="preserve">
-    <value>6,3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL</value>
+    <value>6.3 mm tape with 24 tracks at 394 ftpmm or MLR1-26GBSL</value>
   </data>
   <data name="MediumType_LTOWORM" xml:space="preserve">
     <value>LTO Ultrium WORM or cleaning cartridge</value>
@@ -6510,58 +6495,58 @@
     <value>unknown medium type 0x{0:X2}</value>
   </data>
   <data name="ECMA62" xml:space="preserve">
-    <value>ECMA-62 &amp; ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm</value>
+    <value>ECMA-62 &amp; ANSI X3.22-1983: 12.7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm</value>
   </data>
   <data name="ECMA62_Phase" xml:space="preserve">
-    <value>ECMA-62 &amp; ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm</value>
+    <value>ECMA-62 &amp; ANSI X3.39-1986: 12.7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm</value>
   </data>
   <data name="ECMA62_GCR" xml:space="preserve">
-    <value>ECMA-62 &amp; ANSI X3.54-1986: 12,7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR</value>
+    <value>ECMA-62 &amp; ANSI X3.54-1986: 12.7 mm 9-Track Magnetic Tape, 356 ftpmm, NRZI, 245 cpmm GCR</value>
   </data>
   <data name="ECMA79" xml:space="preserve">
-    <value>ECMA-79 &amp; ANSI X3.116-1986: 6,30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM</value>
+    <value>ECMA-79 &amp; ANSI X3.116-1986: 6.30 mm Magnetic Tape Cartridge, 252 ftpmm, MFM</value>
   </data>
   <data name="IBM3480" xml:space="preserve">
-    <value>Draft ECMA &amp; ANSI X3B5/87-099: 12,7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR (IBM 3480, 3490, 3490E)</value>
+    <value>Draft ECMA &amp; ANSI X3B5/87-099: 12.7 mm 18-Track Magnetic Tape Cartridge, 1944 ftpmm, IFM, GCR (IBM 3480, 3490, 3490E)</value>
   </data>
   <data name="ECMA46" xml:space="preserve">
-    <value>ECMA-46 &amp; ANSI X3.56-1986: 6,30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm</value>
+    <value>ECMA-46 &amp; ANSI X3.56-1986: 6.30 mm Magnetic Tape Cartridge, Phase Encoding, 63 bpmm</value>
   </data>
   <data name="ECMA98" xml:space="preserve">
-    <value>ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm</value>
+    <value>ECMA-98: 6.30 mm Magnetic Tape Cartridge, NRZI, 394 ftpmm</value>
   </data>
   <data name="X3_136" xml:space="preserve">
-    <value>ANSI X3.136-1986: 6,3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)</value>
+    <value>ANSI X3.136-1986: 6.3 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)</value>
   </data>
   <data name="X3_157" xml:space="preserve">
-    <value>ANSI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding</value>
+    <value>ANSI X3.157-1987: 12.7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding</value>
   </data>
   <data name="X3_158" xml:space="preserve">
-    <value>ANSI X3.158-1987: 3,81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR</value>
+    <value>ANSI X3.158-1987: 3.81 mm 4-Track Magnetic Tape Cassette, 315 bpmm, GCR</value>
   </data>
   <data name="X3B5_86" xml:space="preserve">
-    <value>ANSI X3B5/86-199: 12,7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM</value>
+    <value>ANSI X3B5/86-199: 12.7 mm 22-Track Magnetic Tape Cartridge, 262 bpmm, MFM</value>
   </data>
   <data name="HiTC1" xml:space="preserve">
-    <value>HI-TC1: 12,7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR</value>
+    <value>HI-TC1: 12.7 mm 24-Track Magnetic Tape Cartridge, 500 bpmm, GCR</value>
   </data>
   <data name="HiTC2" xml:space="preserve">
-    <value>HI-TC2: 12,7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR</value>
+    <value>HI-TC2: 12.7 mm 24-Track Magnetic Tape Cartridge, 999 bpmm, GCR</value>
   </data>
   <data name="QIC120" xml:space="preserve">
-    <value>QIC-120: 6,3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR</value>
+    <value>QIC-120: 6.3 mm 15-Track Magnetic Tape Cartridge, 394 bpmm, GCR</value>
   </data>
   <data name="QIC150" xml:space="preserve">
-    <value>QIC-150: 6,3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR</value>
+    <value>QIC-150: 6.3 mm 18-Track Magnetic Tape Cartridge, 394 bpmm, GCR</value>
   </data>
   <data name="QIC320" xml:space="preserve">
-    <value>QIC-320: 6,3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR</value>
+    <value>QIC-320: 6.3 mm 26-Track Magnetic Tape Cartridge, 630 bpmm, GCR</value>
   </data>
   <data name="QIC1350" xml:space="preserve">
-    <value>QIC-1350: 6,3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL</value>
+    <value>QIC-1350: 6.3 mm 30-Track Magnetic Tape Cartridge, 2034 bpmm, RLL</value>
   </data>
   <data name="X3B5_88" xml:space="preserve">
-    <value>ANSI X3B5/88-185A: 3,81 mm Magnetic Tape Cassette, 2400 bpmm, DDS</value>
+    <value>ANSI X3B5/88-185A: 3.81 mm Magnetic Tape Cassette, 2400 bpmm, DDS</value>
   </data>
   <data name="X3_202" xml:space="preserve">
     <value>ANSI X3.202-1991: 8 mm Magnetic Tape Cassette, 1703 bpmm, RLL</value>
@@ -6570,10 +6555,10 @@
     <value>ECMA TC17: 8 mm Magnetic Tape Cassette, 1789 bpmm, RLL</value>
   </data>
   <data name="X3_193" xml:space="preserve">
-    <value>ANSI X3.193-1990: 12,7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM</value>
+    <value>ANSI X3.193-1990: 12.7 mm 48-Track Magnetic Tape Cartridge, 394 bpmm, MFM</value>
   </data>
   <data name="X3B5_91" xml:space="preserve">
-    <value>ANSI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM</value>
+    <value>ANSI X3B5/97-174: 12.7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM</value>
   </data>
   <data name="QIC11" xml:space="preserve">
     <value>QIC-11</value>
@@ -6759,7 +6744,7 @@
     <value>DC-9250</value>
   </data>
   <data name="MLR1_26GBSL" xml:space="preserve">
-    <value>MRL1-26GBSL</value>
+    <value>MLR1-26GBSL</value>
   </data>
   <data name="SLR32SL" xml:space="preserve">
     <value>SLR-32 SL</value>
@@ -7027,9 +7012,6 @@
   </data>
   <data name="There_are_no_identifiers" xml:space="preserve">
     <value>There are no identifiers</value>
-  </data>
-  <data name="Identifier_has_unknown_association_with_code__0_" xml:space="preserve">
-    <value>Identifier has unknown association with code {0}</value>
   </data>
   <data name="Automation_Drive_Interface_Transport" xml:space="preserve">
     <value>Automation/Drive Interface Transport</value>

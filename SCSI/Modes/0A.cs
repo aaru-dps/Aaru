@@ -216,7 +216,7 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition);
 
         if(page.SWP)
-            sb.AppendLine("\t" + Localization.Software_write_protect_is_active);
+            sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
 
         if(page.TAS)
             sb.AppendLine("\t" + Localization.

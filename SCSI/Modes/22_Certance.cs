@@ -162,7 +162,7 @@ public static partial class Modes
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.Port_A_uses_Parallel_SCSI_Ultra160_interface);
+                sb.AppendLine("\t" + Localization.Port_A_uses_Parallel_SCSI_Ultra_160_interface);
 
                 break;
             default:

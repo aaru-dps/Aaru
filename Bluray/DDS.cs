@@ -175,7 +175,7 @@ public static class DDS
         var sb = new StringBuilder();
 
         sb.AppendFormat(Localization.DDS_Format_0, response.Format).AppendLine();
-        sb.AppendFormat(Localization.DDS_has_ben_updated_0_times, response.UpdateCount).AppendLine();
+        sb.AppendFormat(Localization.DDS_has_been_updated_0_times, response.UpdateCount).AppendLine();
         sb.AppendFormat(Localization.First_PSN_of_Drive_Area_0, response.DriveAreaPSN).AppendLine();
         sb.AppendFormat(Localization.First_PSN_of_Defect_List_0, response.DefectListPSN).AppendLine();
         sb.AppendFormat(Localization.PSN_of_User_Data_Areas_LSN_0_0, response.PSNofLSNZero).AppendLine();

@@ -249,7 +249,7 @@ public static class ATIP
 
                         break;
                     case 5:
-                        sb.AppendLine(Localization.Disc_is_medium_type__high_beta_category__CD_R);
+                        sb.AppendLine(Localization.Disc_is_medium_type_B_high_beta_category__CD_R);
 
                         break;
                     case 6:

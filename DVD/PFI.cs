@@ -877,7 +877,7 @@ public static class PFI
             sb.AppendLine(Localization.Disc_is_empty);
 
         if(decoded.BCA)
-            sb.AppendLine(Localization.Disc_has_a_burst_cutting_area);
+            sb.AppendLine(Localization.Disc_has_a_BCA);
 
         switch(decoded.DiskCategory)
         {
@@ -928,7 +928,7 @@ public static class PFI
                 if(decoded.VCPS)
                     sb.AppendLine(Localization.Disc_contains_extended_information_for_VCPS);
 
-                sb.AppendFormat(Localization.Disc_application_code_is_0, decoded.ApplicationCode).AppendLine();
+                sb.AppendFormat(Localization.Disc_application_code_0, decoded.ApplicationCode).AppendLine();
 
                 sb.AppendFormat(Localization.Disc_manufacturer_is_0,
                                 ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).AppendLine();
