@@ -227,7 +227,7 @@ public sealed partial class ProDOSPlugin
         rootDirectoryKeyBlock.header.total_blocks    = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
         if(apmFromHddOnCd)
-            sbInformation.AppendLine(Localization.ProDOS_uses_512_bytes_sector_while_devices_uses_2048_bytes_sector).
+            sbInformation.AppendLine(Localization.ProDOS_uses_512_bytes_sector_while_device_uses_2048_bytes_sector).
                           AppendLine();
 
         if(rootDirectoryKeyBlock.header.version     != VERSION1 ||

@@ -558,7 +558,7 @@ public sealed partial class FAT
                     }
 
                     if((fat32Bpb.flags & 0x02) == 0x02)
-                        sb.AppendLine(Localization.Disk_surface_should_be_on_next_mount);
+                        sb.AppendLine(Localization.Disk_surface_should_be_checked_on_next_mount);
                 }
 
                 if((fat32Bpb.mirror_flags & 0x80) == 0x80)
@@ -891,7 +891,7 @@ public sealed partial class FAT
             metadata.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
             sb.AppendFormat(Localization._0_sectors_reserved_between_BPB_and_FAT, fakeBpb.rsectors).AppendLine();
             sb.AppendFormat(Localization._0_FATs, fakeBpb.fats_no).AppendLine();
-            sb.AppendFormat(Localization._0_entries_on_root_directory, fakeBpb.root_ent).AppendLine();
+            sb.AppendFormat(Localization._0_entries_in_root_directory, fakeBpb.root_ent).AppendLine();
 
             if(fakeBpb.media > 0)
                 sb.AppendFormat(Localization.Media_descriptor_0, fakeBpb.media).AppendLine();
@@ -924,7 +924,7 @@ public sealed partial class FAT
                     }
 
                     if((fakeBpb.flags & 0x02) == 0x02)
-                        sb.AppendLine(Localization.Disk_surface_should_be_on_next_mount);
+                        sb.AppendLine(Localization.Disk_surface_should_be_checked_on_next_mount);
                 }
 
                 if(fakeBpb.signature == 0x29 || andosOemCorrect)

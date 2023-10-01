@@ -197,7 +197,7 @@ public sealed partial class PascalPlugin
         sbInformation.AppendFormat(Localization.Volume_has_0_files, volEntry.Files).AppendLine();
 
         sbInformation.
-            AppendFormat(Localization.Volume_last_booted_at_0, DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
+            AppendFormat(Localization.Volume_last_booted_on_0, DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
             AppendLine();
 
         information = sbInformation.ToString();

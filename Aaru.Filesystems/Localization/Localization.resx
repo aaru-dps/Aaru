@@ -174,14 +174,11 @@
   <data name="Volume_is_locked_by_software" xml:space="preserve">
     <value>Volume is locked by software.</value>
   </data>
-  <data name="_0_files_on_root_directory" xml:space="preserve">
-    <value>{0} files on root directory</value>
+  <data name="_0_directories_in_root_directory" xml:space="preserve">
+    <value>{0} directories in root directory</value>
   </data>
-  <data name="_0_directories_on_root_directory" xml:space="preserve">
-    <value>{0} directories on root directory</value>
-  </data>
-  <data name="_0_directories_on_volume" xml:space="preserve">
-    <value>{0} directories on volume</value>
+  <data name="_0_directories_in_volume" xml:space="preserve">
+    <value>{0} directories in volume</value>
   </data>
   <data name="Volume_write_count_0" xml:space="preserve">
     <value>Volume write count: {0}</value>
@@ -522,8 +519,8 @@
   <data name="Volume_should_be_checked_on_next_mount" xml:space="preserve">
     <value>Volume should be checked on next mount.</value>
   </data>
-  <data name="Disk_surface_should_be_on_next_mount" xml:space="preserve">
-    <value>Disk surface should be on next mount.</value>
+  <data name="Disk_surface_should_be_checked_on_next_mount" xml:space="preserve">
+    <value>Disk surface should be checked on next mount.</value>
   </data>
   <data name="FATs_are_out_of_sync_FAT_0_is_in_use" xml:space="preserve">
     <value>FATs are out of sync. FAT #{0} is in use.</value>
@@ -585,8 +582,8 @@
   <data name="_0_FATs" xml:space="preserve">
     <value>{0} FATs.</value>
   </data>
-  <data name="_0_entries_on_root_directory" xml:space="preserve">
-    <value>{0} entries on root directory.</value>
+  <data name="_0_entries_in_root_directory" xml:space="preserve">
+    <value>{0} entries in root directory.</value>
   </data>
   <data name="Volume_Serial_Number_0" xml:space="preserve">
     <value>Volume Serial Number: {0}</value>
@@ -632,9 +629,6 @@
   </data>
   <data name="_0_sectors_1_bytes_per_cluster" xml:space="preserve">
     <value>{0} sectors ({1} bytes) per cluster</value>
-  </data>
-  <data name="Root_directory_starts_on_cluster_0" xml:space="preserve">
-    <value>Root directory starts on cluster {0}</value>
   </data>
   <data name="Volume_serial_0_X8" xml:space="preserve">
     <value>Volume serial: {0:X8}</value>
@@ -1130,8 +1124,8 @@
   <data name="Volume_has_0_files" xml:space="preserve">
     <value>Volume has {0} files</value>
   </data>
-  <data name="Volume_last_booted_at_0" xml:space="preserve">
-    <value>Volume last booted at {0}</value>
+  <data name="Volume_last_booted_on_0" xml:space="preserve">
+    <value>Volume last booted on {0}</value>
   </data>
   <data name="AcornADFS_Name" xml:space="preserve">
     <value>Acorn Advanced Disc Filing System</value>
@@ -1259,23 +1253,14 @@
   <data name="Filesystem_version_is_0" xml:space="preserve">
     <value>Filesystem version is {0}.</value>
   </data>
-  <data name="Volume_is_locked_on_hardware" xml:space="preserve">
-    <value>Volume is locked on hardware.</value>
-  </data>
   <data name="Volume_is_unmounted" xml:space="preserve">
     <value>Volume is unmounted.</value>
   </data>
   <data name="There_are_bad_blocks_in_the_extents_file" xml:space="preserve">
     <value>There are bad blocks in the extents file.</value>
   </data>
-  <data name="Volume_does_not_require_cache" xml:space="preserve">
-    <value>Volume does not require cache.</value>
-  </data>
   <data name="Volume_state_is_inconsistent" xml:space="preserve">
     <value>Volume state is inconsistent.</value>
-  </data>
-  <data name="Volume_is_locked_on_software" xml:space="preserve">
-    <value>Volume is locked on software.</value>
   </data>
   <data name="Implementation_that_last_mounted_the_volume_0" xml:space="preserve">
     <value>Implementation that last mounted the volume: "{0}".</value>
@@ -1288,12 +1273,6 @@
   </data>
   <data name="Volume_has_never_been_checked_up" xml:space="preserve">
     <value>Volume has never been checked up</value>
-  </data>
-  <data name="_0_files_on_volume" xml:space="preserve">
-    <value>{0} files on volume.</value>
-  </data>
-  <data name="_0_folders_on_volume" xml:space="preserve">
-    <value>{0} folders on volume.</value>
   </data>
   <data name="_0_allocation_blocks" xml:space="preserve">
     <value>{0} allocation blocks.</value>
@@ -1332,7 +1311,7 @@
     <value>AtheOS Filesystem</value>
   </data>
   <data name="Atheos_filesystem" xml:space="preserve">
-    <value>Atheos filesystem</value>
+    <value>AtheOS filesystem</value>
   </data>
   <data name="Filesystem_is_read_only" xml:space="preserve">
     <value>Filesystem is read-only</value>
@@ -1642,7 +1621,7 @@
     <value>Underlying media presented errors</value>
   </data>
   <data name="OEM_Parameters_0" xml:space="preserve">
-    <value>OEM Parameters {0}:</value>
+    <value>OEM Parameters: {0}</value>
   </data>
   <data name="_0_bytes_in_erase_block" xml:space="preserve">
     <value>{0} bytes in erase block</value>
@@ -1804,7 +1783,7 @@
     <value>{0} seconds for multi-mount protection wait, on block {1}</value>
   </data>
   <data name="_0_Flexible_block_group_size" xml:space="preserve">
-    <value>{0} Flexible block group size</value>
+    <value>{0} size of FLEX_BG group</value>
   </data>
   <data name="Hash_seed_0_1_2_3_version_4" xml:space="preserve">
     <value>Hash seed: {0:X8}{1:X8}{2:X8}{3:X8}, version {4}</value>
@@ -1897,7 +1876,7 @@
     <value>Pre-allocate directories</value>
   </data>
   <data name="imagic_inodes__" xml:space="preserve">
-    <value>imagic inodes ?</value>
+    <value>Has mapping between inodes and AFS (imagic inodes table)</value>
   </data>
   <data name="Has_journal_ext3" xml:space="preserve">
     <value>Has journal (ext3)</value>
@@ -1986,14 +1965,14 @@
   <data name="ext_filesystem" xml:space="preserve">
     <value>ext filesystem</value>
   </data>
-  <data name="_0_zones_on_volume" xml:space="preserve">
-    <value>{0} zones on volume</value>
+  <data name="_0_zones_in_volume" xml:space="preserve">
+    <value>{0} zones in volume</value>
   </data>
   <data name="_0_free_blocks_1_bytes" xml:space="preserve">
     <value>{0} free blocks ({1} bytes)</value>
   </data>
-  <data name="_0_inodes_on_volume_1_free_2" xml:space="preserve">
-    <value>{0} inodes on volume, {1} free ({2}%)</value>
+  <data name="_0_inodes_in_volume_1_free_2" xml:space="preserve">
+    <value>{0} inodes in volume, {1} free ({2}%)</value>
   </data>
   <data name="First_free_inode_is_0" xml:space="preserve">
     <value>First free inode is {0}</value>
@@ -2225,9 +2204,6 @@
   </data>
   <data name="_0_free_frags" xml:space="preserve">
     <value>{0} free frags</value>
-  </data>
-  <data name="Superblock_is_under_modification" xml:space="preserve">
-    <value>Superblock is under modification</value>
   </data>
   <data name="Volume_is_read_only" xml:space="preserve">
     <value>Volume is read-only</value>
@@ -2550,11 +2526,11 @@
   <data name="Volume_does_not_commit_to_log" xml:space="preserve">
     <value>Volume does not commit to log</value>
   </data>
-  <data name="Volume_has_log_withing_itself" xml:space="preserve">
-    <value>Volume has log withing itself</value>
+  <data name="Volume_has_log_within_itself" xml:space="preserve">
+    <value>Volume has log within itself</value>
   </data>
-  <data name="Volume_has_log_withing_itself_and_is_moving_it_out" xml:space="preserve">
-    <value>Volume has log withing itself and is moving it out</value>
+  <data name="Volume_has_log_within_itself_and_is_moving_it_out" xml:space="preserve">
+    <value>Volume has log within itself and is moving it out</value>
   </data>
   <data name="Volume_supports_sparse_files" xml:space="preserve">
     <value>Volume supports sparse files</value>
@@ -2727,14 +2703,11 @@
   <data name="_0_chars_in_filename" xml:space="preserve">
     <value>{0} chars in filename</value>
   </data>
-  <data name="_0_zones_on_volume_1_bytes" xml:space="preserve">
-    <value>{0} zones on volume ({1} bytes)</value>
+  <data name="_0_zones_in_volume_1_bytes" xml:space="preserve">
+    <value>{0} zones in volume ({1} bytes)</value>
   </data>
   <data name="_0_bytes_block" xml:space="preserve">
     <value>{0} bytes/block</value>
-  </data>
-  <data name="_0_inodes_on_volume" xml:space="preserve">
-    <value>{0} inodes on volume</value>
   </data>
   <data name="_0_blocks_on_inode_map_1_bytes" xml:space="preserve">
     <value>{0} blocks on inode map ({1} bytes)</value>
@@ -2878,7 +2851,7 @@
     <value>Master System Virtual Console</value>
   </data>
   <data name="Megadrive_Virtual_Console" xml:space="preserve">
-    <value>Megadrive Virtual Console</value>
+    <value>Mega Drive Virtual Console</value>
   </data>
   <data name="Nintendo_64_Virtual_Console" xml:space="preserve">
     <value>Nintendo 64 Virtual Console</value>
@@ -3175,8 +3148,8 @@
   <data name="Datetime_field_year_0_month_1_day_2_hour_3_minute_4" xml:space="preserve">
     <value>Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.</value>
   </data>
-  <data name="ProDOS_uses_512_bytes_sector_while_devices_uses_2048_bytes_sector" xml:space="preserve">
-    <value>ProDOS uses 512 bytes/sector while devices uses 2048 bytes/sector.</value>
+  <data name="ProDOS_uses_512_bytes_sector_while_device_uses_2048_bytes_sector" xml:space="preserve">
+    <value>ProDOS uses 512 bytes/sector while device uses 2048 bytes/sector.</value>
   </data>
   <data name="Warning_Detected_unknown_ProDOS_version_ProDOS_filesystem" xml:space="preserve">
     <value>Warning! Detected unknown ProDOS version ProDOS filesystem.</value>
@@ -3415,9 +3388,6 @@
   <data name="Volume_starts_on_device_byte_0_and_ends_on_byte_1" xml:space="preserve">
     <value>Volume starts on device byte {0} and ends on byte {1}</value>
   </data>
-  <data name="Bitmap_starts_in_block_0" xml:space="preserve">
-    <value>Bitmap starts in block {0}</value>
-  </data>
   <data name="Admin_space_container_starts_in_block_0" xml:space="preserve">
     <value>Admin space container starts in block {0}</value>
   </data>
@@ -3503,9 +3473,6 @@
   <data name="Unknown_s_type_value_0" xml:space="preserve">
     <value>Unknown s_type value: 0x{0:X8}</value>
   </data>
-  <data name="WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector" xml:space="preserve">
-    <value>WARNING: Filesystem indicates {0} bytes/block while device indicates {1} bytes/sector</value>
-  </data>
   <data name="_0_free_zones_on_volume_1_bytes" xml:space="preserve">
     <value>{0} free zones on volume ({1} bytes)</value>
   </data>
@@ -3563,8 +3530,8 @@
   <data name="Volume_uses_0_bytes_per_block" xml:space="preserve">
     <value>Volume uses {0} bytes per block</value>
   </data>
-  <data name="Volume_was_last_written_in_0" xml:space="preserve">
-    <value>Volume was last written in {0}</value>
+  <data name="Volume_was_last_written_on_0" xml:space="preserve">
+    <value>Volume was last written on {0}</value>
   </data>
   <data name="Volume_contains_0_partitions" xml:space="preserve">
     <value>Volume contains {0} partitions</value>
@@ -3679,9 +3646,6 @@
   </data>
   <data name="_0_bytes_per_zone" xml:space="preserve">
     <value>{0} bytes per zone</value>
-  </data>
-  <data name="_0_zones_in_volume_1_bytes" xml:space="preserve">
-    <value>{0} zones in volume ({1} bytes)</value>
   </data>
   <data name="_0_inodes" xml:space="preserve">
     <value>{0} inodes</value>

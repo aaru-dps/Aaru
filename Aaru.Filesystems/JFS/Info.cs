@@ -120,10 +120,10 @@ public sealed partial class JFS
             sb.AppendLine(Localization.Volume_does_not_commit_to_log);
 
         if(jfsSb.s_flags.HasFlag(Flags.InlineLog))
-            sb.AppendLine(Localization.Volume_has_log_withing_itself);
+            sb.AppendLine(Localization.Volume_has_log_within_itself);
 
         if(jfsSb.s_flags.HasFlag(Flags.InlineMoving))
-            sb.AppendLine(Localization.Volume_has_log_withing_itself_and_is_moving_it_out);
+            sb.AppendLine(Localization.Volume_has_log_within_itself_and_is_moving_it_out);
 
         if(jfsSb.s_flags.HasFlag(Flags.BadSAIT))
             sb.AppendLine(Localization.Volume_has_bad_current_secondary_ait);

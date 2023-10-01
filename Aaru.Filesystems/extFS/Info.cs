@@ -111,10 +111,10 @@ public sealed partial class extFS
         };
 
         sb.AppendLine(Localization.ext_filesystem);
-        sb.AppendFormat(Localization._0_zones_on_volume, extSb.zones);
+        sb.AppendFormat(Localization._0_zones_in_volume, extSb.zones);
         sb.AppendFormat(Localization._0_free_blocks_1_bytes, extSb.freecountblk, extSb.freecountblk * 1024);
 
-        sb.AppendFormat(Localization._0_inodes_on_volume_1_free_2, extSb.inodes, extSb.freecountind,
+        sb.AppendFormat(Localization._0_inodes_in_volume_1_free_2, extSb.inodes, extSb.freecountind,
                         extSb.freecountind * 100 / extSb.inodes);
 
         sb.AppendFormat(Localization.First_free_inode_is_0, extSb.firstfreeind);

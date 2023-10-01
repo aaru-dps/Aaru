@@ -131,7 +131,7 @@ public sealed partial class AppleMFS
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
             sb.AppendLine(Localization.Volume_is_locked_by_software);
 
-        sb.AppendFormat(Localization._0_files_on_volume, mdb.drNmFls).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_volume, mdb.drNmFls).AppendLine();
         sb.AppendFormat(Localization.First_directory_sector_0, mdb.drDirSt).AppendLine();
         sb.AppendFormat(Localization._0_sectors_in_directory, mdb.drBlLen).AppendLine();
         sb.AppendFormat(Localization._0_volume_allocation_blocks, mdb.drNmAlBlks + 1).AppendLine();

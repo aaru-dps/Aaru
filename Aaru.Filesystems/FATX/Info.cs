@@ -94,7 +94,7 @@ public sealed partial class XboxFatPlugin
                         fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
            AppendLine();
 
-        sb.AppendFormat(Localization.Root_directory_starts_on_cluster_0, fatxSb.rootDirectoryCluster).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_starts_at_cluster_0, fatxSb.rootDirectoryCluster).AppendLine();
 
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
                                                       bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);

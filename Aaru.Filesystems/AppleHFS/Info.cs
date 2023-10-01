@@ -212,10 +212,10 @@ public sealed partial class AppleHFS
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
             sb.AppendLine(Localization.Volume_is_locked_by_software);
 
-        sb.AppendFormat(Localization._0_files_on_root_directory, mdb.drNmFls).AppendLine();
-        sb.AppendFormat(Localization._0_directories_on_root_directory, mdb.drNmRtDirs).AppendLine();
-        sb.AppendFormat(Localization._0_files_on_volume, mdb.drFilCnt).AppendLine();
-        sb.AppendFormat(Localization._0_directories_on_volume, mdb.drDirCnt).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_root_directory, mdb.drNmFls).AppendLine();
+        sb.AppendFormat(Localization._0_directories_in_root_directory, mdb.drNmRtDirs).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_volume, mdb.drFilCnt).AppendLine();
+        sb.AppendFormat(Localization._0_directories_in_volume, mdb.drDirCnt).AppendLine();
         sb.AppendFormat(Localization.Volume_write_count_0, mdb.drWrCnt).AppendLine();
 
         sb.AppendFormat(Localization.Volume_bitmap_starting_sector_in_512_bytes_0, mdb.drVBMSt).AppendLine();

@@ -450,18 +450,18 @@ public sealed partial class SysVfs
             {
                 if(bs != 2048)
                     sb.
-                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                                      bs, 2048).AppendLine();
             }
             else
             {
                 if(bs != imagePlugin.Info.SectorSize)
                     sb.
-                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                                      bs, imagePlugin.Info.SectorSize).AppendLine();
             }
 
-            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
+            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
 
             sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
                AppendLine();
@@ -634,7 +634,7 @@ public sealed partial class SysVfs
 
             metadata.Clusters = sysv_sb.s_fsize;
 
-            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs).
+            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs).
                AppendLine();
 
             sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
@@ -722,10 +722,10 @@ public sealed partial class SysVfs
 
             if(imagePlugin.Info.SectorSize != 512)
                 sb.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                                  512, 2048).AppendLine();
 
-            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
+            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
 
             sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, coh_sb.s_tfree, coh_sb.s_tfree * 512).
                AppendLine();
@@ -797,10 +797,10 @@ public sealed partial class SysVfs
 
             if(imagePlugin.Info.SectorSize != 512)
                 sb.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_sector,
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
                                  512, 2048).AppendLine();
 
-            sb.AppendFormat(Localization._0_zones_on_volume_1_bytes, v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
+            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
 
             sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, v7_sb.s_tfree, v7_sb.s_tfree * 512).
                AppendLine();

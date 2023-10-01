@@ -83,7 +83,7 @@ public sealed partial class SFS
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Bitmap_starts_in_block_0, rootBlock.bitmapbase).AppendLine();
+        sbInformation.AppendFormat(Localization.Bitmap_starts_at_block_0, rootBlock.bitmapbase).AppendLine();
 
         sbInformation.AppendFormat(Localization.Admin_space_container_starts_in_block_0, rootBlock.adminspacecontainer).
                       AppendLine();

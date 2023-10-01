@@ -452,7 +452,7 @@ public sealed partial class FFSPlugin
 
         if(sb.fs_fmod == 1)
         {
-            sbInformation.AppendLine(Localization.Superblock_is_under_modification);
+            sbInformation.AppendLine(Localization.Superblock_is_being_modified);
             metadata.Dirty = true;
         }
 

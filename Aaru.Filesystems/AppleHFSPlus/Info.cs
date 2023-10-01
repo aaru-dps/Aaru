@@ -188,7 +188,7 @@ public sealed partial class AppleHFSPlus
             sb.AppendFormat(Localization.Filesystem_version_is_0, vh.version).AppendLine();
 
             if((vh.attributes & 0x80) == 0x80)
-                sb.AppendLine(Localization.Volume_is_locked_on_hardware);
+                sb.AppendLine(Localization.Volume_is_locked_by_hardware);
 
             if((vh.attributes & 0x100) == 0x100)
                 sb.AppendLine(Localization.Volume_is_unmounted);
@@ -197,7 +197,7 @@ public sealed partial class AppleHFSPlus
                 sb.AppendLine(Localization.There_are_bad_blocks_in_the_extents_file);
 
             if((vh.attributes & 0x400) == 0x400)
-                sb.AppendLine(Localization.Volume_does_not_require_cache);
+                sb.AppendLine(Localization.Volume_does_not_need_cache);
 
             if((vh.attributes & 0x800) == 0x800)
                 sb.AppendLine(Localization.Volume_state_is_inconsistent);
@@ -209,7 +209,7 @@ public sealed partial class AppleHFSPlus
                 sb.AppendLine(Localization.Volume_is_journaled);
 
             if((vh.attributes & 0x8000) == 0x8000)
-                sb.AppendLine(Localization.Volume_is_locked_on_software);
+                sb.AppendLine(Localization.Volume_is_locked_by_software);
 
             sb.AppendFormat(Localization.Implementation_that_last_mounted_the_volume_0,
                             Encoding.ASCII.GetString(vh.lastMountedVersion)).AppendLine();
@@ -234,8 +234,8 @@ public sealed partial class AppleHFSPlus
             else
                 sb.AppendLine(Localization.Volume_has_never_been_checked_up);
 
-            sb.AppendFormat(Localization._0_files_on_volume, vh.fileCount).AppendLine();
-            sb.AppendFormat(Localization._0_folders_on_volume, vh.folderCount).AppendLine();
+            sb.AppendFormat(Localization._0_files_in_volume, vh.fileCount).AppendLine();
+            sb.AppendFormat(Localization._0_directories_in_volume, vh.folderCount).AppendLine();
             sb.AppendFormat(Localization._0_bytes_per_allocation_block, vh.blockSize).AppendLine();
             sb.AppendFormat(Localization._0_allocation_blocks, vh.totalBlocks).AppendLine();
             sb.AppendFormat(Localization._0_free_blocks, vh.freeBlocks).AppendLine();

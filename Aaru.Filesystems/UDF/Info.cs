@@ -340,7 +340,7 @@ public sealed partial class UDF
 
         sbInformation.AppendFormat(Localization.Volume_uses_0_bytes_per_block, lvd.logicalBlockSize).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_was_last_written_in_0, EcmaToDateTime(lvid.recordingDateTime)).
+        sbInformation.AppendFormat(Localization.Volume_was_last_written_on_0, EcmaToDateTime(lvid.recordingDateTime)).
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_contains_0_partitions, lvid.numberOfPartitions).AppendLine();
