@@ -129,7 +129,7 @@ public sealed partial class Udif
 
         if(sectorAddress < _currentSector)
         {
-            ErrorMessage = Localization.Tried_to_rewind_this_format_rewinded_on_writing;
+            ErrorMessage = Localization.Tried_to_rewind_this_format_not_supported;
 
             return false;
         }

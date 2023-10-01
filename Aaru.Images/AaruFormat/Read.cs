@@ -852,7 +852,7 @@ public sealed partial class AaruFormat
                     _trackFlags = new Dictionary<byte, byte>();
                     _trackIsrcs = new Dictionary<byte, string>();
 
-                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Found_0_tracks_at_position_0,
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Found_0_tracks_at_position_1,
                                                tracksHeader.entries, entry.offset);
 
                     for(ushort i = 0; i < tracksHeader.entries; i++)
@@ -1233,7 +1233,7 @@ public sealed partial class AaruFormat
                     compactDiscIndexes = new List<CompactDiscIndexEntry>();
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                               Localization.Found_0_compact_disc_indexes_at_position_0,
+                                               Localization.Found_0_compact_disc_indexes_at_position_1,
                                                indexesHeader.entries, entry.offset);
 
                     for(ushort i = 0; i < indexesHeader.entries; i++)

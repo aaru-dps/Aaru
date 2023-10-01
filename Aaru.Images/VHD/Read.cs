@@ -86,10 +86,10 @@ public sealed partial class Vhd
         uint headerCalculatedChecksum = VhdChecksum(header);
         uint footerCalculatedChecksum = VhdChecksum(footer);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
+        AaruConsole.DebugWriteLine("Virtual PC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
                                    headerChecksum, headerCalculatedChecksum);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
+        AaruConsole.DebugWriteLine("Virtual PC plugin", Localization.Header_checksum_equals_0_X8_calculated_equals_1_X8,
                                    footerChecksum, footerCalculatedChecksum);
 
         byte[] usableHeader;
@@ -143,37 +143,37 @@ public sealed partial class Vhd
         var sha1Ctx = new Sha1Context();
         sha1Ctx.Update(_thisFooter.Reserved);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.cookie = 0x{0:X8}", _thisFooter.Cookie);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.features = 0x{0:X8}", _thisFooter.Features);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.version = 0x{0:X8}", _thisFooter.Version);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.offset = {0}", _thisFooter.Offset);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.cookie = 0x{0:X8}", _thisFooter.Cookie);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.features = 0x{0:X8}", _thisFooter.Features);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.version = 0x{0:X8}", _thisFooter.Version);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.offset = {0}", _thisFooter.Offset);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", _thisFooter.Timestamp,
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.timestamp = 0x{0:X8} ({1})", _thisFooter.Timestamp,
                                    _thisDateTime);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
                                    _thisFooter.CreatorApplication,
                                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.
-                                                                CreatorApplication)));
+                                                                         CreatorApplication)));
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}", _thisFooter.CreatorVersion);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.creatorVersion = 0x{0:X8}", _thisFooter.CreatorVersion);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
                                    _thisFooter.CreatorHostOs,
                                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs)));
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.originalSize = {0}", _thisFooter.OriginalSize);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}", _thisFooter.CurrentSize);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.originalSize = {0}", _thisFooter.OriginalSize);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.currentSize = {0}", _thisFooter.CurrentSize);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
                                    _thisFooter.DiskGeometry, (_thisFooter.DiskGeometry & 0xFFFF0000) >> 16,
                                    (_thisFooter.DiskGeometry & 0xFF00) >> 8, _thisFooter.DiskGeometry & 0xFF);
 
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}", _thisFooter.DiskType);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}", _thisFooter.Checksum);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}", _thisFooter.UniqueId);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}", _thisFooter.SavedState);
-        AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.diskType = 0x{0:X8}", _thisFooter.DiskType);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.checksum = 0x{0:X8}", _thisFooter.Checksum);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.uniqueId = {0}", _thisFooter.UniqueId);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.savedState = 0x{0:X2}", _thisFooter.SavedState);
+        AaruConsole.DebugWriteLine("Virtual PC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
         if(_thisFooter.Version == VERSION1)
             _imageInfo.Version = "1.0";
@@ -366,7 +366,7 @@ public sealed partial class Vhd
 
             uint dynamicChecksumCalculated = VhdChecksum(dynamicBytes);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin",
+            AaruConsole.DebugWriteLine("Virtual PC plugin",
                                        Localization.Dynamic_header_checksum_equals_0_X8_calculated_1_X8,
                                        dynamicChecksum, dynamicChecksumCalculated);
 
@@ -425,48 +425,49 @@ public sealed partial class Vhd
             sha1Ctx = new Sha1Context();
             sha1Ctx.Update(_thisDynamic.Reserved2);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", _thisDynamic.Cookie);
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.dataOffset = {0}", _thisDynamic.DataOffset);
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.tableOffset = {0}", _thisDynamic.TableOffset);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.cookie = 0x{0:X8}", _thisDynamic.Cookie);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.dataOffset = {0}", _thisDynamic.DataOffset);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.tableOffset = {0}", _thisDynamic.TableOffset);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.headerVersion = 0x{0:X8}",
                                        _thisDynamic.HeaderVersion);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}",
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.maxTableEntries = {0}",
                                        _thisDynamic.MaxTableEntries);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.blockSize = {0}", _thisDynamic.BlockSize);
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.checksum = 0x{0:X8}", _thisDynamic.Checksum);
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentID = {0}", _thisDynamic.ParentId);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.blockSize = {0}", _thisDynamic.BlockSize);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.checksum = 0x{0:X8}", _thisDynamic.Checksum);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.parentID = {0}", _thisDynamic.ParentId);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})",
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})",
                                        _thisDynamic.ParentTimestamp, _parentDateTime);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved = 0x{0:X8}", _thisDynamic.Reserved);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.reserved = 0x{0:X8}", _thisDynamic.Reserved);
 
             for(int i = 0; i < 8; i++)
             {
-                AaruConsole.DebugWriteLine("VirtualPC plugin",
+                AaruConsole.DebugWriteLine("Virtual PC plugin",
                                            "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
                                            _thisDynamic.LocatorEntries[i].PlatformCode,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisDynamic.
-                                                                        LocatorEntries[i].PlatformCode)));
+                                                                                 LocatorEntries[i].PlatformCode)));
 
-                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}", i,
+                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
+                                           i,
                                            _thisDynamic.LocatorEntries[i].PlatformDataSpace);
 
-                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataLength = {1}",
+                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}].platformDataLength = {1}",
                                            i, _thisDynamic.LocatorEntries[i].PlatformDataLength);
 
-                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
+                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
                                            _thisDynamic.LocatorEntries[i].Reserved);
 
-                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataOffset = {1}",
+                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}].platformDataOffset = {1}",
                                            i, _thisDynamic.LocatorEntries[i].PlatformDataOffset);
             }
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentName = \"{0}\"", _thisDynamic.ParentName);
-            AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.parentName = \"{0}\"", _thisDynamic.ParentName);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
             if(_thisDynamic.HeaderVersion != VERSION1)
             {
@@ -494,7 +495,7 @@ public sealed partial class Vhd
 
             batStopwatch.Stop();
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Filling_the_BAT_took_0_seconds,
+            AaruConsole.DebugWriteLine("Virtual PC plugin", Localization.Filling_the_BAT_took_0_seconds,
                                        batStopwatch.Elapsed.TotalSeconds);
 
             _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize / 512
@@ -505,7 +506,7 @@ public sealed partial class Vhd
                                                                               // and aligned to 512 byte boundary
                                                                             / 512);
 
-            AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Bitmap_is_0_sectors, _bitmapSize);
+            AaruConsole.DebugWriteLine("Virtual PC plugin", Localization.Bitmap_is_0_sectors, _bitmapSize);
         }
 
         _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
@@ -536,24 +537,24 @@ public sealed partial class Vhd
                         {
                             case PLATFORM_CODE_WINDOWS_ABSOLUTE:
                             case PLATFORM_CODE_WINDOWS_RELATIVE:
-                                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
+                                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
                                                            i, Encoding.ASCII.GetString(_locatorEntriesData[i]));
 
                                 break;
                             case PLATFORM_CODE_WINDOWS_ABSOLUTE_U:
                             case PLATFORM_CODE_WINDOWS_RELATIVE_U:
-                                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
+                                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
                                                            i,
                                                            Encoding.BigEndianUnicode.GetString(_locatorEntriesData[i]));
 
                                 break;
                             case PLATFORM_CODE_MACINTOSH_URI:
-                                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
+                                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}] = \"{1}\"",
                                                            i, Encoding.UTF8.GetString(_locatorEntriesData[i]));
 
                                 break;
                             default:
-                                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
+                                AaruConsole.DebugWriteLine("Virtual PC plugin", "dynamic.locatorEntries[{0}] =", i);
                                 PrintHex.PrintHexArray(_locatorEntriesData[i], 64);
 
                                 break;
@@ -587,7 +588,7 @@ public sealed partial class Vhd
                                 parentPath = parentPath.Remove(0, 16);
                             else
                             {
-                                AaruConsole.DebugWriteLine("VirtualPC plugin",
+                                AaruConsole.DebugWriteLine("Virtual PC plugin",
                                                            Localization.
                                                                Unsupported_protocol_classified_found_in_URI_parent_path_0,
                                                            parentPath);
@@ -600,7 +601,8 @@ public sealed partial class Vhd
 
                     if(parentPath != null)
                     {
-                        AaruConsole.DebugWriteLine("VirtualPC plugin", Localization.Possible_parent_path_0, parentPath);
+                        AaruConsole.DebugWriteLine("Virtual PC plugin", Localization.Possible_parent_path_0,
+                                                   parentPath);
 
                         IFilter parentFilter =
                             new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));

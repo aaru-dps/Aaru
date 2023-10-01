@@ -70,7 +70,7 @@ public sealed partial class VMware
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("adapter_type", typeof(string), Localization.Type_of_adapter_type, "ide"),
+        ("adapter_type", typeof(string), Localization.Name_of_adapter_type, "ide"),
         ("hwversion", typeof(uint), Localization.VDMK_hardware_version, 4),
         ("sparse", typeof(bool), Localization.VMware_SupportedOptions_Use_sparse_extents, false),
         ("split", typeof(bool), Localization.Split_data_file_at_2GiB, (object)false)

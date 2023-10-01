@@ -207,7 +207,7 @@ public sealed partial class Partimage
         // partimage 0.6.1 does not support them either
         if(_cMainHeader.dwEncryptAlgo != PEncryption.None)
         {
-            AaruConsole.ErrorWriteLine(Localization.Encrypted_images_are_currently_not_supported);
+            AaruConsole.ErrorWriteLine(Localization.Encrypted_images_are_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }

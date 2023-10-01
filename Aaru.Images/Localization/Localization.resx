@@ -173,8 +173,8 @@
   <data name="Incorrect_identifier_for_tracks_block_at_position_0" xml:space="preserve">
     <value>Incorrect identifier for tracks block at position {0}</value>
   </data>
-  <data name="Found_0_tracks_at_position_0" xml:space="preserve">
-    <value>Found {0} tracks at position {0}</value>
+  <data name="Found_0_tracks_at_position_1" xml:space="preserve">
+    <value>Found {0} tracks at position {1}</value>
   </data>
   <data name="Found_CICM_XML_metadata_block_at_position_0" xml:space="preserve">
     <value>Found CICM XML metadata block at position {0}</value>
@@ -194,8 +194,8 @@
   <data name="Incorrect_identifier_for_compact_disc_indexes_block_at_position_0" xml:space="preserve">
     <value>Incorrect identifier for compact disc indexes block at position {0}</value>
   </data>
-  <data name="Found_0_compact_disc_indexes_at_position_0" xml:space="preserve">
-    <value>Found {0} compact disc indexes at position {0}</value>
+  <data name="Found_0_compact_disc_indexes_at_position_1" xml:space="preserve">
+    <value>Found {0} compact disc indexes at position {1}</value>
   </data>
   <data name="Could_not_find_user_data_deduplication_table" xml:space="preserve">
     <value>Could not find user data deduplication table.</value>
@@ -363,15 +363,15 @@
   </data>
   <data name="_0_1_prefixes_are_correct_2_3_prefixes_have_not_been_dumped_4_5_prefixes_have_been_written_to_image"
         xml:space="preserve">
-    <value>{0} ({1:P}% prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image</value>
+    <value>{0} ({1:P}%) prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image</value>
   </data>
   <data name="_0_1_suffixes_are_correct_2_3_suffixes_have_not_been_dumped_4_5_suffixes_have_been_written_to_image"
         xml:space="preserve">
-    <value>{0} ({1:P}% suffixes are correct, {2} ({3:P}%) suffixes have not been dumped, {4} ({5:P}%) suffixes have been written to image</value>
+    <value>{0} ({1:P}%) suffixes are correct, {2} ({3:P}%) suffixes have not been dumped, {4} ({5:P}%) suffixes have been written to image</value>
   </data>
   <data name="_0_1_MODE_2_Form_1_are_correct_2_3_MODE_2_Form_2_are_correct_4_5_MODE_2_Form_2_have_empty_CRC"
         xml:space="preserve">
-    <value>{0} ({1:P}% MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC</value>
+    <value>{0} ({1:P}%) MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC</value>
   </data>
   <data name="Writing_CompactDisc_sector_prefix_DDT_to_position_0" xml:space="preserve">
     <value>Writing CompactDisc sector prefix DDT to position {0}</value>
@@ -434,7 +434,7 @@
     <value>Writing compact disc indexes to position {0}</value>
   </data>
   <data name="Writing_apple_sector_tag_block_to_position_0" xml:space="preserve">
-    <value>Writing apple sector tag block to position {0}</value>
+    <value>Writing Apple sector tag block to position {0}</value>
   </data>
   <data name="Writing_metadata_to_position_0" xml:space="preserve">
     <value>Writing metadata to position {0}</value>
@@ -1608,7 +1608,7 @@
     <value>Found INDEX at line {0}</value>
   </data>
   <data name="Found_INDEX_before_a_track_0" xml:space="preserve">
-    <value>Found INDEX before a track {0}</value>
+    <value>Found INDEX before a track at line {0}</value>
   </data>
   <data name="Found_INDEX_0_before_INDEX_00_or_INDEX_01" xml:space="preserve">
     <value>Found INDEX {0} before INDEX 00 or INDEX 01</value>
@@ -1620,7 +1620,7 @@
     <value>Found ISRC at line {0}</value>
   </data>
   <data name="Found_ISRC_before_a_track_0" xml:space="preserve">
-    <value>Found ISRC before a track {0}</value>
+    <value>Found ISRC before a track at line {0}</value>
   </data>
   <data name="Found_CATALOG_at_line_0" xml:space="preserve">
     <value>Found CATALOG at line {0}</value>
@@ -2377,9 +2377,6 @@
   <data name="Support_for_multiple_volumes_not_supported" xml:space="preserve">
     <value>Support for multiple volumes not supported</value>
   </data>
-  <data name="Encrypted_images_are_currently_not_supported" xml:space="preserve">
-    <value>Encrypted images are currently not supported.</value>
-  </data>
   <data name="Cannot_find_MBRs" xml:space="preserve">
     <value>Cannot find MBRs</value>
   </data>
@@ -2671,8 +2668,8 @@
   <data name="zlib_exception_on_chunk_starting_at_sector_0" xml:space="preserve">
     <value>zlib exception on chunk starting at sector {0}</value>
   </data>
-  <data name="Tried_to_rewind_this_format_rewinded_on_writing" xml:space="preserve">
-    <value>Tried to rewind, this format rewinded on writing</value>
+  <data name="Tried_to_rewind_this_format_not_supported" xml:space="preserve">
+    <value>Tried to rewind on writing, not supported by this format</value>
   </data>
   <data name="UkvFdi_Name" xml:space="preserve">
     <value>Spectrum Floppy Disk Image</value>
@@ -2690,16 +2687,16 @@
     <value>Reading Image Block Map took {0} ms</value>
   </data>
   <data name="Vhd_Name" xml:space="preserve">
-    <value>VirtualPC</value>
+    <value>Virtual PC</value>
   </data>
   <data name="Header_checksum_equals_0_X8_calculated_equals_1_X8" xml:space="preserve">
     <value>Header checksum = 0x{0:X8}, calculated = 0x{1:X8}</value>
   </data>
   <data name="VirtualPC_plugin_Both_header_and_footer_are_corrupt_image_cannot_be_opened" xml:space="preserve">
-    <value>(VirtualPC plugin): Both header and footer are corrupt, image cannot be opened.</value>
+    <value>(Virtual PC plugin): Both header and footer are corrupt, image cannot be opened.</value>
   </data>
   <data name="VirtualPC_plugin_Unknown_image_type_0_found" xml:space="preserve">
-    <value>(VirtualPC plugin): Unknown image type {0} found. Please submit a bug with an example image.</value>
+    <value>(Virtual PC plugin): Unknown image type {0} found. Please submit a bug with an example image.</value>
   </data>
   <data name="VirtualBox_for_unknown_OS_0" xml:space="preserve">
     <value>VirtualBox for unknown OS "{0}"</value>
@@ -2732,22 +2729,22 @@
     <value>Possible parent path: "{0}"</value>
   </data>
   <data name="VirtualPC_plugin_Cannot_find_parent_file_for_differencing_disk_image" xml:space="preserve">
-    <value>(VirtualPC plugin): Cannot find parent file for differencing disk image</value>
+    <value>(Virtual PC plugin): Cannot find parent file for differencing disk image</value>
   </data>
   <data name="VirtualPC_plugin_Cannot_find_parent_image_filter" xml:space="preserve">
-    <value>(VirtualPC plugin): Cannot find parent image filter</value>
+    <value>(Virtual PC plugin): Cannot find parent image filter</value>
   </data>
   <data name="VirtualPC_plugin_Parent_image_is_not_a_Virtual_PC_disk_image" xml:space="preserve">
-    <value>(VirtualPC plugin): Parent image is not a Virtual PC disk image</value>
+    <value>(Virtual PC plugin): Parent image is not a Virtual PC disk image</value>
   </data>
   <data name="VirtualPC_plugin_Error_0_opening_parent_disk_image" xml:space="preserve">
-    <value>(VirtualPC plugin): Error {0} opening parent disk image</value>
+    <value>(Virtual PC plugin): Error {0} opening parent disk image</value>
   </data>
   <data name="VirtualPC_plugin_Parent_image_is_of_different_size" xml:space="preserve">
-    <value>(VirtualPC plugin): Parent image is of different size</value>
+    <value>(Virtual PC plugin): Parent image is of different size</value>
   </data>
   <data name="VirtualPC_plugin_Deprecated_image_type_found" xml:space="preserve">
-    <value>(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.</value>
+    <value>(Virtual PC plugin): Deprecated image type found. Please submit a bug with an example image.</value>
   </data>
   <data name="Vhdx_Name" xml:space="preserve">
     <value>Microsoft VHDX</value>
@@ -2803,8 +2800,8 @@
   <data name="VMware_Name" xml:space="preserve">
     <value>VMware disk image</value>
   </data>
-  <data name="Type_of_adapter_type" xml:space="preserve">
-    <value>Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.</value>
+  <data name="Name_of_adapter_type" xml:space="preserve">
+    <value>Name of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.</value>
   </data>
   <data name="VDMK_hardware_version" xml:space="preserve">
     <value>VDMK hardware version.</value>
