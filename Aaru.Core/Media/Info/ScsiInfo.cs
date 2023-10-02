@@ -156,7 +156,7 @@ public sealed class ScsiInfo
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine(Localization.Core.Unknown_testing_unit_was_ready);
+                    AaruConsole.ErrorWriteLine(Localization.Core.Unknown_sense_testing_unit_was_ready);
 
                     return;
                 }

@@ -49,7 +49,7 @@ public sealed class ErrorLog
 
         _logSw = new StreamWriter(outputFile, true);
 
-        _logSw.WriteLine(Localization.Core.Start_error_logging_at_0, DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Start_error_logging_on_0, DateTime.Now);
         _logSw.WriteLine(Localization.Core.Log_section_separator);
         _logSw.Flush();
     }
@@ -58,7 +58,7 @@ public sealed class ErrorLog
     public void Close()
     {
         _logSw.WriteLine(Localization.Core.Log_section_separator);
-        _logSw.WriteLine(Localization.Core.End_logging_at_0, DateTime.Now);
+        _logSw.WriteLine(Localization.Core.End_logging_on_0, DateTime.Now);
         _logSw.Close();
     }
 

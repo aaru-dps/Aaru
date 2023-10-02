@@ -60,7 +60,7 @@ public class SubchannelLog
     public void Close()
     {
         _logSw.WriteLine(Localization.Core.Log_section_separator);
-        _logSw.WriteLine(Localization.Core.End_logging_at_0, DateTime.Now);
+        _logSw.WriteLine(Localization.Core.End_logging_on_0, DateTime.Now);
         _logSw.Close();
     }
 

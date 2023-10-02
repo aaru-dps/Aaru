@@ -559,10 +559,10 @@ partial class Dump
             }
             else
             {
-                _dumpLog.WriteLine(Localization.Core.The_specified_plugin_does_not_support_storing_optical_disc_images);
+                _dumpLog.WriteLine(Localization.Core.The_specified_image_format_cannot_represent_optical_discs);
 
                 StoppingErrorMessage?.Invoke(Localization.Core.
-                                                          The_specified_plugin_does_not_support_storing_optical_disc_images);
+                                                          The_specified_image_format_cannot_represent_optical_discs);
 
                 return;
             }

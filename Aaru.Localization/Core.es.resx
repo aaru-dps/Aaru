@@ -1,0 +1,3476 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <data name="Aborted" xml:space="preserve">
+    <value>¡Abortado!</value>
+  </data>
+  <data name="Aborting" xml:space="preserve">
+    <value>Abortando...</value>
+  </data>
+  <data name="Access_time_is_fast" xml:space="preserve">
+    <value>El tiempo de acceso es rápido</value>
+  </data>
+  <data name="Access_time_is_slow" xml:space="preserve">
+    <value>El tiempo de acceso es lento</value>
+  </data>
+  <data name="Added_0_CompactDisc_read_offsets" xml:space="preserve">
+    <value>Añadidos {0} desplazamientos de lectura de CompactDisc</value>
+  </data>
+  <data name="Added_0_known_devices" xml:space="preserve">
+    <value>Añadidos {0} dispositivos conocidos</value>
+  </data>
+  <data name="Added_0_known_iNES_NES_2_0_headers" xml:space="preserve">
+    <value>Añadidas {0} cabeceras de iNES/NES 2.0 conocidas</value>
+  </data>
+  <data name="Added_0_usb_products" xml:space="preserve">
+    <value>Añadidos {0} productos USB</value>
+  </data>
+  <data name="Added_0_usb_vendors" xml:space="preserve">
+    <value>Añadidos {0} fabricantes USB</value>
+  </data>
+  <data name="Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive" xml:space="preserve">
+    <value>Añadido el agujero de CD-i Ready desde el LBA {0} hasta el {1} inclusivos.</value>
+  </data>
+  <data name="Adding_CompactDisc_read_offsets" xml:space="preserve">
+    <value>Añadiendo desplazamientos de lectura de CompactDisc</value>
+  </data>
+  <data name="Adding_known_devices" xml:space="preserve">
+    <value>Añadiendo dispositivos conocidos</value>
+  </data>
+  <data name="Adding_known_iNES_NES_2_0_headers" xml:space="preserve">
+    <value>Añadiendo cabeceras de iNES/NES 2.0 conocidas</value>
+  </data>
+  <data name="Adding_USB_products" xml:space="preserve">
+    <value>Añadiendo productos USB</value>
+  </data>
+  <data name="Adding_USB_vendors" xml:space="preserve">
+    <value>Añadiendo fabricantes USB</value>
+  </data>
+  <data name="All_Q_empty_for_LBA_0" xml:space="preserve">
+    <value>Todo el Q está vacío para el LBA {0}</value>
+  </data>
+  <data name="Application_identifier_0" xml:space="preserve">
+    <value>Identificador de aplicación: {0}</value>
+  </data>
+  <data name="Architecture_0" xml:space="preserve">
+    <value>Arquitectura: {0}</value>
+  </data>
+  <data name="ASCII_implemented_operating_definitions_0" xml:space="preserve">
+    <value>Definiciones de operación ASCII implementadas: {0}</value>
+  </data>
+  <data name="ASCII_Page_0_1" xml:space="preserve">
+    <value>Página ASCII {0:X2}h: {1}</value>
+  </data>
+  <data name="ATAPI_IDENTIFY_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]ATAPI IDENTIFY contenido en la imagen:[/]</value>
+  </data>
+  <data name="ATA_command_0_error_status_1_error_2" xml:space="preserve">
+    <value>Error en el comando ATA {0}: estado = {1}, error = {2}.</value>
+  </data>
+  <data name="ATA_command_0_operating_system_error_1" xml:space="preserve">
+    <value>Error del sistema operativo en el comando ATA {0}: {1}.</value>
+  </data>
+  <data name="ATA_ERROR_0_STATUS_1" xml:space="preserve">
+    <value>ERROR ATA: {0} ESTADO: {1}</value>
+  </data>
+  <data name="ATA_IDENTIFY_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]ATA IDENTIFY contenido en la imagen:[/]</value>
+  </data>
+  <data name="ATA_reading_CHS_0_1_2_error_status_3_error_4" xml:space="preserve">
+    <value>Error ATA leyendo C/H/S {0}/{1}/{2}: estado = {3}, error = {4}.</value>
+  </data>
+  <data name="ATA_reading_CHS_0_1_2_operating_system_error_3" xml:space="preserve">
+    <value>Error del sistema operativo leyendo ATA C/H/S {0}/{1}/{2}: {3}.</value>
+  </data>
+  <data name="ATA_reading_LBA_0_error_status_1_error_2" xml:space="preserve">
+    <value>Error ATA leyendo LBA {0}: estado = {3}, error = {4}.</value>
+  </data>
+  <data name="ATA_reading_LBA_0_operating_system_error_1" xml:space="preserve">
+    <value>Error del sistema operativo leyendo ATA LBA {0}: {1}.</value>
+  </data>
+  <data name="Automation_Device_Serial_Number_0" xml:space="preserve">
+    <value>Número de serie del dispositivo de automatización: {0}</value>
+  </data>
+  <data name="Average_checksum_speed_0" xml:space="preserve">
+    <value>Velocidad media de checksum: {0}</value>
+  </data>
+  <data name="Average_dump_speed_0" xml:space="preserve">
+    <value>Velocidad media de volcado: {0}</value>
+  </data>
+  <data name="Average_speed_0" xml:space="preserve">
+    <value>Velocidad media: {0}</value>
+  </data>
+  <data name="Average_write_speed_0" xml:space="preserve">
+    <value>Velocidad media de escritura: {0}</value>
+  </data>
+  <data name="Because_of_commands_sent_dumping_XGD_must_be_administrative_Cannot_continue" xml:space="preserve">
+    <value>Debido a los comandos que se envían a la unidad, volcar XGD debe hacerse con privilegios administrativos. No se puede continuar.</value>
+  </data>
+  <data name="Blank_block_found_end_of_tape" xml:space="preserve">
+    <value>Se encontró un bloque vacío, ¿fin de la cinta?...</value>
+  </data>
+  <data name="Blocksize_changed_to_0_bytes_at_block_1" xml:space="preserve">
+    <value>El tamaño del bloque cambió a {0} en el bloque {1}</value>
+  </data>
+  <data name="Block_0_could_not_be_read" xml:space="preserve">
+    <value>El bloque {0} no se pudo leer.</value>
+  </data>
+  <data name="Block_limits_for_device" xml:space="preserve">
+    <value>Límites de bloques para el dispositivo:</value>
+  </data>
+  <data name="Bluray_Burst_Cutting_Area" xml:space="preserve">
+    <value>Burst Cutting Area de Blu-ray</value>
+  </data>
+  <data name="Bluray_Cartridge_Status" xml:space="preserve">
+    <value>Estado de cartucho de Blu-ray</value>
+  </data>
+  <data name="Bluray_Disc_Definition_Structure" xml:space="preserve">
+    <value>Estructura de definición del disco Blu-ray</value>
+  </data>
+  <data name="Bluray_Disc_Definition_Structure_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Estructura de definición del disco Blu-ray contenida en la imagen:[/]</value>
+  </data>
+  <data name="Bluray_Disc_Information" xml:space="preserve">
+    <value>Información del disco Blu-ray</value>
+  </data>
+  <data name="Bluray_Disc_Information_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Información del disco Blu-ray contenida en la imagen:[/]</value>
+  </data>
+  <data name="Bluray_Spare_Area_Information" xml:space="preserve">
+    <value>Información del área de reserva de Blu-ray</value>
+  </data>
+  <data name="Blu_ray_type_BDU_setting_disc_type_UHD" xml:space="preserve">
+    <value>El tipo de Blu-ray es "BDU", estableciendo el tipo de disco como Blu-ray Ultra HD.</value>
+  </data>
+  <data name="Blu_ray_type_XG4_setting_disc_type_XGD4" xml:space="preserve">
+    <value>El tipo de Blu-ray es "XG4", estableciendo el tipo de disco como disco de Xbox One (XGD4).</value>
+  </data>
+  <data name="Building_track_map" xml:space="preserve">
+    <value>Construyendo mapa de pistas...</value>
+  </data>
+  <data name="Calculating_pregaps__can_take_some_time" xml:space="preserve">
+    <value>Calculando huecos anteriores, puede tomar algún tiempo...</value>
+  </data>
+  <data name="Cannot_create_a_sidecar_from_a_directory" xml:space="preserve">
+    <value>No se puede crear un sidecar de un directorio.</value>
+  </data>
+  <data name="Cannot_decode_PFI" xml:space="preserve">
+    <value>No se pudo descodificar el PFI.</value>
+  </data>
+  <data name="Cannot_decode_Xbox_Security_Sector_not_continuing" xml:space="preserve">
+    <value>No se pudo descodificar el Sector de Seguridad de Xbox, no se continuará.</value>
+  </data>
+  <data name="Cannot_dump_a_blank_tape" xml:space="preserve">
+    <value>No se puede volcar una cinta vacía...</value>
+  </data>
+  <data name="Cannot_dump_blank_media" xml:space="preserve">
+    <value>No se puede volcar un medio en blanco.</value>
+  </data>
+  <data name="Cannot_dump_empty_media" xml:space="preserve">
+    <value>¡No se puede volcar un medio vacío!</value>
+  </data>
+  <data name="Cannot_dump_XGD_without_administrative_privileges" xml:space="preserve">
+    <value>No se puede volcar un XGD sin privilegios administrativos.</value>
+  </data>
+  <data name="Cannot_find_lead_out" xml:space="preserve">
+    <value>No se pudo encontrar el lead-out.</value>
+  </data>
+  <data name="Cannot_get_disc_capacity" xml:space="preserve">
+    <value>No se pudo obtener la capacidad del disco.</value>
+  </data>
+  <data name="Cannot_get_DMI" xml:space="preserve">
+    <value>No se pudo obtener el DMI.</value>
+  </data>
+  <data name="Cannot_get_PFI" xml:space="preserve">
+    <value>No se pudo obtener el PFI.</value>
+  </data>
+  <data name="Cannot_get_video_partition_size_not_continuing" xml:space="preserve">
+    <value>No se pudo obtener el tamaño de la partición de video, no se continuará. Intente expulsar y reinssentar el disco, si sigue ocurriendo, contacte con soporte.</value>
+  </data>
+  <data name="Cannot_get_Xbox_Security_Sector_not_continuing" xml:space="preserve">
+    <value>No se pudo obtener el Sector de Seguridad de Xbox, no se continuará.</value>
+  </data>
+  <data name="Cannot_lock_drive_not_continuing" xml:space="preserve">
+    <value>No se pudo bloquear la unidad, no se continuará.</value>
+  </data>
+  <data name="Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands" xml:space="preserve">
+    <value>No se pudo abrir el dispositivo en modo de escritura, necesario por algunos comandos.</value>
+  </data>
+  <data name="Cannot_position_tape_to_block_0" xml:space="preserve">
+    <value>No se pudo posicionar la cinta en el bloque {0}.</value>
+  </data>
+  <data name="Cannot_read_device_dont_know_why_exiting" xml:space="preserve">
+    <value>No se pudo leer del dispositivo por una razón desconocida, saliendo...</value>
+  </data>
+  <data name="Cannot_read_from_disc_not_continuing" xml:space="preserve">
+    <value>No se pudo leer del disco, no se continuará...</value>
+  </data>
+  <data name="Cannot_read_medium_aborting_scan" xml:space="preserve">
+    <value>No se pudo leer el medio, abortando escaneo...</value>
+  </data>
+  <data name="Cannot_read_RAW_TOC_requesting_processed_one" xml:space="preserve">
+    <value>No se pudo leer la TOC sin procesar, solicitando una procesada...</value>
+  </data>
+  <data name="Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start" xml:space="preserve">
+    <value>No se pudo reposicionar la cinta, no se puede resumir. Volcando desde el principio.</value>
+  </data>
+  <data name="Cannot_reposition_tape_unable_to_resume_If_you_want_to_continue_use_force" xml:space="preserve">
+    <value>No se pudo reposicionar la cinta, no se puede resumir. Si desear continuar use "force".</value>
+  </data>
+  <data name="Cannot_stat_0" xml:space="preserve">
+    <value>No se pudo preguntar sobre {0}</value>
+  </data>
+  <data name="Cannot_unlock_drive_not_continuing" xml:space="preserve">
+    <value>No se pudo desbloquear la unidad, no se continuará.</value>
+  </data>
+  <data name="Cannot_write_ATAPI_IDENTIFY_PACKET_DEVICE" xml:space="preserve">
+    <value>No se pudo escribir ATAPI IDENTIFY PACKET DEVICE.</value>
+  </data>
+  <data name="Cannot_write_CID_to_output_image" xml:space="preserve">
+    <value>No se pudo escribir el CID en la imagen de salida.</value>
+  </data>
+  <data name="Cannot_write_CSD_to_output_image" xml:space="preserve">
+    <value>No se pudo escribir el CSD en la imagen de salida.</value>
+  </data>
+  <data name="Cannot_write_Extended_CSD_to_output_image" xml:space="preserve">
+    <value>No se pudo escribir el CSD extendido en la imagen de salida.</value>
+  </data>
+  <data name="Cannot_write_OCR_to_output_image" xml:space="preserve">
+    <value>No se pudo escribir el OCR en la imagen de salida.</value>
+  </data>
+  <data name="Cannot_write_SCR_to_output_image" xml:space="preserve">
+    <value>No se pudo escribir el SCR en la imagen de salida.</value>
+  </data>
+  <data name="Cannot_write_SCSI_INQUIRY" xml:space="preserve">
+    <value>No se pudo escribir SCSI INQUIRY.</value>
+  </data>
+  <data name="Cannot_write_SCSI_MODE_SENSE_10" xml:space="preserve">
+    <value>No se pudo escribir SCSI MODE SENSE (10).</value>
+  </data>
+  <data name="Cannot_write_SCSI_MODE_SENSE_6" xml:space="preserve">
+    <value>No se pudo escribir SCSI MODE SENSE (6).</value>
+  </data>
+  <data name="Cannot_write_tag_0" xml:space="preserve">
+    <value>No se pudo escribir la etiqueta {0}.</value>
+  </data>
+  <data name="Cannot_write_USB_descriptors" xml:space="preserve">
+    <value>No se pudieron escribir los descriptores USB.</value>
+  </data>
+  <data name="Can_do_challenge_response_with_Xbox_360_discs" xml:space="preserve">
+    <value>Puede hacer el desafío/respuesta con discos de Xbox 360</value>
+  </data>
+  <data name="Can_do_challenge_response_with_Xbox_discs" xml:space="preserve">
+    <value>Puede hacer el desafío/respuesta con discos de Xbox</value>
+  </data>
+  <data name="Can_read_and_decrypt_SS_from_Xbox_360_discs" xml:space="preserve">
+    <value>Puede leer y desencriptar el SS de discos de Xbox 360</value>
+  </data>
+  <data name="Can_read_and_decrypt_SS_from_Xbox_discs" xml:space="preserve">
+    <value>Puede leer y desencriptar el SS de discos de Xbox</value>
+  </data>
+  <data name="Can_set_Kreon_locked_state" xml:space="preserve">
+    <value>Puede bloquearse</value>
+  </data>
+  <data name="Can_set_wxripper_unlock_state_with_Xbox_360_discs" xml:space="preserve">
+    <value>Puede para al estado de desbloqueo de wxripper con discos de Xbox 360</value>
+  </data>
+  <data name="Can_set_wxripper_unlock_state_with_Xbox_discs" xml:space="preserve">
+    <value>Puede para al estado de desbloqueo de wxripper con discos de Xbox</value>
+  </data>
+  <data name="Can_set_xtreme_unlock_state_with_Xbox_360_discs" xml:space="preserve">
+    <value>Puede para al estado de desbloqueo de xtreme con discos de Xbox 360</value>
+  </data>
+  <data name="Can_set_xtreme_unlock_state_with_Xbox_discs" xml:space="preserve">
+    <value>Puede para al estado de desbloqueo de xtreme con discos de Xbox</value>
+  </data>
+  <data name="Card_specific_data_0" xml:space="preserve">
+    <value>Datos específicos de la tarjeta: 0x{0:X4}</value>
+  </data>
+  <data name="Cartridge_has_0_bytes" xml:space="preserve">
+    <value>El cartucho tiene {0} bytes</value>
+  </data>
+  <data name="Cartridge_has_0_bytes_1_GiB" xml:space="preserve">
+    <value>El cartucho tiene {0} bytes ({1:F3} GiB)</value>
+  </data>
+  <data name="Cartridge_has_0_bytes_1_KiB" xml:space="preserve">
+    <value>El cartucho tiene {0} bytes ({1:F3} KiB)</value>
+  </data>
+  <data name="Cartridge_has_0_bytes_1_MiB" xml:space="preserve">
+    <value>El cartucho tiene {0} bytes ({1:F3} MiB)</value>
+  </data>
+  <data name="CD_read_speed_limited_to_0" xml:space="preserve">
+    <value>Velocidad de lectura de CD limitada a {0}x</value>
+  </data>
+  <data name="CD_TEXT_on_Lead_In" xml:space="preserve">
+    <value>CD-TEXT en el Lead-In</value>
+  </data>
+  <data name="CD_write_speed_limited_to_0" xml:space="preserve">
+    <value>Velocidad de escritura de CD limitada a {0}x</value>
+  </data>
+  <data name="Changed_to_file_0_at_block_1" xml:space="preserve">
+    <value>Cambió al fichero {0} en el bloque {1}</value>
+  </data>
+  <data name="Checking_filesystems" xml:space="preserve">
+    <value>Comprobando sistemas de ficheros...</value>
+  </data>
+  <data name="Checking_if_drive_supports_full_raw_subchannel_reading" xml:space="preserve">
+    <value>Comprobando si la unidad soporta leer el subcanal completo sin procesar...</value>
+  </data>
+  <data name="Checking_if_drive_supports_PQ_subchannel_reading" xml:space="preserve">
+    <value>Comprobando si la unidad soporta leer el subcanal PQ...</value>
+  </data>
+  <data name="Checking_if_drive_supports_reading_without_subchannel" xml:space="preserve">
+    <value>Comprobando si la unidad soporta leer sin el subcanal...</value>
+  </data>
+  <data name="Checking_if_drive_supports_READ_10" xml:space="preserve">
+    <value>Comprobando si la unidad soporta READ(10)...</value>
+  </data>
+  <data name="Checking_if_drive_supports_READ_12" xml:space="preserve">
+    <value>Comprobando si la unidad soporta READ(12)...</value>
+  </data>
+  <data name="Checking_if_drive_supports_READ_16" xml:space="preserve">
+    <value>Comprobando si la unidad soporta READ(16)...</value>
+  </data>
+  <data name="Checking_if_drive_supports_READ_6" xml:space="preserve">
+    <value>Comprobando si la unidad soporta READ(6)...</value>
+  </data>
+  <data name="Checking_if_media_is_UMD_or_MemoryStick" xml:space="preserve">
+    <value>Comprobando si el medio es un UMD o una MemoryStick...</value>
+  </data>
+  <data name="Checking_mode_for_track_0" xml:space="preserve">
+    <value>Comprobando el modo de la pista {0}...</value>
+  </data>
+  <data name="CID_obtained_correctly" xml:space="preserve">
+    <value>CID obtenido correctamente...</value>
+  </data>
+  <data name="Closed_in_0" xml:space="preserve">
+    <value>Cerrado en {0}.</value>
+  </data>
+  <data name="Closing_output_file" xml:space="preserve">
+    <value>Cerrando fichero de salida.</value>
+  </data>
+  <data name="Combined_disc_and_drive_offset_are_0_bytes_1_samples" xml:space="preserve">
+    <value>El desplazamiento combinado del disco y la unidad es de {0} bytes ({1} muestras).</value>
+  </data>
+  <data name="Combined_offset_is_0_bytes_1_samples" xml:space="preserve">
+    <value>El desplazamiento combinado es de {0} bytes ({1} muestras).</value>
+  </data>
+  <data name="Command_line_0" xml:space="preserve">
+    <value>Línea de comandos: {0}</value>
+  </data>
+  <data name="Comments_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Comentarios:[/] {0}</value>
+  </data>
+  <data name="CompactDisc_Absolute_Time_In_Pregroove_ATIP_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]ATIP de CompactDisc contenido en la imagen:[/]</value>
+  </data>
+  <data name="CompactDisc_Lead_in_CD_Text_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CD-Text del Lead-In del CompactDisc contenido en la imagen:[/]</value>
+  </data>
+  <data name="CompactDisc_Media_Catalogue_Number_contained_in_image_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Número de catálogo del CompactDisc contenido en la imagen:[/] {0}</value>
+  </data>
+  <data name="CompactDisc_Power_Management_Area_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]PMA del CompactDisc contenida en la imagen:[/]</value>
+  </data>
+  <data name="CompactDisc_Table_of_Contents_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Tabla de contenidos del CompactDisc contenida en la imagen:[/]</value>
+  </data>
+  <data name="CompactFlash_device_0" xml:space="preserve">
+    <value>Dispositivo CompactFlash: {0}</value>
+  </data>
+  <data name="Contains_0_readable_media_tags_WithMarkup" xml:space="preserve">
+    <value>[bold]Contiene {0} etiquetas del medio legibles:[/]</value>
+  </data>
+  <data name="Contains_0_readable_sector_tags_WithMarkup" xml:space="preserve">
+    <value>[bold]Contiene {0} etiquetas de sector legibles:[/]</value>
+  </data>
+  <data name="Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc" xml:space="preserve">
+    <value>Contiene un medio de {0} sectores con un tamaño de sector máximo de {1} bytes (si todos los sectores tuvieran el mismo tamaño la imagen tendría {2})</value>
+  </data>
+  <data name="Contains_a_media_of_type_0_and_XML_type_1" xml:space="preserve">
+    <value>Contiene un medio de tipo {0} y tipo XML {1}</value>
+  </data>
+  <data name="Contains_a_media_of_type_0_and_XML_type_1_WithMarkup" xml:space="preserve">
+    <value>Contiene un medio de tipo [italic]{0}[/italic] y tipo XML [italic]{1}[/]</value>
+  </data>
+  <data name="Continuing_dumping_cooked_data" xml:space="preserve">
+    <value>Continuando volcando datos procesados.</value>
+  </data>
+  <data name="Correctly_retried_block_0_in_pass_1" xml:space="preserve">
+    <value>Se reintentó con éxito el bloque {0} en el paso {1}.</value>
+  </data>
+  <data name="Correctly_retried_sector_0_in_pass_1" xml:space="preserve">
+    <value>Se reintentó con éxito el sector {0} en el paso {1}.</value>
+  </data>
+  <data name="Correctly_retried_sector_0_subchannel_in_pass_1" xml:space="preserve">
+    <value>Se reintentó con éxito el subcanal del sector {0} en el paso {1}.</value>
+  </data>
+  <data name="Correctly_retried_title_key_0_in_pass_1" xml:space="preserve">
+    <value>Se reintentó con éxito la llave de título {0} en el paso {1}.</value>
+  </data>
+  <data name="Could_not_check_current_position_continuing" xml:space="preserve">
+    <value>No se pudo detectar la posición actual, continuando.</value>
+  </data>
+  <data name="Could_not_check_current_position_unable_to_resume_Dumping_from_the_start" xml:space="preserve">
+    <value>No se pudo detectar la posición actual, no se puede resumir. Volcando desde el principio.</value>
+  </data>
+  <data name="Could_not_check_current_position_unable_to_resume_If_you_want_to_continue_use_force" xml:space="preserve">
+    <value>No se pudo detectar la posición actual, no se puede resumir. Si desea continuar use "force".</value>
+  </data>
+  <data name="Could_not_decode_MODE_SENSE" xml:space="preserve">
+    <value>No se pudo descodificar el MODE SENSE...</value>
+  </data>
+  <data name="Could_not_decode_TOC" xml:space="preserve">
+    <value>No se pudo descodificar la tabla de contenidos...</value>
+  </data>
+  <data name="Could_not_detect_capacity" xml:space="preserve">
+    <value>No se pudo detectar la capacidad...</value>
+  </data>
+  <data name="Could_not_detect_drive_subchannel_BCD" xml:space="preserve">
+    <value>No se pudo detectar el BCD de la unidad en el subcanal</value>
+  </data>
+  <data name="Could_not_detect_if_drive_subchannel_is_BCD_or_not_pregaps_could_not_be_calculated_dump_may_be_incorrect"
+        xml:space="preserve">
+    <value>No se pudo detectar si el subcanal la unidad lo devuelve en BCD o no, los huecos anteriores no se pueden calcular, el volcado podría ser incorrecto...</value>
+  </data>
+  <data name="Could_not_detect_image_format" xml:space="preserve">
+    <value>No se pudo detectar el formato de la imagen.</value>
+  </data>
+  <data name="Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option" xml:space="preserve">
+    <value>No se pudo encontrar el Lead-Out, si desea continuar use la opcón "force" y se continuará hasta los 360000 sectores...</value>
+  </data>
+  <data name="Could_not_find_second_session_Have_you_inserted_the_correct_type_of_disc" xml:space="preserve">
+    <value>No se pudo encontrar la segunda sesión. ¿Introdujo el tipo correcto de disco?</value>
+  </data>
+  <data name="Could_not_find_VideoNow_Color_frame_offset" xml:space="preserve">
+    <value>No se pudo encontrar el desplazamiento del fotograma de VideoNow Color, el volcado podría ser incorrecto.</value>
+  </data>
+  <data name="Could_not_get_a_working_read_command" xml:space="preserve">
+    <value>¡No se pudo encontrar un comando de lectura que funcione!</value>
+  </data>
+  <data name="Could_not_get_correct_subchannel_for_sector_0" xml:space="preserve">
+    <value>No se pudo obtener el subcanal correcto para el sector {0}</value>
+  </data>
+  <data name="Could_not_get_MODE_SENSE" xml:space="preserve">
+    <value>No se pudo obtener el MODE SENSE...</value>
+  </data>
+  <data name="Could_not_get_position_Sense_follows" xml:space="preserve">
+    <value>No se pudo obtener la posición. Sense a continuación...</value>
+  </data>
+  <data name="Could_not_get_tracks" xml:space="preserve">
+    <value>¡No se pudieron obtener las pistas!</value>
+  </data>
+  <data name="Could_not_get_tracks_because_0" xml:space="preserve">
+    <value>No se pudieron obtener las pistas porque</value>
+  </data>
+  <data name="Could_not_get_tuples" xml:space="preserve">
+    <value>No se pudieron obtener las tuplas</value>
+  </data>
+  <data name="Could_not_process_resume_file_not_continuing" xml:space="preserve">
+    <value>No se pudo procesar el fichero de resumen, no se continuará...</value>
+  </data>
+  <data name="Could_not_read" xml:space="preserve">
+    <value>No se pudo leer...</value>
+  </data>
+  <data name="Could_not_read_CID" xml:space="preserve">
+    <value>No se pudo leer el CID...</value>
+  </data>
+  <data name="Could_not_read_CSD" xml:space="preserve">
+    <value>No se pudo leer el CSD...</value>
+  </data>
+  <data name="Could_not_read_Extended_CSD" xml:space="preserve">
+    <value>No se pudo leer el CSD extendido...</value>
+  </data>
+  <data name="Could_not_read_OCR" xml:space="preserve">
+    <value>No se pudo leer el OCR...</value>
+  </data>
+  <data name="Could_not_read_SCR" xml:space="preserve">
+    <value>No se pudo leer el SCR...</value>
+  </data>
+  <data name="Could_not_read_subchannel_for_sector_0" xml:space="preserve">
+    <value>No se pudo leer el subcanal para el sector {0}</value>
+  </data>
+  <data name="Could_not_read_subchannel_for_this_track_supposing_0_sectors" xml:space="preserve">
+    <value>No se pudo leer el subcanal para esta pista, suponiendo {0} sectores.</value>
+  </data>
+  <data name="Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors" xml:space="preserve">
+    <value>No se pudo leer el subcanal para esta pista, suponiendo 150 sectores.</value>
+  </data>
+  <data name="Could_not_read_subchannel_for_this_track_supposing_zero_sectors" xml:space="preserve">
+    <value>No se pudo leer el subcanal para esta pista, suponiendo 0 sectores.</value>
+  </data>
+  <data name="Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000"
+        xml:space="preserve">
+    <value>No se pudo leer la tabla de contenidos, si desea continuar, use "force", y se intentarán leer desde el LBA 0 hasta el 360000...</value>
+  </data>
+  <data name="Created_by_0" xml:space="preserve">
+    <value>Creado por: {0}</value>
+  </data>
+  <data name="Created_by_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Creador por:[/] {0}</value>
+  </data>
+  <data name="Created_on_0" xml:space="preserve">
+    <value>Creado el {0}</value>
+  </data>
+  <data name="Creating_main_database" xml:space="preserve">
+    <value>Creando base de datos principal.</value>
+  </data>
+  <data name="Creating_sidecar" xml:space="preserve">
+    <value>Creando sidecar.</value>
+  </data>
+  <data name="Creating_single_track_as_could_not_retrieve_track_list_from_drive" xml:space="preserve">
+    <value>Creando una única pista ya que no se pudo obtener la lista de pistas de la unidad.</value>
+  </data>
+  <data name="Creating_subchannel_log_in_0" xml:space="preserve">
+    <value>Creando registro del subcanal en {0}</value>
+  </data>
+  <data name="CSD_obtained_correctly" xml:space="preserve">
+    <value>CSD obtenido correctamente...</value>
+  </data>
+  <data name="Current_position_is_not_as_expected_continuing" xml:space="preserve">
+    <value>La posición actual no es la esperada, continuando.</value>
+  </data>
+  <data name="Current_position_is_not_as_expected_unable_to_resume_Dumping_from_the_start" xml:space="preserve">
+    <value>La posición actual no es la esperada, no se puede resumir. Volcando desde el inicio.</value>
+  </data>
+  <data name="Current_position_is_not_as_expected_unable_to_resume_If_you_want_to_continue_use_force"
+        xml:space="preserve">
+    <value>La posición actual no es la esperada, no se puede resumir. Si desea continuar use "force".</value>
+  </data>
+  <data name="Data_length_is_invalid" xml:space="preserve">
+    <value>¡La longitud de los datos no es válida!</value>
+  </data>
+  <data name="Data_preparer_identifier_0" xml:space="preserve">
+    <value>Identificador del preparador de datos: {0}</value>
+  </data>
+  <data name="Data_Transfer_Device_Element_Address_0" xml:space="preserve">
+    <value>Dirección del Elemento del Dispositivo de Transferencia de Datos: 0x{0}</value>
+  </data>
+  <data name="DEBUG_version" xml:space="preserve">
+    <value>Versión de DEPURACIÓN</value>
+  </data>
+  <data name="Decoding_PCMCIA_CIS" xml:space="preserve">
+    <value>Descodificando el CIS de PCMCIA.</value>
+  </data>
+  <data name="Decoding_Xbox_Security_Sector" xml:space="preserve">
+    <value>Descodificando el Sector de Seguridad de Xbox.</value>
+  </data>
+  <data name="Decrypting_disc_key" xml:space="preserve">
+    <value>Desencriptando llave del disco.</value>
+  </data>
+  <data name="Decryption_of_disc_key_failed" xml:space="preserve">
+    <value>Falló la desencriptación de la llave del disco.</value>
+  </data>
+  <data name="Decryption_of_disc_key_succeeded" xml:space="preserve">
+    <value>Llave del disco desencriptada con éxito.</value>
+  </data>
+  <data name="Detecting_disc_type" xml:space="preserve">
+    <value>Detectando tipo del disco...</value>
+  </data>
+  <data name="Device_block_size_is_fixed_at_0_bytes" xml:space="preserve">
+    <value>El tamaño de bloque del dispositivo está fijado en {0} bytes</value>
+  </data>
+  <data name="Device_can_read_0_blocks_at_a_time" xml:space="preserve">
+    <value>El dispositivo puede leer {0} bloques a la vez.</value>
+  </data>
+  <data name="Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads" xml:space="preserve">
+    <value>El dispositivo puede leer {0} bloques a la vez usando lecturas a través del búfer del SO.</value>
+  </data>
+  <data name="Device_can_read_0_blocks_using_sequential_commands" xml:space="preserve">
+    <value>El dispositivo puede leer {0} bloques usando comandos secuenciales.</value>
+  </data>
+  <data name="Device_contains_MMC" xml:space="preserve">
+    <value>El dispositivo contiene una MultiMediaCard</value>
+  </data>
+  <data name="Device_contains_SDIO_card" xml:space="preserve">
+    <value>El dispositivo contiene una tarjeta Secure Digital I/O</value>
+  </data>
+  <data name="Device_contains_SD_card" xml:space="preserve">
+    <value>El dispositivo contiene una tarjeta Secure Digital</value>
+  </data>
+  <data name="Device_contains_SM_card" xml:space="preserve">
+    <value>El dispositivo contiene una tarjeta Smart Media</value>
+  </data>
+  <data name="Device_contains_unknown_media_card_type_0" xml:space="preserve">
+    <value>El dispositivo contiene una tarjeta de tipo {0} desconocido</value>
+  </data>
+  <data name="Device_doesnt_seem_capable_of_reading_raw_data_from_media" xml:space="preserve">
+    <value>El dispositivo no parece capaz de leer los datos sin procesar del medio.</value>
+  </data>
+  <data name="Device_does_not_specify_a_maximum_block_size" xml:space="preserve">
+    <value>El dispositivo no especifica un tamaño máximo de bloque</value>
+  </data>
+  <data name="Device_error_0_trying_to_guess_ideal_transfer_length" xml:space="preserve">
+    <value>Error {0} del dispositivo intentando averiguar la longitud de transferencia ideal.</value>
+  </data>
+  <data name="Device_error_0_trying_to_read_from_device" xml:space="preserve">
+    <value>Error {0} del dispositivo intentando leer del mismo.</value>
+  </data>
+  <data name="Device_identified_as_0" xml:space="preserve">
+    <value>Dispositivo identificado como {0}</value>
+  </data>
+  <data name="Device_information" xml:space="preserve">
+    <value>################# Información del dispositivo #################</value>
+  </data>
+  <data name="Device_in_database_since_0" xml:space="preserve">
+    <value>Dispositivo en la base de datos desde el {0}.</value>
+  </data>
+  <data name="Device_is_capable_of_reading_raw_data_but_Ive_been_unable_to_guess_correct_sector_size"
+        xml:space="preserve">
+    <value>El dispositivo es capaz de leer los datos sin procesar pero no se ha podido averiguar el tamaño correcto del sector.</value>
+  </data>
+  <data name="Device_maximum_block_size_is_0_bytes" xml:space="preserve">
+    <value>El tamaño máximo de un bloque del dispositivo es de {0} bytes</value>
+  </data>
+  <data name="Device_minimum_block_size_is_0_bytes" xml:space="preserve">
+    <value>El tamaño mínimo de un bloque del dispositivo es de {0} bytes</value>
+  </data>
+  <data name="Device_needs_28_bit_LBA_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
+    <value>El dispositivo necesita comandos LBA de 28-bits pero no podemos mandárselos... Abortando.</value>
+  </data>
+  <data name="Device_needs_48_bit_LBA_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
+    <value>El dispositivo necesita comandos LBA de 48-bits pero no podemos mandárselos... Abortando.</value>
+  </data>
+  <data name="Device_needs_a_block_size_granularity_of_pow_0_1_bytes" xml:space="preserve">
+    <value>El dispositivo necesita un tamaño de bloque con una granularidad de 2^{0} ({1} bytes)</value>
+  </data>
+  <data name="Device_needs_CHS_commands_but_I_cant_issue_them_Aborting" xml:space="preserve">
+    <value>El dispositivo necesita comandos CHS pero no podemos mandárselos... Abortando.</value>
+  </data>
+  <data name="Device_not_in_database" xml:space="preserve">
+    <value>El dispositivo no está en la base de datos, por favor cree un reporte del mismo y adjúntelo en un reporte de Github.</value>
+  </data>
+  <data name="Device_not_ready_Sense" xml:space="preserve">
+    <value>El dispositivo no está listo. Sense {0} ASC {1:X2}h ASCQ {2:X2}h</value>
+  </data>
+  <data name="Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total" xml:space="preserve">
+    <value>El dispositivo sólo soporta SCSI READ (10) pero tiene más de {0} bloques ({1} en total)</value>
+  </data>
+  <data name="Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total" xml:space="preserve">
+    <value>El dispositivo sólo soporta SCSI READ (6) pero tiene más de {0} bloques ({1} en total)</value>
+  </data>
+  <data name="Device_reports_0_blocks" xml:space="preserve">
+    <value>El dispositivo reporta {0} bloques.</value>
+  </data>
+  <data name="Device_reports_0_blocks_1_bytes" xml:space="preserve">
+    <value>El dispositivo reporta {0} bloques ({1} bytes).</value>
+  </data>
+  <data name="Device_reports_0_bytes_per_logical_block" xml:space="preserve">
+    <value>El dispositivo reporta {0} bytes por bloque lógico.</value>
+  </data>
+  <data name="Device_reports_0_bytes_per_physical_block" xml:space="preserve">
+    <value>El dispositivo reporta {0} bytes por bloque físico.</value>
+  </data>
+  <data name="Device_reports_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
+    <value>El dispositivo reporta {0} cilindros {1} cabezas y {2} sectores por pista.</value>
+  </data>
+  <data name="Device_reports_current_profile_is_0" xml:space="preserve">
+    <value>El dispositivo reporta que el perfil actual es 0x{0:X4}</value>
+  </data>
+  <data name="Device_reports_disc_has_0_blocks" xml:space="preserve">
+    <value>El dispositivo reporta que el disco tiene {0} bloques</value>
+  </data>
+  <data name="Device_reports_incorrect_media_card_type" xml:space="preserve">
+    <value>El dispositivo reporta un tipo de tarjeta de memoria incorrect</value>
+  </data>
+  <data name="Device_supports_MCPT_Command_Set" xml:space="preserve">
+    <value>El dispositivo soporta el conjunto de comandos de tarjetas de memoria</value>
+  </data>
+  <data name="Device_type_0" xml:space="preserve">
+    <value>Tipo de dispositivo: {0}</value>
+  </data>
+  <data name="DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen DiscFerret no tiene el mismo número de cabezas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen DiscFerret no tiene el mismo número de pistas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen KryoFlux no tiene el mismo número de cabezas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen KryioFlux no tiene el mismo número de pistas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen SuperCardPro no tiene el mismo número de cabezas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring" xml:space="preserve">
+    <value>La imagen SuperCardPro no tiene el mismo número de pistas ({0}) que la imagen de disco ({1}), ignorándola...</value>
+  </data>
+  <data name="Disc_and_drive_authentication_succeeded" xml:space="preserve">
+    <value>Autentificacón entre el disco y la unidad exitosa.</value>
+  </data>
+  <data name="Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect" xml:space="preserve">
+    <value>Las regiones del disco y la unidad no coinciden. El volcado será incorrecto.</value>
+  </data>
+  <data name="Disc_and_drive_regions_match" xml:space="preserve">
+    <value>Las regiones del disco y la unidad coinciden.</value>
+  </data>
+  <data name="Disc_contains_a_hidden_track" xml:space="preserve">
+    <value>El disco contiene una pista oculta...</value>
+  </data>
+  <data name="Disc_has_audio_and_data_two_sessions_all_data_second_CD_Plus" xml:space="preserve">
+    <value>El disco tiene pistas de audio y datos, dos sesiones, y todas las pistas de datos están en la segunda sesión, estableciendo su tipo como CD+.</value>
+  </data>
+  <data name="Disc_has_a_mode_two_data_track_CD_ROM_XA" xml:space="preserve">
+    <value>El disco tiene una pista de datos en modo 2, estableciendo su tipo como CD-ROM XA.</value>
+  </data>
+  <data name="Disc_has_hidden_CD_i_pregap_CD_i_Ready" xml:space="preserve">
+    <value>El disco tiene una pista de CD-i oculta en el hueco anterior a la pista 1, estableciendo su tipo como CD-i Ready.</value>
+  </data>
+  <data name="Disc_has_only_audio_in_a_session_CD_Digital_Audio" xml:space="preserve">
+    <value>El disco sólo tiene pistas de audio en una única sesión, estableciendo su tipo como CD Digital Audio.</value>
+  </data>
+  <data name="Disc_has_only_data_in_a_session_CD_ROM" xml:space="preserve">
+    <value>El disco sólo tiene pistas de datos en una única sesión, estableciendo su tipo como CD-ROM.</value>
+  </data>
+  <data name="Disc_has_video_tracks_CD_Video" xml:space="preserve">
+    <value>El disco tiene pistas de video y una única sesión, estableciendo su tipo como CD Video.</value>
+  </data>
+  <data name="Disc_offset_cannot_be_calculated" xml:space="preserve">
+    <value>El desplazamiento del disco no pudo ser calculado.</value>
+  </data>
+  <data name="Disc_offset_is_0_bytes_1_samples" xml:space="preserve">
+    <value>El desplazamiento del disco es de {0} bytes ({1} muestras)</value>
+  </data>
+  <data name="Disc_write_offset_is_unknown" xml:space="preserve">
+    <value>El desplazamiento de escritura del disco es desconocido.</value>
+  </data>
+  <data name="Disc_write_offset_is_unknown_dump_may_not_be_correct" xml:space="preserve">
+    <value>El desplazamiento de escritura del disco es desconocido, el volcado puede no ser correcto.</value>
+  </data>
+  <data name="Doesnt_have_partitions" xml:space="preserve">
+    <value>No tiene particiones</value>
+  </data>
+  <data name="Doesnt_have_sessions" xml:space="preserve">
+    <value>No tiene sesiones</value>
+  </data>
+  <data name="Drive_can_read_without_subchannel" xml:space="preserve">
+    <value>La unidad puede leer sin el subcanal...</value>
+  </data>
+  <data name="Drive_could_not_go_back_one_block_Sense_follows" xml:space="preserve">
+    <value>La unidad no pudo retroceder un bloque. Sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_read_block_0_Sense_bytes_follow" xml:space="preserve">
+    <value>La unidad no pudo leer el bloque {0}. Los bytes del sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump" xml:space="preserve">
+    <value>La unidad no pudo leer el bloque {0}. El sense no se pudo descodificar, compruebe el registro para su volcado...</value>
+  </data>
+  <data name="Drive_could_not_read_block_0_Sense_follows" xml:space="preserve">
+    <value>La unidad no pudo leer el bloque {0}. Sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_read_block_0_Sense_follow_1_2" xml:space="preserve">
+    <value>La unidad no pudo leer el bloque {0}. Sense a continuación... {1} {2}</value>
+  </data>
+  <data name="Drive_could_not_read_Sense_follows" xml:space="preserve">
+    <value>La unidad no pudo leer. Sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_return_back_Sense_follows" xml:space="preserve">
+    <value>La unidad no pudo retroceder. Sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_rewind_please_correct_Sense_follows" xml:space="preserve">
+    <value>La unidad no pudo rebobinar, por favor corrígalo. Sense a continuación...</value>
+  </data>
+  <data name="Drive_could_not_rewind_to_partition_0_but_no_error_occurred" xml:space="preserve">
+    <value>La unidad no pudo rebobinar a la partición 0 pero no ocurrió ningún error...</value>
+  </data>
+  <data name="Drive_currently_forces_single_session" xml:space="preserve">
+    <value>La unidad fuerza una sesión única</value>
+  </data>
+  <data name="Drive_currently_hides_CDRs" xml:space="preserve">
+    <value>La unidad oculta los CD-R</value>
+  </data>
+  <data name="Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading" xml:space="preserve">
+    <value>La unidad no aceptó el comando MODE SELECT para activar la lectura con persistencia en errores, por favor intente otra unidad.</value>
+  </data>
+  <data name="Drive_does_not_returns_subchannel_in_BCD" xml:space="preserve">
+    <value>La unidad no devuelve el subcanal en BCD...</value>
+  </data>
+  <data name="Drive_does_not_support_READ_CD_trying_SCSI_READ_commands" xml:space="preserve">
+    <value>La unidad no soporta READ CD, intentando comandos SCSI READ...</value>
+  </data>
+  <data name="Drive_does_not_support_the_requested_subchannel_format_not_continuing" xml:space="preserve">
+    <value>La unidad no soporta el format de subcanal solicitado, no se continuará...</value>
+  </data>
+  <data name="Drive_firmware_info_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Información del firmware de la unidad:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Drive_has_loaded_a_total_of_0_discs" xml:space="preserve">
+    <value>La unidad ha cargado un total de {0} discos</value>
+  </data>
+  <data name="Drive_has_spent_0_reading_CDs" xml:space="preserve">
+    <value>La unidad ha pasado {0} leyendo CDs</value>
+  </data>
+  <data name="Drive_has_spent_0_reading_DVDs" xml:space="preserve">
+    <value>La unidad ha pasado {0} leyendo DVDs</value>
+  </data>
+  <data name="Drive_has_spent_0_writing_CDs" xml:space="preserve">
+    <value>La unidad ha pasado {0} escribiendo CDs</value>
+  </data>
+  <data name="Drive_has_spent_0_writing_DVDs" xml:space="preserve">
+    <value>La unidad ha pasado {0} escribiendo DVDs</value>
+  </data>
+  <data name="Drive_has_status_error_please_correct_Sense_follows" xml:space="preserve">
+    <value>La unidad tiene un estado de error, por favor corríjalo. Sense a continuación...</value>
+  </data>
+  <data name="Drive_identifies_as_Apple_OEM_drive" xml:space="preserve">
+    <value>La unidad se identifica como unidad de fábrica de Apple</value>
+  </data>
+  <data name="Drive_manufacturer_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Fabricante de la unidad:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Drive_model_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Modelo de la unidad:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Drive_not_in_partition_0_Rewinding_please_wait" xml:space="preserve">
+    <value>La unidad no está en la partición 0. Rebobinando, por favor espere...</value>
+  </data>
+  <data name="Drive_reading_offset_is_0_bytes_1_samples" xml:space="preserve">
+    <value>El desplazamiento de lectura de la unidad es de {0} bytes ({1} muestras).</value>
+  </data>
+  <data name="Drive_reading_offset_not_found_in_database" xml:space="preserve">
+    <value>El desplazamiento de lectura de la unidad no se encontró en la base de datos.</value>
+  </data>
+  <data name="Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect" xml:space="preserve">
+    <value>La unidad reporta que el disco usa la protección anticopia {0}. Aún no está soportada y el volcado será incorrecto.</value>
+  </data>
+  <data name="Drive_reports_disc_uses_CSS_copy_protection" xml:space="preserve">
+    <value>La unidad reporta que el disco usa la protección anticopia CSS.</value>
+  </data>
+  <data name="Drive_reports_no_copy_protection_on_disc" xml:space="preserve">
+    <value>La unidad reporta que el disco no usa protección anticopia.</value>
+  </data>
+  <data name="Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled"
+        xml:space="preserve">
+    <value>La unidad reporta que el disco usa protección anticopia. El volcado será incorrecto a no ser que se active la desencriptación.</value>
+  </data>
+  <data name="Drive_returns_subchannel_in_BCD" xml:space="preserve">
+    <value>La unidad devuelve el subcanal en BCD...</value>
+  </data>
+  <data name="Drive_serial_number_0" xml:space="preserve">
+    <value>Número de serie de la unidad: {0}</value>
+  </data>
+  <data name="Drive_serial_number_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Número de serie de la unidad:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Drive_supports_bitsetting_DVD_R_book_type" xml:space="preserve">
+    <value>La unidad soporta establecer el tipo de libro de DVD+R</value>
+  </data>
+  <data name="Drive_supports_bitsetting_DVD_R_DL_book_type" xml:space="preserve">
+    <value>La unidad soporta establecer el tipo de libro de DVD+R DL</value>
+  </data>
+  <data name="Drive_supports_hiding_CDRs_and_forcing_single_session" xml:space="preserve">
+    <value>La unidad soporta esconder los CD-R y forzar una única sesión</value>
+  </data>
+  <data name="Drive_supports_Plextor_GigaRec" xml:space="preserve">
+    <value>La unidad soporta Plextor GigaRec</value>
+  </data>
+  <data name="Drive_supports_Plextor_SecuRec" xml:space="preserve">
+    <value>La unidad soporta Plextor SecuRec</value>
+  </data>
+  <data name="Drive_supports_Plextor_SilentMode" xml:space="preserve">
+    <value>La unidad soporta Plextor SilentMode</value>
+  </data>
+  <data name="Drive_supports_Plextor_SpeedRead" xml:space="preserve">
+    <value>La unidad soporta Plextor SpeedRead</value>
+  </data>
+  <data name="Drive_supports_Plextor_SpeedRead_and_has_it_enabled" xml:space="preserve">
+    <value>La unidad soporta Plextor SpeedRead y lo tiene activado</value>
+  </data>
+  <data name="Drive_supports_Plextor_VariRec" xml:space="preserve">
+    <value>La unidad soporta Plextor VariRec</value>
+  </data>
+  <data name="Drive_supports_Plextor_VariRec_for_DVDs" xml:space="preserve">
+    <value>La unidad soporta Plextor VariRec para DVDs</value>
+  </data>
+  <data name="Drive_supports_PoweRec_and_has_it_disabled" xml:space="preserve">
+    <value>La unidad soporta PoweRec y lo tiene desactivado.</value>
+  </data>
+  <data name="Drive_supports_PoweRec_and_has_it_enabled" xml:space="preserve">
+    <value>La unidad soporta PoweRec y lo tiene activado.</value>
+  </data>
+  <data name="Drive_supports_PoweRec_is_enabled_and_recommends_0" xml:space="preserve">
+    <value>La unidad soporta PoweRec, está activado y recomienda {0} Kb/seg.</value>
+  </data>
+  <data name="Drive_supports_READ_10" xml:space="preserve">
+    <value>La unidad soporta READ(10)...</value>
+  </data>
+  <data name="Drive_supports_READ_12" xml:space="preserve">
+    <value>La unidad soporta READ(12)...</value>
+  </data>
+  <data name="Drive_supports_READ_16" xml:space="preserve">
+    <value>La unidad soporta READ(16)...</value>
+  </data>
+  <data name="Drive_supports_READ_6" xml:space="preserve">
+    <value>La unidad soporta READ(6)...</value>
+  </data>
+  <data name="Drive_supports_test_writing_DVD_Plus" xml:space="preserve">
+    <value>La unidad soporta la escritura de prueba en DVD+</value>
+  </data>
+  <data name="DumBuffered_OS_reads_are_not_working_trying_direct_commands" xml:space="preserve">
+    <value>Las lecturas usando el búfer del SO no están funcionando, intentando comandos directos.</value>
+  </data>
+  <data name="Dumping_CD_i_Ready_requires_the_drive_to_support_the_READ_CD_command" xml:space="preserve">
+    <value>Volcar un CD-i Ready requiere que la unidad soporte el comando READ CD.</value>
+  </data>
+  <data name="Dumping_CD_i_Ready_requires_the_output_image_format_to_support_long_sectors" xml:space="preserve">
+    <value>Volcar un CD-i Ready requiere que la imagen destino soporte sectores largos.</value>
+  </data>
+  <data name="Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented" xml:space="preserve">
+    <value>El volcado de discos de Nintendo GameCube o Wii no está implementado todavía.</value>
+  </data>
+  <data name="Dumping_progress_log" xml:space="preserve">
+    <value>################ Registro de progreso del volcado ################</value>
+  </data>
+  <data name="Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware" xml:space="preserve">
+    <value>Volcar discos de Xbox requiere una unidad con firmware Kreon.</value>
+  </data>
+  <data name="Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware" xml:space="preserve">
+    <value>Volcar discos de Xbox requiere una unidad con firmware Kreon.</value>
+  </data>
+  <data name="Dump_Ata_Output_format_does_not_support_ATA_IDENTIFY_" xml:space="preserve">
+    <value>El formato de salida no soporta ATA IDENTIFY.</value>
+  </data>
+  <data name="Dump_finished_in_0" xml:space="preserve">
+    <value>Volcado terminado en {0}.</value>
+  </data>
+  <data name="Dump_may_not_be_correct" xml:space="preserve">
+    <value>El volcado puede no ser correcto.</value>
+  </data>
+  <data name="DVD_Physical_Format_Information_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Información del formato físico del DVD contenida en la imagen:[/]</value>
+  </data>
+  <data name="DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Estructura de definición del disco DVD-RAM contenida en la imagen:[/]</value>
+  </data>
+  <data name="DVD_read_speed_limited_to_0" xml:space="preserve">
+    <value>Velocidad de lectura de DVD limitada a {0}x</value>
+  </data>
+  <data name="DVD_RW_PFI" xml:space="preserve">
+    <value>PFI de DVD-R(W)</value>
+  </data>
+  <data name="DVD_RW_Pre_Recorded_Information" xml:space="preserve">
+    <value>Información pre-grabada de DVD-R(W)</value>
+  </data>
+  <data name="DVD_RW_Pre_Recorded_Information_WithMarkup" xml:space="preserve">
+    <value>[bold]Información pre-grabada de DVD-R(W):[/]</value>
+  </data>
+  <data name="DVD_R_Physical_Format_Information_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Información del formato físico del DVD-R contenida en la imagen:[/]</value>
+  </data>
+  <data name="Ejecting_disc" xml:space="preserve">
+    <value>Expulsando disco...</value>
+  </data>
+  <data name="Enabling_skipping_CD_i_Ready_hole_because_drive_returns_data_as_audio" xml:space="preserve">
+    <value>Activando la omisión del agujero de CD-i Ready porque la unidad devuelve los datos como audio.</value>
+  </data>
+  <data name="End_logging_on_0" xml:space="preserve">
+    <value>Registro finalizado el {0}</value>
+  </data>
+  <data name="Entropying_sector_0" xml:space="preserve">
+    <value>Calculando entropía del sector {0}</value>
+  </data>
+  <data name="Entropying_sector_0_of_track_1" xml:space="preserve">
+    <value>Calculando entropía del sector {0} de la pista {1}</value>
+  </data>
+  <data name="Entropying_track_0_of_1" xml:space="preserve">
+    <value>Calculando entropía de la pista {0} de {1}</value>
+  </data>
+  <data name="Environment_does_not_support_setting_block_count_downgrading_to_OS_reading" xml:space="preserve">
+    <value>El entorno no soporta establecer la cuenta de bloques, degradando a leer usando el SO.</value>
+  </data>
+  <data name="Error_0" xml:space="preserve">
+    <value>Error: {0}</value>
+  </data>
+  <data name="Error_0_creating_output_image_not_continuing" xml:space="preserve">
+    <value>Error {0} creando la imagen de salida, no se continuará.</value>
+  </data>
+  <data name="Error_0_opening_created_image" xml:space="preserve">
+    <value>Error {0} abriendo la imagen creada.</value>
+  </data>
+  <data name="Error_0_querying_ATA_IDENTIFY" xml:space="preserve">
+    <value>Error {0} solicitando ATA IDENTIFY</value>
+  </data>
+  <data name="Error_0_querying_ATA_PACKET_IDENTIFY" xml:space="preserve">
+    <value>Error {0} solicitando ATA PACKET IDENTIFY</value>
+  </data>
+  <data name="Error_0_reading_sector_1" xml:space="preserve">
+    <value>Error {0} leyendo sector {1}</value>
+  </data>
+  <data name="Error_0_reopening_device" xml:space="preserve">
+    <value>Error {0} reabriendo el dispositivo.</value>
+  </data>
+  <data name="Error_0_setting_metadata" xml:space="preserve">
+    <value>Error {0} estableciendo los metadatos, continuando...</value>
+  </data>
+  <data name="Error_0_when_trying_to_get_updated_entities" xml:space="preserve">
+    <value>Error {0} al intentar obtener las entidades actualizadas.</value>
+  </data>
+  <data name="Error_0_while_reading_data__not_continuing" xml:space="preserve">
+    <value>Error {0} leyendo datos, no se continuará...</value>
+  </data>
+  <data name="Error_0_while_reading_sector_1_continuing" xml:space="preserve">
+    <value>Error {0} leyendo sector {1}, continuando...</value>
+  </data>
+  <data name="ERROR_Cannot_find_correct_read_command_0" xml:space="preserve">
+    <value>ERROR: No se pudo encontrar un comando de lectura correcto: {0}.</value>
+  </data>
+  <data name="ERROR_Cannot_get_blocks_to_read_0" xml:space="preserve">
+    <value>ERROR: No se pudo obtener cuantos bloques para leer: {0}.</value>
+  </data>
+  <data name="ERROR_Cannot_get_blocks_to_read_device_error_0" xml:space="preserve">
+    <value>ERROR: No se pudo obtener cuantos bloques para leer, error del dispositivo {0}.</value>
+  </data>
+  <data name="ERROR_Cannot_get_block_size_0" xml:space="preserve">
+    <value>ERROR: No se pudo obtener el tamaño del bloque: {0}</value>
+  </data>
+  <data name="error_code_0" xml:space="preserve">
+    <value>Código de error {0} desconocido</value>
+  </data>
+  <data name="Error_code_equals_0" xml:space="preserve">
+    <value>Código de error = {0}</value>
+  </data>
+  <data name="ERROR_Could_not_read_from_device_device_error_0" xml:space="preserve">
+    <value>ERROR: No se pudo leer del dispositivo, error del dispositivo {0}.</value>
+  </data>
+  <data name="Error_creating_output_image_not_continuing" xml:space="preserve">
+    <value>Error creando imagen de salida, no se continuará.</value>
+  </data>
+  <data name="Error_reading_cylinder_0_head_1_sector_2" xml:space="preserve">
+    <value>Error leyendo cilindro {0} cabeza {1} sector {2}.</value>
+  </data>
+  <data name="Error_retrieving_CMI_for_sector_0" xml:space="preserve">
+    <value>Error obteniendo el CMI del sector {0}</value>
+  </data>
+  <data name="Error_retrieving_title_key_for_sector_0" xml:space="preserve">
+    <value>Error obteniendo la llave de título para el sector {0}</value>
+  </data>
+  <data name="Error_sending_tracks_to_output_image_not_continuing" xml:space="preserve">
+    <value>Error enviando las pistas a la imagen de salida, no se continuará.</value>
+  </data>
+  <data name="Error_setting_output_image_in_tape_mode_not_continuing" xml:space="preserve">
+    <value>Error activando el modo cinta en la imagen de salida, no se continuará.</value>
+  </data>
+  <data name="Error_Tag_type_0_is_null_skipping" xml:space="preserve">
+    <value>Error: La etiqueta tipo {0} es nula, omitiendo...</value>
+  </data>
+  <data name="Error_testing_unit_was_ready_0" xml:space="preserve">
+    <value>Error comprobando si la unidad estaba lista: {0}</value>
+  </data>
+  <data name="Error_trying_to_decode_TOC" xml:space="preserve">
+    <value>Error intentando descodificar la tabla de contenidos...</value>
+  </data>
+  <data name="ERROR_Unable_to_read_medium_or_empty_medium_present" xml:space="preserve">
+    <value>ERROR: No se puede leer el medio o hay un medio vacío presente...</value>
+  </data>
+  <data name="Exception_0_when_updating_database" xml:space="preserve">
+    <value>Excepción {0} al actualizar la base de datos.</value>
+  </data>
+  <data name="Exception_while_trying_to_save_statistics" xml:space="preserve">
+    <value>Excepción intentando guardar las estadísticas:</value>
+  </data>
+  <data name="Extended_CSD_obtained_correctly" xml:space="preserve">
+    <value>CSD extendido obtenido correctamente...</value>
+  </data>
+  <data name="FAIL" xml:space="preserve">
+    <value>¡FALLO!</value>
+  </data>
+  <data name="Failed_crossing_into_Lead_Out" xml:space="preserve">
+    <value>No se pudo cruzar al Lead-Out, el volcado puede no ser correcto.</value>
+  </data>
+  <data name="Fastest_speed_burst_0" xml:space="preserve">
+    <value>Ráfaga de velocidad más rápida: {0}.</value>
+  </data>
+  <data name="FAT_starts_at_sector_0_and_runs_for_1_sectors" xml:space="preserve">
+    <value>La FAT comienza en el sector {0} y ocupa {1} sectores...</value>
+  </data>
+  <data name="Feature_0" xml:space="preserve">
+    <value>Funcionalidad {0:X4}h</value>
+  </data>
+  <data name="Filesystem_contains_boot_code" xml:space="preserve">
+    <value>El sistema de ficheros contiene código de arranque</value>
+  </data>
+  <data name="Filesystem_has_not_been_unmounted_correctly_or_contains_errors" xml:space="preserve">
+    <value>El sistema de ficheros no se desmontó correctamente o contiene errores</value>
+  </data>
+  <data name="Filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros: {0}</value>
+  </data>
+  <data name="Finished_partition_0" xml:space="preserve">
+    <value>Partición {0} finalizada</value>
+  </data>
+  <data name="FireWire_device_0" xml:space="preserve">
+    <value>Dispositivo FireWire: {0}</value>
+  </data>
+  <data name="FireWire_GUID_0" xml:space="preserve">
+    <value>GUID FireWire: 0x{0:X16}</value>
+  </data>
+  <data name="FireWire_model_0" xml:space="preserve">
+    <value>Modelo FireWire: {0}</value>
+  </data>
+  <data name="FireWire_product_ID_0" xml:space="preserve">
+    <value>ID de producto FireWire: 0x{0:X8}</value>
+  </data>
+  <data name="FireWire_vendor_0" xml:space="preserve">
+    <value>Fabricante FireWire: {0}</value>
+  </data>
+  <data name="FireWire_vendor_ID_0" xml:space="preserve">
+    <value>ID del fabricante FireWire: 0x{0:X8}</value>
+  </data>
+  <data name="Firmware_revision_0" xml:space="preserve">
+    <value>Revisión del firmware: {0}</value>
+  </data>
+  <data name="First_session_Lead_Out_starts_at_0_1_2" xml:space="preserve">
+    <value>El Lead-Out de la primera sesión comienza en {0:D2}:{1:D2}:{2:D2}</value>
+  </data>
+  <data name="fixed_P_subchannel_using_weight_average" xml:space="preserve">
+    <value>corregido el subcanal P usando media pesada.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_ABSOLUTE_POSITION" xml:space="preserve">
+    <value>corregido el subcanal Q con la ABSOLUTE POSITION correcta.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_ADR" xml:space="preserve">
+    <value>corregido el subcanal Q con el ADR correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_CONTROL" xml:space="preserve">
+    <value>corregido el subcanal Q con el CONTROL correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_CRC" xml:space="preserve">
+    <value>corregido el subcanal Q con el CRC correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_INDEX" xml:space="preserve">
+    <value>corregido el subcanal Q con el INDEX correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_RELATIVE_POSITION" xml:space="preserve">
+    <value>corregido el subcanal Q con la RELATIVE POSITION correcta.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_TNO" xml:space="preserve">
+    <value>corregido el subcanal Q con la TNO correcta.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_correct_ZERO" xml:space="preserve">
+    <value>corregido el subcanal Q con el ZERO correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_known_good_ISRC" xml:space="preserve">
+    <value>corregido el subcanal Q con un ISRC correcto.</value>
+  </data>
+  <data name="fixed_Q_subchannel_with_known_good_MCN" xml:space="preserve">
+    <value>corregido el subcanal Q con un MCN correcto.</value>
+  </data>
+  <data name="fixed_R_W_subchannels_writing_empty_data" xml:space="preserve">
+    <value>corregidos los subcanales R-W con datos vacíos.</value>
+  </data>
+  <data name="Format_0_version_1_WithMarkup" xml:space="preserve">
+    <value>[bold]Formato:[/] [italic]{0}[/] versión {1}</value>
+  </data>
+  <data name="Format_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Formato:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Found_0_at_1" xml:space="preserve">
+    <value>Encontrado {0} en {1}</value>
+  </data>
+  <data name="Found_0_at_zero" xml:space="preserve">
+    <value>Encontrado {0} en 0</value>
+  </data>
+  <data name="Found_Atari_signature" xml:space="preserve">
+    <value>Encontrada firma de Atari, estableciendo el tipo como CD de Jaguar.</value>
+  </data>
+  <data name="Found_blank_block_0" xml:space="preserve">
+    <value>Encontrado bloque {0} en blanco.</value>
+  </data>
+  <data name="Found_blank_block_0_in_pass_1" xml:space="preserve">
+    <value>Encontrado bloque {0} en blanco en el paso {1}.</value>
+  </data>
+  <data name="Found_CD32_TM_file_in_root" xml:space="preserve">
+    <value>Encontrado fichero CD32.TM en la raíz, estableciendo el tipo como Amiga CD32.</value>
+  </data>
+  <data name="Found_CDTV_TM_file_in_root" xml:space="preserve">
+    <value>Encontrado fichero CDTV.TM en la raíz, estableciendo el tipo como Commodore CDTV.</value>
+  </data>
+  <data name="Found_China_Video_Disc_description_file" xml:space="preserve">
+    <value>Encontrado fichero de descripción de China Video Disc, estableciendo el tipo como China Video Disc.</value>
+  </data>
+  <data name="Found_correct_IPL_TXT_file_in_root" xml:space="preserve">
+    <value>Encontrado fichero IPL.TXT correcto en la raíz, estableciendo el tipo como Neo Geo CD.</value>
+  </data>
+  <data name="Found_correct_SYSTEM_CNF_file_in_root_PS1" xml:space="preserve">
+    <value>Encontrado fichero SYSTEM.CNF correcto apuntando a un fichero existente en la raíz, estableciendo el tipo como CD de PlayStation.</value>
+  </data>
+  <data name="Found_correct_SYSTEM_CNF_file_in_root_PS2" xml:space="preserve">
+    <value>Encontrado fichero SYSTEM.CNF correcto apuntando a un fichero existente en la raíz, estableciendo el tipo como CD de PlayStation 2.</value>
+  </data>
+  <data name="Found_corrupt_resume_file_cannot_continue" xml:space="preserve">
+    <value>Encontrado fichero de resumen corrupto, no se puede continuar...</value>
+  </data>
+  <data name="Found_end_of_tape_partition" xml:space="preserve">
+    <value>Encontrado fin de cinta o partición...</value>
+  </data>
+  <data name="Found_enhanced_graphics_RW_packet" xml:space="preserve">
+    <value>Encontrado paquete RW de gráficos mejorados, estableciendo el tipo como CD+EG.</value>
+  </data>
+  <data name="Found_filesystem_0_at_sector_1" xml:space="preserve">
+    <value>Encontrado sistema de ficheros {0} en el sector {1}</value>
+  </data>
+  <data name="Found_FM_Towns_boot" xml:space="preserve">
+    <value>Encontrado arranque de FM-Towns, estableciendo su tipo.</value>
+  </data>
+  <data name="Found_graphics_RW_packet" xml:space="preserve">
+    <value>Encontrado paquete RW de gráficos, estableciendo el tipo como CD+G.</value>
+  </data>
+  <data name="Found_ISRC_for_track_0_1" xml:space="preserve">
+    <value>Encontrado ISRC para la pista {0}: {1}</value>
+  </data>
+  <data name="Found_Media_Catalogue_Number_0" xml:space="preserve">
+    <value>Encontrado número de catálogo del medio: {0}</value>
+  </data>
+  <data name="Found_Mega_Sega_CD_IP_BIN" xml:space="preserve">
+    <value>Encontrado IP.BIN de Mega CD, estableciendo el tipo como Mega CD.</value>
+  </data>
+  <data name="Found_MIDI_RW_packet" xml:space="preserve">
+    <value>Encontrado paquete RW de MIDI, estableciendo el tipo como CD+MIDI.</value>
+  </data>
+  <data name="Found_new_ISRC_0_for_track_1" xml:space="preserve">
+    <value>Encontrado nuevo ISRC {0} para la pista {1}.</value>
+  </data>
+  <data name="Found_new_MCN_0" xml:space="preserve">
+    <value>Encontrado nuevo MCN {0}.</value>
+  </data>
+  <data name="Found_Opera_filesystem" xml:space="preserve">
+    <value>Encontrado sistema de ficheros Opera, estableciendo el tipo como 3DO.</value>
+  </data>
+  <data name="Found_PC_Engine_CD_signature" xml:space="preserve">
+    <value>Encontrada firma de PC-Engine CD, estableciendo el tipo como Super CD-ROM².</value>
+  </data>
+  <data name="Found_PC_FX_copyright" xml:space="preserve">
+    <value>Encontrado copyright de PC-FX, estableciendo el tipo como PC-FX.</value>
+  </data>
+  <data name="Found_Photo_CD_description_file" xml:space="preserve">
+    <value>Encontrado fichero descriptor de Photo CD, estableciendo el tipo como Photo CD.</value>
+  </data>
+  <data name="Found_Playdia_copyright" xml:space="preserve">
+    <value>Encontrado copyright de Playdia, estableciendo el tipo como Playdia.</value>
+  </data>
+  <data name="Found_Sega_Dreamcast_IP_BIN" xml:space="preserve">
+    <value>Encontrado IP.BIN de Dreamcast, estableciendo el tipo como GD-ROM.</value>
+  </data>
+  <data name="Found_Sega_Dreamcast_IP_BIN_on_second_session" xml:space="preserve">
+    <value>Encontrado IP.BIN de Dreamcast en la segunda sesión, estableciendo el tipo como MilCD.</value>
+  </data>
+  <data name="Found_Sega_Saturn_IP_BIN" xml:space="preserve">
+    <value>Encontrado IP.BIN de Saturn, estableciendo el tipo como CD de Saturn.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_2_boot_sectors" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 2, estableciendo el tipo como CD de PlayStation 2.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_2_boot_sectors_DVD" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 2, estableciendo el tipo como DVD de PlayStation 2.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_3_boot_sectors" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 3, estableciendo el tipo como Blu-ray de PlayStation 3.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_3_boot_sectors_DVD" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 3, estableciendo el tipo como DVD de PlayStation 3.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_4_boot_sectors" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 4, estableciendo el tipo como Blu-ray de PlayStation 4.</value>
+  </data>
+  <data name="Found_Sony_PlayStation_5_boot_sectors" xml:space="preserve">
+    <value>Encontrados sectores de arranque de Sony PlayStation 5, estableciendo el tipo como Blu-ray Ultra HD de PlayStation 5.</value>
+  </data>
+  <data name="Found_Super_Video_CD_description_file" xml:space="preserve">
+    <value>Encontrado fichero descriptor de Super Video CD, estableciendo el tipo como Super Video CD.</value>
+  </data>
+  <data name="Found_undecoded_SCSI_VPD_page_0" xml:space="preserve">
+    <value>Encontrada página 0x{0:X2} VPD de SCSI sin descodificar</value>
+  </data>
+  <data name="Found_unknown_feature_code_0" xml:space="preserve">
+    <value>Encontrado código de función {0:X4}h desconocido</value>
+  </data>
+  <data name="Found_unknown_mode_page_0" xml:space="preserve">
+    <value>Encontrada página de modo {0:X2}h desconocida</value>
+  </data>
+  <data name="Found_unknown_mode_page_0_subpage_1" xml:space="preserve">
+    <value>Encontrada página de modo {0:X2}h subpágina {1:X2}h desconocida</value>
+  </data>
+  <data name="Found_unknown_tuple_ID_0" xml:space="preserve">
+    <value>Encontrada tupla con ID 0x{0:X2} desconocida</value>
+  </data>
+  <data name="Found_unknown_vendor_mode_page_0" xml:space="preserve">
+    <value>Encontrada página de modo {0:X2}h del fabricante desconocida</value>
+  </data>
+  <data name="Found_unknown_vendor_mode_page_0_subpage_1" xml:space="preserve">
+    <value>Encontrada página de modo {0:X2}h subpágina {1:X2}h del fabricante desconocida</value>
+  </data>
+  <data name="Found_VideoNow_Color_frame" xml:space="preserve">
+    <value>Encontrado fotograma de VideoNow! Color, estableciendo tipo como VideoNow Color.</value>
+  </data>
+  <data name="Found_Video_CD_description_file" xml:space="preserve">
+    <value>Encontrado fichero de descripción de Video CD, estableciendo tipo como Video CD.</value>
+  </data>
+  <data name="Full_raw_subchannel_reading_supported" xml:space="preserve">
+    <value>Lectura del subcanal completo sin procesar soportada...</value>
+  </data>
+  <data name="Game_data_size" xml:space="preserve">
+    <value>Tamaño de los datos de juego</value>
+  </data>
+  <data name="Game_data_size_0_sectors" xml:space="preserve">
+    <value>Tamaño de los datos de juego: {0} sectores</value>
+  </data>
+  <data name="Game_partition_total_size_0_sectors" xml:space="preserve">
+    <value>Tamaño total de la partición del juego: {0} sectores</value>
+  </data>
+  <data name="GD_ROM_dump_support_is_not_yet_implemented" xml:space="preserve">
+    <value>El volcado de GD-ROM no está implementado todavía.</value>
+  </data>
+  <data name="GD_ROM_scan_support_is_not_yet_implemented" xml:space="preserve">
+    <value>El escaneo de GD-ROM no está implementado todavía.</value>
+  </data>
+  <data name="Generating_subchannels" xml:space="preserve">
+    <value>Generando subcanales...</value>
+  </data>
+  <data name="Generating_subchannel_for_sector_0" xml:space="preserve">
+    <value>Generando subcanal del sector {0}...</value>
+  </data>
+  <data name="Getting_disc_size" xml:space="preserve">
+    <value>Obteniendo tamaño del disco.</value>
+  </data>
+  <data name="Getting_game_partition_size" xml:space="preserve">
+    <value>Obteniendo tamaño de la partición del juego.</value>
+  </data>
+  <data name="Getting_middle_zone_size" xml:space="preserve">
+    <value>Obteniendo tamaño de la zona intermedia</value>
+  </data>
+  <data name="Getting_video_partition_size" xml:space="preserve">
+    <value>Obteniendo tamaño de la partición de video</value>
+  </data>
+  <data name="GET_CONFIGURATION_current_profile_is_0" xml:space="preserve">
+    <value>El perfil actual de GET CONFIGURATION es {0:X4}h</value>
+  </data>
+  <data name="GET_CONFIGURATION_length_is_0" xml:space="preserve">
+    <value>La respuesta de GET CONFIGURATION ocupa {0} bytes</value>
+  </data>
+  <data name="GET_CONFIGURATION_returned_no_feature_descriptors" xml:space="preserve">
+    <value>GET CONFIGURATION no devolvió ningún descriptor de funcionalidad</value>
+  </data>
+  <data name="Got_0_children" xml:space="preserve">
+    <value>Obtenidas {0} hijas</value>
+  </data>
+  <data name="Got_0_first_track_pregap_sectors" xml:space="preserve">
+    <value>Obtenidos {0} sectores de hueco anterior a la primera pista.</value>
+  </data>
+  <data name="Got_0_parents" xml:space="preserve">
+    <value>Obtenidas {0} madres</value>
+  </data>
+  <data name="Got_0_partitions" xml:space="preserve">
+    <value>Obtenidas {0} particiones</value>
+  </data>
+  <data name="Got_partial_data_for_sector_0_in_pass_1" xml:space="preserve">
+    <value>Obtenidos datos parciales para el sector {0} en el paso {1}.</value>
+  </data>
+  <data name="Got_sense_status_but_no_sense_buffer" xml:space="preserve">
+    <value>Obtenido estado sense pero sin búfer</value>
+  </data>
+  <data name="Hashing_blocks_0_of_1" xml:space="preserve">
+    <value>Calculando el hash de los bloques {0} de {1}</value>
+  </data>
+  <data name="Hashing_DiscFerret_image" xml:space="preserve">
+    <value>Calculando el hash de la imagen de DiscFerret...</value>
+  </data>
+  <data name="Hashing_files" xml:space="preserve">
+    <value>Calculando el hash de los ficheros...</value>
+  </data>
+  <data name="Hashing_file_0" xml:space="preserve">
+    <value>Calculando el hash del fichero {0}...</value>
+  </data>
+  <data name="Hashing_file_0_1" xml:space="preserve">
+    <value>Calculando el hash del fichero {0} de {1}...</value>
+  </data>
+  <data name="Hashing_file_byte_0_of_1" xml:space="preserve">
+    <value>Calculando el hash del byte {0} de {1} del fichero</value>
+  </data>
+  <data name="Hashing_image_file" xml:space="preserve">
+    <value>Calculando el hash del fichero de imagen...</value>
+  </data>
+  <data name="Hashing_image_file_byte_0_of_1" xml:space="preserve">
+    <value>Calculando el hash del byte {0} de {1} del fichero de imagen</value>
+  </data>
+  <data name="Hashing_KryoFlux_images" xml:space="preserve">
+    <value>Calculando el hash de las imágenes de KryoFlux...</value>
+  </data>
+  <data name="Hashing_media_tags" xml:space="preserve">
+    <value>Calculando el hash de las etiquetas del medio...</value>
+  </data>
+  <data name="Hashing_partition_0" xml:space="preserve">
+    <value>Calculando el hash de la partición {0}...</value>
+  </data>
+  <data name="Hashing_sectors" xml:space="preserve">
+    <value>Calculando el hash de los sectores...</value>
+  </data>
+  <data name="Hashing_sector_0_of_1" xml:space="preserve">
+    <value>Calculando el hash del sector {0} de {1}</value>
+  </data>
+  <data name="Hashing_subchannel_sector_0_of_1" xml:space="preserve">
+    <value>Calculando el hash del subcanal del sector {0} de {1}</value>
+  </data>
+  <data name="Hashing_SuperCardPro_image" xml:space="preserve">
+    <value>Calculando el hash de la imagen de SuperCardPro...</value>
+  </data>
+  <data name="Hashing_tracks" xml:space="preserve">
+    <value>Calculando el hash de las pistas...</value>
+  </data>
+  <data name="Has_partitions" xml:space="preserve">
+    <value>Tiene particiones</value>
+  </data>
+  <data name="Has_sessions" xml:space="preserve">
+    <value>Tiene sesiones</value>
+  </data>
+  <data name="Have_you_previously_tried_with_a_GD_ROM_disc_and_did_the_computer_hang_or_crash_Q" xml:space="preserve">
+    <value>¿Ha intentado anteriormente con un disco GD-ROM y se colgó o bloqueó el ordenador? (S/N):</value>
+  </data>
+  <data name="If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_force_option"
+        xml:space="preserve">
+    <value>No se continuará. Si quiere continuar leyendo datos procesados use la opción "force".</value>
+  </data>
+  <data name="Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_continuing" xml:space="preserve">
+    <value>La imagen no soporta múltiples sesiones en volcados de Compact Disc, continuando...</value>
+  </data>
+  <data name="Image_does_not_support_multiple_sessions_in_non_Compact_Disc_dumps_not_continuing" xml:space="preserve">
+    <value>La imagen no soporta múltiples sesiones en volcados de Compact Disc, no se continuará...</value>
+  </data>
+  <data name="Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_continuing" xml:space="preserve">
+    <value>La imagen no soporta múltiples pistas en volcados de Compact Disc, continuando...</value>
+  </data>
+  <data name="Image_does_not_support_multiple_tracks_in_non_Compact_Disc_dumps_not_continuing" xml:space="preserve">
+    <value>La imagen no soporta múltiples pistas en volcados de Compact Disc, no se continuará...</value>
+  </data>
+  <data name="Image_flux_captures" xml:space="preserve">
+    <value>Esta imagen contiene capturas de flujos de bajo nivel.</value>
+  </data>
+  <data name="Image_information_WithMarkup" xml:space="preserve">
+    <value>[bold]Información de la imagen:[/]</value>
+  </data>
+  <data name="Image_is_not_writable_aborting" xml:space="preserve">
+    <value>La imagen no es escribible, abortando...</value>
+  </data>
+  <data name="Image_without_headers_is_0_bytes_long" xml:space="preserve">
+    <value>La imagen sin cabeceras ocupa {0} bytes</value>
+  </data>
+  <data name="Initializing_reader" xml:space="preserve">
+    <value>Inicializando el lector.</value>
+  </data>
+  <data name="INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found" xml:space="preserve">
+    <value>Las unidades floptical INSITE se vuelven locas en el bus SCSI cuando encuentran un error, parando para que pueda reiniciar el ordenador o el bus SCSI de forma apropiada.</value>
+  </data>
+  <data name="Invalid_Q_position_for_LBA_0_got_1" xml:space="preserve">
+    <value>Posición {1} del subcanal Q inválida para el LBA {0}</value>
+  </data>
+  <data name="Invoke_Found_undecoded_tuple_ID_0" xml:space="preserve">
+    <value>Encontrado ID de tupla {0} no descodificado</value>
+  </data>
+  <data name="ISRC_for_track_0_changed_from_1_to_2" xml:space="preserve">
+    <value>El ISRC de la pista {0} cambió de {1} a {2}.</value>
+  </data>
+  <data name="Kreon_Can_skip_read_errors" xml:space="preserve">
+    <value>Puede omitir los errores de lectura</value>
+  </data>
+  <data name="KREON_EXTRACT_SS_0" xml:space="preserve">
+    <value>KREON EXTRACT SS: {0}</value>
+  </data>
+  <data name="Last_modified_on_0" xml:space="preserve">
+    <value>Modificado por última vez el {0}</value>
+  </data>
+  <data name="Last_update_0" xml:space="preserve">
+    <value>Última actualización: {0}</value>
+  </data>
+  <data name="Last_used_PoweRec_was_0_1" xml:space="preserve">
+    <value>El último PoweRec usado fue {0} Kb/seg ({1}x)</value>
+  </data>
+  <data name="LBA_0_Try_1_Sense_2" xml:space="preserve">
+    <value>LBA: {0}, Intento {1}, Sense {2}</value>
+  </data>
+  <data name="LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16" xml:space="preserve">
+    <value>LBA: {0}, Intento {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, CRC calculado: 0x{15:X2}{16:X2}</value>
+  </data>
+  <data name="LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16" xml:space="preserve">
+    <value>LBA: {0}, Intento {1}, Sense {2}, Q (CORREGIDO): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, CRC calculado: 0x{15:X2}{16:X2}</value>
+  </data>
+  <data name="Lead_In" xml:space="preserve">
+    <value>Lead-In</value>
+  </data>
+  <data name="Lead_In_CMI" xml:space="preserve">
+    <value>CMI del Lead-In</value>
+  </data>
+  <data name="Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs" xml:space="preserve">
+    <value>El Lead-Out ha cambiado, esta unidad no soporta cambiar discos en caliente...</value>
+  </data>
+  <data name="LOCATE_LONG_works" xml:space="preserve">
+    <value>LOCATE LONG funciona.</value>
+  </data>
+  <data name="LOCATE_works" xml:space="preserve">
+    <value>LOCATE funciona.</value>
+  </data>
+  <data name="Locking_drive" xml:space="preserve">
+    <value>Bloqueando la unidad.</value>
+  </data>
+  <data name="Log_section_separator" xml:space="preserve">
+    <value>######################################################</value>
+  </data>
+  <data name="Manufacturer_0" xml:space="preserve">
+    <value>Fabricante: {0}</value>
+  </data>
+  <data name="Manufacturer_assigned_Serial_Number_0" xml:space="preserve">
+    <value>Número de serie asignado por el fabricante: {0}</value>
+  </data>
+  <data name="Mapping_WithMarkup" xml:space="preserve">
+    <value>[bold]Mapeado:[/]</value>
+  </data>
+  <data name="Maximum_PoweRec_speed_for_currently_inserted_media_is_0_1" xml:space="preserve">
+    <value>La velocidad máxima de PowerRec para el medio actualmente insertado es {0} Kb/seg ({1}x)</value>
+  </data>
+  <data name="MCN" xml:space="preserve">
+    <value>MCN</value>
+  </data>
+  <data name="MCN_changed_from_0_to_1" xml:space="preserve">
+    <value>El MCN cambió de {0} a {1}.</value>
+  </data>
+  <data name="Media_barcode_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Código de barras del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_card_is_write_protected" xml:space="preserve">
+    <value>La tarjeta de memoria está protegida contra escritura</value>
+  </data>
+  <data name="Media_detected_as_MemoryStick_Duo" xml:space="preserve">
+    <value>Medio detectado como MemoryStick Duo...</value>
+  </data>
+  <data name="Media_detected_as_MemoryStick_Pro_Duo" xml:space="preserve">
+    <value>Medio detectado como MemoryStick Pro Duo...</value>
+  </data>
+  <data name="Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup" xml:space="preserve">
+    <value>[bold]Geometría del medio:[/] [italic]{0} cilindros, {1} cabezas, {2} sectores por pista[/]</value>
+  </data>
+  <data name="Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2" xml:space="preserve">
+    <value>El medio tiene {0} bloques de {1} bytes cada uno (para un total de {2})</value>
+  </data>
+  <data name="Media_identified_as" xml:space="preserve">
+    <value>Medio identificado como</value>
+  </data>
+  <data name="Media_identified_as_0" xml:space="preserve">
+    <value>Medio identificado como {0}.</value>
+  </data>
+  <data name="Media_is_number_0_on_a_set_of_1_medias" xml:space="preserve">
+    <value>El medio es el número {0} de un conjunto de {1}</value>
+  </data>
+  <data name="Media_manufacturer_0" xml:space="preserve">
+    <value>Fabricante del medio: {0}</value>
+  </data>
+  <data name="Media_manufacturer_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Fabricante del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_model_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Modelo del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_part_number_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Número de parte del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_part_number_is_0" xml:space="preserve">
+    <value>El número de parte del medio es {0}.</value>
+  </data>
+  <data name="Media_Serial_Number" xml:space="preserve">
+    <value>Número de serie del medio</value>
+  </data>
+  <data name="Media_serial_number_0" xml:space="preserve">
+    <value>Número de serie del medio: {0}</value>
+  </data>
+  <data name="Media_serial_number_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Número de serie del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_title_0_WithMarkup" xml:space="preserve">
+    <value>[bold]Título del medio:[/] [italic]{0}[/]</value>
+  </data>
+  <data name="Media_Type_Name_MDW_60" xml:space="preserve">
+    <value>MiniDisc de 60 minutos</value>
+  </data>
+  <data name="Media_Type_Name_MDW_74" xml:space="preserve">
+    <value>MiniDisc de 74 minutos</value>
+  </data>
+  <data name="Media_Type_Name_MDW_80" xml:space="preserve">
+    <value>MiniDisc de 80 minutos</value>
+  </data>
+  <data name="Media_Type_Name_MiniDisc" xml:space="preserve">
+    <value>MiniDisc estampado de música</value>
+  </data>
+  <data name="Media_Type_Name_MMD_140A" xml:space="preserve">
+    <value>MD DATA (MiniDisc de datos de 140Mb)</value>
+  </data>
+  <data name="MEDIUM_SCAN_github_plead_message" xml:space="preserve">
+    <value>Por favor abra un reporte de errores en Github con el fabricante y modelo de este dispositivo, así como el nombre y versión de su sistema operativo, y este mensaje: Este entorno soporta correctamente el comando MEDIUM SCAN.</value>
+  </data>
+  <data name="Medium_Status" xml:space="preserve">
+    <value>Estado del medio</value>
+  </data>
+  <data name="Middle_zone_size" xml:space="preserve">
+    <value>Tamaño de la zona intermedia</value>
+  </data>
+  <data name="Middle_zone_size_0_sectors" xml:space="preserve">
+    <value>Tamaño de la zona intermedia: {0} sectores</value>
+  </data>
+  <data name="MiniDisc_albums_NetMD_discs_or_user_written_audio_MiniDisc_cannot_be_dumped" xml:space="preserve">
+    <value>Los álbumes MiniDisc, discos NetMD o discos de audio MiniDisc escritos por un usuario no pueden ser volcados.</value>
+  </data>
+  <data name="Model_0" xml:space="preserve">
+    <value>Modelo: {0}</value>
+  </data>
+  <data name="Modified_0_CompactDisc_read_offsets" xml:space="preserve">
+    <value>Modificados {0} desplazamientos de lectura de CompactDisc</value>
+  </data>
+  <data name="Modified_0_known_devices" xml:space="preserve">
+    <value>Modificados {0} dispositivos conocidos</value>
+  </data>
+  <data name="Modified_0_known_iNES_NES_2_0_headers" xml:space="preserve">
+    <value>Modificadas {0} cabeceras de iNES/NES 2.0 conocidas</value>
+  </data>
+  <data name="Modified_0_USB_products" xml:space="preserve">
+    <value>Modificados {0} productos USB</value>
+  </data>
+  <data name="Modified_0_USB_vendors" xml:space="preserve">
+    <value>Modificados {0} fabricantes USB</value>
+  </data>
+  <data name="Mounting_0" xml:space="preserve">
+    <value>Montando {0}</value>
+  </data>
+  <data name="MultiMediaCard_CID_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CID de MultiMediaCard contenido en la imagen:[/]</value>
+  </data>
+  <data name="MultiMediaCard_CSD_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CSD de MultiMediaCard contenido en la imagen:[/]</value>
+  </data>
+  <data name="MultiMediaCard_Extended_CSD_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CSD extendido de MultiMediaCard contenido en la imagen:[/]</value>
+  </data>
+  <data name="MultiMediaCard_OCR_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]OCR de MultiMediaCard contenido en la imagen:[/]</value>
+  </data>
+  <data name="Not_enough_permissions_to_open_the_device" xml:space="preserve">
+    <value>No tiene permisos suficientes para abrir el dispositivo.</value>
+  </data>
+  <data name="Not_overwriting_file_0" xml:space="preserve">
+    <value>No se sobreescribirá el fichero {0}</value>
+  </data>
+  <data name="No_audio_tracks_disabling_offset_fix" xml:space="preserve">
+    <value>No hay pistas de audio, desactivando correción de desplazamiento.</value>
+  </data>
+  <data name="No_cartridge_found_not_dumping" xml:space="preserve">
+    <value>No se encontró ningún cartucho, no se volcará</value>
+  </data>
+  <data name="No_tracks_found_adding_a_single_track_from_zero_to_Lead_Out" xml:space="preserve">
+    <value>No se encontraron pistas, añadiendo una pista desde 0 hasta el Lead-Out</value>
+  </data>
+  <data name="NVMe_devices_not_yet_supported" xml:space="preserve">
+    <value>Los dispositivos NVMe no están soportados todavía.</value>
+  </data>
+  <data name="OCR_obtained_correctly" xml:space="preserve">
+    <value>OCR obtenido correctamente...</value>
+  </data>
+  <data name="Offsets" xml:space="preserve">
+    <value>Desplazamientos</value>
+  </data>
+  <data name="Operating_system_0_1" xml:space="preserve">
+    <value>Sistema operativo: {0} {1}</value>
+  </data>
+  <data name="Output_format_does_not_support_0" xml:space="preserve">
+    <value>El formato de salida no soporta {0}.</value>
+  </data>
+  <data name="Output_format_does_not_support_0_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta {0}, continuando...</value>
+  </data>
+  <data name="Output_format_does_not_support_0_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta {0}, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_audio_tracks_cannot_continue" xml:space="preserve">
+    <value>El formato de salida no soporta pistas de audio, no se puede continuar...</value>
+  </data>
+  <data name="Output_format_does_not_support_audio_tracks_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta pistas de audio, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_CD_first_track_pregap_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta hueco anterior a la primera pista del CD, continuando...</value>
+  </data>
+  <data name="Output_format_does_not_support_CD_first_track_pregap_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta hueco anterior a la primera pista del CD, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_hidden_tracks" xml:space="preserve">
+    <value>El formato de salida no soporta guardar las pistas ocultas de forma apropiada, esto generará una pérdida de datos, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_more_than_1_track_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta más de 1 pista, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_PCMCIA_CIS_descriptors" xml:space="preserve">
+    <value>El formato de salida no soporta los descriptores CIS de PCMCIA.</value>
+  </data>
+  <data name="Output_format_does_not_support_pregaps_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta huecos anteriores, esto podría generar una pérdida de datos, continuando...</value>
+  </data>
+  <data name="Output_format_does_not_support_pregaps_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta huecos anteriores, esto podría generar una pérdida de datos, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_sessions" xml:space="preserve">
+    <value>El formato de salida no soporta sesiones, esto generará una pérdida de datos, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_storing_raw_data_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta guardar los datos sin procesar, esto podría generar una pérdida de datos, continuando...</value>
+  </data>
+  <data name="Output_format_does_not_support_storing_raw_data_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta guardar los datos sin procesar, esto podría generar una pérdida de datos, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_subchannels_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta los subcanales, continuando...</value>
+  </data>
+  <data name="Output_format_does_not_support_subchannels_not_continuing" xml:space="preserve">
+    <value>El formato de salida no soporta los subcanales, no se continuará...</value>
+  </data>
+  <data name="Output_format_does_not_support_USB_descriptors" xml:space="preserve">
+    <value>El formato de salida no soporta los descriptores USB.</value>
+  </data>
+  <data name="Output_format_only_supports_MODE_1_tracks_not_continuing" xml:space="preserve">
+    <value>El formato de salida sólo soporta las pistas modo 1, no se continuará...</value>
+  </data>
+  <data name="Partition_length_0_sectors_1_bytes" xml:space="preserve">
+    <value>Longitud de la partición: {0} sectores, {1} bytes</value>
+  </data>
+  <data name="Partition_name_0" xml:space="preserve">
+    <value>Nombre de la partición: {0}</value>
+  </data>
+  <data name="Partition_start_sector_0_byte_1" xml:space="preserve">
+    <value>Comienzo de la partición: sector {0}, byte {1}</value>
+  </data>
+  <data name="Partition_type_0" xml:space="preserve">
+    <value>Tipo de la partición: {0}</value>
+  </data>
+  <data name="PCMCIA_CIS_WithMarkup" xml:space="preserve">
+    <value>[bold]CIS de PCMCIA:[/]</value>
+  </data>
+  <data name="PCMCIA_device_0" xml:space="preserve">
+    <value>Dispositivo PCMCIA: {0}</value>
+  </data>
+  <data name="PlayStation_2_boot_sectors_SHA256_0" xml:space="preserve">
+    <value>SHA256 de los sectores de arranque de PlayStation 2: {0}</value>
+  </data>
+  <data name="Please_insert_media_in_drive" xml:space="preserve">
+    <value>Por favor inserte el medio en la unidad</value>
+  </data>
+  <data name="Please_insert_trap_disc_inside" xml:space="preserve">
+    <value>Por favor inserte el disco trampa en la unidad...</value>
+  </data>
+  <data name="Please_MANUALLY_get_the_trap_disc_out_and_put_the_GD_ROM_disc_inside" xml:space="preserve">
+    <value>Por favor extraiga el disco trampa MANUALMENTE e introduzca el disco GD-ROM en su lugar...</value>
+  </data>
+  <data name="Please_open_an_issue_at_Github" xml:space="preserve">
+    <value>Por fabor abra un reporte de errores en Github.</value>
+  </data>
+  <data name="Please_write_description_of_media_type" xml:space="preserve">
+    <value>Por favor escriba una descripción del medio y pulse intro:</value>
+  </data>
+  <data name="Please_write_media_manufacturer" xml:space="preserve">
+    <value>Por favor escriba el fabricante del medio y pulse intro:</value>
+  </data>
+  <data name="Please_write_media_model" xml:space="preserve">
+    <value>Por favor escriba el modelo del disco y pulse intro:</value>
+  </data>
+  <data name="Plextor_READ_CD_DA" xml:space="preserve">
+    <value>Probando Plextor READ CD-DA...</value>
+  </data>
+  <data name="Plextor_SilentMode_is_enabled" xml:space="preserve">
+    <value>Plextor SilentMode está activado:</value>
+  </data>
+  <data name="PMA" xml:space="preserve">
+    <value>PMA</value>
+  </data>
+  <data name="Positioning_tape_to_block_0" xml:space="preserve">
+    <value>Posicionando la cinta en el bloque {0}.</value>
+  </data>
+  <data name="Positioning_tape_to_block_1" xml:space="preserve">
+    <value>Posicionando la cinta en el bloque 1.</value>
+  </data>
+  <data name="POW_Resources_Information" xml:space="preserve">
+    <value>Información de recursos POW</value>
+  </data>
+  <data name="PQ_subchannel_reading_supported" xml:space="preserve">
+    <value>La lectura del subcanal PQ está soportada...</value>
+  </data>
+  <data name="Pregap_for_track_0_1" xml:space="preserve">
+    <value>Hueco anterior de la pista {0}: {1}</value>
+  </data>
+  <data name="Pregap_for_track_0_set_to_1_sectors" xml:space="preserve">
+    <value>Estableciendo el hueco anterior de la pista {0} en {1} sectores.</value>
+  </data>
+  <data name="Press_any_key_to_continue" xml:space="preserve">
+    <value>Pulse cualquier tecla para continuar...</value>
+  </data>
+  <data name="Program" xml:space="preserve">
+    <value>Programa</value>
+  </data>
+  <data name="Program_information" xml:space="preserve">
+    <value>################# Información del programa ################</value>
+  </data>
+  <data name="Protocol_version_0" xml:space="preserve">
+    <value>Versión del protocolo: {0}</value>
+  </data>
+  <data name="Publisher_identifier_0" xml:space="preserve">
+    <value>Identificador del publicador: {0}</value>
+  </data>
+  <data name="Querying_SCSI_INQUIRY" xml:space="preserve">
+    <value>Obteniendo SCSI INQUIRY...</value>
+  </data>
+  <data name="Querying_list_of_SCSI_EVPDs" xml:space="preserve">
+    <value>Obteniendo lista de EVPDs SCSI...</value>
+  </data>
+  <data name="Querying_SCSI_EVPD_pages" xml:space="preserve">
+    <value>Obteniendo páginas SCSI EVPD...</value>
+  </data>
+  <data name="Querying_SCSI_EVPD_0" xml:space="preserve">
+    <value>Obteniendo SCSI EVPD {0:X2}h...</value>
+  </data>
+  <data name="Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10" xml:space="preserve">
+    <value>Obteniendo todas las páginas y subpágina de modo usando SCSI MODE SENSE (10)...</value>
+  </data>
+  <data name="Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6" xml:space="preserve">
+    <value>Obteniendo todas las páginas y subpágina de modo usando SCSI MODE SENSE (6)...</value>
+  </data>
+  <data name="Querying_ATAPI_IDENTIFY" xml:space="preserve">
+    <value>Obteniendo ATAPI IDENTIFY...</value>
+  </data>
+  <data name="Querying_ATA_IDENTIFY" xml:space="preserve">
+    <value>Obteniendo ATA IDENTIFY...</value>
+  </data>
+  <data name="Querying_USB_information" xml:space="preserve">
+    <value>Obteniendo Información USB...</value>
+  </data>
+  <data name="Querying_PCMCIA_information" xml:space="preserve">
+    <value>Obteniendo información PCMCIA...</value>
+  </data>
+  <data name="Querying_MMC_GET_CONFIGURATION" xml:space="preserve">
+    <value>Obteniendo MMC GET CONFIGURATION...</value>
+  </data>
+  <data name="Querying_SCSI_READ_CAPACITY" xml:space="preserve">
+    <value>Obteniendo SCSI READ CAPACITY...</value>
+  </data>
+  <data name="Querying_SCSI_READ_CAPACITY_16" xml:space="preserve">
+    <value>Obteniendo SCSI READ CAPACITY (16)...</value>
+  </data>
+  <data name="Querying_SCSI_MODE_SENSE_10" xml:space="preserve">
+    <value>Obteniendo SCSI MODE SENSE (10)...</value>
+  </data>
+  <data name="Querying_SCSI_MODE_SENSE" xml:space="preserve">
+    <value>Obteniendo SCSI MODE SENSE...</value>
+  </data>
+  <data name="Querying_CD_TOC" xml:space="preserve">
+    <value>Obteniendo tabla de contenidos de CD...</value>
+  </data>
+  <data name="Querying_CD_Full_TOC" xml:space="preserve">
+    <value>Obteniendo tabla de contenidos completa de CD...</value>
+  </data>
+  <data name="Querying_CD_ATIP" xml:space="preserve">
+    <value>Obteniendo ATIP de CD...</value>
+  </data>
+  <data name="Querying_CD_PMA" xml:space="preserve">
+    <value>Obteniendo PMA de CD...</value>
+  </data>
+  <data name="Sense_equals_0" xml:space="preserve">
+    <value>Sense = {0}</value>
+  </data>
+  <data name="Querying_DVD_PFI" xml:space="preserve">
+    <value>Obteniendo PFI de DVD...</value>
+  </data>
+  <data name="Querying_DVD_DMI" xml:space="preserve">
+    <value>Obteniendo DMI de DVD...</value>
+  </data>
+  <data name="Querying_DVD_CMI" xml:space="preserve">
+    <value>Obteniendo CMI de DVD...</value>
+  </data>
+  <data name="Querying_DVD_BCA" xml:space="preserve">
+    <value>Obteniendo BCA de DVD...</value>
+  </data>
+  <data name="Querying_DVD_AACS" xml:space="preserve">
+    <value>Obteniendo AACS de DVD...</value>
+  </data>
+  <data name="Querying_BD_BCA" xml:space="preserve">
+    <value>Obteniendo BCA de Blu-ray...</value>
+  </data>
+  <data name="Querying_Disc_Definition_Structure" xml:space="preserve">
+    <value>Obteniendo Estructura de definición del disco...</value>
+  </data>
+  <data name="Querying_Spare_Area_Information" xml:space="preserve">
+    <value>Obteniendo Información del área de reserva...</value>
+  </data>
+  <data name="Querying_BD_DDS" xml:space="preserve">
+    <value>Obteniendo DDS de Blu-ray...</value>
+  </data>
+  <data name="Querying_BD_SAI" xml:space="preserve">
+    <value>Obteniendo SAI de Blu-ray...</value>
+  </data>
+  <data name="Querying_DVD_PRI" xml:space="preserve">
+    <value>Obteniendo PRI de DVD...</value>
+  </data>
+  <data name="Querying_DVD_Media_ID" xml:space="preserve">
+    <value>Obteniendo ID del medio de DVD...</value>
+  </data>
+  <data name="Querying_DVD_Embossed_PFI" xml:space="preserve">
+    <value>Obteniendo PFI estampado de DVD...</value>
+  </data>
+  <data name="Querying_DVD_ADIP" xml:space="preserve">
+    <value>Obteniendo ADIP de DVD...</value>
+  </data>
+  <data name="Querying_DVD_DCB" xml:space="preserve">
+    <value>Obteniendo DCB de DVD...</value>
+  </data>
+  <data name="Querying_HD_DVD_CMI" xml:space="preserve">
+    <value>Obteniendo CMI de HD DVD...</value>
+  </data>
+  <data name="Querying_DVD_Layer_Capacity" xml:space="preserve">
+    <value>Obteniendo Capacidad de la capa de DVD...</value>
+  </data>
+  <data name="Querying_BD_Disc_Information" xml:space="preserve">
+    <value>Obteniendo Información de disco Blu-ray...</value>
+  </data>
+  <data name="Querying_BD_PAC" xml:space="preserve">
+    <value>Obteniendo PAC de Blu-ray...</value>
+  </data>
+  <data name="Querying_SCSI_READ_BLOCK_LIMITS" xml:space="preserve">
+    <value>Obteniendo SCSI READ BLOCK LIMITS...</value>
+  </data>
+  <data name="Querying_SCSI_REPORT_DENSITY_SUPPORT" xml:space="preserve">
+    <value>Obteniendo SCSI REPORT DENSITY SUPPORT...</value>
+  </data>
+  <data name="Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types" xml:space="preserve">
+    <value>Obteniendo SCSI REPORT DENSITY SUPPORT para los tipos de medio...</value>
+  </data>
+  <data name="Querying_SCSI_REPORT_DENSITY_SUPPORT_for_current_media" xml:space="preserve">
+    <value>Obteniendo SCSI REPORT DENSITY SUPPORT para el medio actual...</value>
+  </data>
+  <data name="Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types_for_current_media" xml:space="preserve">
+    <value>Obteniendo SCSI REPORT DENSITY SUPPORT para los tipos del medio actual...</value>
+  </data>
+  <data name="Raw_CD_dumping_not_yet_implemented" xml:space="preserve">
+    <value>El volcado de CD en crudo todavía no está implementado</value>
+  </data>
+  <data name="Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Aborting" xml:space="preserve">
+    <value>El vocado de dispositivos MultiMediaCard o SecureDigital en crudo no está implementado. Abortando...</value>
+  </data>
+  <data name="Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Continuing" xml:space="preserve">
+    <value>El vocado de dispositivos MultiMediaCard o SecureDigital en crudo no está implementado. Continuando...</value>
+  </data>
+  <data name="Raw_dumping_not_yet_supported_in_ATA_devices_aborting" xml:space="preserve">
+    <value>El vocado de dispositivos ATA en crudo no está implementado, abortando...</value>
+  </data>
+  <data name="Raw_dumping_not_yet_supported_in_ATA_devices_continuing" xml:space="preserve">
+    <value>El vocado de dispositivos ATA en crudo no está implementado, continuando...</value>
+  </data>
+  <data name="Raw_TOC" xml:space="preserve">
+    <value>Tabla de contenidos sin procesar</value>
+  </data>
+  <data name="Reading_0_raw_bytes_1_cooked_bytes_per_sector" xml:space="preserve">
+    <value>Leyendo {0} bytes sin procesar ({1} procesados) por sector.</value>
+  </data>
+  <data name="Reading_0_sectors_at_a_time" xml:space="preserve">
+    <value>Leyendo {0} sectores a la vez.</value>
+  </data>
+  <data name="Reading_0_sectors_at_a_time_using_OS_buffered_reads" xml:space="preserve">
+    <value>Leyendo {0} sectores a la vez usando lectúras con búfer del SO.</value>
+  </data>
+  <data name="Reading_0_sectors_using_sequential_single_commands" xml:space="preserve">
+    <value>Leyendo {0} sectores usando secuencias de comandos singulares.</value>
+  </data>
+  <data name="Reading_Burst_Cutting_Area" xml:space="preserve">
+    <value>Leyendo Burst Cutting Area.</value>
+  </data>
+  <data name="Reading_Disc_Description_Structure" xml:space="preserve">
+    <value>Leyendo estructura de descripción del disco.</value>
+  </data>
+  <data name="Reading_Spare_Area_Information" xml:space="preserve">
+    <value>Leyendo información del área de reserva.</value>
+  </data>
+  <data name="Reading_Pre_Recorded_Information" xml:space="preserve">
+    <value>Leyendo información pre-grabada.</value>
+  </data>
+  <data name="Reading_Media_Identifier" xml:space="preserve">
+    <value>Leyendo identificador del medio.</value>
+  </data>
+  <data name="Reading_Recordable_Physical_Information" xml:space="preserve">
+    <value>Leyendo información física grabable.</value>
+  </data>
+  <data name="Reading_ADdress_In_Pregroove" xml:space="preserve">
+    <value>Leyendo ADIP.</value>
+  </data>
+  <data name="Reading_Disc_Control_Blocks" xml:space="preserve">
+    <value>Leyendo bloques de control del disco.</value>
+  </data>
+  <data name="Reading_Disc_Definition_Structure" xml:space="preserve">
+    <value>Leyendo estructura de definición del disco.</value>
+  </data>
+  <data name="Reading_ATIP" xml:space="preserve">
+    <value>Leyendo ATIP</value>
+  </data>
+  <data name="Reading_Disc_Information" xml:space="preserve">
+    <value>Leyendo información del disco</value>
+  </data>
+  <data name="Reading_PMA" xml:space="preserve">
+    <value>Leyendo PMA</value>
+  </data>
+  <data name="Reading_Session_Information" xml:space="preserve">
+    <value>Leyendo información de sesiones</value>
+  </data>
+  <data name="Reading_CD_Text_from_Lead_In" xml:space="preserve">
+    <value>Leyendo CD-Text del Lead-In</value>
+  </data>
+  <data name="Reading_full_TOC" xml:space="preserve">
+    <value>Leyendo tabla de contenidos completa</value>
+  </data>
+  <data name="Reading_block_0_1" xml:space="preserve">
+    <value>Leyendo bloque {0} ({1})</value>
+  </data>
+  <data name="Reading_CSD" xml:space="preserve">
+    <value>Leyendo CSD</value>
+  </data>
+  <data name="Reading_Extended_CSD" xml:space="preserve">
+    <value>Leyendo CSD extendido</value>
+  </data>
+  <data name="Reading_OCR" xml:space="preserve">
+    <value>Leyendo OCR</value>
+  </data>
+  <data name="Reading_SCR" xml:space="preserve">
+    <value>Leyendo SCR</value>
+  </data>
+  <data name="Reading_CID" xml:space="preserve">
+    <value>Leyendo CID</value>
+  </data>
+  <data name="Reading_Disc_Manufacturing_Information" xml:space="preserve">
+    <value>Leyendo información de fabricación del disco</value>
+  </data>
+  <data name="Reading_Lead_in_Copyright_Information" xml:space="preserve">
+    <value>Leyendo información del copyright del Lead-In</value>
+  </data>
+  <data name="Reading_LBA_zero_as_audio_scrambled" xml:space="preserve">
+    <value>Leyendo LBA 0 como audio (revuelto)... </value>
+  </data>
+  <data name="Reading_LBA_100000_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 100000 como audio... </value>
+  </data>
+  <data name="Reading_LBA_50000_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 50000 como audio... </value>
+  </data>
+  <data name="Reading_LBA_450000_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 450000 como audio... </value>
+  </data>
+  <data name="Reading_LBA_400000_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 400000 como audio... </value>
+  </data>
+  <data name="Reading_LBA_45000_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 45000 como audio... </value>
+  </data>
+  <data name="Reading_LBA_44990_as_audio" xml:space="preserve">
+    <value>Leyendo LBA 44990 como audio... </value>
+  </data>
+  <data name="Reading_LBA_100000_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 100000 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_50000_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 50000 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_450000_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 450000 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_400000_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 400000 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_45000_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 45000 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_44990_as_audio_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 44990 como audio con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_100000_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 100000 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_50000_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 50000 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_450000_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 450000 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_400000_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 400000 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_45000_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 45000 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_44990_as_audio_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 44990 como audio con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_100000" xml:space="preserve">
+    <value>Leyendo LBA 100000... </value>
+  </data>
+  <data name="Reading_LBA_50000" xml:space="preserve">
+    <value>Leyendo LBA 50000... </value>
+  </data>
+  <data name="Reading_LBA_450000" xml:space="preserve">
+    <value>Leyendo LBA 450000... </value>
+  </data>
+  <data name="Reading_LBA_400000" xml:space="preserve">
+    <value>Leyendo LBA 400000... </value>
+  </data>
+  <data name="Reading_LBA_45000" xml:space="preserve">
+    <value>Leyendo LBA 45000... </value>
+  </data>
+  <data name="Reading_LBA_44990" xml:space="preserve">
+    <value>Leyendo LBA 44990... </value>
+  </data>
+  <data name="Reading_LBA_100000_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 100000 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_50000_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 50000 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_450000_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 450000 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_400000_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 400000 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_45000_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 45000 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_44990_with_PQ_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 44990 con el subcanal PQ... </value>
+  </data>
+  <data name="Reading_LBA_100000_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 100000 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_50000_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 50000 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_450000_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 450000 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_400000_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 400000 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_45000_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 45000 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_LBA_44990_with_RW_subchannel" xml:space="preserve">
+    <value>Leyendo LBA 44990 con el subcanal RW... </value>
+  </data>
+  <data name="Reading_byte_0_of_1_2" xml:space="preserve">
+    <value>Leyendo byte {0} de {1} ({2})</value>
+  </data>
+  <data name="Reading_cylinder_0_head_1_sector_2_3" xml:space="preserve">
+    <value>Leyendo cilindro {0} cabeza {1} sector {2} ({3}</value>
+  </data>
+  <data name="Reading_disc_key" xml:space="preserve">
+    <value>Leyendo llave del disco.</value>
+  </data>
+  <data name="Reading_FAT" xml:space="preserve">
+    <value>Leyendo la FAT...</value>
+  </data>
+  <data name="Reading_first_track_pregap" xml:space="preserve">
+    <value>Leyendo el hueco anterior a la primera pista</value>
+  </data>
+  <data name="Reading_game_partition" xml:space="preserve">
+    <value>Leyendo partición del juego.</value>
+  </data>
+  <data name="Reading_LBA_0_of_1" xml:space="preserve">
+    <value>Leyendo LBA {0} de {1}</value>
+  </data>
+  <data name="Reading_LBA_zero" xml:space="preserve">
+    <value>Leyendo LBA 0...</value>
+  </data>
+  <data name="Reading_lead_outs" xml:space="preserve">
+    <value>Leyendo Lead-Outs</value>
+  </data>
+  <data name="Reading_PCMCIA_CIS" xml:space="preserve">
+    <value>Leyendo CIS de PCMCIA</value>
+  </data>
+  <data name="Reading_Physical_Format_Information" xml:space="preserve">
+    <value>Leyendo información del formato físico</value>
+  </data>
+  <data name="Reading_root_directory_in_sector_0" xml:space="preserve">
+    <value>Leyendo directorio raíz en el sector {0}...</value>
+  </data>
+  <data name="Reading_sector_0_at_lead_out_1" xml:space="preserve">
+    <value>Leyendo sector {0} en el Lead-Out ({1})</value>
+  </data>
+  <data name="Reading_sector_0_of_1_2" xml:space="preserve">
+    <value>Leyendo sector {0} de {1} ({2})</value>
+  </data>
+  <data name="Reading_USB_descriptors" xml:space="preserve">
+    <value>Leyendo descriptores USB.</value>
+  </data>
+  <data name="Reading_Video_Layer_1" xml:space="preserve">
+    <value>Leyendo capa 1 de video.</value>
+  </data>
+  <data name="Reading_Xbox_Security_Sector" xml:space="preserve">
+    <value>Leyendo Sector de Seguridad de Xbox.</value>
+  </data>
+  <data name="READ_CD_command_is_not_supported_disabling_offset_fix_Dump_may_not_be_correct" xml:space="preserve">
+    <value>El comando READ CD no está soportado, desactivando correción de desplazamientos. El volcado podría ser incorrecto.</value>
+  </data>
+  <data name="READ_CD_error_0" xml:space="preserve">
+    <value>Error de READ CD:
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Recognized_Format_Layers_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Capas de formato reconocidas
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Write_Protection_Status_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Estado de protección contra escritura
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_PFI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: PFI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DMI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DMI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_CMI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: CMI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_BCA_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: BCA
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DVD_AACS_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DVD AACS
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DDS_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DDS
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Medium_Status_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Estado del medio
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_SAI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: SAI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Last_Out_Border_RMD_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Last-Out Border RMD
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Disc_Key_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Llave del disco
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Sector_CMI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: CMI  de sector
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Pre_Recorded_Info_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Información pre-grabada
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DVD_R_Media_ID_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: ID de medio DVD-R
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DVD_R_PFI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DVD-R PFI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_ADIP_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: ADIP
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DCB_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DCB
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_HD_DVD_CMI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: HD DVD CMI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_HD_DVD_R_Medium_Status" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Estado de medio HD DVD-R
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Last_RMD_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Último RMD
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Layer_Capacity_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Capacidad de capa
+{0}</value>
+  </data>
+  <data name="READ_MEDIA_SERIAL_NUMBER_0" xml:space="preserve">
+    <value>READ MEDIA SERIAL NUMBER
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Middle_Zone_Start_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Comienzo de la zona intermedia
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Jump_Interval_Size_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Tamaño de intervalo de salto
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Manual_Layer_Jump_Start_LBA_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: LBA del salto manual de capa
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Remap_Anchor_Point_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Punto de anclaje del remapeo
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_DI_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DI
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_PAC_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: PAC
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Cartridge_Status_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: Estado del cartucho
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_Raw_DFL_0" xml:space="preserve">
+    <value>READ DISC STRUCTURE: DFL sin procesar
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_001b_0" xml:space="preserve">
+    <value>READ DISC INFORMATION 001b
+{0}</value>
+  </data>
+  <data name="READ_DISC_STRUCTURE_010b_0" xml:space="preserve">
+    <value>READ DISC INFORMATION 010b
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_TOC_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: Tabla de contenidos
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_ATIP_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: ATIP
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_Session_Info_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: Session info
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_Raw_TOC_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: Tabla de contenidos sin procesar
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_PMA_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: PMA
+{0}</value>
+  </data>
+  <data name="READ_TOC_PMA_ATIP_CD_TEXT_0" xml:space="preserve">
+    <value>READ TOC/PMA/ATIP: CD-TEXT
+{0}</value>
+  </data>
+  <data name="KREON_EXTRACT_SS_0" xml:space="preserve">
+    <value>KREON EXTRACT SS:
+{0}</value>
+  </data>
+  <data name="READ_DISC_INFORMATION_000b_0" xml:space="preserve">
+    <value>READ DISC INFORMATION 000b
+{0}</value>
+  </data>
+  <data name="READ_error_0" xml:space="preserve">
+    <value>Error de READ:
+{0}</value>
+  </data>
+  <data name="READ_FULL_TOC_failed" xml:space="preserve">
+    <value>READ FULL TOC falló...</value>
+  </data>
+  <data name="Real_layer_break" xml:space="preserve">
+    <value>Salto de capa real</value>
+  </data>
+  <data name="Real_layer_break_0" xml:space="preserve">
+    <value>Salto de capa real: {0}</value>
+  </data>
+  <data name="Remote_information" xml:space="preserve">
+    <value>################# Información remota #################</value>
+  </data>
+  <data name="Removable_device_0" xml:space="preserve">
+    <value>Dispositivo extraíble: {0}</value>
+  </data>
+  <data name="Requesting_ATAPI_IDENTIFY_PACKET_DEVICE" xml:space="preserve">
+    <value>Solicitando ATAPI IDENTIFY PACKET DEVICE.</value>
+  </data>
+  <data name="Requesting_ATA_IDENTIFY_DEVICE" xml:space="preserve">
+    <value>Solicitando ATA IDENTIFY DEVICE.</value>
+  </data>
+  <data name="Requesting_MODE_SENSE_10" xml:space="preserve">
+    <value>Solicitando MODE SENSE (10).</value>
+  </data>
+  <data name="Requesting_MODE_SENSE_6" xml:space="preserve">
+    <value>Solicitando MODE SENSE (8).</value>
+  </data>
+  <data name="Requesting_SCSI_INQUIRY" xml:space="preserve">
+    <value>Solicitando SCSI INQUIRY.</value>
+  </data>
+  <data name="Resume_file_different_firmware_revision_not_continuing" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo con versión {0} del firmware pero está intentando volcar uno con versión {1}, no se continuará...</value>
+  </data>
+  <data name="Resume_file_different_manufacturer_not_continuing" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo fabricado por {0} pero está intentando volcar uno fabricado por {1}, no se continuará...</value>
+  </data>
+  <data name="Resume_file_different_model_not_continuing" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo modelo {0} pero está intentando volcar uno modelo {1}, no se continuará</value>
+  </data>
+  <data name="Resume_file_different_number_of_blocks_not_continuing" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo con {0} bloques pero está intentando volcar uno con {1}, no se continuará...</value>
+  </data>
+  <data name="Resume_file_different_serial_number_not_continuing" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo con número de serie {0} pero está intentando volcar uno con número de serie {1}, no se continuará...</value>
+  </data>
+  <data name="Resume_specifies_non_removable_but_device_is_removable" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo no extraíble pero está intentando volcar uno extráible, no se continuará...</value>
+  </data>
+  <data name="Resume_specifies_not_tape_but_device_is_tape" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo que no es de cinta pero está intentando volcar uno de cinta, no se continuará...</value>
+  </data>
+  <data name="Resume_specifies_removable_but_device_is_non_removable" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo extraíble pero está intentando volcar uno no extraíble, no se continuará...</value>
+  </data>
+  <data name="Resume_specifies_tape_but_device_is_not_tape" xml:space="preserve">
+    <value>El fichero de resumen especifica un dispositivo de cinta pero está intentando volcar uno que no lo es, no se continuará...</value>
+  </data>
+  <data name="Resuming_CHS_devices_is_currently_not_supported" xml:space="preserve">
+    <value>Resumir los dispositivo CHS no está soportado actualmente.</value>
+  </data>
+  <data name="Resuming_from_block_0" xml:space="preserve">
+    <value>Resumiendo desde el bloque {0}.</value>
+  </data>
+  <data name="Retrode_partition_not_recognized_not_dumping" xml:space="preserve">
+    <value>Partición de Retrode no reconocida, no se volcará...</value>
+  </data>
+  <data name="Retrying_sector_0_pass_1_forward" xml:space="preserve">
+    <value>Reintentando sector {0}, paso {1}, hacia adelante</value>
+  </data>
+  <data name="Retrying_sector_0_pass_1_recovering_partial_data_forward" xml:space="preserve">
+    <value>Reintentando sector {0}, paso {1}, recuperando datos parciales, hacia adelante</value>
+  </data>
+  <data name="Retrying_sector_0_pass_1_recovering_partial_data_reverse" xml:space="preserve">
+    <value>Reintentando sector {0}, paso {1}, recuperando datos parciales, hacia atrás</value>
+  </data>
+  <data name="Retrying_sector_0_pass_1_reverse" xml:space="preserve">
+    <value>Reintentando sector {0}, paso {1}, hacia atrás</value>
+  </data>
+  <data name="Retrying_sector_0_subchannel_pass_1_forward" xml:space="preserve">
+    <value>Reintentando subcanal del sector {0}, paso {1}, hacia adelante</value>
+  </data>
+  <data name="Retrying_sector_0_subchannel_pass_1_reverse" xml:space="preserve">
+    <value>Reintentando subcanal del sector {0}, paso {1}, hacia atrás</value>
+  </data>
+  <data name="Retrying_title_key_0_pass_1_forward" xml:space="preserve">
+    <value>Reintentando llave de título {0}, paso {1}, hacia adelante</value>
+  </data>
+  <data name="Retrying_title_key_0_pass_1_reverse" xml:space="preserve">
+    <value>Reintentando llave de título {0}, paso {1}, hacia atrás</value>
+  </data>
+  <data name="Rewinding_please_wait" xml:space="preserve">
+    <value>Rebobinando, por favor espere...</value>
+  </data>
+  <data name="Running_as_superuser_No" xml:space="preserve">
+    <value>Corriendo como superusuario: No</value>
+  </data>
+  <data name="Running_as_superuser_Yes" xml:space="preserve">
+    <value>Corriendo como superusuario: Sí</value>
+  </data>
+  <data name="Running_in_0_bit" xml:space="preserve">
+    <value>Corriendo en {0}-bits</value>
+  </data>
+  <data name="Saving_changes" xml:space="preserve">
+    <value>Guardando cambios...</value>
+  </data>
+  <data name="Saving_metadata" xml:space="preserve">
+    <value>Guardando metadatos...</value>
+  </data>
+  <data name="Scanning_for_0_blank_blocks_starting_in_block_1" xml:space="preserve">
+    <value>Escaneando {0} bloques en blanco comenzando en el bloque {1}</value>
+  </data>
+  <data name="Scanning_for_0_written_blocks_starting_in_block_1" xml:space="preserve">
+    <value>Escaneando {0} bloques escritos comenzando en el bloque {1}</value>
+  </data>
+  <data name="Scanning_never_supported_in_SSC" xml:space="preserve">
+    <value>Escanear nunca se soportará en dispositivos SCSI Streaming.
+No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
+  </data>
+  <data name="Scanning_Xbox_discs_is_not_yet_supported" xml:space="preserve">
+    <value>Escanear los discos de Xbox todavía no está soportado.</value>
+  </data>
+  <data name="SCR_obtained_correctly" xml:space="preserve">
+    <value>SCR obtenido correctamente</value>
+  </data>
+  <data name="SCSI_command_0_error_1" xml:space="preserve">
+    <value>Comando SCSI {0} dió error: {1}</value>
+  </data>
+  <data name="SCSI_command_0_error_1_2" xml:space="preserve">
+    <value>Comando SCSI {0} dió error: {1}, {2}.</value>
+  </data>
+  <data name="SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4" xml:space="preserve">
+    <value>Comando SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.</value>
+  </data>
+  <data name="SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5" xml:space="preserve">
+    <value>Comando SCSI {0} dió error: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.</value>
+  </data>
+  <data name="SCSI_command_0_operating_system_error_1" xml:space="preserve">
+    <value>Comando SCSI {0} dió error del sistema operativo: {1}.</value>
+  </data>
+  <data name="SCSI_density_type_0" xml:space="preserve">
+    <value>Tipo de densidad SCSI: {0}.</value>
+  </data>
+  <data name="SCSI_device_type_0" xml:space="preserve">
+    <value>Tipo de dispositivo SCSI: {0}.</value>
+  </data>
+  <data name="SCSI_error_0" xml:space="preserve">
+    <value>Error SCSI: {0}</value>
+  </data>
+  <data name="SCSI_floppy_mode_page_present_0" xml:space="preserve">
+    <value>Página de modo SCSI de disquetera presente: {0}.</value>
+  </data>
+  <data name="SCSI_INQUIRY_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]SCSI INQUIRY contenido en la imagen:[/]</value>
+  </data>
+  <data name="SCSI_medium_type_0" xml:space="preserve">
+    <value>Tipo de medio SCSI: {0}.</value>
+  </data>
+  <data name="SCSI_MODE_SENSE_10_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]SCSI MODE SENSE (10) contenido en la imagen:[/]</value>
+  </data>
+  <data name="SCSI_MODE_SENSE_6_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]SCSI MODE SENSE (6) contenido en la imagen:[/]</value>
+  </data>
+  <data name="SCSI_reading_LBA_0_error_1" xml:space="preserve">
+    <value>Error SCSI leyendo LBA {0}: {1}</value>
+  </data>
+  <data name="SCSI_reading_LBA_0_error_1_2" xml:space="preserve">
+    <value>Error SCSI leyendo LBA {0}: {1}, {2}.</value>
+  </data>
+  <data name="SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4" xml:space="preserve">
+    <value>Error SCSI leyendo LBA {0}: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}.</value>
+  </data>
+  <data name="SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5" xml:space="preserve">
+    <value>Error SCSI leyendo LBA {0}: SENSE {1} ASC {2:X2}h ASCQ {3:X2}h, {4}, {5}.</value>
+  </data>
+  <data name="SCSI_reading_LBA_0_operating_system_error_1" xml:space="preserve">
+    <value>Error SCSI del sistema operativo leyendo LBA {0}: {1}.</value>
+  </data>
+  <data name="SD_MMC_command_0_error_1" xml:space="preserve">
+    <value>Comando SD/MMC {0} dió error: {1}</value>
+  </data>
+  <data name="SD_MMC_command_0_operating_system_error_1" xml:space="preserve">
+    <value>Comando SD/MMC {0} dió error del sistema operativo: {1}</value>
+  </data>
+  <data name="SD_MMC_reading_LBA_0_block_addressed_error_1" xml:space="preserve">
+    <value>Error SD/MMC leyendo LBA {0} (direccionado por bloques): {1}</value>
+  </data>
+  <data name="SD_MMC_reading_LBA_0_byte_addressed_error_1" xml:space="preserve">
+    <value>Error SD/MMC leyendo LBA {0} (direccionado por bytes): {1}</value>
+  </data>
+  <data name="SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1" xml:space="preserve">
+    <value>Error SD/MMC del sistema operativo leyendo LBA {0} (direccionado por bloques): {1}</value>
+  </data>
+  <data name="SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1" xml:space="preserve">
+    <value>Error SD/MMC del sistema operativo leyendo LBA {0} (direccionado por bytes): {1}</value>
+  </data>
+  <data name="Second_session_starts_at_0_1_2" xml:space="preserve">
+    <value>La segunda sesión empieza en {0:D2}:{1:D2}:{2:D2}</value>
+  </data>
+  <data name="Sectors_0" xml:space="preserve">
+    <value>{0} sectores</value>
+  </data>
+  <data name="Sector_0_could_not_be_read" xml:space="preserve">
+    <value>El sector {0} no se pudo leer.</value>
+  </data>
+  <data name="SecureDigital_CID_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CID de SecureDigital contenido en la imagen:[/]</value>
+  </data>
+  <data name="SecureDigital_CSD_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]CSD de SecureDigital contenido en la imagen:[/]</value>
+  </data>
+  <data name="SecureDigital_OCR_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]OCR de SecureDigital contenido en la imagen:[/]</value>
+  </data>
+  <data name="SecureDigital_SCR_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]SCR de SecureDigital contenido en la imagen:[/]</value>
+  </data>
+  <data name="Seeking_to_cylinder_0_head_1_sector_2" xml:space="preserve">
+    <value>Posicionándose en el cilindro {0}, cabeza {1}, sector {2}...</value>
+  </data>
+  <data name="Seeking_to_partition_0" xml:space="preserve">
+    <value>Posicionándose en la partición {0}</value>
+  </data>
+  <data name="Seeking_to_sector_0" xml:space="preserve">
+    <value>Posicionándose en el sector {0}...</value>
+  </data>
+  <data name="Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump" xml:space="preserve">
+    <value>El formato de salida seleccionado no soporta ni MemoryStick Duo ni UMD, no se puede volcar...</value>
+  </data>
+  <data name="Selected_PoweRec_speed_for_currently_inserted_media_is_0_1" xml:space="preserve">
+    <value>La velocidad PoweRec seleccionada para le medio insertado es {0} Kb/seg ({1}x)</value>
+  </data>
+  <data name="Sending_MODE_SELECT_to_drive_ignore_error_correction" xml:space="preserve">
+    <value>Enviando MODE SELECT a la unidad (ignorar correciones de errores).</value>
+  </data>
+  <data name="Sending_MODE_SELECT_to_drive_return_damaged_blocks" xml:space="preserve">
+    <value>Enviando MODE SELECT a la unidad (devolver bloques dañados).</value>
+  </data>
+  <data name="Sending_MODE_SELECT_to_drive_return_device_to_previous_status" xml:space="preserve">
+    <value>Enviando MODE SELECT a la unidad (devolver dispositivo al estado anterior).</value>
+  </data>
+  <data name="Sending_READ_FULL_TOC_to_the_device" xml:space="preserve">
+    <value>Enviando READ FULL TOC al dispositivo...</value>
+  </data>
+  <data name="Sense_0_Status_1_Error_2" xml:space="preserve">
+    <value>Sense = {0}, Estadp = 0x{1:X2}, Error = 0x{2:X2}</value>
+  </data>
+  <data name="Sense_0_Status_1_Error_2_Length_3" xml:space="preserve">
+    <value>Sense = {0}, Estado = 0x{1:X2}, Error = 0x{2:X2}, Longitud = {3}</value>
+  </data>
+  <data name="Serial_number_0" xml:space="preserve">
+    <value>Número de serie: {0}</value>
+  </data>
+  <data name="Server_0" xml:space="preserve">
+    <value>Servidor: {0}</value>
+  </data>
+  <data name="Session_information" xml:space="preserve">
+    <value>Información de sesión</value>
+  </data>
+  <data name="Setting_disc_Media_Catalogue_Number_to_0" xml:space="preserve">
+    <value>Estableciendo el número de catálogo del medio a {0}</value>
+  </data>
+  <data name="Setting_flags_for_track_0" xml:space="preserve">
+    <value>Estableciendo banderas para la pista...</value>
+  </data>
+  <data name="Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
+    <value>Estableciendo geometría en {0} cilindros, {1} cabezas y {2} sectores por pista</value>
+  </data>
+  <data name="Setting_index_0_for_track_1_to_LBA_2" xml:space="preserve">
+    <value>Estableciendo índice {0} para la pista {1} en el LBA {2}.</value>
+  </data>
+  <data name="Setting_ISRC_for_track_0_to_1" xml:space="preserve">
+    <value>Estableciendo ISRC para la pista {0} como {1}</value>
+  </data>
+  <data name="Setting_speed_to_0_x" xml:space="preserve">
+    <value>Estableciendo la velocidad a {0}x</value>
+  </data>
+  <data name="Setting_speed_to_0_x_for_data_reading" xml:space="preserve">
+    <value>Estableciendo la velocidad a {0}x para la lectura de datos</value>
+  </data>
+  <data name="Setting_speed_to_8x_for_audio_reading" xml:space="preserve">
+    <value>Estableciendo la velocidad a 8x para la lectura de audio</value>
+  </data>
+  <data name="Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio" xml:space="preserve">
+    <value>Estableciendo la velocidad a 8x para la lectura de CD-i Ready como audio</value>
+  </data>
+  <data name="Setting_speed_to_MAX" xml:space="preserve">
+    <value>Estableciendo la velocidad al máximo</value>
+  </data>
+  <data name="Setting_speed_to_MAX_for_data_reading" xml:space="preserve">
+    <value>Estableciendo la velocidad al máximo para la lectura de datos</value>
+  </data>
+  <data name="Several_media_tags_not_supported_continuing" xml:space="preserve">
+    <value>Varias etiquetas de medio no están soportadas, continuando...</value>
+  </data>
+  <data name="Several_media_tags_not_supported_not_continuing" xml:space="preserve">
+    <value>Varias etiquetas de medio no están soportadas, no se continuará...</value>
+  </data>
+  <data name="Sidecar_created_in_0" xml:space="preserve">
+    <value>Sidecar creado en {0}.</value>
+  </data>
+  <data name="Skipping_0_blocks_from_errored_block_1" xml:space="preserve">
+    <value>Omitiendo {0} bloques desde el bloque erróneo {1}.</value>
+  </data>
+  <data name="Skipping_0_bytes_from_errored_byte_1" xml:space="preserve">
+    <value>Omitiendo {0} bytes desde el byte erróneo {1}.</value>
+  </data>
+  <data name="Skipping_track_0" xml:space="preserve">
+    <value>Omitiendo pista {1}</value>
+  </data>
+  <data name="Skipping_track_0_due_to_Plextor_firmware_bug" xml:space="preserve">
+    <value>Omitiendo pista {1} debido a un error en el firmware de Plextor</value>
+  </data>
+  <data name="Slowest_speed_burst_0" xml:space="preserve">
+    <value>Ráfaga de velocidad más lenta: {0}.</value>
+  </data>
+  <data name="Solving_lead_outs" xml:space="preserve">
+    <value>Resolviendo Lead-Outs...</value>
+  </data>
+  <data name="Stack_trace_0" xml:space="preserve">
+    <value>Traza de pila: {0}</value>
+  </data>
+  <data name="Standard_Disc_Information" xml:space="preserve">
+    <value>Información estándar del disco</value>
+  </data>
+  <data name="Start_error_logging_on_0" xml:space="preserve">
+    <value>Registro de errores empezado el {0}</value>
+  </data>
+  <data name="Start_logging_at_0" xml:space="preserve">
+    <value>Registro empezado el {0}</value>
+  </data>
+  <data name="Start_subchannel_logging_at_0" xml:space="preserve">
+    <value>Registro de subcanales empezado el {0}</value>
+  </data>
+  <data name="Stopping_motor" xml:space="preserve">
+    <value>Parando el motor...</value>
+  </data>
+  <data name="Subchannel_is_BCD" xml:space="preserve">
+    <value>El subcanal es BCD</value>
+  </data>
+  <data name="Subchannel_is_not_BCD" xml:space="preserve">
+    <value>El subcanal no es BCD</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>¡Éxito!</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Sumario</value>
+  </data>
+  <data name="System_identifier_0" xml:space="preserve">
+    <value>Identificador del sistema: {0}</value>
+  </data>
+  <data name="System_information" xml:space="preserve">
+    <value>################# Información del sistema #################</value>
+  </data>
+  <data name="TapeAlert_Supported_Flags_Bitmap_0" xml:space="preserve">
+    <value>Mapa de bits de banderas TapeAlert soportadas: 0x{0:X16}</value>
+  </data>
+  <data name="Tapes_cannot_be_dumped_raw" xml:space="preserve">
+    <value>Las cintas no se pueden volcar sin procesar.</value>
+  </data>
+  <data name="Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average" xml:space="preserve">
+    <value>Comprobando {0} posicionamientos, el posicionamiento más lento tardó {1:F3} ms, el más rápido {2:F3} ms. ({3:F3} ms de media)</value>
+  </data>
+  <data name="Test_read_whole_high_density_area_proceed_Q" xml:space="preserve">
+    <value>La siguiente parte del test leerá el área de alta densidad del GD-ROM entera desde el primer sector que sabemos legible hasta que ocurra el primer error. ¿Desea continuar? (S/N):</value>
+  </data>
+  <data name="There_are_audio_tracks_and_offset_fixing_is_disabled_dump_may_not_be_correct" xml:space="preserve">
+    <value>Hay pistas de audio y la correción de desplazamientos está desactivada, el volcado podría ser incorrecto.</value>
+  </data>
+  <data name="There_will_be_thousand_of_errors_between_track_0_and_track_1_that_is_normal_and_you_can_ignore_them"
+        xml:space="preserve">
+    <value>Habrá miles de errores entre las pistas 0 y 1, esto es normal y puede ignorarlos.</value>
+  </data>
+  <data name="The_current_environment_doesn_t_support_the_medium_scan_command" xml:space="preserve">
+    <value>El entorno actual no soporta el comando MEDIUM SCAN, el volcado tardará mucho más de lo normal.</value>
+  </data>
+  <data name="The_drive_has_returned_incorrect_Q_positioning_calculating_pregaps" xml:space="preserve">
+    <value>ATENCIÓN: La unidad ha devuelto la posición de Q incorrecta calculando los huecos anteriores. Se ha hecho todo lo posible pero pueden ser incorrectos.</value>
+  </data>
+  <data name="The_selected_image_does_not_support_tracks" xml:space="preserve">
+    <value>La imagen seleccionada no soporta pistas.</value>
+  </data>
+  <data name="The_specified_device_cannot_be_found" xml:space="preserve">
+    <value>No se pudo encontrar el dispositivo especificado.</value>
+  </data>
+  <data name="The_specified_device_is_in_use_by_another_process" xml:space="preserve">
+    <value>El dispositivo especificado está en uso por otro proceso.</value>
+  </data>
+  <data name="The_specified_format_does_not_support_the_inserted_cartridge" xml:space="preserve">
+    <value>El formato especificado no soporta el cartucho introducido...</value>
+  </data>
+  <data name="The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them"
+        xml:space="preserve">
+    <value>La imagen especificada dice contener un medio óptico y a la vez no soportarlos.</value>
+  </data>
+  <data
+    name="The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them"
+    xml:space="preserve">
+    <value>La imagen especificada dice contener un medio direccionado por bloques y a la vez no soportarlos.</value>
+  </data>
+  <data
+    name="The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them"
+    xml:space="preserve">
+    <value>La imagen especificada dice contener un medio direccionado por bytes y a la vez no soportarlos.</value>
+  </data>
+  <data name="The_specified_image_format_cannot_represent_optical_discs" xml:space="preserve">
+    <value>El formato de imagen especificado no puede representar discos ópticos.</value>
+  </data>
+  <data name="The_specified_image_format_cannot_represent_streaming_tapes" xml:space="preserve">
+    <value>El formato de imagen especificado no puede representar cintas.</value>
+  </data>
+  <data name="Title_Blu_ray" xml:space="preserve">
+    <value>Blu-ray</value>
+  </data>
+  <data name="Title_Bps" xml:space="preserve">
+    <value>Bps</value>
+  </data>
+  <data name="Title_CompactDisc" xml:space="preserve">
+    <value>CompactDisc</value>
+  </data>
+  <data name="Title_Dump_hardware_information" xml:space="preserve">
+    <value>Información del hardware de volcado</value>
+  </data>
+  <data name="Title_DVD" xml:space="preserve">
+    <value>DVD</value>
+  </data>
+  <data name="Title_DVD_HD_DVD" xml:space="preserve">
+    <value>DVD / HD DVD</value>
+  </data>
+  <data name="Title_DVD_Plus_Dash_R_W" xml:space="preserve">
+    <value>DVD±R(W)</value>
+  </data>
+  <data name="Title_End" xml:space="preserve">
+    <value>Final</value>
+  </data>
+  <data name="Title_First_track" xml:space="preserve">
+    <value>Primera pista</value>
+  </data>
+  <data name="Title_Image_indexes" xml:space="preserve">
+    <value>Índices de la imagen</value>
+  </data>
+  <data name="Title_Image_sessions" xml:space="preserve">
+    <value>Sesiones de la imagen</value>
+  </data>
+  <data name="Title_Image_tracks" xml:space="preserve">
+    <value>Pistas de la imagen</value>
+  </data>
+  <data name="Title_Index" xml:space="preserve">
+    <value>Índices</value>
+  </data>
+  <data name="Title_keys_dumping_is_enabled_This_will_be_very_slow" xml:space="preserve">
+    <value>Volcar las llaves de título está activado. Esto será muy lento...</value>
+  </data>
+  <data name="Title_Last_track" xml:space="preserve">
+    <value>Última pista</value>
+  </data>
+  <data name="Title_Manufacturer" xml:space="preserve">
+    <value>Fabricante</value>
+  </data>
+  <data name="Title_MMC" xml:space="preserve">
+    <value>MMC</value>
+  </data>
+  <data name="Title_Model" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="Title_Operating_system" xml:space="preserve">
+    <value>Sistema operativo</value>
+  </data>
+  <data name="Title_Partition_description" xml:space="preserve">
+    <value>Descripción de la partición:</value>
+  </data>
+  <data name="Title_Pregap" xml:space="preserve">
+    <value>Hueco anterior</value>
+  </data>
+  <data name="Title_Raw_bps" xml:space="preserve">
+    <value>Bps sin procesar</value>
+  </data>
+  <data name="Title_Serial" xml:space="preserve">
+    <value>Serie</value>
+  </data>
+  <data name="Title_Session" xml:space="preserve">
+    <value>Sesión</value>
+  </data>
+  <data name="Title_Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Title_SSC" xml:space="preserve">
+    <value>SSC</value>
+  </data>
+  <data name="Title_Start" xml:space="preserve">
+    <value>Comienzo</value>
+  </data>
+  <data name="Title_Subchannel" xml:space="preserve">
+    <value>Subcanal</value>
+  </data>
+  <data name="Title_Track" xml:space="preserve">
+    <value>Pista</value>
+  </data>
+  <data name="Title_Type_for_media" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Title_Version" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="Title_Xbox" xml:space="preserve">
+    <value>Xbox</value>
+  </data>
+  <data name="TOC_says_disc_type_is_CD_i" xml:space="preserve">
+    <value>La tabla de contenido dice que el disco es de tipo CD-i.</value>
+  </data>
+  <data name="TOC_says_disc_type_is_CD_ROM_XA" xml:space="preserve">
+    <value>La tabla de contenido dice que el disco es de tipo CD-ROM XA.</value>
+  </data>
+  <data name="Took_a_total_of_0_1_processing_commands" xml:space="preserve">
+    <value>Tomó un total de {0} ({1} procesando comandos).</value>
+  </data>
+  <data name="Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing" xml:space="preserve">
+    <value>Tomó un total de {0} ({1} procesando comandos, {2} calculando checksums, {3} escribiendo, {4} cerrando).</value>
+  </data>
+  <data name="Total_size" xml:space="preserve">
+    <value>Tamaño total</value>
+  </data>
+  <data name="Total_size_0_sectors" xml:space="preserve">
+    <value>Tamaño total: {0} sectores</value>
+  </data>
+  <data name="Tracks_0_ISRC" xml:space="preserve">
+    <value>ISRC de la pista {0}</value>
+  </data>
+  <data name="Track_0" xml:space="preserve">
+    <value>Pista {0}</value>
+  </data>
+  <data name="Track_0_has_1_sectors" xml:space="preserve">
+    <value>La pista {0} tiene {1} sectores</value>
+  </data>
+  <data name="Track_0_is_MODE1" xml:space="preserve">
+    <value>La pista {0} es modo 1</value>
+  </data>
+  <data name="Track_0_is_MODE2" xml:space="preserve">
+    <value>La pista {0} es modo 2</value>
+  </data>
+  <data name="Track_0_is_MODE2_FORM_1" xml:space="preserve">
+    <value>La pista {0} es modo 2 forma 1</value>
+  </data>
+  <data name="Track_0_is_MODE2_FORM_2" xml:space="preserve">
+    <value>La pista {0} es modo 2 forma 2</value>
+  </data>
+  <data name="Track_0_is_unknown_mode_1" xml:space="preserve">
+    <value>La pista {0} es modo desconocido {1}</value>
+  </data>
+  <data name="Track_0_of_1" xml:space="preserve">
+    <value>Pista {0} de {1}</value>
+  </data>
+  <data name="Track_0_pregap_is_1_sectors" xml:space="preserve">
+    <value>El hueco anterior de la pista {0} tiene {1} sectores</value>
+  </data>
+  <data name="Track_0_starts_at_LBA_1_and_ends_at_LBA_2" xml:space="preserve">
+    <value>La pista {0} empieza en el LBA {1} y termina en el {2}</value>
+  </data>
+  <data name="Track_calculations" xml:space="preserve">
+    <value>Cálculos de pista</value>
+  </data>
+  <data name="Track_Resources_Information" xml:space="preserve">
+    <value>Información de recursos de pista</value>
+  </data>
+  <data name="Trap_disc_doesnt_have_enough_sectors" xml:space="preserve">
+    <value>El disco trampa no tiene suficientes sectores...</value>
+  </data>
+  <data name="Trap_disc_shows_0_sectors" xml:space="preserve">
+    <value>El disco trampa tiene {0} sectores...</value>
+  </data>
+  <data name="Traversing_FAT" xml:space="preserve">
+    <value>Recorriendo la FAT...</value>
+  </data>
+  <data name="Tried_to_open_a_file_instead_of_a_device" xml:space="preserve">
+    <value>Se intentó abrir un fichero en lugar de un dispositivo.</value>
+  </data>
+  <data name="Trimming_finished_in_0" xml:space="preserve">
+    <value>Recorte finalizado en {0}.</value>
+  </data>
+  <data name="Trimming_sector_0" xml:space="preserve">
+    <value>Recortando sector {0}</value>
+  </data>
+  <data name="Trimming_skipped_sectors" xml:space="preserve">
+    <value>Recortando sectores omitidos</value>
+  </data>
+  <data name="Trying_0_at_1" xml:space="preserve">
+    <value>Intentando {0} en {1}</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_scrambled" xml:space="preserve">
+    <value>Intentando SCSI READ CD revuelto...</value>
+  </data>
+  <data name="Trying_SCSI_READ_6" xml:space="preserve">
+    <value>Intentando SCSI READ (6)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_10" xml:space="preserve">
+    <value>Intentando SCSI READ (10)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_12" xml:space="preserve">
+    <value>Intentando SCSI READ (12)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_16" xml:space="preserve">
+    <value>Intentando SCSI READ (16)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD" xml:space="preserve">
+    <value>Intentando SCSI READ CD...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_MSF" xml:space="preserve">
+    <value>Intentando SCSI READ CD MSF...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_full_sector" xml:space="preserve">
+    <value>Intentando SCSI READ CD sector completo...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_MSF_full_sector" xml:space="preserve">
+    <value>Intentando SCSI READ CD MSF sector completo...</value>
+  </data>
+  <data name="Trying_to_read_CD_Track_1_pre_gap" xml:space="preserve">
+    <value>Intentando leer el hueco anterior a la pista 1 del CD...</value>
+  </data>
+  <data name="Trying_to_read_CD_Lead_In" xml:space="preserve">
+    <value>Intentando leer Lead-In del CD...</value>
+  </data>
+  <data name="Trying_to_read_CD_Lead_Out" xml:space="preserve">
+    <value>Intentando leer Lead-Out del CD...</value>
+  </data>
+  <data name="Trying_to_read_C2_Pointers" xml:space="preserve">
+    <value>Intentando leer punteros C2...</value>
+  </data>
+  <data name="Trying_to_read_subchannels" xml:space="preserve">
+    <value>Intentando leer subcanales...</value>
+  </data>
+  <data name="Trying_to_read_subchannels_with_C2_Pointers" xml:space="preserve">
+    <value>Intentando leer subcanales con punteros C2...</value>
+  </data>
+  <data name="Plextor_READ_CD_DA" xml:space="preserve">
+    <value>Intentando Plextor READ CD-DA...</value>
+  </data>
+  <data name="Trying_Pioneer_READ_CD_DA" xml:space="preserve">
+    <value>Intentando Pioneer READ CD-DA...</value>
+  </data>
+  <data name="Trying_Pioneer_READ_CD_DA_MSF" xml:space="preserve">
+    <value>Intentando Pioneer READ CD-DA MSF...</value>
+  </data>
+  <data name="Trying_NEC_READ_CD_DA" xml:space="preserve">
+    <value>Intentando NEC READ CD-DA...</value>
+  </data>
+  <data name="Trying_Plextor_trick_to_raw_read_DVDs" xml:space="preserve">
+    <value>Intentando truco de Plextor para leer DVDs in procesar...</value>
+  </data>
+  <data name="Trying_HL_DT_ST_aka_LG_trick_to_raw_read_DVDs" xml:space="preserve">
+    <value>Intentando truco de HL-DT-ST (o LG) para leer DVDs sin procesar...</value>
+  </data>
+  <data name="Trying_MediaTek_READ_DRAM_command" xml:space="preserve">
+    <value>Intentando comando READ DRAM de MediaTek...</value>
+  </data>
+  <data name="Trying_MediaTek_READ_DRAM_command_for_Lead_Out" xml:space="preserve">
+    <value>Intentando comando READ DRAM de MediaTek para el Lead-Out...</value>
+  </data>
+  <data name="Trying_READ_SECTORS_RETRY_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ SECTOR(S) RETRY en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_DMA_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ DMA en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_DMA_RETRY_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ DMA RETRY en modo CHS...</value>
+  </data>
+  <data name="Trying_SEEK_in_CHS_mode" xml:space="preserve">
+    <value>Intentando SEEK en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_SECTORS_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ SECTOR(S) en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_SECTORS_RETRY_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ SECTOR(S) RETRY en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_DMA_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ DMA en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_DMA_RETRY_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ DMA RETRY en modo LBA...</value>
+  </data>
+  <data name="Trying_SEEK_in_LBA_mode" xml:space="preserve">
+    <value>Intentando SEEK en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_SECTORS_in_LBA48_mode" xml:space="preserve">
+    <value>Intentando READ SECTOR(S) en modo LBA48...</value>
+  </data>
+  <data name="Trying_READ_DMA_in_LBA48_mode" xml:space="preserve">
+    <value>Intentando READ DMA en modo LBA48...</value>
+  </data>
+  <data name="Trying_READ_LONG_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ LONG en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_LONG_RETRY_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ LONG RETRY en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_LONG_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ LONG en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_LONG_RETRY_in_LBA_mode" xml:space="preserve">
+    <value>Intentando READ LONG RETRY en modo LBA...</value>
+  </data>
+  <data name="Trying_READ_SECTORS_in_CHS_mode" xml:space="preserve">
+    <value>Intentando READ SECTOR(S) en modo CHS...</value>
+  </data>
+  <data name="Trying_READ_LONG_with_size_0" xml:space="preserve">
+    <value>Intentando READ LONG con {0} bytes...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_in_first_session_Lead_Out" xml:space="preserve">
+    <value>Intentando SCSI READ CD en el Lead-Out de la primera sesión...</value>
+  </data>
+  <data name="Trying_SCSI_READ_CD_in_second_session_Lead_In" xml:space="preserve">
+    <value>Intentando SCSI READ CD en el Lead-In de la segunda sesión...</value>
+  </data>
+  <data name="Trying_SCSI_READ_LONG_10" xml:space="preserve">
+    <value>Intentando SCSI READ LONG (10)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_LONG_16" xml:space="preserve">
+    <value>Intentando SCSI READ LONG (16)...</value>
+  </data>
+  <data name="Trying_SCSI_READ_MEDIA_SERIAL_NUMBER" xml:space="preserve">
+    <value>Intentando SCSI READ MEDIA SERIAL NUMBER...</value>
+  </data>
+  <data name="Trying_to_get_CID" xml:space="preserve">
+    <value>Intentando obtener CID...</value>
+  </data>
+  <data name="Trying_plugin_0" xml:space="preserve">
+    <value>Intentando extensión {0}</value>
+  </data>
+  <data name="Trying_READ_LONG" xml:space="preserve">
+    <value>Intentando READ LONG...</value>
+  </data>
+  <data name="Trying_to_get_CSD" xml:space="preserve">
+    <value>Intentando obtener CSD...</value>
+  </data>
+  <data name="Trying_to_get_Extended_CSD" xml:space="preserve">
+    <value>Intentando obtener CSD extendido...</value>
+  </data>
+  <data name="Trying_to_get_OCR" xml:space="preserve">
+    <value>Intentando obtener OCR...</value>
+  </data>
+  <data name="Trying_to_get_partial_data_for_sector_0" xml:space="preserve">
+    <value>Intentando obtener datos parciales para el sector {0}</value>
+  </data>
+  <data name="Trying_to_get_SCR" xml:space="preserve">
+    <value>Intentando obtener SCR...</value>
+  </data>
+  <data name="Trying_to_read_first_track_pregap_sector_0_1" xml:space="preserve">
+    <value>Intentando leer el sector {0} en el hueco anterior a la pista 1 del CD ({1})</value>
+  </data>
+  <data name="Try_to_find_SCSI_READ_LONG_size" xml:space="preserve">
+    <value>La unidad soporta el comando SCSI READ LONG pero no consigo encontrar el tamaño correcto. ¿Quiere que lo intente? (Puede tardar horas)</value>
+  </data>
+  <data name="Unable_to_communicate_with_ATA_device" xml:space="preserve">
+    <value>No se pudo comunicar con el dispositivo ATA.</value>
+  </data>
+  <data name="Unable_to_get_device_size" xml:space="preserve">
+    <value>No se pudo obtener el tamaño del dispositivo.</value>
+  </data>
+  <data name="Unable_to_get_media_capacity" xml:space="preserve">
+    <value>No se pudo obtener la capacidad del medio {0}</value>
+  </data>
+  <data name="Unable_to_get_separate_tracks_not_calculating_their_entropy" xml:space="preserve">
+    <value>No se pudieron obtener las pistas por separado, no se calculará su entropía</value>
+  </data>
+  <data name="Unable_to_guess_mode_for_track_0_continuing" xml:space="preserve">
+    <value>No se pudo adivinar el modo de la pista {0}, continuando...</value>
+  </data>
+  <data name="Unable_to_read_medium" xml:space="preserve">
+    <value>No se pudo leer el medio.</value>
+  </data>
+  <data name="Unable_to_read_medium_or_empty_medium_present" xml:space="preserve">
+    <value>No se pudo leer el medio o un medio vacío está presente...</value>
+  </data>
+  <data name="Unable_to_write_file_0" xml:space="preserve">
+    <value>No se pudo escribir el fichero {0}</value>
+  </data>
+  <data name="Unit_Serial_Number_0" xml:space="preserve">
+    <value>Número de serie de la unidad: {0}</value>
+  </data>
+  <data name="Unknown_device_type" xml:space="preserve">
+    <value>Tipo de dispositivo desconocido.</value>
+  </data>
+  <data name="Unknown_device_type_0" xml:space="preserve">
+    <value>Tipo de dispositivo {0} desconocido.</value>
+  </data>
+  <data name="Unknown_device_type_0_cannot_get_information" xml:space="preserve">
+    <value>Tipo de dispositivo {0} desconocido, no se pudo obtener información.</value>
+  </data>
+  <data name="Unknown_sense_testing_unit_was_ready" xml:space="preserve">
+    <value>Sense desconocido comprobando si la unidad estaba lista.</value>
+  </data>
+  <data name="Unlocked_total_size_0_sectors" xml:space="preserve">
+    <value>Tamaño total desbloqueada: {0} sectores</value>
+  </data>
+  <data name="Unlocking_drive_Wxripper" xml:space="preserve">
+    <value>Desbloqueando la unidad (Wxripper).</value>
+  </data>
+  <data name="Unlocking_drive_Xtreme_" xml:space="preserve">
+    <value>Desbloqueando la unidad (Xtreme).</value>
+  </data>
+  <data name="Updating_CompactDisc_read_offsets" xml:space="preserve">
+    <value>Actualizando los desplazamientos de lectura de CompactDisc</value>
+  </data>
+  <data name="Updating_known_devices" xml:space="preserve">
+    <value>Actualizando los dispositivos conocidos</value>
+  </data>
+  <data name="Updating_known_iNES_NES_2_0_headers" xml:space="preserve">
+    <value>Actualizando las cabeceras iNES/NES 2.0 conocidas</value>
+  </data>
+  <data name="Updating_main_database" xml:space="preserve">
+    <value>Actualizando la base de datos principal</value>
+  </data>
+  <data name="Updating_USB_products" xml:space="preserve">
+    <value>Actualizando productos USB</value>
+  </data>
+  <data name="Updating_USB_vendors" xml:space="preserve">
+    <value>Actualizando fabricantes USB</value>
+  </data>
+  <data name="Uploading_device_report" xml:space="preserve">
+    <value>Subiendo reporte de dispositivo</value>
+  </data>
+  <data name="Uploading_partial_statistics_file_0" xml:space="preserve">
+    <value>Subiendo fichero {0} de estadísticas parciales</value>
+  </data>
+  <data name="Uploading_statistics" xml:space="preserve">
+    <value>Subiendo estadísticas</value>
+  </data>
+  <data name="USB_device_0" xml:space="preserve">
+    <value>Dispositivo USB: {0}</value>
+  </data>
+  <data name="USB_manufacturer_0" xml:space="preserve">
+    <value>Fabricante USB: {0}</value>
+  </data>
+  <data name="USB_product_0" xml:space="preserve">
+    <value>Producto USB: {0}</value>
+  </data>
+  <data name="USB_product_ID_0" xml:space="preserve">
+    <value>ID del producto USB: {0:X4}h</value>
+  </data>
+  <data name="USB_serial_0" xml:space="preserve">
+    <value>Número de serie USB: {0}</value>
+  </data>
+  <data name="USB_vendor_ID_0" xml:space="preserve">
+    <value>ID del fabricante USB: {0:X4}h</value>
+  </data>
+  <data name="Using_ATA_READ_command_CHS" xml:space="preserve">
+    <value>Usando comando ATA READ (CHS).</value>
+  </data>
+  <data name="Using_ATA_READ_command_LBA" xml:space="preserve">
+    <value>Usando comando ATA READ (LBA).</value>
+  </data>
+  <data name="Using_ATA_READ_command_with_retries_CHS" xml:space="preserve">
+    <value>Usando comando ATA READ con reintentos (CHS).</value>
+  </data>
+  <data name="Using_ATA_READ_command_with_retries_LBA" xml:space="preserve">
+    <value>Usando comando ATA READ con reintentos (LBA).</value>
+  </data>
+  <data name="Using_ATA_READ_DMA_command_CHS" xml:space="preserve">
+    <value>Usando comando ATA READ DMA (CHS).</value>
+  </data>
+  <data name="Using_ATA_READ_DMA_command_LBA" xml:space="preserve">
+    <value>Usando comando ATA READ DMA (LBA).</value>
+  </data>
+  <data name="Using_ATA_READ_DMA_command_with_retries_CHS" xml:space="preserve">
+    <value>Usando comando ATA READ DMA con reintentos (CHS).</value>
+  </data>
+  <data name="Using_ATA_READ_DMA_command_with_retries_LBA" xml:space="preserve">
+    <value>Usando comando ATA READ DMA con reintentos (LBA).</value>
+  </data>
+  <data name="Using_ATA_READ_DMA_EXT_command" xml:space="preserve">
+    <value>Usando comando ATA READ DMA EXT.</value>
+  </data>
+  <data name="Using_ATA_READ_EXT_command" xml:space="preserve">
+    <value>Usando comando ATA READ EXT.</value>
+  </data>
+  <data name="Using_HL_DT_ST_raw_DVD_reading" xml:space="preserve">
+    <value>Usando lectura de DVD sin procesar de HL-DT-ST.</value>
+  </data>
+  <data name="Using_MMC_READ_CD_command" xml:space="preserve">
+    <value>Usando comando MMC READ CD.</value>
+  </data>
+  <data name="Using_Plextor_raw_DVD_reading" xml:space="preserve">
+    <value>Usando lectura de DVD sin procesar de Plextor.</value>
+  </data>
+  <data name="Using_SCSI_READ_10_command" xml:space="preserve">
+    <value>Usando comando SCSI READ (10).</value>
+  </data>
+  <data name="Using_SCSI_READ_12_command" xml:space="preserve">
+    <value>Usando comando SCSI READ (12).</value>
+  </data>
+  <data name="Using_SCSI_READ_16_command" xml:space="preserve">
+    <value>Usando comando SCSI READ (16).</value>
+  </data>
+  <data name="Using_SCSI_READ_6_command" xml:space="preserve">
+    <value>Usando comando SCSI READ (6).</value>
+  </data>
+  <data name="Using_SCSI_READ_LONG_10_command" xml:space="preserve">
+    <value>Usando comando SCSI READ LONG (10).</value>
+  </data>
+  <data name="Using_SCSI_READ_LONG_16_command" xml:space="preserve">
+    <value>Usando comando SCSI READ LONG (16).</value>
+  </data>
+  <data name="Using_SyQuest_READ_LONG_10_command" xml:space="preserve">
+    <value>Usando comando SyQuest READ LONG (10).</value>
+  </data>
+  <data name="Using_SyQuest_READ_LONG_6_command" xml:space="preserve">
+    <value>Usando comando SyQuest READ LONG (6).</value>
+  </data>
+  <data name="Version_0" xml:space="preserve">
+    <value>Versión: {0}</value>
+  </data>
+  <data name="VideoNow_Color_frame_is_offset_0_bytes" xml:space="preserve">
+    <value>El fotograma de VideoNow Color está desplazado {0} bytes.</value>
+  </data>
+  <data name="Video_layer_0_size_0_sectors" xml:space="preserve">
+    <value>Tamaño de la capa 0 de video: {0} sectores</value>
+  </data>
+  <data name="Video_layer_1_size_0_sectors" xml:space="preserve">
+    <value>Tamaño de la capa 1 de video: {0} sectores</value>
+  </data>
+  <data name="Video_layer_one_size" xml:space="preserve">
+    <value>Tamaño de la capa 0 de video</value>
+  </data>
+  <data name="Video_layer_zero_size" xml:space="preserve">
+    <value>Tamaño de la capa 1 de video</value>
+  </data>
+  <data name="Video_partition_is_too_big_did_lock_work_Trying_cold_values" xml:space="preserve">
+    <value>La partición de video es demasiado grande, ¿se bloqueó correctamente? Intentando valores conocidos.</value>
+  </data>
+  <data name="Video_partition_total_size_0_sectors" xml:space="preserve">
+    <value>Tamaño total de la partición de video: {0} sectores</value>
+  </data>
+  <data name="Volume_contains_0_files" xml:space="preserve">
+    <value>El volumen contiene {0} ficheros</value>
+  </data>
+  <data name="Volume_created_on_0" xml:space="preserve">
+    <value>Volumen creado el {0:F}</value>
+  </data>
+  <data name="Volume_effective_from_0" xml:space="preserve">
+    <value>Volumen efectivo desde el {0:F}</value>
+  </data>
+  <data name="Volume_expired_on_0" xml:space="preserve">
+    <value>Volumen expirado el {0:F}</value>
+  </data>
+  <data name="Volume_has_0_clusters_free_1" xml:space="preserve">
+    <value>El volumen tiene {0} clústeres libres ({1:P})</value>
+  </data>
+  <data name="Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes" xml:space="preserve">
+    <value>El volumen tiene {0} clústeres de {1} bytes cada uno (por un total de {2} bytes)</value>
+  </data>
+  <data name="Volume_last_backed_up_on_0" xml:space="preserve">
+    <value>Volumen respaldado por última vez el {0:F}</value>
+  </data>
+  <data name="Volume_last_modified_on_0" xml:space="preserve">
+    <value>Volumen modificado por última vez el {0:F}</value>
+  </data>
+  <data name="Volume_name_0" xml:space="preserve">
+    <value>Nombre del volumen: {0}</value>
+  </data>
+  <data name="Volume_serial_0" xml:space="preserve">
+    <value>Número de serie del volumen: {0}</value>
+  </data>
+  <data name="Volume_set_identifier_0" xml:space="preserve">
+    <value>Identificador del conjunto del volumen: {0}</value>
+  </data>
+  <data name="Waiting_5_seconds" xml:space="preserve">
+    <value>Esperando 5 segundos...</value>
+  </data>
+  <data name="Waiting_for_drive_to_become_ready" xml:space="preserve">
+    <value>Esperando que la unidad esté lista</value>
+  </data>
+  <data name="WARNING_Could_not_find_Lead_Out_start_will_try_to_read_up_to" xml:space="preserve">
+    <value>ATENCIÓN: No se pudo encontrar el comienzo del Lead-Out, se intentarán leer hasta 360000 sectores, probablemente falle antes...</value>
+  </data>
+  <data name="WARNING_If_disc_says_CDG_CDEG_CDMIDI_dump_will_be_incorrect" xml:space="preserve">
+    <value>ATENCIÓN: Si el disco dice CD+G, CD+EG, CD-MIDI, CD Graphics o CD Enhanced Graphics, ¡el volcado será incorrecto!</value>
+  </data>
+  <data name="Was_created_with_0" xml:space="preserve">
+    <value>Creado con {0}</value>
+  </data>
+  <data name="Was_created_with_0_version_1" xml:space="preserve">
+    <value>Creado con {0} versión {1}</value>
+  </data>
+  <data name="Was_created_with_0_version_1_WithMarkup" xml:space="preserve">
+    <value>Creado con [italic]{0}[/] versión [italic]{1}[/]</value>
+  </data>
+  <data name="Was_created_with_0_WithMarkup" xml:space="preserve">
+    <value>Creado con [italic]{0}[/]</value>
+  </data>
+  <data name="Whole_device" xml:space="preserve">
+    <value>Dispositivo completo</value>
+  </data>
+  <data name="Writing_0_to_1" xml:space="preserve">
+    <value>Escribiendo {0} en {1}</value>
+  </data>
+  <data name="Writing_metadata_sidecar" xml:space="preserve">
+    <value>Escribiendo sidecar de metadatos</value>
+  </data>
+  <data name="Writing_Middle_Zone_D_empty" xml:space="preserve">
+    <value>Escribiendo zona intermedia D (vacía).</value>
+  </data>
+  <data name="WxRipper_PFI_Data_Area_Start_PSN_0_sectors" xml:space="preserve">
+    <value>PSN de comienzo del área de datos según el PFI de WxRipper: {0} sectores</value>
+  </data>
+  <data name="WxRipper_PFI_Layer_0_End_PSN_0_sectors" xml:space="preserve">
+    <value>PSN de final de la capa 0 según el PFI de WxRipper: {0} sectores</value>
+  </data>
+  <data name="Xbox_360_DMI" xml:space="preserve">
+    <value>DMI de Xbox 360</value>
+  </data>
+  <data name="Xbox_360_DMI_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]DMI de Xbox 360 contenida en la imagen:[/]</value>
+  </data>
+  <data name="Xbox_DMI" xml:space="preserve">
+    <value>DMI de Xbox</value>
+  </data>
+  <data name="Xbox_DMI_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]DMI de Xbox contenida en la imagen:[/]</value>
+  </data>
+  <data name="Xbox_Physical_Format_Information_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Información del formato físico de Xbox contenida en la imagen:[/]</value>
+  </data>
+  <data name="Xbox_Security_Sector" xml:space="preserve">
+    <value>Sector de Seguridad de Xbox</value>
+  </data>
+  <data name="Xbox_Security_Sectors_contained_in_image_WithMarkup" xml:space="preserve">
+    <value>[bold]Sectores de Seguridad de Xbox contenidos en la imagen:[/]</value>
+  </data>
+  <data name="_0_1_2_LBA_3_4_area_5" xml:space="preserve">
+    <value>{0:D2}:{1:D2}:{2:D2} - LBA {3,6}: área de {4}, {5}</value>
+  </data>
+  <data name="_0_bytes" xml:space="preserve">
+    <value>{0} bytes</value>
+  </data>
+  <data name="_0_sectors" xml:space="preserve">
+    <value>{0} sectores</value>
+  </data>
+  <data name="_0_sectors_at_the_end_of_the_disc_are_unreadable" xml:space="preserve">
+    <value>No se pudieron leer {0} sectores al final del disco. Esto es normal en los CD-R(W) ya que esos sectores se crean por el software de grabación como parte de esta. Se generarán y guardarán en la imagen sectores vacíos.</value>
+  </data>
+  <data name="_0_sectors_could_not_be_read" xml:space="preserve">
+    <value>No se pudieron leer {0} sectores</value>
+  </data>
+  <data name="_0_sectors_took_less_than_10_ms_but_more_than_3_ms" xml:space="preserve">
+    <value>{0} sectores tomaron más de 3 ms pero menos de 10 ms.</value>
+  </data>
+  <data name="_0_sectors_took_less_than_150_ms_but_more_than_50_ms" xml:space="preserve">
+    <value>{0} sectores tomaron más de 50 ms pero menos de 150 ms.</value>
+  </data>
+  <data name="_0_sectors_took_less_than_3_ms" xml:space="preserve">
+    <value>{0} sectores tomaron menos de 3 ms</value>
+  </data>
+  <data name="_0_sectors_took_less_than_500_ms_but_more_than_150_ms" xml:space="preserve">
+    <value>{0} sectores tomaron más de 150 ms pero menos de 500 ms.</value>
+  </data>
+  <data name="_0_sectors_took_less_than_50_ms_but_more_than_10_ms" xml:space="preserve">
+    <value>{0} sectores tomaron más de 10 ms pero menos de 50 ms.</value>
+  </data>
+  <data name="_0_sectors_took_more_than_500_ms" xml:space="preserve">
+    <value>{0} sectores tomaron más de 500 ms.</value>
+  </data>
+  <data name="_0_subchannels_could_not_be_read" xml:space="preserve">
+    <value>No se pudieron leer {0} subcanales.</value>
+  </data>
+  <data name="_FIXED" xml:space="preserve">
+    <value> (CORREGIDO)</value>
+  </data>
+  <data name="_GENERATED" xml:space="preserve">
+    <value> (GENERADO)</value>
+  </data>
+</root>

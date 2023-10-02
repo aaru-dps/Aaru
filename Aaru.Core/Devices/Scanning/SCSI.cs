@@ -163,7 +163,7 @@ public sealed partial class MediaScan
                     }
                 else
                 {
-                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_testing_unit_was_ready);
+                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_sense_testing_unit_was_ready);
 
                     return results;
                 }

@@ -249,7 +249,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added {0} usb products.
+        ///   Looks up a localized string similar to Added {0} USB products.
         /// </summary>
         public static string Added_0_usb_products {
             get {
@@ -258,7 +258,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Added {0} usb vendors.
+        ///   Looks up a localized string similar to Added {0} USB vendors.
         /// </summary>
         public static string Added_0_usb_vendors {
             get {
@@ -456,7 +456,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average checksum speed {0}..
+        ///   Looks up a localized string similar to Average checksum speed: {0}.
         /// </summary>
         public static string Average_checksum_speed_0 {
             get {
@@ -465,7 +465,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average dump speed {0}..
+        ///   Looks up a localized string similar to Average dump speed: {0}.
         /// </summary>
         public static string Average_dump_speed_0 {
             get {
@@ -474,7 +474,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average speed: {0}..
+        ///   Looks up a localized string similar to Average speed: {0}.
         /// </summary>
         public static string Average_speed_0 {
             get {
@@ -483,7 +483,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Average write speed {0}..
+        ///   Looks up a localized string similar to Average write speed: {0}.
         /// </summary>
         public static string Average_write_speed_0 {
             get {
@@ -582,7 +582,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [bold]Bluray Disc Definition Structure contained in image:[/].
+        ///   Looks up a localized string similar to [bold]Blu-ray Disc Definition Structure contained in image:[/].
         /// </summary>
         public static string Bluray_Disc_Definition_Structure_contained_in_image_WithMarkup {
             get {
@@ -600,7 +600,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to [bold]Bluray Disc Information contained in image:[/].
+        ///   Looks up a localized string similar to [bold]Blu-ray Disc Information contained in image:[/].
         /// </summary>
         public static string Bluray_Disc_Information_contained_in_image_WithMarkup {
             get {
@@ -816,7 +816,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot get video partition size, not continuing. Try to eject and reinsert the drive, if it keeps happening, contact support..
+        ///   Looks up a localized string similar to Cannot get video partition size, not continuing. Try to eject and reinsert the disc, if it keeps happening, contact support..
         /// </summary>
         public static string Cannot_get_video_partition_size_not_continuing {
             get {
@@ -2938,15 +2938,6 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dumping Xbox discs require a Kreon drive..
-        /// </summary>
-        public static string Dumping_Xbox_discs_require_a_Kreon_drive {
-            get {
-                return ResourceManager.GetString("Dumping_Xbox_discs_require_a_Kreon_drive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Dumping Xbox Game Discs requires a drive with Kreon firmware..
         /// </summary>
         public static string Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware {
@@ -3037,11 +3028,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to End logging at {0}.
+        ///   Looks up a localized string similar to End logging on {0}.
         /// </summary>
-        public static string End_logging_at_0 {
+        public static string End_logging_on_0 {
             get {
-                return ResourceManager.GetString("End_logging_at_0", resourceCulture);
+                return ResourceManager.GetString("End_logging_on_0", resourceCulture);
             }
         }
         
@@ -4517,7 +4508,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately..
+        ///   Looks up a localized string similar to INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the SCSI bus appropriately..
         /// </summary>
         public static string INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found {
             get {
@@ -4663,7 +4654,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lead-out has changed, this drive does not support hot swapping discs....
+        ///   Looks up a localized string similar to Lead-Out has changed, this drive does not support hot swapping discs....
         /// </summary>
         public static string Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs {
             get {
@@ -4969,7 +4960,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please open a bug report in github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command..
+        ///   Looks up a localized string similar to Please open a bug report in Github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command..
         /// </summary>
         public static string MEDIUM_SCAN_github_plead_message {
             get {
@@ -5361,24 +5352,6 @@ namespace Aaru.Localization {
         public static string Output_format_only_supports_MODE_1_tracks_not_continuing {
             get {
                 return ResourceManager.GetString("Output_format_only_supports_MODE_1_tracks_not_continuing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Output image does not support subchannels, continuing....
-        /// </summary>
-        public static string Output_image_does_not_support_subchannels_continuing {
-            get {
-                return ResourceManager.GetString("Output_image_does_not_support_subchannels_continuing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Output image does not support subchannels, not continuing....
-        /// </summary>
-        public static string Output_image_does_not_support_subchannels_not_continuing {
-            get {
-                return ResourceManager.GetString("Output_image_does_not_support_subchannels_not_continuing", resourceCulture);
             }
         }
         
@@ -7929,11 +7902,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Selected output plugin does not support MemoryStick Duo or UMD, cannot dump....
+        ///   Looks up a localized string similar to Selected output format does not support MemoryStick Duo or UMD, cannot dump....
         /// </summary>
-        public static string Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump {
+        public static string Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump {
             get {
-                return ResourceManager.GetString("Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump", resourceCulture);
+                return ResourceManager.GetString("Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump", resourceCulture);
             }
         }
         
@@ -8235,11 +8208,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Start error logging at {0}.
+        ///   Looks up a localized string similar to Start error logging on {0}.
         /// </summary>
-        public static string Start_error_logging_at_0 {
+        public static string Start_error_logging_on_0 {
             get {
-                return ResourceManager.GetString("Start_error_logging_at_0", resourceCulture);
+                return ResourceManager.GetString("Start_error_logging_on_0", resourceCulture);
             }
         }
         
@@ -8362,7 +8335,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The current environment doesn&apos;t support the medium scan command, dump will take much longer than normal..
+        ///   Looks up a localized string similar to The current environment doesn&apos;t support the MEDIUM SCAN command, dump will take much longer than normal..
         /// </summary>
         public static string The_current_environment_doesn_t_support_the_medium_scan_command {
             get {
@@ -8380,7 +8353,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The selected image does not support tracks..
+        ///   Looks up a localized string similar to The selected image format does not support tracks..
         /// </summary>
         public static string The_selected_image_does_not_support_tracks {
             get {
@@ -8416,6 +8389,24 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified image format cannot represent optical discs..
+        /// </summary>
+        public static string The_specified_image_format_cannot_represent_optical_discs {
+            get {
+                return ResourceManager.GetString("The_specified_image_format_cannot_represent_optical_discs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified image format cannot represent streaming tapes..
+        /// </summary>
+        public static string The_specified_image_format_cannot_represent_streaming_tapes {
+            get {
+                return ResourceManager.GetString("The_specified_image_format_cannot_represent_streaming_tapes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified image says it contains a block addressable media but at the same time says it does not support them..
         /// </summary>
         public static string The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them {
@@ -8442,24 +8433,6 @@ namespace Aaru.Localization {
             get {
                 return ResourceManager.GetString("The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_i" +
                         "t_does_not_support_them", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified plugin does not support storing optical disc images..
-        /// </summary>
-        public static string The_specified_plugin_does_not_support_storing_optical_disc_images {
-            get {
-                return ResourceManager.GetString("The_specified_plugin_does_not_support_storing_optical_disc_images", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified plugin does not support storing streaming tape images..
-        /// </summary>
-        public static string The_specified_plugin_does_not_support_storing_streaming_tape_images {
-            get {
-                return ResourceManager.GetString("The_specified_plugin_does_not_support_storing_streaming_tape_images", resourceCulture);
             }
         }
         
@@ -9140,6 +9113,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Trying READ LONG....
+        /// </summary>
+        public static string Trying_READ_LONG {
+            get {
+                return ResourceManager.GetString("Trying_READ_LONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trying READ LONG in CHS mode....
         /// </summary>
         public static string Trying_READ_LONG_in_CHS_mode {
@@ -9176,7 +9158,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trying to READ LONG with a size of {0} bytes....
+        ///   Looks up a localized string similar to Trying READ LONG with a size of {0} bytes....
         /// </summary>
         public static string Trying_READ_LONG_with_size_0 {
             get {
@@ -9473,15 +9455,6 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trying to READ LONG....
-        /// </summary>
-        public static string Trying_to_READ_LONG {
-            get {
-                return ResourceManager.GetString("Trying_to_READ_LONG", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Trying to read subchannels....
         /// </summary>
         public static string Trying_to_read_subchannels {
@@ -9609,11 +9582,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unknown testing unit was ready..
+        ///   Looks up a localized string similar to Unknown sense testing unit was ready..
         /// </summary>
-        public static string Unknown_testing_unit_was_ready {
+        public static string Unknown_sense_testing_unit_was_ready {
             get {
-                return ResourceManager.GetString("Unknown_testing_unit_was_ready", resourceCulture);
+                return ResourceManager.GetString("Unknown_sense_testing_unit_was_ready", resourceCulture);
             }
         }
         

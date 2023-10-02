@@ -48,11 +48,11 @@
   <data name="Try_to_find_SCSI_READ_LONG_size" xml:space="preserve">
     <value>Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours)</value>
   </data>
-  <data name="Trying_to_READ_LONG" xml:space="preserve">
-    <value>Trying to READ LONG...</value>
+  <data name="Trying_READ_LONG" xml:space="preserve">
+    <value>Trying READ LONG...</value>
   </data>
   <data name="Trying_READ_LONG_with_size_0" xml:space="preserve">
-    <value>Trying to READ LONG with a size of {0} bytes...</value>
+    <value>Trying READ LONG with a size of {0} bytes...</value>
   </data>
   <data name="Trying_SCSI_READ_LONG_10" xml:space="preserve">
     <value>Trying SCSI READ LONG (10)...</value>
@@ -400,7 +400,7 @@
     <value>Took a total of {0} ({1} processing commands).</value>
   </data>
   <data name="Average_speed_0" xml:space="preserve">
-    <value>Average speed: {0}.</value>
+    <value>Average speed: {0}</value>
   </data>
   <data name="Fastest_speed_burst_0" xml:space="preserve">
     <value>Fastest speed burst: {0}.</value>
@@ -608,9 +608,6 @@
   </data>
   <data name="GD_ROM_dump_support_is_not_yet_implemented" xml:space="preserve">
     <value>GD-ROM dump support is not yet implemented.</value>
-  </data>
-  <data name="Dumping_Xbox_discs_require_a_Kreon_drive" xml:space="preserve">
-    <value>Dumping Xbox discs require a Kreon drive.</value>
   </data>
   <data name="GD_ROM_scan_support_is_not_yet_implemented" xml:space="preserve">
     <value>GD-ROM scan support is not yet implemented.</value>
@@ -842,12 +839,6 @@
   <data name="Error_sending_tracks_to_output_image_not_continuing" xml:space="preserve">
     <value>Error sending tracks to output image, not continuing.</value>
   </data>
-  <data name="Output_image_does_not_support_subchannels_continuing" xml:space="preserve">
-    <value>Output image does not support subchannels, continuing...</value>
-  </data>
-  <data name="Output_image_does_not_support_subchannels_not_continuing" xml:space="preserve">
-    <value>Output image does not support subchannels, not continuing...</value>
-  </data>
   <data name="Creating_subchannel_log_in_0" xml:space="preserve">
     <value>Creating subchannel log in {0}</value>
   </data>
@@ -903,10 +894,10 @@
     <value>Dump finished in {0}.</value>
   </data>
   <data name="Average_dump_speed_0" xml:space="preserve">
-    <value>Average dump speed {0}.</value>
+    <value>Average dump speed: {0}</value>
   </data>
   <data name="Average_write_speed_0" xml:space="preserve">
-    <value>Average write speed {0}.</value>
+    <value>Average write speed: {0}</value>
   </data>
   <data name="Error_Tag_type_0_is_null_skipping" xml:space="preserve">
     <value>Error: Tag type {0} is null, skipping...</value>
@@ -1170,13 +1161,13 @@
     <value>Sidecar created in {0}.</value>
   </data>
   <data name="Average_checksum_speed_0" xml:space="preserve">
-    <value>Average checksum speed {0}.</value>
+    <value>Average checksum speed: {0}</value>
   </data>
   <data name="Found_filesystem_0_at_sector_1" xml:space="preserve">
     <value>Found filesystem {0} at sector {1}</value>
   </data>
-  <data name="Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump" xml:space="preserve">
-    <value>Selected output plugin does not support MemoryStick Duo or UMD, cannot dump...</value>
+  <data name="Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump" xml:space="preserve">
+    <value>Selected output format does not support MemoryStick Duo or UMD, cannot dump...</value>
   </data>
   <data name="Checking_if_media_is_UMD_or_MemoryStick" xml:space="preserve">
     <value>Checking if media is UMD or MemoryStick...</value>
@@ -1196,8 +1187,8 @@
   <data name="Traversing_FAT" xml:space="preserve">
     <value>Traversing FAT...</value>
   </data>
-  <data name="The_specified_plugin_does_not_support_storing_optical_disc_images" xml:space="preserve">
-    <value>The specified plugin does not support storing optical disc images.</value>
+  <data name="The_specified_image_format_cannot_represent_optical_discs" xml:space="preserve">
+    <value>The specified image format cannot represent optical discs.</value>
   </data>
   <data name="Device_reports_0_bytes_per_physical_block" xml:space="preserve">
     <value>Device reports {0} bytes per physical block.</value>
@@ -1212,7 +1203,7 @@
     <value>Error retrieving title key for sector {0}</value>
   </data>
   <data name="INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found" xml:space="preserve">
-    <value>INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.</value>
+    <value>INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the SCSI bus appropriately.</value>
   </data>
   <data name="Initializing_reader" xml:space="preserve">
     <value>Initializing reader.</value>
@@ -1332,10 +1323,10 @@
     <value>Correctly retried title key {0} in pass {1}.</value>
   </data>
   <data name="The_current_environment_doesn_t_support_the_medium_scan_command" xml:space="preserve">
-    <value>The current environment doesn't support the medium scan command, dump will take much longer than normal.</value>
+    <value>The current environment doesn't support the MEDIUM SCAN command, dump will take much longer than normal.</value>
   </data>
   <data name="MEDIUM_SCAN_github_plead_message" xml:space="preserve">
-    <value>Please open a bug report in github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command.</value>
+    <value>Please open a bug report in Github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command.</value>
   </data>
   <data name="Scanning_for_0_written_blocks_starting_in_block_1" xml:space="preserve">
     <value>Scanning for {0} written blocks starting in block {1}</value>
@@ -1518,14 +1509,14 @@
     <value>Error testing unit was ready:
 {0}</value>
   </data>
-  <data name="Unknown_testing_unit_was_ready" xml:space="preserve">
-    <value>Unknown testing unit was ready.</value>
+  <data name="Unknown_sense_testing_unit_was_ready" xml:space="preserve">
+    <value>Unknown sense testing unit was ready.</value>
   </data>
   <data name="Tapes_cannot_be_dumped_raw" xml:space="preserve">
     <value>Tapes cannot be dumped raw.</value>
   </data>
-  <data name="The_specified_plugin_does_not_support_storing_streaming_tape_images" xml:space="preserve">
-    <value>The specified plugin does not support storing streaming tape images.</value>
+  <data name="The_specified_image_format_cannot_represent_streaming_tapes" xml:space="preserve">
+    <value>The specified image format cannot represent streaming tapes.</value>
   </data>
   <data name="Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Continuing" xml:space="preserve">
     <value>Raw dumping is not supported in MultiMediaCard or SecureDigital devices. Continuing...</value>
@@ -1745,7 +1736,7 @@
     <value>Video partition is too big, did lock work? Trying cold values.</value>
   </data>
   <data name="Cannot_get_video_partition_size_not_continuing" xml:space="preserve">
-    <value>Cannot get video partition size, not continuing. Try to eject and reinsert the drive, if it keeps happening, contact support.</value>
+    <value>Cannot get video partition size, not continuing. Try to eject and reinsert the disc, if it keeps happening, contact support.</value>
   </data>
   <data name="Getting_game_partition_size" xml:space="preserve">
     <value>Getting game partition size.</value>
@@ -1923,7 +1914,7 @@
     <value>Waiting 5 seconds...</value>
   </data>
   <data name="Lead_out_has_changed_this_drive_does_not_support_hot_swapping_discs" xml:space="preserve">
-    <value>Lead-out has changed, this drive does not support hot swapping discs...</value>
+    <value>Lead-Out has changed, this drive does not support hot swapping discs...</value>
   </data>
   <data name="Reading_LBA_zero" xml:space="preserve">
     <value>Reading LBA 0... </value>
@@ -2514,11 +2505,11 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
   <data name="Dumping_progress_log" xml:space="preserve">
     <value>################ Dumping progress log ################</value>
   </data>
-  <data name="End_logging_at_0" xml:space="preserve">
-    <value>End logging at {0}</value>
+  <data name="End_logging_on_0" xml:space="preserve">
+    <value>End logging on {0}</value>
   </data>
-  <data name="Start_error_logging_at_0" xml:space="preserve">
-    <value>Start error logging at {0}</value>
+  <data name="Start_error_logging_on_0" xml:space="preserve">
+    <value>Start error logging on {0}</value>
   </data>
   <data name="ATA_command_0_operating_system_error_1" xml:space="preserve">
     <value>ATA command {0} operating system error: {1}.</value>
@@ -3065,7 +3056,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <value>{0} bytes</value>
   </data>
   <data name="The_selected_image_does_not_support_tracks" xml:space="preserve">
-    <value>The selected image does not support tracks.</value>
+    <value>The selected image format does not support tracks.</value>
   </data>
   <data name="Entropying_track_0_of_1" xml:space="preserve">
     <value>Entropying track {0} of {1}</value>
@@ -3158,13 +3149,13 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <value>Adding USB vendors</value>
   </data>
   <data name="Added_0_usb_vendors" xml:space="preserve">
-    <value>Added {0} usb vendors</value>
+    <value>Added {0} USB vendors</value>
   </data>
   <data name="Adding_USB_products" xml:space="preserve">
     <value>Adding USB products</value>
   </data>
   <data name="Added_0_usb_products" xml:space="preserve">
-    <value>Added {0} usb products</value>
+    <value>Added {0} USB products</value>
   </data>
   <data name="Adding_CompactDisc_read_offsets" xml:space="preserve">
     <value>Adding CompactDisc read offsets</value>
@@ -3351,10 +3342,10 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <value>[bold]DVD-R Physical Format Information contained in image:[/]</value>
   </data>
   <data name="Bluray_Disc_Information_contained_in_image_WithMarkup" xml:space="preserve">
-    <value>[bold]Bluray Disc Information contained in image:[/]</value>
+    <value>[bold]Blu-ray Disc Information contained in image:[/]</value>
   </data>
   <data name="Bluray_Disc_Definition_Structure_contained_in_image_WithMarkup" xml:space="preserve">
-    <value>[bold]Bluray Disc Definition Structure contained in image:[/]</value>
+    <value>[bold]Blu-ray Disc Definition Structure contained in image:[/]</value>
   </data>
   <data name="PCMCIA_CIS_WithMarkup" xml:space="preserve">
     <value>[bold]PCMCIA CIS:[/]</value>

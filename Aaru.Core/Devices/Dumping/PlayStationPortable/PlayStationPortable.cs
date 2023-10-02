@@ -53,10 +53,10 @@ public partial class Dump
            !_outputPlugin.SupportedMediaTypes.Contains(MediaType.UMD))
         {
             _dumpLog.WriteLine(Localization.Core.
-                                            Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
+                                            Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
             StoppingErrorMessage?.Invoke(Localization.Core.
-                                                      Selected_output_plugin_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
+                                                      Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
             return;
         }
@@ -205,7 +205,6 @@ public partial class Dump
         if(_outputPlugin is IWritableOpticalImage)
             DumpUmd();
         else
-            StoppingErrorMessage?.Invoke(Localization.Core.
-                                                      The_specified_plugin_does_not_support_storing_optical_disc_images);
+            StoppingErrorMessage?.Invoke(Localization.Core.The_specified_image_format_cannot_represent_optical_discs);
     }
 }

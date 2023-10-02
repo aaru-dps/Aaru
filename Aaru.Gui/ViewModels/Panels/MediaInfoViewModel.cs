@@ -41,7 +41,6 @@ using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Localization;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -410,7 +409,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
                 when _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error,
-                                                  Localization.Core.Dumping_Xbox_discs_require_a_Kreon_drive,
+                                            Localization.Core.
+                                                         Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware,
                                                   ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;

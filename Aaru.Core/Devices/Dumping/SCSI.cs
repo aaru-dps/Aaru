@@ -219,7 +219,7 @@ public partial class Dump
                 }
                 else
                 {
-                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_testing_unit_was_ready);
+                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_sense_testing_unit_was_ready);
 
                     return;
                 }
@@ -242,7 +242,7 @@ public partial class Dump
                     Ssc();
                 else
                     StoppingErrorMessage?.Invoke(Localization.Core.
-                                                              The_specified_plugin_does_not_support_storing_streaming_tape_images);
+                                                              The_specified_image_format_cannot_represent_streaming_tapes);
 
                 return;
             case PeripheralDeviceTypes.MultiMediaDevice:
@@ -250,7 +250,7 @@ public partial class Dump
                     Mmc();
                 else
                     StoppingErrorMessage?.Invoke(Localization.Core.
-                                                              The_specified_plugin_does_not_support_storing_optical_disc_images);
+                                                              The_specified_image_format_cannot_represent_optical_discs);
 
                 return;
             case PeripheralDeviceTypes.BridgingExpander

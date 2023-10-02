@@ -890,15 +890,15 @@ sealed partial class Dump
         {
             if(_force)
             {
-                _dumpLog.WriteLine(Localization.Core.Output_image_does_not_support_subchannels_continuing);
-                ErrorMessage?.Invoke(Localization.Core.Output_image_does_not_support_subchannels_continuing);
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_subchannels_continuing);
+                ErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_subchannels_continuing);
             }
             else
             {
-                _dumpLog.WriteLine(Localization.Core.Output_image_does_not_support_subchannels_not_continuing);
+                _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_subchannels_not_continuing);
 
                 StoppingErrorMessage?.Invoke(Localization.Core.
-                                                          Output_image_does_not_support_subchannels_not_continuing);
+                                                          Output_format_does_not_support_subchannels_not_continuing);
 
                 return;
             }

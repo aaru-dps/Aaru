@@ -37,7 +37,6 @@ using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
@@ -856,7 +855,7 @@ sealed class DeviceReportCommand : Command
                                                             new PercentageColumn()).Start(ctx =>
                                                     {
                                                         ProgressTask task =
-                                                            ctx.AddTask(Localization.Core.Trying_to_READ_LONG);
+                                                            ctx.AddTask(Localization.Core.Trying_READ_LONG);
 
                                                         task.MaxValue = ushort.MaxValue;
 
@@ -1221,8 +1220,7 @@ sealed class DeviceReportCommand : Command
                                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
                                                         new PercentageColumn()).Start(ctx =>
                                                 {
-                                                    ProgressTask task =
-                                                        ctx.AddTask(Localization.Core.Trying_to_READ_LONG);
+                                                    ProgressTask task = ctx.AddTask(Localization.Core.Trying_READ_LONG);
 
                                                     task.MaxValue = ushort.MaxValue;
 
@@ -1408,7 +1406,7 @@ sealed class DeviceReportCommand : Command
                                                             new PercentageColumn()).Start(ctx =>
                                                     {
                                                         ProgressTask task =
-                                                            ctx.AddTask(Localization.Core.Trying_to_READ_LONG);
+                                                            ctx.AddTask(Localization.Core.Trying_READ_LONG);
 
                                                         task.MaxValue = ushort.MaxValue;
 
@@ -1499,8 +1497,7 @@ sealed class DeviceReportCommand : Command
                                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(),
                                                         new PercentageColumn()).Start(ctx =>
                                                 {
-                                                    ProgressTask task =
-                                                        ctx.AddTask(Localization.Core.Trying_to_READ_LONG);
+                                                    ProgressTask task = ctx.AddTask(Localization.Core.Trying_READ_LONG);
 
                                                     task.MaxValue = ushort.MaxValue;
 
