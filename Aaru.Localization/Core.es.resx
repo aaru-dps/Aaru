@@ -625,7 +625,7 @@
     <value>Dispositivo identificado como {0}</value>
   </data>
   <data name="Device_information" xml:space="preserve">
-    <value>################# Información del dispositivo #################</value>
+    <value>#################### Información del dispositivo ###################</value>
   </data>
   <data name="Device_in_database_since_0" xml:space="preserve">
     <value>Dispositivo en la base de datos desde el {0}.</value>
@@ -936,7 +936,7 @@
     <value>El volcado de discos de Nintendo GameCube o Wii no está implementado todavía.</value>
   </data>
   <data name="Dumping_progress_log" xml:space="preserve">
-    <value>################ Registro de progreso del volcado ################</value>
+    <value>################# Registro de progreso del volcado #################</value>
   </data>
   <data name="Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware" xml:space="preserve">
     <value>Volcar discos de Xbox requiere una unidad con firmware Kreon.</value>
@@ -1528,7 +1528,7 @@
     <value>Bloqueando la unidad.</value>
   </data>
   <data name="Log_section_separator" xml:space="preserve">
-    <value>######################################################</value>
+    <value>####################################################################</value>
   </data>
   <data name="Manufacturer_0" xml:space="preserve">
     <value>Fabricante: {0}</value>
@@ -1825,7 +1825,7 @@
     <value>Programa</value>
   </data>
   <data name="Program_information" xml:space="preserve">
-    <value>################# Información del programa ################</value>
+    <value>#################### Información del programa ######################</value>
   </data>
   <data name="Protocol_version_0" xml:space="preserve">
     <value>Versión del protocolo: {0}</value>
@@ -2411,7 +2411,7 @@
     <value>Salto de capa real: {0}</value>
   </data>
   <data name="Remote_information" xml:space="preserve">
-    <value>################# Información remota #################</value>
+    <value>####################### Información remota #########################</value>
   </data>
   <data name="Removable_device_0" xml:space="preserve">
     <value>Dispositivo extraíble: {0}</value>
@@ -2754,7 +2754,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>Identificador del sistema: {0}</value>
   </data>
   <data name="System_information" xml:space="preserve">
-    <value>################# Información del sistema #################</value>
+    <value>###################### Información del sistema #####################</value>
   </data>
   <data name="TapeAlert_Supported_Flags_Bitmap_0" xml:space="preserve">
     <value>Mapa de bits de banderas TapeAlert soportadas: 0x{0:X16}</value>
