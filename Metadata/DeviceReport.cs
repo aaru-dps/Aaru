@@ -48,7 +48,6 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 
-
 #pragma warning disable 1591
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
@@ -64,7 +63,7 @@ namespace Aaru.CommonTypes.Metadata;
 [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(DeviceReport))]
-public partial class DeviceReportContext : JsonSerializerContext {}
+public partial class DeviceReportContext : JsonSerializerContext;
 
 public class DeviceReport
 {

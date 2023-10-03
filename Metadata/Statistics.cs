@@ -88,7 +88,7 @@ public class Stats
                              IncludeFields = true)]
 [JsonSerializable(typeof(StatsDto))]
 // ReSharper disable once PartialTypeWithSinglePart
-public partial class StatsDtoContext : JsonSerializerContext {}
+public partial class StatsDtoContext : JsonSerializerContext;
 
 /// <summary>DTO for statistics</summary>
 [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]

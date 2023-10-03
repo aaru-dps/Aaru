@@ -48,7 +48,7 @@ namespace Aaru.CommonTypes.Metadata;
                              IncludeFields = true)]
 [JsonSerializable(typeof(ResumeJson))]
 // ReSharper disable once PartialTypeWithSinglePart
-public partial class ResumeJsonContext : JsonSerializerContext {}
+public partial class ResumeJsonContext : JsonSerializerContext;
 
 public class ResumeJson
 {
