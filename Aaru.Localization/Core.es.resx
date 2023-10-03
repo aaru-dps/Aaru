@@ -1,4 +1,5 @@
 <root>
+  <!-- ReSharper disable MarkupTextTypo -->
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -97,7 +98,7 @@
     <value>Error del sistema operativo leyendo ATA C/H/S {0}/{1}/{2}: {3}.</value>
   </data>
   <data name="ATA_reading_LBA_0_error_status_1_error_2" xml:space="preserve">
-    <value>Error ATA leyendo LBA {0}: estado = {3}, error = {4}.</value>
+    <value>Error ATA leyendo LBA {0}: estado = {1}, error = {2}.</value>
   </data>
   <data name="ATA_reading_LBA_0_operating_system_error_1" xml:space="preserve">
     <value>Error del sistema operativo leyendo ATA LBA {0}: {1}.</value>
@@ -476,7 +477,7 @@
     <value>¡No se pudieron obtener las pistas!</value>
   </data>
   <data name="Could_not_get_tracks_because_0" xml:space="preserve">
-    <value>No se pudieron obtener las pistas porque</value>
+    <value>No se pudieron obtener las pistas porque {0}</value>
   </data>
   <data name="Could_not_get_tuples" xml:space="preserve">
     <value>No se pudieron obtener las tuplas</value>
@@ -2664,7 +2665,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>Estableciendo el número de catálogo del medio a {0}</value>
   </data>
   <data name="Setting_flags_for_track_0" xml:space="preserve">
-    <value>Estableciendo banderas para la pista...</value>
+    <value>Estableciendo banderas para la pista {0}...</value>
   </data>
   <data name="Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
     <value>Estableciendo geometría en {0} cilindros, {1} cabezas y {2} sectores por pista</value>
@@ -2709,10 +2710,10 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <value>Omitiendo {0} bytes desde el byte erróneo {1}.</value>
   </data>
   <data name="Skipping_track_0" xml:space="preserve">
-    <value>Omitiendo pista {1}</value>
+    <value>Omitiendo pista {0}</value>
   </data>
   <data name="Skipping_track_0_due_to_Plextor_firmware_bug" xml:space="preserve">
-    <value>Omitiendo pista {1} debido a un error en el firmware de Plextor</value>
+    <value>Omitiendo pista {0} debido a un error en el firmware de Plextor</value>
   </data>
   <data name="Slowest_speed_burst_0" xml:space="preserve">
     <value>Ráfaga de velocidad más lenta: {0}.</value>

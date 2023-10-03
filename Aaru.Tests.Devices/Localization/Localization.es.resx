@@ -1,4 +1,5 @@
 <root>
+  <!-- ReSharper disable MarkupTextTypo -->
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -316,7 +317,7 @@
     <value>Parámetros para el comando READ LOG EXT:</value>
   </data>
   <data name="Log_address_0" xml:space="preserve">
-    <value>Dirección del registro:</value>
+    <value>Dirección del registro: {0}</value>
   </data>
   <data name="Page_number_0" xml:space="preserve">
     <value>Número de página: {0}</value>
@@ -1786,7 +1787,7 @@
     <value>PoweRec está desactivado.</value>
   </data>
   <data name="Speed_0" xml:space="preserve">
-    <value>Velocidad:</value>
+    <value>Velocidad: {0}</value>
   </data>
   <data name="POWEREC_GET_SPEEDS_decoded_sense" xml:space="preserve">
     <value>Sense descodificado de POWEREC GET SPEEDS:</value>
@@ -2410,7 +2411,7 @@
     <value>Bloque: {0}</value>
   </data>
   <data name="Object_0" xml:space="preserve">
-    <value>Objeto:</value>
+    <value>Objeto: {0}</value>
   </data>
   <data name="Change_partition_Q" xml:space="preserve">
     <value>¿Cambiar partición?:</value>
