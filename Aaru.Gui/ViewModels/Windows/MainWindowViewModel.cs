@@ -72,21 +72,22 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    readonly DevicesRootModel _devicesRoot;
-    readonly Bitmap           _ejectIcon;
-    readonly Bitmap           _genericFolderIcon;
-    readonly Bitmap           _genericHddIcon;
-    readonly Bitmap           _genericOpticalIcon;
-    readonly Bitmap           _genericTapeIcon;
-    readonly ImagesRootModel  _imagesRoot;
-    readonly Bitmap           _removableIcon;
-    readonly Bitmap           _sdIcon;
-    readonly Bitmap           _usbIcon;
-    readonly MainWindow       _view;
-    Views.Dialogs.Console     _console;
-    object                    _contentPanel;
-    bool                      _devicesSupported;
-    object                    _treeViewSelectedItem;
+    const string           MODULE_NAME = "Main Window ViewModel";
+    readonly      DevicesRootModel _devicesRoot;
+    readonly      Bitmap           _ejectIcon;
+    readonly      Bitmap           _genericFolderIcon;
+    readonly      Bitmap           _genericHddIcon;
+    readonly      Bitmap           _genericOpticalIcon;
+    readonly      Bitmap           _genericTapeIcon;
+    readonly      ImagesRootModel  _imagesRoot;
+    readonly      Bitmap           _removableIcon;
+    readonly      Bitmap           _sdIcon;
+    readonly      Bitmap           _usbIcon;
+    readonly      MainWindow       _view;
+    Views.Dialogs.Console          _console;
+    object                         _contentPanel;
+    bool                           _devicesSupported;
+    object                         _treeViewSelectedItem;
 
     public MainWindowViewModel(MainWindow view)
     {
@@ -593,7 +594,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 if(partitions.Count == 0)
                 {
-                    AaruConsole.DebugWriteLine("Fs-info command", UI.No_partitions_found);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                     checkRaw = true;
                 }
@@ -768,7 +769,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-                AaruConsole.DebugWriteLine("Image-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
             }
         }
         catch(Exception ex)
@@ -777,7 +778,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                                           Icon.Error);
 
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
         }
 
         Statistics.AddCommand("image-info");
@@ -800,7 +801,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
                                                         ThenBy(d => d.Model))
             {
-                AaruConsole.DebugWriteLine("Main window",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            UI.Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3,
                                            device.Model, device.Vendor, device.Bus, device.Path);
 

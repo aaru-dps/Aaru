@@ -47,10 +47,11 @@ namespace Aaru.Gui.ViewModels.Tabs;
 
 public class PcmciaInfoViewModel : ViewModelBase
 {
-    readonly byte[] _cis;
-    readonly Window _view;
-    string          _pcmciaCisText;
-    PcmciaCisModel  _selectedCis;
+    const string MODULE_NAME = "PCMCIA Information ViewModel";
+    readonly      byte[] _cis;
+    readonly      Window _view;
+    string               _pcmciaCisText;
+    PcmciaCisModel       _selectedCis;
 
     internal PcmciaInfoViewModel([CanBeNull] byte[] pcmciaCis, Window view)
     {
@@ -143,7 +144,7 @@ public class PcmciaInfoViewModel : ViewModelBase
                 });
             }
         else
-            AaruConsole.DebugWriteLine("Device-Info command", UI.PCMCIA_CIS_returned_no_tuples);
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.PCMCIA_CIS_returned_no_tuples);
     }
 
     public string CisLabel           => UI.Title_CIS;

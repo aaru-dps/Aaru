@@ -52,6 +52,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 {
     // How many sectors to read at once
     const    uint        SECTORS_TO_READ = 256;
+    const    string      MODULE_NAME     = "Image Checksum ViewModel";
     readonly IMediaImage _inputFormat;
     readonly Window      _view;
     bool                 _adler32Checked;
@@ -514,7 +515,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                             mediaChecksum?.Update(hiddenSector);
                         }
 
-                    AaruConsole.DebugWriteLine("Checksum command", UI.Track_0_starts_at_sector_1_and_ends_at_sector_2,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.Track_0_starts_at_sector_1_and_ends_at_sector_2,
                                                currentTrack.Sequence, currentTrack.StartSector, currentTrack.EndSector);
 
                     if(ChecksumTracksChecked)

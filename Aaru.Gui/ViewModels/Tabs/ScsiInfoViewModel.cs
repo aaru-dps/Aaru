@@ -51,16 +51,17 @@ namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class ScsiInfoViewModel : ViewModelBase
 {
-    readonly byte[] _configuration;
-    readonly byte[] _scsiModeSense10;
-    readonly byte[] _scsiModeSense6;
-    readonly Window _view;
-    string          _evpdPageText;
-    string          _mmcFeatureText;
-    string          _scsiModeSensePageText;
-    object          _selectedEvpdPage;
-    object          _selectedMmcFeature;
-    object          _selectedModeSensePage;
+    const string MODULE_NAME = "SCSI Information ViewModel";
+    readonly      byte[] _configuration;
+    readonly      byte[] _scsiModeSense10;
+    readonly      byte[] _scsiModeSense6;
+    readonly      Window _view;
+    string               _evpdPageText;
+    string               _mmcFeatureText;
+    string               _scsiModeSensePageText;
+    object               _selectedEvpdPage;
+    object               _selectedMmcFeature;
+    object               _selectedModeSensePage;
 
     public ScsiInfoViewModel(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
                              Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
@@ -580,7 +581,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdPageTitle   = string.Format(UI.Page_0_h, page.Key);
                         evpdDecodedPage = UI.Undecoded;
 
-                        AaruConsole.DebugWriteLine("Device-Info command",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.Found_undecoded_SCSI_VPD_page_0, page.Key);
 
                         break;
@@ -600,17 +601,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
-        AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.GET_CONFIGURATION_length_is_0,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_length_is_0,
                                    ftr.DataLength);
 
-        AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.GET_CONFIGURATION_current_profile_is_0,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                    ftr.CurrentProfile);
 
         if(ftr.Descriptors != null)
             foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
             {
                 string featureNumber = string.Format(Localization.Core.Feature_0, desc.Code);
-                AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Feature_0, desc.Code);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Feature_0, desc.Code);
 
                 string featureDescription = desc.Code switch
                 {
@@ -682,7 +683,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                 });
             }
         else
-            AaruConsole.DebugWriteLine("Device-Info command",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
     }
 
