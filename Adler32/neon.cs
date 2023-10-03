@@ -60,7 +60,7 @@ static class Neon
         uint s1 = preSum1;
         uint s2 = preSum2;
 
-        int bufPos = 0;
+        var bufPos = 0;
 
         /*
          * Process the data in blocks.
@@ -81,8 +81,8 @@ static class Neon
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo ADLER_MODULE.
              */
-            Vector128<uint>   vS2         = Vector128.Create(s1 * n, 0, 0, 0);
-            Vector128<uint>   vS1         = Vector128.Create(0u, 0, 0, 0);
+            var               vS2         = Vector128.Create(s1 * n, 0, 0, 0);
+            var               vS1         = Vector128.Create(0u,     0, 0, 0);
             Vector128<ushort> vColumnSum1 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum2 = AdvSimd.DuplicateToVector128((ushort)0);
             Vector128<ushort> vColumnSum3 = AdvSimd.DuplicateToVector128((ushort)0);
@@ -93,21 +93,21 @@ static class Neon
                 /*
                  * Load 32 input bytes.
                  */
-                Vector128<byte> bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2],
-                                                          buf[bufPos + 3], buf[bufPos + 4], buf[bufPos + 5],
-                                                          buf[bufPos + 6], buf[bufPos + 7], buf[bufPos + 8],
-                                                          buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                                          buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14],
-                                                          buf[bufPos + 15]);
+                var bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos  + 2],
+                                              buf[bufPos              + 3], buf[bufPos  + 4], buf[bufPos  + 5],
+                                              buf[bufPos              + 6], buf[bufPos  + 7], buf[bufPos  + 8],
+                                              buf[bufPos              + 9], buf[bufPos  + 10], buf[bufPos + 11],
+                                              buf[bufPos              + 12], buf[bufPos + 13], buf[bufPos + 14],
+                                              buf[bufPos              + 15]);
 
                 bufPos += 16;
 
-                Vector128<byte> bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2],
-                                                          buf[bufPos + 3], buf[bufPos + 4], buf[bufPos + 5],
-                                                          buf[bufPos + 6], buf[bufPos + 7], buf[bufPos + 8],
-                                                          buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                                          buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14],
-                                                          buf[bufPos + 15]);
+                var bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos  + 2],
+                                              buf[bufPos              + 3], buf[bufPos  + 4], buf[bufPos  + 5],
+                                              buf[bufPos              + 6], buf[bufPos  + 7], buf[bufPos  + 8],
+                                              buf[bufPos              + 9], buf[bufPos  + 10], buf[bufPos + 11],
+                                              buf[bufPos              + 12], buf[bufPos + 13], buf[bufPos + 14],
+                                              buf[bufPos              + 15]);
 
                 bufPos += 16;
                 /*
@@ -165,7 +165,7 @@ static class Neon
              */
             Vector64<uint> sum1 = AdvSimd.AddPairwise(vS1.GetLower(), vS1.GetUpper());
             Vector64<uint> sum2 = AdvSimd.AddPairwise(vS2.GetLower(), vS2.GetUpper());
-            Vector64<uint> s1S2 = AdvSimd.AddPairwise(sum1, sum2);
+            Vector64<uint> s1S2 = AdvSimd.AddPairwise(sum1,           sum2);
             s1 += AdvSimd.Extract(s1S2, 0);
             s2 += AdvSimd.Extract(s1S2, 1);
             /*

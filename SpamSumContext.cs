@@ -56,7 +56,7 @@ public sealed class SpamSumContext : IChecksum
     const uint HASH_INIT        = 0x28021967;
     const uint NUM_BLOCKHASHES  = 31;
     const uint SPAMSUM_LENGTH   = 64;
-    const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH) + 20;
+    const uint FUZZY_MAX_RESULT = 2 * SPAMSUM_LENGTH + 20;
 
     //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     readonly byte[] _b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"u8.ToArray();
@@ -70,7 +70,7 @@ public sealed class SpamSumContext : IChecksum
             Bh = new BlockhashContext[NUM_BLOCKHASHES]
         };
 
-        for(int i = 0; i < NUM_BLOCKHASHES; i++)
+        for(var i = 0; i < NUM_BLOCKHASHES; i++)
             _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
         _self.Bhstart          = 0;
@@ -84,6 +84,8 @@ public sealed class SpamSumContext : IChecksum
         roll_init();
     }
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -92,7 +94,7 @@ public sealed class SpamSumContext : IChecksum
     {
         _self.TotalSize += len;
 
-        for(int i = 0; i < len; i++)
+        for(var i = 0; i < len; i++)
             fuzzy_engine_step(data[i]);
     }
 
@@ -114,6 +116,8 @@ public sealed class SpamSumContext : IChecksum
 
         return CToString(result);
     }
+
+#endregion
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void roll_init() => _self.Roll = new RollState
@@ -155,7 +159,7 @@ public sealed class SpamSumContext : IChecksum
 
     /* A simple non-rolling hash, based on the FNV hash. */
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static uint sum_hash(byte c, uint h) => (h * HASH_PRIME) ^ c;
+    static uint sum_hash(byte c, uint h) => h * HASH_PRIME ^ c;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static uint SSDEEP_BS(uint index) => MIN_BLOCKSIZE << (int)index;
@@ -165,10 +169,12 @@ public sealed class SpamSumContext : IChecksum
     {
         switch(_self.Bhend)
         {
-            case >= NUM_BLOCKHASHES: return;
+            case >= NUM_BLOCKHASHES:
+                return;
 
             // assert
-            case 0: throw new Exception(Localization.Assertion_failed);
+            case 0:
+                throw new Exception(Localization.Assertion_failed);
         }
 
         uint obh = _self.Bhend - 1;
@@ -268,7 +274,7 @@ public sealed class SpamSumContext : IChecksum
         var  sb     = new StringBuilder();
         uint bi     = _self.Bhstart;
         uint h      = roll_sum();
-        int  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
+        var  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
         result = new byte[FUZZY_MAX_RESULT];
 
         /* Verify that our elimination was not overeager. */
@@ -465,7 +471,7 @@ public sealed class SpamSumContext : IChecksum
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static string CToString(byte[] cString)
     {
-        int count = 0;
+        var count = 0;
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         // LINQ is six times slower
@@ -480,16 +486,7 @@ public sealed class SpamSumContext : IChecksum
         return Encoding.ASCII.GetString(cString, 0, count);
     }
 
-    struct RollState
-    {
-        public byte[] Window;
-
-        // ROLLING_WINDOW
-        public uint H1;
-        public uint H2;
-        public uint H3;
-        public uint N;
-    }
+#region Nested type: BlockhashContext
 
     /* A blockhash contains a signature state for a specific (implicit) blocksize.
      * The blocksize is given by SSDEEP_BS(index). The h and halfh members are the
@@ -507,6 +504,10 @@ public sealed class SpamSumContext : IChecksum
         public uint Dlen;
     }
 
+#endregion
+
+#region Nested type: FuzzyState
+
     struct FuzzyState
     {
         public uint               Bhstart;
@@ -517,4 +518,21 @@ public sealed class SpamSumContext : IChecksum
         public ulong     TotalSize;
         public RollState Roll;
     }
+
+#endregion
+
+#region Nested type: RollState
+
+    struct RollState
+    {
+        public byte[] Window;
+
+        // ROLLING_WINDOW
+        public uint H1;
+        public uint H2;
+        public uint H3;
+        public uint N;
+    }
+
+#endregion
 }

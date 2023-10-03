@@ -1,109 +1,111 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <root>
-  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
-              xmlns="">
-    <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>1.3</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <data name="Detected_Zero_Pack_in_subchannel" xml:space="preserve">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Detected_Zero_Pack_in_subchannel" xml:space="preserve">
     <value>Detected Zero Pack in subchannel</value>
   </data>
-  <data name="Detected_Line_Graphics_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_Line_Graphics_Pack_in_subchannel" xml:space="preserve">
     <value>Detected Line Graphics Pack in subchannel</value>
   </data>
-  <data name="Detected_CD_G_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_CD_G_Pack_in_subchannel" xml:space="preserve">
     <value>Detected CD+G Pack in subchannel</value>
   </data>
-  <data name="Detected_CD_EG_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_CD_EG_Pack_in_subchannel" xml:space="preserve">
     <value>Detected CD+EG Pack in subchannel</value>
   </data>
-  <data name="Detected_CD_TEXT_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_CD_TEXT_Pack_in_subchannel" xml:space="preserve">
     <value>Detected CD-TEXT Pack in subchannel</value>
   </data>
-  <data name="Detected_CD_MIDI_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_CD_MIDI_Pack_in_subchannel" xml:space="preserve">
     <value>Detected CD+MIDI Pack in subchannel</value>
   </data>
-  <data name="Detected_User_Pack_in_subchannel" xml:space="preserve">
+    <data name="Detected_User_Pack_in_subchannel" xml:space="preserve">
     <value>Detected User Pack in subchannel</value>
   </data>
-  <data name="Detected_unknown_Pack_type_in_subchannel_mode_0_item_1" xml:space="preserve">
+    <data name="Detected_unknown_Pack_type_in_subchannel_mode_0_item_1" xml:space="preserve">
     <value>Detected unknown Pack type in subchannel: mode {0}, item {1}</value>
   </data>
-  <data name="Q_subchannel_CRC_0_expected_1" xml:space="preserve">
+    <data name="Q_subchannel_CRC_0_expected_1" xml:space="preserve">
     <value>Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}</value>
   </data>
-  <data name="CD_Text_Pack_one_CRC_0_expected_1" xml:space="preserve">
+    <data name="CD_Text_Pack_one_CRC_0_expected_1" xml:space="preserve">
     <value>CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}</value>
   </data>
-  <data name="Cyclic_CDTP2_0_Calc_CDTP2_1" xml:space="preserve">
+    <data name="Cyclic_CDTP2_0_Calc_CDTP2_1" xml:space="preserve">
     <value>Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}</value>
   </data>
-  <data name="CD_Text_Pack_two_CRC_0_expected_1" xml:space="preserve">
+    <data name="CD_Text_Pack_two_CRC_0_expected_1" xml:space="preserve">
     <value>CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}</value>
   </data>
-  <data name="Cyclic_CDTP3_0_Calc_CDTP3_1" xml:space="preserve">
+    <data name="Cyclic_CDTP3_0_Calc_CDTP3_1" xml:space="preserve">
     <value>Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}</value>
   </data>
-  <data name="CD_Text_Pack_three_CRC_0_expected_1" xml:space="preserve">
+    <data name="CD_Text_Pack_three_CRC_0_expected_1" xml:space="preserve">
     <value>CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}</value>
   </data>
-  <data name="Cyclic_CDTP4_0_Calc_CDTP4_1" xml:space="preserve">
+    <data name="Cyclic_CDTP4_0_Calc_CDTP4_1" xml:space="preserve">
     <value>Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}</value>
   </data>
-  <data name="CD_Text_Pack_four_CRC_0_expected_1" xml:space="preserve">
+    <data name="CD_Text_Pack_four_CRC_0_expected_1" xml:space="preserve">
     <value>CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}</value>
   </data>
-  <data name="m_must_be_between_2_and_16_inclusive" xml:space="preserve">
+    <data name="m_must_be_between_2_and_16_inclusive" xml:space="preserve">
     <value>m must be between 2 and 16 inclusive</value>
   </data>
-  <data name="Trying_to_calculate_RS_without_initializing" xml:space="preserve">
+    <data name="Trying_to_calculate_RS_without_initializing" xml:space="preserve">
     <value>Trying to calculate RS without initializing!</value>
   </data>
-  <data name="lambda_is_wrong" xml:space="preserve">
+    <data name="lambda_is_wrong" xml:space="preserve">
     <value>
  lambda(x) is WRONG
 </value>
   </data>
-  <data name="Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly" xml:space="preserve">
+    <data name="Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly" xml:space="preserve">
     <value>
  Erasure positions as determined by roots of Eras Loc Poly:
 </value>
   </data>
-  <data name="Final_error_positions" xml:space="preserve">
+    <data name="Final_error_positions" xml:space="preserve">
     <value>
  Final error positions:	</value>
   </data>
-  <data name="ERROR_denominator_equals_zero" xml:space="preserve">
+    <data name="ERROR_denominator_equals_zero" xml:space="preserve">
     <value>
  ERROR: denominator = 0
 </value>
   </data>
-  <data name="SpamSum_does_not_have_a_binary_representation" xml:space="preserve">
+    <data name="SpamSum_does_not_have_a_binary_representation" xml:space="preserve">
     <value>SpamSum does not have a binary representation.</value>
   </data>
-  <data name="Assertion_failed" xml:space="preserve">
+    <data name="Assertion_failed" xml:space="preserve">
     <value>Assertion failed</value>
   </data>
-  <data name="The_input_exceeds_data_types" xml:space="preserve">
+    <data name="The_input_exceeds_data_types" xml:space="preserve">
     <value>The input exceeds data types.</value>
   </data>
-  <data name="Not_yet_implemented" xml:space="preserve">
+    <data name="Not_yet_implemented" xml:space="preserve">
     <value>Not yet implemented.</value>
   </data>
 </root>

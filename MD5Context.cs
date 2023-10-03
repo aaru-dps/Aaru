@@ -47,6 +47,8 @@ public sealed class Md5Context : IChecksum
     /// <summary>Initializes the MD5 hash provider</summary>
     public Md5Context() => _provider = MD5.Create();
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -82,6 +84,8 @@ public sealed class Md5Context : IChecksum
 
         return md5Output.ToString();
     }
+
+#endregion
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

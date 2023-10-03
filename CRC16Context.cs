@@ -83,6 +83,8 @@ public class Crc16Context : IChecksum
             _table = table ?? GenerateTable(polynomial, inverse);
     }
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -186,6 +188,8 @@ public class Crc16Context : IChecksum
         return crc16Output.ToString();
     }
 
+#endregion
+
     [DllImport("libAaru.Checksums.Native", SetLastError = true)]
     static extern IntPtr crc16_init();
 
@@ -234,16 +238,16 @@ public class Crc16Context : IChecksum
                 var two = BitConverter.ToUInt32(data, currentPos);
                 currentPos += 4;
 
-                crc = (ushort)(table[0][(two >> 24) & 0xFF] ^ table[1][(two >> 16) & 0xFF] ^
-                               table[2][(two >> 8)  & 0xFF] ^ table[3][two & 0xFF] ^ table[4][(one >> 24) & 0xFF] ^
-                               table[5][(one >> 16) & 0xFF] ^ table[6][(one >> 8) & 0xFF] ^ table[7][one & 0xFF]);
+                crc = (ushort)(table[0][two >> 24 & 0xFF] ^ table[1][two >> 16 & 0xFF] ^
+                               table[2][two >> 8  & 0xFF] ^ table[3][two       & 0xFF] ^ table[4][one >> 24 & 0xFF] ^
+                               table[5][one >> 16 & 0xFF] ^ table[6][one >> 8 & 0xFF] ^ table[7][one & 0xFF]);
             }
 
             len -= bytesAtOnce;
         }
 
         while(len-- != 0)
-            crc = (ushort)((crc >> 8) ^ table[0][(crc & 0xFF) ^ data[currentPos++]]);
+            crc = (ushort)(crc >> 8 ^ table[0][crc & 0xFF ^ data[currentPos++]]);
 
         previousCrc = crc;
     }
@@ -266,8 +270,8 @@ public class Crc16Context : IChecksum
 
             for(unrolling = 0; unrolling < unroll; unrolling++)
             {
-                crc = (ushort)(table[7][data[currentPos + 0] ^ (crc >> 8)]   ^
-                               table[6][data[currentPos + 1] ^ (crc & 0xFF)] ^ table[5][data[currentPos + 2]] ^
+                crc = (ushort)(table[7][data[currentPos + 0] ^ crc >> 8]   ^
+                               table[6][data[currentPos + 1] ^ crc & 0xFF] ^ table[5][data[currentPos + 2]] ^
                                table[4][data[currentPos + 3]] ^ table[3][data[currentPos + 4]] ^
                                table[2][data[currentPos + 5]] ^ table[1][data[currentPos + 6]] ^
                                table[0][data[currentPos + 7]]);
@@ -279,7 +283,7 @@ public class Crc16Context : IChecksum
         }
 
         while(len-- != 0)
-            crc = (ushort)((crc << 8) ^ table[0][(crc >> 8) ^ data[currentPos++]]);
+            crc = (ushort)(crc << 8 ^ table[0][crc >> 8 ^ data[currentPos++]]);
 
         previousCrc = crc;
     }
@@ -292,19 +296,24 @@ public class Crc16Context : IChecksum
             table[i] = new ushort[256];
 
         if(!inverseTable)
+        {
             for(uint i = 0; i < 256; i++)
             {
                 uint entry = i;
 
                 for(var j = 0; j < 8; j++)
+                {
                     if((entry & 1) == 1)
-                        entry = (entry >> 1) ^ polynomial;
+                        entry = entry >> 1 ^ polynomial;
                     else
                         entry >>= 1;
+                }
 
                 table[0][i] = (ushort)entry;
             }
+        }
         else
+        {
             for(uint i = 0; i < 256; i++)
             {
                 uint entry = i << 8;
@@ -312,20 +321,23 @@ public class Crc16Context : IChecksum
                 for(uint j = 0; j < 8; j++)
                 {
                     if((entry & 0x8000) > 0)
-                        entry = (entry << 1) ^ polynomial;
+                        entry = entry << 1 ^ polynomial;
                     else
                         entry <<= 1;
 
                     table[0][i] = (ushort)entry;
                 }
             }
+        }
 
         for(var slice = 1; slice < 8; slice++)
-            for(var i = 0; i < 256; i++)
-                if(inverseTable)
-                    table[slice][i] = (ushort)((table[slice - 1][i] << 8) ^ table[0][table[slice - 1][i] >> 8]);
-                else
-                    table[slice][i] = (ushort)((table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF]);
+        for(var i = 0; i < 256; i++)
+        {
+            if(inverseTable)
+                table[slice][i] = (ushort)(table[slice - 1][i] << 8 ^ table[0][table[slice - 1][i] >> 8]);
+            else
+                table[slice][i] = (ushort)(table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF]);
+        }
 
         return table;
     }
@@ -338,7 +350,7 @@ public class Crc16Context : IChecksum
     /// <param name="table">CRC lookup table</param>
     /// <param name="inverse">Is CRC inverted?</param>
     public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
-                              bool inverse)
+                              bool   inverse)
     {
         bool useNative = Native.IsSupported;
 
@@ -443,7 +455,7 @@ public class Crc16Context : IChecksum
     /// <param name="table">CRC lookup table</param>
     /// <param name="inverse">Is CRC inverted?</param>
     public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed, ushort[][] table,
-                              bool inverse)
+                              bool   inverse)
     {
         bool useNative = Native.IsSupported;
 

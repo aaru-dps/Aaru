@@ -71,6 +71,8 @@ public sealed class Adler32Context : IChecksum
         _useNative     = _nativeContext != IntPtr.Zero;
     }
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -86,7 +88,7 @@ public sealed class Adler32Context : IChecksum
     /// <summary>Returns a byte array of the hash value.</summary>
     public byte[] Final()
     {
-        var finalSum = (uint)((_sum2 << 16) | _sum1);
+        var finalSum = (uint)(_sum2 << 16 | _sum1);
 
         if(!_useNative)
             return BigEndianBitConverter.GetBytes(finalSum);
@@ -101,7 +103,7 @@ public sealed class Adler32Context : IChecksum
     /// <summary>Returns a hexadecimal representation of the hash value.</summary>
     public string End()
     {
-        var finalSum = (uint)((_sum2 << 16) | _sum1);
+        var finalSum = (uint)(_sum2 << 16 | _sum1);
 
         if(_useNative)
         {
@@ -117,6 +119,8 @@ public sealed class Adler32Context : IChecksum
         return adlerOutput.ToString();
     }
 
+#endregion
+
     [DllImport("libAaru.Checksums.Native", SetLastError = true)]
     static extern IntPtr adler32_init();
 
@@ -130,7 +134,7 @@ public sealed class Adler32Context : IChecksum
     static extern void adler32_free(IntPtr ctx);
 
     static void Step(ref ushort preSum1, ref ushort preSum2, byte[] data, uint len, bool useNative,
-                     IntPtr nativeContext)
+                     IntPtr     nativeContext)
     {
         if(useNative)
         {
@@ -342,7 +346,7 @@ public sealed class Adler32Context : IChecksum
             read = fileStream.EnsureRead(buffer, 0, 65536);
         }
 
-        var finalSum = (uint)((localSum2 << 16) | localSum1);
+        var finalSum = (uint)(localSum2 << 16 | localSum1);
 
         if(useNative)
         {
@@ -384,7 +388,7 @@ public sealed class Adler32Context : IChecksum
 
         Step(ref localSum1, ref localSum2, data, len, useNative, nativeContext);
 
-        var finalSum = (uint)((localSum2 << 16) | localSum1);
+        var finalSum = (uint)(localSum2 << 16 | localSum1);
 
         if(useNative)
         {

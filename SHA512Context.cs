@@ -47,6 +47,8 @@ public sealed class Sha512Context : IChecksum
     /// <summary>Initializes the SHA512 hash provider</summary>
     public Sha512Context() => _provider = SHA512.Create();
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -82,6 +84,8 @@ public sealed class Sha512Context : IChecksum
 
         return sha512Output.ToString();
     }
+
+#endregion
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

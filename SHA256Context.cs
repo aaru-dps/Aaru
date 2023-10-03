@@ -47,6 +47,8 @@ public sealed class Sha256Context : IChecksum
     /// <summary>Initializes the SHA256 hash provider</summary>
     public Sha256Context() => _provider = SHA256.Create();
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -82,6 +84,8 @@ public sealed class Sha256Context : IChecksum
 
         return sha256Output.ToString();
     }
+
+#endregion
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

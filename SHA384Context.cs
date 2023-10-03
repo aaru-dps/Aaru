@@ -47,6 +47,8 @@ public sealed class Sha384Context : IChecksum
     /// <summary>Initializes the SHA384 hash provider</summary>
     public Sha384Context() => _provider = SHA384.Create();
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -82,6 +84,8 @@ public sealed class Sha384Context : IChecksum
 
         return sha384Output.ToString();
     }
+
+#endregion
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

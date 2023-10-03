@@ -312,6 +312,8 @@ public sealed class Crc64Context : IChecksum
             _table = GenerateTable(polynomial);
     }
 
+#region IChecksum Members
+
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
@@ -360,6 +362,8 @@ public sealed class Crc64Context : IChecksum
         return crc64Output.ToString();
     }
 
+#endregion
+
     [DllImport("libAaru.Checksums.Native", SetLastError = true)]
     static extern IntPtr crc64_init();
 
@@ -384,23 +388,25 @@ public sealed class Crc64Context : IChecksum
             var entry = (ulong)i;
 
             for(var j = 0; j < 8; j++)
+            {
                 if((entry & 1) == 1)
-                    entry = (entry >> 1) ^ polynomial;
+                    entry = entry >> 1 ^ polynomial;
                 else
                     entry >>= 1;
+            }
 
             table[0][i] = entry;
         }
 
         for(var slice = 1; slice < 4; slice++)
-            for(var i = 0; i < 256; i++)
-                table[slice][i] = (table[slice - 1][i] >> 8) ^ table[0][table[slice - 1][i] & 0xFF];
+        for(var i = 0; i < 256; i++)
+            table[slice][i] = table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF];
 
         return table;
     }
 
     static void Step(ref ulong previousCrc, ulong[][] table, byte[] data, uint len, bool useEcma, bool useNative,
-                     IntPtr nativeContext)
+                     IntPtr    nativeContext)
     {
         if(useNative && useEcma)
         {
@@ -448,13 +454,13 @@ public sealed class Crc64Context : IChecksum
                 var tmp = (uint)(crc ^ BitConverter.ToUInt32(data, dataOff));
                 dataOff += 4;
 
-                crc = table[3][tmp & 0xFF] ^ table[2][(tmp >> 8) & 0xFF] ^ (crc >> 32) ^ table[1][(tmp >> 16) & 0xFF] ^
+                crc = table[3][tmp & 0xFF] ^ table[2][tmp >> 8 & 0xFF] ^ crc >> 32 ^ table[1][tmp >> 16 & 0xFF] ^
                       table[0][tmp >> 24];
             }
         }
 
         while(len-- != 0)
-            crc = table[0][data[dataOff++] ^ (crc & 0xFF)] ^ (crc >> 8);
+            crc = table[0][data[dataOff++] ^ crc & 0xFF] ^ crc >> 8;
 
         previousCrc = crc;
     }

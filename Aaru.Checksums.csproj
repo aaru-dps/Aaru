@@ -34,8 +34,8 @@
     <NoWarn>CS1591;CS1574</NoWarn>
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <InternalsVisibleTo Include="Aaru.Tests" />
-    <InternalsVisibleTo Include="Aaru.Tests.Devices" />
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
   </ItemGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
@@ -43,9 +43,9 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -60,10 +60,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha9" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="Aaru.Checksums.Native" Version="6.0.0-alpha9"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.Generators\Aaru.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Aaru.Generators\Aaru.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
 </Project>

@@ -56,7 +56,7 @@ static class ArmSimd
     {
         uint c = crc;
 
-        int bufPos = 0;
+        var bufPos = 0;
 
         while(len >= 64)
         {
@@ -96,7 +96,7 @@ static class ArmSimd
     {
         uint c = crc;
 
-        int bufPos = 0;
+        var bufPos = 0;
 
         while(len >= 32)
         {
