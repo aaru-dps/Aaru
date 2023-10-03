@@ -70,7 +70,7 @@
     <value>Sistema de ficheros rápido de Amiga con caché de directorio</value>
   </data>
   <data name="Amiga_Fast_File_System_with_international_characters" xml:space="preserve">
-    <value>Sistema de ficheros rápido de Amiga con carácteres internacionales</value>
+    <value>Sistema de ficheros rápido de Amiga con caracteres internacionales</value>
   </data>
   <data name="Amiga_Fast_File_System_with_long_filenames" xml:space="preserve">
     <value>Sistema de ficheros rápido de Amiga con nombres de archivo largos</value>
@@ -82,7 +82,7 @@
     <value>Sistema de ficheros original de Amiga con caché de directorio</value>
   </data>
   <data name="Amiga_Original_File_System_with_international_characters" xml:space="preserve">
-    <value>Sistema de ficheros original de Amiga con carácteres internacionales</value>
+    <value>Sistema de ficheros original de Amiga con caracteres internacionales</value>
   </data>
   <data name="Amiga_Original_File_System_with_long_filenames" xml:space="preserve">
     <value>Sistema de ficheros original de Amiga con nombres de archivo largos</value>
@@ -3355,7 +3355,7 @@
     <value>{0} bytes para asignar cuando se extiende un fichero.</value>
   </data>
   <data name="_0_chars_in_filename" xml:space="preserve">
-    <value>{0} carácteres en un nombre de fichero</value>
+    <value>{0} caracteres en un nombre de fichero</value>
   </data>
   <data name="_0_clusters_on_volume" xml:space="preserve">
     <value>{0} clústeres en el volumen.</value>

@@ -56,7 +56,7 @@ sealed class VerifyCommand : Command
         Add(new Option<bool>(new[]
         {
             "--verify-disc", "-w"
-        }, () => true, UI.Verify_disc_image_if_supported));
+        }, () => true, UI.Verify_media_image_if_supported));
 
         Add(new Option<bool>(new[]
         {

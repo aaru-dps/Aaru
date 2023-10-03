@@ -254,7 +254,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     public string ForceLabel            => UI.Continue_dumping_whatever_happens;
     public string RetriesLabel          => UI.Retry_passes;
     public string PersistentLabel       => UI.Try_to_recover_partial_or_incorrect_data;
-    public string ResumeLabel           => UI.Create_use_resume_mapfile;
+    public string ResumeLabel           => UI.Create_or_use_resume_mapfile;
     public string Track1PregapLabel     => UI.Try_to_read_track_1_pregap;
     public string SkippedLabel          => UI.Skipped_sectors_on_error;
     public string SidecarLabel          => UI.Create_Aaru_Metadata_sidecar;

@@ -94,7 +94,7 @@
     <value>Checksums an image.</value>
   </data>
   <data name="Image_Compare_Command_Description" xml:space="preserve">
-    <value>Compares two disc images.</value>
+    <value>Compares two images.</value>
   </data>
   <data name="Image_Convert_Command_Description" xml:space="preserve">
     <value>Converts one image to another format.</value>
@@ -103,7 +103,7 @@
     <value>Creates CICM Metadata XML sidecar.</value>
   </data>
   <data name="Image_Decode_Command_Description" xml:space="preserve">
-    <value>Decodes and pretty prints disk and/or sector tags.</value>
+    <value>Decodes and pretty prints media and/or sector tags.</value>
   </data>
   <data name="Image_Entropy_Command_Description" xml:space="preserve">
     <value>Calculates entropy and/or duplicated sectors of an image.</value>
@@ -426,9 +426,6 @@ In you are unsure, please press N to not continue.</value>
   <data name="Image_has_0_sectors" xml:space="preserve">
     <value>Image has {0} sectors.</value>
   </data>
-  <data name="Image_identifies_disk_type_as_0" xml:space="preserve">
-    <value>Image identifies disk type as {0}.</value>
-  </data>
   <data name="Enumerating_partitions" xml:space="preserve">
     <value>Enumerating partitions...</value>
   </data>
@@ -513,8 +510,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="Image_format_not_identified_not_proceeding_with_analysis" xml:space="preserve">
     <value>Image format not identified, not proceeding with analysis.</value>
   </data>
-  <data name="No_partitions_founds_not_searching_for_filesystems" xml:space="preserve">
-    <value>No partitions founds, not searching for filesystems</value>
+  <data name="No_partitions_found_not_searching_for_filesystems" xml:space="preserve">
+    <value>No partitions found, not searching for filesystems</value>
   </data>
   <data name="Title_Name" xml:space="preserve">
     <value>Name</value>
@@ -1188,8 +1185,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="The_specified_input_file_cannot_be_found" xml:space="preserve">
     <value>The specified input file cannot be found.</value>
   </data>
-  <data name="Decode_disk_tags" xml:space="preserve">
-    <value>Decode disk tags.</value>
+  <data name="Decode_media_tags" xml:space="preserve">
+    <value>Decode media tags.</value>
   </data>
   <data name="Parameter_response_all_sectors" xml:space="preserve">
     <value>all</value>
@@ -1207,8 +1204,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="Unable_to_recognize_image_format_not_decoding" xml:space="preserve">
     <value>Unable to recognize image format, not decoding</value>
   </data>
-  <data name="There_are_no_disk_tags_in_chosen_disc_image" xml:space="preserve">
-    <value>There are no disk tags in chosen disc image.</value>
+  <data name="There_are_no_media_tags_in_chosen_disc_image" xml:space="preserve">
+    <value>There are no media tags in chosen disc image.</value>
   </data>
   <data name="Error_0_reading_SCSI_INQUIRY_response_from_disc_image" xml:space="preserve">
     <value>Error {0} reading SCSI INQUIRY response from disc image</value>
@@ -1261,8 +1258,8 @@ In you are unsure, please press N to not continue.</value>
   <data name="CD_TOC" xml:space="preserve">
     <value>CD TOC:</value>
   </data>
-  <data name="Decoder_for_disk_tag_type_0_not_yet_implemented_sorry" xml:space="preserve">
-    <value>Decoder for disk tag type "{0}" not yet implemented, sorry.</value>
+  <data name="Decoder_for_media_tag_type_0_not_yet_implemented_sorry" xml:space="preserve">
+    <value>Decoder for media tag type "{0}" not yet implemented, sorry.</value>
   </data>
   <data name="Value_0_is_not_a_valid_number_for_length" xml:space="preserve">
     <value>Value "{0}" is not a valid number for length.</value>
@@ -1352,8 +1349,8 @@ In you are unsure, please press N to not continue.</value>
     <value>Error {0} reading sector {1}.</value>
     <comment>{0} is error name and {1} is sector number</comment>
   </data>
-  <data name="Verify_disc_image_if_supported" xml:space="preserve">
-    <value>Verify disc image if supported.</value>
+  <data name="Verify_media_image_if_supported" xml:space="preserve">
+    <value>Verify media image if supported.</value>
   </data>
   <data name="Verify_all_sectors_if_supported" xml:space="preserve">
     <value>Verify all sectors if supported.</value>
@@ -1435,9 +1432,6 @@ In you are unsure, please press N to not continue.</value>
   </data>
   <data name="Fix_audio_tracks_offset" xml:space="preserve">
     <value>Fix audio tracks offset. Only applicable to CD/GD.</value>
-  </data>
-  <data name="Continue_dump_whatever_happens" xml:space="preserve">
-    <value>Continue dump whatever happens.</value>
   </data>
   <data name="Enables_creating_Aaru_Metadata_sidecar" xml:space="preserve">
     <value>Enables creating Aaru Metadata sidecar.</value>
@@ -2923,13 +2917,10 @@ Do you want to continue?</value>
     <value>Found supported device model {0} by manufacturer {1} on bus {2} and path {3}</value>
   </data>
   <data name="Continue_dumping_whatever_happens" xml:space="preserve">
-    <value>Continue dumping whatever happens</value>
+    <value>Continue dumping whatever happens.</value>
   </data>
   <data name="Retry_passes" xml:space="preserve">
     <value>Retry passes</value>
-  </data>
-  <data name="Create_use_resume_mapfile" xml:space="preserve">
-    <value>Create/use resume mapfile</value>
   </data>
   <data name="Try_to_read_track_1_pregap" xml:space="preserve">
     <value>Try to read track 1 pregap</value>
@@ -3007,7 +2998,7 @@ Do you want to continue?</value>
     <value>Create graph of verified disc (currently only implemented for optical discs).</value>
   </data>
   <data name="Verify_dimensions_paramater_help" xml:space="preserve">
-    <value>Dimensions, as a square, in pixels, for the graph of verified disc.</value>
+    <value>Dimensions, as a square, in pixels, for the graph of verified media.</value>
   </data>
   <data name="Create_graph_of_dumped_media" xml:space="preserve">
     <value>Create graph of dumped media. Currently only supported for CD/DVD/BD/GD/UMD.</value>

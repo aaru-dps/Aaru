@@ -1,0 +1,2938 @@
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>1.3</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    </value>
+  </resheader>
+  <data name="aaruremote_host" xml:space="preserve">
+    <value>host de aaruremote</value>
+  </data>
+  <data name="Aaru_started" xml:space="preserve">
+    <value>¡Aaru empezó!</value>
+  </data>
+  <data name="all_sectors" xml:space="preserve">
+    <value>todos los sectores.</value>
+  </data>
+  <data name="All_sectors_are_unknown" xml:space="preserve">
+    <value>La integridad de todos los sectores es desconocida</value>
+  </data>
+  <data name="All_sectors_contain_errors" xml:space="preserve">
+    <value>Todos los sectores contienen errores</value>
+  </data>
+  <data name="All_sector_checksums_are_correct" xml:space="preserve">
+    <value>El checksum de todos los sectores es correcto</value>
+  </data>
+  <data name="Archive_Command_Family_Description" xml:space="preserve">
+    <value>Comandos para gestionar archivos</value>
+  </data>
+  <data name="Archive_Info_Command_Description" xml:space="preserve">
+    <value>Identifica un archivo y muestra información del mismo.</value>
+  </data>
+  <data name="ASCII_implemented_operating_definitions" xml:space="preserve">
+    <value>Definiciones de operación ASCII implementadas</value>
+  </data>
+  <data name="ASCII_Page_0" xml:space="preserve">
+    <value>Página ASCII {0:X2}h</value>
+  </data>
+  <data name="Asking_drive_to_unload_tape" xml:space="preserve">
+    <value>Pidiendo a la unidad que descargue la cinta (puede tomar unos minutos)...</value>
+  </data>
+  <data name="As_identified_by_0" xml:space="preserve">
+    <value>Como lo identificó {0}.</value>
+  </data>
+  <data name="ATA_IDENTIFY_DEVICE_command_response" xml:space="preserve">
+    <value>Respuesta al comando ATA IDENTIFY DEVICE:</value>
+  </data>
+  <data name="ATA_IDENTIFY_PACKET_DEVICE_command_response" xml:space="preserve">
+    <value>Respuesta al comando ATA IDENTIFY PACKET DEVICE:</value>
+  </data>
+  <data name="Automation_Device_Serial_Number" xml:space="preserve">
+    <value>Número de serie del dispositivo de automatización</value>
+  </data>
+  <data name="Barcode_of_the_media_by_image" xml:space="preserve">
+    <value>Código de barras del medio representado por la imagen.</value>
+  </data>
+  <data name="Base_Mechanical_Serial_Number" xml:space="preserve">
+    <value>Número de serie de la mecánica base</value>
+  </data>
+  <data name="Board_Serial_Number" xml:space="preserve">
+    <value>Número de serie de la placa</value>
+  </data>
+  <data name="Burst_Cutting_Area" xml:space="preserve">
+    <value>Burst Cutting Area</value>
+  </data>
+  <data name="ButtonLabel_Calculate_entropy" xml:space="preserve">
+    <value>Calcular entropía</value>
+  </data>
+  <data name="ButtonLabel_Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="ButtonLabel_Checksum" xml:space="preserve">
+    <value>Checksum</value>
+  </data>
+  <data name="ButtonLabel_Choose" xml:space="preserve">
+    <value>Elegir...</value>
+  </data>
+  <data name="ButtonLabel_Clear" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="ButtonLabel_Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="ButtonLabel_Convert_to" xml:space="preserve">
+    <value>Convertir a...</value>
+  </data>
+  <data name="ButtonLabel_Create_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Generar sidecar de metadatos Aaru...</value>
+  </data>
+  <data name="ButtonLabel_Decode_media_tags" xml:space="preserve">
+    <value>Descodificar etiquetas de medio...</value>
+  </data>
+  <data name="ButtonLabel_Dump_media_to_image" xml:space="preserve">
+    <value>Volcar medio a imagen</value>
+  </data>
+  <data name="ButtonLabel_Extract_to" xml:space="preserve">
+    <value>Extraer en...</value>
+  </data>
+  <data name="ButtonLabel_Get_from_source_image" xml:space="preserve">
+    <value>Obtener de la imagen origen</value>
+  </data>
+  <data name="ButtonLabel_Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="ButtonLabel_Save_AACS_Information" xml:space="preserve">
+    <value>Guardar información AACS</value>
+  </data>
+  <data name="ButtonLabel_Save_ADIP" xml:space="preserve">
+    <value>Guardar ADIP</value>
+  </data>
+  <data name="ButtonLabel_Save_binary_to_file" xml:space="preserve">
+    <value>Guardar binario en fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_Burst_Cutting_Area" xml:space="preserve">
+    <value>Guardar Burst Cutting Area</value>
+  </data>
+  <data name="ButtonLabel_Save_Cartridge_Status" xml:space="preserve">
+    <value>Guardar estado de cartucho</value>
+  </data>
+  <data name="ButtonLabel_Save_Copyright_Management_Information" xml:space="preserve">
+    <value>Guardar información de gestión del copyright</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Control_Blocks" xml:space="preserve">
+    <value>Guardar bloques de control del disco</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Definition_Structure" xml:space="preserve">
+    <value>Guardar escrutura de definición del disco</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Information" xml:space="preserve">
+    <value>Guardar información del disco</value>
+  </data>
+  <data name="ButtonLabel_Save_Disc_Manufacturer_Information" xml:space="preserve">
+    <value>Guardar información del fabricante del disco</value>
+  </data>
+  <data name="ButtonLabel_Save_EVPD_page_to_file" xml:space="preserve">
+    <value>Guardar página EVPD a fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_GET_CONFIGURATION_response" xml:space="preserve">
+    <value>Guardar respuesta de GET CONFIGURATION</value>
+  </data>
+  <data name="ButtonLabel_Save_Jump_Interval_Size" xml:space="preserve">
+    <value>Guardar tamaño del intervalo de salto</value>
+  </data>
+  <data name="ButtonLabel_Save_Last_Border_Out_RMD" xml:space="preserve">
+    <value>Guardar RMD del último Border.Out</value>
+  </data>
+  <data name="ButtonLabel_Save_Layer_Capacity" xml:space="preserve">
+    <value>Guardar capacidad de la capa</value>
+  </data>
+  <data name="ButtonLabel_Save_Lead_In_CD_TEXT" xml:space="preserve">
+    <value>Guardar CD-TEXT del Lead-In</value>
+  </data>
+  <data name="ButtonLabel_Save_Manual_Layer_Jump_Start_LBA" xml:space="preserve">
+    <value>Guardar LBA del comienzo del salto manual de capa</value>
+  </data>
+  <data name="ButtonLabel_Save_Media_Identifier" xml:space="preserve">
+    <value>Guardar identificador del medio</value>
+  </data>
+  <data name="ButtonLabel_Save_Medium_Status" xml:space="preserve">
+    <value>Guardar estado del medio</value>
+  </data>
+  <data name="ButtonLabel_Save_Middle_Zone_Start" xml:space="preserve">
+    <value>Guardar comienzo de la zona intermedia</value>
+  </data>
+  <data name="ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file" xml:space="preserve">
+    <value>Guardar respuesta de MMC GET CONFIGURATION a fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_MODE_SENSE_10_response_to_file" xml:space="preserve">
+    <value>Guardar respuesta de MODE SENSE (10) a fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_MODE_SENSE_6_response_to_file" xml:space="preserve">
+    <value>Guardar respuesta de MODE SENSE (6) a fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_PAC" xml:space="preserve">
+    <value>Guardar PAC</value>
+  </data>
+  <data name="ButtonLabel_Save_PCMCIA_CIS_to_file" xml:space="preserve">
+    <value>Guardar CIS de PCMCIA a fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_Physical_Format_Information" xml:space="preserve">
+    <value>Guardar información del formato físico</value>
+  </data>
+  <data name="ButtonLabel_Save_Pre_Recorded_Physical_Information" xml:space="preserve">
+    <value>Guardar información física pre-graba</value>
+  </data>
+  <data name="ButtonLabel_Save_Pseudo_OverWrite_Resources" xml:space="preserve">
+    <value>Guardar recursos de seudo-sobreescritura</value>
+  </data>
+  <data name="ButtonLabel_Save_raw_DFL" xml:space="preserve">
+    <value>Guardar DFL sin procesar</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_ATIP_response" xml:space="preserve">
+    <value>Guardar respuesta de READ ATIP</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_CAPACITY_16_response" xml:space="preserve">
+    <value>Guardar respuesta de READ CAPACITY (16)</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_CAPACITY_response" xml:space="preserve">
+    <value>Guardar respuesta de READ CAPACITY</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_DISC_INFORMATION_response" xml:space="preserve">
+    <value>Guardar respuesta de READ DISC INFORMATION</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response" xml:space="preserve">
+    <value>Guardar respuesta de READ MEDIA SERIAL NUMBER</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_PMA_response" xml:space="preserve">
+    <value>Guardar respuesta de READ PMA</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_RAW_TOC_response" xml:space="preserve">
+    <value>Guardar respuesta de READ RAW TOC</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_SESSION_response" xml:space="preserve">
+    <value>Guardar respuesta de READ SESSION</value>
+  </data>
+  <data name="ButtonLabel_Save_READ_TOC_response" xml:space="preserve">
+    <value>Guardar respuesta de READ TOC</value>
+  </data>
+  <data name="ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response" xml:space="preserve">
+    <value>Guardar respuesta de RECOGNIZED FORMAT LAYERS</value>
+  </data>
+  <data name="ButtonLabel_Save_Recordable_Physical_Information" xml:space="preserve">
+    <value>Guardar información física grabable</value>
+  </data>
+  <data name="ButtonLabel_Save_Remap_Anchor_Point" xml:space="preserve">
+    <value>Guardar punto de ancla del remapeado</value>
+  </data>
+  <data name="ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response" xml:space="preserve">
+    <value>Guardar respuesta de REPORT DENSITY SUPPORT (MEDIA)</value>
+  </data>
+  <data name="ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response" xml:space="preserve">
+    <value>Guardar respuesta de REPORT DENSITY SUPPORT (MEDIUM &amp; MEDIA)</value>
+  </data>
+  <data name="ButtonLabel_Save_Spare_Area_Information" xml:space="preserve">
+    <value>Guardar información del área de reserva</value>
+  </data>
+  <data name="ButtonLabel_Save_text_to_file" xml:space="preserve">
+    <value>Guardar texto en fichero</value>
+  </data>
+  <data name="ButtonLabel_Save_Track_Resources" xml:space="preserve">
+    <value>Guardar recursos de pista</value>
+  </data>
+  <data name="ButtonLabel_Save_WRITE_PROTECTION_STATUS_response" xml:space="preserve">
+    <value>Guardar respuesta de WRITE PROTECTION STATUS</value>
+  </data>
+  <data name="ButtonLabel_Save_Xbox_Security_Sector" xml:space="preserve">
+    <value>Guardar Sector de Seguridad Xbox</value>
+  </data>
+  <data name="ButtonLabel_Scan_media_surface" xml:space="preserve">
+    <value>Escaner superficie del medio</value>
+  </data>
+  <data name="ButtonLabel_Start" xml:space="preserve">
+    <value>Comenzar</value>
+  </data>
+  <data name="ButtonLabel_Stop" xml:space="preserve">
+    <value>Parar</value>
+  </data>
+  <data name="ButtonLabel_Verify" xml:space="preserve">
+    <value>Verificar</value>
+  </data>
+  <data name="ButtonLabel_View_sectors" xml:space="preserve">
+    <value>Ver sectores</value>
+  </data>
+  <data name="Calculates_Adler_32" xml:space="preserve">
+    <value>Calcula el Adler-32.</value>
+  </data>
+  <data name="Calculates_CRC16" xml:space="preserve">
+    <value>Calcula el CRC16.</value>
+  </data>
+  <data name="Calculates_CRC32" xml:space="preserve">
+    <value>Calcula el CRC32.</value>
+  </data>
+  <data name="Calculates_CRC64_ECMA" xml:space="preserve">
+    <value>Calcula el CRC64 (ECMA).</value>
+  </data>
+  <data name="Calculates_entropy_for_each_track_separately" xml:space="preserve">
+    <value>Calcula la entropía de cada pista por separado.</value>
+  </data>
+  <data name="Calculates_entropy_for_the_whole_disc" xml:space="preserve">
+    <value>Calcula la entropía del disco entero.</value>
+  </data>
+  <data name="Calculates_Fletcher_16" xml:space="preserve">
+    <value>Calcula el Fletcher-16.</value>
+  </data>
+  <data name="Calculates_Fletcher_32" xml:space="preserve">
+    <value>Calcula el Fletcher-32.</value>
+  </data>
+  <data name="Calculates_how_many_sectors_are_duplicated" xml:space="preserve">
+    <value>Calcula cuantos sectores están duplicados (tiene los mismos datos en el área de usuario)</value>
+  </data>
+  <data name="Calculates_MD5" xml:space="preserve">
+    <value>Calcula el MD5.</value>
+  </data>
+  <data name="Calculates_SHA1" xml:space="preserve">
+    <value>Calcula el SHA1.</value>
+  </data>
+  <data name="Calculates_SHA256" xml:space="preserve">
+    <value>Calcula el SHA256.</value>
+  </data>
+  <data name="Calculates_SHA384" xml:space="preserve">
+    <value>Calcula el SHA384.</value>
+  </data>
+  <data name="Calculates_SHA512" xml:space="preserve">
+    <value>Calcula el SHA512.</value>
+  </data>
+  <data name="Calculates_SpamSum_fuzzy_hash" xml:space="preserve">
+    <value>Calcula el SpamSum.</value>
+  </data>
+  <data name="Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented" xml:space="preserve">
+    <value>Calcular la entropía del disco entero en imágenes multisesión no está implementado todavía.</value>
+  </data>
+  <data name="Cannot_create_file" xml:space="preserve">
+    <value>No se pudo crear el fichero</value>
+  </data>
+  <data name="Cannot_delete" xml:space="preserve">
+    <value>No se pudo eliminar</value>
+  </data>
+  <data name="Cannot_open_first_input_file" xml:space="preserve">
+    <value>No se pudo abrir el 1er fichero de entrada</value>
+  </data>
+  <data name="Cannot_open_image_file_aborting" xml:space="preserve">
+    <value>No se pudo abrir el fichero de imagen, abortando...</value>
+  </data>
+  <data name="Cannot_open_output_plugin" xml:space="preserve">
+    <value>No se pudo abrir el formato de salida.</value>
+  </data>
+  <data name="Cannot_open_second_input_file" xml:space="preserve">
+    <value>No se pudo abrir el 2º fichero de entrada</value>
+  </data>
+  <data name="Cannot_open_specified_file" xml:space="preserve">
+    <value>No se pudo abrir el fichero especificado.</value>
+  </data>
+  <data name="Cannot_write_file_0_output_exists" xml:space="preserve">
+    <value>No se pudo escribir el fichero {0}, ya existe</value>
+  </data>
+  <data name="Cannot_write_xattr_0_for_1_output_exists" xml:space="preserve">
+    <value>No se pudo escribir el atributo extendido {0} del fichero {1} ,ya existe</value>
+  </data>
+  <data name="Cartridge_Status" xml:space="preserve">
+    <value>Estado del cartucho</value>
+  </data>
+  <data name="CD_ATIP" xml:space="preserve">
+    <value>ATIP de CD:</value>
+  </data>
+  <data name="CD_full_TOC" xml:space="preserve">
+    <value>Tabla de contenidos completa del CD:</value>
+  </data>
+  <data name="CD_read_speed_limited_to" xml:space="preserve">
+    <value>Velocidad de lectura del CD limitada a</value>
+  </data>
+  <data name="CD_session_information" xml:space="preserve">
+    <value>Información de sesión del CD:</value>
+  </data>
+  <data name="CD_TEXT" xml:space="preserve">
+    <value>CD-TEXT:</value>
+  </data>
+  <data name="CD_TOC" xml:space="preserve">
+    <value>Tabla de contenidos del CD:</value>
+  </data>
+  <data name="CD_write_speed_limited_to" xml:space="preserve">
+    <value>Velocidad de escritura del CD limitada a</value>
+  </data>
+  <data name="Certance_Drive_Component_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión de componentes de la unidad Certance</value>
+  </data>
+  <data name="Certance_drive_status_page" xml:space="preserve">
+    <value>Página de estado de la unidad Certance</value>
+  </data>
+  <data name="Checking_disc_image_checksums_took_0" xml:space="preserve">
+    <value>Comprobar los checksums de la imagen tomó {0}</value>
+  </data>
+  <data name="Checking_GDPR_compliance" xml:space="preserve">
+    <value>Comprobando cumplimiento de la GDPR...</value>
+  </data>
+  <data name="Checking_media_image" xml:space="preserve">
+    <value>Comprobando imagen de medio...</value>
+  </data>
+  <data name="Checking_sector" xml:space="preserve">
+    <value>Comprobando sector</value>
+  </data>
+  <data name="Checking_sectors" xml:space="preserve">
+    <value>Comprobando sectores...</value>
+  </data>
+  <data name="Checking_sector_0_of_1" xml:space="preserve">
+    <value>Comprobando sector {0} de {1}</value>
+  </data>
+  <data name="Checking_sector_0_of_1_on_track_2" xml:space="preserve">
+    <value>Comprobando sector {0} de {1}, en la pista {2}</value>
+  </data>
+  <data name="Checking_sector_checksums_took_0" xml:space="preserve">
+    <value>Comprobar los checksums de los sectores tomó {0}</value>
+  </data>
+  <data name="Checking_tracks" xml:space="preserve">
+    <value>Comprobando pistas...</value>
+  </data>
+  <data name="Checking_track_0_of_1" xml:space="preserve">
+    <value>Comprobando pista {0} de {1}</value>
+  </data>
+  <data name="Checksums_Disc_has_0" xml:space="preserve">
+    <value>{0} del disco</value>
+  </data>
+  <data name="Checksums_Disk_has_0" xml:space="preserve">
+    <value>{0} del disco:</value>
+  </data>
+  <data name="Checksums_each_track_separately" xml:space="preserve">
+    <value>Calcular el checksum de cada pista por separado.</value>
+  </data>
+  <data name="Checksums_File_0_has_1" xml:space="preserve">
+    <value>{1} del fichero {0}</value>
+  </data>
+  <data name="Checksums_Media_has_0" xml:space="preserve">
+    <value>{0} del medio:</value>
+  </data>
+  <data name="Checksums_Tape_has_0" xml:space="preserve">
+    <value>{0} de la cinta:</value>
+  </data>
+  <data name="Checksums_the_whole_disc" xml:space="preserve">
+    <value>Calcular el checksum del disco completo.</value>
+  </data>
+  <data name="Checksums_Track_0_has_1" xml:space="preserve">
+    <value>{1} de la pista {0}:</value>
+  </data>
+  <data name="Clear_existing_main_and_local_database" xml:space="preserve">
+    <value>Limpiar las bases de datos local y principal existentes.</value>
+  </data>
+  <data name="Clear_existing_main_database" xml:space="preserve">
+    <value>Limpiar la base de datos principal.</value>
+  </data>
+  <data name="Closing_output_image" xml:space="preserve">
+    <value>Cerrando imagen de salida...</value>
+  </data>
+  <data name="Commands_statistics" xml:space="preserve">
+    <value>Estadísticas de comandos</value>
+  </data>
+  <data name="Command_not_supported_for_this_image_type" xml:space="preserve">
+    <value>Comando no soportado para este tipo de imagen.</value>
+  </data>
+  <data name="Command_not_yet_supported_for_this_image_type" xml:space="preserve">
+    <value>Comando aún no soportado para este tipo de imagen.</value>
+  </data>
+  <data name="Comma_separated_name_value_pairs_of_filesystem_options" xml:space="preserve">
+    <value>Pares de nombre=valor separados por coma con opciones que pasar a la extensión de sistema de ficheros.</value>
+  </data>
+  <data name="Comma_separated_name_value_pairs_of_image_options" xml:space="preserve">
+    <value>Pares de nombre=valor separados por coma con opciones que pasar a la extensión de imagen de salida.</value>
+  </data>
+  <data name="Comparing_images" xml:space="preserve">
+    <value>Comparando imágenes...</value>
+  </data>
+  <data name="Comparing_media_image_characteristics" xml:space="preserve">
+    <value>Comparando las características del medio</value>
+  </data>
+  <data name="Comparing_sectors" xml:space="preserve">
+    <value>Comparando sectores...</value>
+  </data>
+  <data name="Comparing_sector_0_of_1" xml:space="preserve">
+    <value>Comparando sector {0} de {1}...</value>
+  </data>
+  <data name="Configure_Command_Description" xml:space="preserve">
+    <value>Configura las preferencias de usuario y las estadísticas.</value>
+  </data>
+  <data name="Configure_Device_Report_information_disclaimer" xml:space="preserve">
+    <value>Con el comando 'device-report', Aaru crea un reporte del dispositivo, incluyendo su fabricante, modelo, revisión y/o versión del firmware, bus de conexión, tamaño y comandos soportados. El número de serie del dispositivo no se guarda en el reporte. Si se usa con el parámetro 'debug', información extra del dispositivo se guardará en el reporte. En algunos dispositivos esta información podría contener el número de serie del dispositivo en lugares no estándares que impiden su eliminación automática. Una copia legible en formato XML del reporte se crea siempre en el directorio desde el que se está ejecutando Aaru.</value>
+  </data>
+  <data name="Configure_Do_you_want_to_save_device_reports_in_shared_folder_of_your_computer_Q" xml:space="preserve">
+    <value>¿Desea guardar los reportes de los dispositivos en una carpeta compartida de su ordenador?</value>
+  </data>
+  <data name="Configure_enable_decryption_disclaimer" xml:space="preserve">
+    <value>¿Desea activar la desencriptación de los medios protegidos contra copia (o DRM)? Por ejemplo la encriptación CSS de un DVD de video. Consulte sus leyes locales antes de activarla, ya que es ilegan en algunos países, o legal sólo en determinadas circunstancias.</value>
+  </data>
+  <data name="Configure_share_report_disclaimer" xml:space="preserve">
+    <value>Compartir un reporte lo enviará a nuestro servidor, localizado en la Unión Europa, dónde será analizado manualmente por un ciudadano europeo para eliminar cualquier rastro de identificación personal del mismo. Una vez hecho, se compartirá en nuestra web de estadísticas: https://www.aaru.app Este reporte se usará para mejorar el soporte de Aaru, y en algunos casos, para proveer emulación de los dispositivos a otros projectos de código abierto. En cualquier caso, no se almacenará ninguna información que le vincule con el reporte.</value>
+  </data>
+  <data name="Console_with_ornament" xml:space="preserve">
+    <value>################# Consola ################</value>
+  </data>
+  <data name="Continue_conversion_even_if_data_lost" xml:space="preserve">
+    <value>Continuar la conversión incluso si se pierden etiquetas del medio o de sector.</value>
+  </data>
+  <data name="Continue_dumping_whatever_happens" xml:space="preserve">
+    <value>Continuar el volcado pase lo que pase.</value>
+  </data>
+  <data name="Conversion_done" xml:space="preserve">
+    <value>Conversión completada.</value>
+  </data>
+  <data name="Converting_disc" xml:space="preserve">
+    <value>Convirtiendo disco...</value>
+  </data>
+  <data name="Converting_files" xml:space="preserve">
+    <value>Convirtiendo ficheros</value>
+  </data>
+  <data name="Converting_file_0_of_partition_1" xml:space="preserve">
+    <value>Convirtiendo fichero {0} de la partición {1}...</value>
+  </data>
+  <data name="Converting_image_will_lose_media_tag_0" xml:space="preserve">
+    <value>La conversión perdería la etiqueta de medio {0}, no se continuará...</value>
+  </data>
+  <data name="Converting_image_will_lose_sector_tag_0" xml:space="preserve">
+    <value>La conversión perdería la etiqueta de sector {0}, no se continuará...</value>
+  </data>
+  <data name="Converting_media" xml:space="preserve">
+    <value>Convirtiendo medio</value>
+  </data>
+  <data name="Converting_media_tag_0" xml:space="preserve">
+    <value>Convirtiendo etiqueta de medio {0}</value>
+  </data>
+  <data name="Converting_sectors" xml:space="preserve">
+    <value>Convirtiendo sectores</value>
+  </data>
+  <data name="Converting_sectors_0_to_1" xml:space="preserve">
+    <value>Convirtiendo sectores del {0} al {1}</value>
+  </data>
+  <data name="Converting_sectors_0_to_1_2_done" xml:space="preserve">
+    <value>Convirtiendo sectores del {0} al {1} ({2:P2} completado)</value>
+  </data>
+  <data name="Converting_sectors_0_to_1_in_track_2" xml:space="preserve">
+    <value>Convirtiendo sectores del {0} al {1} en la pista {2}</value>
+  </data>
+  <data name="Converting_sectors_0_to_1_in_track_2_3_done" xml:space="preserve">
+    <value>Convirtiendo sectores del {0} al {1} en la pista {2} ({3:P2} completado)</value>
+  </data>
+  <data name="Converting_sectors_in_track_0" xml:space="preserve">
+    <value>Convirtiendo sectores en la pista {0}</value>
+  </data>
+  <data name="Converting_sectors_in_track_0_of_1" xml:space="preserve">
+    <value>Convirtiendo sectores en la pista {0} de {1}</value>
+  </data>
+  <data name="Converting_tags" xml:space="preserve">
+    <value>Convirtiendo etiquetas</value>
+  </data>
+  <data name="Converting_tags_in_track_0_of_1" xml:space="preserve">
+    <value>Convirtiendo etiquetas en la pista {0} de {1}</value>
+  </data>
+  <data name="Converting_tag_0" xml:space="preserve">
+    <value>Convirtiendo etiqueta {0}</value>
+  </data>
+  <data name="Converting_tag_0_for_sectors_1_to_2_3_done" xml:space="preserve">
+    <value>Convirtiendo etiqueta {0} para los sectores del {1} al {2} ({3:P2} completado)</value>
+  </data>
+  <data name="Converting_tag_0_for_sectors_1_to_2_in_track_3_4_done" xml:space="preserve">
+    <value>Convirtiendo etiqueta {0} para los sectores del {1} al {2} en la pista {3} ({4:P2} completado)</value>
+  </data>
+  <data name="Converting_tag_2_for_sectors_0_to_1" xml:space="preserve">
+    <value>Convirtiendo etiqueta {2} para los sectores del {0} al {1}</value>
+  </data>
+  <data name="Converting_tag_3_for_sectors_0_to_1_in_track_2" xml:space="preserve">
+    <value>Convirtiendo etiqueta {3} para los sectores del {0} al {1} en la pista {2}</value>
+  </data>
+  <data name="Converting_tape_partition_0" xml:space="preserve">
+    <value>Convirtiendo partición {0} de cinta...</value>
+  </data>
+  <data name="Converting_track" xml:space="preserve">
+    <value>Convirtiendo pista</value>
+  </data>
+  <data name="Correctly_opened_image_file" xml:space="preserve">
+    <value>No se pudo abrir el fichero de imagen.</value>
+  </data>
+  <data name="Could_note_delete_existe_file_continue_Q" xml:space="preserve">
+    <value>No se puedo eliminar el fichero existente. ¿Desea continuar?</value>
+  </data>
+  <data name="Could_not_create_destination_file_continue_Q" xml:space="preserve">
+    <value>No se pudo crear el fichero destino. ¿Desea continuar?</value>
+  </data>
+  <data name="Could_not_find_metadata_sidecar" xml:space="preserve">
+    <value>No se pudo encontrar el sidecar de datos, no se continuará...</value>
+  </data>
+  <data name="Could_not_find_resume_file" xml:space="preserve">
+    <value>No se pudo encontrar el fichero de resumen, no se continuará...</value>
+  </data>
+  <data name="Could_not_open_device_error_0" xml:space="preserve">
+    <value>No se pudo abrir el dispositivo debido al error {0}.</value>
+  </data>
+  <data name="Could_not_remove_local_database" xml:space="preserve">
+    <value>No se pudo eliminar la base de datos local.</value>
+  </data>
+  <data name="Could_not_remove_main_database" xml:space="preserve">
+    <value>No se pudo eliminar la base de datos principal.</value>
+  </data>
+  <data name="Created_subdirectory_at_0" xml:space="preserve">
+    <value>Creando subdirectorio en {0}</value>
+  </data>
+  <data name="Create_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Creando sidecar de metadatos de Aaru</value>
+  </data>
+  <data name="Create_graph_of_dumped_media" xml:space="preserve">
+    <value>Crear gráfica del medio volcado. Actualmente sólo soportado para CD/DVD/BD/GD/UMD.</value>
+  </data>
+  <data name="Create_graph_of_verified_disc" xml:space="preserve">
+    <value>Crear gráfica del disco verificado (actualmente sólo implementado para discos ópticos.</value>
+  </data>
+  <data name="Create_or_use_resume_mapfile" xml:space="preserve">
+    <value>Crear y usar fichero de resumen.</value>
+  </data>
+  <data name="Creating_output_image" xml:space="preserve">
+    <value>Creando imagen de salida</value>
+  </data>
+  <data name="Database_Command_Family_Description" xml:space="preserve">
+    <value>Comandos para manejar la base de datos de dispositivos y estadísticas</value>
+  </data>
+  <data name="Database_Stats_Command_Description" xml:space="preserve">
+    <value>Muestra las estadísticas.</value>
+  </data>
+  <data name="Database_Update_Command_Description" xml:space="preserve">
+    <value>Actualiza la base de datos.</value>
+  </data>
+  <data name="Data_Transfer_Device_Element_Address" xml:space="preserve">
+    <value>Dirección del Elemento de Transferencia de Datos del Dispositivo</value>
+  </data>
+  <data name="Decoder_for_media_tag_type_0_not_yet_implemented_sorry" xml:space="preserve">
+    <value>Aún no se ha implementado un descodificador para la etiqueta del medio "{0}".</value>
+  </data>
+  <data name="Decoder_for_sector_tag_type_0_not_yet_implemented_sorry" xml:space="preserve">
+    <value>Aún no se ha implementado un descodificador para la etiqueta de sector "{0}".</value>
+  </data>
+  <data name="Decode_media_tags" xml:space="preserve">
+    <value>Descodificar etiquetas del medio.</value>
+  </data>
+  <data name="Decode_sector_tags" xml:space="preserve">
+    <value>Descodificar etiquetas de sector.</value>
+  </data>
+  <data name="Decrypt_sectors_help" xml:space="preserve">
+    <value>Intentar desencriptar los sectores encriptados.</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Por defecto</value>
+  </data>
+  <data name="Densities_supported_by_currently_inserted_media" xml:space="preserve">
+    <value>Densidades soportadas por el medio actualmente introducido</value>
+  </data>
+  <data name="Densities_supported_by_device" xml:space="preserve">
+    <value>Densidades soportadas por el dispositivo:</value>
+  </data>
+  <data name="Destination_exists_aborting" xml:space="preserve">
+    <value>El destino existe, abortando.</value>
+  </data>
+  <data name="Device_Command_Family_Description" xml:space="preserve">
+    <value>Comandos que se comunican con dispositivos</value>
+  </data>
+  <data name="Device_does_not_report_with_trap_discs" xml:space="preserve">
+    <value>El tipo de dispositivo no soporte crear reportes usando un disco trampa.</value>
+  </data>
+  <data name="Device_Geometry_Tuples" xml:space="preserve">
+    <value>Tuplas de geometría del dispositivo</value>
+  </data>
+  <data name="Device_Info_Command_Description" xml:space="preserve">
+    <value>Obtiene información sobre un dispositivo.</value>
+  </data>
+  <data name="Device_List_Command_Description" xml:space="preserve">
+    <value>Lista todos los dispositivos conectados.</value>
+  </data>
+  <data name="Device_path" xml:space="preserve">
+    <value>Ruta al dispositivo.</value>
+  </data>
+  <data name="Device_Report_Command_Description" xml:space="preserve">
+    <value>Comprueba las capacidades del dispositivo y crea un reporte de ellas.</value>
+  </data>
+  <data name="Device_report_must_be_run_as_admin" xml:space="preserve">
+    <value>Debido a los comandos que se envían a un dispositivo, para crear un reporte del mismo es necesario tener privilegios administrativos.</value>
+  </data>
+  <data name="Device_report_using_trap_disc" xml:space="preserve">
+    <value>Crea un reporte del dispositivo usando un disco trampa.</value>
+  </data>
+  <data name="Device_statistics" xml:space="preserve">
+    <value>Estadísticas de dispositivos</value>
+  </data>
+  <data name="Dialog_Aaru_Metadata" xml:space="preserve">
+    <value>Metadatos de Aaru</value>
+  </data>
+  <data name="Dialog_Binary_files" xml:space="preserve">
+    <value>Binario</value>
+  </data>
+  <data name="Dialog_Choose_destination_file" xml:space="preserve">
+    <value>Fichero destino</value>
+  </data>
+  <data name="Dialog_Choose_destination_folder" xml:space="preserve">
+    <value>Carpeta de destino...</value>
+  </data>
+  <data name="Dialog_Choose_existing_metadata_sidecar" xml:space="preserve">
+    <value>Sidecar de metadatos existente</value>
+  </data>
+  <data name="Dialog_Choose_existing_resume_file" xml:space="preserve">
+    <value>Fichero de resumen existente</value>
+  </data>
+  <data name="Dialog_Choose_image_to_open" xml:space="preserve">
+    <value>Imagen a abrir</value>
+  </data>
+  <data name="Dialog_Log_files" xml:space="preserve">
+    <value>Ficheros de registro</value>
+  </data>
+  <data name="Dialog_Text_files" xml:space="preserve">
+    <value>Texto</value>
+  </data>
+  <data name="Directory_0" xml:space="preserve">
+    <value>Directorio: {0}</value>
+  </data>
+  <data name="Directory_abbreviation" xml:space="preserve">
+    <value>&lt;DIR&gt;</value>
+  </data>
+  <data name="Directory_where_extracted_files_will_be_created" xml:space="preserve">
+    <value>Se creará el directorio donde se extraerán los ficheros. Se abortará si existe</value>
+  </data>
+  <data name="Disc_Definition_Structure" xml:space="preserve">
+    <value>Estructura de definición del disco</value>
+  </data>
+  <data name="Disc_image_checksums_are_correct" xml:space="preserve">
+    <value>Los checksums de la imagen de disco son correctos</value>
+  </data>
+  <data name="Disc_image_checksums_are_incorrect" xml:space="preserve">
+    <value>Los checksums de la imagen de disco son incorrectos</value>
+  </data>
+  <data name="Disc_image_does_not_contain_checksums" xml:space="preserve">
+    <value>La imagen de disco no contiene checksums</value>
+  </data>
+  <data name="Disc_image_does_not_support_verification" xml:space="preserve">
+    <value>La imagen de disco no soporta la verificación</value>
+  </data>
+  <data name="Disc_image_path" xml:space="preserve">
+    <value>Ruta a la imagen de disco</value>
+  </data>
+  <data name="Disc_information" xml:space="preserve">
+    <value>Información del disco</value>
+  </data>
+  <data name="Disk_has_0_unique_sectors_1" xml:space="preserve">
+    <value>El disco tiene {0} sectores únicos ({1:P3})</value>
+  </data>
+  <data name="Doesnt_have_partitions" xml:space="preserve">
+    <value>No contiene particiones</value>
+  </data>
+  <data name="Doesnt_have_sessions" xml:space="preserve">
+    <value>No contiene sesiones</value>
+  </data>
+  <data name="Do_not_store_paths_and_serial_numbers_in_log_or_metadata" xml:space="preserve">
+    <value>No guardar rutas ni números de serie en los registros ni metadatos.</value>
+  </data>
+  <data name="Do_you_have_audio_trap_disc" xml:space="preserve">
+    <value>¿Tiene un disco trampa (si no está segure pulse N)?</value>
+  </data>
+  <data name="Do_you_have_a_0_disc" xml:space="preserve">
+    <value>¿Tiene un disco {0} que pueda introducir en la unidad?</value>
+  </data>
+  <data name="Do_you_have_GD_ROM_disc" xml:space="preserve">
+    <value>¿Tiene un disco GD-ROM que pueda introducir en la unidad (si no está segure pulse N)?</value>
+  </data>
+  <data name="Do_you_have_media_you_can_insert" xml:space="preserve">
+    <value>¿Tiene un medio que pueda introducir en la unidad?</value>
+  </data>
+  <data name="Do_you_want_to_enable_decryption_of_copy_protected_media_Q" xml:space="preserve">
+    <value>¿Desea activar la desencriptación de los medios protegidos contra copia?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_command_usage_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre el uso de los comandos?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_found_devices_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los dispositivos encontrados?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_found_filesystems_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los sistemas de ficheros encontrados?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_found_file_filters_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los filtros de fichero encontrados?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_found_media_image_formats_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los formatos de imagen encontrados?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_found_partitioning_schemes_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los esquemas de particionado encontrados?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_media_image_verifications_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre las verificaciones de las imágenes?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_media_types_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los tipos de medio?</value>
+  </data>
+  <data name="Do_you_want_to_gather_statistics_about_scanned_media_Q" xml:space="preserve">
+    <value>¿Desea recopilar estadísticas sobre los escaneos de medios?</value>
+  </data>
+  <data name="Do_you_want_to_save_stats_about_your_Aaru_usage_Q" xml:space="preserve">
+    <value>¿Desea guardar estadísticas acerca de su uso de Aaru?</value>
+  </data>
+  <data name="Do_you_want_to_share_your_device_reports_with_us_Q" xml:space="preserve">
+    <value>¿Desea compartir sus reportes de dispositivo con nosotres?</value>
+  </data>
+  <data name="Do_you_want_to_share_your_stats__anonymously_Q" xml:space="preserve">
+    <value>¿Desea compartir sus estadísticas de forma anónima?</value>
+  </data>
+  <data name="Do_you_want_to_try_HLDTST_commands" xml:space="preserve">
+    <value>¿Desea intentar los comandos específicos de HL-DT-ST (o LG)?</value>
+  </data>
+  <data name="Do_you_want_to_try_MediaTek_commands" xml:space="preserve">
+    <value>¿Desea intentar el comando específico F1h subcomando 06h de MediaTek?</value>
+  </data>
+  <data name="Do_you_want_to_try_NEC_commands" xml:space="preserve">
+    <value>¿Desea intentar los comandos específicos de NEC?</value>
+  </data>
+  <data name="Do_you_want_to_try_Pioneer_commands" xml:space="preserve">
+    <value>¿Desea intentar los comandos específicos de Pioneer?</value>
+  </data>
+  <data name="Do_you_want_to_try_Plextor_commands" xml:space="preserve">
+    <value>¿Desea intentar los comandos específicos de Plextor?</value>
+  </data>
+  <data name="Drive_firmware_info_0" xml:space="preserve">
+    <value>Información del firmware de la unidad: {0}</value>
+  </data>
+  <data name="Drive_manufacturer_0" xml:space="preserve">
+    <value>Fabricante de la unidad: {0}</value>
+  </data>
+  <data name="Drive_model_0" xml:space="preserve">
+    <value>Modelo de la unidad: {0}</value>
+  </data>
+  <data name="Dump_graph_dimensions_argument_help" xml:space="preserve">
+    <value>Dimensiones en píxeles del cuadrado que contendrá la gráfica del medio volcado.</value>
+  </data>
+  <data name="Duration_cannot_be_negative_or_infinite" xml:space="preserve">
+    <value>La duración no puede ser ni negativa ni infinita</value>
+  </data>
+  <data name="DVD_read_speed_limited_to" xml:space="preserve">
+    <value>Velocidad de lectura del DVD limitada a</value>
+  </data>
+  <data name="Ejecting_media" xml:space="preserve">
+    <value>Expulsando medio...</value>
+  </data>
+  <data name="Eject_media_after_dump_finishes" xml:space="preserve">
+    <value>Expulsar el medio al terminar el volcado.</value>
+  </data>
+  <data name="Enables_creating_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Crear sidecar de metadatos de Aaru.</value>
+  </data>
+  <data name="Enables_trimming_errored_from_skipped_sectors" xml:space="preserve">
+    <value>Recortar los sectores erróneos de entre los omitidos.</value>
+  </data>
+  <data name="Enable_debug_console" xml:space="preserve">
+    <value>Activar consola de depuración</value>
+  </data>
+  <data name="Encodings" xml:space="preserve">
+    <value>Codificaciones</value>
+  </data>
+  <data name="encoding_for_0" xml:space="preserve">
+    <value>Usando codificación para {0}.</value>
+  </data>
+  <data name="Encoding_to_use_on_metadata_sidecar_creation" xml:space="preserve">
+    <value>Codificación para usar en la creación del sidecar de metadatos.</value>
+  </data>
+  <data name="Entropy_for_disk_is_0" xml:space="preserve">
+    <value>La entropía del disco es {0:F4}.</value>
+  </data>
+  <data name="Entropy_for_track_0_is_1" xml:space="preserve">
+    <value>La entropía de la pista {0} es {1:F4}.</value>
+  </data>
+  <data name="Enumerating_partitions" xml:space="preserve">
+    <value>Enumerando particiones...</value>
+  </data>
+  <data name="Error_0_closing_output_image_Contents_are_not_correct" xml:space="preserve">
+    <value>Error {0} al cerrar la imagen de salida... Su contenido no es correcto.</value>
+  </data>
+  <data name="Error_0_creating_output_image" xml:space="preserve">
+    <value>Error {0} al crear la imagen de salida.</value>
+  </data>
+  <data name="Error_0_opening_device" xml:space="preserve">
+    <value>Error {0} abriendo el dispositivo.</value>
+  </data>
+  <data name="Error_0_opening_image_format" xml:space="preserve">
+    <value>Error {0} abriendo la imagen.</value>
+  </data>
+  <data name="Error_0_reading_ATA_IDENTIFY_DEVICE_response_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo la respuesta de ATA IDENTIFY DEVICE de la imagen</value>
+  </data>
+  <data name="Error_0_reading_ATA_IDENTIFY_PACKET_DEVICE_response_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo la respuesta de ATA IDENTIFY PACKET DEVICE de la imagen</value>
+  </data>
+  <data name="Error_0_reading_CD_ATIP_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo el ATIP de CD de la imagen</value>
+  </data>
+  <data name="Error_0_reading_CD_full_TOC_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo la tabla de contenidos completa de CD de la imagen</value>
+  </data>
+  <data name="Error_0_reading_CD_PMA_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo el PMA de CD de la imagen</value>
+  </data>
+  <data name="Error_0_reading_CD_session_information_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo la información de sesión de CD de la imagen</value>
+  </data>
+  <data name="Error_0_reading_data_from_1" xml:space="preserve">
+    <value>Error {0} leyendo datos desde {1}.</value>
+  </data>
+  <data name="Error_0_reading_directory_1" xml:space="preserve">
+    <value>Error {0} leyendo el directorio {1}</value>
+  </data>
+  <data name="Error_0_reading_file_1" xml:space="preserve">
+    <value>Error {0} leyendo el fichero {1}</value>
+  </data>
+  <data name="Error_0_reading_file_continue_Q" xml:space="preserve">
+    <value>Error {0} leyendo fichero. ¿Desea continuar?</value>
+  </data>
+  <data name="Error_0_reading_media_tag" xml:space="preserve">
+    <value>Error {0} leyendo etiqueta del medio, continuando...</value>
+  </data>
+  <data name="Error_0_reading_media_tag_not_continuing" xml:space="preserve">
+    <value>Error {0} leyendo etiqueta del medio, no se continuará...</value>
+  </data>
+  <data name="Error_0_reading_root_directory" xml:space="preserve">
+    <value>Error {0} leyendo directorio raíz.</value>
+  </data>
+  <data name="Error_0_reading_SCSI_INQUIRY_response_from_disc_image" xml:space="preserve">
+    <value>Error {0} leyendo la respuesta de SCSI INQUIRY de la imagen</value>
+  </data>
+  <data name="Error_0_reading_sector_1" xml:space="preserve">
+    <value>Error {0} leyendo el sector {1}.</value>
+  </data>
+  <data name="Error_0_reading_sector_1_continuing" xml:space="preserve">
+    <value>Error {0} leyendo el sector {1}, continuando...</value>
+  </data>
+  <data name="Error_0_reading_sector_1_from_first_image" xml:space="preserve">
+    <value>Error {0} leyendo el sector {1} de la 1ª imagen.</value>
+  </data>
+  <data name="Error_0_reading_sector_1_from_second_image" xml:space="preserve">
+    <value>Error {0} leyendo el sector {1} de la 2ª imagen.</value>
+  </data>
+  <data name="Error_0_reading_sector_1_not_continuing" xml:space="preserve">
+    <value>Error {0} leyendo el sector {1}, no se continuará...</value>
+  </data>
+  <data name="Error_0_reading_tag_for_sector_1_continuing" xml:space="preserve">
+    <value>Error {0} leyendo etiqueta del sector {1}, continuando...</value>
+  </data>
+  <data name="Error_0_reading_tag_for_sector_1_not_continuing" xml:space="preserve">
+    <value>Error {0} leyendo etiqueta del sector {1}, no se continuará</value>
+  </data>
+  <data name="Error_0_sending_tracks_list_to_output_image" xml:space="preserve">
+    <value>Error {0} enviando lista de pistas a la imagen de salida.</value>
+  </data>
+  <data name="Error_0_setting_geometry_image_may_be_incorrect_continuing" xml:space="preserve">
+    <value>Error {0} estableciendo geometría. La imagen puede ser incorrecta, continuando...</value>
+  </data>
+  <data name="Error_0_setting_metadata_not_continuing" xml:space="preserve">
+    <value>Error {0} estableciendo metadatos, no se continuará...</value>
+  </data>
+  <data name="Error_0_trying_to_get_information_about_filesystem_entry_named_1" xml:space="preserve">
+    <value>Error {0} intentendo obtener información sobre la entrada del sistema de ficheros llamada {1}</value>
+  </data>
+  <data name="Error_0_trying_to_read_1_of_chosen_filesystem" xml:space="preserve">
+    <value>Error {0} intentando leer "{1}" del sistema de ficheros elegido</value>
+  </data>
+  <data name="Error_0_while_reading_1_bytes_from_2" xml:space="preserve">
+    <value>Error {0} al leer {1} bytes desde el {2}, no se continuará...</value>
+  </data>
+  <data name="Error_0_while_reading_1_sectors_from_sector_2" xml:space="preserve">
+    <value>Error {0} al leer {1} sectores desde el {2}, no se continuará...</value>
+  </data>
+  <data name="Error_0_while_reading_block_1" xml:space="preserve">
+    <value>Error {0} al leer el bloque {1}, no se continuará...</value>
+  </data>
+  <data name="Error_0_writing_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Error {0} escribiendo metadatos de Aaru en la imagen de salida.</value>
+  </data>
+  <data name="Error_0_writing_dump_hardware_list_to_output_image" xml:space="preserve">
+    <value>Error {0} escribiendo lista de hardware de volcado en la imagen de salida.</value>
+  </data>
+  <data name="Error_0_writing_media_tag" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta de medio, continuando...</value>
+  </data>
+  <data name="Error_0_writing_media_tag_not_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta de medio, no se continuará...</value>
+  </data>
+  <data name="Error_0_writing_sector_1_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo el sector {1}, continuando...</value>
+  </data>
+  <data name="Error_0_writing_sector_1_not_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo el sector {1}, no se continuará...</value>
+  </data>
+  <data name="Error_0_writing_tag_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta, continuando...</value>
+  </data>
+  <data name="Error_0_writing_tag_for_sector_1_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta del sector {1}, continuando...</value>
+  </data>
+  <data name="Error_0_writing_tag_for_sector_1_not_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta del sector {1}, no se continuará...</value>
+  </data>
+  <data name="Error_0_writing_tag_not_continuing" xml:space="preserve">
+    <value>Error {0} escribiendo etiqueta, no se continuará...</value>
+  </data>
+  <data name="Error_decoding_page_please_open_an_issue" xml:space="preserve">
+    <value>Error descodificando página, por favor repórtelo</value>
+  </data>
+  <data name="Error_reading_CD_TEXT_from_disc_image" xml:space="preserve">
+    <value>Error leyendo CD-TEXT de la imagen de disco</value>
+  </data>
+  <data name="Error_reading_CD_TOC_from_disc_image" xml:space="preserve">
+    <value>Error leyendo tabla de contenidos de CD de la imagen de disco</value>
+  </data>
+  <data name="Error_reading_file" xml:space="preserve">
+    <value>Error leyendo fichero</value>
+  </data>
+  <data name="Error_reading_file_0" xml:space="preserve">
+    <value>Error leyendo fichero: {0}</value>
+  </data>
+  <data name="Error_setting_output_image_in_tape_mode" xml:space="preserve">
+    <value>Error estableciendo imagen de salida en modo cinta, no se continuará</value>
+  </data>
+  <data name="Error_trying_to_find_selected_plugin" xml:space="preserve">
+    <value>Error intentando encontrar la extensión elegida</value>
+  </data>
+  <data name="Exception_0_trying_to_save_logfile_details_has_been_sent_to_console" xml:space="preserve">
+    <value>Excepción {0} intentando guardar el fichero de registro, los detalles se han enviado a la consola.</value>
+  </data>
+  <data name="Exception_reading_file" xml:space="preserve">
+    <value>Excepción leyendo fichero.</value>
+  </data>
+  <data name="Exception_trying_to_remove_old_database_version" xml:space="preserve">
+    <value>Excepción intentando eliminar la versión antigua de la base de datos, no se puede continuar...</value>
+  </data>
+  <data name="Existing_file" xml:space="preserve">
+    <value>Fichero existente</value>
+  </data>
+  <data name="Extract_extended_attributes_if_present" xml:space="preserve">
+    <value>Extraer atributos extendidos si existen.</value>
+  </data>
+  <data name="Filename_0_not_supported_want_to_rename_to_1" xml:space="preserve">
+    <value>El nombre de fichero {0} no está soportado en esta plataforma. ¿Desea renombrarlo a {1}?</value>
+  </data>
+  <data name="Filesystem_Command_Family_Description" xml:space="preserve">
+    <value>Comandos para manejar sistemas de ficheros</value>
+  </data>
+  <data name="Filesystem_Extract_Command_Description" xml:space="preserve">
+    <value>Extrae todos los ficheros de la imagen de disco.</value>
+  </data>
+  <data name="Filesystem_Info_Command_Description" xml:space="preserve">
+    <value>Abre una imagen de disco y muestra informacion de las particiones y/o sistemas de ficheros encontrados.</value>
+  </data>
+  <data name="Filesystem_List_Command_Description" xml:space="preserve">
+    <value>Lista los ficheros de la imagen de disco.</value>
+  </data>
+  <data name="Filesystem_not_identified" xml:space="preserve">
+    <value>Sistema de ficheros no identificado</value>
+  </data>
+  <data name="Filesystem_Options_Command_Description" xml:space="preserve">
+    <value>Lista todas las opciones soportadas por los sistemas de ficheros de sólo lectura.</value>
+  </data>
+  <data name="Filesystem_statistics" xml:space="preserve">
+    <value>Estadísticas de sistemas de ficheros</value>
+  </data>
+  <data name="File_0_starts_at_block_1_and_ends_at_block_2" xml:space="preserve">
+    <value>El fichero {0} empieza en el bloque {1} y termina en el {2}</value>
+  </data>
+  <data name="File_named_0_exists_overwrite_Q" xml:space="preserve">
+    <value>Ya existe un fichero llamado {0} en el directorio de destino. ¿Desea sobreescribirlo?</value>
+  </data>
+  <data name="Filters_statistics" xml:space="preserve">
+    <value>Estadísticas de filtros</value>
+  </data>
+  <data name="Filter_0" xml:space="preserve">
+    <value>Filtro: {0}</value>
+  </data>
+  <data name="Firmware_revision_of_drive_read_the_media_by_image" xml:space="preserve">
+    <value>La revisión del firmware de la unidad usada para leer el medio representado por la imagen.</value>
+  </data>
+  <data name="First_image_has_more_sectors" xml:space="preserve">
+    <value>La 1ª imagen tiene más sectores</value>
+  </data>
+  <data name="First_input_file_format_identified_by_0" xml:space="preserve">
+    <value>El formato del 1er fichero es identificado por {0}.</value>
+  </data>
+  <data name="First_input_file_format_identified_by_0_1" xml:space="preserve">
+    <value>El formato del 1er fichero es identificado por {0} ({1}).</value>
+  </data>
+  <data name="First_input_file_format_not_identified" xml:space="preserve">
+    <value>No se identificó el formato del 1er fichero, no se procederá con la comparativa.</value>
+  </data>
+  <data name="First_media_image_path" xml:space="preserve">
+    <value>Ruta de la primera imagen</value>
+  </data>
+  <data name="Fix_audio_tracks_offset" xml:space="preserve">
+    <value>Correcgir desplazamiento de las pistas de audio. Sólo aplicable a CD/GD.</value>
+  </data>
+  <data name="Fix_subchannel_crc_help" xml:space="preserve">
+    <value>Si el subcanal parece correcto, pero falla su CRC, reescribirlo. Implica corregir subcanales.</value>
+  </data>
+  <data name="Fix_subchannel_help" xml:space="preserve">
+    <value>Intentar corregir el subcanal. Implica corregir la posición del subcanal.</value>
+  </data>
+  <data name="Fix_subchannel_position_help" xml:space="preserve">
+    <value>Guardar el subcanal junto al sector que describe.</value>
+  </data>
+  <data name="Force_geometry_help" xml:space="preserve">
+    <value>Forzar la geometría, sólo soportados en medios de bloques que no son cintas. Especificado como C/H/S.</value>
+  </data>
+  <data name="Format_0" xml:space="preserve">
+    <value>Formato: {0}</value>
+  </data>
+  <data name="Format_0_version_1" xml:space="preserve">
+    <value>Formato: {0} versión {1}</value>
+  </data>
+  <data name="Format_of_the_output_image_as_plugin_name_or_plugin_id" xml:space="preserve">
+    <value>Formato de la imagen de salida, como nombre o id de su extensión. Si no se especifica, se intentará detectar de acuerdo a la extensión del nombre de fichero de salida.</value>
+  </data>
+  <data name="Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3" xml:space="preserve">
+    <value>Encontrado dispositivo soportado modelo {0} fabricado por {1} en el bus {2} y ruta {3}</value>
+  </data>
+  <data name="Gather_statistics_about_command_usage_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre el uso de comandos?</value>
+  </data>
+  <data name="Gather_statistics_about_found_devices_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los dispositivos encontrados?</value>
+  </data>
+  <data name="Gather_statistics_about_found_filesystems_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los sistemas de ficheros encontrados?</value>
+  </data>
+  <data name="Gather_statistics_about_found_file_filters_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los filtros de fichero encontrados?</value>
+  </data>
+  <data name="Gather_statistics_about_found_media_image_formats_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los formatos de imagen encontrados?</value>
+  </data>
+  <data name="Gather_statistics_about_found_partitioning_schemes_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los esquemas de particionado encontrados?</value>
+  </data>
+  <data name="Gather_statistics_about_media_image_verifications_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre las verificaciones de las imágenes?</value>
+  </data>
+  <data name="Gather_statistics_about_media_types_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los tipos de medio?</value>
+  </data>
+  <data name="Gather_statistics_about_scanned_media_Q" xml:space="preserve">
+    <value>¿Recopilar estadísticas sobre los escaneos de medios?</value>
+  </data>
+  <data name="GDPR_Compliance" xml:space="preserve">
+    <value>En cumplimiento con el Reglamento General de Protección de Datos de la Unión Europa 2016/679 (RGPD), debemos ofrecerle la siguiente información sobre Aaru y preguntarle si desea unirse a compartir cierta información.</value>
+  </data>
+  <data name="GDPR_Information_sharing" xml:space="preserve">
+    <value>Para cualquier información compartida su dirección IP puede ser almacenada en nuestro servidor, de una forma que no es posible para ninguna persona, en un proceso manual o automatizado, vincularla con su identidad, a no ser que se especifique lo contrario.</value>
+  </data>
+  <data name="GDPR_Open_Source_Disclaimer" xml:space="preserve">
+    <value>Atención: Debido a que Aaru es software de código abierto esta información, y por tanto su cumplimiento con el RGPD sólo es cierto si ha obtenido una copia certificada de los autores originales. En caso de duda, cierre Aaru y pregunte en nuestros canales de soporte.</value>
+  </data>
+  <data name="Generates_subchannels_help" xml:space="preserve">
+    <value>Generando subcanales faltantes.</value>
+  </data>
+  <data name="Generate_subchannels_dump_help" xml:space="preserve">
+    <value>Generando subcanales faltantes (no cuentan como volcados en el fichero de resumen).</value>
+  </data>
+  <data name="Generating_decryption_keys" xml:space="preserve">
+    <value>Llaves de desencriptación no encontrados. Intentando generarlas.</value>
+  </data>
+  <data name="Hashing_blocks_0_to_2_of_file_1" xml:space="preserve">
+    <value>Calculando hash de los bloques {0} a {2} del fichero {1}</value>
+  </data>
+  <data name="Hashing_bytes_0_to_1" xml:space="preserve">
+    <value>Calculando hash de los bytes {0} a {1}</value>
+  </data>
+  <data name="Hashing_file_0_of_1" xml:space="preserve">
+    <value>Calculando hash del fichero {0} de {1}</value>
+  </data>
+  <data name="Hashing_file_less_block_0" xml:space="preserve">
+    <value>Calculando hash del bloque {0} sin fichero</value>
+  </data>
+  <data name="Hashing_image" xml:space="preserve">
+    <value>Calculando hash de la imagen...</value>
+  </data>
+  <data name="Hashing_sector" xml:space="preserve">
+    <value>Calculando hash del sector</value>
+  </data>
+  <data name="Hashing_sectors_0_to_1" xml:space="preserve">
+    <value>Calculando hash de los sectores del {0} al {1}</value>
+  </data>
+  <data name="Hashing_sectors_0_to_2_of_track_1" xml:space="preserve">
+    <value>Calculando hash de los sectores del {0} al {2} de la pista {1}</value>
+  </data>
+  <data name="Hashing_track_0_of_1" xml:space="preserve">
+    <value>Calculando hash de la pista {0} de {1}</value>
+  </data>
+  <data name="Has_partitions" xml:space="preserve">
+    <value>Tiene particiones</value>
+  </data>
+  <data name="Has_partitions_Question" xml:space="preserve">
+    <value>¿Tiene particiones?</value>
+  </data>
+  <data name="Has_sessions" xml:space="preserve">
+    <value>Tiene sesiones</value>
+  </data>
+  <data name="Has_sessions_Question" xml:space="preserve">
+    <value>¿Tiene sesiones?</value>
+  </data>
+  <data name="Has_tag_0_Question" xml:space="preserve">
+    <value>¿Tiene {0}?</value>
+  </data>
+  <data name="Head_Assembly_Serial_Number" xml:space="preserve">
+    <value>Número de serie del ensamblado de la cabeza</value>
+  </data>
+  <data name="Hidden_track_starts_at_LBA_0_ends_at_LBA_1" xml:space="preserve">
+    <value>Pista oculta empieza en el LBA {0} y termina en el {1}</value>
+  </data>
+  <data name="How_many_bytes_to_print_per_line" xml:space="preserve">
+    <value>Cuando bytes deben mostrarse por línea.</value>
+  </data>
+  <data name="How_many_CDRW_run_out_sectors_to_ignore_and_regenerate" xml:space="preserve">
+    <value>Cuantos sectores de finalización de CD-R(W) deben ignorarse y regenerarse (0 para ninguno).</value>
+  </data>
+  <data name="How_many_retry_passes_to_do" xml:space="preserve">
+    <value>Cuantos pasos de reintento realizar.</value>
+  </data>
+  <data name="How_many_sectors_to_convert_at_once" xml:space="preserve">
+    <value>Cuantos sectores convertir de una vez.</value>
+  </data>
+  <data name="How_many_sectors_to_decode_or_all" xml:space="preserve">
+    <value>Cuantos sectores descodificar, o "todos".</value>
+  </data>
+  <data name="How_many_sectors_to_print" xml:space="preserve">
+    <value>Cuantos sectores mostrar.</value>
+  </data>
+  <data name="HP_Drive_ACI_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión de ACI de la unidad HP</value>
+  </data>
+  <data name="HP_Drive_Firmware_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión del firmware de la unidad HP</value>
+  </data>
+  <data name="HP_Drive_Hardware_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión del hardware de la unidad HP</value>
+  </data>
+  <data name="HP_Drive_Head_Assembly_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión del ensamblado de la cabeza de la unidad HP</value>
+  </data>
+  <data name="HP_Drive_Mechanism_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión del mecanismo de la unidad HP</value>
+  </data>
+  <data name="HP_Drive_PCA_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión del PCA de la unidad HP</value>
+  </data>
+  <data name="IBM_Drive_Component_Revision_Levels_page" xml:space="preserve">
+    <value>Página de niveles de revisión de los componentes de la unidad IBM</value>
+  </data>
+  <data name="IBM_Drive_Serial_Numbers_page" xml:space="preserve">
+    <value>Página de números de serie de la unidad IBM</value>
+  </data>
+  <data name="Identified_by_0" xml:space="preserve">
+    <value>Identificado por {0}.</value>
+  </data>
+  <data name="Identified_by_0_plugins" xml:space="preserve">
+    <value>Identificado por {0} extensiones</value>
+  </data>
+  <data name="Identifying_filesystems" xml:space="preserve">
+    <value>Identificando sistemas de ficheros...</value>
+  </data>
+  <data name="Identifying_filesystems_on_partition" xml:space="preserve">
+    <value>Identificando sistemas de ficheros en la partición...</value>
+  </data>
+  <data name="Identifying_file_filter" xml:space="preserve">
+    <value>Identificando el filtro de fichero...</value>
+  </data>
+  <data name="Identifying_first_file_filter" xml:space="preserve">
+    <value>Identificando el filtro del 1er fichero...</value>
+  </data>
+  <data name="Identifying_first_image_format" xml:space="preserve">
+    <value>Identificando el formato de la 1ª imagen...</value>
+  </data>
+  <data name="Identifying_image_format" xml:space="preserve">
+    <value>Identificando el formato de la imagen...</value>
+  </data>
+  <data name="Identifying_second_file_filter" xml:space="preserve">
+    <value>Identificando el filtro del 2º fichero...</value>
+  </data>
+  <data name="Identifying_second_image_format" xml:space="preserve">
+    <value>Identificando el formato de la 2ª imagen...</value>
+  </data>
+  <data name="If_you_dont_care_use_force_option" xml:space="preserve">
+    <value>Si no le importa, use la opción "force".</value>
+  </data>
+  <data name="If_you_dont_care_use_force_option_This_will_skip_all_sector_tags_converting_only_user_data"
+        xml:space="preserve">
+    <value>Si no le importa, use la opción "force". Esto omitirá todas las etiquetas de sector convirtiendo sólo los datos de usuario.</value>
+  </data>
+  <data name="Images_differ" xml:space="preserve">
+    <value>Las imágenes son diferentes</value>
+  </data>
+  <data name="Images_do_not_differ" xml:space="preserve">
+    <value>Las imágenes son idénticas</value>
+  </data>
+  <data name="Image_Checksum_Command_Description" xml:space="preserve">
+    <value>Calcula el checksum de una imagen.</value>
+  </data>
+  <data name="Image_Command_Family_Description" xml:space="preserve">
+    <value>Comandos para manejar imágenes</value>
+  </data>
+  <data name="Image_comments" xml:space="preserve">
+    <value>Commentarios de la imagen.</value>
+  </data>
+  <data name="Image_Compare_Command_Description" xml:space="preserve">
+    <value>Compara dos imágenes.</value>
+  </data>
+  <data name="Image_converted_successfully" xml:space="preserve">
+    <value>Imagen convertida con éxito.</value>
+  </data>
+  <data name="Image_Convert_Command_Description" xml:space="preserve">
+    <value>Convierte una imagen a otro formato.</value>
+  </data>
+  <data name="Image_Create_Sidecar_Command_Description" xml:space="preserve">
+    <value>Crea sidecar XML de metadatos CICM.</value>
+  </data>
+  <data name="Image_Decode_Command_Description" xml:space="preserve">
+    <value>Descodifica y muestra etiquetas del sector o medio.</value>
+  </data>
+  <data name="Image_Entropy_Command_Description" xml:space="preserve">
+    <value>Calcula la entropía y/o sectores duplicados de una imagen.</value>
+  </data>
+  <data name="Image_format_identified_by_0" xml:space="preserve">
+    <value>Formato de imagen identificado por {0}.</value>
+  </data>
+  <data name="Image_format_identified_by_0_1" xml:space="preserve">
+    <value>Formato de imagen identificado por {0} ({1}).</value>
+  </data>
+  <data name="Image_format_not_identified" xml:space="preserve">
+    <value>Format de imagen no identificado.</value>
+  </data>
+  <data name="Image_format_not_identified_not_proceeding_with_analysis" xml:space="preserve">
+    <value>Format de imagen no identificado, no se procede con el análisis.</value>
+  </data>
+  <data name="Image_format_not_identified_not_proceeding_with_file_extraction" xml:space="preserve">
+    <value>Format de imagen no identificado, no se procede con la extracción de ficheros.</value>
+  </data>
+  <data name="Image_format_not_identified_not_proceeding_with_listing" xml:space="preserve">
+    <value>Format de imagen no identificado, no se procede con el listado.</value>
+  </data>
+  <data name="Image_format_not_identified_not_proceeding_with_sidecar_creation" xml:space="preserve">
+    <value>Format de imagen no identificado, no se procede con la creación del sidecar.</value>
+  </data>
+  <data name="Image_has_0_sectors" xml:space="preserve">
+    <value>La imagen contiene {0} sectores.</value>
+  </data>
+  <data name="Image_identifies_media_type_as_0" xml:space="preserve">
+    <value>La imagen identifica el tipo de medio como {0}.</value>
+  </data>
+  <data name="Image_Info_Command_Description" xml:space="preserve">
+    <value>Identifica y muestra información sobre una imagen, el medio que representa y sus metadatos.</value>
+  </data>
+  <data name="Image_Options_Command_Description" xml:space="preserve">
+    <value>Muestra todas las opciones para los formatos de imagen escribibles.</value>
+  </data>
+  <data name="Image_partitioned_status_differ" xml:space="preserve">
+    <value>El estado de particionado de las imágenes difiere</value>
+  </data>
+  <data name="Image_Print_Command_Description" xml:space="preserve">
+    <value>Muestra un sector, en valores hexadecimales, en la consola</value>
+  </data>
+  <data name="Image_sectors_differ" xml:space="preserve">
+    <value>Los sectores de las imágenes difieren</value>
+  </data>
+  <data name="Image_sector_size_differ" xml:space="preserve">
+    <value>El tamaño de sector de las imágenes difieren</value>
+  </data>
+  <data name="Image_session_status_differ" xml:space="preserve">
+    <value>El estado de sesiones de las imágenes difiere</value>
+  </data>
+  <data name="Image_Verify_Command_Description" xml:space="preserve">
+    <value>Verifica la integridad de una imagen, y si está soportado, de sus sectores.</value>
+  </data>
+  <data name="Image_without_headers_is_0_bytes" xml:space="preserve">
+    <value>La imagen sin cabeceras ocupa {0} bytes.</value>
+  </data>
+  <data name="Incorrect_metadata_sidecar_file" xml:space="preserve">
+    <value>Fichero sidecar de metadatos incorrecto...</value>
+  </data>
+  <data name="Incorrect_metadata_sidecar_file_not_continuing" xml:space="preserve">
+    <value>Fichero sidecar de metadatos incorrecto, no se continuará...</value>
+  </data>
+  <data name="Incorrect_resume_file" xml:space="preserve">
+    <value>Fichero de resumen incorrecto...</value>
+  </data>
+  <data name="Incorrect_resume_file_cannot_use_it" xml:space="preserve">
+    <value>Fichero de resumen incorrecto, no se puede usar...</value>
+  </data>
+  <data name="Incorrect_resume_file_not_continuing" xml:space="preserve">
+    <value>Fichero de resumen incorrecto, no se continuará...</value>
+  </data>
+  <data name="Incorrect_subchannel_type_0_requested" xml:space="preserve">
+    <value>El tipo de subcanal solicitado, "{0}", es incorrecto.</value>
+  </data>
+  <data name="Initializing_console" xml:space="preserve">
+    <value>Inicializando consola...</value>
+  </data>
+  <data name="Input_format_contains_a_tape_image_and_is_not_supported_by_output_format" xml:space="preserve">
+    <value>El formato de entrada contiene la imagen de una cinta y esto no está soportado por el formato de salida, no se continuará...</value>
+  </data>
+  <data name="Input_image_format_identified_by_0" xml:space="preserve">
+    <value>Formato de imagen de entrada identificado por {0}.</value>
+  </data>
+  <data name="Input_image_format_identified_by_0_1" xml:space="preserve">
+    <value>Formato de imagen de entrada identificado por {0} ({1}).</value>
+  </data>
+  <data name="Input_image_format_not_identified" xml:space="preserve">
+    <value>Formato de imagen de entrada no identificado, no se procederá con la conversión...</value>
+  </data>
+  <data name="Input_image_is_not_returning_raw_sectors_use_force_if_you_want_to_continue" xml:space="preserve">
+    <value>El formato de imagen de entrada no está devolviendo sectores sin procesar, utilice "force" si desea continuar...</value>
+  </data>
+  <data name="Input_image_path" xml:space="preserve">
+    <value>Ruta de la imagen de entrada</value>
+  </data>
+  <data name="Invalid_characters_found_in_list_of_files" xml:space="preserve">
+    <value>Caracteres inválidos encontrados en la lista de ficheros, saliendo...</value>
+  </data>
+  <data name="Invalid_geometry_specified" xml:space="preserve">
+    <value>La geometría especificada no es válida</value>
+  </data>
+  <data name="Invalid_item_in_list" xml:space="preserve">
+    <value>Elemento no válido en la lista</value>
+  </data>
+  <data name="Invalid_list_of_items" xml:space="preserve">
+    <value>La lista de elementos no es válido</value>
+  </data>
+  <data name="Invalid_number_of_cylinders_specified" xml:space="preserve">
+    <value>El número de cilindros especificado no es válido</value>
+  </data>
+  <data name="Invalid_number_of_heads_specified" xml:space="preserve">
+    <value>El número de cabezas especificado no es válido</value>
+  </data>
+  <data name="Invalid_sectors_per_track_specified" xml:space="preserve">
+    <value>El número de sectores por pista especificado no es válido</value>
+  </data>
+  <data name="Invoke_Opening_image_file" xml:space="preserve">
+    <value>Abriendo fichero de imagen...</value>
+  </data>
+  <data name="Is_forcing_only_first_session" xml:space="preserve">
+    <value>Está forzando una única sesión</value>
+  </data>
+  <data name="Is_hiding_CD_Rs" xml:space="preserve">
+    <value>Está ocultando los CD-R</value>
+  </data>
+  <data name="Is_the_device_natively_FireWire" xml:space="preserve">
+    <value>¿Es el dispositivo FireWire de forma nativa (en caso de duda, pulse S)</value>
+  </data>
+  <data name="Is_the_device_natively_USB" xml:space="preserve">
+    <value>¿Es el dispositivo USB de forma nativa (en caso de duda, pulse S)</value>
+  </data>
+  <data name="Is_the_media_removable" xml:space="preserve">
+    <value>¿Es el medio extraíble de los elementos de lectura y escritura?</value>
+  </data>
+  <data name="Is_the_media_removable_flash_is_not" xml:space="preserve">
+    <value>¿Es el medio extraíble de los elementos de lectura y escritura (las memorias flash, o pendrive, NO SON extraíbles)?</value>
+  </data>
+  <data name="Items_must_be_a_IList_ulong_double" xml:space="preserve">
+    <value>Los elementos deben de ser un IList&lt;(ulong, double)&gt; con ulong siendo el bloque y double siendo el tiempo ocupado leyéndolo, o NaN para un error.</value>
+  </data>
+  <data name="Kb_s" xml:space="preserve">
+    <value>Kb/s</value>
+  </data>
+  <data name="Label_About" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="Label_Authors" xml:space="preserve">
+    <value>Autores</value>
+  </data>
+  <data name="Label_Libraries" xml:space="preserve">
+    <value>Librerías</value>
+  </data>
+  <data name="Label_License" xml:space="preserve">
+    <value>Licencia: Licencia General Pública GNU Versión 3 (GPLv3)</value>
+  </data>
+  <data name="Last_media_of_sequence_by_image" xml:space="preserve">
+    <value>El último medio del conjunto al que pertenece el medio representado por la imagen corresponde a.</value>
+  </data>
+  <data name="Last_PoweRec_used_speed" xml:space="preserve">
+    <value>Última velocidad de PoweRec usada</value>
+  </data>
+  <data name="LBAs_without_checksum" xml:space="preserve">
+    <value>LBAs sin checksum:</value>
+  </data>
+  <data name="LBAs_with_error" xml:space="preserve">
+    <value>LBAs sin errores:</value>
+  </data>
+  <data name="Level_1_Version_Product_Information_Tuple" xml:space="preserve">
+    <value>Tupla de Información del Producto o Versión Nivel 1</value>
+  </data>
+  <data name="Listing_extended_attributes" xml:space="preserve">
+    <value>Listando atributos extendidos...</value>
+  </data>
+  <data name="List_Encodings_Command_Description" xml:space="preserve">
+    <value>Lista todas las codificaciones de texto y páginas de código.</value>
+  </data>
+  <data name="List_Formats_Command_Description" xml:space="preserve">
+    <value>Lista todos los formatos de imagen, esquemas de partición y sistemas de ficheros.</value>
+  </data>
+  <data name="List_Namespaces_Command_Description" xml:space="preserve">
+    <value>Lista todos los espacios de nombre soportados por los sistemas de ficheros de sólo lectura.</value>
+  </data>
+  <data name="Loading_main_window" xml:space="preserve">
+    <value>Cargando ventana principal...</value>
+  </data>
+  <data name="Loading_settings" xml:space="preserve">
+    <value>Cargando preferencias...</value>
+  </data>
+  <data name="Loading_statistics" xml:space="preserve">
+    <value>Cargando estadísticas...</value>
+  </data>
+  <data name="LogEntry_Type_Info" xml:space="preserve">
+    <value>Información</value>
+  </data>
+  <data name="Log_saved_at_0" xml:space="preserve">
+    <value>Registro guardado en {0}</value>
+  </data>
+  <data name="Manufacturer_assigned_Serial_Number" xml:space="preserve">
+    <value>Número de serie asignado por el fabricante</value>
+  </data>
+  <data name="Manufacturer_Identification_Tuple" xml:space="preserve">
+    <value>Tupla de identificación del fabricante</value>
+  </data>
+  <data name="Manufacturer_of_drive_read_the_media_by_image" xml:space="preserve">
+    <value>Fabricante de la unidad usada para leer el medio representado por la imagen.</value>
+  </data>
+  <data name="Manufacturer_of_media_by_image" xml:space="preserve">
+    <value>Fabricante del medio representado por la imagen.</value>
+  </data>
+  <data name="Maximum_number_of_blocks_to_read_at_once" xml:space="preserve">
+    <value>Número máximo de bloques para leer de una vez.</value>
+  </data>
+  <data name="Maximum_PoweRec_speed_for_currently_inserted_media" xml:space="preserve">
+    <value>Velocidad máxima PoweRec para el medio actualmente insertado:</value>
+  </data>
+  <data name="Media_already_dumped_correctly_not_continuing" xml:space="preserve">
+    <value>El medio ya se volcó correctamente, no se continuará...</value>
+  </data>
+  <data name="Media_already_dumped_correctly_please_choose_another_destination" xml:space="preserve">
+    <value>El medio ya se volcó correctamente, por favor elija otro destino...</value>
+  </data>
+  <data name="Media_barcode_0" xml:space="preserve">
+    <value>Código de barras del medio: {0}</value>
+  </data>
+  <data name="Media_Command_Family_Description" xml:space="preserve">
+    <value>Comandos para manejar medios insertados en dispositivos</value>
+  </data>
+  <data name="Media_Dump_Command_Description" xml:space="preserve">
+    <value>Vuelca el medio a una imagen.</value>
+  </data>
+  <data name="Media_found_in_images_statistics" xml:space="preserve">
+    <value>Estadísticas de tipos de medio encontrados en imágenes</value>
+  </data>
+  <data name="Media_found_in_real_device_statistics" xml:space="preserve">
+    <value>Estadísticas de tipos de medio encontrados en dispositivos</value>
+  </data>
+  <data name="Media_found_type_image" xml:space="preserve">
+    <value>imagen</value>
+  </data>
+  <data name="Media_found_type_real" xml:space="preserve">
+    <value>real</value>
+  </data>
+  <data name="Media_geometry_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
+    <value>Geometría del medio: {0} cilindros, {1} cabezas y {2} sectores por pista</value>
+  </data>
+  <data name="Media_image_format_statistics" xml:space="preserve">
+    <value>Estadísticas de formatos de imagen de medio</value>
+  </data>
+  <data name="Media_image_path" xml:space="preserve">
+    <value>Ruta de la imagen</value>
+  </data>
+  <data name="Media_Info_Command_Description" xml:space="preserve">
+    <value>Obtiene información sobre el medio introducido en un dispositivo.</value>
+  </data>
+  <data name="Media_model_0" xml:space="preserve">
+    <value>Model del medio: {0}</value>
+  </data>
+  <data name="Media_part_number_0" xml:space="preserve">
+    <value>Número de parte del medio: {0}</value>
+  </data>
+  <data name="Media_Scan_Command_Description" xml:space="preserve">
+    <value>Escane el medio introducido en un dispositivo.</value>
+  </data>
+  <data name="Media_title_0" xml:space="preserve">
+    <value>Título del medio: {0}</value>
+  </data>
+  <data name="Media_type_differs" xml:space="preserve">
+    <value>El tipo de medio difiere</value>
+  </data>
+  <data name="Medium_types_currently_inserted_in_device" xml:space="preserve">
+    <value>Tipos de medio actualmente introducidos en la unidad</value>
+  </data>
+  <data name="Medium_types_supported_by_device" xml:space="preserve">
+    <value>Tipos de medio actualmente soportados por la unidad:</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>_Acerca de</value>
+  </data>
+  <data name="Menu_Close_all_images" xml:space="preserve">
+    <value>_Cerrar todas las imágenes</value>
+  </data>
+  <data name="Menu_Console" xml:space="preserve">
+    <value>_Consola</value>
+  </data>
+  <data name="Menu_Devices" xml:space="preserve">
+    <value>_Dispositivos</value>
+  </data>
+  <data name="Menu_Encodings" xml:space="preserve">
+    <value>_Codificaciones</value>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>_Salir</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>_Fichero</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>A_yuda</value>
+  </data>
+  <data name="Menu_Open" xml:space="preserve">
+    <value>_Abrir</value>
+  </data>
+  <data name="Menu_Plugins" xml:space="preserve">
+    <value>E_xtensiones</value>
+  </data>
+  <data name="Menu_Refresh" xml:space="preserve">
+    <value>_Refrescar</value>
+  </data>
+  <data name="Menu_Refresh_devices" xml:space="preserve">
+    <value>_Refrescar dispositivos</value>
+  </data>
+  <data name="Menu_Settings" xml:space="preserve">
+    <value>_Preferencias</value>
+  </data>
+  <data name="Menu_Statistics" xml:space="preserve">
+    <value>_Estadísticas</value>
+  </data>
+  <data name="Menu_Window" xml:space="preserve">
+    <value>_Ventana</value>
+  </data>
+  <data name="Migrating_local_database" xml:space="preserve">
+    <value>Migrando base de datos local...</value>
+  </data>
+  <data name="Model_of_drive_read_the_media_by_image" xml:space="preserve">
+    <value>Modelo de la uinidad usada para leer el medio representado en la imagen.</value>
+  </data>
+  <data name="Model_of_media_by_image" xml:space="preserve">
+    <value>Modelo del medio representado en la imagen.</value>
+  </data>
+  <data name="MODE_0" xml:space="preserve">
+    <value>MODE {0:X2}h</value>
+  </data>
+  <data name="MODE_0_Subpage_1" xml:space="preserve">
+    <value>MODE {0:X2}h Subpágina {1:X2}</value>
+  </data>
+  <data name="More_than_one_plugin_supports_requested_extension" xml:space="preserve">
+    <value>Más de una extensión soportada.</value>
+  </data>
+  <data name="Mounting_filesystem" xml:space="preserve">
+    <value>Montando sistema de ficheros...</value>
+  </data>
+  <data name="Namespaces_for_0" xml:space="preserve">
+    <value>Espacios de nombre para {0}:</value>
+  </data>
+  <data name="Namespace_to_use_for_filenames" xml:space="preserve">
+    <value>Espacio de nombre que usar para los nombres de los ficheros.</value>
+  </data>
+  <data name="Name_of_character_encoding_to_use" xml:space="preserve">
+    <value>Nombre de la codificación de caracteres para usar.</value>
+  </data>
+  <data name="Need_to_specify_more_than_zero_sectors_to_copy_at_once" xml:space="preserve">
+    <value>Debe especificar más de 0 sectores para copiar de una vez</value>
+  </data>
+  <data name="New_database_version_updating" xml:space="preserve">
+    <value>Nueva versión de la base de datos, actualizando...</value>
+  </data>
+  <data name="Non_removable_device_commands_not_yet_implemented" xml:space="preserve">
+    <value>Los comandos para el dispositivo no extraíble no están aún implementados</value>
+  </data>
+  <data name="Not_continuing" xml:space="preserve">
+    <value>No se continuará.</value>
+  </data>
+  <data name="Not_decoding_sectors_tags" xml:space="preserve">
+    <value>No se descodificarán las etiquetas de sector</value>
+  </data>
+  <data name="No_error_given" xml:space="preserve">
+    <value>No se indicó el error</value>
+  </data>
+  <data name="No_known_devices_attached" xml:space="preserve">
+    <value>No hay dispositivos conocidos conectados.</value>
+  </data>
+  <data name="No_media_inserted" xml:space="preserve">
+    <value>No hay medio insertado</value>
+  </data>
+  <data name="No_partitions_found" xml:space="preserve">
+    <value>No se encontraron particiones</value>
+  </data>
+  <data name="No_partitions_found_not_searching_for_filesystems" xml:space="preserve">
+    <value>No se encontraron particiones, no se buscarán sistemas de ficheros</value>
+  </data>
+  <data name="No_plugin_supports_requested_extension" xml:space="preserve">
+    <value>Ninguna extensión soportada.</value>
+  </data>
+  <data name="Number_in_sequence_for_media_by_image" xml:space="preserve">
+    <value>El número en la secuencia del medio representado por la imagen.</value>
+  </data>
+  <data name="Opening_device" xml:space="preserve">
+    <value>Abriendo dispositivo...</value>
+  </data>
+  <data name="Opening_first_image_file" xml:space="preserve">
+    <value>Abriendo 1ª imagen...</value>
+  </data>
+  <data name="Opening_second_image_file" xml:space="preserve">
+    <value>Abriendo 2ª imagen...</value>
+  </data>
+  <data name="Operation_canceled_the_output_file_is_not_correct" xml:space="preserve">
+    <value>Operación cancelada, el fichero de salida no es correcto.</value>
+  </data>
+  <data name="Options_for_0" xml:space="preserve">
+    <value>Opciones para {0}:</value>
+  </data>
+  <data name="OS_buffered_reads_help" xml:space="preserve">
+    <value>Para MMC/SD, usar lecturas con el búfer del SO si CMD23 no está soportado.</value>
+  </data>
+  <data name="Output_directory_missing" xml:space="preserve">
+    <value>Falta el directorio de salida.</value>
+  </data>
+  <data name="Output_file_already_exists" xml:space="preserve">
+    <value>El fichero de salida ya existe, no se continuará.</value>
+  </data>
+  <data name="Output_format" xml:space="preserve">
+    <value>Formato de salida</value>
+  </data>
+  <data name="Output_format_does_not_support_media_type" xml:space="preserve">
+    <value>El formato de salida no soporta el tipo de medio, no se puede continuar...</value>
+  </data>
+  <data name="Output_image_format_0" xml:space="preserve">
+    <value>Formato de la imagen de salida: {0}.</value>
+  </data>
+  <data name="Output_image_format_0_1" xml:space="preserve">
+    <value>Formato de la imagen de salida: {0} ({1}).</value>
+  </data>
+  <data name="Output_image_path" xml:space="preserve">
+    <value>Ruta de la imagen de salida</value>
+  </data>
+  <data name="Output_image_path_Dump_help" xml:space="preserve">
+    <value>Ruta de la imagen de salida. Si el fichero comienza por # y existe, se leerá como una lista de imágenes de salida, su extensión se usará para determinar el formato de salida, cada medio será expulsado y se solicitará el siguiente.</value>
+  </data>
+  <data name="Page_0_h" xml:space="preserve">
+    <value>Página {0:X2}h</value>
+  </data>
+  <data name="Parameter_response_all_sectors" xml:space="preserve">
+    <value>todos</value>
+  </data>
+  <data name="Parsed_options" xml:space="preserve">
+    <value>Opciones interpretadas:</value>
+  </data>
+  <data name="Partitioning_scheme_statistics" xml:space="preserve">
+    <value>Estadísticas de esquemas de particionado</value>
+  </data>
+  <data name="Partition_0" xml:space="preserve">
+    <value>Partición {0}:</value>
+  </data>
+  <data name="Part_number_of_media_by_image" xml:space="preserve">
+    <value>Número de parte del medio representado por la imagen.</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Ruta</value>
+  </data>
+  <data name="Path_0" xml:space="preserve">
+    <value>Ruta: {0}</value>
+  </data>
+  <data name="Pauses_before_exiting" xml:space="preserve">
+    <value>Pausa antes de salir.</value>
+  </data>
+  <data name="PCMCIA_CIS_is_0_bytes" xml:space="preserve">
+    <value>El CIS de PCMCIA ocupa {0} bytes</value>
+  </data>
+  <data name="PCMCIA_CIS_returned_no_tuples" xml:space="preserve">
+    <value>El CIS de PCMCIA no retornó ninguna tupla</value>
+  </data>
+  <data name="Please_burn_audio_trap_disc" xml:space="preserve">
+    <value>Por favor grabe un disco trampa antes de continuar...</value>
+  </data>
+  <data name="Please_insert_it_in_the_drive" xml:space="preserve">
+    <value>Por favor insértelo en la unidad y pulse cualquier tecla cuando esté listo.</value>
+  </data>
+  <data name="Please_insert_media_with_title_0_and_press_any_key_to_continue_" xml:space="preserve">
+    <value>Por favor inserte el medio titulado {0} y pulse cualquier tecla para continuar...</value>
+  </data>
+  <data name="Please_manually_remove_file_at_0" xml:space="preserve">
+    <value>Por favor elimine el fichero en {0} manualmente</value>
+  </data>
+  <data name="Please_remove_any_media" xml:space="preserve">
+    <value>Por favor extraiga cualquier medio del dispositivo y pulse cualquier tecla después.</value>
+  </data>
+  <data name="Please_use_device_info_command_for_ATA_devices" xml:space="preserve">
+    <value>Por favor use el comando 'device-info' para los dispositivos ATA.</value>
+  </data>
+  <data name="Please_use_device_info_command_for_MMC_SD_devices" xml:space="preserve">
+    <value>Por favor use el comando 'device-info' para los dispositivos MMC/SC.</value>
+  </data>
+  <data name="PoweRec_is_enabled" xml:space="preserve">
+    <value>PoweRec está activado</value>
+  </data>
+  <data name="Prefix_for_saving_binary_information" xml:space="preserve">
+    <value>Prefijo para guardar la información binaria del dispositivo.</value>
+  </data>
+  <data name="Press_any_key_to_exit" xml:space="preserve">
+    <value>Pulse cualquier tecla para salir.</value>
+  </data>
+  <data name="Print_sectors_with_tags_included" xml:space="preserve">
+    <value>Mostrar los sectores con sus etiquetas.</value>
+  </data>
+  <data name="Pseudo_OverWrite_Resources" xml:space="preserve">
+    <value>Recursos de Seudo-Sobrescritura</value>
+  </data>
+  <data name="Quantum_Firmware_Build_Information_page" xml:space="preserve">
+    <value>Página de información de la versión del firmware de Quantum</value>
+  </data>
+  <data name="Reading_data" xml:space="preserve">
+    <value>Leyendo datos...</value>
+  </data>
+  <data name="Reading_directory" xml:space="preserve">
+    <value>Leyendo directorio...</value>
+  </data>
+  <data name="Reading_extended_attribute" xml:space="preserve">
+    <value>Leyendo atributo extendido...</value>
+  </data>
+  <data name="Reading_file_0" xml:space="preserve">
+    <value>Leyendo fichero {0}...</value>
+  </data>
+  <data name="Reading_sector" xml:space="preserve">
+    <value>Leyendo sector...</value>
+  </data>
+  <data name="Read_only_filesystems_options" xml:space="preserve">
+    <value>Opciones de sistemas de ficheros de sólo lectura:</value>
+  </data>
+  <data name="Read_only_media_image_formats_0" xml:space="preserve">
+    <value>{0} formatos de imagen de sólo lectura:</value>
+  </data>
+  <data name="Read_Write_media_images_options" xml:space="preserve">
+    <value>Opciones de los formatos de lectura/escritura:</value>
+  </data>
+  <data name="Read_write_media_image_formats_0" xml:space="preserve">
+    <value>{0} formatos de imagen de lectura escritura:</value>
+  </data>
+  <data name="Recommended_speed" xml:space="preserve">
+    <value>Velocidad recomendada</value>
+  </data>
+  <data name="Reel_Motor_1_Serial_Number" xml:space="preserve">
+    <value>Número de serie del motor del carrete 1</value>
+  </data>
+  <data name="Reel_Motor_2_Serial_Number" xml:space="preserve">
+    <value>Número de serie del motor del carrete 2</value>
+  </data>
+  <data name="Refreshing_devices" xml:space="preserve">
+    <value>Refrescando dispositivos</value>
+  </data>
+  <data name="Registering_encodings" xml:space="preserve">
+    <value>Registrando codificaciones...</value>
+  </data>
+  <data name="Remote_Command_Description" xml:space="preserve">
+    <value>Comprueba la conexión a un servidor Aaru Remote.</value>
+  </data>
+  <data name="Requested_sectors_tags_unsupported_by_image_format_printing_user_data" xml:space="preserve">
+    <value>Se solicitaron sectores con etiquetas, algo no soportado por la imagen, mostrando sólo datos de usuario.</value>
+  </data>
+  <data name="Resume_file_does_not_contain_dump_hardware_information" xml:space="preserve">
+    <value>El fichero de resumen no contiene información del hardware de volcado...</value>
+  </data>
+  <data name="Retrieving_file_information" xml:space="preserve">
+    <value>Obteniendo información del fichero...</value>
+  </data>
+  <data name="Retrieving_SCSI_information" xml:space="preserve">
+    <value>Obteniendo información SCSI...</value>
+  </data>
+  <data name="Retry_passes" xml:space="preserve">
+    <value>Pasos de reintento</value>
+  </data>
+  <data name="Retry_subchannel_help" xml:space="preserve">
+    <value>Reintentar el subcanal. Implica corregir su posición.</value>
+  </data>
+  <data name="Root_directory" xml:space="preserve">
+    <value>Directorio raíz</value>
+  </data>
+  <data name="Save_descriptors_to_file" xml:space="preserve">
+    <value>Guardar descriptores a fichero</value>
+  </data>
+  <data name="Save_device_reports_in_shared_folder_of_your_computer_Q" xml:space="preserve">
+    <value>¿Guardar los reportes de dispositivo en una carpeta compartida de su ordenador?</value>
+  </data>
+  <data name="Save_stats_about_your_Aaru_usage_Q" xml:space="preserve">
+    <value>¿Guardar estadísticas sobre su uso de Aaru?</value>
+  </data>
+  <data name="Saving_statistics" xml:space="preserve">
+    <value>Guardando estadísticas...</value>
+  </data>
+  <data name="SCSI_Device_identification" xml:space="preserve">
+    <value>Identificación del dispositivo SCSI</value>
+  </data>
+  <data name="SCSI_Extended_INQUIRY_Data" xml:space="preserve">
+    <value>Datos extendidos de INQUIRY SCSI</value>
+  </data>
+  <data name="SCSI_Implemented_operating_definitions" xml:space="preserve">
+    <value>Definitiones de operación SCSI implementadas</value>
+  </data>
+  <data name="SCSI_INQUIRY_command_response" xml:space="preserve">
+    <value>Respuesta al comando SCSI INQUIRY:</value>
+  </data>
+  <data name="SCSI_Management_Network_Addresses" xml:space="preserve">
+    <value>Direcciones de red de región SCSI</value>
+  </data>
+  <data name="SCSI_Sequential_access_Device_Capabilities" xml:space="preserve">
+    <value>Capacidades del dispositivo SCSI de acceso secuencial</value>
+  </data>
+  <data name="SCSI_Software_Interface_Identifiers" xml:space="preserve">
+    <value>Identificadores de interfaz de software SCSI</value>
+  </data>
+  <data name="SCSI_to_ATA_Translation_Layer_Data" xml:space="preserve">
+    <value>Datos de la capa de traducción de SCSI a ATA</value>
+  </data>
+  <data name="Seagate_Firmware_Numbers_page" xml:space="preserve">
+    <value>Página de números del firmware de Seagate</value>
+  </data>
+  <data name="Searches_and_interprets_partitions" xml:space="preserve">
+    <value>Busca e interpreta particiones.</value>
+  </data>
+  <data name="Searches_and_prints_information_about_filesystems" xml:space="preserve">
+    <value>Busca y muesta información sobre sistemas de ficheros.</value>
+  </data>
+  <data name="Second_image_has_more_sectors" xml:space="preserve">
+    <value>La 2ª imagen tiene más sectores</value>
+  </data>
+  <data name="Second_input_file_format_identified_by_0" xml:space="preserve">
+    <value>El formato del 2º fichero es identificado por {0}.</value>
+  </data>
+  <data name="Second_input_file_format_identified_by_0_1" xml:space="preserve">
+    <value>El formato del 2º fichero es identificado por {0} ({1}).</value>
+  </data>
+  <data name="Second_input_file_format_not_identified" xml:space="preserve">
+    <value>No se identificó el formato del 2º fichero, no se procederá con la comparativa.</value>
+  </data>
+  <data name="Second_media_image_path" xml:space="preserve">
+    <value>Ruta de la 2ª imagen</value>
+  </data>
+  <data name="Sector_0_as_in_sector_number" xml:space="preserve">
+    <value>Sector {0}</value>
+  </data>
+  <data name="sector_0_byte_1" xml:space="preserve">
+    <value>sector 0, byte {1}</value>
+  </data>
+  <data name="Sector_to_start_decoding_from" xml:space="preserve">
+    <value>Sector donde empezar a descodificar.</value>
+  </data>
+  <data name="Selected_PoweRec_speed_for_currently_inserted_media" xml:space="preserve">
+    <value>Velocidad PoweRec seleccionada para el medio insertado:</value>
+  </data>
+  <data name="Serial" xml:space="preserve">
+    <value>Número de serie</value>
+  </data>
+  <data name="Serial_number_of_drive_read_the_media_by_image" xml:space="preserve">
+    <value>Número de serie de la unidad usada para leer el medio representado por la imagen.</value>
+  </data>
+  <data name="Serial_number_of_media_by_image" xml:space="preserve">
+    <value>Número de serie del medio representado por la imagen.</value>
+  </data>
+  <data name="Setting_geometry_to_0_cylinders_1_heads_and_2_sectors_per_track" xml:space="preserve">
+    <value>Estableciendo geometría en {0} cilindros, {1} cabezas y {2} sectores por pista</value>
+  </data>
+  <data name="Setting_image_metadata" xml:space="preserve">
+    <value>Estableciendo metadatos de la imagen</value>
+  </data>
+  <data name="Setting_tracks_list" xml:space="preserve">
+    <value>Estableciendo lista de pistas</value>
+  </data>
+  <data name="Share_your_device_reports_with_us_Q" xml:space="preserve">
+    <value>¿Compartir sus reportes de dispositivo con nosotres?</value>
+  </data>
+  <data name="Share_your_stats_anonymously_Q" xml:space="preserve">
+    <value>¿Compartir sus estadísticas de forma anónima?</value>
+  </data>
+  <data name="Shows_debug_output_from_plugins" xml:space="preserve">
+    <value>Muestra información de depuración de las extensiones.</value>
+  </data>
+  <data name="Shows_verbose_output" xml:space="preserve">
+    <value>Muestra información adicional.</value>
+  </data>
+  <data name="Show_long_sector" xml:space="preserve">
+    <value>Muestra un sector largo</value>
+  </data>
+  <data name="SilentMode_is_enabled" xml:space="preserve">
+    <value>SilentMode está activado</value>
+  </data>
+  <data name="Skipped_sectors_on_error" xml:space="preserve">
+    <value>Sectores omitidos ante un error</value>
+  </data>
+  <data name="Skip_CDi_Ready_hole_help" xml:space="preserve">
+    <value>Omitir el hueco entre los datos y el audio en un disco CD-i Ready.</value>
+  </data>
+  <data name="Some_warnings_happened_Check_console" xml:space="preserve">
+    <value>Ocurrieron algunas advertencias. Compruebe la consola para más información. La imagen debería ser correcta.</value>
+  </data>
+  <data name="Source_image" xml:space="preserve">
+    <value>Imagen origen</value>
+  </data>
+  <data name="Spare_Area_Information" xml:space="preserve">
+    <value>Información del área de reserva</value>
+  </data>
+  <data name="Specified_encoding_is_not_supported" xml:space="preserve">
+    <value>La codificación especificada no está soportada</value>
+  </data>
+  <data name="SpeedRead_is_enabled" xml:space="preserve">
+    <value>SpeedRead está activado</value>
+  </data>
+  <data name="Speed_to_dump" xml:space="preserve">
+    <value>Velocidad para volcar. Sólo aplicable a unidades ópticas, 0 para el máximo.</value>
+  </data>
+  <data name="Starting_sector" xml:space="preserve">
+    <value>Sector de comienzo.</value>
+  </data>
+  <data name="Start_0_as_in_sector_start" xml:space="preserve">
+    <value>Comienzo {0}</value>
+  </data>
+  <data name="Statistics_disclaimer" xml:space="preserve">
+    <value>Aaru puede guardar algunas estadísticas de uso. Estas estadísticas están limitadas al número de veces que se ejecuta un comando, se encuentra un sistema de ficheros o una partición, se usa un dispositivo, la versión del sistema operativo, y otros. En ningún caso, ninguna información más allá del número de usos estadístico es almacenada, y se unen a la pila sin ninguna manera de poder identificarle.</value>
+  </data>
+  <data name="Stop_media_dump_on_first_error" xml:space="preserve">
+    <value>Parar el volcado ante el primer error.</value>
+  </data>
+  <data name="Store_encrypted_data_as_is" xml:space="preserve">
+    <value>Guardar datos encriptados tal cual.</value>
+  </data>
+  <data name="Subchannel_name_any" xml:space="preserve">
+    <value>cualquiera</value>
+  </data>
+  <data name="Subchannel_name_none" xml:space="preserve">
+    <value>ninguno</value>
+  </data>
+  <data name="Subchannel_name_pq" xml:space="preserve">
+    <value>pq</value>
+  </data>
+  <data name="Subchannel_name_rw" xml:space="preserve">
+    <value>rw</value>
+  </data>
+  <data name="Subchannel_name_rw_or_pq" xml:space="preserve">
+    <value>rw-o-pq</value>
+  </data>
+  <data name="Subchannel_to_dump_help" xml:space="preserve">
+    <value>Subcanal a volcar. Sólo aplicable a CD/GD. Valores: cualquiera, rw, rw-o-pq, pq, ninguno.</value>
+  </data>
+  <data name="Supported_archive_formats_0" xml:space="preserve">
+    <value>{0} formatos de archivo soportados:</value>
+  </data>
+  <data name="Supported_filesystems_for_identification_and_information_only_0" xml:space="preserve">
+    <value>{0} sistemas de ficheros soportados sólo para identificación e información:</value>
+  </data>
+  <data name="Supported_filesystems_that_can_read_their_contents_0" xml:space="preserve">
+    <value>{0} sistemas de ficheros que podemos leer su contenido:</value>
+  </data>
+  <data name="Supported_filters_0" xml:space="preserve">
+    <value>{0} filtros soportados:</value>
+  </data>
+  <data name="Supported_partitioning_schemes_0" xml:space="preserve">
+    <value>{0} esquemas de particionado soportados:</value>
+  </data>
+  <data name="Supported_Question" xml:space="preserve">
+    <value>¿Soportado?</value>
+  </data>
+  <data name="Supports_bitsetting_DVD_R_book_type" xml:space="preserve">
+    <value>Soporta establecer el tipo de libro de DVD+R</value>
+  </data>
+  <data name="Supports_bitsetting_DVD_R_DL_book_type" xml:space="preserve">
+    <value>Soporta establecer el tipo de libro de DVD+R DL</value>
+  </data>
+  <data name="Supports_GigaRec" xml:space="preserve">
+    <value>Soporta GigaRec</value>
+  </data>
+  <data name="Supports_hiding_CD_Rs_and_sessions" xml:space="preserve">
+    <value>Soporta ocultar CD-R y sesiones</value>
+  </data>
+  <data name="Supports_PoweRec" xml:space="preserve">
+    <value>Soporta PoweeRec</value>
+  </data>
+  <data name="Supports_SecuRec" xml:space="preserve">
+    <value>Soporta SecuRec</value>
+  </data>
+  <data name="Supports_SilentMode" xml:space="preserve">
+    <value>Soporta SilentMode</value>
+  </data>
+  <data name="Supports_SpeedRead" xml:space="preserve">
+    <value>Soporta SpeedRead</value>
+  </data>
+  <data name="Supports_test_writing_DVD_Plus" xml:space="preserve">
+    <value>Soporta escritura de prueba en DVD+</value>
+  </data>
+  <data name="Supports_VariRec" xml:space="preserve">
+    <value>Soporta VariRec</value>
+  </data>
+  <data name="Supports_VariRec_on_DVDs" xml:space="preserve">
+    <value>Soporta VariRec en DVDs</value>
+  </data>
+  <data name="Sure_report_trap_disc" xml:space="preserve">
+    <value>¿Está segure de hacer un reporte usando un disco trampa y el método de intercambio? Éste método puede dañar la unidad, o el disco, y requiere cierta habilidad. Si no está segure, pulse N para no continuar.</value>
+  </data>
+  <data name="Take_dump_hardware_from_existing_resume" xml:space="preserve">
+    <value>Obtener lista del hardware de volcado de un fichero de resumen existente.</value>
+  </data>
+  <data name="Take_metadata_from_existing_CICM_XML_sidecar" xml:space="preserve">
+    <value>Obtener metadatos de un sidecar XML de CICM existente.</value>
+  </data>
+  <data name="TapeAlert_Supported_Flags_Bitmap" xml:space="preserve">
+    <value>Mapa de bits de banderas TapeAlert soportadas</value>
+  </data>
+  <data name="Tape_argument_input_help" xml:space="preserve">
+    <value>Al usarse indica que la entrada es una carpeta conteniendo los ficheros ordenados alfabéticamente extraídos de una cinta lineal de bloques de tamaño fijo (por ej. una unidad de cinta SCSI).</value>
+  </data>
+  <data name="Tape_block_size_argument_help" xml:space="preserve">
+    <value>Sólo usado para cintas, indica el tamaño del bloque. Los ficheros en la carpeta cuyo tamaño no sea múltiple de este serán ignorados.</value>
+  </data>
+  <data name="Text_Authors" xml:space="preserve">
+    <value>Desarrolladores:
+    Natalia Portillo
+    Michael Drüing
+    Rebecca Wallander
+
+Probadores:
+    Silas Laspada</value>
+  </data>
+  <data name="There_are_no_media_tags_in_chosen_disc_image" xml:space="preserve">
+    <value>No hay etiquetas del medio en la imagen seleccionada.</value>
+  </data>
+  <data name="There_are_no_sector_tags_in_chosen_disc_image" xml:space="preserve">
+    <value>No hay etiquetas de sector en la imagen seleccionada.</value>
+  </data>
+  <data name="There_are_no_statistics" xml:space="preserve">
+    <value>No hay estadísticas.</value>
+  </data>
+  <data name="There_is_at_least_one_sector_that_does_not_contain_a_checksum" xml:space="preserve">
+    <value>Al menos un sector no contenía un checksum.</value>
+  </data>
+  <data name="There_is_at_least_one_sector_with_incorrect_checksum_or_errors" xml:space="preserve">
+    <value>Al menos un sector tenía un checksum incorrecto o errores</value>
+  </data>
+  <data name="The_specified_image_does_not_support_any_kind_of_verification" xml:space="preserve">
+    <value>La imagen especificada no soporta ningún tipo de verificación</value>
+  </data>
+  <data name="The_specified_input_file_cannot_be_found" xml:space="preserve">
+    <value>No se pudo encontrar la imagen especificada</value>
+  </data>
+  <data name="This_is_dangerous" xml:space="preserve">
+    <value>ESTO ES PELIGROSO Y PUEDE DAÑAR SU UNIDAD IRREVERSIBLEMENTE (SI DUDA PULSE 'N')</value>
+  </data>
+  <data name="Time_spent_reading_CDs" xml:space="preserve">
+    <value>Tiempo leyendo CDs</value>
+  </data>
+  <data name="Time_spent_reading_DVDs" xml:space="preserve">
+    <value>Tiempo leyendo DVDs</value>
+  </data>
+  <data name="Time_spent_writing_CDs" xml:space="preserve">
+    <value>Tiempo escribiendo CDs</value>
+  </data>
+  <data name="Time_spent_writing_DVDs" xml:space="preserve">
+    <value>Tiempo escribiendo DVDs</value>
+  </data>
+  <data name="Title_Aaru_license" xml:space="preserve">
+    <value>Licencia de Aaru</value>
+  </data>
+  <data name="Title_About_Aaru" xml:space="preserve">
+    <value>Acerca de Aaru</value>
+  </data>
+  <data name="Title_Algorithms" xml:space="preserve">
+    <value>Algoritmos</value>
+  </data>
+  <data name="Title_ATA_ATAPI" xml:space="preserve">
+    <value>ATA / ATAPI</value>
+  </data>
+  <data name="Title_ATIP" xml:space="preserve">
+    <value>ATIP</value>
+  </data>
+  <data name="Title_Attributes" xml:space="preserve">
+    <value>Atributos</value>
+  </data>
+  <data name="Title_Author" xml:space="preserve">
+    <value>Autor</value>
+  </data>
+  <data name="Title_Barcode" xml:space="preserve">
+    <value>Código de barras</value>
+  </data>
+  <data name="Title_Block" xml:space="preserve">
+    <value>Bloque</value>
+  </data>
+  <data name="Title_Bus" xml:space="preserve">
+    <value>Bus</value>
+  </data>
+  <data name="Title_Calculating_entropy" xml:space="preserve">
+    <value>Calculando entropía</value>
+  </data>
+  <data name="Title_CD_TEXT" xml:space="preserve">
+    <value>CD-TEXT</value>
+  </data>
+  <data name="Title_Changed" xml:space="preserve">
+    <value>Modificación</value>
+  </data>
+  <data name="Title_CID" xml:space="preserve">
+    <value>CID</value>
+  </data>
+  <data name="Title_CIS" xml:space="preserve">
+    <value>CIS</value>
+  </data>
+  <data name="Title_Code_for_encoding" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="Title_Command" xml:space="preserve">
+    <value>Comando</value>
+  </data>
+  <data name="Title_Commands" xml:space="preserve">
+    <value>Comandos</value>
+  </data>
+  <data name="Title_Comments" xml:space="preserve">
+    <value>Comentarios</value>
+  </data>
+  <data name="Title_Connected_by_USB" xml:space="preserve">
+    <value>Conectado por USB</value>
+  </data>
+  <data name="Title_Console" xml:space="preserve">
+    <value>Consola</value>
+  </data>
+  <data name="Title_Conversion_success" xml:space="preserve">
+    <value>Conversión exitosa</value>
+  </data>
+  <data name="Title_Creation" xml:space="preserve">
+    <value>Creación</value>
+  </data>
+  <data name="Title_Creation_time" xml:space="preserve">
+    <value>Tiempo de creación</value>
+  </data>
+  <data name="Title_CSD" xml:space="preserve">
+    <value>CSD</value>
+  </data>
+  <data name="Title_Decoded" xml:space="preserve">
+    <value>Descodificado</value>
+  </data>
+  <data name="Title_Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Title_Descriptor_size" xml:space="preserve">
+    <value>Tamaño del descriptor</value>
+  </data>
+  <data name="Title_Destination_file" xml:space="preserve">
+    <value>Fichero destino</value>
+  </data>
+  <data name="Title_Details" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="Title_Device" xml:space="preserve">
+    <value>Dispositivo</value>
+  </data>
+  <data name="Title_Devices" xml:space="preserve">
+    <value>Dispositivos</value>
+  </data>
+  <data name="Title_Device_information" xml:space="preserve">
+    <value>Información del dispositivo</value>
+  </data>
+  <data name="Title_Device_type" xml:space="preserve">
+    <value>Tipo del dispositivo</value>
+  </data>
+  <data name="Title_Disc_Manufacturing_Information" xml:space="preserve">
+    <value>Información del fabricante del disco</value>
+  </data>
+  <data name="Title_Drive" xml:space="preserve">
+    <value>Unidad</value>
+  </data>
+  <data name="Title_Drive_firmware_revision" xml:space="preserve">
+    <value>Revisión del firmware de la unidad</value>
+  </data>
+  <data name="Title_Drive_has_kreon_firmware" xml:space="preserve">
+    <value>La unidad tiene firmware Kreon:</value>
+  </data>
+  <data name="Title_Drive_information" xml:space="preserve">
+    <value>Información de la unidad</value>
+  </data>
+  <data name="Title_Drive_manufacturer" xml:space="preserve">
+    <value>Fabricante de la unidad</value>
+  </data>
+  <data name="Title_Drive_model" xml:space="preserve">
+    <value>Modelo de la unidad</value>
+  </data>
+  <data name="Title_Drive_serial_number" xml:space="preserve">
+    <value>Número de serie de la unidad</value>
+  </data>
+  <data name="Title_Dump_hardware" xml:space="preserve">
+    <value>Hardware de volcado</value>
+  </data>
+  <data name="Title_Entropy" xml:space="preserve">
+    <value>Entropía</value>
+  </data>
+  <data name="Title_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Title_EVPD" xml:space="preserve">
+    <value>EVPD</value>
+  </data>
+  <data name="Title_Existing_Aaru_Metadata_sidecar" xml:space="preserve">
+    <value>Sidecar de metadatos de Aaru existente</value>
+  </data>
+  <data name="Title_Existing_resume_file" xml:space="preserve">
+    <value>Fichero de resumen existente</value>
+  </data>
+  <data name="Title_Extended_CSD" xml:space="preserve">
+    <value>CSD extendido</value>
+  </data>
+  <data name="Title_Feature" xml:space="preserve">
+    <value>Funcionalidad</value>
+  </data>
+  <data name="Title_File" xml:space="preserve">
+    <value>Fichero</value>
+  </data>
+  <data name="Title_Filesystem" xml:space="preserve">
+    <value>Sistema de ficheros</value>
+  </data>
+  <data name="Title_Filesystems" xml:space="preserve">
+    <value>Sistemas de ficheros</value>
+  </data>
+  <data name="Title_Filter" xml:space="preserve">
+    <value>Filtro</value>
+  </data>
+  <data name="Title_Filters" xml:space="preserve">
+    <value>Filtros</value>
+  </data>
+  <data name="Title_FireWire" xml:space="preserve">
+    <value>FireWire</value>
+  </data>
+  <data name="Title_FireWire_device" xml:space="preserve">
+    <value>Dispositivo FireWire</value>
+  </data>
+  <data name="Title_Firmware_revision" xml:space="preserve">
+    <value>Revisión de firmware</value>
+  </data>
+  <data name="Title_First_Media_image" xml:space="preserve">
+    <value>1ª imagen</value>
+  </data>
+  <data name="Title_Floppy_images" xml:space="preserve">
+    <value>Imágenes de disquete</value>
+  </data>
+  <data name="Title_Format" xml:space="preserve">
+    <value>Formato</value>
+  </data>
+  <data name="Title_Formats" xml:space="preserve">
+    <value>Formatos</value>
+  </data>
+  <data name="Title_From_image" xml:space="preserve">
+    <value>Desde la imagen...</value>
+  </data>
+  <data name="Title_GDPR" xml:space="preserve">
+    <value>RGPD</value>
+  </data>
+  <data name="Title_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Title_GID" xml:space="preserve">
+    <value>GID</value>
+  </data>
+  <data name="Title_GUID" xml:space="preserve">
+    <value>GUID</value>
+  </data>
+  <data name="Title_Hash" xml:space="preserve">
+    <value>Hash</value>
+  </data>
+  <data name="Title_Header" xml:space="preserve">
+    <value>Cabecera</value>
+  </data>
+  <data name="Title_HexView" xml:space="preserve">
+    <value>Vista hex.</value>
+  </data>
+  <data name="Title_Identify_only" xml:space="preserve">
+    <value>Sólo identificar:</value>
+  </data>
+  <data name="Title_Images" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="Title_Image_application" xml:space="preserve">
+    <value>Aplicación de la imagen</value>
+  </data>
+  <data name="Title_Image_application_version" xml:space="preserve">
+    <value>Versión de la aplicación de la imagen</value>
+  </data>
+  <data name="Title_Image_comments" xml:space="preserve">
+    <value>Comentarios de la imagen</value>
+  </data>
+  <data name="Title_Image_creator" xml:space="preserve">
+    <value>Creador de la imagen</value>
+  </data>
+  <data name="Title_Image_information" xml:space="preserve">
+    <value>Información de la imagen</value>
+  </data>
+  <data name="Title_Image_name" xml:space="preserve">
+    <value>Nombre de la imagen</value>
+  </data>
+  <data name="Title_Image_size" xml:space="preserve">
+    <value>Tamaño de la imagen</value>
+  </data>
+  <data name="Title_Image_version" xml:space="preserve">
+    <value>Versión de la imagen</value>
+  </data>
+  <data name="Title_Information" xml:space="preserve">
+    <value>Información</value>
+  </data>
+  <data name="Title_Inode" xml:space="preserve">
+    <value>Nodo-I</value>
+  </data>
+  <data name="Title_INQUIRY" xml:space="preserve">
+    <value>INQUIRY</value>
+  </data>
+  <data name="Title_ISRC" xml:space="preserve">
+    <value>ISRC</value>
+  </data>
+  <data name="Title_ISRCs" xml:space="preserve">
+    <value>ISRCs</value>
+  </data>
+  <data name="Title_Kreon" xml:space="preserve">
+    <value>Kreon</value>
+  </data>
+  <data name="Title_Last_access" xml:space="preserve">
+    <value>Último acceso</value>
+  </data>
+  <data name="Title_Last_backup" xml:space="preserve">
+    <value>Último respaldo</value>
+  </data>
+  <data name="Title_Last_media_of_the_sequence" xml:space="preserve">
+    <value>Último medio de la secuencia</value>
+  </data>
+  <data name="Title_Last_media_on_sequence" xml:space="preserve">
+    <value>Último medio en la secuencia</value>
+  </data>
+  <data name="Title_Last_modification_time" xml:space="preserve">
+    <value>Fecha de última modificación</value>
+  </data>
+  <data name="Title_Last_write" xml:space="preserve">
+    <value>Última escritura</value>
+  </data>
+  <data name="Title_LBA" xml:space="preserve">
+    <value>LBA</value>
+  </data>
+  <data name="Title_Length" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="Title_Library" xml:space="preserve">
+    <value>Libreria</value>
+  </data>
+  <data name="Title_Links" xml:space="preserve">
+    <value>Enlaces</value>
+  </data>
+  <data name="Title_Log" xml:space="preserve">
+    <value>Registro</value>
+  </data>
+  <data name="Title_Manufacturer" xml:space="preserve">
+    <value>Fabricante</value>
+  </data>
+  <data name="Title_Media" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="Title_Medias" xml:space="preserve">
+    <value>Medios</value>
+  </data>
+  <data name="Title_Media_barcode" xml:space="preserve">
+    <value>Código de barras del medio</value>
+  </data>
+  <data name="Title_Media_catalog_number" xml:space="preserve">
+    <value>Número de catálogo del medio</value>
+  </data>
+  <data name="Title_Media_checksums" xml:space="preserve">
+    <value>Checksums del medio:</value>
+  </data>
+  <data name="Title_Media_images" xml:space="preserve">
+    <value>Imágenes de medios</value>
+  </data>
+  <data name="Title_Media_image_format" xml:space="preserve">
+    <value>Formato de imagen</value>
+  </data>
+  <data name="Title_Media_information" xml:space="preserve">
+    <value>Información del medio</value>
+  </data>
+  <data name="Title_Media_manufacturer" xml:space="preserve">
+    <value>Fabricante del medio</value>
+  </data>
+  <data name="Title_Media_model" xml:space="preserve">
+    <value>Modelo del medio</value>
+  </data>
+  <data name="Title_Media_part_number" xml:space="preserve">
+    <value>Nº de parte del medio</value>
+  </data>
+  <data name="Title_Media_sequence" xml:space="preserve">
+    <value>Secuencia del medio</value>
+  </data>
+  <data name="Title_Media_serial_number" xml:space="preserve">
+    <value>Número de serie del medio</value>
+  </data>
+  <data name="Title_Media_type" xml:space="preserve">
+    <value>Tipo de medio</value>
+  </data>
+  <data name="Title_Message" xml:space="preserve">
+    <value>Mensaje</value>
+  </data>
+  <data name="Title_Metadata" xml:space="preserve">
+    <value>Metadato</value>
+  </data>
+  <data name="Title_Miscellaneous" xml:space="preserve">
+    <value>Miscelánea</value>
+  </data>
+  <data name="Title_MMC_FEATURES" xml:space="preserve">
+    <value>MMC FEATURES</value>
+  </data>
+  <data name="Title_Mode" xml:space="preserve">
+    <value>Modo</value>
+  </data>
+  <data name="Title_Model" xml:space="preserve">
+    <value>Modelo</value>
+  </data>
+  <data name="Title_Model_ID" xml:space="preserve">
+    <value>ID de modelo</value>
+  </data>
+  <data name="Title_MODE_SENSE" xml:space="preserve">
+    <value>MODE SENSE</value>
+  </data>
+  <data name="Title_Module" xml:space="preserve">
+    <value>Módulo</value>
+  </data>
+  <data name="Title_Name" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Title_Namespace" xml:space="preserve">
+    <value>Espacio de nombres</value>
+  </data>
+  <data name="Title_Number_in_sequence" xml:space="preserve">
+    <value>Número en secuencia</value>
+  </data>
+  <data name="Title_OCR" xml:space="preserve">
+    <value>OCR</value>
+  </data>
+  <data name="Title_of_media_represented_by_image" xml:space="preserve">
+    <value>Título del medio representado por la imagen.</value>
+  </data>
+  <data name="Title_Operating_system" xml:space="preserve">
+    <value>Sistema operativo</value>
+  </data>
+  <data name="Title_Page" xml:space="preserve">
+    <value>Página</value>
+  </data>
+  <data name="Title_Partition" xml:space="preserve">
+    <value>Partición</value>
+  </data>
+  <data name="Title_Partitions" xml:space="preserve">
+    <value>Particiones</value>
+  </data>
+  <data name="Title_Part_number" xml:space="preserve">
+    <value>Número de parte</value>
+  </data>
+  <data name="Title_PCMCIA" xml:space="preserve">
+    <value>PCMCIA</value>
+  </data>
+  <data name="Title_PCMCIA_device" xml:space="preserve">
+    <value>Dispositivo PCMCIA</value>
+  </data>
+  <data name="Title_Peripheral_device_type" xml:space="preserve">
+    <value>Tipo de periférico del dispositivo</value>
+  </data>
+  <data name="Title_Plextor" xml:space="preserve">
+    <value>Plextor</value>
+  </data>
+  <data name="Title_Plugins" xml:space="preserve">
+    <value>Extensiones</value>
+  </data>
+  <data name="Title_Product" xml:space="preserve">
+    <value>Producto</value>
+  </data>
+  <data name="Title_Product_ID" xml:space="preserve">
+    <value>ID de producto</value>
+  </data>
+  <data name="Title_Readable" xml:space="preserve">
+    <value>Legible:</value>
+  </data>
+  <data name="Title_Readable_media_tags" xml:space="preserve">
+    <value>Etiquetas de medio legibles</value>
+  </data>
+  <data name="Title_Readable_sector_tags" xml:space="preserve">
+    <value>Etiquetas de sector legibles</value>
+  </data>
+  <data name="Title_Removable_media" xml:space="preserve">
+    <value>Medio extraíble</value>
+  </data>
+  <data name="Title_Reports" xml:space="preserve">
+    <value>Reportes</value>
+  </data>
+  <data name="Title_Revision" xml:space="preserve">
+    <value>Revisión</value>
+  </data>
+  <data name="Title_Scheme" xml:space="preserve">
+    <value>Esquema</value>
+  </data>
+  <data name="Title_SCR" xml:space="preserve">
+    <value>SCR</value>
+  </data>
+  <data name="Title_SCSI" xml:space="preserve">
+    <value>SCSI</value>
+  </data>
+  <data name="Title_SCSI_device" xml:space="preserve">
+    <value>Dispositivo SCSI</value>
+  </data>
+  <data name="Title_SCSI_INQUIRY" xml:space="preserve">
+    <value>SCSI INQUIRY</value>
+  </data>
+  <data name="Title_SCSI_MMC_GET_CONFIGURATION_Features" xml:space="preserve">
+    <value>Funcionas de SCSI MMC GET CONFIGURATION:</value>
+  </data>
+  <data name="Title_SD_MMC" xml:space="preserve">
+    <value>SD / MMC</value>
+  </data>
+  <data name="Title_Second_Media_image" xml:space="preserve">
+    <value>2ª imagen</value>
+  </data>
+  <data name="Title_Sector" xml:space="preserve">
+    <value>Sector</value>
+  </data>
+  <data name="Title_Sectors" xml:space="preserve">
+    <value>Sectores</value>
+  </data>
+  <data name="Title_Sector_size" xml:space="preserve">
+    <value>Tamaño de sector</value>
+  </data>
+  <data name="Title_Security_Sector" xml:space="preserve">
+    <value>Sector de Seguridad</value>
+  </data>
+  <data name="Title_Serial_number" xml:space="preserve">
+    <value>Número de serie</value>
+  </data>
+  <data name="Title_Sessions" xml:space="preserve">
+    <value>Sesiones</value>
+  </data>
+  <data name="Title_Settings" xml:space="preserve">
+    <value>Preferencias</value>
+  </data>
+  <data name="Title_Software" xml:space="preserve">
+    <value>Software</value>
+  </data>
+  <data name="Title_Statistics" xml:space="preserve">
+    <value>Estadísticas</value>
+  </data>
+  <data name="Title_Tag" xml:space="preserve">
+    <value>Etiqueta:</value>
+  </data>
+  <data name="Title_Time" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="Title_Times_used" xml:space="preserve">
+    <value>Veces usado</value>
+  </data>
+  <data name="Title_Title" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Title_TOC" xml:space="preserve">
+    <value>Tabla de contenidos</value>
+  </data>
+  <data name="Title_TOC_full" xml:space="preserve">
+    <value>Tabla de contenidos completa</value>
+  </data>
+  <data name="Title_Tracks" xml:space="preserve">
+    <value>Pistas</value>
+  </data>
+  <data name="Title_Track_checksums" xml:space="preserve">
+    <value>Checksums de pista:</value>
+  </data>
+  <data name="Title_Track_entropy" xml:space="preserve">
+    <value>Entropía de pista</value>
+  </data>
+  <data name="Title_Type" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Title_UID" xml:space="preserve">
+    <value>UID</value>
+  </data>
+  <data name="Title_Unique_sectors" xml:space="preserve">
+    <value>Sectores únicos</value>
+  </data>
+  <data name="Title_USB" xml:space="preserve">
+    <value>USB</value>
+  </data>
+  <data name="Title_USB_device" xml:space="preserve">
+    <value>Dispositivo USB</value>
+  </data>
+  <data name="Title_UUID" xml:space="preserve">
+    <value>UUID</value>
+  </data>
+  <data name="Title_Vendor" xml:space="preserve">
+    <value>Fabricante</value>
+  </data>
+  <data name="Title_Vendor_ID" xml:space="preserve">
+    <value>ID de fabricante</value>
+  </data>
+  <data name="Title_Version" xml:space="preserve">
+    <value>Versión</value>
+  </data>
+  <data name="Title_Warning" xml:space="preserve">
+    <value>Atención</value>
+  </data>
+  <data name="Title_Writable" xml:space="preserve">
+    <value>Escribible</value>
+  </data>
+  <data name="Total_errors_plus_unknowns" xml:space="preserve">
+    <value>Total desconocidos+errores....</value>
+  </data>
+  <data name="Total_errors" xml:space="preserve">
+    <value>Total de errores..............</value>
+  </data>
+  <data name="Total_sectors" xml:space="preserve">
+    <value>Total de sectores.............</value>
+  </data>
+  <data name="Total_unknowns" xml:space="preserve">
+    <value>Total desconocidos............</value>
+  </data>
+  <data name="Total_loaded_discs" xml:space="preserve">
+    <value>Discos cargados en total:</value>
+  </data>
+  <data name="Track_0_has_1_unique_sectors_2" xml:space="preserve">
+    <value>La pista {0} tiene {1} sectores únicos ({2:P3})</value>
+  </data>
+  <data name="Track_0_starts_at_LBA_1_ends_at_LBA_2_has_a_pregap_of_3_sectors_and_is_of_type_4" xml:space="preserve">
+    <value>La pista {0} empieza en el LBA {1}, termina en el {2}, tiene un hueco anterior de {3} sectores y es de tipo {4}</value>
+  </data>
+  <data name="Track_0_starts_at_sector_1_and_ends_at_sector_2" xml:space="preserve">
+    <value>La pista {0} empieza en el sector {1} y termina en el {2}</value>
+  </data>
+  <data name="Track_Resources" xml:space="preserve">
+    <value>Recursos de pista</value>
+  </data>
+  <data name="Trim_errors_from_skipped_sectors" xml:space="preserve">
+    <value>Recortar errores entre los sectores omitidos</value>
+  </data>
+  <data name="Try_to_read_first_track_pregap" xml:space="preserve">
+    <value>Intentar leer el hueco anterior a la primera pista. Sólo aplicable a CD/DDCD/GD.</value>
+  </data>
+  <data name="Try_to_read_the_title_keys_from_CSS_DVDs" xml:space="preserve">
+    <value>Intentar leer las llaves de título de los DVDs encriptados con CSS (muy lento).</value>
+  </data>
+  <data name="Try_to_read_track_1_pregap" xml:space="preserve">
+    <value>Intentar leer el hueco anterior a la 1ª pista</value>
+  </data>
+  <data name="Try_to_recover_partial_or_incorrect_data" xml:space="preserve">
+    <value>Intentar recuperar datos parciales o incorrectos.</value>
+  </data>
+  <data name="TypeToString_boolean" xml:space="preserve">
+    <value>buleano</value>
+  </data>
+  <data name="TypeToString_float_number" xml:space="preserve">
+    <value>número de coma flotante</value>
+  </data>
+  <data name="TypeToString_number" xml:space="preserve">
+    <value>número</value>
+  </data>
+  <data name="TypeToString_signed_number" xml:space="preserve">
+    <value>número con signo</value>
+  </data>
+  <data name="TypeToString_string" xml:space="preserve">
+    <value>texto</value>
+  </data>
+  <data name="TypeToString_uuid" xml:space="preserve">
+    <value>uuid</value>
+  </data>
+  <data name="Unable_to_mount_volume_error_0" xml:space="preserve">
+    <value>No se pudo montar el volumen, error {0}</value>
+  </data>
+  <data name="Unable_to_open_first_image_format" xml:space="preserve">
+    <value>No se pudo abrir la 1ª imagen</value>
+  </data>
+  <data name="Unable_to_open_image_format" xml:space="preserve">
+    <value>No se pudo abrir la imagen</value>
+  </data>
+  <data name="Unable_to_open_second_image_format" xml:space="preserve">
+    <value>No se pudo abrir la 2ª imagen</value>
+  </data>
+  <data name="Unable_to_recognize_image_format_not_checksumming" xml:space="preserve">
+    <value>No se pudo reconocer el formato de la imagen, no se calculará el checksum</value>
+  </data>
+  <data name="Unable_to_recognize_image_format_not_decoding" xml:space="preserve">
+    <value>No se pudo reconocer el formato de la imagen, no se descodificará</value>
+  </data>
+  <data name="Unable_to_recognize_image_format_not_printing" xml:space="preserve">
+    <value>No se pudo reconocer el formato de la imagen, no se mostrará</value>
+  </data>
+  <data name="Unable_to_recognize_image_format_not_verifying" xml:space="preserve">
+    <value>No se pudo reconocer el formato de la imagen, no se verificará</value>
+  </data>
+  <data name="Undecoded" xml:space="preserve">
+    <value>Sin descocidicar</value>
+  </data>
+  <data name="Undecoded_tuple_ID_0" xml:space="preserve">
+    <value>Tupla ID {0} sin descodificar</value>
+  </data>
+  <data name="Unit_Serial_Number" xml:space="preserve">
+    <value>Número de serie de la unidad</value>
+  </data>
+  <data name="Unknown_feature" xml:space="preserve">
+    <value>Funcionalidad desconocida</value>
+  </data>
+  <data name="Unknown_LBAs" xml:space="preserve">
+    <value>LBAs desconocidos:</value>
+  </data>
+  <data name="unlimited_as_in_speed" xml:space="preserve">
+    <value>ilimitada</value>
+  </data>
+  <data name="Unsupported_device_type_for_report" xml:space="preserve">
+    <value>Tipo de dispositivo no soportado, no se puede crear un reporte</value>
+  </data>
+  <data name="Unsupported_filename" xml:space="preserve">
+    <value>Nombre de fichero no soportado</value>
+  </data>
+  <data name="Updating_main_database" xml:space="preserve">
+    <value>Actualizando base de datos principal...</value>
+  </data>
+  <data name="Use_long_format" xml:space="preserve">
+    <value>Usar formato largo.</value>
+  </data>
+  <data name="Value_0_is_not_a_valid_number_for_length" xml:space="preserve">
+    <value>El valor "{0}" no es un número válido para la longitud.</value>
+  </data>
+  <data name="Verifying_image_checksums" xml:space="preserve">
+    <value>Verificando checksums de la imagen...</value>
+  </data>
+  <data name="Verifying_track_0_of_1" xml:space="preserve">
+    <value>Verificando pista {0} de {1}</value>
+  </data>
+  <data name="Verify_all_sectors_if_supported" xml:space="preserve">
+    <value>Verificar todos los sectores si está soportado.</value>
+  </data>
+  <data name="Verify_dimensions_paramater_help" xml:space="preserve">
+    <value>Dimensiones, de un cuadrado, en píxeles, para la gráfica del medio verificado.</value>
+  </data>
+  <data name="Verify_media_image_if_supported" xml:space="preserve">
+    <value>Verificar la imagen si está soportado.</value>
+  </data>
+  <data name="Welcome_to_Aaru" xml:space="preserve">
+    <value>¡Bienvenide a Aaru!</value>
+  </data>
+  <data name="When_an_unreadable_sector_is_found_skip_this_many_sectors" xml:space="preserve">
+    <value>Cuando se encuentra un sector erróneo se omitirán estos sectores.</value>
+  </data>
+  <data name="Who_person_created_the_image" xml:space="preserve">
+    <value>¿Quién creó la imagen?</value>
+  </data>
+  <data name="Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn" xml:space="preserve">
+    <value>Escribir un registro del escaneo en el formato usado por ImgBurn.</value>
+  </data>
+  <data name="Write_a_log_of_the_scan_in_the_format_used_by_MHDD" xml:space="preserve">
+    <value>Escribir un registro del escaneo en el formato usado por MHDD.</value>
+  </data>
+  <data name="Writing_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Escribiendo los metadatos de Aaru en la imagen.</value>
+  </data>
+  <data name="Writing_dump_hardware_list" xml:space="preserve">
+    <value>Escribiendo la lista del hardware de volcado...</value>
+  </data>
+  <data name="Writing_extended_attribute" xml:space="preserve">
+    <value>Escribiendo atributo extendido...</value>
+  </data>
+  <data name="Writing_image_to" xml:space="preserve">
+    <value>Escribiendo imagen a:</value>
+  </data>
+  <data name="Writing_metadata" xml:space="preserve">
+    <value>Escribiendo metadatos...</value>
+  </data>
+  <data name="Written_0_bytes_of_file_1_to_2" xml:space="preserve">
+    <value>Escritos {0} bytes del fichero {1} en {2}</value>
+  </data>
+  <data name="Written_0_bytes_of_xattr_1_from_file_2_to_3" xml:space="preserve">
+    <value>Escritos {0} bytes del atributo extendido {1} del fichero {2} en {3}</value>
+  </data>
+  <data name="Written_Aaru_Metadata_to_output_image" xml:space="preserve">
+    <value>Escritos los metadatos de Aaru en la imagen.</value>
+  </data>
+  <data name="Written_dump_hardware_list_to_output_image" xml:space="preserve">
+    <value>Escrita la lista de hardware de volcado en la imagen.</value>
+  </data>
+  <data name="You_cannot_use_tape_option_when_input_is_a_file" xml:space="preserve">
+    <value>No puede usar la opción --tape cuando la entrada es un fichero.</value>
+  </data>
+  <data name="You_have_called_the_Checksum_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Checksum</value>
+  </data>
+  <data name="You_have_called_the_Compare_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Comparar</value>
+  </data>
+  <data name="You_have_called_the_Convert_Image_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Convertir-imagen</value>
+  </data>
+  <data name="You_have_called_the_Create_Sidecar_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Crear-sidecar</value>
+  </data>
+  <data name="You_have_called_the_Decode_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Descodificar</value>
+  </data>
+  <data name="You_have_called_the_Device_Info_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Info-de-dispositivo</value>
+  </data>
+  <data name="You_have_called_the_Device_Report_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Reporte-de-dispositivo</value>
+  </data>
+  <data name="You_have_called_the_Dump_Media_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Volcar-medio</value>
+  </data>
+  <data name="You_have_called_the_Entropy_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Entropía</value>
+  </data>
+  <data name="You_have_called_the_Filesystem_Info_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Info de sistema de ficheros</value>
+  </data>
+  <data name="You_have_called_the_Formats_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Formatos</value>
+  </data>
+  <data name="You_have_called_the_Image_Info_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Info-de-imagen</value>
+  </data>
+  <data name="You_have_called_the_Media_Info_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Info-de-medio</value>
+  </data>
+  <data name="You_have_called_the_Media_Scan_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Escaneo-de-medio</value>
+  </data>
+  <data name="You_have_called_the_Print_Hex_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Mostrar-en-hex</value>
+  </data>
+  <data name="You_have_called_the_Verify_command_0_times" xml:space="preserve">
+    <value>Ha llamado {0} veces al comando Verificar</value>
+  </data>
+  <data name="_0_Kb_sec" xml:space="preserve">
+    <value>{0} Kb/seg.</value>
+  </data>
+  <data name="_0_partitions_found" xml:space="preserve">
+    <value>{0} particiones encontradas.</value>
+  </data>
+  <data name="_0_sectors_1_bytes" xml:space="preserve">
+    <value>{0} sectores, {1} bytes</value>
+  </data>
+  <data name="_0_sectors_to_convert" xml:space="preserve">
+    <value>{0} sectores para convertir</value>
+  </data>
+  <data name="_From_image_" xml:space="preserve">
+    <value>&lt;De la imagen&gt;</value>
+  </data>
+</root>

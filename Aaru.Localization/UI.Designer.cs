@@ -1530,16 +1530,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Continue dump whatever happens..
-        /// </summary>
-        public static string Continue_dump_whatever_happens {
-            get {
-                return ResourceManager.GetString("Continue_dump_whatever_happens", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Continue dumping whatever happens.
+        ///   Looks up a localized string similar to Continue dumping whatever happens..
         /// </summary>
         public static string Continue_dumping_whatever_happens {
             get {
@@ -1874,15 +1865,6 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create/use resume mapfile.
-        /// </summary>
-        public static string Create_use_resume_mapfile {
-            get {
-                return ResourceManager.GetString("Create_use_resume_mapfile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Created subdirectory at {0}.
         /// </summary>
         public static string Created_subdirectory_at_0 {
@@ -1937,11 +1919,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decode disk tags..
+        ///   Looks up a localized string similar to Decode media tags..
         /// </summary>
-        public static string Decode_disk_tags {
+        public static string Decode_media_tags {
             get {
-                return ResourceManager.GetString("Decode_disk_tags", resourceCulture);
+                return ResourceManager.GetString("Decode_media_tags", resourceCulture);
             }
         }
         
@@ -1955,11 +1937,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decoder for disk tag type &quot;{0}&quot; not yet implemented, sorry..
+        ///   Looks up a localized string similar to Decoder for media tag type &quot;{0}&quot; not yet implemented, sorry..
         /// </summary>
-        public static string Decoder_for_disk_tag_type_0_not_yet_implemented_sorry {
+        public static string Decoder_for_media_tag_type_0_not_yet_implemented_sorry {
             get {
-                return ResourceManager.GetString("Decoder_for_disk_tag_type_0_not_yet_implemented_sorry", resourceCulture);
+                return ResourceManager.GetString("Decoder_for_media_tag_type_0_not_yet_implemented_sorry", resourceCulture);
             }
         }
         
@@ -3954,7 +3936,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Compares two disc images..
+        ///   Looks up a localized string similar to Compares two images..
         /// </summary>
         public static string Image_Compare_Command_Description {
             get {
@@ -3990,7 +3972,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decodes and pretty prints disk and/or sector tags..
+        ///   Looks up a localized string similar to Decodes and pretty prints media and/or sector tags..
         /// </summary>
         public static string Image_Decode_Command_Description {
             get {
@@ -4076,15 +4058,6 @@ namespace Aaru.Localization {
         public static string Image_has_0_sectors {
             get {
                 return ResourceManager.GetString("Image_has_0_sectors", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image identifies disk type as {0}..
-        /// </summary>
-        public static string Image_identifies_disk_type_as_0 {
-            get {
-                return ResourceManager.GetString("Image_identifies_disk_type_as_0", resourceCulture);
             }
         }
         
@@ -5133,11 +5106,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No partitions founds, not searching for filesystems.
+        ///   Looks up a localized string similar to No partitions found, not searching for filesystems.
         /// </summary>
-        public static string No_partitions_founds_not_searching_for_filesystems {
+        public static string No_partitions_found_not_searching_for_filesystems {
             get {
-                return ResourceManager.GetString("No_partitions_founds_not_searching_for_filesystems", resourceCulture);
+                return ResourceManager.GetString("No_partitions_found_not_searching_for_filesystems", resourceCulture);
             }
         }
         
@@ -6467,11 +6440,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to There are no disk tags in chosen disc image..
+        ///   Looks up a localized string similar to There are no media tags in chosen disc image..
         /// </summary>
-        public static string There_are_no_disk_tags_in_chosen_disc_image {
+        public static string There_are_no_media_tags_in_chosen_disc_image {
             get {
-                return ResourceManager.GetString("There_are_no_disk_tags_in_chosen_disc_image", resourceCulture);
+                return ResourceManager.GetString("There_are_no_media_tags_in_chosen_disc_image", resourceCulture);
             }
         }
         
@@ -8546,7 +8519,7 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dimensions, as a square, in pixels, for the graph of verified disc..
+        ///   Looks up a localized string similar to Dimensions, as a square, in pixels, for the graph of verified media..
         /// </summary>
         public static string Verify_dimensions_paramater_help {
             get {
@@ -8555,11 +8528,11 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Verify disc image if supported..
+        ///   Looks up a localized string similar to Verify media image if supported..
         /// </summary>
-        public static string Verify_disc_image_if_supported {
+        public static string Verify_media_image_if_supported {
             get {
-                return ResourceManager.GetString("Verify_disc_image_if_supported", resourceCulture);
+                return ResourceManager.GetString("Verify_media_image_if_supported", resourceCulture);
             }
         }
         

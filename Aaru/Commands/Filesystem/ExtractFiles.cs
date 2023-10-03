@@ -249,7 +249,7 @@ sealed class ExtractFilesCommand : Command
 
                 AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_identifies_disk_type_as_0,
+                AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);

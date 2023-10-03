@@ -109,7 +109,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         OptionsVisible       = true;
     }
 
-    public string VerifyImageLabel   => UI.Verify_disc_image_if_supported;
+    public string VerifyImageLabel   => UI.Verify_media_image_if_supported;
     public string VerifySectorsLabel => UI.Verify_all_sectors_if_supported;
     public string LBALabel           => UI.Title_LBA;
     public string StartLabel         => UI.ButtonLabel_Start;

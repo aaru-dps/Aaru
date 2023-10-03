@@ -244,7 +244,7 @@ sealed class FilesystemInfoCommand : Command
 
                     if(!filesystems)
                     {
-                        AaruConsole.WriteLine(UI.No_partitions_founds_not_searching_for_filesystems);
+                        AaruConsole.WriteLine(UI.No_partitions_found_not_searching_for_filesystems);
 
                         return (int)ErrorNumber.NothingFound;
                     }

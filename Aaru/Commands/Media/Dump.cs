@@ -87,7 +87,7 @@ sealed class DumpMediaCommand : Command
         Add(new Option<bool>(new[]
         {
             "--force", "-f"
-        }, () => false, UI.Continue_dump_whatever_happens));
+        }, () => false, UI.Continue_dumping_whatever_happens));
 
         Add(new Option<string>(new[]
         {

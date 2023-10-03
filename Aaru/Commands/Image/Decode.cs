@@ -53,7 +53,7 @@ sealed class DecodeCommand : Command
         Add(new Option<bool>(new[]
         {
             "--disk-tags", "-f"
-        }, () => true, UI.Decode_disk_tags));
+        }, () => true, UI.Decode_media_tags));
 
         Add(new Option<string>(new[]
         {
@@ -183,7 +183,7 @@ sealed class DecodeCommand : Command
 
         if(diskTags)
             if(inputFormat.Info.ReadableMediaTags.Count == 0)
-                AaruConsole.WriteLine(UI.There_are_no_disk_tags_in_chosen_disc_image);
+                AaruConsole.WriteLine(UI.There_are_no_media_tags_in_chosen_disc_image);
             else
                 foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
                     switch(tag)
@@ -382,7 +382,7 @@ sealed class DecodeCommand : Command
                             break;
                         }
                         default:
-                            AaruConsole.WriteLine(UI.Decoder_for_disk_tag_type_0_not_yet_implemented_sorry, tag);
+                            AaruConsole.WriteLine(UI.Decoder_for_media_tag_type_0_not_yet_implemented_sorry, tag);
 
                             break;
                     }
