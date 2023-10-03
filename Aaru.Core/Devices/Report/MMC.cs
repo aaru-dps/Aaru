@@ -680,7 +680,7 @@ public sealed partial class DeviceReport
                     !_dev.ReadTocPmaAtip(out buffer, out senseBuffer, false, 0, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadTOC);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadTOC);
             mediaTest.TocData = buffer;
 
             Spectre.ProgressSingleSpinner(ctx =>
@@ -689,7 +689,7 @@ public sealed partial class DeviceReport
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadFullTOC);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadFullTOC);
             mediaTest.FullTocData = buffer;
         }
 
@@ -702,7 +702,7 @@ public sealed partial class DeviceReport
                 mediaTest.CanReadATIP = !_dev.ReadAtip(out buffer, out senseBuffer, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadATIP);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadATIP);
 
             mediaTest.AtipData = buffer;
 
@@ -712,7 +712,7 @@ public sealed partial class DeviceReport
                 mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadPMA);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadPMA);
 
             mediaTest.PmaData = buffer;
         }
@@ -732,7 +732,7 @@ public sealed partial class DeviceReport
                                                                _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadPFI);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadPFI);
 
             mediaTest.PfiData = buffer;
 
@@ -746,7 +746,7 @@ public sealed partial class DeviceReport
                                                                _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadDMI);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadDMI);
 
             mediaTest.DmiData = buffer;
         }
@@ -763,7 +763,7 @@ public sealed partial class DeviceReport
                                                                _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadCMI);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadCMI);
 
             mediaTest.CmiData = buffer;
         }
@@ -782,7 +782,7 @@ public sealed partial class DeviceReport
                                                                    _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
 
                 mediaTest.DvdBcaData = buffer;
 
@@ -796,7 +796,7 @@ public sealed partial class DeviceReport
                                                                     out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadAACS);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadAACS);
 
                 mediaTest.DvdAacsData = buffer;
 
@@ -813,7 +813,7 @@ public sealed partial class DeviceReport
                                                                    _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
 
                 mediaTest.DvdBcaData = buffer;
 
@@ -827,7 +827,7 @@ public sealed partial class DeviceReport
                                                                    _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadPFI);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadPFI);
 
                 mediaTest.PfiData = buffer;
 
@@ -841,7 +841,7 @@ public sealed partial class DeviceReport
                                                                    0, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadDMI);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadDMI);
 
                 mediaTest.DmiData = buffer;
 
@@ -863,7 +863,7 @@ public sealed partial class DeviceReport
                                                                    _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadBCA);
 
                 mediaTest.BluBcaData = buffer;
 
@@ -882,7 +882,7 @@ public sealed partial class DeviceReport
                                                                    out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadDDS);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadDDS);
 
                 mediaTest.DvdDdsData = buffer;
 
@@ -896,7 +896,7 @@ public sealed partial class DeviceReport
                                                 out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.CanReadSpareAreaInformation);
 
                 mediaTest.DvdSaiData = buffer;
@@ -916,7 +916,7 @@ public sealed partial class DeviceReport
                                                                MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadDDS);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadDDS);
 
             mediaTest.BluDdsData = buffer;
 
@@ -929,7 +929,7 @@ public sealed partial class DeviceReport
                                             MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.CanReadSpareAreaInformation);
 
             mediaTest.BluSaiData = buffer;
@@ -947,7 +947,7 @@ public sealed partial class DeviceReport
                                                                out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadPRI);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadPRI);
 
             mediaTest.PriData = buffer;
         }
@@ -964,7 +964,7 @@ public sealed partial class DeviceReport
                                                                    _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadMediaID);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadMediaID);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -976,7 +976,7 @@ public sealed partial class DeviceReport
                                                                          0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.CanReadRecordablePFI);
 
             mediaTest.EmbossedPfiData = buffer;
@@ -994,7 +994,7 @@ public sealed partial class DeviceReport
                                                                 MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadADIP);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadADIP);
 
             mediaTest.AdipData = buffer;
 
@@ -1007,7 +1007,7 @@ public sealed partial class DeviceReport
                                                                MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadDCB);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadDCB);
 
             mediaTest.DcbData = buffer;
         }
@@ -1024,7 +1024,7 @@ public sealed partial class DeviceReport
                                                                  _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadHDCMI);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadHDCMI);
 
             mediaTest.HdCmiData = buffer;
         }
@@ -1041,7 +1041,7 @@ public sealed partial class DeviceReport
                                                                          _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.CanReadLayerCapacity);
 
             mediaTest.DvdLayerData = buffer;
@@ -1061,7 +1061,7 @@ public sealed partial class DeviceReport
                                                                            _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.CanReadDiscInformation);
 
             mediaTest.BluDiData = buffer;
@@ -1075,7 +1075,7 @@ public sealed partial class DeviceReport
                                                                MmcDiscStructureFormat.Pac, 0, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadPAC);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadPAC);
 
             mediaTest.BluPacData = buffer;
         }
@@ -1103,7 +1103,7 @@ public sealed partial class DeviceReport
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 512, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
 
             mediaTest.Read6Data = buffer;
 
@@ -1115,7 +1115,7 @@ public sealed partial class DeviceReport
                                                         512, 0, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
 
             mediaTest.Read10Data = buffer;
 
@@ -1127,7 +1127,7 @@ public sealed partial class DeviceReport
                                                         512, 0, 1, false, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
 
             mediaTest.Read12Data = buffer;
 
@@ -1139,7 +1139,7 @@ public sealed partial class DeviceReport
                                                         1, false, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
 
             mediaTest.Read16Data = buffer;
         }
@@ -1151,7 +1151,7 @@ public sealed partial class DeviceReport
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 2048, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
 
             mediaTest.Read6Data = buffer;
 
@@ -1163,7 +1163,7 @@ public sealed partial class DeviceReport
                                                         2048, 0, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
 
             mediaTest.Read10Data = buffer;
 
@@ -1175,7 +1175,7 @@ public sealed partial class DeviceReport
                                                         2048, 0, 1, false, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
 
             mediaTest.Read12Data = buffer;
 
@@ -1187,7 +1187,7 @@ public sealed partial class DeviceReport
                                                         1, false, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
 
             mediaTest.Read16Data = buffer;
         }
@@ -1208,7 +1208,8 @@ public sealed partial class DeviceReport
                                                             MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsReadCd);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
+                                           !mediaTest.SupportsReadCd);
 
                 mediaTest.ReadCdFullData = buffer;
 
@@ -1222,7 +1223,7 @@ public sealed partial class DeviceReport
                                                                   MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsReadCdMsf);
 
                 mediaTest.ReadCdMsfFullData = buffer;
@@ -1239,7 +1240,8 @@ public sealed partial class DeviceReport
                                                             MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsReadCd);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
+                                           !mediaTest.SupportsReadCd);
 
                 mediaTest.ReadCdData = buffer;
 
@@ -1253,7 +1255,7 @@ public sealed partial class DeviceReport
                                                                   MmcSubchannel.None, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsReadCdMsf);
 
                 mediaTest.ReadCdMsfData = buffer;
@@ -1269,7 +1271,7 @@ public sealed partial class DeviceReport
                                                                out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsReadCdRaw);
 
                 mediaTest.ReadCdFullData = buffer;
@@ -1285,7 +1287,7 @@ public sealed partial class DeviceReport
                                                                      _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsReadCdMsfRaw);
 
                 mediaTest.ReadCdMsfFullData = buffer;
@@ -1312,7 +1314,7 @@ public sealed partial class DeviceReport
 
                         // ReSharper restore IntVariableOverflowInUncheckedContext
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, sense);
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, sense);
 
                         mediaTest.Track1PregapData = buffer;
 
@@ -1345,7 +1347,7 @@ public sealed partial class DeviceReport
                                                 false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, sense);
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, sense);
 
                         mediaTest.LeadInData = buffer;
 
@@ -1379,7 +1381,8 @@ public sealed partial class DeviceReport
                                                                 out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadLeadOut);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
+                                           !mediaTest.CanReadLeadOut);
 
                 mediaTest.LeadOutData = buffer;
             }
@@ -1408,7 +1411,7 @@ public sealed partial class DeviceReport
                                                                        MmcErrorField.C2PointersAndBlock,
                                                                        MmcSubchannel.None, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadC2Pointers);
 
                         mediaTest.C2PointersData = buffer;
@@ -1424,7 +1427,7 @@ public sealed partial class DeviceReport
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
@@ -1434,7 +1437,7 @@ public sealed partial class DeviceReport
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
@@ -1450,7 +1453,7 @@ public sealed partial class DeviceReport
                                                                             MmcErrorField.None, MmcSubchannel.Rw,
                                                                             _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadCorrectedSubchannel);
 
                         mediaTest.CorrectedSubchannelData = buffer;
@@ -1483,7 +1486,7 @@ public sealed partial class DeviceReport
                                                                                MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
@@ -1501,7 +1504,7 @@ public sealed partial class DeviceReport
                                                                                MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
@@ -1521,7 +1524,7 @@ public sealed partial class DeviceReport
                                                                              MmcSubchannel.Rw, _dev.Timeout,
                                                                              out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                         mediaTest.CorrectedSubchannelWithC2Data = buffer;
@@ -1552,7 +1555,7 @@ public sealed partial class DeviceReport
                                                                        MmcErrorField.C2PointersAndBlock,
                                                                        MmcSubchannel.None, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadC2Pointers);
 
                         mediaTest.C2PointersData = buffer;
@@ -1569,7 +1572,7 @@ public sealed partial class DeviceReport
                                                                  MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout,
                                                                  out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
@@ -1580,7 +1583,7 @@ public sealed partial class DeviceReport
                                                                  MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout,
                                                                  out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
@@ -1596,7 +1599,7 @@ public sealed partial class DeviceReport
                                                                             MmcErrorField.None, MmcSubchannel.Rw,
                                                                             _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadCorrectedSubchannel);
 
                         mediaTest.CorrectedSubchannelData = buffer;
@@ -1628,7 +1631,7 @@ public sealed partial class DeviceReport
                                                                                true, MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
@@ -1646,7 +1649,7 @@ public sealed partial class DeviceReport
                                                                                true, MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
@@ -1673,7 +1676,7 @@ public sealed partial class DeviceReport
                                                                                  MmcSubchannel.Rw, _dev.Timeout,
                                                                                  out _);
 
-                            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                        !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                             mediaTest.CorrectedSubchannelWithC2Data = buffer;
@@ -1705,7 +1708,7 @@ public sealed partial class DeviceReport
                                                                        MmcSubchannel.None, _dev.Timeout, out _);
                     });
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadC2Pointers);
 
                     mediaTest.C2PointersData = buffer;
@@ -1720,7 +1723,7 @@ public sealed partial class DeviceReport
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
@@ -1730,7 +1733,7 @@ public sealed partial class DeviceReport
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
@@ -1746,7 +1749,7 @@ public sealed partial class DeviceReport
                                                                             MmcErrorField.None, MmcSubchannel.Rw,
                                                                             _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadCorrectedSubchannel);
 
                         mediaTest.CorrectedSubchannelData = buffer;
@@ -1778,7 +1781,7 @@ public sealed partial class DeviceReport
                                                                                MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadPQSubchannelWithC2);
 
                         mediaTest.PQSubchannelWithC2Data = buffer;
@@ -1796,7 +1799,7 @@ public sealed partial class DeviceReport
                                                                                MmcErrorField.C2PointersAndBlock,
                                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadRWSubchannelWithC2);
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
@@ -1816,7 +1819,7 @@ public sealed partial class DeviceReport
                                                                              MmcSubchannel.Rw, _dev.Timeout,
                                                                              out _);
 
-                        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                    !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                         mediaTest.CorrectedSubchannelWithC2Data = buffer;
@@ -1835,7 +1838,7 @@ public sealed partial class DeviceReport
                                               _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsPlextorReadCDDA);
 
                 mediaTest.PlextorReadCddaData = buffer;
@@ -1852,7 +1855,7 @@ public sealed partial class DeviceReport
                                               _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsPioneerReadCDDA);
 
                 mediaTest.PioneerReadCddaData = buffer;
@@ -1866,7 +1869,7 @@ public sealed partial class DeviceReport
                                                  PioneerSubchannel.None, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsPioneerReadCDDAMSF);
 
                 mediaTest.PioneerReadCddaMsfData = buffer;
@@ -1882,7 +1885,7 @@ public sealed partial class DeviceReport
                         !_dev.NecReadCdDa(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
                 });
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.SupportsNECReadCDDA);
 
                 mediaTest.NecReadCddaData = buffer;
@@ -1947,7 +1950,7 @@ public sealed partial class DeviceReport
                     !_dev.PlextorReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.SupportsPlextorReadRawDVD);
 
             if(mediaTest.SupportsPlextorReadRawDVD == true)
@@ -1967,7 +1970,7 @@ public sealed partial class DeviceReport
                     !_dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                        !mediaTest.SupportsHLDTSTReadRawDVD);
 
             if(mediaTest.SupportsHLDTSTReadRawDVD == true)
@@ -2044,7 +2047,7 @@ public sealed partial class DeviceReport
 
                 mediaTest.ReadF1_06Data = mediaTest.CanReadF1_06 == true ? buffer : senseBuffer;
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadF1_06);
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadF1_06);
             });
 
             Spectre.ProgressSingleSpinner(ctx =>
@@ -2127,7 +2130,7 @@ public sealed partial class DeviceReport
                     mediaTest.ReadF1_06LeadOutData = senseBuffer;
                 }
 
-                AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                            !mediaTest.CanReadF1_06LeadOut);
             });
         }
@@ -2141,7 +2144,7 @@ public sealed partial class DeviceReport
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
             });
 
-            AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.CanReadFullTOC);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.CanReadFullTOC);
 
             mediaTest.FullTocData = buffer;
 
@@ -2178,11 +2181,12 @@ public sealed partial class DeviceReport
                         return null;
                     }
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.First_session_Lead_Out_starts_at_0_1_2,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                               Localization.Core.First_session_Lead_Out_starts_at_0_1_2,
                                                firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
                                                firstSessionLeadOutTrack.PFRAME);
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Second_session_starts_at_0_1_2,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Second_session_starts_at_0_1_2,
                                                secondSessionFirstTrack.PMIN, secondSessionFirstTrack.PSEC,
                                                secondSessionFirstTrack.PFRAME);
 
@@ -2226,7 +2230,7 @@ public sealed partial class DeviceReport
                                                                           MmcSubchannel.None, _dev.Timeout, out _);
                     });
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadingIntersessionLeadOut);
 
                     mediaTest.IntersessionLeadOutData = buffer;
@@ -2261,7 +2265,7 @@ public sealed partial class DeviceReport
                                                                          MmcSubchannel.None, _dev.Timeout, out _);
                     });
 
-                    AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0,
+                    AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0,
                                                !mediaTest.CanReadingIntersessionLeadIn);
 
                     mediaTest.IntersessionLeadInData = buffer;

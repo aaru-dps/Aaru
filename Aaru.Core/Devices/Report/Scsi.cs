@@ -552,7 +552,7 @@ public sealed partial class DeviceReport
                                                   _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
         mediaTest.Read6Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -563,7 +563,7 @@ public sealed partial class DeviceReport
                                                     mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
         mediaTest.Read10Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -574,7 +574,7 @@ public sealed partial class DeviceReport
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
         mediaTest.Read12Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -585,7 +585,7 @@ public sealed partial class DeviceReport
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
         mediaTest.Read16Data = buffer;
 
         mediaTest.LongBlockSize = mediaTest.BlockSize;
@@ -859,7 +859,7 @@ public sealed partial class DeviceReport
                                                      _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead6);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead6);
         capabilities.Read6Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -870,7 +870,7 @@ public sealed partial class DeviceReport
                                                        capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead10);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead10);
         capabilities.Read10Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -881,7 +881,7 @@ public sealed partial class DeviceReport
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead12);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead12);
         capabilities.Read12Data = buffer;
 
         Spectre.ProgressSingleSpinner(ctx =>
@@ -892,7 +892,7 @@ public sealed partial class DeviceReport
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
         });
 
-        AaruConsole.DebugWriteLine("SCSI Report", Localization.Core.Sense_equals_0, !capabilities.SupportsRead16);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead16);
         capabilities.Read16Data = buffer;
 
         capabilities.LongBlockSize = capabilities.BlockSize;
