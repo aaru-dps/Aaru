@@ -58,7 +58,7 @@ public static class Extensions
     /// </returns>
     public static int EnsureRead(this Stream s, byte[] buffer, int offset, int count)
     {
-        int pos = 0;
+        var pos = 0;
         int read;
 
         do

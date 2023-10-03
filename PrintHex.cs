@@ -86,7 +86,7 @@ public static class PrintHex
         sb.Append(str);
         sb.Append("  ");
 
-        for(int i = 0; i < width; i++)
+        for(var i = 0; i < width; i++)
             sb.AppendFormat(" {0:X2}", i);
 
         if(color)
@@ -94,11 +94,11 @@ public static class PrintHex
 
         sb.AppendLine();
 
-        int b = 0;
+        var b = 0;
 
-        string format = $"{{0:X{offsetLength}}}";
+        var format = $"{{0:X{offsetLength}}}";
 
-        for(int i = 0; i < rows; i++)
+        for(var i = 0; i < rows; i++)
         {
             if(color)
                 sb.Append("\u001b[36m");
@@ -112,19 +112,19 @@ public static class PrintHex
             int lastBytes  = i == rows - 1 ? last : width;
             int lastSpaces = width - lastBytes;
 
-            for(int j = 0; j < lastBytes; j++)
+            for(var j = 0; j < lastBytes; j++)
             {
                 sb.AppendFormat(" {0:X2}", array[b]);
                 b++;
             }
 
-            for(int j = 0; j < lastSpaces; j++)
+            for(var j = 0; j < lastSpaces; j++)
                 sb.Append("   ");
 
             b -= lastBytes;
             sb.Append("   ");
 
-            for(int j = 0; j < lastBytes; j++)
+            for(var j = 0; j < lastBytes; j++)
             {
                 int v = array[b];
                 sb.Append(v is > 31 and < 127 or > 159 ? (char)v : '.');

@@ -56,6 +56,7 @@ public sealed class MarshallingPropertiesAttribute : Attribute
 
     /// <summary>c</summary>
     public BitEndian Endian { get; }
+
     /// <summary>Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).</summary>
     public bool HasReferences { get; set; }
 }

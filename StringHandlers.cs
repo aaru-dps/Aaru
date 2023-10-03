@@ -54,11 +54,12 @@ public static class StringHandlers
         if(cString == null)
             return null;
 
-        int len = 0;
+        var len = 0;
 
         for(int i = start; i < cString.Length; i++)
         {
             if(cString[i] == 0)
+            {
                 if(twoBytes)
                 {
                     if(i + 1          < cString.Length &&
@@ -71,6 +72,7 @@ public static class StringHandlers
                 }
                 else
                     break;
+            }
 
             len++;
         }
@@ -78,7 +80,7 @@ public static class StringHandlers
         if(twoBytes && len % 2 > 0)
             len--;
 
-        byte[] dest = new byte[len];
+        var dest = new byte[len];
         Array.Copy(cString, start, dest, 0, len);
 
         return len == 0 ? "" : encoding.GetString(dest);
@@ -100,7 +102,7 @@ public static class StringHandlers
             return null;
 
         byte length = pascalString[start];
-        int  len    = 0;
+        var  len    = 0;
 
         for(int i = start + 1; i < length + 1 && i < pascalString.Length; i++)
         {
@@ -110,7 +112,7 @@ public static class StringHandlers
             len++;
         }
 
-        byte[] dest = new byte[len];
+        var dest = new byte[len];
         Array.Copy(pascalString, start + 1, dest, 0, len);
 
         return len == 0 ? "" : encoding.GetString(dest);
@@ -155,14 +157,14 @@ public static class StringHandlers
     /// <param name="dstring">OSTA compressed unicode byte array.</param>
     public static string DecompressUnicode(byte[] dstring)
     {
-        byte   compId = dstring[0];
-        string temp   = "";
+        byte compId = dstring[0];
+        var  temp   = "";
 
         if(compId != 8 &&
            compId != 16)
             return null;
 
-        for(int byteIndex = 1; byteIndex < dstring.Length;)
+        for(var byteIndex = 1; byteIndex < dstring.Length;)
         {
             ushort unicode;
 
