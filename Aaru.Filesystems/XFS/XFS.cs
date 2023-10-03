@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of SGI's XFS</summary>
 public sealed partial class XFS : IFilesystem
 {
+    const string MODULE_NAME = "XFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.XFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("1D8CD8B8-27E6-410F-9973-D16409225FBA");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "XFS plugin";
+
+#endregion
 }

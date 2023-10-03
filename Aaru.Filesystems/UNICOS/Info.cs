@@ -34,13 +34,13 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using blkno_t = System.Int64;
-using daddr_t = System.Int64;
-using dev_t = System.Int64;
-using extent_t = System.Int64;
-using ino_t = System.Int64;
+using blkno_t = long;
+using daddr_t = long;
+using dev_t = long;
+using extent_t = long;
+using ino_t = long;
 using Partition = Aaru.CommonTypes.Partition;
-using time_t = System.Int64;
+using time_t = long;
 
 namespace Aaru.Filesystems;
 
@@ -48,13 +48,15 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Cray UNICOS filesystem</summary>
 public sealed partial class UNICOS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -89,7 +91,7 @@ public sealed partial class UNICOS
         if(imagePlugin.Info.SectorSize < 512)
             return;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -115,11 +117,11 @@ public sealed partial class UNICOS
             sb.AppendLine(Localization.Volume_is_secure);
 
         sb.AppendFormat(Localization.Volume_contains_0_partitions, unicosSb.s_npart).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_sector, unicosSb.s_iounit).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector,          unicosSb.s_iounit).AppendLine();
         sb.AppendLine(Localization._4096_bytes_per_block);
         sb.AppendFormat(Localization._0_data_blocks_in_volume, unicosSb.s_fsize).AppendLine();
-        sb.AppendFormat(Localization.Root_resides_on_inode_0, unicosSb.s_root).AppendLine();
-        sb.AppendFormat(Localization._0_inodes_in_volume, unicosSb.s_isize).AppendLine();
+        sb.AppendFormat(Localization.Root_resides_on_inode_0,  unicosSb.s_root).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_in_volume,      unicosSb.s_isize).AppendLine();
 
         sb.AppendFormat(Localization.Volume_last_updated_on_0, DateHandlers.UnixToDateTime(unicosSb.s_time)).
            AppendLine();
@@ -142,4 +144,6 @@ public sealed partial class UNICOS
 
         metadata.Dirty |= unicosSb.s_error > 0;
     }
+
+#endregion
 }

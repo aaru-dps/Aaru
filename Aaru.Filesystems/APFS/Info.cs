@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class APFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -113,4 +115,6 @@ public sealed partial class APFS
             Type        = FS_TYPE
         };
     }
+
+#endregion
 }

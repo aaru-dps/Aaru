@@ -50,8 +50,10 @@ public sealed partial class CPM
         {
             _definitions =
                 JsonSerializer.
-                    Deserialize(Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.json") ?? new MemoryStream(),
-                                typeof(CpmDefinitions), CpmDefinitionsContext.Default) as CpmDefinitions;
+                    Deserialize(
+                        Assembly.GetExecutingAssembly().
+                                 GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.json") ?? new MemoryStream(),
+                        typeof(CpmDefinitions), CpmDefinitionsContext.Default) as CpmDefinitions;
 
             if(_definitions is null)
                 return false;
@@ -67,7 +69,7 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(int i = 0; i < def.sectorsPerTrack; i++)
+                    for(var i = 0; i < def.sectorsPerTrack; i++)
                         def.side1.sectorIds[i] = i + 1;
                 }
 
@@ -82,7 +84,7 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(int i = 0; i < def.sectorsPerTrack; i++)
+                    for(var i = 0; i < def.sectorsPerTrack; i++)
                         def.side2.sectorIds[i] = i + 1;
                 }
             }

@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Locus filesystem</summary>
 public sealed partial class RBF
 {
+#region Nested type: IdSector
+
     /// <summary>Identification sector. Wherever the sector this resides on, becomes LSN 0.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct IdSector
@@ -87,6 +89,10 @@ public sealed partial class RBF
         /// <summary>Version ID</summary>
         public readonly ushort dd_versid;
     }
+
+#endregion
+
+#region Nested type: NewIdSector
 
     /// <summary>
     ///     Identification sector. Wherever the sector this resides on, becomes LSN 0. Introduced on OS-9000, this can be
@@ -144,4 +150,6 @@ public sealed partial class RBF
         /// <summary>Parity</summary>
         public readonly uint rid_parity;
     }
+
+#endregion
 }

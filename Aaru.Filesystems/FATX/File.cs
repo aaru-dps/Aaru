@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -131,14 +133,14 @@ public sealed partial class XboxFatPlugin
 
         var ms = new MemoryStream();
 
-        for(int i = 0; i < sizeInClusters; i++)
+        for(var i = 0; i < sizeInClusters; i++)
         {
             if(i + firstCluster >= mynode._clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
                 _imagePlugin.
-                    ReadSectors(_firstClusterSector + ((mynode._clusters[i + firstCluster] - 1) * _sectorsPerCluster),
+                    ReadSectors(_firstClusterSector + (mynode._clusters[i + firstCluster] - 1) * _sectorsPerCluster,
                                 _sectorsPerCluster, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)
@@ -226,6 +228,8 @@ public sealed partial class XboxFatPlugin
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     uint[] GetClusters(uint startCluster)
     {
         if(startCluster == 0)
@@ -244,18 +248,22 @@ public sealed partial class XboxFatPlugin
         uint nextCluster = startCluster;
 
         if(_fat16 is null)
+        {
             while((nextCluster & FAT32_MASK) > 0 &&
                   (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
             {
                 clusters.Add(nextCluster);
                 nextCluster = _fat32[nextCluster];
             }
+        }
         else
+        {
             while(nextCluster is > 0 and <= FAT16_RESERVED)
             {
                 clusters.Add(nextCluster);
                 nextCluster = _fat16[nextCluster];
             }
+        }
 
         return clusters.ToArray();
     }
@@ -266,15 +274,12 @@ public sealed partial class XboxFatPlugin
 
         string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 

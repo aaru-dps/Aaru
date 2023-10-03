@@ -35,22 +35,50 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ISO9660
 {
-    // RRIP 1.10
+#region Nested type: AlternateName
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct PosixAttributesOld
+    readonly struct AlternateName
     {
-        public readonly ushort    signature;
-        public readonly byte      length;
-        public readonly byte      version;
-        public readonly PosixMode st_mode;
-        public readonly PosixMode st_mode_be;
-        public readonly uint      st_nlink;
-        public readonly uint      st_nlink_be;
-        public readonly uint      st_uid;
-        public readonly uint      st_uid_be;
-        public readonly uint      st_gid;
-        public readonly uint      st_gid_be;
+        public readonly ushort             signature;
+        public readonly byte               length;
+        public readonly byte               version;
+        public readonly AlternateNameFlags flags;
+
+        // Folowed by name, can be divided in pieces
     }
+
+#endregion
+
+#region Nested type: ChildLink
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ChildLink
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly uint   child_dir_lba;
+        public readonly uint   child_dir_lba_be;
+    }
+
+#endregion
+
+#region Nested type: ParentLink
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ParentLink
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly uint   parent_dir_lba;
+        public readonly uint   parent_dir_lba_be;
+    }
+
+#endregion
+
+#region Nested type: PosixAttributes
 
     // RRIP 1.12
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -71,6 +99,31 @@ public sealed partial class ISO9660
         public readonly uint      st_ino_be;
     }
 
+#endregion
+
+#region Nested type: PosixAttributesOld
+
+    // RRIP 1.10
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct PosixAttributesOld
+    {
+        public readonly ushort    signature;
+        public readonly byte      length;
+        public readonly byte      version;
+        public readonly PosixMode st_mode;
+        public readonly PosixMode st_mode_be;
+        public readonly uint      st_nlink;
+        public readonly uint      st_nlink_be;
+        public readonly uint      st_uid;
+        public readonly uint      st_uid_be;
+        public readonly uint      st_gid;
+        public readonly uint      st_gid_be;
+    }
+
+#endregion
+
+#region Nested type: PosixDeviceNumber
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct PosixDeviceNumber
     {
@@ -83,6 +136,39 @@ public sealed partial class ISO9660
         public readonly uint   dev_t_low_be;
     }
 
+#endregion
+
+#region Nested type: RelocatedDirectory
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct RelocatedDirectory
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+    }
+
+#endregion
+
+#region Nested type: SparseFile
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SparseFile
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+        public readonly uint   virtual_size_high;
+        public readonly uint   virtual_size_high_be;
+        public readonly uint   virtual_size_low;
+        public readonly uint   virtual_size_low_be;
+        public readonly byte   table_depth;
+    }
+
+#endregion
+
+#region Nested type: SymbolicLink
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SymbolicLink
     {
@@ -94,6 +180,10 @@ public sealed partial class ISO9660
         // Followed by SymbolicLinkComponent (link to /bar/foo uses at least two of these structs)
     }
 
+#endregion
+
+#region Nested type: SymbolicLinkComponent
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SymbolicLinkComponent
     {
@@ -103,44 +193,9 @@ public sealed partial class ISO9660
         // Followed by component content
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AlternateName
-    {
-        public readonly ushort             signature;
-        public readonly byte               length;
-        public readonly byte               version;
-        public readonly AlternateNameFlags flags;
+#endregion
 
-        // Folowed by name, can be divided in pieces
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ChildLink
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-        public readonly uint   child_dir_lba;
-        public readonly uint   child_dir_lba_be;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ParentLink
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-        public readonly uint   parent_dir_lba;
-        public readonly uint   parent_dir_lba_be;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct RelocatedDirectory
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-    }
+#region Nested type: Timestamps
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Timestamps
@@ -160,16 +215,5 @@ public sealed partial class ISO9660
         // Followed by effective time if present
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SparseFile
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-        public readonly uint   virtual_size_high;
-        public readonly uint   virtual_size_high_be;
-        public readonly uint   virtual_size_low;
-        public readonly uint   virtual_size_low_be;
-        public readonly byte   table_depth;
-    }
+#endregion
 }

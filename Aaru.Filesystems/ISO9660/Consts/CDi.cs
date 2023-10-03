@@ -44,12 +44,24 @@ public sealed partial class ISO9660
     static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
     static readonly int    _cdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
 
+#region Nested type: CdiAttributes
+
     [Flags]
-    enum CdiVolumeFlags : byte
+    enum CdiAttributes : ushort
     {
-        // Escapes are not ISO 2375 but ISO 2022
-        NotISO2375 = 1
+        OwnerRead    = 1 << 0,
+        OwnerExecute = 1 << 2,
+        GroupRead    = 1 << 4,
+        GroupExecute = 1 << 6,
+        OtherRead    = 1 << 8,
+        OtherExecute = 1 << 10,
+        DigitalAudio = 1 << 14,
+        Directory    = 1 << 15
     }
+
+#endregion
+
+#region Nested type: CdiFileFlags
 
     [Flags]
     enum CdiFileFlags : byte
@@ -57,11 +69,16 @@ public sealed partial class ISO9660
         Hidden = 0x01
     }
 
+#endregion
+
+#region Nested type: CdiVolumeFlags
+
     [Flags]
-    enum CdiAttributes : ushort
+    enum CdiVolumeFlags : byte
     {
-        OwnerRead    = 1 << 0, OwnerExecute = 1 << 2, GroupRead    = 1 << 4,
-        GroupExecute = 1 << 6, OtherRead    = 1 << 8, OtherExecute = 1 << 10,
-        DigitalAudio = 1 << 14, Directory   = 1 << 15
+        // Escapes are not ISO 2375 but ISO 2022
+        NotISO2375 = 1
     }
+
+#endregion
 }

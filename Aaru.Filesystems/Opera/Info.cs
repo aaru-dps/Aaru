@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -49,7 +51,7 @@ public sealed partial class OperaFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] syncBytes = new byte[5];
+        var syncBytes = new byte[5];
 
         byte recordType = sbSector[0x000];
         Array.Copy(sbSector, 0x001, syncBytes, 0, 5);
@@ -89,40 +91,52 @@ public sealed partial class OperaFS
         superBlockmetadata.AppendFormat(Localization.Opera_filesystem_disc).AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, encoding)))
+        {
             superBlockmetadata.
                 AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, encoding)).
                 AppendLine();
+        }
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, encoding)))
+        {
             superBlockmetadata.
                 AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, encoding)).
                 AppendLine();
+        }
 
         superBlockmetadata.AppendFormat(Localization.Volume_identifier_0_X8, sb.volume_id).AppendLine();
-        superBlockmetadata.AppendFormat(Localization.Block_size_0_bytes, sb.block_size).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Block_size_0_bytes,     sb.block_size).AppendLine();
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
         {
             if(sb.block_size != 2048)
+            {
                 superBlockmetadata.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                 sb.block_size, 2048);
+                    AppendFormat(
+                        Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                        sb.block_size, 2048);
+            }
         }
         else if(imagePlugin.Info.SectorSize != sb.block_size)
+        {
             superBlockmetadata.
-                AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                             sb.block_size, imagePlugin.Info.SectorSize);
+                AppendFormat(
+                    Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                    sb.block_size, imagePlugin.Info.SectorSize);
+        }
 
         superBlockmetadata.
             AppendFormat(Localization.Volume_size_0_blocks_1_bytes, sb.block_count, sb.block_size * sb.block_count).
             AppendLine();
 
         if(sb.block_count > imagePlugin.Info.Sectors)
+        {
             superBlockmetadata.
                 AppendFormat(Localization.WARNING__Filesystem_indicates_0_blocks_while_device_indicates_1_blocks,
                              sb.block_count, imagePlugin.Info.Sectors);
+        }
 
-        superBlockmetadata.AppendFormat(Localization.Root_directory_identifier_0, sb.root_dirid).AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Root_directory_identifier_0,       sb.root_dirid).AppendLine();
         superBlockmetadata.AppendFormat(Localization.Root_directory_block_size_0_bytes, sb.rootdir_bsize).AppendLine();
 
         superBlockmetadata.AppendFormat(Localization.Root_directory_size_0_blocks_1_bytes, sb.rootdir_blocks,
@@ -140,4 +154,6 @@ public sealed partial class OperaFS
             Clusters    = sb.block_count
         };
     }
+
+#endregion
 }

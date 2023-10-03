@@ -35,6 +35,7 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class F2FS
 {
+    const string FS_TYPE = "f2fs";
     // ReSharper disable InconsistentNaming
     const uint F2FS_MAGIC        = 0xF2F52010;
     const uint F2FS_SUPER_OFFSET = 1024;
@@ -43,6 +44,4 @@ public sealed partial class F2FS
     const uint F2FS_BLOCK_SIZE   = 4096;
 
     // ReSharper restore InconsistentNaming
-
-    const string FS_TYPE = "f2fs";
 }

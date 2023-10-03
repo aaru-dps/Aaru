@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class F2FS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.F2FS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("82B0920F-5F0D-4063-9F57-ADE0AE02ECE5");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

@@ -40,21 +40,27 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the Apple Lisa File System</summary>
 public sealed partial class LisaFS : IReadOnlyFilesystem
 {
-    bool        _debug;
-    IMediaImage _device;
-    int         _devTagSize;
-    MDDF        _mddf;
-    bool        _mounted;
-    SRecord[]   _srecords;
-    ulong       _volumePrefix;
-    Encoding    _encoding;
+    const string MODULE_NAME = "LisaFS plugin";
+    bool         _debug;
+    IMediaImage  _device;
+    int          _devTagSize;
+    Encoding     _encoding;
+    MDDF         _mddf;
+    bool         _mounted;
+    SRecord[]    _srecords;
+    ulong        _volumePrefix;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public string Name => "Apple Lisa File System";
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("7E6034D1-D823-4248-A54D-239742B28391");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -66,22 +72,19 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()
     {
-        {
-            "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"
-        },
-        {
-            "office", "Filenames as shown by the Lisa Office System (not yet implemented)"
-        }
+        { "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)" },
+        { "office", "Filenames as shown by the Lisa Office System (not yet implemented)" }
     };
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
 
-    #region Caches
+#region Caches
+
     /// <summary>Caches Extents Files</summary>
     Dictionary<short, ExtentFile> _extentCache;
     /// <summary>Caches system files</summary>
@@ -96,7 +99,6 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     List<short> _printedExtents;
     /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
     Dictionary<short, DateTime> _directoryDtcCache;
-    #endregion Caches
 
-    const string MODULE_NAME = "LisaFS plugin";
+#endregion Caches
 }

@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Reiser v4 filesystem</summary>
 public sealed partial class Reiser4
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -51,7 +53,7 @@ public sealed partial class Reiser4
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -88,7 +90,7 @@ public sealed partial class Reiser4
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -125,4 +127,6 @@ public sealed partial class Reiser4
             VolumeSerial = reiserSb.uuid.ToString()
         };
     }
+
+#endregion
 }

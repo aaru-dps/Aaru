@@ -43,13 +43,15 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the PC-Engine CD file headers</summary>
 public sealed partial class PCEnginePlugin
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         if(2 + partition.Start >= partition.End)
             return false;
 
-        byte[]      systemDescriptor = new byte[23];
+        var         systemDescriptor = new byte[23];
         ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
 
         if(errno != ErrorNumber.NoError)
@@ -73,4 +75,6 @@ public sealed partial class PCEnginePlugin
             ClusterSize = 2048
         };
     }
+
+#endregion
 }

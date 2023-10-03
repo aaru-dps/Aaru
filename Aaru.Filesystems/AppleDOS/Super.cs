@@ -41,9 +41,11 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         _device   = imagePlugin;
         _start    = partition.Start;
@@ -156,4 +158,6 @@ public sealed partial class AppleDOS
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -43,6 +43,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Amiga Fast File System (AFFS)</summary>
 public sealed partial class AmigaDOSPlugin
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -87,7 +89,7 @@ public sealed partial class AmigaDOSPlugin
         uint bsum             = AmigaBootChecksum(sector);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "bblk.checksum = 0x{0:X8}", bblk.checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bsum = 0x{0:X8}", bsum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bsum = 0x{0:X8}",          bsum);
 
         ulong bRootPtr = 0;
 
@@ -100,10 +102,10 @@ public sealed partial class AmigaDOSPlugin
 
         ulong[] rootPtrs =
         {
-            bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
-            ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
-            ((partition.End - partition.Start + 1) / 2) + partition.Start,
-            ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
+            bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+            (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
+            (partition.End - partition.Start + 1) / 2 + partition.Start,
+            (partition.End - partition.Start + 1) / 2 + partition.Start + 4
         };
 
         var rblk = new RootBlock();
@@ -129,9 +131,9 @@ public sealed partial class AmigaDOSPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.hashTableSize = {0}", rblk.hashTableSize);
 
             uint blockSize       = (rblk.hashTableSize + 56) * 4;
-            uint sectorsPerBlock = (uint)(blockSize / sector.Length);
+            var  sectorsPerBlock = (uint)(blockSize / sector.Length);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}", blockSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}",       blockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerBlock = {0}", sectorsPerBlock);
 
             if(blockSize % sector.Length > 0)
@@ -151,7 +153,7 @@ public sealed partial class AmigaDOSPlugin
             uint rsum                  = AmigaChecksum(sector);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.checksum = 0x{0:X8}", rblk.checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "rsum = 0x{0:X8}", rsum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "rsum = 0x{0:X8}",          rsum);
 
             rblk.sec_type = BigEndianBitConverter.ToUInt32(sector, sector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.sec_type = {0}", rblk.sec_type);
@@ -194,16 +196,16 @@ public sealed partial class AmigaDOSPlugin
 
         ulong[] rootPtrs =
         {
-            bRootPtr + partition.Start, ((partition.End - partition.Start + 1) / 2) + partition.Start - 2,
-            ((partition.End                             - partition.Start + 1) / 2) + partition.Start - 1,
-            ((partition.End - partition.Start + 1) / 2) + partition.Start,
-            ((partition.End - partition.Start + 1) / 2) + partition.Start + 4
+            bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
+            (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
+            (partition.End - partition.Start + 1) / 2 + partition.Start,
+            (partition.End - partition.Start + 1) / 2 + partition.Start + 4
         };
 
         var    rootBlk         = new RootBlock();
         byte[] rootBlockSector = null;
 
-        bool rootFound = false;
+        var  rootFound = false;
         uint blockSize = 0;
 
         // So to handle even number of sectors
@@ -227,9 +229,9 @@ public sealed partial class AmigaDOSPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
 
             blockSize = (rootBlk.hashTableSize + 56) * 4;
-            uint sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
+            var sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}", blockSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}",       blockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerBlock = {0}", sectorsPerBlock);
 
             if(blockSize % rootBlockSector.Length > 0)
@@ -249,7 +251,7 @@ public sealed partial class AmigaDOSPlugin
             uint rsum                                 = AmigaChecksum(rootBlockSector);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.checksum = 0x{0:X8}", rootBlk.checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "rsum = 0x{0:X8}", rsum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "rsum = 0x{0:X8}",             rsum);
 
             rootBlk.sec_type = BigEndianBitConverter.ToUInt32(rootBlockSector, rootBlockSector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.sec_type = {0}", rootBlk.sec_type);
@@ -339,8 +341,10 @@ public sealed partial class AmigaDOSPlugin
 
         if(rootBlk.bitmapExtensionBlock != 0x00000000 &&
            rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
+        {
             sbInformation.AppendFormat(Localization.Bitmap_extension_at_block_0, rootBlk.bitmapExtensionBlock).
                           AppendLine();
+        }
 
         if((bootBlk.diskType & 0xFF) == 4 ||
            (bootBlk.diskType & 0xFF) == 5)
@@ -349,7 +353,7 @@ public sealed partial class AmigaDOSPlugin
         ulong blocks = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize;
 
         sbInformation.AppendFormat(Localization.Volume_block_size_is_0_bytes, blockSize).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_blocks, blocks).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks,          blocks).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks)).
@@ -379,4 +383,6 @@ public sealed partial class AmigaDOSPlugin
         // Useful as a serial
         metadata.VolumeSerial = $"{rootBlk.checksum:X8}";
     }
+
+#endregion
 }

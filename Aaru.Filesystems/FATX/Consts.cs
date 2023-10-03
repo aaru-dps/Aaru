@@ -58,10 +58,17 @@ public sealed partial class XboxFatPlugin
     // Do not translate
     const string FS_TYPE = "fatx";
 
+#region Nested type: Attributes
+
     [Flags]
     enum Attributes : byte
     {
-        ReadOnly  = 0x01, Hidden  = 0x02, System = 0x04,
-        Directory = 0x10, Archive = 0x20
+        ReadOnly  = 0x01,
+        Hidden    = 0x02,
+        System    = 0x04,
+        Directory = 0x10,
+        Archive   = 0x20
     }
+
+#endregion
 }

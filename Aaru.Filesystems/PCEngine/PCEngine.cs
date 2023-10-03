@@ -39,10 +39,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the PC-Engine CD file headers</summary>
 public sealed partial class PCEnginePlugin : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.PCEnginePlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("e5ee6d7c-90fa-49bd-ac89-14ef750b8af3");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

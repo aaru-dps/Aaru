@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Smart File System</summary>
 public sealed partial class SFS : IFilesystem
 {
+#region Nested type: RootBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct RootBlock
     {
@@ -65,4 +67,6 @@ public sealed partial class SFS : IFilesystem
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly uint[] reserved4;
     }
+
+#endregion
 }

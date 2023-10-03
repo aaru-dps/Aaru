@@ -44,8 +44,11 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class ext2FS
 {
+#region Nested type: SuperBlock
+
     /// <summary>ext2/3/4 superblock</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct SuperBlock
     {
         /// <summary>0x000, inodes on volume</summary>
@@ -273,4 +276,6 @@ public sealed partial class ext2FS
         /// <summary>crc32c(superblock)</summary>
         public readonly uint checksum;
     }
+
+#endregion
 }

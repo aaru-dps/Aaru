@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's Journaled File System</summary>
 public sealed partial class JFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.JFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D3BE2A41-8F28-4055-94DC-BB6C72A0E9C4");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

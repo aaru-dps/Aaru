@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -133,7 +135,7 @@ public sealed partial class OperaFS
         else
             fileBlockSizeRatio = mynode._dentry.Entry.block_size / _image.Info.SectorSize;
 
-        ErrorNumber errno = _image.ReadSectors((ulong)(mynode._dentry.Pointers[0] + (firstBlock * fileBlockSizeRatio)),
+        ErrorNumber errno = _image.ReadSectors((ulong)(mynode._dentry.Pointers[0] + firstBlock * fileBlockSizeRatio),
                                                (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buf);
 
         if(errno != ErrorNumber.NoError)
@@ -192,6 +194,8 @@ public sealed partial class OperaFS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     ErrorNumber GetFileEntry(string path, out DirectoryEntryWithPointers entry)
     {
         entry = null;
@@ -200,15 +204,12 @@ public sealed partial class OperaFS
                              ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {

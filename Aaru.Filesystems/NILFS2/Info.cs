@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
 public sealed partial class NILFS2
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -52,7 +54,7 @@ public sealed partial class NILFS2
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -89,7 +91,7 @@ public sealed partial class NILFS2
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -110,11 +112,11 @@ public sealed partial class NILFS2
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.NILFS2_filesystem);
-        sb.AppendFormat(Localization.Version_0_1, nilfsSb.rev_level, nilfsSb.minor_rev_level).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_block, 1 << (int)(nilfsSb.log_block_size + 10)).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_in_volume, nilfsSb.dev_size).AppendLine();
+        sb.AppendFormat(Localization.Version_0_1,           nilfsSb.rev_level, nilfsSb.minor_rev_level).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block,    1 << (int)(nilfsSb.log_block_size + 10)).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_in_volume,    nilfsSb.dev_size).AppendLine();
         sb.AppendFormat(Localization._0_blocks_per_segment, nilfsSb.blocks_per_segment).AppendLine();
-        sb.AppendFormat(Localization._0_segments, nilfsSb.nsegments).AppendLine();
+        sb.AppendFormat(Localization._0_segments,           nilfsSb.nsegments).AppendLine();
 
         if(nilfsSb.creator_os == 0)
             sb.AppendLine(Localization.Filesystem_created_on_Linux);
@@ -122,7 +124,7 @@ public sealed partial class NILFS2
             sb.AppendFormat(Localization.Creator_OS_code_0, nilfsSb.creator_os).AppendLine();
 
         sb.AppendFormat(Localization._0_bytes_per_inode, nilfsSb.inode_size).AppendLine();
-        sb.AppendFormat(Localization.Volume_UUID_0, nilfsSb.uuid).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0,      nilfsSb.uuid).AppendLine();
 
         sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, encoding)).
            AppendLine();
@@ -153,4 +155,6 @@ public sealed partial class NILFS2
 
         metadata.Clusters = nilfsSb.dev_size / metadata.ClusterSize;
     }
+
+#endregion
 }

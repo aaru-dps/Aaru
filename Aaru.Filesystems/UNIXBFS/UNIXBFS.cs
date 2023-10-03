@@ -36,11 +36,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the UNIX boot filesystem</summary>
 public sealed partial class BFS : IFilesystem
 {
+    const string MODULE_NAME = "BFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.BFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "BFS plugin";
+
+#endregion
 }

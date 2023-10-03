@@ -34,14 +34,21 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the VMware filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
- SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "IdentifierTypo")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class VMfs : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.VMfs_Name;
+
     /// <inheritdoc />
     public Guid Id => new("EE52BDB8-B49C-4122-A3DA-AD21CBE79843");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

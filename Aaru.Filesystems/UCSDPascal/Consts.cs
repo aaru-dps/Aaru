@@ -38,6 +38,10 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class PascalPlugin
 {
+    const string FS_TYPE = "ucsd";
+
+#region Nested type: PascalFileKind
+
     enum PascalFileKind : short
     {
         /// <summary>Disk volume entry</summary>
@@ -60,5 +64,5 @@ public sealed partial class PascalPlugin
         Secure
     }
 
-    const string FS_TYPE = "ucsd";
+#endregion
 }

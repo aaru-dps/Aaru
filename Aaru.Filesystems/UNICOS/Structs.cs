@@ -30,12 +30,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using blkno_t = System.Int64;
-using daddr_t = System.Int64;
-using dev_t = System.Int64;
-using extent_t = System.Int64;
-using ino_t = System.Int64;
-using time_t = System.Int64;
+using blkno_t = long;
+using daddr_t = long;
+using dev_t = long;
+using extent_t = long;
+using ino_t = long;
+using time_t = long;
 
 namespace Aaru.Filesystems;
 
@@ -43,15 +43,10 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Cray UNICOS filesystem</summary>
 public sealed partial class UNICOS
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-    readonly struct nc1ireg_sb
-    {
-        public readonly ushort i_unused; /* reserved */
-        public readonly ushort i_nblk;   /* number of blocks */
-        public readonly uint   i_sblk;   /* start block number */
-    }
+#region Nested type: nc1fdev_sb
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     readonly struct nc1fdev_sb
     {
         public readonly long fd_name; /* Physical device name */
@@ -61,8 +56,26 @@ public sealed partial class UNICOS
         public readonly nc1ireg_sb[] fd_ireg; /* Inode regions */
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming"),
-     SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+#endregion
+
+#region Nested type: nc1ireg_sb
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    readonly struct nc1ireg_sb
+    {
+        public readonly ushort i_unused; /* reserved */
+        public readonly ushort i_nblk;   /* number of blocks */
+        public readonly uint   i_sblk;   /* start block number */
+    }
+
+#endregion
+
+#region Nested type: Superblock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     readonly struct Superblock
     {
         public readonly ulong s_magic; /* magic number to indicate file system type */
@@ -124,4 +137,6 @@ public sealed partial class UNICOS
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 91)]
         public readonly long[] s_fill; /* reserved */
     }
+
+#endregion
 }

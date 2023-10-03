@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber OpenDir(string path, out IDirNode node)
     {
@@ -72,10 +74,7 @@ public sealed partial class XboxFatPlugin
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntry> entry =
             _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
@@ -90,7 +89,7 @@ public sealed partial class XboxFatPlugin
 
         currentDirectory = _rootDirectory;
 
-        for(int p = 0; p < pieces.Length; p++)
+        for(var p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
@@ -111,12 +110,12 @@ public sealed partial class XboxFatPlugin
             if(clusters is null)
                 return ErrorNumber.InvalidArgument;
 
-            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
+            var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
-            for(int i = 0; i < clusters.Length; i++)
+            for(var i = 0; i < clusters.Length; i++)
             {
                 ErrorNumber errno =
-                    _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
+                    _imagePlugin.ReadSectors(_firstClusterSector + (clusters[i] - 1) * _sectorsPerCluster,
                                              _sectorsPerCluster, out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
@@ -127,7 +126,7 @@ public sealed partial class XboxFatPlugin
 
             currentDirectory = new Dictionary<string, DirectoryEntry>();
 
-            int pos = 0;
+            var pos = 0;
 
             while(pos < directoryBuffer.Length)
             {
@@ -202,4 +201,6 @@ public sealed partial class XboxFatPlugin
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

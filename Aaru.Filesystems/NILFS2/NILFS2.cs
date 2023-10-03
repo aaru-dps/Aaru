@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
 public sealed partial class NILFS2 : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.NILFS2_Name;
+
     /// <inheritdoc />
     public Guid Id => new("35224226-C5CC-48B5-8FFD-3781E91E86B6");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

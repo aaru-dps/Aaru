@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     /// <summary>Solves a symbolic link.</summary>
     /// <param name="path">Link path.</param>
@@ -72,7 +74,8 @@ public sealed partial class FAT
             return ErrorNumber.NoError;
         }
 
-        string cutPath = path.StartsWith("/", StringComparison.Ordinal) ? path[1..].ToLower(_cultureInfo)
+        string cutPath = path.StartsWith("/", StringComparison.Ordinal)
+                             ? path[1..].ToLower(_cultureInfo)
                              : path.ToLower(_cultureInfo);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, CompleteDirectoryEntry> currentDirectory))
@@ -87,10 +90,7 @@ public sealed partial class FAT
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, CompleteDirectoryEntry> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
@@ -105,7 +105,7 @@ public sealed partial class FAT
 
         currentDirectory = _rootDirectoryCache;
 
-        for(int p = 0; p < pieces.Length; p++)
+        for(var p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
@@ -144,11 +144,11 @@ public sealed partial class FAT
             if(clusters is null)
                 return ErrorNumber.InvalidArgument;
 
-            byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
+            var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
-            for(int i = 0; i < clusters.Length; i++)
+            for(var i = 0; i < clusters.Length; i++)
             {
-                ErrorNumber errno = _image.ReadSectors(_firstClusterSector + (clusters[i] * _sectorsPerCluster),
+                ErrorNumber errno = _image.ReadSectors(_firstClusterSector + clusters[i] * _sectorsPerCluster,
                                                        _sectorsPerCluster, out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
@@ -161,7 +161,7 @@ public sealed partial class FAT
             byte[] lastLfnName     = null;
             byte   lastLfnChecksum = 0;
 
-            for(int pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
+            for(var pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
             {
                 DirectoryEntry dirent =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer, pos,
@@ -199,9 +199,9 @@ public sealed partial class FAT
 
                     lfnSequence--;
 
-                    Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26, 10);
-                    Array.Copy(lfnEntry.name2, 0, lastLfnName, (lfnSequence * 26) + 10, 12);
-                    Array.Copy(lfnEntry.name3, 0, lastLfnName, (lfnSequence * 26) + 22, 4);
+                    Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26,      10);
+                    Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
+                    Array.Copy(lfnEntry.name3, 0, lastLfnName, lfnSequence * 26 + 22, 4);
 
                     continue;
                 }
@@ -267,7 +267,7 @@ public sealed partial class FAT
                     name = ":{EMPTYNAME}:";
 
                     // Try to create a unique filename with an extension from 000 to 999
-                    for(int uniq = 0; uniq < 1000; uniq++)
+                    for(var uniq = 0; uniq < 1000; uniq++)
                     {
                         extension = $"{uniq:D03}";
 
@@ -302,7 +302,7 @@ public sealed partial class FAT
 
                     completeEntry.HumanDirent = humanEntry;
 
-                    name      = StringHandlers.CToString(humanEntry.name1, _encoding).TrimEnd();
+                    name      = StringHandlers.CToString(humanEntry.name1,     _encoding).TrimEnd();
                     extension = StringHandlers.CToString(humanEntry.extension, _encoding).TrimEnd();
                     string name2 = StringHandlers.CToString(humanEntry.name2, _encoding).TrimEnd();
 
@@ -329,7 +329,7 @@ public sealed partial class FAT
                _namespace is Namespace.Os2 or Namespace.Ecs &&
                !_fat32)
             {
-                List<KeyValuePair<string, CompleteDirectoryEntry>> filesWithEas =
+                var filesWithEas =
                     currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in filesWithEas)
@@ -345,12 +345,12 @@ public sealed partial class FAT
                     if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII)
                         continue;
 
-                    ushort longnameSize = BitConverter.ToUInt16(longnameEa, 2);
+                    var longnameSize = BitConverter.ToUInt16(longnameEa, 2);
 
                     if(longnameSize + 4 > longnameEa.Length)
                         continue;
 
-                    byte[] longnameBytes = new byte[longnameSize];
+                    var longnameBytes = new byte[longnameSize];
 
                     Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
 
@@ -371,7 +371,7 @@ public sealed partial class FAT
             // Check FAT32.IFS EAs
             if(_fat32 || _debug)
             {
-                List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars =
+                var fat32EaSidecars =
                     currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
@@ -383,11 +383,13 @@ public sealed partial class FAT
 
                     // If not in debug mode we will consider the lack of EA bitflags to mean the EAs are corrupted or not real
                     if(!_debug)
+                    {
                         if(!fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEaOld) &&
                            !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa)  &&
                            !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEa)    &&
                            !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa))
                             continue;
+                    }
 
                     fileWithEa.Fat32Ea = sidecar.Value.Dirent;
 
@@ -432,14 +434,14 @@ public sealed partial class FAT
         CompleteDirectoryEntry entry = mynode._entries[mynode._position];
 
         filename = _namespace switch
-        {
-            Namespace.Ecs when entry.Longname is not null                      => entry.Longname,
-            Namespace.Ecs when entry.Longname is null && entry.Lfn is not null => entry.Lfn,
-            Namespace.Lfn when entry.Lfn is not null                           => entry.Lfn,
-            Namespace.Human when entry.HumanName is not null                   => entry.HumanName,
-            Namespace.Os2 when entry.Longname is not null                      => entry.Longname,
-            _                                                                  => entry.Shortname
-        };
+                   {
+                       Namespace.Ecs when entry.Longname is not null                      => entry.Longname,
+                       Namespace.Ecs when entry.Longname is null && entry.Lfn is not null => entry.Lfn,
+                       Namespace.Lfn when entry.Lfn is not null                           => entry.Lfn,
+                       Namespace.Human when entry.HumanName is not null                   => entry.HumanName,
+                       Namespace.Os2 when entry.Longname is not null                      => entry.Longname,
+                       _                                                                  => entry.Shortname
+                   };
 
         mynode._position++;
 
@@ -457,4 +459,6 @@ public sealed partial class FAT
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

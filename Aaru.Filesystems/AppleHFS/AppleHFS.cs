@@ -42,10 +42,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Apple Hierarchical File System (HFS)</summary>
 public sealed partial class AppleHFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Name_Apple_Hierarchical_File_System;
+
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-6ECC-0BBB-1D5225FF404F");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

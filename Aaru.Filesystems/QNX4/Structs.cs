@@ -36,11 +36,37 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class QNX4
 {
+#region Nested type: Extent
+
     struct Extent
     {
         public uint Block;
         public uint Length;
     }
+
+#endregion
+
+#region Nested type: ExtentBlock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ExtentBlock
+    {
+        public readonly uint next_xblk;
+        public readonly uint prev_xblk;
+        public readonly byte num_xtnts;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] spare;
+        public readonly uint num_blocks;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
+        public readonly Extent[] xtnts;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] signature;
+        public readonly Extent first_xtnt;
+    }
+
+#endregion
+
+#region Nested type: Inode
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Inode
@@ -64,6 +90,10 @@ public sealed partial class QNX4
         public readonly byte   di_status;
     }
 
+#endregion
+
+#region Nested type: LinkInfo
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct LinkInfo
     {
@@ -76,21 +106,9 @@ public sealed partial class QNX4
         public readonly byte dl_status;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ExtentBlock
-    {
-        public readonly uint next_xblk;
-        public readonly uint prev_xblk;
-        public readonly byte num_xtnts;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] spare;
-        public readonly uint num_blocks;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-        public readonly Extent[] xtnts;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] signature;
-        public readonly Extent first_xtnt;
-    }
+#endregion
+
+#region Nested type: Superblock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Superblock
@@ -100,4 +118,6 @@ public sealed partial class QNX4
         public readonly Inode boot;
         public readonly Inode altBoot;
     }
+
+#endregion
 }

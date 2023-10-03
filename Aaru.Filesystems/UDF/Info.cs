@@ -45,6 +45,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class UDF
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -62,50 +64,23 @@ public sealed partial class UDF
         // All positions where anchor may reside, with the ratio between 512 and 2048bps
         ulong[][] positions =
         {
-            new ulong[]
-            {
-                256, 1
-            },
-            new ulong[]
-            {
-                512, 1
-            },
-            new ulong[]
-            {
-                partition.End - 256, 1
-            },
-            new ulong[]
-            {
-                partition.End, 1
-            },
-            new ulong[]
-            {
-                1024, 4
-            },
-            new ulong[]
-            {
-                2048, 4
-            },
-            new ulong[]
-            {
-                partition.End - 1024, 4
-            },
-            new ulong[]
-            {
-                partition.End - 4, 4
-            }
+            new ulong[] { 256, 1 }, new ulong[] { 512, 1 }, new ulong[] { partition.End - 256, 1 },
+            new ulong[] { partition.End, 1 }, new ulong[] { 1024, 4 }, new ulong[] { 2048, 4 },
+            new ulong[] { partition.End - 1024, 4 }, new ulong[] { partition.End - 4, 4 }
         };
 
-        bool anchorFound = false;
+        var  anchorFound = false;
         uint ratio       = 1;
         sector = null;
 
         foreach(ulong[] position in from position in
                                         positions.Where(position =>
                                                             position[0] + partition.Start + position[1] <=
-                                                            partition.End && position[0] < partition.End) let errno =
+                                                            partition.End && position[0] < partition.End)
+                                    let errno =
                                         imagePlugin.ReadSectors(position[0], (uint)position[1], out sector)
-                                    where errno == ErrorNumber.NoError select position)
+                                    where errno == ErrorNumber.NoError
+                                    select position)
         {
             anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
@@ -115,7 +90,7 @@ public sealed partial class UDF
                                        anchor.tag.descriptorVersion);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.reserved = {0}", anchor.tag.reserved);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.reserved = {0}",         anchor.tag.reserved);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagSerialNumber = {0}", anchor.tag.tagSerialNumber);
 
@@ -140,7 +115,7 @@ public sealed partial class UDF
 
             if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
                anchor.tag.tagLocation != position[0] / position[1] ||
-               (anchor.mainVolumeDescriptorSequenceExtent.location * position[1]) + partition.Start >= partition.End)
+               anchor.mainVolumeDescriptorSequenceExtent.location * position[1] + partition.Start >= partition.End)
                 continue;
 
             anchorFound = true;
@@ -158,8 +133,9 @@ public sealed partial class UDF
         {
             ErrorNumber errno =
                 imagePlugin.
-                    ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
-                                ratio, out sector);
+                    ReadSectors(
+                        partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location * ratio + count * ratio,
+                        ratio, out sector);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -168,10 +144,10 @@ public sealed partial class UDF
                 continue;
             }
 
-            var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-            uint location = BitConverter.ToUInt32(sector, 0x0C);
+            var tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+            var location = BitConverter.ToUInt32(sector, 0x0C);
 
-            if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+            if(location == partition.Start / ratio + anchor.mainVolumeDescriptorSequenceExtent.location + count)
             {
                 if(tagId == TagIdentifier.TerminatingDescriptor)
                     break;
@@ -214,38 +190,9 @@ public sealed partial class UDF
         // All positions where anchor may reside, with the ratio between 512 and 2048bps
         ulong[][] positions =
         {
-            new ulong[]
-            {
-                256, 1
-            },
-            new ulong[]
-            {
-                512, 1
-            },
-            new ulong[]
-            {
-                partition.End - 256, 1
-            },
-            new ulong[]
-            {
-                partition.End, 1
-            },
-            new ulong[]
-            {
-                1024, 4
-            },
-            new ulong[]
-            {
-                2048, 4
-            },
-            new ulong[]
-            {
-                partition.End - 1024, 4
-            },
-            new ulong[]
-            {
-                partition.End - 4, 4
-            }
+            new ulong[] { 256, 1 }, new ulong[] { 512, 1 }, new ulong[] { partition.End - 256, 1 },
+            new ulong[] { partition.End, 1 }, new ulong[] { 1024, 4 }, new ulong[] { 2048, 4 },
+            new ulong[] { partition.End - 1024, 4 }, new ulong[] { partition.End - 4, 4 }
         };
 
         uint ratio = 1;
@@ -279,16 +226,17 @@ public sealed partial class UDF
         {
             errno =
                 imagePlugin.
-                    ReadSectors(partition.Start + (anchor.mainVolumeDescriptorSequenceExtent.location * ratio) + (count * ratio),
-                                ratio, out sector);
+                    ReadSectors(
+                        partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location * ratio + count * ratio,
+                        ratio, out sector);
 
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-            uint location = BitConverter.ToUInt32(sector, 0x0C);
+            var tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+            var location = BitConverter.ToUInt32(sector, 0x0C);
 
-            if(location == (partition.Start / ratio) + anchor.mainVolumeDescriptorSequenceExtent.location + count)
+            if(location == partition.Start / ratio + anchor.mainVolumeDescriptorSequenceExtent.location + count)
             {
                 if(tagId == TagIdentifier.TerminatingDescriptor)
                     break;
@@ -321,10 +269,12 @@ public sealed partial class UDF
 
         if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
            lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)
+        {
             lvidiu =
                 Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
-                    (int)((lvid.numberOfPartitions * 8) + 80),
+                    (int)(lvid.numberOfPartitions * 8 + 80),
                     System.Runtime.InteropServices.Marshal.SizeOf(lvidiu));
+        }
         else
             lvid = new LogicalVolumeIntegrityDescriptor();
 
@@ -358,15 +308,15 @@ public sealed partial class UDF
 
         sbInformation.AppendFormat(Localization.Volume_requires_UDF_version_0_1_to_be_read,
                                    Convert.ToInt32($"{(lvidiu.minimumReadUDF & 0xFF00) >> 8}", 10),
-                                   Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}", 10)).AppendLine();
+                                   Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}",          10)).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_requires_UDF_version_0_1_to_be_written_to,
                                    Convert.ToInt32($"{(lvidiu.minimumWriteUDF & 0xFF00) >> 8}", 10),
-                                   Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}", 10)).AppendLine();
+                                   Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}",          10)).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_cannot_be_written_by_any_UDF_version_higher_than_0_1,
                                    Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
-                                   Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
+                                   Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}",          10)).AppendLine();
 
         metadata = new FileSystem
         {
@@ -385,4 +335,6 @@ public sealed partial class UDF
 
         information = sbInformation.ToString();
     }
+
+#endregion
 }

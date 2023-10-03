@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -48,10 +50,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -202,10 +201,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -213,10 +209,11 @@ public sealed partial class AppleMFS
         path = pathElements[0];
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
-               string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
+        {
+            if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
+               string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-               string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
+               string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
             {
                 stat = new FileEntryInfo
                 {
@@ -228,26 +225,26 @@ public sealed partial class AppleMFS
 
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = (_directoryBlocks.Length / stat.BlockSize) +
-                                  (_directoryBlocks.Length % stat.BlockSize);
+                    stat.Blocks = _directoryBlocks.Length / stat.BlockSize +
+                                  _directoryBlocks.Length % stat.BlockSize;
 
                     stat.Length = _directoryBlocks.Length;
                 }
                 else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = (_blockMapBytes.Length / stat.BlockSize) + (_blockMapBytes.Length % stat.BlockSize);
+                    stat.Blocks = _blockMapBytes.Length / stat.BlockSize + _blockMapBytes.Length % stat.BlockSize;
 
                     stat.Length = _blockMapBytes.Length;
                 }
                 else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
                         _bootBlocks                                                      != null)
                 {
-                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_bootBlocks.Length % stat.BlockSize);
+                    stat.Blocks = _bootBlocks.Length / stat.BlockSize + _bootBlocks.Length % stat.BlockSize;
                     stat.Length = _bootBlocks.Length;
                 }
                 else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = (_mdbBlocks.Length / stat.BlockSize) + (_mdbBlocks.Length % stat.BlockSize);
+                    stat.Blocks = _mdbBlocks.Length / stat.BlockSize + _mdbBlocks.Length % stat.BlockSize;
                     stat.Length = _mdbBlocks.Length;
                 }
                 else
@@ -255,6 +252,7 @@ public sealed partial class AppleMFS
 
                 return ErrorNumber.NoError;
             }
+        }
 
         if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
             return ErrorNumber.NoSuchFile;
@@ -290,6 +288,8 @@ public sealed partial class AppleMFS
         return ErrorNumber.NotImplemented;
     }
 
+#endregion
+
     ErrorNumber ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
     {
         buf = null;
@@ -297,10 +297,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -373,6 +370,7 @@ public sealed partial class AppleMFS
         else
         {
             if(resourceFork)
+            {
                 if(ms.Length < entry.flRLgLen)
                     buf = ms.ToArray();
                 else
@@ -380,6 +378,7 @@ public sealed partial class AppleMFS
                     buf = new byte[entry.flRLgLen];
                     Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
                 }
+            }
             else
             {
                 if(ms.Length < entry.flLgLen)

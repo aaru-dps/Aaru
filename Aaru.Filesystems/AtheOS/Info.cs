@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class AtheOS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -60,14 +62,14 @@ public sealed partial class AtheOS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+        var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
 
         if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length)
             return false;
 
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-        uint magic = BitConverter.ToUInt32(sbSector, 0x20);
+        var magic = BitConverter.ToUInt32(sbSector, 0x20);
 
         return magic == AFS_MAGIC1;
     }
@@ -94,7 +96,7 @@ public sealed partial class AtheOS
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+        var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
         SuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
@@ -104,7 +106,7 @@ public sealed partial class AtheOS
         if(afsSb.flags == 1)
             sb.AppendLine(Localization.Filesystem_is_read_only);
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(afsSb.name, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0,      StringHandlers.CToString(afsSb.name, encoding)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_block, afsSb.block_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, afsSb.num_blocks,
@@ -128,19 +130,24 @@ public sealed partial class AtheOS
                         afsSb.log_size, afsSb.log_valid_blocks).AppendLine();
 
         sb.
-            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
-                         afsSb.root_dir_len * afsSb.block_size).AppendLine();
+            AppendFormat(
+                Localization.
+                    Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
+                afsSb.root_dir_len * afsSb.block_size).AppendLine();
 
         sb.
-            AppendFormat(Localization.Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
-                         afsSb.deleted_len * afsSb.block_size).AppendLine();
+            AppendFormat(
+                Localization.
+                    Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
+                afsSb.deleted_len * afsSb.block_size).AppendLine();
 
         sb.
-            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
-                         afsSb.indices_len * afsSb.block_size).AppendLine();
+            AppendFormat(
+                Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
+                afsSb.indices_len * afsSb.block_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_for_bootloader_1_bytes, afsSb.boot_size,
                         afsSb.boot_size * afsSb.block_size).AppendLine();
@@ -157,4 +164,6 @@ public sealed partial class AtheOS
             VolumeName   = StringHandlers.CToString(afsSb.name, encoding)
         };
     }
+
+#endregion
 }

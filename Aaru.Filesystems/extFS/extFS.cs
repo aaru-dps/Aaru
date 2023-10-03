@@ -38,10 +38,16 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class extFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.extFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("076CB3A2-08C2-4D69-BC8A-FCAA2E502BE2");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

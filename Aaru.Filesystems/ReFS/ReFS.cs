@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Microsoft's Resilient filesystem (ReFS)</summary>
 public sealed partial class ReFS : IFilesystem
 {
+    const string MODULE_NAME = "ReFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.ReFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("37766C4E-EBF5-4113-A712-B758B756ABD6");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "ReFS plugin";
+
+#endregion
 }

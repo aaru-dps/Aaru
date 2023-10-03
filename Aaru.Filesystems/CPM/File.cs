@@ -36,6 +36,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -44,10 +46,7 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -77,10 +76,7 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -156,18 +152,18 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
 
         if(!string.IsNullOrEmpty(path) &&
            string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-            return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? ErrorNumber.NoError
+        {
+            return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
+                       ? ErrorNumber.NoError
                        : ErrorNumber.NoSuchFile;
+        }
 
         stat = new FileEntryInfo
         {
@@ -183,4 +179,6 @@ public sealed partial class CPM
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

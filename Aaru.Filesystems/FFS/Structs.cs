@@ -28,8 +28,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using time_t = System.Int32;
-using ufs_daddr_t = System.Int32;
+using time_t = int;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class FFSPlugin
 {
+#region Nested type: csum
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct csum
     {
@@ -51,6 +53,10 @@ public sealed partial class FFSPlugin
         /// <summary>number of free frags</summary>
         public int cs_nffree;
     }
+
+#endregion
+
+#region Nested type: csum_total
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct csum_total
@@ -69,6 +75,10 @@ public sealed partial class FFSPlugin
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly long[] cs_spare;
     }
+
+#endregion
+
+#region Nested type: SuperBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct SuperBlock
@@ -289,4 +299,6 @@ public sealed partial class FFSPlugin
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
         public readonly byte[] fs_rotbl;
     }
+
+#endregion
 }

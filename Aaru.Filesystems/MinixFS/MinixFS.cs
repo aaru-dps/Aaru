@@ -36,10 +36,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the MINIX filesystem</summary>
 public sealed partial class MinixFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.MinixFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("FE248C3B-B727-4AE5-A39F-79EA9A07D4B3");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

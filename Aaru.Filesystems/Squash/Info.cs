@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the squash filesystem</summary>
 public sealed partial class Squash
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -51,7 +53,7 @@ public sealed partial class Squash
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic is SQUASH_MAGIC or SQUASH_CIGAM;
     }
@@ -67,10 +69,10 @@ public sealed partial class Squash
         if(errno != ErrorNumber.NoError)
             return;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
-        var  sqSb         = new SuperBlock();
-        bool littleEndian = true;
+        var sqSb         = new SuperBlock();
+        var littleEndian = true;
 
         switch(magic)
         {
@@ -89,8 +91,8 @@ public sealed partial class Squash
 
         sbInformation.AppendLine(Localization.Squash_file_system);
         sbInformation.AppendLine(littleEndian ? Localization.Little_endian : Localization.Big_endian);
-        sbInformation.AppendFormat(Localization.Volume_version_0_1, sqSb.s_major, sqSb.s_minor).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_bytes, sqSb.bytes_used).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_version_0_1,           sqSb.s_major, sqSb.s_minor).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes,           sqSb.bytes_used).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_per_block, sqSb.block_size).AppendLine();
 
         sbInformation.
@@ -145,4 +147,6 @@ public sealed partial class Squash
             FreeClusters = 0
         };
     }
+
+#endregion
 }

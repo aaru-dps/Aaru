@@ -68,6 +68,7 @@ public sealed partial class ISO9660
                 return errno;
 
             if(_debug)
+            {
                 switch(data.Length)
                 {
                     case 2048:
@@ -111,6 +112,7 @@ public sealed partial class ISO9660
 
                         break;
                 }
+            }
 
             if(_blockSize == 2048)
             {
@@ -119,7 +121,7 @@ public sealed partial class ISO9660
                 return ErrorNumber.NoError;
             }
 
-            byte[] tmp = new byte[_blockSize];
+            var tmp = new byte[_blockSize];
             Array.Copy(Sector.GetUserData(data, interleaved, fileNumber), (int)offset, tmp, 0, _blockSize);
 
             buffer = tmp;
@@ -143,6 +145,7 @@ public sealed partial class ISO9660
                     return errno;
 
                 if(_debug)
+                {
                     switch(data.Length)
                     {
                         case 2048:
@@ -187,13 +190,14 @@ public sealed partial class ISO9660
 
                             break;
                     }
+                }
 
                 byte[] sectorData = Sector.GetUserData(data, interleaved, fileNumber);
 
                 ms.Write(sectorData, 0, sectorData.Length);
             }
 
-            byte[] tmp = new byte[_blockSize];
+            var tmp = new byte[_blockSize];
             Array.Copy(Sector.GetUserData(ms.ToArray(), interleaved, fileNumber), 0, tmp, 0, _blockSize);
             buffer = tmp;
 

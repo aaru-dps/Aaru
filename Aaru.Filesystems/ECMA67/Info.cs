@@ -44,6 +44,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
 public sealed partial class ECMA67
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -98,4 +100,6 @@ public sealed partial class ECMA67
 
         information = sbInformation.ToString();
     }
+
+#endregion
 }

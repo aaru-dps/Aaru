@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
 public sealed partial class EFS : IFilesystem
 {
+    const string MODULE_NAME = "EFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.EFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("52A43F90-9AF3-4391-ADFE-65598DEEABAB");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "EFS plugin";
+
+#endregion
 }

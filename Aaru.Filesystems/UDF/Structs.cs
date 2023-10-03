@@ -37,40 +37,33 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class UDF
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct EntityIdentifier
-    {
-        /// <summary>Entity flags</summary>
-        public readonly EntityFlags flags;
-        /// <summary>Structure identifier</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
-        public readonly byte[] identifier;
-        /// <summary>Structure data</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] identifierSuffix;
-    }
+#region Nested type: AnchorVolumeDescriptorPointer
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Timestamp
+    readonly struct AnchorVolumeDescriptorPointer
     {
-        public readonly ushort typeAndZone;
-        public readonly short  year;
-        public readonly byte   month;
-        public readonly byte   day;
-        public readonly byte   hour;
-        public readonly byte   minute;
-        public readonly byte   second;
-        public readonly byte   centiseconds;
-        public readonly byte   hundredsMicroseconds;
-        public readonly byte   microseconds;
+        public readonly DescriptorTag    tag;
+        public readonly ExtentDescriptor mainVolumeDescriptorSequenceExtent;
+        public readonly ExtentDescriptor reserveVolumeDescriptorSequenceExtent;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
+        public readonly byte[] reserved;
     }
 
-    enum TagIdentifier : ushort
+#endregion
+
+#region Nested type: CharacterSpecification
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CharacterSpecification
     {
-        PrimaryVolumeDescriptor           = 1, AnchorVolumeDescriptorPointer = 2, VolumeDescriptorPointer          = 3,
-        ImplementationUseVolumeDescriptor = 4, PartitionDescriptor           = 5, LogicalVolumeDescriptor          = 6,
-        UnallocatedSpaceDescriptor        = 7, TerminatingDescriptor         = 8, LogicalVolumeIntegrityDescriptor = 9
+        public readonly byte type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
+        public readonly byte[] information;
     }
+
+#endregion
+
+#region Nested type: DescriptorTag
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct DescriptorTag
@@ -85,6 +78,27 @@ public sealed partial class UDF
         public readonly uint          tagLocation;
     }
 
+#endregion
+
+#region Nested type: EntityIdentifier
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct EntityIdentifier
+    {
+        /// <summary>Entity flags</summary>
+        public readonly EntityFlags flags;
+        /// <summary>Structure identifier</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
+        public readonly byte[] identifier;
+        /// <summary>Structure data</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] identifierSuffix;
+    }
+
+#endregion
+
+#region Nested type: ExtentDescriptor
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ExtentDescriptor
     {
@@ -92,23 +106,69 @@ public sealed partial class UDF
         public readonly uint location;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CharacterSpecification
-    {
-        public readonly byte type;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
-        public readonly byte[] information;
-    }
+#endregion
+
+#region Nested type: LogicalVolumeDescriptor
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AnchorVolumeDescriptorPointer
+    readonly struct LogicalVolumeDescriptor
+    {
+        public readonly DescriptorTag          tag;
+        public readonly uint                   volumeDescriptorSequenceNumber;
+        public readonly CharacterSpecification descriptorCharacterSet;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public readonly byte[] logicalVolumeIdentifier;
+        public readonly uint             logicalBlockSize;
+        public readonly EntityIdentifier domainIdentifier;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] logicalVolumeContentsUse;
+        public readonly uint             mapTableLength;
+        public readonly uint             numberOfPartitionMaps;
+        public readonly EntityIdentifier implementationIdentifier;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public readonly byte[] implementationUse;
+        public readonly ExtentDescriptor integritySequenceExtent;
+    }
+
+#endregion
+
+#region Nested type: LogicalVolumeIntegrityDescriptor
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct LogicalVolumeIntegrityDescriptor
     {
         public readonly DescriptorTag    tag;
-        public readonly ExtentDescriptor mainVolumeDescriptorSequenceExtent;
-        public readonly ExtentDescriptor reserveVolumeDescriptorSequenceExtent;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
-        public readonly byte[] reserved;
+        public readonly Timestamp        recordingDateTime;
+        public readonly uint             integrityType;
+        public readonly ExtentDescriptor nextIntegrityExtent;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] logicalVolumeContentsUse;
+        public readonly uint numberOfPartitions;
+        public readonly uint lengthOfImplementationUse;
+
+        // Follows uint[numberOfPartitions] freeSpaceTable;
+        // Follows uint[numberOfPartitions] sizeTable;
+        // Follows byte[lengthOfImplementationUse] implementationUse;
     }
+
+#endregion
+
+#region Nested type: LogicalVolumeIntegrityDescriptorImplementationUse
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct LogicalVolumeIntegrityDescriptorImplementationUse
+    {
+        public readonly EntityIdentifier implementationId;
+        public readonly uint             files;
+        public readonly uint             directories;
+        public readonly ushort           minimumReadUDF;
+        public readonly ushort           minimumWriteUDF;
+        public readonly ushort           maximumWriteUDF;
+    }
+
+#endregion
+
+#region Nested type: PrimaryVolumeDescriptor
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct PrimaryVolumeDescriptor
@@ -141,51 +201,41 @@ public sealed partial class UDF
         public readonly byte[] reserved;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct LogicalVolumeDescriptor
+#endregion
+
+#region Nested type: TagIdentifier
+
+    enum TagIdentifier : ushort
     {
-        public readonly DescriptorTag          tag;
-        public readonly uint                   volumeDescriptorSequenceNumber;
-        public readonly CharacterSpecification descriptorCharacterSet;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public readonly byte[] logicalVolumeIdentifier;
-        public readonly uint             logicalBlockSize;
-        public readonly EntityIdentifier domainIdentifier;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly byte[] logicalVolumeContentsUse;
-        public readonly uint             mapTableLength;
-        public readonly uint             numberOfPartitionMaps;
-        public readonly EntityIdentifier implementationIdentifier;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public readonly byte[] implementationUse;
-        public readonly ExtentDescriptor integritySequenceExtent;
+        PrimaryVolumeDescriptor           = 1,
+        AnchorVolumeDescriptorPointer     = 2,
+        VolumeDescriptorPointer           = 3,
+        ImplementationUseVolumeDescriptor = 4,
+        PartitionDescriptor               = 5,
+        LogicalVolumeDescriptor           = 6,
+        UnallocatedSpaceDescriptor        = 7,
+        TerminatingDescriptor             = 8,
+        LogicalVolumeIntegrityDescriptor  = 9
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct LogicalVolumeIntegrityDescriptor
-    {
-        public readonly DescriptorTag    tag;
-        public readonly Timestamp        recordingDateTime;
-        public readonly uint             integrityType;
-        public readonly ExtentDescriptor nextIntegrityExtent;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] logicalVolumeContentsUse;
-        public readonly uint numberOfPartitions;
-        public readonly uint lengthOfImplementationUse;
+#endregion
 
-        // Follows uint[numberOfPartitions] freeSpaceTable;
-        // Follows uint[numberOfPartitions] sizeTable;
-        // Follows byte[lengthOfImplementationUse] implementationUse;
-    }
+#region Nested type: Timestamp
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct LogicalVolumeIntegrityDescriptorImplementationUse
+    readonly struct Timestamp
     {
-        public readonly EntityIdentifier implementationId;
-        public readonly uint             files;
-        public readonly uint             directories;
-        public readonly ushort           minimumReadUDF;
-        public readonly ushort           minimumWriteUDF;
-        public readonly ushort           maximumWriteUDF;
+        public readonly ushort typeAndZone;
+        public readonly short  year;
+        public readonly byte   month;
+        public readonly byte   day;
+        public readonly byte   hour;
+        public readonly byte   minute;
+        public readonly byte   second;
+        public readonly byte   centiseconds;
+        public readonly byte   hundredsMicroseconds;
+        public readonly byte   microseconds;
     }
+
+#endregion
 }

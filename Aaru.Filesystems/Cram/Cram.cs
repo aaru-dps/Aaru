@@ -39,10 +39,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Cram : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Cram_Name;
+
     /// <inheritdoc />
     public Guid Id => new("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

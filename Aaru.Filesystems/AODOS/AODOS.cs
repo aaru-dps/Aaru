@@ -41,10 +41,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the AO-DOS filesystem</summary>
 public sealed partial class AODOS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.AODOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

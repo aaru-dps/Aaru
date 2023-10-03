@@ -47,13 +47,15 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
 public sealed partial class RT11
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         if(1 + partition.Start >= partition.End)
             return false;
 
-        byte[]      magicB = new byte[12];
+        var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -96,7 +98,7 @@ public sealed partial class RT11
          */
         ushort check = 0;
 
-        for(int i = 0; i < 512; i += 2)
+        for(var i = 0; i < 512; i += 2)
             check += BitConverter.ToUInt16(hbSector, i);
 
         sb.AppendFormat(Localization.Volume_format_is_0,
@@ -123,4 +125,6 @@ public sealed partial class RT11
 
         information = sb.ToString();
     }
+
+#endregion
 }

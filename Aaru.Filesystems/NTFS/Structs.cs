@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Technology File System (NTFS)</summary>
 public sealed partial class NTFS
 {
+#region Nested type: BiosParameterBlock
+
     /// <summary>NTFS $BOOT</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BiosParameterBlock
@@ -108,4 +110,6 @@ public sealed partial class NTFS
         /// <summary>0x1FE, 0xAA55</summary>
         public readonly ushort signature2;
     }
+
+#endregion
 }

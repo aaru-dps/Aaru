@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Amiga Fast File System (AFFS)</summary>
 public sealed partial class AmigaDOSPlugin
 {
+#region Nested type: BootBlock
+
     /// <summary>Boot block, first 2 sectors</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct BootBlock
@@ -48,6 +50,10 @@ public sealed partial class AmigaDOSPlugin
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
         public byte[] bootCode;
     }
+
+#endregion
+
+#region Nested type: RootBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct RootBlock
@@ -113,4 +119,6 @@ public sealed partial class AmigaDOSPlugin
         /// <summary>Offset 0x18+hashTableSize*4+196, block secondary type = ST_ROOT (1)</summary>
         public uint sec_type;
     }
+
+#endregion
 }

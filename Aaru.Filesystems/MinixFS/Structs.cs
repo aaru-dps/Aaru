@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the MINIX filesystem</summary>
 public sealed partial class MinixFS
 {
+#region Nested type: SuperBlock
+
     /// <summary>Superblock for Minix v1 and V2 filesystems</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -60,6 +62,10 @@ public sealed partial class MinixFS
         /// <summary>0x14, number of zones</summary>
         public readonly uint s_zones;
     }
+
+#endregion
+
+#region Nested type: SuperBlock3
 
     /// <summary>Superblock for Minix v3 filesystems</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -92,4 +98,6 @@ public sealed partial class MinixFS
         /// <summary>0x1E, on-disk structures version</summary>
         public readonly byte s_disk_version;
     }
+
+#endregion
 }

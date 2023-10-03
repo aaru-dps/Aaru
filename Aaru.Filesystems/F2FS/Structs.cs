@@ -37,7 +37,10 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class F2FS
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
+#region Nested type: Superblock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     readonly struct Superblock
     {
         public readonly uint   magic;
@@ -99,4 +102,6 @@ public sealed partial class F2FS
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 871)]
         public readonly byte[] reserved;
     }
+
+#endregion
 }

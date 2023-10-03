@@ -35,13 +35,20 @@ namespace Aaru.Filesystems;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection for the Xia filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Xia : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Xia_Name;
+
     /// <inheritdoc />
     public Guid Id => new("169E1DE5-24F2-4EF6-A04D-A4B2CA66DE9D");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

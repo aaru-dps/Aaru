@@ -87,6 +87,49 @@ public sealed partial class ISO9660
         return decodedVd;
     }
 
+#region Nested type: HighSierraDirectoryRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct HighSierraDirectoryRecord
+    {
+        public readonly byte                length;
+        public readonly byte                xattr_len;
+        public readonly uint                extent;
+        public readonly uint                extent_be;
+        public readonly uint                size;
+        public readonly uint                size_be;
+        public readonly HighSierraTimestamp date;
+        public readonly FileFlags           flags;
+        public readonly byte                reserved;
+        public readonly byte                interleave_size;
+        public readonly byte                interleave;
+        public readonly ushort              volume_sequence_number;
+        public readonly ushort              volume_sequence_number_be;
+        public readonly byte                name_len;
+
+        // Followed by name[name_len] and then system area until length arrives
+    }
+
+#endregion
+
+#region Nested type: HighSierraPathTableEntry
+
+    // There are two tables one in little endian one in big endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct HighSierraPathTableEntry
+    {
+        public readonly uint   start_lbn;
+        public readonly byte   xattr_len;
+        public readonly byte   name_len;
+        public readonly ushort parent_dirno;
+
+        // Followed by name[name_len]
+    }
+
+#endregion
+
+#region Nested type: HighSierraPrimaryVolumeDescriptor
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HighSierraPrimaryVolumeDescriptor
     {
@@ -154,26 +197,9 @@ public sealed partial class ISO9660
         public readonly byte[] reserved3;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct HighSierraDirectoryRecord
-    {
-        public readonly byte                length;
-        public readonly byte                xattr_len;
-        public readonly uint                extent;
-        public readonly uint                extent_be;
-        public readonly uint                size;
-        public readonly uint                size_be;
-        public readonly HighSierraTimestamp date;
-        public readonly FileFlags           flags;
-        public readonly byte                reserved;
-        public readonly byte                interleave_size;
-        public readonly byte                interleave;
-        public readonly ushort              volume_sequence_number;
-        public readonly ushort              volume_sequence_number_be;
-        public readonly byte                name_len;
+#endregion
 
-        // Followed by name[name_len] and then system area until length arrives
-    }
+#region Nested type: HighSierraTimestamp
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HighSierraTimestamp
@@ -186,15 +212,5 @@ public sealed partial class ISO9660
         public readonly byte Second;
     }
 
-    // There are two tables one in little endian one in big endian
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct HighSierraPathTableEntry
-    {
-        public readonly uint   start_lbn;
-        public readonly byte   xattr_len;
-        public readonly byte   name_len;
-        public readonly ushort parent_dirno;
-
-        // Followed by name[name_len]
-    }
+#endregion
 }

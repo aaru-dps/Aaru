@@ -42,10 +42,12 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Microsoft's Resilient filesystem (ReFS)</summary>
 public sealed partial class ReFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -74,7 +76,7 @@ public sealed partial class ReFS : IFilesystem
         information = "";
         metadata    = new FileSystem();
 
-        uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -104,9 +106,9 @@ public sealed partial class ReFS : IFilesystem
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.identifier = {0}",
                                    StringHandlers.CToString(BitConverter.GetBytes(vhdr.identifier)));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.length = {0}", vhdr.length);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.checksum = 0x{0:X4}", vhdr.checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.sectors = {0}", vhdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.length = {0}",         vhdr.length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.checksum = 0x{0:X4}",  vhdr.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.sectors = {0}",        vhdr.sectors);
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.bytesPerSector = {0}", vhdr.bytesPerSector);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.sectorsPerCluster = {0}", vhdr.sectorsPerCluster);
@@ -144,4 +146,6 @@ public sealed partial class ReFS : IFilesystem
             Clusters    = vhdr.sectors        / vhdr.sectorsPerCluster
         };
     }
+
+#endregion
 }

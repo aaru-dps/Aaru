@@ -34,6 +34,34 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of QNX 6 filesystem</summary>
 public sealed partial class QNX6
 {
+#region Nested type: AudiSuperBlock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AudiSuperBlock
+    {
+        public readonly uint  magic;
+        public readonly uint  checksum;
+        public readonly ulong serial;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] spare1;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] id;
+        public readonly uint     blockSize;
+        public readonly uint     numInodes;
+        public readonly uint     freeInodes;
+        public readonly uint     numBlocks;
+        public readonly uint     freeBlocks;
+        public readonly uint     spare2;
+        public readonly RootNode inode;
+        public readonly RootNode bitmap;
+        public readonly RootNode longfile;
+        public readonly RootNode unknown;
+    }
+
+#endregion
+
+#region Nested type: RootNode
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct RootNode
     {
@@ -45,6 +73,10 @@ public sealed partial class QNX6
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
         public readonly byte[] spare;
     }
+
+#endregion
+
+#region Nested type: SuperBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -71,25 +103,5 @@ public sealed partial class QNX6
         public readonly RootNode unknown;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AudiSuperBlock
-    {
-        public readonly uint  magic;
-        public readonly uint  checksum;
-        public readonly ulong serial;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public readonly byte[] spare1;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public readonly byte[] id;
-        public readonly uint     blockSize;
-        public readonly uint     numInodes;
-        public readonly uint     freeInodes;
-        public readonly uint     numBlocks;
-        public readonly uint     freeBlocks;
-        public readonly uint     spare2;
-        public readonly RootNode inode;
-        public readonly RootNode bitmap;
-        public readonly RootNode longfile;
-        public readonly RootNode unknown;
-    }
+#endregion
 }

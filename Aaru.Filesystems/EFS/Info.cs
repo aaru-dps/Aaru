@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
 public sealed partial class EFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -50,7 +52,7 @@ public sealed partial class EFS
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -63,7 +65,7 @@ public sealed partial class EFS
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -77,7 +79,7 @@ public sealed partial class EFS
         }
         else
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -118,7 +120,7 @@ public sealed partial class EFS
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -131,7 +133,7 @@ public sealed partial class EFS
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -142,7 +144,7 @@ public sealed partial class EFS
         }
         else
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -214,4 +216,6 @@ public sealed partial class EFS
             CreationDate = DateHandlers.UnixToDateTime(efsSb.sb_time)
         };
     }
+
+#endregion
 }

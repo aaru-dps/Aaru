@@ -36,11 +36,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Solar OS filesystem</summary>
 public sealed partial class SolarFS : IFilesystem
 {
+    const string MODULE_NAME = "SolarFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.SolarFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "SolarFS plugin";
+
+#endregion
 }

@@ -36,6 +36,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class APFS
 {
+#region Nested type: ContainerSuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ContainerSuperBlock
     {
@@ -47,4 +49,6 @@ public sealed partial class APFS
         public readonly uint  blockSize;
         public readonly ulong containerBlocks;
     }
+
+#endregion
 }

@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Professional File System</summary>
 public sealed partial class PFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.PFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("68DE769E-D957-406A-8AE4-3781CA8CDA77");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

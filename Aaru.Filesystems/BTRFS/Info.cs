@@ -44,6 +44,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the b-tree filesystem (btrfs)</summary>
 public sealed partial class BTRFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -72,10 +74,10 @@ public sealed partial class BTRFS
             return false;
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorOff = {0}", sbSectorOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorSize = {0}", sbSectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorOff = {0}",                    sbSectorOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorSize = {0}",                   sbSectorSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "partition.PartitionStartSector = {0}", partition.Start);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = 0x{0:X16}",            btrfsSb.magic);
 
         return btrfsSb.magic == BTRFS_MAGIC;
     }
@@ -98,39 +100,39 @@ public sealed partial class BTRFS
 
         SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.checksum = {0}", btrfsSb.checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.uuid = {0}", btrfsSb.uuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.pba = {0}", btrfsSb.pba);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.flags = {0}", btrfsSb.flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = {0}", btrfsSb.magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.generation = {0}", btrfsSb.generation);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_lba = {0}", btrfsSb.root_lba);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_lba = {0}", btrfsSb.chunk_lba);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_lba = {0}", btrfsSb.log_lba);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_transid = {0}", btrfsSb.log_root_transid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.total_bytes = {0}", btrfsSb.total_bytes);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.bytes_used = {0}", btrfsSb.bytes_used);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.checksum = {0}",          btrfsSb.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.uuid = {0}",              btrfsSb.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.pba = {0}",               btrfsSb.pba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.flags = {0}",             btrfsSb.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = {0}",             btrfsSb.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.generation = {0}",        btrfsSb.generation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_lba = {0}",          btrfsSb.root_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_lba = {0}",         btrfsSb.chunk_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_lba = {0}",           btrfsSb.log_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_transid = {0}",  btrfsSb.log_root_transid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.total_bytes = {0}",       btrfsSb.total_bytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.bytes_used = {0}",        btrfsSb.bytes_used);
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_dir_objectid = {0}", btrfsSb.root_dir_objectid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.num_devices = {0}", btrfsSb.num_devices);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.sectorsize = {0}", btrfsSb.sectorsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.nodesize = {0}", btrfsSb.nodesize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.leafsize = {0}", btrfsSb.leafsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.stripesize = {0}", btrfsSb.stripesize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.n = {0}", btrfsSb.n);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.num_devices = {0}",       btrfsSb.num_devices);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.sectorsize = {0}",        btrfsSb.sectorsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.nodesize = {0}",          btrfsSb.nodesize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.leafsize = {0}",          btrfsSb.leafsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.stripesize = {0}",        btrfsSb.stripesize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.n = {0}",                 btrfsSb.n);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_generation = {0}",
                                    btrfsSb.chunk_root_generation);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_flags = 0x{0:X16}", btrfsSb.compat_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_flags = 0x{0:X16}",    btrfsSb.compat_flags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.incompat_flags = 0x{0:X16}", btrfsSb.incompat_flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.csum_type = {0}", btrfsSb.csum_type);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_level = {0}", btrfsSb.root_level);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_level = {0}", btrfsSb.chunk_root_level);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_level = {0}", btrfsSb.log_root_level);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.id = 0x{0:X16}", btrfsSb.dev_item.id);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.bytes = {0}", btrfsSb.dev_item.bytes);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.used = {0}", btrfsSb.dev_item.used);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.incompat_flags = 0x{0:X16}",  btrfsSb.incompat_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.csum_type = {0}",             btrfsSb.csum_type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_level = {0}",            btrfsSb.root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_level = {0}",      btrfsSb.chunk_root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_level = {0}",        btrfsSb.log_root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.id = 0x{0:X16}",     btrfsSb.dev_item.id);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.bytes = {0}",        btrfsSb.dev_item.bytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.used = {0}",         btrfsSb.dev_item.used);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_align = {0}",
                                    btrfsSb.dev_item.optimal_align);
@@ -157,7 +159,7 @@ public sealed partial class BTRFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.label = {0}", btrfsSb.label);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.label = {0}",         btrfsSb.label);
 
         sbInformation.AppendLine(Localization.B_tree_filesystem);
         sbInformation.AppendFormat(Localization.UUID_0, btrfsSb.uuid).AppendLine();
@@ -169,17 +171,17 @@ public sealed partial class BTRFS
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_spanned_in_1_devices, btrfsSb.total_bytes,
                                    btrfsSb.num_devices).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_used, btrfsSb.bytes_used).AppendLine();
-        sbInformation.AppendFormat(Localization._0_bytes_sector, btrfsSb.sectorsize).AppendLine();
-        sbInformation.AppendFormat(Localization._0_bytes_node, btrfsSb.nodesize).AppendLine();
-        sbInformation.AppendFormat(Localization._0_bytes_leaf, btrfsSb.leafsize).AppendLine();
-        sbInformation.AppendFormat(Localization._0_bytes_stripe, btrfsSb.stripesize).AppendLine();
-        sbInformation.AppendFormat(Localization.Flags_0, btrfsSb.flags).AppendLine();
-        sbInformation.AppendFormat(Localization.Compatible_flags_0, btrfsSb.compat_flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_used,      btrfsSb.bytes_used).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_sector,              btrfsSb.sectorsize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_node,                btrfsSb.nodesize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_leaf,                btrfsSb.leafsize).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_stripe,              btrfsSb.stripesize).AppendLine();
+        sbInformation.AppendFormat(Localization.Flags_0,                      btrfsSb.flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Compatible_flags_0,           btrfsSb.compat_flags).AppendLine();
         sbInformation.AppendFormat(Localization.Read_only_compatible_flags_0, btrfsSb.compat_ro_flags).AppendLine();
-        sbInformation.AppendFormat(Localization.Incompatible_flags_0, btrfsSb.incompat_flags).AppendLine();
-        sbInformation.AppendFormat(Localization.Device_UUID_0, btrfsSb.dev_item.uuid).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_label_0, btrfsSb.label).AppendLine();
+        sbInformation.AppendFormat(Localization.Incompatible_flags_0,         btrfsSb.incompat_flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Device_UUID_0,                btrfsSb.dev_item.uuid).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_label_0,               btrfsSb.label).AppendLine();
 
         information = sbInformation.ToString();
 
@@ -193,6 +195,8 @@ public sealed partial class BTRFS
             Type                = FS_TYPE
         };
 
-        metadata.FreeClusters = metadata.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);
+        metadata.FreeClusters = metadata.Clusters - btrfsSb.bytes_used / btrfsSb.sectorsize;
     }
+
+#endregion
 }

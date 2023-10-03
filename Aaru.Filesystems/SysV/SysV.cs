@@ -37,14 +37,21 @@ namespace Aaru.Filesystems;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection of the UNIX System V filesystem</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
- SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class SysVfs : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.SysVfs_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9B8D016A-8561-400E-A12A-A198283C211D");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

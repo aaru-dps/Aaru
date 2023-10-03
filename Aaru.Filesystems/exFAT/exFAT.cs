@@ -40,10 +40,16 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.exFAT_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8271D088-1533-4CB3-AC28-D802B68BB95C");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

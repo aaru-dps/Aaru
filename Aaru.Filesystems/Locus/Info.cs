@@ -34,26 +34,26 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using commitcnt_t = System.Int32;
+using commitcnt_t = int;
 
 // Disk address
-using daddr_t = System.Int32;
+using daddr_t = int;
 
 // Fstore
-using fstore_t = System.Int32;
+using fstore_t = int;
 
 // Global File System number
-using gfs_t = System.Int32;
+using gfs_t = int;
 
 // Inode number
-using ino_t = System.Int32;
+using ino_t = int;
 using Partition = Aaru.CommonTypes.Partition;
 
 // Filesystem pack number
-using pckno_t = System.Int16;
+using pckno_t = short;
 
 // Timestamp
-using time_t = System.Int32;
+using time_t = int;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedType.Local
@@ -64,6 +64,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Locus filesystem</summary>
 public sealed partial class Locus
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -72,7 +74,7 @@ public sealed partial class Locus
 
         for(ulong location = 0; location <= 8; location++)
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -115,7 +117,7 @@ public sealed partial class Locus
 
         for(ulong location = 0; location <= 8; location++)
         {
-            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -150,7 +152,8 @@ public sealed partial class Locus
 
         var sb = new StringBuilder();
 
-        sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD ? Localization.Locus_filesystem_old
+        sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD
+                          ? Localization.Locus_filesystem_old
                           : Localization.Locus_filesystem);
 
         int blockSize = locusSb.s_version == Version.SB_SB4096 ? 4096 : 1024;
@@ -162,26 +165,26 @@ public sealed partial class Locus
         string s_fpack = StringHandlers.CToString(locusSb.s_fpack, encoding);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_magic = 0x{0:X8}", locusSb.s_magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_gfs = {0}", locusSb.s_gfs);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fsize = {0}", locusSb.s_fsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_lwm = {0}", locusSb.s_lwm);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_hwm = {0}", locusSb.s_hwm);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_llst = {0}", locusSb.s_llst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fstore = {0}", locusSb.s_fstore);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_time = {0}", locusSb.s_time);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_tfree = {0}", locusSb.s_tfree);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_isize = {0}", locusSb.s_isize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_nfree = {0}", locusSb.s_nfree);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_flags = {0}", locusSb.s_flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_tinode = {0}", locusSb.s_tinode);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_lasti = {0}", locusSb.s_lasti);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_nbehind = {0}", locusSb.s_nbehind);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_gfspack = {0}", locusSb.s_gfspack);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_ninode = {0}", locusSb.s_ninode);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_flock = {0}", locusSb.s_flock);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_ilock = {0}", locusSb.s_ilock);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fmod = {0}", locusSb.s_fmod);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_version = {0}", locusSb.s_version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_gfs = {0}",        locusSb.s_gfs);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fsize = {0}",      locusSb.s_fsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_lwm = {0}",        locusSb.s_lwm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_hwm = {0}",        locusSb.s_hwm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_llst = {0}",       locusSb.s_llst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fstore = {0}",     locusSb.s_fstore);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_time = {0}",       locusSb.s_time);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_tfree = {0}",      locusSb.s_tfree);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_isize = {0}",      locusSb.s_isize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_nfree = {0}",      locusSb.s_nfree);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_flags = {0}",      locusSb.s_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_tinode = {0}",     locusSb.s_tinode);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_lasti = {0}",      locusSb.s_lasti);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_nbehind = {0}",    locusSb.s_nbehind);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_gfspack = {0}",    locusSb.s_gfspack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_ninode = {0}",     locusSb.s_ninode);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_flock = {0}",      locusSb.s_flock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_ilock = {0}",      locusSb.s_ilock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fmod = {0}",       locusSb.s_fmod);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_version = {0}",    locusSb.s_version);
 
         sb.AppendFormat(Localization.Superblock_last_modified_on_0, DateHandlers.UnixToDateTime(locusSb.s_time)).
            AppendLine();
@@ -233,9 +236,9 @@ public sealed partial class Locus
         if(locusSb.s_flags.HasFlag(Flags.SB_SYNCW))
             sb.AppendLine(Localization.Volume_uses_synchronous_writes);
 
-        sb.AppendFormat(Localization.Volume_label_0, s_fsmnt).AppendLine();
-        sb.AppendFormat(Localization.Physical_volume_name_0, s_fpack).AppendLine();
-        sb.AppendFormat(Localization.Global_File_System_number_0, locusSb.s_gfs).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0,                   s_fsmnt).AppendLine();
+        sb.AppendFormat(Localization.Physical_volume_name_0,           s_fpack).AppendLine();
+        sb.AppendFormat(Localization.Global_File_System_number_0,      locusSb.s_gfs).AppendLine();
         sb.AppendFormat(Localization.Global_File_System_pack_number_0, locusSb.s_gfspack).AppendLine();
 
         information = sb.ToString();
@@ -253,4 +256,6 @@ public sealed partial class Locus
             FreeClusters     = (ulong)locusSb.s_tfree
         };
     }
+
+#endregion
 }

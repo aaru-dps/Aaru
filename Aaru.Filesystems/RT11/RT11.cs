@@ -40,10 +40,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
 public sealed partial class RT11 : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.RT11_Name;
+
     /// <inheritdoc />
     public Guid Id => new("DB3E2F98-8F98-463C-8126-E937843DA024");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

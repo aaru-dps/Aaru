@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the LIF filesystem</summary>
 public sealed partial class LIF
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -83,9 +85,9 @@ public sealed partial class LIF
 
         sb.AppendLine(Localization.HP_Logical_Interchange_Format);
         sb.AppendFormat(Localization.Directory_starts_at_cluster_0, lifSb.directoryStart).AppendLine();
-        sb.AppendFormat(Localization.LIF_identifier_0, lifSb.lifId).AppendLine();
-        sb.AppendFormat(Localization.Directory_size_0_clusters, lifSb.directorySize).AppendLine();
-        sb.AppendFormat(Localization.LIF_version_0, lifSb.lifVersion).AppendLine();
+        sb.AppendFormat(Localization.LIF_identifier_0,              lifSb.lifId).AppendLine();
+        sb.AppendFormat(Localization.Directory_size_0_clusters,     lifSb.directorySize).AppendLine();
+        sb.AppendFormat(Localization.LIF_version_0,                 lifSb.lifVersion).AppendLine();
 
         // How is this related to volume size? I have only CDs to test and makes no sense there
         sb.AppendFormat(Localization._0_tracks, lifSb.tracks).AppendLine();
@@ -105,4 +107,6 @@ public sealed partial class LIF
             VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, encoding)
         };
     }
+
+#endregion
 }

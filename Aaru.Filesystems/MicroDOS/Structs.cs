@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// </summary>
 public sealed partial class MicroDOS
 {
+#region Nested type: Block0
+
     // Followed by directory entries
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Block0
@@ -73,6 +75,10 @@ public sealed partial class MicroDOS
         public readonly byte[] unknown3;
     }
 
+#endregion
+
+#region Nested type: DirectoryEntry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct DirectoryEntry
     {
@@ -92,4 +98,6 @@ public sealed partial class MicroDOS
         /// <summary>Length</summary>
         public readonly ushort length;
     }
+
+#endregion
 }

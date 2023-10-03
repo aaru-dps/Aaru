@@ -39,10 +39,15 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the VMware filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
- SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "IdentifierTypo")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class VMfs
 {
+    const string FS_TYPE = "vmfs";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -59,12 +64,10 @@ public sealed partial class VMfs
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic == VMFS_MAGIC;
     }
-
-    const string FS_TYPE = "vmfs";
 
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
@@ -85,10 +88,10 @@ public sealed partial class VMfs
 
         sbInformation.AppendLine(Localization.VMware_file_system);
 
-        uint ctimeSecs     = (uint)(volInfo.ctime / 1000000);
-        uint ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
-        uint mtimeSecs     = (uint)(volInfo.mtime / 1000000);
-        uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
+        var ctimeSecs     = (uint)(volInfo.ctime / 1000000);
+        var ctimeNanoSecs = (uint)(volInfo.ctime % 1000000);
+        var mtimeSecs     = (uint)(volInfo.mtime / 1000000);
+        var mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
         sbInformation.AppendFormat(Localization.Volume_version_0, volInfo.version).AppendLine();
 
@@ -96,7 +99,7 @@ public sealed partial class VMfs
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_size_0_bytes, volInfo.size * 256).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_UUID_0, volInfo.uuid).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_UUID_0,       volInfo.uuid).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).AppendLine();
@@ -116,4 +119,6 @@ public sealed partial class VMfs
             VolumeSerial     = volInfo.uuid.ToString()
         };
     }
+
+#endregion
 }

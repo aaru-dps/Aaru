@@ -53,12 +53,17 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     uint         _usedSectors;
     Vtoc         _vtoc;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => Localization.AppleDOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -69,14 +74,15 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
 
-    #region Caches
+#region Caches
+
     /// <summary>Caches track/sector lists</summary>
     Dictionary<string, byte[]> _extentCache;
     /// <summary>Caches files</summary>
@@ -95,5 +101,6 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     Dictionary<string, byte> _fileTypeCache;
     /// <summary>Caches locked files</summary>
     List<string> _lockedFiles;
-    #endregion Caches
+
+#endregion Caches
 }

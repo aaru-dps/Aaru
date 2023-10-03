@@ -43,6 +43,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -60,14 +62,14 @@ public sealed partial class ISO9660
         if(errno != ErrorNumber.NoError)
             return false;
 
-        int xaOff = 0;
+        var xaOff = 0;
 
         if(vdSector.Length == 2336)
             xaOff = 8;
 
-        byte   vdType  = vdSector[0 + xaOff];
-        byte[] vdMagic = new byte[5];
-        byte[] hsMagic = new byte[5];
+        byte vdType  = vdSector[0 + xaOff];
+        var  vdMagic = new byte[5];
+        var  hsMagic = new byte[5];
 
         // This indicates the end of a volume descriptor. HighSierra here would have 16 so no problem
         if(vdType == 255)
@@ -90,11 +92,11 @@ public sealed partial class ISO9660
         encoding    ??= Encoding.ASCII;
         information =   "";
         metadata    =   new FileSystem();
-        var    isoMetadata = new StringBuilder();
-        byte[] vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
-        byte[] hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
+        var isoMetadata = new StringBuilder();
+        var vdMagic     = new byte[5]; // Volume Descriptor magic "CD001"
+        var hsMagic     = new byte[5]; // Volume Descriptor magic "CDROM"
 
-        string bootSpec = "";
+        var bootSpec = "";
 
         PrimaryVolumeDescriptor?           pvd      = null;
         PrimaryVolumeDescriptor?           jolietvd = null;
@@ -121,14 +123,14 @@ public sealed partial class ISO9660
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
         bool highSierraInfo = encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
-        int  hsOff          = 0;
+        var  hsOff          = 0;
 
         if(highSierraInfo)
             hsOff = 8;
 
-        bool cdiInfo = false;
-        bool evd     = false;
-        bool vpd     = false;
+        var cdiInfo = false;
+        var evd     = false;
+        var vpd     = false;
 
         while(true)
         {
@@ -211,13 +213,17 @@ public sealed partial class ISO9660
                     {
                         if(svd.escape_sequences[0] == '%' &&
                            svd.escape_sequences[1] == '/')
+                        {
                             if(svd.escape_sequences[2] == '@' ||
                                svd.escape_sequences[2] == 'C' ||
                                svd.escape_sequences[2] == 'E')
                                 jolietvd = svd;
                             else
+                            {
                                 AaruConsole.WriteLine(MODULE_NAME,
                                                       Localization.Found_unknown_supplementary_volume_descriptor);
+                            }
+                        }
                     }
                     else
                         evd = true;
@@ -266,7 +272,8 @@ public sealed partial class ISO9660
         // No need to read root on CD-i, as extensions are not supported...
         if(!cdiInfo)
         {
-            rootLocation = highSierraInfo ? hsvd.Value.root_directory_record.extent
+            rootLocation = highSierraInfo
+                               ? hsvd.Value.root_directory_record.extent
                                : pvd.Value.root_directory_record.extent;
 
             if(highSierraInfo)
@@ -286,14 +293,14 @@ public sealed partial class ISO9660
         }
 
         byte[]                 rootDir         = Array.Empty<byte>();
-        int                    rootOff         = 0;
-        bool                   xaExtensions    = false;
-        bool                   apple           = false;
-        bool                   susp            = false;
-        bool                   rrip            = false;
-        bool                   ziso            = false;
-        bool                   amiga           = false;
-        bool                   aaip            = false;
+        var                    rootOff         = 0;
+        var                    xaExtensions    = false;
+        var                    apple           = false;
+        var                    susp            = false;
+        var                    rrip            = false;
+        var                    ziso            = false;
+        var                    amiga           = false;
+        var                    aaip            = false;
         List<ContinuationArea> contareas       = new();
         List<byte[]>           refareas        = new();
         var                    suspInformation = new StringBuilder();
@@ -321,13 +328,13 @@ public sealed partial class ISO9660
             if(saLen                   > 0 &&
                rootOff + saOff + saLen <= rootDir.Length)
             {
-                byte[] sa = new byte[saLen];
+                var sa = new byte[saLen];
                 Array.Copy(rootDir, rootOff + saOff, sa, 0, saLen);
                 saOff = 0;
 
                 while(saOff < saLen)
                 {
-                    bool noneFound = true;
+                    var noneFound = true;
 
                     if(Marshal.SizeOf<CdromXa>() + saOff <= saLen)
                     {
@@ -344,7 +351,7 @@ public sealed partial class ISO9660
                     if(saOff + 2 >= saLen)
                         break;
 
-                    ushort nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
+                    var nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
 
                     switch(nextSignature)
                     {
@@ -407,7 +414,7 @@ public sealed partial class ISO9660
 
                                         break;
                                     case SUSP_CONTINUATION when saOff + sa[saOff + 2] <= saLen:
-                                        byte[] ce = new byte[sa[saOff + 2]];
+                                        var ce = new byte[sa[saOff + 2]];
                                         Array.Copy(sa, saOff, ce, 0, ce.Length);
 
                                         ContinuationArea ca =
@@ -417,7 +424,7 @@ public sealed partial class ISO9660
 
                                         break;
                                     case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
-                                        byte[] er = new byte[sa[saOff + 2]];
+                                        var er = new byte[sa[saOff + 2]];
                                         Array.Copy(sa, saOff, er, 0, er.Length);
                                         refareas.Add(er);
 
@@ -425,14 +432,14 @@ public sealed partial class ISO9660
                                 }
 
                                 rrip |= nextSignature is RRIP_MAGIC or RRIP_POSIX_ATTRIBUTES or RRIP_POSIX_DEV_NO
-                                            or RRIP_SYMLINK or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK
-                                            or RRIP_RELOCATED_DIR or RRIP_TIMESTAMPS or RRIP_SPARSE;
+                                                      or RRIP_SYMLINK or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK
+                                                      or RRIP_RELOCATED_DIR or RRIP_TIMESTAMPS or RRIP_SPARSE;
 
                                 ziso  |= nextSignature == ZISO_MAGIC;
                                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                                aaip |= nextSignature == AAIP_MAGIC || (nextSignature == AAIP_MAGIC_OLD &&
-                                                                        sa[saOff + 3] == 1 && sa[saOff + 2] >= 9);
+                                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD &&
+                                        sa[saOff + 3]                                == 1 && sa[saOff + 2] >= 9;
 
                                 saOff += sa[saOff + 2];
 
@@ -468,13 +475,13 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 return;
 
-            byte[] caData = new byte[ca.ca_length_be];
+            var caData = new byte[ca.ca_length_be];
             Array.Copy(caSectors, ca.offset_be, caData, 0, ca.ca_length_be);
-            int caOff = 0;
+            var caOff = 0;
 
             while(caOff < ca.ca_length_be)
             {
-                ushort nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
+                var nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
 
                 switch(nextSignature)
                 {
@@ -488,7 +495,7 @@ public sealed partial class ISO9660
 
                         break;
                     case SUSP_REFERENCE when caOff + caData[caOff + 2] <= ca.ca_length_be:
-                        byte[] er = new byte[caData[caOff + 2]];
+                        var er = new byte[caData[caOff + 2]];
                         Array.Copy(caData, caOff, er, 0, er.Length);
                         refareas.Add(er);
 
@@ -496,14 +503,15 @@ public sealed partial class ISO9660
                 }
 
                 rrip |= nextSignature is RRIP_MAGIC or RRIP_POSIX_ATTRIBUTES or RRIP_POSIX_DEV_NO or RRIP_SYMLINK
-                            or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK or RRIP_RELOCATED_DIR or RRIP_TIMESTAMPS
-                            or RRIP_SPARSE;
+                                      or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK or RRIP_RELOCATED_DIR
+                                      or RRIP_TIMESTAMPS
+                                      or RRIP_SPARSE;
 
                 ziso  |= nextSignature == ZISO_MAGIC;
                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                aaip |= nextSignature == AAIP_MAGIC || (nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
-                                                        caData[caOff                                    + 2] >= 9);
+                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
+                        caData[caOff                                                                   + 2] >= 9;
 
                 caOff += caData[caOff + 2];
             }
@@ -527,10 +535,10 @@ public sealed partial class ISO9660
                 string extSrc = encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len + er.des_len,
                                                    er.src_len);
 
-                suspInformation.AppendFormat(Localization.Extension_0, counter).AppendLine();
+                suspInformation.AppendFormat(Localization.Extension_0,           counter).AppendLine();
                 suspInformation.AppendFormat("\t" + Localization.ID_0_version_1, extId, er.ext_ver).AppendLine();
-                suspInformation.AppendFormat("\t" + Localization.Description_0, extDes).AppendLine();
-                suspInformation.AppendFormat("\t" + Localization.Source_0, extSrc).AppendLine();
+                suspInformation.AppendFormat("\t" + Localization.Description_0,  extDes).AppendLine();
+                suspInformation.AppendFormat("\t" + Localization.Source_0,       extSrc).AppendLine();
                 counter++;
             }
         }
@@ -615,16 +623,16 @@ public sealed partial class ISO9660
             isoMetadata.AppendLine(Localization.VOLUME_DESCRIPTOR_INFORMATION_border);
         }
 
-        isoMetadata.AppendFormat(Localization.System_identifier_0, decodedVd.SystemIdentifier).AppendLine();
-        isoMetadata.AppendFormat(Localization.Volume_identifier_0, decodedVd.VolumeIdentifier).AppendLine();
+        isoMetadata.AppendFormat(Localization.System_identifier_0,     decodedVd.SystemIdentifier).AppendLine();
+        isoMetadata.AppendFormat(Localization.Volume_identifier_0,     decodedVd.VolumeIdentifier).AppendLine();
         isoMetadata.AppendFormat(Localization.Volume_set_identifier_0, decodedVd.VolumeSetIdentifier).AppendLine();
-        isoMetadata.AppendFormat(Localization.Publisher_identifier_0, decodedVd.PublisherIdentifier).AppendLine();
+        isoMetadata.AppendFormat(Localization.Publisher_identifier_0,  decodedVd.PublisherIdentifier).AppendLine();
 
         isoMetadata.AppendFormat(Localization.Data_preparer_identifier_0, decodedVd.DataPreparerIdentifier).
                     AppendLine();
 
         isoMetadata.AppendFormat(Localization.Application_identifier_0, decodedVd.ApplicationIdentifier).AppendLine();
-        isoMetadata.AppendFormat(Localization.Volume_creation_date_0, decodedVd.CreationTime).AppendLine();
+        isoMetadata.AppendFormat(Localization.Volume_creation_date_0,   decodedVd.CreationTime).AppendLine();
 
         if(decodedVd.HasModificationTime)
             isoMetadata.AppendFormat(Localization.Volume_modification_date_0, decodedVd.ModificationTime).AppendLine();
@@ -668,20 +676,26 @@ public sealed partial class ISO9660
             isoMetadata.AppendFormat(Localization.Volume_creation_date_0, decodedJolietVd.CreationTime).AppendLine();
 
             if(decodedJolietVd.HasModificationTime)
+            {
                 isoMetadata.AppendFormat(Localization.Volume_modification_date_0, decodedJolietVd.ModificationTime).
                             AppendLine();
+            }
             else
                 isoMetadata.AppendFormat(Localization.Volume_has_not_been_modified).AppendLine();
 
             if(decodedJolietVd.HasExpirationTime)
+            {
                 isoMetadata.AppendFormat(Localization.Volume_expiration_date_0, decodedJolietVd.ExpirationTime).
                             AppendLine();
+            }
             else
                 isoMetadata.AppendFormat(Localization.Volume_does_not_expire).AppendLine();
 
             if(decodedJolietVd.HasEffectiveTime)
+            {
                 isoMetadata.AppendFormat(Localization.Volume_effective_date_0, decodedJolietVd.EffectiveTime).
                             AppendLine();
+            }
             else
                 isoMetadata.AppendFormat(Localization.Volume_has_always_been_effective).AppendLine();
         }
@@ -693,7 +707,7 @@ public sealed partial class ISO9660
             if(errno != ErrorNumber.NoError)
                 return;
 
-            int toritoOff = 0;
+            var toritoOff = 0;
 
             if(vdSector[toritoOff] != 1)
                 goto exit_torito;
@@ -721,8 +735,10 @@ public sealed partial class ISO9660
             byte[] bootImage = null;
 
             if(initialEntry.load_rba + partition.Start + initialEntry.sector_count - 1 <= partition.End)
+            {
                 imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count,
                                         out bootImage);
+            }
 
             isoMetadata.AppendLine(Localization.EL_TORITO_INFORMATION_border);
             isoMetadata.AppendLine(Localization.EL_TORITO_INFORMATION);
@@ -741,11 +757,15 @@ public sealed partial class ISO9660
                                          initialEntry.load_rba, initialEntry.sector_count).AppendLine();
 
                 if(valentry.platform_id == ElToritoPlatform.x86)
+                {
                     isoMetadata.AppendFormat("\t" + Localization.Bootable_image_will_be_loaded_at_segment_0,
                                              initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg).AppendLine();
+                }
                 else
+                {
                     isoMetadata.AppendFormat("\t" + Localization.Bootable_image_will_be_loaded_at_0,
                                              (uint)initialEntry.load_seg * 10).AppendLine();
+                }
 
                 switch(initialEntry.boot_type)
                 {
@@ -775,9 +795,11 @@ public sealed partial class ISO9660
                 isoMetadata.AppendFormat("\t" + Localization.System_type_0, initialEntry.system_type).AppendLine();
 
                 if(bootImage != null)
+                {
                     isoMetadata.
                         AppendFormat("\t" + Localization.Bootable_image_SHA1_0, Sha1Context.Data(bootImage, out _)).
                         AppendLine();
+                }
             }
             else
                 isoMetadata.AppendLine("\t" + Localization.Not_bootable);
@@ -802,7 +824,8 @@ public sealed partial class ISO9660
                     AppendFormat("\t" + Localization.Section_ID_0, encoding.GetString(sectionHeader.identifier)).
                     AppendLine();
 
-                for(int entryCounter = 1; entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
+                for(var entryCounter = 1;
+                    entryCounter <= sectionHeader.entries && toritoOff < vdSector.Length;
                     entryCounter++)
                 {
                     ElToritoSectionEntry sectionEntry =
@@ -818,8 +841,10 @@ public sealed partial class ISO9660
                         bootImage = null;
 
                         if(sectionEntry.load_rba + partition.Start + sectionEntry.sector_count - 1 <= partition.End)
+                        {
                             imagePlugin.ReadSectors(sectionEntry.load_rba + partition.Start, sectionEntry.sector_count,
                                                     out bootImage);
+                        }
 
                         isoMetadata.AppendFormat("\t\t" + Localization.Bootable_on_0, sectionHeader.platform_id).
                                     AppendLine();
@@ -829,12 +854,16 @@ public sealed partial class ISO9660
                                          sectionEntry.load_rba, sectionEntry.sector_count).AppendLine();
 
                         if(valentry.platform_id == ElToritoPlatform.x86)
+                        {
                             isoMetadata.AppendFormat("\t\t" + Localization.Bootable_image_will_be_loaded_at_segment_0,
                                                      sectionEntry.load_seg == 0 ? 0x7C0 : sectionEntry.load_seg).
                                         AppendLine();
+                        }
                         else
+                        {
                             isoMetadata.AppendFormat("\t\t" + Localization.Bootable_image_will_be_loaded_at_0,
                                                      (uint)sectionEntry.load_seg * 10).AppendLine();
+                        }
 
                         switch((ElToritoEmulation)((byte)sectionEntry.boot_type & 0xF))
                         {
@@ -871,8 +900,10 @@ public sealed partial class ISO9660
                                     AppendLine();
 
                         if(bootImage != null)
+                        {
                             isoMetadata.AppendFormat("\t\t" + Localization.Bootable_image_SHA1_0,
                                                      Sha1Context.Data(bootImage, out _)).AppendLine();
+                        }
                     }
                     else
                         isoMetadata.AppendLine("\t\t" + Localization.Not_bootable);
@@ -906,7 +937,7 @@ public sealed partial class ISO9660
             }
         }
 
-        exit_torito:
+    exit_torito:
 
         if(refareas.Count > 0)
             isoMetadata.Append(suspInformation);
@@ -926,53 +957,62 @@ public sealed partial class ISO9660
                decodedVd.SystemIdentifier.Length > decodedJolietVd.SystemIdentifier.Length)
                 metadata.SystemIdentifier = decodedVd.SystemIdentifier;
             else
-                metadata.SystemIdentifier = string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier) ? null
+            {
+                metadata.SystemIdentifier = string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier)
+                                                ? null
                                                 : decodedJolietVd.SystemIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier) ||
                decodedVd.VolumeSetIdentifier.Length > decodedJolietVd.VolumeSetIdentifier.Length)
                 metadata.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
             else
-                metadata.VolumeSetIdentifier = string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier) ? null
+            {
+                metadata.VolumeSetIdentifier = string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier)
+                                                   ? null
                                                    : decodedJolietVd.VolumeSetIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier) ||
                decodedVd.PublisherIdentifier.Length > decodedJolietVd.PublisherIdentifier.Length)
                 metadata.PublisherIdentifier = decodedVd.PublisherIdentifier;
             else
-                metadata.PublisherIdentifier = string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier) ? null
+            {
+                metadata.PublisherIdentifier = string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier)
+                                                   ? null
                                                    : decodedJolietVd.PublisherIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ||
                decodedVd.DataPreparerIdentifier.Length > decodedJolietVd.DataPreparerIdentifier.Length)
                 metadata.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
             else
-                metadata.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ? null
+            {
+                metadata.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier)
+                                                      ? null
                                                       : decodedJolietVd.DataPreparerIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ||
                decodedVd.ApplicationIdentifier.Length > decodedJolietVd.ApplicationIdentifier.Length)
                 metadata.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
             else
-                metadata.ApplicationIdentifier = string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ? null
+            {
+                metadata.ApplicationIdentifier = string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier)
+                                                     ? null
                                                      : decodedJolietVd.ApplicationIdentifier;
+            }
 
             metadata.CreationDate = decodedJolietVd.CreationTime;
 
             if(decodedJolietVd.HasModificationTime)
-            {
                 metadata.ModificationDate = decodedJolietVd.ModificationTime;
-            }
 
             if(decodedJolietVd.HasExpirationTime)
-            {
                 metadata.ExpirationDate = decodedJolietVd.ExpirationTime;
-            }
 
             if(decodedJolietVd.HasEffectiveTime)
-            {
                 metadata.EffectiveDate = decodedJolietVd.EffectiveTime;
-            }
         }
         else
         {
@@ -985,19 +1025,13 @@ public sealed partial class ISO9660
             metadata.CreationDate           = decodedVd.CreationTime;
 
             if(decodedVd.HasModificationTime)
-            {
                 metadata.ModificationDate = decodedVd.ModificationTime;
-            }
 
             if(decodedVd.HasExpirationTime)
-            {
                 metadata.ExpirationDate = decodedVd.ExpirationTime;
-            }
 
             if(decodedVd.HasEffectiveTime)
-            {
                 metadata.EffectiveDate = decodedVd.EffectiveTime;
-            }
         }
 
         metadata.Bootable    |= bvd != null || segaCd != null || saturn != null || dreamcast != null;
@@ -1006,4 +1040,6 @@ public sealed partial class ISO9660
 
         information = isoMetadata.ToString();
     }
+
+#endregion
 }

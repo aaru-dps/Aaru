@@ -37,9 +37,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Cram
 {
+#region Nested type: CramCompression
+
     enum CramCompression : ushort
     {
-        Zlib = 1, Lzma = 2, Lzo = 3,
-        Xz   = 4, Lz4  = 5
+        Zlib = 1,
+        Lzma = 2,
+        Lzo  = 3,
+        Xz   = 4,
+        Lz4  = 5
     }
+
+#endregion
 }

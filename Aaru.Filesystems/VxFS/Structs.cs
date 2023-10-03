@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Veritas filesystem</summary>
 public sealed partial class VxFS
 {
+#region Nested type: SuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
     {
@@ -180,4 +182,6 @@ public sealed partial class VxFS
         /// <summary>checksum of V2 RO</summary>
         public readonly int vs_checksum2;
     }
+
+#endregion
 }

@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Smart File System</summary>
 public sealed partial class SFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.SFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("26550C19-3671-4A2D-BC2F-F20CEB7F48DC");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

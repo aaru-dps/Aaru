@@ -41,6 +41,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>
 public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 {
+    const string                                           MODULE_NAME = "Xbox FAT plugin";
     uint                                                   _bytesPerCluster;
     CultureInfo                                            _cultureInfo;
     bool                                                   _debug;
@@ -58,12 +59,17 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     FileSystemInfo                                         _statfs;
     Superblock                                             _superblock;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => Localization.XboxFatPlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -93,12 +99,10 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
-
-    const string MODULE_NAME = "Xbox FAT plugin";
 }

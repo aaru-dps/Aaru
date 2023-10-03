@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Solar OS filesystem</summary>
 public sealed partial class SolarFS
 {
+#region Nested type: BiosParameterBlock
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct BiosParameterBlock
     {
@@ -71,4 +73,6 @@ public sealed partial class SolarFS
         /// <summary>0x35, 8 bytes, "SOL_FS  "</summary>
         public string fs_type;
     }
+
+#endregion
 }

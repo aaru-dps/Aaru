@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
@@ -64,6 +66,8 @@ public sealed partial class LisaFS
 
         return isDir ? ErrorNumber.InvalidArgument : GetXattr(fileId, xattr, out buf);
     }
+
+#endregion
 
     /// <summary>Lists special Apple Lisa filesystem features as extended attributes</summary>
     /// <returns>Error number.</returns>
@@ -148,12 +152,14 @@ public sealed partial class LisaFS
 
             // Only MDDF contains an extended attributes
             if(fileId == FILEID_MDDF)
+            {
                 if(xattr == "com.apple.lisa.password")
                 {
                     buf = Encoding.ASCII.GetBytes(_mddf.password);
 
                     return ErrorNumber.NoError;
                 }
+            }
 
             // But on debug mode even system files contain tags
             if(_debug && xattr == "com.apple.lisa.tags")

@@ -33,18 +33,7 @@ namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Superblock
-    {
-        public readonly uint magic;
-        public readonly uint id;
-        public readonly uint sectorsPerCluster;
-        public readonly uint rootDirectoryCluster;
-
-        // TODO: Undetermined size
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] volumeLabel;
-    }
+#region Nested type: DirectoryEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct DirectoryEntry
@@ -63,22 +52,61 @@ public sealed partial class XboxFatPlugin
         public readonly ushort creationDate;
     }
 
-    sealed class FatxFileNode : IFileNode
-    {
-        internal uint[] _clusters;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
+#endregion
+
+#region Nested type: FatxDirNode
 
     sealed class FatxDirNode : IDirNode
     {
         internal DirectoryEntry[] _entries;
         internal int              _position;
+
+    #region IDirNode Members
+
         /// <inheritdoc />
         public string Path { get; init; }
+
+    #endregion
     }
+
+#endregion
+
+#region Nested type: FatxFileNode
+
+    sealed class FatxFileNode : IFileNode
+    {
+        internal uint[] _clusters;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: Superblock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Superblock
+    {
+        public readonly uint magic;
+        public readonly uint id;
+        public readonly uint sectorsPerCluster;
+        public readonly uint rootDirectoryCluster;
+
+        // TODO: Undetermined size
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] volumeLabel;
+    }
+
+#endregion
 }

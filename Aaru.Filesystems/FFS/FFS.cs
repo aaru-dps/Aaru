@@ -29,8 +29,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Interfaces;
-using time_t = System.Int32;
-using ufs_daddr_t = System.Int32;
+using time_t = int;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
@@ -40,11 +40,18 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class FFSPlugin : IFilesystem
 {
+    const string MODULE_NAME = "FFS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.FFSPlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("CC90D342-05DB-48A8-988C-C1FE000034A3");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "FFS plugin";
+
+#endregion
 }

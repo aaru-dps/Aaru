@@ -36,11 +36,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the LIF filesystem</summary>
 public sealed partial class LIF : IFilesystem
 {
+    const string MODULE_NAME = "LIF plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.LIF_Name;
+
     /// <inheritdoc />
     public Guid Id => new("41535647-77A5-477B-9206-DA727ACDC704");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "LIF plugin";
+
+#endregion
 }

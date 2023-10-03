@@ -35,9 +35,96 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class AppleMFS
 {
+#region Nested type: AppleMfsDirNode
+
+    sealed class AppleMfsDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: AppleMfsFileNode
+
+    sealed class AppleMfsFileNode : IFileNode
+    {
+        internal byte[] _cache;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: FileEntry
+
+    struct FileEntry
+    {
+        /// <summary>0x00, Entry flags</summary>
+        public FileFlags flFlags;
+        /// <summary>0x01, Version number</summary>
+        public byte flTyp;
+        /// <summary>0x02, FinderInfo</summary>
+        public AppleCommon.FInfo flUsrWds;
+        /// <summary>0x12, file ID</summary>
+        public uint flFlNum;
+        /// <summary>0x16, first allocation block of data fork</summary>
+        public ushort flStBlk;
+        /// <summary>0x18, logical end-of-file of data fork</summary>
+        public uint flLgLen;
+        /// <summary>0x1C, physical end-of-file of data fork</summary>
+        public uint flPyLen;
+        /// <summary>0x20, first allocation block of resource fork</summary>
+        public ushort flRStBlk;
+        /// <summary>0x22, logical end-of-file of resource fork</summary>
+        public uint flRLgLen;
+        /// <summary>0x26, physical end-of-file of resource fork</summary>
+        public uint flRPyLen;
+        /// <summary>0x2A, date and time of creation</summary>
+        public uint flCrDat;
+        /// <summary>0x2E, date and time of last modification</summary>
+        public uint flMdDat;
+        /// <summary>0x32, file name prefixed with length</summary>
+        public byte[] flNam;
+    }
+
+#endregion
+
+#region Nested type: FileFlags
+
+    [Flags]
+    enum FileFlags : byte
+    {
+        Locked = 0x01,
+        Used   = 0x80
+    }
+
+#endregion
+
+#region Nested type: MasterDirectoryBlock
+
     /// <summary>Master Directory Block, should be at offset 0x0400 bytes in volume</summary>
     struct MasterDirectoryBlock
     {
@@ -73,58 +160,5 @@ public sealed partial class AppleMFS
         public string drVN;
     }
 
-    [Flags]
-    enum FileFlags : byte
-    {
-        Locked = 0x01, Used = 0x80
-    }
-
-    struct FileEntry
-    {
-        /// <summary>0x00, Entry flags</summary>
-        public FileFlags flFlags;
-        /// <summary>0x01, Version number</summary>
-        public byte flTyp;
-        /// <summary>0x02, FinderInfo</summary>
-        public AppleCommon.FInfo flUsrWds;
-        /// <summary>0x12, file ID</summary>
-        public uint flFlNum;
-        /// <summary>0x16, first allocation block of data fork</summary>
-        public ushort flStBlk;
-        /// <summary>0x18, logical end-of-file of data fork</summary>
-        public uint flLgLen;
-        /// <summary>0x1C, physical end-of-file of data fork</summary>
-        public uint flPyLen;
-        /// <summary>0x20, first allocation block of resource fork</summary>
-        public ushort flRStBlk;
-        /// <summary>0x22, logical end-of-file of resource fork</summary>
-        public uint flRLgLen;
-        /// <summary>0x26, physical end-of-file of resource fork</summary>
-        public uint flRPyLen;
-        /// <summary>0x2A, date and time of creation</summary>
-        public uint flCrDat;
-        /// <summary>0x2E, date and time of last modification</summary>
-        public uint flMdDat;
-        /// <summary>0x32, file name prefixed with length</summary>
-        public byte[] flNam;
-    }
-
-    sealed class AppleMfsFileNode : IFileNode
-    {
-        internal byte[] _cache;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
-
-    sealed class AppleMfsDirNode : IDirNode
-    {
-        internal string[] _contents;
-        internal int      _position;
-        /// <inheritdoc />
-        public string Path { get; init; }
-    }
+#endregion
 }

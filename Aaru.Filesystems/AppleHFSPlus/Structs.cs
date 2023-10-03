@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
 public sealed partial class AppleHFSPlus
 {
+#region Nested type: VolumeHeader
+
     /// <summary>HFS+ Volume Header, should be at offset 0x0400 bytes in volume with a size of 532 bytes</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct VolumeHeader
@@ -300,4 +302,6 @@ public sealed partial class AppleHFSPlus
         /// <summary>0x200</summary>
         public readonly uint startupFile_extents_blockCount7;
     }
+
+#endregion
 }

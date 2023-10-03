@@ -71,6 +71,10 @@ public sealed partial class LisaFS
     /// <summary>Root directory ID</summary>
     const short DIRID_ROOT = 0;
 
+    const string FS_TYPE = "lisafs";
+
+#region Nested type: FileType
+
     enum FileType : byte
     {
         /// <summary>Undefined file type</summary>
@@ -107,5 +111,5 @@ public sealed partial class LisaFS
         KilledObject = 15
     }
 
-    const string FS_TYPE = "lisafs";
+#endregion
 }

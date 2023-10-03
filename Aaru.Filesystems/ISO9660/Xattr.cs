@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
@@ -128,10 +130,12 @@ public sealed partial class ISO9660
                     return ErrorNumber.InvalidArgument;
 
                 if(entry.AssociatedFile.Size != 0)
+                {
                     return ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
                                            entry.AssociatedFile.XA?.signature == XA_MAGIC &&
                                            entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) ==
                                            true, entry.AssociatedFile.XA?.filenumber ?? 0, out buf);
+                }
 
                 buf = Array.Empty<byte>();
 
@@ -160,10 +164,12 @@ public sealed partial class ISO9660
                     return ErrorNumber.InvalidArgument;
 
                 if(entry.ResourceFork.Size != 0)
+                {
                     return ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
                                            entry.ResourceFork.XA?.signature == XA_MAGIC &&
                                            entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
                                            entry.ResourceFork.XA?.filenumber ?? 0, out buf);
+                }
 
                 buf = Array.Empty<byte>();
 
@@ -200,7 +206,10 @@ public sealed partial class ISO9660
                 buf = ReadSubheaderWithExtents(entry.Extents, true);
 
                 return ErrorNumber.NoError;
-            default: return ErrorNumber.NoSuchExtendedAttribute;
+            default:
+                return ErrorNumber.NoSuchExtendedAttribute;
         }
     }
+
+#endregion
 }

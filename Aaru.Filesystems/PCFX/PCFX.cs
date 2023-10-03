@@ -40,10 +40,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of NEC PC-FX headers</summary>
 public sealed partial class PCFX : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.PCFX_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8BC27CCE-D9E9-48F8-BA93-C66A86EB565A");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

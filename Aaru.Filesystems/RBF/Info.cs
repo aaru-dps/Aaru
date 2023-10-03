@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Locus filesystem</summary>
 public sealed partial class RBF : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -49,14 +51,11 @@ public sealed partial class RBF : IFilesystem
         // Documentation says ID should be sector 0
         // I've found that OS-9/X68000 has it on sector 4
         // I've read OS-9/Apple2 has it on sector 15
-        foreach(int i in new[]
-                {
-                    0, 4, 15
-                })
+        foreach(int i in new[] { 0, 4, 15 })
         {
-            ulong location = (ulong)i;
+            var location = (ulong)i;
 
-            uint sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -100,13 +99,10 @@ public sealed partial class RBF : IFilesystem
         var rbfSb     = new IdSector();
         var rbf9000Sb = new NewIdSector();
 
-        foreach(int i in new[]
-                {
-                    0, 4, 15
-                })
+        foreach(int i in new[] { 0, 4, 15 })
         {
-            ulong location = (ulong)i;
-            uint  sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
+            var location = (ulong)i;
+            var sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
             if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -144,19 +140,21 @@ public sealed partial class RBF : IFilesystem
 
         if(rbf9000Sb.rid_sync == RBF_SYNC)
         {
-            sb.AppendFormat(Localization.Volume_ID_0_X8, rbf9000Sb.rid_diskid).AppendLine();
-            sb.AppendFormat(Localization._0_blocks_in_volume, rbf9000Sb.rid_totblocks).AppendLine();
-            sb.AppendFormat(Localization._0_cylinders, rbf9000Sb.rid_cylinders).AppendLine();
+            sb.AppendFormat(Localization.Volume_ID_0_X8,             rbf9000Sb.rid_diskid).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume,        rbf9000Sb.rid_totblocks).AppendLine();
+            sb.AppendFormat(Localization._0_cylinders,               rbf9000Sb.rid_cylinders).AppendLine();
             sb.AppendFormat(Localization._0_blocks_in_cylinder_zero, rbf9000Sb.rid_cyl0size).AppendLine();
-            sb.AppendFormat(Localization._0_blocks_per_cylinder, rbf9000Sb.rid_cylsize).AppendLine();
-            sb.AppendFormat(Localization._0_heads, rbf9000Sb.rid_heads).AppendLine();
-            sb.AppendFormat(Localization._0_bytes_per_block, rbf9000Sb.rid_blocksize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_cylinder,     rbf9000Sb.rid_cylsize).AppendLine();
+            sb.AppendFormat(Localization._0_heads,                   rbf9000Sb.rid_heads).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block,         rbf9000Sb.rid_blocksize).AppendLine();
 
             // TODO: Convert to flags?
-            sb.AppendLine((rbf9000Sb.rid_format & 0x01) == 0x01 ? Localization.Disk_is_double_sided
+            sb.AppendLine((rbf9000Sb.rid_format & 0x01) == 0x01
+                              ? Localization.Disk_is_double_sided
                               : Localization.Disk_is_single_sided);
 
-            sb.AppendLine((rbf9000Sb.rid_format & 0x02) == 0x02 ? Localization.Disk_is_double_density
+            sb.AppendLine((rbf9000Sb.rid_format & 0x02) == 0x02
+                              ? Localization.Disk_is_double_density
                               : Localization.Disk_is_single_density);
 
             if((rbf9000Sb.rid_format & 0x10) == 0x10)
@@ -172,12 +170,16 @@ public sealed partial class RBF : IFilesystem
                             rbf9000Sb.rid_bitmap == 0 ? 1 : rbf9000Sb.rid_bitmap).AppendLine();
 
             if(rbf9000Sb.rid_firstboot > 0)
+            {
                 sb.AppendFormat(Localization.Debugger_descriptor_starts_at_block_0, rbf9000Sb.rid_firstboot).
                    AppendLine();
+            }
 
             if(rbf9000Sb.rid_bootfile > 0)
+            {
                 sb.AppendFormat(Localization.Boot_file_descriptor_starts_at_block_0, rbf9000Sb.rid_bootfile).
                    AppendLine();
+            }
 
             sb.AppendFormat(Localization.Root_directory_descriptor_starts_at_block_0, rbf9000Sb.rid_rootdir).
                AppendLine();
@@ -208,20 +210,22 @@ public sealed partial class RBF : IFilesystem
         }
         else
         {
-            sb.AppendFormat(Localization.Volume_ID_0_X4, rbfSb.dd_dsk).AppendLine();
-            sb.AppendFormat(Localization._0_blocks_in_volume, LSNToUInt32(rbfSb.dd_tot)).AppendLine();
-            sb.AppendFormat(Localization._0_tracks, rbfSb.dd_tks).AppendLine();
+            sb.AppendFormat(Localization.Volume_ID_0_X4,       rbfSb.dd_dsk).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume,  LSNToUInt32(rbfSb.dd_tot)).AppendLine();
+            sb.AppendFormat(Localization._0_tracks,            rbfSb.dd_tks).AppendLine();
             sb.AppendFormat(Localization._0_sectors_per_track, rbfSb.dd_spt).AppendLine();
-            sb.AppendFormat(Localization._0_bytes_per_sector, 256 << rbfSb.dd_lsnsize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_sector,  256 << rbfSb.dd_lsnsize).AppendLine();
 
             sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, rbfSb.dd_bit,
                             rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize)).AppendLine();
 
             // TODO: Convert to flags?
-            sb.AppendLine((rbfSb.dd_fmt & 0x01) == 0x01 ? Localization.Disk_is_double_sided
+            sb.AppendLine((rbfSb.dd_fmt & 0x01) == 0x01
+                              ? Localization.Disk_is_double_sided
                               : Localization.Disk_is_single_sided);
 
-            sb.AppendLine((rbfSb.dd_fmt & 0x02) == 0x02 ? Localization.Disk_is_double_density
+            sb.AppendLine((rbfSb.dd_fmt & 0x02) == 0x02
+                              ? Localization.Disk_is_double_density
                               : Localization.Disk_is_single_density);
 
             if((rbfSb.dd_fmt & 0x10) == 0x10)
@@ -240,8 +244,10 @@ public sealed partial class RBF : IFilesystem
 
             if(LSNToUInt32(rbfSb.dd_bt) > 0 &&
                rbfSb.dd_bsz             > 0)
+            {
                 sb.AppendFormat(Localization.Boot_file_starts_at_block_0_and_has_1_bytes, LSNToUInt32(rbfSb.dd_bt),
                                 rbfSb.dd_bsz).AppendLine();
+            }
 
             sb.AppendFormat(Localization.Root_directory_descriptor_starts_at_block_0, LSNToUInt32(rbfSb.dd_dir)).
                AppendLine();
@@ -271,4 +277,6 @@ public sealed partial class RBF : IFilesystem
 
         information = sb.ToString();
     }
+
+#endregion
 }

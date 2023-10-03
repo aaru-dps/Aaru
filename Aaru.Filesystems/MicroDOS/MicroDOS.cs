@@ -41,10 +41,16 @@ namespace Aaru.Filesystems;
 /// </summary>
 public sealed partial class MicroDOS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.MicroDOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9F9A364A-1A27-48A3-B730-7A7122000324");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

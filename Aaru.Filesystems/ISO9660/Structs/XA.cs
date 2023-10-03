@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region Nested type: CdromXa
+
     // Big-endian
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct CdromXa
@@ -49,4 +51,6 @@ public sealed partial class ISO9660
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
         public readonly byte[] reserved;
     }
+
+#endregion
 }

@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -85,13 +87,14 @@ public sealed partial class AppleDOS
            AppendLine();
 
         sb.AppendFormat(Localization.File_system_initialized_by_DOS_release_0, _vtoc.dosRelease).AppendLine();
-        sb.AppendFormat(Localization.Disk_volume_number_0, _vtoc.volumeNumber).AppendLine();
-        sb.AppendFormat(Localization.Sectors_allocated_at_most_in_track_0, _vtoc.lastAllocatedSector).AppendLine();
-        sb.AppendFormat(Localization._0_tracks_in_volume, _vtoc.tracks).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_per_track, _vtoc.sectorsPerTrack).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_sector, _vtoc.bytesPerSector).AppendLine();
+        sb.AppendFormat(Localization.Disk_volume_number_0,                     _vtoc.volumeNumber).AppendLine();
+        sb.AppendFormat(Localization.Sectors_allocated_at_most_in_track_0,     _vtoc.lastAllocatedSector).AppendLine();
+        sb.AppendFormat(Localization._0_tracks_in_volume,                      _vtoc.tracks).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track,                     _vtoc.sectorsPerTrack).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector,                      _vtoc.bytesPerSector).AppendLine();
 
-        sb.AppendLine(_vtoc.allocationDirection > 0 ? Localization.Track_allocation_is_forward
+        sb.AppendLine(_vtoc.allocationDirection > 0
+                          ? Localization.Track_allocation_is_forward
                           : Localization.Track_allocation_is_reverse);
 
         information = sb.ToString();
@@ -104,4 +107,6 @@ public sealed partial class AppleDOS
             Type        = FS_TYPE
         };
     }
+
+#endregion
 }

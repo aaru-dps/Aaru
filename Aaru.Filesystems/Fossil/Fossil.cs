@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Plan-9 Fossil on-disk filesystem</summary>
 public sealed partial class Fossil : IFilesystem
 {
+    const string MODULE_NAME = "Fossil plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Fossil_Name;
+
     /// <inheritdoc />
     public Guid Id => new("932BF104-43F6-494F-973C-45EF58A51DA9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "Fossil plugin";
+
+#endregion
 }

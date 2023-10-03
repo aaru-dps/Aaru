@@ -49,7 +49,7 @@ public sealed partial class LisaFS
             return ErrorNumber.AccessDenied;
 
         if(fileId < 4 ||
-           (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
+           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
         if(_extentCache.TryGetValue(fileId, out file))
@@ -76,7 +76,7 @@ public sealed partial class LisaFS
         // This code just allow to ignore that corruption by searching the Extents File using sector tags
         if(ptr >= _device.Info.Sectors)
         {
-            bool found = false;
+            var found = false;
 
             for(ulong i = 0; i < _device.Info.Sectors; i++)
             {
@@ -113,7 +113,8 @@ public sealed partial class LisaFS
 
         byte[] sector;
 
-        errno = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2, out sector)
+        errno = _mddf.fsversion == LISA_V1
+                    ? _device.ReadSectors(ptr, 2, out sector)
                     : _device.ReadSector(ptr, out sector);
 
         if(errno != ErrorNumber.NoError)
@@ -164,7 +165,7 @@ public sealed partial class LisaFS
         file.LisaInfo  = new byte[128];
         Array.Copy(sector, 0x180, file.LisaInfo, 0, 128);
 
-        int extentsCount = 0;
+        var extentsCount = 0;
         int extentsOffset;
 
         if(_mddf.fsversion == LISA_V1)
@@ -180,9 +181,9 @@ public sealed partial class LisaFS
             extentsOffset = 0x88;
         }
 
-        for(int j = 0; j < 41; j++)
+        for(var j = 0; j < 41; j++)
         {
-            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + (j * 6) + 4) == 0)
+            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)
                 break;
 
             extentsCount++;
@@ -190,12 +191,14 @@ public sealed partial class LisaFS
 
         file.extents = new Extent[extentsCount];
 
-        for(int j = 0; j < extentsCount; j++)
+        for(var j = 0; j < extentsCount; j++)
+        {
             file.extents[j] = new Extent
             {
-                start  = BigEndianBitConverter.ToInt32(sector, extentsOffset + (j * 6)),
-                length = BigEndianBitConverter.ToInt16(sector, extentsOffset + (j * 6) + 4)
+                start  = BigEndianBitConverter.ToInt32(sector, extentsOffset + j * 6),
+                length = BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4)
             };
+        }
 
         _extentCache.Add(fileId, file);
 
@@ -210,25 +213,25 @@ public sealed partial class LisaFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filename = {1}", fileId,
                                    StringHandlers.CToString(file.filename, _encoding));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown1 = 0x{1:X4}",  fileId, file.unknown1);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].etype = 0x{1:X2}", fileId, file.etype);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].ftype = {1}", fileId, file.ftype);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId, file.unknown3);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtc = {1}", fileId, file.dtc);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dta = {1}", fileId, file.dta);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtm = {1}", fileId, file.dtm);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtb = {1}", fileId, file.dtb);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dts = {1}", fileId, file.dts);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].serial = {1}", fileId, file.serial);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId, file.unknown4);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].locked = {1}", fileId, file.locked       > 0);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].protect = {1}", fileId, file.protect     > 0);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].master = {1}", fileId, file.master       > 0);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].scavenged = {1}", fileId, file.scavenged > 0);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].closed = {1}", fileId, file.closed       > 0);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].open = {1}", fileId, file.open           > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown2 = 0x{1:X2}",  fileId, file.unknown2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].etype = 0x{1:X2}",     fileId, file.etype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].ftype = {1}",          fileId, file.ftype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown3 = 0x{1:X2}",  fileId, file.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtc = {1}",            fileId, file.dtc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dta = {1}",            fileId, file.dta);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtm = {1}",            fileId, file.dtm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtb = {1}",            fileId, file.dtb);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dts = {1}",            fileId, file.dts);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].serial = {1}",         fileId, file.serial);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown4 = 0x{1:X2}",  fileId, file.unknown4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].locked = {1}",         fileId, file.locked    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].protect = {1}",        fileId, file.protect   > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].master = {1}",         fileId, file.master    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].scavenged = {1}",      fileId, file.scavenged > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].closed = {1}",         fileId, file.closed    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].open = {1}",           fileId, file.open      > 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
@@ -237,11 +240,11 @@ public sealed partial class LisaFS
                                    file.unknown5[7], file.unknown5[8], file.unknown5[9], file.unknown5[10]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].release = {1}", fileId, file.release);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].build = {1}", fileId, file.build);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].build = {1}",   fileId, file.build);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].revision = {1}", fileId, file.revision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].revision = {1}",      fileId, file.revision);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].password_valid = {1}", fileId,
@@ -263,10 +266,10 @@ public sealed partial class LisaFS
                                    file.unknown8[9], file.unknown8[10], file.unknown8[11], file.unknown8[12],
                                    file.unknown8[13], file.unknown8[14], file.unknown8[15]);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].length = {1}", fileId, file.length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].length = {1}",        fileId, file.length);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
 
-        for(int ext = 0; ext < file.extents.Length; ext++)
+        for(var ext = 0; ext < file.extents.Length; ext++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext,
                                        file.extents[ext].start);
@@ -298,14 +301,16 @@ public sealed partial class LisaFS
         // Each entry takes 14 bytes
         _srecords = new SRecord[sectors.Length / 14];
 
-        for(int s = 0; s < _srecords.Length; s++)
+        for(var s = 0; s < _srecords.Length; s++)
+        {
             _srecords[s] = new SRecord
             {
-                extent_ptr = BigEndianBitConverter.ToUInt32(sectors, 0x00 + (14 * s)),
-                unknown    = BigEndianBitConverter.ToUInt32(sectors, 0x04 + (14 * s)),
-                filesize   = BigEndianBitConverter.ToUInt32(sectors, 0x08 + (14 * s)),
-                flags      = BigEndianBitConverter.ToUInt16(sectors, 0x0C + (14 * s))
+                extent_ptr = BigEndianBitConverter.ToUInt32(sectors, 0x00 + 14 * s),
+                unknown    = BigEndianBitConverter.ToUInt32(sectors, 0x04 + 14 * s),
+                filesize   = BigEndianBitConverter.ToUInt32(sectors, 0x08 + 14 * s),
+                flags      = BigEndianBitConverter.ToUInt16(sectors, 0x0C + 14 * s)
             };
+        }
 
         return ErrorNumber.NoError;
     }

@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
@@ -46,10 +48,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -61,7 +60,7 @@ public sealed partial class AppleDOS
 
         xattrs = new List<string>();
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) {}
         else
@@ -84,10 +83,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -97,7 +93,7 @@ public sealed partial class AppleDOS
         if(filename.Length > 30)
             return ErrorNumber.NameTooLong;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             return ErrorNumber.NoSuchExtendedAttribute;
@@ -128,4 +124,6 @@ public sealed partial class AppleDOS
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

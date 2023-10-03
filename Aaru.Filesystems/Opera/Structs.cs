@@ -33,6 +33,106 @@ namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region Nested type: DirectoryEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        /// <summary>File flags, see <see cref="FileFlags" /></summary>
+        public readonly uint flags;
+        /// <summary>Unique file identifier</summary>
+        public readonly uint id;
+        /// <summary>Entry type</summary>
+        public readonly uint type;
+        /// <summary>Block size</summary>
+        public readonly uint block_size;
+        /// <summary>Size in bytes</summary>
+        public readonly uint byte_count;
+        /// <summary>Block count</summary>
+        public readonly uint block_count;
+        /// <summary>Unknown</summary>
+        public readonly uint burst;
+        /// <summary>Unknown</summary>
+        public readonly uint gap;
+        /// <summary>Filename</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_NAME)]
+        public readonly byte[] name;
+        /// <summary>Last copy</summary>
+        public readonly uint last_copy;
+    }
+
+#endregion
+
+#region Nested type: DirectoryEntryWithPointers
+
+    sealed class DirectoryEntryWithPointers
+    {
+        public DirectoryEntry Entry;
+        public uint[]         Pointers;
+    }
+
+#endregion
+
+#region Nested type: DirectoryHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryHeader
+    {
+        /// <summary>Next block from this directory, -1 if last</summary>
+        public readonly int next_block;
+        /// <summary>Previous block from this directory, -1 if first</summary>
+        public readonly int prev_block;
+        /// <summary>Directory flags</summary>
+        public readonly uint flags;
+        /// <summary>Offset to first free unused byte in the directory</summary>
+        public readonly uint first_free;
+        /// <summary>Offset to first directory entry</summary>
+        public readonly uint first_used;
+    }
+
+#endregion
+
+#region Nested type: OperaDirNode
+
+    sealed class OperaDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: OperaFileNode
+
+    sealed class OperaFileNode : IFileNode
+    {
+        internal DirectoryEntryWithPointers _dentry;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: SuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
     {
@@ -67,69 +167,5 @@ public sealed partial class OperaFS
         public readonly uint last_root_copy;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryHeader
-    {
-        /// <summary>Next block from this directory, -1 if last</summary>
-        public readonly int next_block;
-        /// <summary>Previous block from this directory, -1 if first</summary>
-        public readonly int prev_block;
-        /// <summary>Directory flags</summary>
-        public readonly uint flags;
-        /// <summary>Offset to first free unused byte in the directory</summary>
-        public readonly uint first_free;
-        /// <summary>Offset to first directory entry</summary>
-        public readonly uint first_used;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryEntry
-    {
-        /// <summary>File flags, see <see cref="FileFlags" /></summary>
-        public readonly uint flags;
-        /// <summary>Unique file identifier</summary>
-        public readonly uint id;
-        /// <summary>Entry type</summary>
-        public readonly uint type;
-        /// <summary>Block size</summary>
-        public readonly uint block_size;
-        /// <summary>Size in bytes</summary>
-        public readonly uint byte_count;
-        /// <summary>Block count</summary>
-        public readonly uint block_count;
-        /// <summary>Unknown</summary>
-        public readonly uint burst;
-        /// <summary>Unknown</summary>
-        public readonly uint gap;
-        /// <summary>Filename</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_NAME)]
-        public readonly byte[] name;
-        /// <summary>Last copy</summary>
-        public readonly uint last_copy;
-    }
-
-    sealed class DirectoryEntryWithPointers
-    {
-        public DirectoryEntry Entry;
-        public uint[]         Pointers;
-    }
-
-    sealed class OperaFileNode : IFileNode
-    {
-        internal DirectoryEntryWithPointers _dentry;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
-
-    sealed class OperaDirNode : IDirNode
-    {
-        internal string[] _contents;
-        internal int      _position;
-        /// <inheritdoc />
-        public string Path { get; init; }
-    }
+#endregion
 }

@@ -42,13 +42,15 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Technology File System (NTFS)</summary>
 public sealed partial class NTFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         if(2 + partition.Start >= partition.End)
             return false;
 
-        byte[] eigthBytes = new byte[8];
+        var eigthBytes = new byte[8];
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
 
@@ -61,9 +63,9 @@ public sealed partial class NTFS
         if(oemName != "NTFS    ")
             return false;
 
-        byte   fatsNo    = ntfsBpb[0x010];
-        ushort spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
-        ushort signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
+        byte fatsNo    = ntfsBpb[0x010];
+        var  spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
+        var  signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
 
         if(fatsNo != 0)
             return false;
@@ -90,7 +92,7 @@ public sealed partial class NTFS
 
         BiosParameterBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(ntfsBpb);
 
-        sb.AppendFormat(Localization._0_bytes_per_sector, ntfsBb.bps).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector,            ntfsBb.bps).AppendLine();
         sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();
 
         //          sb.AppendFormat("{0} reserved sectors", ntfs_bb.rsectors).AppendLine();
@@ -100,8 +102,8 @@ public sealed partial class NTFS
         sb.AppendFormat(Localization.Media_descriptor_0, ntfsBb.media).AppendLine();
 
         //          sb.AppendFormat("{0} sectors per FAT", ntfs_bb.spfat).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_per_track, ntfsBb.sptrk).AppendLine();
-        sb.AppendFormat(Localization._0_heads, ntfsBb.heads).AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_track,                ntfsBb.sptrk).AppendLine();
+        sb.AppendFormat(Localization._0_heads,                            ntfsBb.heads).AppendLine();
         sb.AppendFormat(Localization._0_hidden_sectors_before_filesystem, ntfsBb.hsectors).AppendLine();
 
         //          sb.AppendFormat("{0} sectors on volume (big)", ntfs_bb.big_sectors).AppendLine();
@@ -112,18 +114,22 @@ public sealed partial class NTFS
         sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps).
            AppendLine();
 
-        sb.AppendFormat(Localization.Cluster_where_MFT_starts_0, ntfsBb.mft_lsn).AppendLine();
+        sb.AppendFormat(Localization.Cluster_where_MFT_starts_0,     ntfsBb.mft_lsn).AppendLine();
         sb.AppendFormat(Localization.Cluster_where_MFTMirr_starts_0, ntfsBb.mftmirror_lsn).AppendLine();
 
         if(ntfsBb.mft_rc_clusters > 0)
+        {
             sb.AppendFormat(Localization._0_clusters_per_MFT_record_1_bytes, ntfsBb.mft_rc_clusters,
                             ntfsBb.mft_rc_clusters * ntfsBb.bps * ntfsBb.spc).AppendLine();
+        }
         else
             sb.AppendFormat(Localization._0_bytes_per_MFT_record, 1 << -ntfsBb.mft_rc_clusters).AppendLine();
 
         if(ntfsBb.index_blk_cts > 0)
+        {
             sb.AppendFormat(Localization._0_clusters_per_Index_block_1_bytes, ntfsBb.index_blk_cts,
                             ntfsBb.index_blk_cts * ntfsBb.bps * ntfsBb.spc).AppendLine();
+        }
         else
             sb.AppendFormat(Localization._0_bytes_per_Index_block, 1 << -ntfsBb.index_blk_cts).AppendLine();
 
@@ -151,4 +157,6 @@ public sealed partial class NTFS
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -38,11 +38,18 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class UDF : IFilesystem
 {
+    const string MODULE_NAME = "UDF Plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.UDF_Name;
+
     /// <inheritdoc />
     public Guid Id => new("83976FEC-A91B-464B-9293-56C719461BAB");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "UDF Plugin";
+
+#endregion
 }

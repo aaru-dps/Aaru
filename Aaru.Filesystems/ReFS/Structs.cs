@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Microsoft's Resilient filesystem (ReFS)</summary>
 public sealed partial class ReFS
 {
+#region Nested type: VolumeHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct VolumeHeader
     {
@@ -56,4 +58,6 @@ public sealed partial class ReFS
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15872)]
         public readonly byte[] unknown5;
     }
+
+#endregion
 }

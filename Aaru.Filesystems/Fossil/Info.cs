@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Plan-9 Fossil on-disk filesystem</summary>
 public sealed partial class Fossil
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -86,14 +88,14 @@ public sealed partial class Fossil
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.Fossil_filesystem);
-        sb.AppendFormat(Localization.Filesystem_version_0, hdr.version).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_block, hdr.blockSize).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_version_0,          hdr.version).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block,            hdr.blockSize).AppendLine();
         sb.AppendFormat(Localization.Superblock_resides_in_block_0, hdr.super).AppendLine();
-        sb.AppendFormat(Localization.Labels_resides_in_block_0, hdr.label).AppendLine();
-        sb.AppendFormat(Localization.Data_starts_at_block_0, hdr.data).AppendLine();
-        sb.AppendFormat(Localization.Volume_has_0_blocks, hdr.end).AppendLine();
+        sb.AppendFormat(Localization.Labels_resides_in_block_0,     hdr.label).AppendLine();
+        sb.AppendFormat(Localization.Data_starts_at_block_0,        hdr.data).AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks,           hdr.end).AppendLine();
 
-        ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
+        ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize) + partition.Start;
 
         metadata = new FileSystem
         {
@@ -124,4 +126,6 @@ public sealed partial class Fossil
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
 public sealed partial class AcornADFS
 {
+#region Nested type: BootBlock
+
     /// <summary>Boot block, used in hard disks and ADFS-F and higher.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BootBlock
@@ -45,6 +47,40 @@ public sealed partial class AcornADFS
         public readonly ushort     startCylinder;
         public readonly byte       checksum;
     }
+
+#endregion
+
+#region Nested type: DirectoryEntry
+
+    /// <summary>Directory header, common to "old" and "new" directories</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly byte[] name;
+        public readonly uint load;
+        public readonly uint exec;
+        public readonly uint length;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] address;
+        public readonly byte atts;
+    }
+
+#endregion
+
+#region Nested type: DirectoryHeader
+
+    /// <summary>Directory header, common to "old" and "new" directories</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryHeader
+    {
+        public readonly byte masterSequence;
+        public readonly uint magic;
+    }
+
+#endregion
+
+#region Nested type: DiscRecord
 
     /// <summary>Disc record, used in hard disks and ADFS-E and higher.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -76,65 +112,23 @@ public sealed partial class AcornADFS
         public readonly byte[] reserved;
     }
 
-    /// <summary>Free block map, sector 0, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
+#endregion
+
+#region Nested type: NewDirectory
+
+    /// <summary>Directory, new format</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct OldMapSector0
+    readonly struct NewDirectory
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
-        public readonly byte[] freeStart;
-        public readonly byte reserved;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly byte[] name;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] size;
-        public readonly byte checksum;
+        public readonly DirectoryHeader header;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)]
+        public readonly DirectoryEntry[] entries;
+        public readonly NewDirectoryTail tail;
     }
 
-    /// <summary>Free block map, sector 1, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct OldMapSector1
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
-        public readonly byte[] freeStart;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly byte[] name;
-        public readonly ushort discId;
-        public readonly byte   boot;
-        public readonly byte   freeEnd;
-        public readonly byte   checksum;
-    }
+#endregion
 
-    /// <summary>Free block map, sector 0, used in ADFS-E</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct NewMap
-    {
-        public readonly byte       zoneChecksum;
-        public readonly ushort     freeLink;
-        public readonly byte       crossChecksum;
-        public readonly DiscRecord discRecord;
-    }
-
-    /// <summary>Directory header, common to "old" and "new" directories</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryHeader
-    {
-        public readonly byte masterSequence;
-        public readonly uint magic;
-    }
-
-    /// <summary>Directory header, common to "old" and "new" directories</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryEntry
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public readonly byte[] name;
-        public readonly uint load;
-        public readonly uint exec;
-        public readonly uint length;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] address;
-        public readonly byte atts;
-    }
+#region Nested type: NewDirectoryTail
 
     /// <summary>Directory tail, new format</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -152,6 +146,38 @@ public sealed partial class AcornADFS
         public readonly uint magic;
         public readonly byte checkByte;
     }
+
+#endregion
+
+#region Nested type: NewMap
+
+    /// <summary>Free block map, sector 0, used in ADFS-E</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct NewMap
+    {
+        public readonly byte       zoneChecksum;
+        public readonly ushort     freeLink;
+        public readonly byte       crossChecksum;
+        public readonly DiscRecord discRecord;
+    }
+
+#endregion
+
+#region Nested type: OldDirectory
+
+    /// <summary>Directory, old format</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct OldDirectory
+    {
+        public readonly DirectoryHeader header;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)]
+        public readonly DirectoryEntry[] entries;
+        public readonly OldDirectoryTail tail;
+    }
+
+#endregion
+
+#region Nested type: OldDirectoryTail
 
     /// <summary>Directory tail, old format</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -171,23 +197,41 @@ public sealed partial class AcornADFS
         public readonly byte checkByte;
     }
 
-    /// <summary>Directory, old format</summary>
+#endregion
+
+#region Nested type: OldMapSector0
+
+    /// <summary>Free block map, sector 0, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct OldDirectory
+    readonly struct OldMapSector0
     {
-        public readonly DirectoryHeader header;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)]
-        public readonly DirectoryEntry[] entries;
-        public readonly OldDirectoryTail tail;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
+        public readonly byte[] freeStart;
+        public readonly byte reserved;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly byte[] name;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] size;
+        public readonly byte checksum;
     }
 
-    /// <summary>Directory, new format</summary>
+#endregion
+
+#region Nested type: OldMapSector1
+
+    /// <summary>Free block map, sector 1, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct NewDirectory
+    readonly struct OldMapSector1
     {
-        public readonly DirectoryHeader header;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)]
-        public readonly DirectoryEntry[] entries;
-        public readonly NewDirectoryTail tail;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
+        public readonly byte[] freeStart;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly byte[] name;
+        public readonly ushort discId;
+        public readonly byte   boot;
+        public readonly byte   freeEnd;
+        public readonly byte   checksum;
     }
+
+#endregion
 }

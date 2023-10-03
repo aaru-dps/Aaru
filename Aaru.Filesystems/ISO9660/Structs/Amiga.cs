@@ -33,6 +33,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region Nested type: AmigaEntry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AmigaEntry
     {
@@ -45,6 +47,10 @@ public sealed partial class ISO9660
         // Followed by length-prefixed string for comment if present
     }
 
+#endregion
+
+#region Nested type: AmigaProtection
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AmigaProtection
     {
@@ -53,4 +59,6 @@ public sealed partial class ISO9660
         public readonly AmigaMultiuser  Multiuser;
         public readonly AmigaAttributes Protection;
     }
+
+#endregion
 }

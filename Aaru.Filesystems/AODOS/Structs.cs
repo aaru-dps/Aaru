@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the AO-DOS filesystem</summary>
 public sealed partial class AODOS
 {
+#region Nested type: BootBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BootBlock
     {
@@ -60,4 +62,6 @@ public sealed partial class AODOS
         /// <summary>How many sectors are used</summary>
         public readonly ushort usedSectors;
     }
+
+#endregion
 }

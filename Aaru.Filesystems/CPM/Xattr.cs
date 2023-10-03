@@ -38,16 +38,15 @@ namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
     {
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -56,13 +55,16 @@ public sealed partial class CPM
             return ErrorNumber.NoSuchFile;
 
         if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
+        {
             if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
                 return ErrorNumber.NoError;
+        }
 
         if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
             return ErrorNumber.NoSuchExtendedAttribute;
 
-        return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? ErrorNumber.NoError
+        return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)
+                   ? ErrorNumber.NoError
                    : ErrorNumber.NoSuchExtendedAttribute;
     }
 
@@ -74,10 +76,7 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -95,4 +94,6 @@ public sealed partial class CPM
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

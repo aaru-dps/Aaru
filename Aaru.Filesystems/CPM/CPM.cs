@@ -43,6 +43,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the CP/M filesystem</summary>
 public sealed partial class CPM : IReadOnlyFilesystem
 {
+    const string MODULE_NAME = "CP/M Plugin";
     /// <summary>True if <see cref="Identify" /> thinks this is a CP/M filesystem</summary>
     bool _cpmFound;
 
@@ -82,12 +83,17 @@ public sealed partial class CPM : IReadOnlyFilesystem
     /// <summary>If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it</summary>
     CpmDefinition _workingDefinition;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => Localization.CPM_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -98,5 +104,5 @@ public sealed partial class CPM : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
-    const string MODULE_NAME = "CP/M Plugin";
+#endregion
 }

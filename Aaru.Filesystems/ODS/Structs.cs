@@ -47,6 +47,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of DEC's On-Disk Structure, aka the ODS filesystem</summary>
 public sealed partial class ODS
 {
+#region Nested type: HomeBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HomeBlock
     {
@@ -150,4 +152,6 @@ public sealed partial class ODS
         /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>
         public readonly ushort checksum2;
     }
+
+#endregion
 }

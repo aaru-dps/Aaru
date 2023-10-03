@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Cram
 {
+#region Nested type: SuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
     {
@@ -54,4 +56,6 @@ public sealed partial class Cram
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] name;
     }
+
+#endregion
 }

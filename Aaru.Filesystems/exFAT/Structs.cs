@@ -40,6 +40,51 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT
 {
+#region Nested type: ChecksumSector
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ChecksumSector
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public readonly uint[] checksum;
+    }
+
+#endregion
+
+#region Nested type: OemParameter
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct OemParameter
+    {
+        public readonly Guid OemParameterType;
+        public readonly uint eraseBlockSize;
+        public readonly uint pageSize;
+        public readonly uint spareBlocks;
+        public readonly uint randomAccessTime;
+        public readonly uint programTime;
+        public readonly uint readCycleTime;
+        public readonly uint writeCycleTime;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly byte[] reserved;
+    }
+
+#endregion
+
+#region Nested type: OemParameterTable
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct OemParameterTable
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly OemParameter[] parameters;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] padding;
+    }
+
+#endregion
+
+#region Nested type: VolumeBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct VolumeBootRecord
     {
@@ -71,34 +116,5 @@ public sealed partial class exFAT
         public readonly ushort bootSignature;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct OemParameter
-    {
-        public readonly Guid OemParameterType;
-        public readonly uint eraseBlockSize;
-        public readonly uint pageSize;
-        public readonly uint spareBlocks;
-        public readonly uint randomAccessTime;
-        public readonly uint programTime;
-        public readonly uint readCycleTime;
-        public readonly uint writeCycleTime;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly byte[] reserved;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct OemParameterTable
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public readonly OemParameter[] parameters;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] padding;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ChecksumSector
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public readonly uint[] checksum;
-    }
+#endregion
 }

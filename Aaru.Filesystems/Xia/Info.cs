@@ -39,14 +39,19 @@ namespace Aaru.Filesystems;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection for the Xia filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Xia
 {
+    const string FS_TYPE = "xia";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -64,8 +69,6 @@ public sealed partial class Xia
         return supblk.s_magic == XIAFS_SUPER_MAGIC;
     }
 
-    const string FS_TYPE = "xia";
-
     /// <inheritdoc />
     public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
                                out FileSystem metadata)
@@ -75,8 +78,8 @@ public sealed partial class Xia
 
         var sb = new StringBuilder();
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -124,4 +127,6 @@ public sealed partial class Xia
 
         information = sb.ToString();
     }
+
+#endregion
 }

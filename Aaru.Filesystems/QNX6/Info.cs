@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of QNX 6 filesystem</summary>
 public sealed partial class QNX6
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -100,9 +102,9 @@ public sealed partial class QNX6
         if(audi)
         {
             sb.AppendLine(Localization.QNX6_Audi_filesystem);
-            sb.AppendFormat(Localization.Checksum_0_X8, audiSb.checksum).AppendLine();
-            sb.AppendFormat(Localization.Serial_0_X16, audiSb.checksum).AppendLine();
-            sb.AppendFormat(Localization._0_bytes_per_block, audiSb.blockSize).AppendLine();
+            sb.AppendFormat(Localization.Checksum_0_X8,       audiSb.checksum).AppendLine();
+            sb.AppendFormat(Localization.Serial_0_X16,        audiSb.checksum).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block,  audiSb.blockSize).AppendLine();
             sb.AppendFormat(Localization._0_inodes_free_of_1, audiSb.freeInodes, audiSb.numInodes).AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, audiSb.freeBlocks,
@@ -128,16 +130,16 @@ public sealed partial class QNX6
         }
 
         sb.AppendLine(Localization.QNX6_filesystem);
-        sb.AppendFormat(Localization.Checksum_0_X8, qnxSb.checksum).AppendLine();
-        sb.AppendFormat(Localization.Serial_0_X16, qnxSb.checksum).AppendLine();
-        sb.AppendFormat(Localization.Created_on_0, DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime)).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X8,     qnxSb.checksum).AppendLine();
+        sb.AppendFormat(Localization.Serial_0_X16,      qnxSb.checksum).AppendLine();
+        sb.AppendFormat(Localization.Created_on_0,      DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime)).AppendLine();
         sb.AppendFormat(Localization.Last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(qnxSb.atime)).AppendLine();
-        sb.AppendFormat(Localization.Flags_0_X8, qnxSb.flags).AppendLine();
-        sb.AppendFormat(Localization.Version1_0_X4, qnxSb.version1).AppendLine();
-        sb.AppendFormat(Localization.Version2_0_X4, qnxSb.version2).AppendLine();
+        sb.AppendFormat(Localization.Flags_0_X8,        qnxSb.flags).AppendLine();
+        sb.AppendFormat(Localization.Version1_0_X4,     qnxSb.version1).AppendLine();
+        sb.AppendFormat(Localization.Version2_0_X4,     qnxSb.version2).AppendLine();
 
         //sb.AppendFormat("Volume ID: \"{0}\"", CurrentEncoding.GetString(qnxSb.volumeid)).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_block, qnxSb.blockSize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block,  qnxSb.blockSize).AppendLine();
         sb.AppendFormat(Localization._0_inodes_free_of_1, qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, qnxSb.freeBlocks,
@@ -161,4 +163,6 @@ public sealed partial class QNX6
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -42,19 +42,24 @@ public sealed partial class OperaFS : IReadOnlyFilesystem
 {
     bool                                                               _debug;
     Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> _directoryCache;
+    Encoding                                                           _encoding;
     IMediaImage                                                        _image;
     bool                                                               _mounted;
     Dictionary<string, DirectoryEntryWithPointers>                     _rootDirectoryCache;
     FileSystemInfo                                                     _statfs;
     uint                                                               _volumeBlockSizeRatio;
-    Encoding                                                           _encoding;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => Localization.OperaFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0ec84ec7-eae6-4196-83fe-943b3fe46dbd");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -84,10 +89,10 @@ public sealed partial class OperaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
 }

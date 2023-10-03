@@ -35,15 +35,7 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ISO9660
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ZisofsHeader
-    {
-        public readonly ulong magic;
-        public readonly uint  uncomp_len;
-        public readonly uint  uncomp_len_be;
-        public readonly byte  header_size;    // Shifted >> 2
-        public readonly byte  block_size_log; // log2(block_size)
-    }
+#region Nested type: ZisofsEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ZisofsEntry
@@ -57,4 +49,20 @@ public sealed partial class ISO9660
         public readonly uint   uncomp_len;
         public readonly uint   uncomp_len_be;
     }
+
+#endregion
+
+#region Nested type: ZisofsHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ZisofsHeader
+    {
+        public readonly ulong magic;
+        public readonly uint  uncomp_len;
+        public readonly uint  uncomp_len_be;
+        public readonly byte  header_size;    // Shifted >> 2
+        public readonly byte  block_size_log; // log2(block_size)
+    }
+
+#endregion
 }

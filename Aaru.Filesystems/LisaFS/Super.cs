@@ -43,9 +43,11 @@ namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         try
         {
@@ -99,7 +101,7 @@ public sealed partial class LisaFS
                     return errno;
 
                 _mddf = new MDDF();
-                byte[] pString = new byte[33];
+                var pString = new byte[33];
 
                 _mddf.fsversion = BigEndianBitConverter.ToUInt16(sector, 0x00);
                 _mddf.volid     = BigEndianBitConverter.ToUInt64(sector, 0x02);
@@ -114,7 +116,7 @@ public sealed partial class LisaFS
                 _mddf.unknown2       = sector[0x4F];
                 _mddf.machine_id     = BigEndianBitConverter.ToUInt32(sector, 0x50);
                 _mddf.master_copy_id = BigEndianBitConverter.ToUInt32(sector, 0x54);
-                uint lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
+                var lisaTime = BigEndianBitConverter.ToUInt32(sector, 0x58);
                 _mddf.dtvc                         = DateHandlers.LisaToDateTime(lisaTime);
                 lisaTime                           = BigEndianBitConverter.ToUInt32(sector, 0x5C);
                 _mddf.dtcc                         = DateHandlers.LisaToDateTime(lisaTime);
@@ -247,9 +249,7 @@ public sealed partial class LisaFS
 
                 _directoryDtcCache = new Dictionary<short, DateTime>
                 {
-                    {
-                        DIRID_ROOT, _mddf.dtcc
-                    }
+                    { DIRID_ROOT, _mddf.dtcc }
                 };
 
                 // Read the Catalog File
@@ -323,17 +323,13 @@ public sealed partial class LisaFS
                 Metadata = new FileSystem();
 
                 if(DateTime.Compare(_mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
-                {
                     Metadata.BackupDate = _mddf.dtvb;
-                }
 
                 Metadata.Clusters    = _mddf.vol_size;
                 Metadata.ClusterSize = (uint)(_mddf.clustersize * _mddf.datasize);
 
                 if(DateTime.Compare(_mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
-                {
                     Metadata.CreationDate = _mddf.dtvc;
-                }
 
                 Metadata.Dirty        = _mddf.vol_left_mounted != 0;
                 Metadata.Files        = _mddf.filecount;
@@ -400,13 +396,15 @@ public sealed partial class LisaFS
         stat.FreeFiles = FILEID_MAX - stat.Files;
 
         stat.Type = _mddf.fsversion switch
-        {
-            LISA_V1 => "LisaFS v1",
-            LISA_V2 => "LisaFS v2",
-            LISA_V3 => "LisaFS v3",
-            _       => stat.Type
-        };
+                    {
+                        LISA_V1 => "LisaFS v1",
+                        LISA_V2 => "LisaFS v2",
+                        LISA_V3 => "LisaFS v3",
+                        _       => stat.Type
+                    };
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

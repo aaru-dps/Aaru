@@ -44,23 +44,29 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the U.C.S.D. Pascal filesystem</summary>
 public sealed partial class PascalPlugin : IReadOnlyFilesystem
 {
+    const string          MODULE_NAME = "U.C.S.D. Pascal Plugin";
     byte[]                _bootBlocks;
     byte[]                _catalogBlocks;
     bool                  _debug;
     IMediaImage           _device;
+    Encoding              _encoding;
     List<PascalFileEntry> _fileEntries;
     bool                  _mounted;
     PascalVolumeEntry     _mountedVolEntry;
-    Encoding              _encoding;
     /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
     uint _multiplier;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.PascalPlugin_Name;
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -90,12 +96,10 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
-
-    const string MODULE_NAME = "U.C.S.D. Pascal Plugin";
 }

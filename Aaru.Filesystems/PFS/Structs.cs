@@ -36,6 +36,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Professional File System</summary>
 public sealed partial class PFS
 {
+#region Nested type: BootBlock
+
     /// <summary>Boot block, first 2 sectors</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BootBlock
@@ -45,6 +47,10 @@ public sealed partial class PFS
         /// <summary>Boot code, til completion</summary>
         public readonly byte[] bootCode;
     }
+
+#endregion
+
+#region Nested type: RootBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct RootBlock
@@ -91,4 +97,6 @@ public sealed partial class PFS
         /// <summary>Unused</summary>
         public readonly uint unused;
     }
+
+#endregion
 }

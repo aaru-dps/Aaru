@@ -55,8 +55,9 @@ public sealed partial class FAT
         ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
 
         // Check clusters for Human68k are correct
-        bool humanClustersCorrect = humanBpb.clusters       == 0 ? humanBpb.big_clusters == expectedClusters
-                                        : humanBpb.clusters == expectedClusters;
+        bool humanClustersCorrect = humanBpb.clusters           == 0
+                                        ? humanBpb.big_clusters == expectedClusters
+                                        : humanBpb.clusters     == expectedClusters;
 
         // Check OEM for Human68k is correct
         bool humanOemCorrect = bpbSector[2]  >= 0x20 && bpbSector[3]  >= 0x20 && bpbSector[4]  >= 0x20 &&
@@ -70,8 +71,8 @@ public sealed partial class FAT
         bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x1C && bpbSector[1] < 0xFE;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "humanClustersCorrect = {0}", humanClustersCorrect);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "humanOemCorrect = {0}", humanOemCorrect);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "humanBranchCorrect = {0}", humanBranchCorrect);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "humanOemCorrect = {0}",      humanOemCorrect);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "humanBranchCorrect = {0}",   humanBranchCorrect);
 
         // If all Human68k checks are correct, it is a Human68k FAT16
         bool useHumanBpb = humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0;
@@ -105,18 +106,18 @@ public sealed partial class FAT
         var ebpb       = new BiosParameterBlockEbpb();
         var apricotBpb = new ApricotLabel();
 
-        bool useAtariBpb          = false;
-        bool useMsxBpb            = false;
-        bool useDos2Bpb           = false;
-        bool useDos3Bpb           = false;
-        bool useDos32Bpb          = false;
-        bool useDos33Bpb          = false;
-        bool userShortExtendedBpb = false;
-        bool useExtendedBpb       = false;
-        bool useShortFat32        = false;
-        bool useLongFat32         = false;
-        bool useApricotBpb        = false;
-        bool useDecRainbowBpb     = false;
+        var useAtariBpb          = false;
+        var useMsxBpb            = false;
+        var useDos2Bpb           = false;
+        var useDos3Bpb           = false;
+        var useDos32Bpb          = false;
+        var useDos33Bpb          = false;
+        var userShortExtendedBpb = false;
+        var useExtendedBpb       = false;
+        var useShortFat32        = false;
+        var useLongFat32         = false;
+        var useApricotBpb        = false;
+        var useDecRainbowBpb     = false;
 
         if(imagePlugin.Info.SectorSize >= 256)
         {
@@ -232,6 +233,7 @@ public sealed partial class FAT
                 if(ebpb.sectors == 0)
                 {
                     if(ebpb.big_sectors <= partition.End - partition.Start + 1)
+                    {
                         if(ebpb.signature == 0x29 || andosOemCorrect)
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_DOS_4_0_BPB);
@@ -244,8 +246,10 @@ public sealed partial class FAT
                             userShortExtendedBpb = true;
                             minBootNearJump      = 0x29;
                         }
+                    }
                 }
                 else if(ebpb.sectors <= partition.End - partition.Start + 1)
+                {
                     if(ebpb.signature == 0x29 || andosOemCorrect)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_DOS_4_0_BPB);
@@ -258,12 +262,14 @@ public sealed partial class FAT
                         userShortExtendedBpb = true;
                         minBootNearJump      = 0x29;
                     }
+                }
             }
             else if(bitsInBpsDos33 == 1                                 &&
                     correctSpcDos33                                     &&
                     dos33Bpb.rsectors < partition.End - partition.Start &&
                     dos33Bpb.fats_no  <= 2                              &&
                     dos33Bpb is { root_ent: > 0, spfat: > 0 })
+            {
                 if(dos33Bpb.sectors     == 0               &&
                    dos33Bpb.hsectors    <= partition.Start &&
                    dos33Bpb.big_sectors > 0                &&
@@ -277,9 +283,10 @@ public sealed partial class FAT
                         dos33Bpb.hsectors    <= partition.Start &&
                         dos33Bpb.sectors     > 0                &&
                         dos33Bpb.sectors     <= partition.End - partition.Start + 1)
+                {
                     if(atariBpb.jump[0] == 0x60 ||
-                       (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                        Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ") ||
+                       atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                       Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    " ||
                        partition.Type is "GEM" or "BGM")
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_Atari_BPB);
@@ -291,6 +298,7 @@ public sealed partial class FAT
                         useDos33Bpb     = true;
                         minBootNearJump = 0x22;
                     }
+                }
                 else
                 {
                     if(dos32Bpb.hsectors                    <= partition.Start &&
@@ -302,9 +310,10 @@ public sealed partial class FAT
                     }
                     else if(dos30Bpb.sptrk is > 0 and < 64 &&
                             dos30Bpb.heads is > 0 and < 256)
+                    {
                         if(atariBpb.jump[0] == 0x60 ||
-                           (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    "))
+                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                           Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_Atari_BPB);
                             useAtariBpb = true;
@@ -315,11 +324,12 @@ public sealed partial class FAT
                             useDos3Bpb      = true;
                             minBootNearJump = 0x1C;
                         }
+                    }
                     else
                     {
                         if(atariBpb.jump[0] == 0x60 ||
-                           (atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
-                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    "))
+                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                           Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_Atari_BPB);
                             useAtariBpb = true;
@@ -332,6 +342,7 @@ public sealed partial class FAT
                         }
                     }
                 }
+            }
         }
 
         // DEC Rainbow, lacks a BPB but has a very concrete structure...
@@ -361,30 +372,29 @@ public sealed partial class FAT
             // Volume is software interleaved 2:1
             var rootMs = new MemoryStream();
 
-            foreach(ulong rootSector in new ulong[]
-                    {
-                        0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                    })
+            foreach(ulong rootSector in new ulong[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
             {
                 imagePlugin.ReadSector(rootSector, out byte[] tmp);
                 rootMs.Write(tmp, 0, tmp.Length);
             }
 
             byte[] rootDir      = rootMs.ToArray();
-            bool   validRootDir = true;
+            var    validRootDir = true;
 
             // Iterate all root directory
-            for(int e = 0; e < 96 * 32; e += 32)
+            for(var e = 0; e < 96 * 32; e += 32)
             {
-                for(int c = 0; c < 11; c++)
-                    if((rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05) ||
-                       rootDir[c + e] == 0xFF                                                      ||
+                for(var c = 0; c < 11; c++)
+                {
+                    if(rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05 ||
+                       rootDir[c + e] == 0xFF                                                    ||
                        rootDir[c + e] == 0x2E)
                     {
                         validRootDir = false;
 
                         break;
                     }
+                }
 
                 if(!validRootDir)
                     break;
@@ -603,8 +613,8 @@ public sealed partial class FAT
             }
 
             // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-            bootable |= bpbSector[0] == 0xFA || (bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F) ||
-                        (bpbSector[0]                         == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC);
+            bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F ||
+                        bpbSector[0]                         == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC;
 
             fakeBpb.boot_code = bpbSector;
 
@@ -786,9 +796,11 @@ public sealed partial class FAT
 
         if(apricotBpb.bootLocation                       > 0 &&
            apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
+        {
             imagePlugin.ReadSectors(apricotBpb.bootLocation,
                                     (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) / imagePlugin.Info.SectorSize,
                                     out fakeBpb.boot_code);
+        }
 
         return BpbKind.Apricot;
     }

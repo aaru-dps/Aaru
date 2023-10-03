@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the LIF filesystem</summary>
 public sealed partial class LIF
 {
+#region Nested type: SystemBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SystemBlock
     {
@@ -53,4 +55,6 @@ public sealed partial class LIF
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
         public readonly byte[] creationDate;
     }
+
+#endregion
 }

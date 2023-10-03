@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class BeFS
 {
+#region Nested type: SuperBlock
+
     /// <summary>Be superblock</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct SuperBlock
@@ -93,4 +95,6 @@ public sealed partial class BeFS
         /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
         public readonly ushort indices_len;
     }
+
+#endregion
 }

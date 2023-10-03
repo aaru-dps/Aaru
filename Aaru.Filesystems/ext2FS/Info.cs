@@ -49,6 +49,8 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class ext2FS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -58,8 +60,8 @@ public sealed partial class ext2FS
         if(sbSectorOff + partition.Start >= partition.End)
             return false;
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -70,14 +72,14 @@ public sealed partial class ext2FS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] sb = new byte[sbSizeInBytes];
+        var sb = new byte[sbSizeInBytes];
 
         if(sbOff + sbSizeInBytes > sbSector.Length)
             return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
-        ushort magic = BitConverter.ToUInt16(sb, 0x038);
+        var magic = BitConverter.ToUInt16(sb, 0x038);
 
         return magic is EXT2_MAGIC or EXT2_MAGIC_OLD;
     }
@@ -92,12 +94,12 @@ public sealed partial class ext2FS
 
         var sb = new StringBuilder();
 
-        bool newExt2 = false;
-        bool ext3    = false;
-        bool ext4    = false;
+        var newExt2 = false;
+        var ext3    = false;
+        var ext4    = false;
 
-        int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
-        uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
+        int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
+        var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
         if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
             sbSizeInSectors++;
@@ -111,7 +113,7 @@ public sealed partial class ext2FS
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sblock = new byte[sbSizeInBytes];
+        var sblock = new byte[sbSizeInBytes];
         Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
         SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 
@@ -171,14 +173,14 @@ public sealed partial class ext2FS
         }
 
         string extOs = supblk.creator_os switch
-        {
-            EXT2_OS_FREEBSD => "FreeBSD",
-            EXT2_OS_HURD    => "Hurd",
-            EXT2_OS_LINUX   => "Linux",
-            EXT2_OS_LITES   => "Lites",
-            EXT2_OS_MASIX   => "MasIX",
-            _               => string.Format(Localization.Unknown_OS_0, supblk.creator_os)
-        };
+                       {
+                           EXT2_OS_FREEBSD => "FreeBSD",
+                           EXT2_OS_HURD    => "Hurd",
+                           EXT2_OS_LINUX   => "Linux",
+                           EXT2_OS_LITES   => "Lites",
+                           EXT2_OS_MASIX   => "MasIX",
+                           _               => string.Format(Localization.Unknown_OS_0, supblk.creator_os)
+                       };
 
         metadata.SystemIdentifier = extOs;
 
@@ -192,8 +194,8 @@ public sealed partial class ext2FS
         else
             sb.AppendFormat(Localization.Volume_was_created_for_0, extOs).AppendLine();
 
-        byte[] tempBytes = new byte[8];
-        ulong  blocks, reserved, free;
+        var   tempBytes = new byte[8];
+        ulong blocks, reserved, free;
 
         if((supblk.ftr_incompat & EXT4_FEATURE_INCOMPAT_64BIT) == EXT4_FEATURE_INCOMPAT_64BIT)
         {
@@ -253,48 +255,69 @@ public sealed partial class ext2FS
            supblk.mount_c > 0)
         {
             if(supblk.mount_t > 0)
+            {
                 sb.AppendFormat(Localization.Last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.mount_t)).
                    AppendLine();
+            }
 
             if(supblk.max_mount_c != -1)
+            {
                 sb.AppendFormat(Localization.Volume_has_been_mounted_0_times_of_a_maximum_of_1_mounts_before_checking,
                                 supblk.mount_c, supblk.max_mount_c).AppendLine();
+            }
             else
+            {
                 sb.
-                    AppendFormat(Localization.Volume_has_been_mounted_0_times_with_no_maximum_no_of_mounts_before_checking,
-                                 supblk.mount_c).AppendLine();
+                    AppendFormat(
+                        Localization.Volume_has_been_mounted_0_times_with_no_maximum_no_of_mounts_before_checking,
+                        supblk.mount_c).AppendLine();
+            }
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, encoding)))
+            {
                 sb.AppendFormat(Localization.Last_mounted_at_0,
                                 StringHandlers.CToString(supblk.last_mount_dir, encoding)).AppendLine();
+            }
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, encoding)))
+            {
                 sb.AppendFormat(Localization.Last_used_mount_options_were_0,
                                 StringHandlers.CToString(supblk.mount_options, encoding)).AppendLine();
+            }
         }
         else
         {
             sb.AppendLine(Localization.Volume_has_never_been_mounted);
 
             if(supblk.max_mount_c != -1)
+            {
                 sb.AppendFormat(Localization.Volume_can_be_mounted_0_times_before_checking, supblk.max_mount_c).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Volume_has_no_maximum_no_of_mounts_before_checking);
         }
 
         if(supblk.check_t > 0)
+        {
             if(supblk.check_inv > 0)
+            {
                 sb.AppendFormat(Localization.Last_checked_on_0_should_check_every_1_seconds,
                                 DateHandlers.UnixUnsignedToDateTime(supblk.check_t), supblk.check_inv).AppendLine();
+            }
             else
+            {
                 sb.AppendFormat(Localization.Last_checked_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.check_t)).
                    AppendLine();
+            }
+        }
         else
         {
             if(supblk.check_inv > 0)
+            {
                 sb.AppendFormat(Localization.Volume_has_never_been_checked_should_check_every_0_, supblk.check_inv).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_checked);
         }
@@ -387,8 +410,10 @@ public sealed partial class ext2FS
 
         if(supblk.blocks_per_grp > 0 &&
            supblk is { flags_per_grp: > 0, inodes_per_grp: > 0 })
+        {
             sb.AppendFormat(Localization._0_blocks_1_flags_and_2_inodes_per_group, supblk.blocks_per_grp,
                             supblk.flags_per_grp, supblk.inodes_per_grp).AppendLine();
+        }
 
         if(supblk.first_block > 0)
             sb.AppendFormat(Localization._0_is_first_data_block, supblk.first_block).AppendLine();
@@ -411,15 +436,19 @@ public sealed partial class ext2FS
             sb.AppendFormat(Localization._0_blocks_on_all_data_disks, supblk.raid_stripe_width).AppendLine();
 
         if(supblk is { mmp_interval: > 0, mmp_block: > 0 })
+        {
             sb.AppendFormat(Localization._0_seconds_for_multi_mount_protection_wait_on_block_1, supblk.mmp_interval,
                             supblk.mmp_block).AppendLine();
+        }
 
         if(supblk.flex_bg_grp_size > 0)
             sb.AppendFormat(Localization._0_Flexible_block_group_size, supblk.flex_bg_grp_size).AppendLine();
 
         if(supblk is { hash_seed_1: > 0, hash_seed_2: > 0 } and { hash_seed_3: > 0, hash_seed_4: > 0 })
+        {
             sb.AppendFormat(Localization.Hash_seed_0_1_2_3_version_4, supblk.hash_seed_1, supblk.hash_seed_2,
                             supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version).AppendLine();
+        }
 
         if((supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL)   == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) == EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
@@ -447,10 +476,14 @@ public sealed partial class ext2FS
         if(ext4)
         {
             if(supblk.snapshot_id > 0)
+            {
                 sb.
-                    AppendFormat(Localization.Active_snapshot_has_ID_0_on_inode_1_with_2_blocks_reserved_list_starting_on_block_3,
-                                 supblk.snapshot_id, supblk.snapshot_inum, supblk.snapshot_blocks,
-                                 supblk.snapshot_list).AppendLine();
+                    AppendFormat(
+                        Localization.
+                            Active_snapshot_has_ID_0_on_inode_1_with_2_blocks_reserved_list_starting_on_block_3,
+                        supblk.snapshot_id, supblk.snapshot_inum, supblk.snapshot_blocks,
+                        supblk.snapshot_list).AppendLine();
+            }
 
             if(supblk.error_count > 0)
             {
@@ -611,4 +644,6 @@ public sealed partial class ext2FS
 
         information = sb.ToString();
     }
+
+#endregion
 }

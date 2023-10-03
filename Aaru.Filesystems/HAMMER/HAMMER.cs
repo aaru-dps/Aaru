@@ -28,9 +28,9 @@
 
 using System;
 using Aaru.CommonTypes.Interfaces;
-using hammer_crc_t = System.UInt32;
-using hammer_off_t = System.UInt64;
-using hammer_tid_t = System.UInt64;
+using hammer_crc_t = uint;
+using hammer_off_t = ulong;
+using hammer_tid_t = ulong;
 
 #pragma warning disable 169
 
@@ -40,10 +40,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the HAMMER filesystem</summary>
 public sealed partial class HAMMER : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.HAMMER_Name;
+
     /// <inheritdoc />
     public Guid Id => new("91A188BF-5FD7-4677-BBD3-F59EBA9C864D");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -48,10 +50,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -67,7 +66,7 @@ public sealed partial class AppleDOS
         if(_lockedFiles.Contains(filename))
             attributes |= FileAttributes.ReadOnly;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             attributes |= FileAttributes.System;
@@ -82,10 +81,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -96,15 +92,17 @@ public sealed partial class AppleDOS
         if(filename.Length > 30)
             return ErrorNumber.NameTooLong;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+        {
             if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 file = _catalogBlocks;
             else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
                 file = _vtocBlocks;
             else
                 file = _bootBlocks;
+        }
         else
         {
             if(!_fileCache.TryGetValue(filename, out file))
@@ -179,10 +177,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -200,7 +195,7 @@ public sealed partial class AppleDOS
         _fileSizeCache.TryGetValue(filename, out int fileSize);
         GetAttributes(path, out FileAttributes attrs);
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
         {
@@ -226,12 +221,11 @@ public sealed partial class AppleDOS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     ErrorNumber CacheFile(string path)
     {
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -244,7 +238,7 @@ public sealed partial class AppleDOS
         if(!_catalogCache.TryGetValue(filename, out ushort ts))
             return ErrorNumber.NoSuchFile;
 
-        ulong  lba           = (ulong)((((ts & 0xFF00) >> 8) * _sectorsPerTrack) + (ts & 0xFF));
+        var    lba           = (ulong)(((ts & 0xFF00) >> 8) * _sectorsPerTrack + (ts & 0xFF));
         var    fileMs        = new MemoryStream();
         var    tsListMs      = new MemoryStream();
         ushort expectedBlock = 0;
@@ -265,7 +259,7 @@ public sealed partial class AppleDOS
 
             if(tsSector.sectorOffset > expectedBlock)
             {
-                byte[] hole = new byte[(tsSector.sectorOffset - expectedBlock) * _vtoc.bytesPerSector];
+                var hole = new byte[(tsSector.sectorOffset - expectedBlock) * _vtoc.bytesPerSector];
                 fileMs.Write(hole, 0, hole.Length);
                 expectedBlock = tsSector.sectorOffset;
             }
@@ -276,7 +270,7 @@ public sealed partial class AppleDOS
                 _track2UsedByFiles |= entry.track == 2;
                 _usedSectors++;
 
-                ulong blockLba = (ulong)((entry.track * _sectorsPerTrack) + entry.sector);
+                var blockLba = (ulong)(entry.track * _sectorsPerTrack + entry.sector);
 
                 if(blockLba == 0)
                     break;
@@ -290,7 +284,7 @@ public sealed partial class AppleDOS
                 expectedBlock++;
             }
 
-            lba = (ulong)((tsSector.nextListTrack * _sectorsPerTrack) + tsSector.nextListSector);
+            lba = (ulong)(tsSector.nextListTrack * _sectorsPerTrack + tsSector.nextListSector);
         }
 
         if(_fileCache.ContainsKey(filename))

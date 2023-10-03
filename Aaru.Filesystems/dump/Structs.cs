@@ -32,71 +32,47 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using ufs_daddr_t = System.Int32;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class dump
 {
-    // Old 16-bit format record
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct spcl16
-    {
-        /// <summary>Record type</summary>
-        public readonly short c_type;
-        /// <summary>Dump date</summary>
-        public int c_date;
-        /// <summary>Previous dump date</summary>
-        public int c_ddate;
-        /// <summary>Dump volume number</summary>
-        public readonly short c_volume;
-        /// <summary>Logical block of this record</summary>
-        public readonly int c_tapea;
-        /// <summary>Inode number</summary>
-        public readonly ushort c_inumber;
-        /// <summary>Magic number</summary>
-        public readonly ushort c_magic;
-        /// <summary>Record checksum</summary>
-        public readonly int c_checksum;
+#region Nested type: dinode
 
-        // Unneeded for now
-        /*
-        struct dinode  c_dinode;
-        int c_count;
-        char c_addr[BSIZE];
-        */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct dinode
+    {
+        public readonly ushort di_mode;      /*   0: IFMT, permissions; see below. */
+        public readonly short  di_nlink;     /*   2: File link count. */
+        public readonly int    inumber;      /*   4: Lfs: inode number. */
+        public readonly ulong  di_size;      /*   8: File byte count. */
+        public readonly int    di_atime;     /*  16: Last access time. */
+        public readonly int    di_atimensec; /*  20: Last access time. */
+        public readonly int    di_mtime;     /*  24: Last modified time. */
+        public readonly int    di_mtimensec; /*  28: Last modified time. */
+        public readonly int    di_ctime;     /*  32: Last inode change time. */
+        public readonly int    di_ctimensec; /*  36: Last inode change time. */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)]
+        public readonly int[] di_db; /*  40: Direct disk blocks. */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NIADDR)]
+        public readonly int[] di_ib;    /*  88: Indirect disk blocks. */
+        public readonly uint di_flags;  /* 100: Status flags (chflags). */
+        public readonly uint di_blocks; /* 104: Blocks actually held. */
+        public readonly int  di_gen;    /* 108: Generation number. */
+        public readonly uint di_uid;    /* 112: File owner. */
+        public readonly uint di_gid;    /* 116: File group. */
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly int[] di_spare; /* 120: Reserved; currently unused */
     }
 
-    // 32-bit AIX format record
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct spcl_aix
-    {
-        /// <summary>Record type</summary>
-        public readonly int c_type;
-        /// <summary>Dump date</summary>
-        public readonly int c_date;
-        /// <summary>Previous dump date</summary>
-        public readonly int c_ddate;
-        /// <summary>Dump volume number</summary>
-        public readonly int c_volume;
-        /// <summary>Logical block of this record</summary>
-        public readonly int c_tapea;
-        public readonly uint c_inumber;
-        public readonly uint c_magic;
-        public readonly int  c_checksum;
+#endregion
 
-        // Unneeded for now
-        /*
-        public bsd_dinode  bsd_c_dinode;
-        public int c_count;
-        public char c_addr[TP_NINDIR];
-        public int xix_flag;
-        public dinode xix_dinode;
-        */
-    }
+#region Nested type: s_spcl
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct s_spcl
@@ -132,29 +108,70 @@ public sealed partial class dump
         public readonly int[] c_spare; /* reserved for future uses */
     }
 
+#endregion
+
+#region Nested type: spcl_aix
+
+    // 32-bit AIX format record
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct dinode
+    readonly struct spcl_aix
     {
-        public readonly ushort di_mode;      /*   0: IFMT, permissions; see below. */
-        public readonly short  di_nlink;     /*   2: File link count. */
-        public readonly int    inumber;      /*   4: Lfs: inode number. */
-        public readonly ulong  di_size;      /*   8: File byte count. */
-        public readonly int    di_atime;     /*  16: Last access time. */
-        public readonly int    di_atimensec; /*  20: Last access time. */
-        public readonly int    di_mtime;     /*  24: Last modified time. */
-        public readonly int    di_mtimensec; /*  28: Last modified time. */
-        public readonly int    di_ctime;     /*  32: Last inode change time. */
-        public readonly int    di_ctimensec; /*  36: Last inode change time. */
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDADDR)]
-        public readonly int[] di_db; /*  40: Direct disk blocks. */
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = NIADDR)]
-        public readonly int[] di_ib;    /*  88: Indirect disk blocks. */
-        public readonly uint di_flags;  /* 100: Status flags (chflags). */
-        public readonly uint di_blocks; /* 104: Blocks actually held. */
-        public readonly int  di_gen;    /* 108: Generation number. */
-        public readonly uint di_uid;    /* 112: File owner. */
-        public readonly uint di_gid;    /* 116: File group. */
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly int[] di_spare; /* 120: Reserved; currently unused */
+        /// <summary>Record type</summary>
+        public readonly int c_type;
+        /// <summary>Dump date</summary>
+        public readonly int c_date;
+        /// <summary>Previous dump date</summary>
+        public readonly int c_ddate;
+        /// <summary>Dump volume number</summary>
+        public readonly int c_volume;
+        /// <summary>Logical block of this record</summary>
+        public readonly int c_tapea;
+        public readonly uint c_inumber;
+        public readonly uint c_magic;
+        public readonly int  c_checksum;
+
+        // Unneeded for now
+        /*
+        public bsd_dinode  bsd_c_dinode;
+        public int c_count;
+        public char c_addr[TP_NINDIR];
+        public int xix_flag;
+        public dinode xix_dinode;
+        */
     }
+
+#endregion
+
+#region Nested type: spcl16
+
+    // Old 16-bit format record
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct spcl16
+    {
+        /// <summary>Record type</summary>
+        public readonly short c_type;
+        /// <summary>Dump date</summary>
+        public int c_date;
+        /// <summary>Previous dump date</summary>
+        public int c_ddate;
+        /// <summary>Dump volume number</summary>
+        public readonly short c_volume;
+        /// <summary>Logical block of this record</summary>
+        public readonly int c_tapea;
+        /// <summary>Inode number</summary>
+        public readonly ushort c_inumber;
+        /// <summary>Magic number</summary>
+        public readonly ushort c_magic;
+        /// <summary>Record checksum</summary>
+        public readonly int c_checksum;
+
+        // Unneeded for now
+        /*
+        struct dinode  c_dinode;
+        int c_count;
+        char c_addr[BSIZE];
+        */
+    }
+
+#endregion
 }

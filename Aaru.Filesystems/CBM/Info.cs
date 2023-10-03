@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
 public sealed partial class CBM
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -119,20 +121,16 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1, cbmHdr.directoryTrack,
                                        cbmHdr.directorySector).AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_DOS_Version_0, Encoding.ASCII.GetString(new[]
-            {
-                cbmHdr.diskDosVersion
-            })).AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_DOS_Version_0,
+                                       Encoding.ASCII.GetString(new[] { cbmHdr.diskDosVersion })).AppendLine();
 
-            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
-            {
-                cbmHdr.dosVersion
-            })).AppendLine();
+            sbInformation.
+                AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[] { cbmHdr.dosVersion })).
+                AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_Version_0, Encoding.ASCII.GetString(new[]
-            {
-                cbmHdr.diskVersion
-            })).AppendLine();
+            sbInformation.
+                AppendFormat(Localization.Disk_Version_0, Encoding.ASCII.GetString(new[] { cbmHdr.diskVersion })).
+                AppendLine();
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmHdr.diskId).AppendLine();
 
@@ -157,10 +155,9 @@ public sealed partial class CBM
             sbInformation.AppendFormat(Localization.Disk_DOS_type_0,
                                        Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).AppendLine();
 
-            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
-            {
-                cbmBam.dosVersion
-            })).AppendLine();
+            sbInformation.
+                AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[] { cbmBam.dosVersion })).
+                AppendLine();
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmBam.diskId).AppendLine();
 
@@ -173,4 +170,6 @@ public sealed partial class CBM
 
         information = sbInformation.ToString();
     }
+
+#endregion
 }

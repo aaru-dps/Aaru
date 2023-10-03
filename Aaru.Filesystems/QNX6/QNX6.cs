@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of QNX 6 filesystem</summary>
 public sealed partial class QNX6 : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.QNX6_Name;
+
     /// <inheritdoc />
     public Guid Id => new("3E610EA2-4D08-4D70-8947-830CD4C74FC0");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

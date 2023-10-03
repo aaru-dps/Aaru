@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -124,6 +126,7 @@ public sealed partial class LisaFS
         ErrorNumber error;
 
         if(_debug)
+        {
             switch(mynode._fileId)
             {
                 case FILEID_BOOT_SIGNED:
@@ -140,6 +143,7 @@ public sealed partial class LisaFS
 
                     break;
             }
+        }
         else
             error = ReadFile(mynode._fileId, out tmp);
 
@@ -168,6 +172,8 @@ public sealed partial class LisaFS
 
         return isDir ? StatDir(fileId, out stat) : Stat(fileId, out stat);
     }
+
+#endregion
 
     ErrorNumber GetAttributes(short fileId, out FileAttributes attributes)
     {
@@ -210,7 +216,8 @@ public sealed partial class LisaFS
                 attributes |= FileAttributes.Pipe;
 
                 break;
-            case FileType.Undefined: break;
+            case FileType.Undefined:
+                break;
             default:
                 attributes |= FileAttributes.File;
                 attributes |= FileAttributes.Extents;
@@ -242,17 +249,20 @@ public sealed partial class LisaFS
             return ErrorNumber.AccessDenied;
 
         if(fileId is > 4 or <= 0)
+        {
             if(fileId != FILEID_BOOT_SIGNED &&
                fileId != FILEID_LOADER_SIGNED)
                 return ErrorNumber.InvalidArgument;
+        }
 
         if(_systemFileCache.TryGetValue(fileId, out buf) &&
            !tags)
             return ErrorNumber.NoError;
 
-        int count = 0;
+        var count = 0;
 
         if(fileId == FILEID_SRECORD)
+        {
             if(!tags)
             {
                 errno = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len, out buf);
@@ -271,6 +281,7 @@ public sealed partial class LisaFS
 
                 return errno != ErrorNumber.NoError ? errno : ErrorNumber.NoError;
             }
+        }
 
         LisaTag.PriamTag sysTag;
 
@@ -308,7 +319,8 @@ public sealed partial class LisaFS
 
             byte[] sector;
 
-            errno = !tags ? _device.ReadSector(i, out sector)
+            errno = !tags
+                        ? _device.ReadSector(i, out sector)
                         : _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out sector);
 
             if(errno != ErrorNumber.NoError)
@@ -338,6 +350,7 @@ public sealed partial class LisaFS
         ExtentFile  file;
 
         if(fileId <= 4)
+        {
             if(!_debug ||
                fileId == 0)
                 return ErrorNumber.NoSuchFile;
@@ -392,6 +405,7 @@ public sealed partial class LisaFS
 
                 return ErrorNumber.NoError;
             }
+        }
 
         stat = new FileEntryInfo();
 
@@ -437,7 +451,7 @@ public sealed partial class LisaFS
         tags &= _debug;
 
         if(fileId < 4 ||
-           (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
+           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
         if(!tags &&
@@ -456,17 +470,18 @@ public sealed partial class LisaFS
         else
             sectorSize = (int)_device.Info.SectorSize;
 
-        byte[] temp = new byte[file.length * sectorSize];
+        var temp = new byte[file.length * sectorSize];
 
-        int offset = 0;
+        var offset = 0;
 
-        for(int i = 0; i < file.extents.Length; i++)
+        for(var i = 0; i < file.extents.Length; i++)
         {
             byte[] sector;
 
             ErrorNumber errno =
-                !tags ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                            (uint)file.extents[i].length, out sector)
+                !tags
+                    ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                          (uint)file.extents[i].length, out sector)
                     : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
                                              (uint)file.extents[i].length, SectorTagType.AppleSectorTag, out sector);
 
@@ -480,8 +495,10 @@ public sealed partial class LisaFS
         if(!tags)
         {
             if(_fileSizeCache.TryGetValue(fileId, out int realSize))
+            {
                 if(realSize > temp.Length)
                     AaruConsole.ErrorWriteLine(Localization.File_0_gets_truncated, fileId);
+            }
 
             buf = temp;
 
@@ -501,10 +518,7 @@ public sealed partial class LisaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         switch(pathElements.Length)
         {
@@ -515,7 +529,8 @@ public sealed partial class LisaFS
                 return ErrorNumber.NoError;
 
             // Only V3 supports subdirectories
-            case > 1 when _mddf.fsversion != LISA_V3: return ErrorNumber.NotSupported;
+            case > 1 when _mddf.fsversion != LISA_V3:
+                return ErrorNumber.NotSupported;
         }
 
         if(_debug && pathElements.Length == 1)
@@ -564,7 +579,7 @@ public sealed partial class LisaFS
             }
         }
 
-        for(int lvl = 0; lvl < pathElements.Length; lvl++)
+        for(var lvl = 0; lvl < pathElements.Length; lvl++)
         {
             string wantedFilename = pathElements[0].Replace('-', '/');
 

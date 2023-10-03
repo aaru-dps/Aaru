@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of SGI's XFS</summary>
 public sealed partial class XFS
 {
+#region Nested type: Superblock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Superblock
     {
@@ -97,4 +99,6 @@ public sealed partial class XFS
         public readonly ulong lsn;
         public readonly Guid  meta_uuid;
     }
+
+#endregion
 }

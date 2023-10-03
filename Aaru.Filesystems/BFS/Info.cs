@@ -43,6 +43,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class BeFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -54,8 +56,8 @@ public sealed partial class BeFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
-        uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
+        var magic   = BitConverter.ToUInt32(sbSector, 0x20);
+        var magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
         if(magic   == BEFS_MAGIC1 ||
            magicBe == BEFS_MAGIC1)
@@ -138,7 +140,8 @@ public sealed partial class BeFS
                 return;
         }
 
-        besb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
+        besb = littleEndian
+                   ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
                    : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
         sb.AppendLine(littleEndian ? Localization.Little_endian_BeFS : Localization.Big_endian_BeFS);
@@ -152,8 +155,8 @@ public sealed partial class BeFS
            1 << (int)besb.block_shift != besb.block_size)
         {
             sb.AppendLine(Localization.Superblock_seems_corrupt_following_information_may_be_incorrect);
-            sb.AppendFormat(Localization.Magic_one_0_Should_be_0x42465331, besb.magic1).AppendLine();
-            sb.AppendFormat(Localization.Magic_two_0_Should_be_0xDD121031, besb.magic2).AppendLine();
+            sb.AppendFormat(Localization.Magic_one_0_Should_be_0x42465331,   besb.magic1).AppendLine();
+            sb.AppendFormat(Localization.Magic_two_0_Should_be_0xDD121031,   besb.magic2).AppendLine();
             sb.AppendFormat(Localization.Magic_three_0_Should_be_0x15B6830E, besb.magic3).AppendLine();
 
             sb.AppendFormat(Localization.Filesystem_endianness_0_Should_be_0x42494745, besb.fs_byte_order).AppendLine();
@@ -170,7 +173,8 @@ public sealed partial class BeFS
         switch(besb.flags)
         {
             case BEFS_CLEAN:
-                sb.AppendLine(besb.log_start == besb.log_end ? Localization.Filesystem_is_clean
+                sb.AppendLine(besb.log_start == besb.log_end
+                                  ? Localization.Filesystem_is_clean
                                   : Localization.Filesystem_is_dirty);
 
                 break;
@@ -184,7 +188,7 @@ public sealed partial class BeFS
                 break;
         }
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(besb.name, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0,      StringHandlers.CToString(besb.name, encoding)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_block, besb.block_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, besb.num_blocks, besb.num_blocks * besb.block_size).
@@ -208,13 +212,16 @@ public sealed partial class BeFS
            AppendLine();
 
         sb.
-            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
+            AppendFormat(
+                Localization.
+                    Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
             AppendLine();
 
         sb.
-            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
+            AppendFormat(
+                Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
             AppendLine();
 
         information = sb.ToString();
@@ -229,4 +236,6 @@ public sealed partial class BeFS
             VolumeName   = StringHandlers.CToString(besb.name, encoding)
         };
     }
+
+#endregion
 }

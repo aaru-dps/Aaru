@@ -34,17 +34,7 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleHFS
 {
-    enum NodeType : sbyte
-    {
-        /// <summary>Index node</summary>
-        ndIndxNode = 0,
-        /// <summary>Header node</summary>
-        ndHdrNode = 1,
-        /// <summary>Map node</summary>
-        ndMapNode = 2,
-        /// <summary>Leaf node</summary>
-        ndLeafNode = -1
-    }
+#region Nested type: CatDataType
 
     enum CatDataType : sbyte
     {
@@ -58,8 +48,31 @@ public sealed partial class AppleHFS
         cdrFThdRec = 4
     }
 
+#endregion
+
+#region Nested type: ForkType
+
     enum ForkType : sbyte
     {
-        Data = 0, Resource = -1
+        Data     = 0,
+        Resource = -1
     }
+
+#endregion
+
+#region Nested type: NodeType
+
+    enum NodeType : sbyte
+    {
+        /// <summary>Index node</summary>
+        ndIndxNode = 0,
+        /// <summary>Header node</summary>
+        ndHdrNode = 1,
+        /// <summary>Map node</summary>
+        ndMapNode = 2,
+        /// <summary>Leaf node</summary>
+        ndLeafNode = -1
+    }
+
+#endregion
 }

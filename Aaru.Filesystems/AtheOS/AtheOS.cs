@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class AtheOS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.AtheOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AAB2C4F1-DC07-49EE-A948-576CC51B58C5");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

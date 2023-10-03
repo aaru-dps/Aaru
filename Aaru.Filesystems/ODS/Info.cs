@@ -54,6 +54,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of DEC's On-Disk Structure, aka the ODS filesystem</summary>
 public sealed partial class ODS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -63,7 +65,7 @@ public sealed partial class ODS
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        byte[]      magicB = new byte[12];
+        var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
         if(errno != ErrorNumber.NoError)
@@ -177,12 +179,14 @@ public sealed partial class ODS
            AppendLine();
 
         sb.AppendFormat(Localization._0_maximum_files_on_the_volume, homeblock.maxfiles).AppendLine();
-        sb.AppendFormat(Localization._0_reserved_files, homeblock.resfiles).AppendLine();
+        sb.AppendFormat(Localization._0_reserved_files,              homeblock.resfiles).AppendLine();
 
         if(homeblock is { rvn: > 0, setcount: > 0 } &&
            StringHandlers.CToString(homeblock.strucname) != "            ")
+        {
             sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2, homeblock.rvn, homeblock.setcount,
                             StringHandlers.SpacePaddedToString(homeblock.strucname, encoding)).AppendLine();
+        }
 
         sb.AppendFormat(Localization.Volume_owner_is_0_ID_1,
                         StringHandlers.SpacePaddedToString(homeblock.ownername, encoding), homeblock.volowner).
@@ -197,17 +201,21 @@ public sealed partial class ODS
            AppendLine();
 
         if(homeblock.revdate > 0)
+        {
             sb.AppendFormat(Localization.Volume_was_last_modified_on_0, DateHandlers.VmsToDateTime(homeblock.revdate)).
                AppendLine();
+        }
 
         if(homeblock.copydate > 0)
+        {
             sb.AppendFormat(Localization.Volume_copied_on_0, DateHandlers.VmsToDateTime(homeblock.copydate)).
                AppendLine();
+        }
 
         sb.AppendFormat(Localization.Checksums_0_and_1, homeblock.checksum1, homeblock.checksum2).AppendLine();
         sb.AppendLine(Localization.Flags);
-        sb.AppendFormat(Localization.Window_0, homeblock.window).AppendLine();
-        sb.AppendFormat(Localization.Cached_directories_0, homeblock.lru_lim).AppendLine();
+        sb.AppendFormat(Localization.Window_0,                    homeblock.window).AppendLine();
+        sb.AppendFormat(Localization.Cached_directories_0,        homeblock.lru_lim).AppendLine();
         sb.AppendFormat(Localization.Default_allocation_0_blocks, homeblock.extend).AppendLine();
 
         if((homeblock.volchar & 0x01) == 0x01)
@@ -255,8 +263,8 @@ public sealed partial class ODS
         sb.AppendLine();
 
         sb.AppendLine(Localization.Unknown_structures);
-        sb.AppendFormat(Localization.Security_mask_0, homeblock.sec_mask).AppendLine();
-        sb.AppendFormat(Localization.File_protection_0, homeblock.fileprot).AppendLine();
+        sb.AppendFormat(Localization.Security_mask_0,     homeblock.sec_mask).AppendLine();
+        sb.AppendFormat(Localization.File_protection_0,   homeblock.fileprot).AppendLine();
         sb.AppendFormat(Localization.Record_protection_0, homeblock.recprot).AppendLine();
 
         metadata = new FileSystem
@@ -269,15 +277,13 @@ public sealed partial class ODS
         };
 
         if(homeblock.credate > 0)
-        {
             metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
-        }
 
         if(homeblock.revdate > 0)
-        {
             metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
-        }
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -45,6 +45,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of NEC PC-FX headers</summary>
 public sealed partial class PCFX
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -84,9 +86,9 @@ public sealed partial class PCFX
         try
         {
             date = encoding.GetString(header.date);
-            int year  = int.Parse(date[..4]);
-            int month = int.Parse(date.Substring(4, 2));
-            int day   = int.Parse(date.Substring(6, 2));
+            var year  = int.Parse(date[..4]);
+            var month = int.Parse(date.Substring(4, 2));
+            var day   = int.Parse(date.Substring(6, 2));
             dateTime = new DateTime(year, month, day);
         }
         catch
@@ -122,8 +124,10 @@ public sealed partial class PCFX
             Bootable            = true,
             CreationDate        = date != null ? dateTime : null,
             PublisherIdentifier = StringHandlers.CToString(header.makerName, encoding),
-            VolumeName          = StringHandlers.CToString(header.title, encoding),
+            VolumeName          = StringHandlers.CToString(header.title,     encoding),
             SystemIdentifier    = "PC-FX"
         };
     }
+
+#endregion
 }

@@ -34,9 +34,14 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Smart File System</summary>
 public sealed partial class SFS
 {
+#region Nested type: Flags
+
     [Flags]
     enum Flags : byte
     {
-        RecycledFolder = 64, CaseSensitive = 128
+        RecycledFolder = 64,
+        CaseSensitive  = 128
     }
+
+#endregion
 }

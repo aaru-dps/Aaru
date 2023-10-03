@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the squash filesystem</summary>
 public sealed partial class Squash : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Squash_Name;
+
     /// <inheritdoc />
     public Guid Id => new("F8F6E46F-7A2A-48E3-9C0A-46AF4DC29E09");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

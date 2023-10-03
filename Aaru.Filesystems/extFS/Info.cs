@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class extFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -59,14 +61,14 @@ public sealed partial class extFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        byte[] sb = new byte[512];
+        var sb = new byte[512];
 
         if(sbOff + 512 > sbSector.Length)
             return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, 512);
 
-        ushort magic = BitConverter.ToUInt16(sb, 0x038);
+        var magic = BitConverter.ToUInt16(sb, 0x038);
 
         return magic == EXT_MAGIC;
     }
@@ -94,7 +96,7 @@ public sealed partial class extFS
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sbSector = new byte[512];
+        var sbSector = new byte[512];
         Array.Copy(sblock, sbOff, sbSector, 0, 512);
 
         var extSb = new SuperBlock
@@ -111,7 +113,7 @@ public sealed partial class extFS
         };
 
         sb.AppendLine(Localization.ext_filesystem);
-        sb.AppendFormat(Localization._0_zones_in_volume, extSb.zones);
+        sb.AppendFormat(Localization._0_zones_in_volume,     extSb.zones);
         sb.AppendFormat(Localization._0_free_blocks_1_bytes, extSb.freecountblk, extSb.freecountblk * 1024);
 
         sb.AppendFormat(Localization._0_inodes_in_volume_1_free_2, extSb.inodes, extSb.freecountind,
@@ -119,9 +121,9 @@ public sealed partial class extFS
 
         sb.AppendFormat(Localization.First_free_inode_is_0, extSb.firstfreeind);
         sb.AppendFormat(Localization.First_free_block_is_0, extSb.firstfreeblk);
-        sb.AppendFormat(Localization.First_data_zone_is_0, extSb.firstdatazone);
-        sb.AppendFormat(Localization.Log_zone_size_0, extSb.logzonesize);
-        sb.AppendFormat(Localization.Max_zone_size_0, extSb.maxsize);
+        sb.AppendFormat(Localization.First_data_zone_is_0,  extSb.firstdatazone);
+        sb.AppendFormat(Localization.Log_zone_size_0,       extSb.logzonesize);
+        sb.AppendFormat(Localization.Max_zone_size_0,       extSb.maxsize);
 
         metadata = new FileSystem
         {
@@ -133,4 +135,6 @@ public sealed partial class extFS
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -46,6 +46,8 @@ namespace Aaru.Filesystems;
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -56,7 +58,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return false;
@@ -82,15 +84,15 @@ public sealed partial class PascalPlugin
         Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.firstBlock = {0}", volEntry.FirstBlock);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.lastBlock = {0}", volEntry.LastBlock);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.entryType = {0}", volEntry.EntryType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.lastBlock = {0}",  volEntry.LastBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.entryType = {0}",  volEntry.EntryType);
 
         //            AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.volumeName = {0}", volEntry.VolumeName);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.blocks = {0}", volEntry.Blocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.files = {0}", volEntry.Files);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.dummy = {0}", volEntry.Dummy);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.blocks = {0}",   volEntry.Blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.files = {0}",    volEntry.Files);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.dummy = {0}",    volEntry.Dummy);
         AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.lastBoot = {0}", volEntry.LastBoot);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.tail = {0}", volEntry.Tail);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.tail = {0}",     volEntry.Tail);
 
         // First block is always 0 (even is it's sector 2)
         if(volEntry.FirstBlock != 0)
@@ -98,7 +100,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
+           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
             return false;
 
         // Volume record entry type must be volume or secure
@@ -134,7 +136,7 @@ public sealed partial class PascalPlugin
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno =
-            imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier, out byte[] volBlock);
+            imagePlugin.ReadSectors(_multiplier * 2 + partition.Start, _multiplier, out byte[] volBlock);
 
         if(errno != ErrorNumber.NoError)
             return;
@@ -165,7 +167,7 @@ public sealed partial class PascalPlugin
 
         // Last volume record block must be after first block, and before end of device
         if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-           (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
+           (ulong)volEntry.LastBlock > imagePlugin.Info.Sectors / _multiplier - 2)
             return;
 
         // Volume record entry type must be volume or secure
@@ -194,7 +196,7 @@ public sealed partial class PascalPlugin
             AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks, volEntry.Blocks).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_files, volEntry.Files).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_files,  volEntry.Files).AppendLine();
 
         sbInformation.
             AppendFormat(Localization.Volume_last_booted_on_0, DateHandlers.UcsdPascalToDateTime(volEntry.LastBoot)).
@@ -214,4 +216,6 @@ public sealed partial class PascalPlugin
             VolumeName  = StringHandlers.PascalToString(volEntry.VolumeName, encoding)
         };
     }
+
+#endregion
 }

@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Smart File System</summary>
 public sealed partial class SFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -50,7 +52,7 @@ public sealed partial class SFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic is SFS_MAGIC or SFS2_MAGIC;
     }
@@ -115,4 +117,6 @@ public sealed partial class SFS
             Type         = FS_TYPE
         };
     }
+
+#endregion
 }

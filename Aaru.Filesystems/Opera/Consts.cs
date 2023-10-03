@@ -44,13 +44,20 @@ public sealed partial class OperaFS
     const uint TYPE_LBL = 0x2A6C626C;
     /// <summary>Catapult</summary>
     const uint TYPE_ZAP = 0x2A7A6170;
-    static readonly int _directoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
+
+    const           string FS_TYPE             = "opera";
+    static readonly int    _directoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
+
+#region Nested type: FileFlags
 
     enum FileFlags : uint
     {
-        File             = 2, Special            = 6, Directory = 7,
-        LastEntryInBlock = 0x40000000, LastEntry = 0x80000000
+        File             = 2,
+        Special          = 6,
+        Directory        = 7,
+        LastEntryInBlock = 0x40000000,
+        LastEntry        = 0x80000000
     }
 
-    const string FS_TYPE = "opera";
+#endregion
 }

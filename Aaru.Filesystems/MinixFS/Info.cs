@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the MINIX filesystem</summary>
 public sealed partial class MinixFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -64,15 +66,15 @@ public sealed partial class MinixFS
         // Optical media
         if(offset > 0)
         {
-            byte[] tmp = new byte[0x200];
+            var tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x010);
+        var magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
         if(magic is MINIX_MAGIC or MINIX_MAGIC2 or MINIX2_MAGIC or MINIX2_MAGIC2 or MINIX_CIGAM or MINIX_CIGAM2
-           or MINIX2_CIGAM or MINIX2_CIGAM2)
+                 or MINIX2_CIGAM or MINIX2_CIGAM2)
             return true;
 
         magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
@@ -98,7 +100,7 @@ public sealed partial class MinixFS
             offset = 0x400;
         }
 
-        bool        minix3 = false;
+        var         minix3 = false;
         int         filenamesize;
         string      minixVersion;
         ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
@@ -109,12 +111,12 @@ public sealed partial class MinixFS
         // Optical media
         if(offset > 0)
         {
-            byte[] tmp = new byte[0x200];
+            var tmp = new byte[0x200];
             Array.Copy(minixSbSector, offset, tmp, 0, 0x200);
             minixSbSector = tmp;
         }
 
-        ushort magic = BitConverter.ToUInt16(minixSbSector, 0x018);
+        var magic = BitConverter.ToUInt16(minixSbSector, 0x018);
 
         metadata = new FileSystem();
 
@@ -210,13 +212,15 @@ public sealed partial class MinixFS
                     metadata.Type = FS_TYPE_V2;
 
                     break;
-                default: return;
+                default:
+                    return;
             }
         }
 
         if(minix3)
         {
-            SuperBlock3 mnxSb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector)
+            SuperBlock3 mnxSb = littleEndian
+                                    ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector)
                                     : Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
 
             if(magic != MINIX3_MAGIC &&
@@ -227,13 +231,17 @@ public sealed partial class MinixFS
             sb.AppendFormat(Localization._0_chars_in_filename, filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
+            {
                 sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
                    AppendLine();
+            }
             else
+            {
                 sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
                    AppendLine();
+            }
 
-            sb.AppendFormat(Localization._0_bytes_block, mnxSb.s_blocksize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_block,      mnxSb.s_blocksize).AppendLine();
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
@@ -245,7 +253,7 @@ public sealed partial class MinixFS
             sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 
             //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
-            sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_maximum_per_file,    mnxSb.s_max_size).AppendLine();
             sb.AppendFormat(Localization.On_disk_filesystem_version_0, mnxSb.s_disk_version).AppendLine();
 
             metadata.ClusterSize = mnxSb.s_blocksize;
@@ -253,18 +261,23 @@ public sealed partial class MinixFS
         }
         else
         {
-            SuperBlock mnxSb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(minixSbSector)
+            SuperBlock mnxSb = littleEndian
+                                   ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(minixSbSector)
                                    : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(minixSbSector);
 
             sb.AppendLine(minixVersion);
             sb.AppendFormat(Localization._0_chars_in_filename, filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
+            {
                 sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
                    AppendLine();
+            }
             else
+            {
                 sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
                    AppendLine();
+            }
 
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
@@ -278,11 +291,13 @@ public sealed partial class MinixFS
 
             //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
             sb.AppendFormat(Localization._0_bytes_maximum_per_file, mnxSb.s_max_size).AppendLine();
-            sb.AppendFormat(Localization.Filesystem_state_0, mnxSb.s_state).AppendLine();
+            sb.AppendFormat(Localization.Filesystem_state_0,        mnxSb.s_state).AppendLine();
             metadata.ClusterSize = 1024;
             metadata.Clusters    = mnxSb.s_zones > 0 ? mnxSb.s_zones : mnxSb.s_nzones;
         }
 
         information = sb.ToString();
     }
+
+#endregion
 }

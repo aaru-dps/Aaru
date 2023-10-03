@@ -34,8 +34,14 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
 public sealed partial class NILFS2
 {
+#region Nested type: State
+
     enum State : ushort
     {
-        Valid = 0x0001, Error = 0x0002, Resize = 0x0004
+        Valid  = 0x0001,
+        Error  = 0x0002,
+        Resize = 0x0004
     }
+
+#endregion
 }

@@ -42,18 +42,22 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the File Allocation Table, aka FAT, filesystem (FAT12, FAT16 and FAT32 variants).</summary>
 public sealed partial class FAT : IReadOnlyFilesystem
 {
+    const string                                                   MODULE_NAME = "FAT plugin";
     uint                                                           _bytesPerCluster;
     byte[]                                                         _cachedEaData;
     CultureInfo                                                    _cultureInfo;
     bool                                                           _debug;
     Dictionary<string, Dictionary<string, CompleteDirectoryEntry>> _directoryCache;
     DirectoryEntry                                                 _eaDirEntry;
+    Encoding                                                       _encoding;
     bool                                                           _fat12;
     bool                                                           _fat16;
     bool                                                           _fat32;
     ushort[]                                                       _fatEntries;
+    uint                                                           _fatEntriesPerSector;
     ulong                                                          _fatFirstSector;
     ulong                                                          _firstClusterSector;
+    IMediaImage                                                    _image;
     bool                                                           _mounted;
     Namespace                                                      _namespace;
     uint                                                           _reservedSectors;
@@ -62,16 +66,18 @@ public sealed partial class FAT : IReadOnlyFilesystem
     uint                                                           _sectorsPerFat;
     FileSystemInfo                                                 _statfs;
     bool                                                           _useFirstFat;
-    Encoding                                                       _encoding;
-    uint                                                           _fatEntriesPerSector;
-    IMediaImage                                                    _image;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => Localization.FAT_Name;
+
     /// <inheritdoc />
     public Guid Id => new("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -82,29 +88,17 @@ public sealed partial class FAT : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()
     {
-        {
-            "dos", Localization.DOS_8_3_all_uppercase
-        },
-        {
-            "nt", Localization.Windows_NT_8_3_mixed_case
-        },
-        {
-            "os2", Localization.OS2_LONGNAME_extended_attribute
-        },
-        {
-            "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default
-        },
-        {
-            "lfn", Localization.Long_file_names
-        }
+        { "dos", Localization.DOS_8_3_all_uppercase },
+        { "nt", Localization.Windows_NT_8_3_mixed_case },
+        { "os2", Localization.OS2_LONGNAME_extended_attribute },
+        { "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default },
+        { "lfn", Localization.Long_file_names }
     };
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
-
-    const string MODULE_NAME = "FAT plugin";
 }

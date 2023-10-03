@@ -36,13 +36,24 @@ namespace Aaru.Filesystems;
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 static partial class AppleCommon
 {
+#region Nested type: ExtendedFinderFlags
+
     [Flags]
-    internal enum VolumeAttributes : ushort
+    internal enum ExtendedFinderFlags : ushort
     {
-        HardwareLock     = 0x80, Unmounted         = 0x100, SparedBadBlocks = 0x200,
-        DoesNotNeedCache = 0x400, BootInconsistent = 0x800, ReusedIds       = 0x1000,
-        Journaled        = 0x2000, Inconsistent    = 0x4000, SoftwareLock   = 0x8000
+        /// <summary>If set the other extended flags are ignored.</summary>
+        kExtendedFlagsAreInvalid = 0x8000,
+        /// <summary>Set if the file or folder has a badge resource.</summary>
+        kExtendedFlagHasCustomBadge = 0x0100,
+        /// <summary>Set if the object is marked as busy/incomplete.</summary>
+        kExtendedFlagObjectIsBusy = 0x0080,
+        /// <summary>Set if the file contains routing info resource.</summary>
+        kExtendedFlagHasRoutingInfo = 0x0004
     }
+
+#endregion
+
+#region Nested type: FinderFlags
 
     [Flags]
     internal enum FinderFlags : ushort
@@ -50,7 +61,8 @@ static partial class AppleCommon
         /// <summary>Is on desktop.</summary>
         kIsOnDesk = 0x0001,
         /// <summary>Color mask.</summary>
-        kColor = 0x000E, kRequireSwitchLaunch = 0x0020,
+        kColor = 0x000E,
+        kRequireSwitchLaunch = 0x0020,
         /// <summary>If clear, the application needs to write to its resource fork, and therefore cannot be shared on a server.</summary>
         kIsShared = 0x0040,
         /// <summary>Extension or control panel with no INIT entries in resource fork.</summary>
@@ -61,7 +73,8 @@ static partial class AppleCommon
         /// </summary>
         kHasBeenInited = 0x0100,
         /// <summary>PowerTalk</summary>
-        kAOCE = 0x200, kChanged = 0x0200,
+        kAOCE = 0x200,
+        kChanged = 0x0200,
         /// <summary>Has a custom icon in the resource fork.</summary>
         kHasCustomIcon = 0x0400,
         /// <summary>Is a stationery.</summary>
@@ -76,21 +89,34 @@ static partial class AppleCommon
         kIsAlias = 0x8000
     }
 
+#endregion
+
+#region Nested type: FinderFolder
+
     internal enum FinderFolder : short
     {
-        fTrash = -3, fDesktop = -2, fDisk = 0
+        fTrash   = -3,
+        fDesktop = -2,
+        fDisk    = 0
     }
 
+#endregion
+
+#region Nested type: VolumeAttributes
+
     [Flags]
-    internal enum ExtendedFinderFlags : ushort
+    internal enum VolumeAttributes : ushort
     {
-        /// <summary>If set the other extended flags are ignored.</summary>
-        kExtendedFlagsAreInvalid = 0x8000,
-        /// <summary>Set if the file or folder has a badge resource.</summary>
-        kExtendedFlagHasCustomBadge = 0x0100,
-        /// <summary>Set if the object is marked as busy/incomplete.</summary>
-        kExtendedFlagObjectIsBusy = 0x0080,
-        /// <summary>Set if the file contains routing info resource.</summary>
-        kExtendedFlagHasRoutingInfo = 0x0004
+        HardwareLock     = 0x80,
+        Unmounted        = 0x100,
+        SparedBadBlocks  = 0x200,
+        DoesNotNeedCache = 0x400,
+        BootInconsistent = 0x800,
+        ReusedIds        = 0x1000,
+        Journaled        = 0x2000,
+        Inconsistent     = 0x4000,
+        SoftwareLock     = 0x8000
     }
+
+#endregion
 }

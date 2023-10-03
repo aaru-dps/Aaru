@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Veritas filesystem</summary>
 public sealed partial class VxFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.VxFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("EC372605-7687-453C-8BEA-7E0DFF79CB03");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

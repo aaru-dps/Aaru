@@ -35,7 +35,10 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification for the SGI Extent FileSystem</summary>
 public sealed partial class EFS
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
+#region Nested type: Superblock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     readonly struct Superblock
     {
         /* 0:   fs size incl. bb 0 (in bb) */
@@ -84,4 +87,6 @@ public sealed partial class EFS
         /* 88:  checksum (all above) */
         public readonly uint sb_checksum;
     }
+
+#endregion
 }

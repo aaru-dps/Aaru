@@ -51,8 +51,10 @@ namespace Aaru.Filesystems;
  */
 /// <inheritdoc />
 /// <summary>Implements detection for the Zettabyte File System (ZFS)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
- SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class ZFS
 {
     const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;

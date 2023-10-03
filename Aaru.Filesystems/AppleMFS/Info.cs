@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -52,7 +54,7 @@ public sealed partial class AppleMFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
+        var drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
         return drSigWord == MFS_MAGIC;
     }
@@ -97,20 +99,21 @@ public sealed partial class AppleMFS
         mdb.drNxtFNum  = BigEndianBitConverter.ToUInt32(mdbSector, 0x01E);
         mdb.drFreeBks  = BigEndianBitConverter.ToUInt16(mdbSector, 0x022);
         mdb.drVNSiz    = mdbSector[0x024];
-        byte[] variableSize = new byte[mdb.drVNSiz + 1];
+        var variableSize = new byte[mdb.drVNSiz + 1];
         Array.Copy(mdbSector, 0x024, variableSize, 0, mdb.drVNSiz + 1);
         mdb.drVN = StringHandlers.PascalToString(variableSize, encoding);
 
         sb.AppendLine(Localization.AppleMFS_Name);
         sb.AppendLine();
         sb.AppendLine(Localization.Master_Directory_Block);
-        sb.AppendFormat(Localization.Creation_date_0, DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
+        sb.AppendFormat(Localization.Creation_date_0,    DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
         sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(mdb.drLsBkUp)).AppendLine();
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.HardwareLock))
             sb.AppendLine(Localization.Volume_is_locked_by_hardware);
 
-        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted) ? Localization.Volume_was_unmonted
+        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted)
+                          ? Localization.Volume_was_unmonted
                           : Localization.Volume_is_mounted);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SparedBadBlocks))
@@ -158,22 +161,20 @@ public sealed partial class AppleMFS
         metadata = new FileSystem();
 
         if(mdb.drLsBkUp > 0)
-        {
             metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
-        }
 
         metadata.Bootable    = bootBlockInfo != null;
         metadata.Clusters    = mdb.drNmAlBlks;
         metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
-        {
             metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
-        }
 
         metadata.Files        = mdb.drNmFls;
         metadata.FreeClusters = mdb.drFreeBks;
         metadata.Type         = FS_TYPE;
         metadata.VolumeName   = mdb.drVN;
     }
+
+#endregion
 }

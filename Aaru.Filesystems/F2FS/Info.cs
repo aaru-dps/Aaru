@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class F2FS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -52,7 +54,7 @@ public sealed partial class F2FS
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -88,7 +90,7 @@ public sealed partial class F2FS
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -110,20 +112,20 @@ public sealed partial class F2FS
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.F2FS_filesystem);
-        sb.AppendFormat(Localization.Version_0_1, f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
+        sb.AppendFormat(Localization.Version_0_1,         f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_sector, 1 << (int)f2fsSb.log_sectorsize).AppendLine();
 
         sb.AppendFormat(Localization._0_sectors_1_bytes_per_block, 1 << (int)f2fsSb.log_sectors_per_block,
                         1                                            << (int)f2fsSb.log_blocksize).AppendLine();
 
-        sb.AppendFormat(Localization._0_blocks_per_segment, f2fsSb.log_blocks_per_seg).AppendLine();
-        sb.AppendFormat(Localization._0_blocks_in_volume, f2fsSb.block_count).AppendLine();
-        sb.AppendFormat(Localization._0_segments_per_section, f2fsSb.segs_per_sec).AppendLine();
-        sb.AppendFormat(Localization._0_sections_per_zone, f2fsSb.secs_per_zone).AppendLine();
-        sb.AppendFormat(Localization._0_sections, f2fsSb.section_count).AppendLine();
-        sb.AppendFormat(Localization._0_segments, f2fsSb.segment_count).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_segment,             f2fsSb.log_blocks_per_seg).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_in_volume,               f2fsSb.block_count).AppendLine();
+        sb.AppendFormat(Localization._0_segments_per_section,           f2fsSb.segs_per_sec).AppendLine();
+        sb.AppendFormat(Localization._0_sections_per_zone,              f2fsSb.secs_per_zone).AppendLine();
+        sb.AppendFormat(Localization._0_sections,                       f2fsSb.section_count).AppendLine();
+        sb.AppendFormat(Localization._0_segments,                       f2fsSb.segment_count).AppendLine();
         sb.AppendFormat(Localization.Root_directory_resides_on_inode_0, f2fsSb.root_ino).AppendLine();
-        sb.AppendFormat(Localization.Volume_UUID_0, f2fsSb.uuid).AppendLine();
+        sb.AppendFormat(Localization.Volume_UUID_0,                     f2fsSb.uuid).AppendLine();
 
         sb.AppendFormat(Localization.Volume_name_0,
                         StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).AppendLine();
@@ -147,4 +149,6 @@ public sealed partial class F2FS
             VolumeSerial           = f2fsSb.uuid.ToString()
         };
     }
+
+#endregion
 }

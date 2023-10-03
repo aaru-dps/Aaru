@@ -33,7 +33,8 @@ namespace Aaru.Filesystems;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection for the Xia filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Xia
 {
     const uint XIAFS_SUPER_MAGIC        = 0x012FD16D;

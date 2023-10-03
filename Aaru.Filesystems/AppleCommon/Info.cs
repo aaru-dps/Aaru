@@ -58,9 +58,12 @@ static partial class AppleCommon
                 sb.AppendLine(Localization.Boot_block_should_be_executed);
 
                 if((bb.bbVersion & 0x2000) > 0)
+                {
                     sb.
-                        AppendFormat(Localization.System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
-                                     bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                        AppendFormat(
+                            Localization.System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
+                            bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                }
             }
         }
         else if((bb.bbVersion & 0xFF) == 0x0D)
@@ -99,10 +102,10 @@ static partial class AppleCommon
         sb.AppendFormat(Localization.Clipboard_filename_0, StringHandlers.PascalToString(bb.bbScrapName, encoding)).
            AppendLine();
 
-        sb.AppendFormat(Localization.Maximum_opened_files_0, bb.bbCntFCBs * 4).AppendLine();
-        sb.AppendFormat(Localization.Event_queue_size_0, bb.bbCntEvts).AppendLine();
-        sb.AppendFormat(Localization.Heap_size_with_128KiB_of_RAM_0_bytes, bb.bb128KSHeap).AppendLine();
-        sb.AppendFormat(Localization.Heap_size_with_256KiB_of_RAM_0_bytes, bb.bb256KSHeap).AppendLine();
+        sb.AppendFormat(Localization.Maximum_opened_files_0,                       bb.bbCntFCBs * 4).AppendLine();
+        sb.AppendFormat(Localization.Event_queue_size_0,                           bb.bbCntEvts).AppendLine();
+        sb.AppendFormat(Localization.Heap_size_with_128KiB_of_RAM_0_bytes,         bb.bb128KSHeap).AppendLine();
+        sb.AppendFormat(Localization.Heap_size_with_256KiB_of_RAM_0_bytes,         bb.bb256KSHeap).AppendLine();
         sb.AppendFormat(Localization.Heap_size_with_512KiB_of_RAM_or_more_0_bytes, bb.bbSysHeapSize).AppendLine();
 
         return sb.ToString();

@@ -30,13 +30,9 @@ namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
-    readonly byte[] _type =
-    {
-        0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
-    };
-    readonly byte[] _medinfoSignature = "MEDINFO "u8.ToArray();
-    readonly byte[] _volinfoSignature = "VOLINFO "u8.ToArray();
-
     // Do not translate
-    const string FS_TYPE = "hpofs";
+    const    string FS_TYPE           = "hpofs";
+    readonly byte[] _medinfoSignature = "MEDINFO "u8.ToArray();
+    readonly byte[] _type             = { 0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00 };
+    readonly byte[] _volinfoSignature = "VOLINFO "u8.ToArray();
 }

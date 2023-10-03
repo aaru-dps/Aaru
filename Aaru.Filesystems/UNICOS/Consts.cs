@@ -28,12 +28,12 @@
 
 // UNICOS is ILP64 so let's think everything is 64-bit
 
-using blkno_t = System.Int64;
-using daddr_t = System.Int64;
-using dev_t = System.Int64;
-using extent_t = System.Int64;
-using ino_t = System.Int64;
-using time_t = System.Int64;
+using blkno_t = long;
+using daddr_t = long;
+using dev_t = long;
+using extent_t = long;
+using ino_t = long;
+using time_t = long;
 
 namespace Aaru.Filesystems;
 

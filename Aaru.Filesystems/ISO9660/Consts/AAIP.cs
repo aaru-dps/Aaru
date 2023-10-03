@@ -38,9 +38,13 @@ public sealed partial class ISO9660
     const ushort AAIP_MAGIC     = 0x414C; // "AL"
     const ushort AAIP_MAGIC_OLD = 0x4141; // "AA"
 
+#region Nested type: AAIPFlags
+
     [Flags]
     enum AAIPFlags : byte
     {
         Continue = 1
     }
+
+#endregion
 }

@@ -46,6 +46,8 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -119,7 +121,7 @@ public sealed partial class exFAT
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_serial_number_0_X8, vbr.volumeSerial).AppendLine();
-        sb.AppendFormat(Localization.BIOS_drive_is_0, vbr.drive).AppendLine();
+        sb.AppendFormat(Localization.BIOS_drive_is_0,           vbr.drive).AppendLine();
 
         if(vbr.flags.HasFlag(VolumeFlags.SecondFatActive))
             sb.AppendLine(Localization.Second_FAT_is_in_use);
@@ -130,16 +132,16 @@ public sealed partial class exFAT
         if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
             sb.AppendLine(Localization.Underlying_media_presented_errors);
 
-        int count = 1;
+        var count = 1;
 
         foreach(OemParameter parameter in parametersTable.parameters)
         {
             if(parameter.OemParameterType == _oemFlashParameterGuid)
             {
-                sb.AppendFormat(Localization.OEM_Parameters_0, count).AppendLine();
+                sb.AppendFormat(Localization.OEM_Parameters_0,               count).AppendLine();
                 sb.AppendFormat("\t" + Localization._0_bytes_in_erase_block, parameter.eraseBlockSize).AppendLine();
-                sb.AppendFormat("\t" + Localization._0_bytes_per_page, parameter.pageSize).AppendLine();
-                sb.AppendFormat("\t" + Localization._0_spare_blocks, parameter.spareBlocks).AppendLine();
+                sb.AppendFormat("\t" + Localization._0_bytes_per_page,       parameter.pageSize).AppendLine();
+                sb.AppendFormat("\t" + Localization._0_spare_blocks,         parameter.spareBlocks).AppendLine();
 
                 sb.AppendFormat("\t" + Localization._0_nanoseconds_random_access_time, parameter.randomAccessTime).
                    AppendLine();
@@ -168,4 +170,6 @@ public sealed partial class exFAT
 
         information = sb.ToString();
     }
+
+#endregion
 }

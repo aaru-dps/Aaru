@@ -35,7 +35,8 @@ namespace Aaru.Filesystems;
 // Information from Apple ProDOS 8 Technical Reference
 /// <inheritdoc />
 /// <summary>Implements detection of Apple ProDOS filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ProDOSPlugin
 {
     const byte EMPTY_STORAGE_TYPE = 0x00;

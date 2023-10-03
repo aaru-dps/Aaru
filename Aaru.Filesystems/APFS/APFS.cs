@@ -37,10 +37,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class APFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.APFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A4060F9D-2909-42E2-9D95-DB31FA7EA797");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

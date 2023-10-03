@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of SGI's XFS</summary>
 public sealed partial class XFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -50,7 +52,7 @@ public sealed partial class XFS
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -63,12 +65,9 @@ public sealed partial class XFS
             if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-            foreach(int location in new[]
-                    {
-                        0, 0x200, 0x400
-                    })
+            foreach(int location in new[] { 0, 0x200, 0x400 })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -82,14 +81,12 @@ public sealed partial class XFS
             }
         }
         else
-            foreach(int i in new[]
-                    {
-                        0, 1, 2
-                    })
+        {
+            foreach(int i in new[] { 0, 1, 2 })
             {
-                ulong location = (ulong)i;
+                var location = (ulong)i;
 
-                uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+                var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
                 if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
@@ -110,6 +107,7 @@ public sealed partial class XFS
                 if(xfsSb.magicnum == XFS_MAGIC)
                     return true;
             }
+        }
 
         return false;
     }
@@ -130,7 +128,7 @@ public sealed partial class XFS
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
-            uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+            var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
             if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
@@ -141,12 +139,9 @@ public sealed partial class XFS
                sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
+            var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-            foreach(int location in new[]
-                    {
-                        0, 0x200, 0x400
-                    })
+            foreach(int location in new[] { 0, 0x200, 0x400 })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -160,13 +155,11 @@ public sealed partial class XFS
             }
         }
         else
-            foreach(int i in new[]
-                    {
-                        0, 1, 2
-                    })
+        {
+            foreach(int i in new[] { 0, 1, 2 })
             {
-                ulong location = (ulong)i;
-                uint  sbSize   = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+                var location = (ulong)i;
+                var sbSize   = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
                 if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
@@ -185,6 +178,7 @@ public sealed partial class XFS
                 if(xfsSb.magicnum == XFS_MAGIC)
                     break;
             }
+        }
 
         if(xfsSb.magicnum != XFS_MAGIC)
             return;
@@ -192,14 +186,14 @@ public sealed partial class XFS
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.XFS_filesystem);
-        sb.AppendFormat(Localization.Filesystem_version_0, xfsSb.version & 0xF).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_sector, xfsSb.sectsize).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_block, xfsSb.blocksize).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_inode, xfsSb.inodesize).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_version_0,            xfsSb.version & 0xF).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_sector,             xfsSb.sectsize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block,              xfsSb.blocksize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_inode,              xfsSb.inodesize).AppendLine();
         sb.AppendFormat(Localization._0_data_blocks_in_volume_1_free, xfsSb.dblocks, xfsSb.fdblocks).AppendLine();
-        sb.AppendFormat(Localization._0_blocks_per_allocation_group, xfsSb.agblocks).AppendLine();
-        sb.AppendFormat(Localization._0_allocation_groups_in_volume, xfsSb.agcount).AppendLine();
-        sb.AppendFormat(Localization._0_inodes_in_volume_1_free, xfsSb.icount, xfsSb.ifree).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group,  xfsSb.agblocks).AppendLine();
+        sb.AppendFormat(Localization._0_allocation_groups_in_volume,  xfsSb.agcount).AppendLine();
+        sb.AppendFormat(Localization._0_inodes_in_volume_1_free,      xfsSb.icount, xfsSb.ifree).AppendLine();
 
         if(xfsSb.inprogress > 0)
             sb.AppendLine(Localization.fsck_in_progress);
@@ -221,4 +215,6 @@ public sealed partial class XFS
             VolumeSerial = xfsSb.uuid.ToString()
         };
     }
+
+#endregion
 }

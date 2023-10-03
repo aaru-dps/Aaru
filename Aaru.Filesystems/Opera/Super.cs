@@ -39,9 +39,11 @@ namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         // TODO: Find correct default encoding
         _encoding = Encoding.ASCII;
@@ -95,7 +97,7 @@ public sealed partial class OperaFS
         };
 
         _image = imagePlugin;
-        int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
+        var firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
         _rootDirectoryCache = DecodeDirectory(firstRootBlock);
         _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
         _mounted            = true;
@@ -126,4 +128,6 @@ public sealed partial class OperaFS
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

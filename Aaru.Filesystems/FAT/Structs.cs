@@ -39,521 +39,7 @@ public sealed partial class FAT
 {
     const int UMSDOS_MAXNAME = 220;
 
-    /// <summary>BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AtariParameterBlock
-    {
-        /// <summary>68000 BRA.S jump or x86 loop</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 6 bytes, space-padded, "Loader" for Atari ST boot loader</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public readonly byte[] oem_name;
-        /// <summary>Volume serial number</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] serial_no;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT (inclusive)</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor, unused by GEMDOS</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB, unused by GEMDOS</summary>
-        public readonly ushort hsectors;
-        /// <summary>Word to be loaded in the cmdload system variable. Big-endian.</summary>
-        public readonly ushort execflag;
-        /// <summary>
-        ///     Word indicating load mode. If zero, file named <see cref="fname" /> is located and loaded. It not, sectors
-        ///     specified in <see cref="ssect" /> and <see cref="sectcnt" /> are loaded. Big endian.
-        /// </summary>
-        public readonly ushort ldmode;
-        /// <summary>Starting sector of boot code.</summary>
-        public readonly ushort ssect;
-        /// <summary>Count of sectors of boot code.</summary>
-        public readonly ushort sectcnt;
-        /// <summary>Address where boot code should be loaded.</summary>
-        public readonly ushort ldaaddr;
-        /// <summary>Padding.</summary>
-        public readonly ushort padding;
-        /// <summary>Address where FAT and root directory sectors must be loaded.</summary>
-        public readonly ushort fatbuf;
-        /// <summary>Unknown.</summary>
-        public readonly ushort unknown;
-        /// <summary>Filename to be loaded for booting.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public readonly byte[] fname;
-        /// <summary>Reserved</summary>
-        public readonly ushort reserved;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 455)]
-        public readonly byte[] boot_code;
-        /// <summary>Big endian word to make big endian sum of all sector words be equal to 0x1234 if disk is bootable.</summary>
-        public readonly ushort checksum;
-    }
-
-    /// <summary>BIOS Parameter Block as used by MSX-DOS 2.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct MsxParameterBlock
-    {
-        /// <summary>x86 loop</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT (inclusive)</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly ushort hsectors;
-        /// <summary>Jump for MSX-DOS 1 boot code</summary>
-        public readonly ushort msxdos_jmp;
-        /// <summary>Set to "VOL_ID" by MSX-DOS 2</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public readonly byte[] vol_id;
-        /// <summary>Bigger than 0 if there are deleted files (MSX-DOS 2)</summary>
-        public readonly byte undelete_flag;
-        /// <summary>Volume serial number (MSX-DOS 2)</summary>
-        public readonly uint serial_no;
-        /// <summary>Reserved (MSX-DOS 2)</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly byte[] reserved;
-        /// <summary>Jump for MSX-DOS 2 boot code (MSX-DOS 2)</summary>
-        public readonly ushort msxdos2_jmp;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 460)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 2.0 BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlock2
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 486)]
-        public readonly byte[] boot_code;
-        /// <summary>0x55 0xAA if bootable.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 3.0 BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlock30
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly ushort hsectors;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 3.2 BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlock32
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly ushort hsectors;
-        /// <summary>Total sectors including hidden ones</summary>
-        public readonly ushort total_sectors;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 478)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 3.31 BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlock33
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly uint hsectors;
-        /// <summary>Sectors in volume if > 65535</summary>
-        public uint big_sectors;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 474)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 3.4 BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlockShortEbpb
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly uint hsectors;
-        /// <summary>Sectors in volume if > 65535</summary>
-        public uint big_sectors;
-        /// <summary>Drive number</summary>
-        public readonly byte drive_no;
-        /// <summary>Volume flags</summary>
-        public readonly byte flags;
-        /// <summary>EPB signature, 0x28</summary>
-        public readonly byte signature;
-        /// <summary>Volume serial number</summary>
-        public readonly uint serial_no;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 467)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>DOS 4.0 or higher BIOS Parameter Block.</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BiosParameterBlockEbpb
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public byte fats_no;
-        /// <summary>Number of entries on root directory</summary>
-        public ushort root_ent;
-        /// <summary>Sectors in volume</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public byte media;
-        /// <summary>Sectors per FAT</summary>
-        public ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public ushort sptrk;
-        /// <summary>Heads</summary>
-        public ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public uint hsectors;
-        /// <summary>Sectors in volume if > 65535</summary>
-        public uint big_sectors;
-        /// <summary>Drive number</summary>
-        public byte drive_no;
-        /// <summary>Volume flags</summary>
-        public byte flags;
-        /// <summary>EPB signature, 0x29</summary>
-        public byte signature;
-        /// <summary>Volume serial number</summary>
-        public uint serial_no;
-        /// <summary>Volume label, 11 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public readonly byte[] volume_label;
-        /// <summary>Filesystem type, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] fs_type;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 448)]
-        public byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public ushort boot_signature;
-    }
-
-    /// <summary>FAT32 Parameter Block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Fat32ParameterBlockShort
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public readonly ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory, set to 0</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume, set to 0</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT, set to 0</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public readonly ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public readonly uint hsectors;
-        /// <summary>Sectors in volume</summary>
-        public uint big_sectors;
-        /// <summary>Sectors per FAT</summary>
-        public readonly uint big_spfat;
-        /// <summary>FAT flags</summary>
-        public readonly ushort mirror_flags;
-        /// <summary>FAT32 version</summary>
-        public readonly ushort version;
-        /// <summary>Cluster of root directory</summary>
-        public readonly uint root_cluster;
-        /// <summary>Sector of FSINFO structure</summary>
-        public readonly ushort fsinfo_sector;
-        /// <summary>Sector of FAT32PB backup</summary>
-        public readonly ushort backup_sector;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public readonly byte[] reserved;
-        /// <summary>Drive number</summary>
-        public readonly byte drive_no;
-        /// <summary>Volume flags</summary>
-        public readonly byte flags;
-        /// <summary>Signature, should be 0x28</summary>
-        public readonly byte signature;
-        /// <summary>Volume serial number</summary>
-        public readonly uint serial_no;
-        /// <summary>Volume label, 11 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public readonly byte[] reserved2;
-        /// <summary>Sectors in volume if <see cref="big_sectors" /> equals 0</summary>
-        public ulong huge_sectors;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 420)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
-
-    /// <summary>FAT32 Parameter Block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Fat32ParameterBlock
-    {
-        /// <summary>x86 jump</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] jump;
-        /// <summary>OEM Name, 8 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] oem_name;
-        /// <summary>Bytes per sector</summary>
-        public ushort bps;
-        /// <summary>Sectors per cluster</summary>
-        public byte spc;
-        /// <summary>Reserved sectors between BPB and FAT</summary>
-        public readonly ushort rsectors;
-        /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
-        /// <summary>Number of entries on root directory, set to 0</summary>
-        public readonly ushort root_ent;
-        /// <summary>Sectors in volume, set to 0</summary>
-        public ushort sectors;
-        /// <summary>Media descriptor</summary>
-        public readonly byte media;
-        /// <summary>Sectors per FAT, set to 0</summary>
-        public readonly ushort spfat;
-        /// <summary>Sectors per track</summary>
-        public ushort sptrk;
-        /// <summary>Heads</summary>
-        public readonly ushort heads;
-        /// <summary>Hidden sectors before BPB</summary>
-        public uint hsectors;
-        /// <summary>Sectors in volume</summary>
-        public uint big_sectors;
-        /// <summary>Sectors per FAT</summary>
-        public uint big_spfat;
-        /// <summary>FAT flags</summary>
-        public readonly ushort mirror_flags;
-        /// <summary>FAT32 version</summary>
-        public readonly ushort version;
-        /// <summary>Cluster of root directory</summary>
-        public readonly uint root_cluster;
-        /// <summary>Sector of FSINFO structure</summary>
-        public readonly ushort fsinfo_sector;
-        /// <summary>Sector of FAT32PB backup</summary>
-        public readonly ushort backup_sector;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public readonly byte[] reserved;
-        /// <summary>Drive number</summary>
-        public readonly byte drive_no;
-        /// <summary>Volume flags</summary>
-        public readonly byte flags;
-        /// <summary>Signature, should be 0x29</summary>
-        public readonly byte signature;
-        /// <summary>Volume serial number</summary>
-        public readonly uint serial_no;
-        /// <summary>Volume label, 11 bytes, space-padded</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public readonly byte[] volume_label;
-        /// <summary>Filesystem type, 8 bytes, space-padded, must be "FAT32   "</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] fs_type;
-        /// <summary>Boot code.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 419)]
-        public readonly byte[] boot_code;
-        /// <summary>Always 0x55 0xAA.</summary>
-        public readonly ushort boot_signature;
-    }
+#region Nested type: ApricotLabel
 
     /// <summary>Apricot Label.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -766,6 +252,10 @@ public sealed partial class FAT
         public readonly bool cpmDoubleSided;
     }
 
+#endregion
+
+#region Nested type: ApricotParameterBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct ApricotParameterBlock
     {
@@ -791,6 +281,622 @@ public sealed partial class FAT
         public readonly ushort startSector;
     }
 
+#endregion
+
+#region Nested type: AtariParameterBlock
+
+    /// <summary>BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AtariParameterBlock
+    {
+        /// <summary>68000 BRA.S jump or x86 loop</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 6 bytes, space-padded, "Loader" for Atari ST boot loader</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public readonly byte[] oem_name;
+        /// <summary>Volume serial number</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] serial_no;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT (inclusive)</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor, unused by GEMDOS</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB, unused by GEMDOS</summary>
+        public readonly ushort hsectors;
+        /// <summary>Word to be loaded in the cmdload system variable. Big-endian.</summary>
+        public readonly ushort execflag;
+        /// <summary>
+        ///     Word indicating load mode. If zero, file named <see cref="fname" /> is located and loaded. It not, sectors
+        ///     specified in <see cref="ssect" /> and <see cref="sectcnt" /> are loaded. Big endian.
+        /// </summary>
+        public readonly ushort ldmode;
+        /// <summary>Starting sector of boot code.</summary>
+        public readonly ushort ssect;
+        /// <summary>Count of sectors of boot code.</summary>
+        public readonly ushort sectcnt;
+        /// <summary>Address where boot code should be loaded.</summary>
+        public readonly ushort ldaaddr;
+        /// <summary>Padding.</summary>
+        public readonly ushort padding;
+        /// <summary>Address where FAT and root directory sectors must be loaded.</summary>
+        public readonly ushort fatbuf;
+        /// <summary>Unknown.</summary>
+        public readonly ushort unknown;
+        /// <summary>Filename to be loaded for booting.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public readonly byte[] fname;
+        /// <summary>Reserved</summary>
+        public readonly ushort reserved;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 455)]
+        public readonly byte[] boot_code;
+        /// <summary>Big endian word to make big endian sum of all sector words be equal to 0x1234 if disk is bootable.</summary>
+        public readonly ushort checksum;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlock2
+
+    /// <summary>DOS 2.0 BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlock2
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 486)]
+        public readonly byte[] boot_code;
+        /// <summary>0x55 0xAA if bootable.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlock30
+
+    /// <summary>DOS 3.0 BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlock30
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly ushort hsectors;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlock32
+
+    /// <summary>DOS 3.2 BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlock32
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly ushort hsectors;
+        /// <summary>Total sectors including hidden ones</summary>
+        public readonly ushort total_sectors;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 478)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlock33
+
+    /// <summary>DOS 3.31 BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlock33
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly uint hsectors;
+        /// <summary>Sectors in volume if > 65535</summary>
+        public uint big_sectors;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 474)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlockEbpb
+
+    /// <summary>DOS 4.0 or higher BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlockEbpb
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public byte media;
+        /// <summary>Sectors per FAT</summary>
+        public ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public ushort sptrk;
+        /// <summary>Heads</summary>
+        public ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public uint hsectors;
+        /// <summary>Sectors in volume if > 65535</summary>
+        public uint big_sectors;
+        /// <summary>Drive number</summary>
+        public byte drive_no;
+        /// <summary>Volume flags</summary>
+        public byte flags;
+        /// <summary>EPB signature, 0x29</summary>
+        public byte signature;
+        /// <summary>Volume serial number</summary>
+        public uint serial_no;
+        /// <summary>Volume label, 11 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public readonly byte[] volume_label;
+        /// <summary>Filesystem type, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] fs_type;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 448)]
+        public byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: BiosParameterBlockShortEbpb
+
+    /// <summary>DOS 3.4 BIOS Parameter Block.</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BiosParameterBlockShortEbpb
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly uint hsectors;
+        /// <summary>Sectors in volume if > 65535</summary>
+        public uint big_sectors;
+        /// <summary>Drive number</summary>
+        public readonly byte drive_no;
+        /// <summary>Volume flags</summary>
+        public readonly byte flags;
+        /// <summary>EPB signature, 0x28</summary>
+        public readonly byte signature;
+        /// <summary>Volume serial number</summary>
+        public readonly uint serial_no;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 467)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: CompleteDirectoryEntry
+
+    sealed class CompleteDirectoryEntry
+    {
+        public DirectoryEntry       Dirent;
+        public DirectoryEntry       Fat32Ea;
+        public HumanDirectoryEntry  HumanDirent;
+        public string               HumanName;
+        public string               Lfn;
+        public UmsdosDirectoryEntry LinuxDirent;
+        public string               LinuxName;
+        public string               Longname;
+        public string               Shortname;
+
+        public override string ToString()
+        {
+            // This ensures UMSDOS takes preference when present
+            if(!string.IsNullOrEmpty(LinuxName))
+                return LinuxName;
+
+            // This ensures LFN takes preference when eCS is in use
+            if(!string.IsNullOrEmpty(Lfn))
+                return Lfn;
+
+            // This ensures Humans takes preference when present
+            if(!string.IsNullOrEmpty(HumanName))
+                return HumanName;
+
+            return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
+        }
+    }
+
+#endregion
+
+#region Nested type: DirectoryEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] filename;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] extension;
+        public readonly FatAttributes attributes;
+        public readonly CaseInfo      caseinfo;
+        public readonly byte          ctime_ms;
+        public readonly ushort        ctime;
+        public readonly ushort        cdate;
+        public readonly ushort        adate;
+        public readonly ushort        ea_handle;
+        public readonly ushort        mtime;
+        public readonly ushort        mdate;
+        public readonly ushort        start_cluster;
+        public readonly uint          size;
+    }
+
+#endregion
+
+#region Nested type: EaHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct EaHeader
+    {
+        public readonly ushort  magic;
+        public readonly ushort  cluster;
+        public readonly EaFlags flags;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] filename;
+        public readonly uint   unknown;
+        public readonly ushort zero;
+    }
+
+#endregion
+
+#region Nested type: Fat32ParameterBlock
+
+    /// <summary>FAT32 Parameter Block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Fat32ParameterBlock
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory, set to 0</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume, set to 0</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT, set to 0</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public uint hsectors;
+        /// <summary>Sectors in volume</summary>
+        public uint big_sectors;
+        /// <summary>Sectors per FAT</summary>
+        public uint big_spfat;
+        /// <summary>FAT flags</summary>
+        public readonly ushort mirror_flags;
+        /// <summary>FAT32 version</summary>
+        public readonly ushort version;
+        /// <summary>Cluster of root directory</summary>
+        public readonly uint root_cluster;
+        /// <summary>Sector of FSINFO structure</summary>
+        public readonly ushort fsinfo_sector;
+        /// <summary>Sector of FAT32PB backup</summary>
+        public readonly ushort backup_sector;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] reserved;
+        /// <summary>Drive number</summary>
+        public readonly byte drive_no;
+        /// <summary>Volume flags</summary>
+        public readonly byte flags;
+        /// <summary>Signature, should be 0x29</summary>
+        public readonly byte signature;
+        /// <summary>Volume serial number</summary>
+        public readonly uint serial_no;
+        /// <summary>Volume label, 11 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public readonly byte[] volume_label;
+        /// <summary>Filesystem type, 8 bytes, space-padded, must be "FAT32   "</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] fs_type;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 419)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: Fat32ParameterBlockShort
+
+    /// <summary>FAT32 Parameter Block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Fat32ParameterBlockShort
+    {
+        /// <summary>x86 jump</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory, set to 0</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume, set to 0</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT, set to 0</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly uint hsectors;
+        /// <summary>Sectors in volume</summary>
+        public uint big_sectors;
+        /// <summary>Sectors per FAT</summary>
+        public readonly uint big_spfat;
+        /// <summary>FAT flags</summary>
+        public readonly ushort mirror_flags;
+        /// <summary>FAT32 version</summary>
+        public readonly ushort version;
+        /// <summary>Cluster of root directory</summary>
+        public readonly uint root_cluster;
+        /// <summary>Sector of FSINFO structure</summary>
+        public readonly ushort fsinfo_sector;
+        /// <summary>Sector of FAT32PB backup</summary>
+        public readonly ushort backup_sector;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public readonly byte[] reserved;
+        /// <summary>Drive number</summary>
+        public readonly byte drive_no;
+        /// <summary>Volume flags</summary>
+        public readonly byte flags;
+        /// <summary>Signature, should be 0x28</summary>
+        public readonly byte signature;
+        /// <summary>Volume serial number</summary>
+        public readonly uint serial_no;
+        /// <summary>Volume label, 11 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public readonly byte[] reserved2;
+        /// <summary>Sectors in volume if <see cref="big_sectors" /> equals 0</summary>
+        public ulong huge_sectors;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 420)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
+    }
+
+#endregion
+
+#region Nested type: FatDirNode
+
+    sealed class FatDirNode : IDirNode
+    {
+        internal CompleteDirectoryEntry[] _entries;
+        internal int                      _position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: FatFileNode
+
+    sealed class FatFileNode : IFileNode
+    {
+        internal uint[] _clusters;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: FsInfoSector
+
     /// <summary>FAT32 FS Information Sector</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct FsInfoSector
@@ -812,6 +918,30 @@ public sealed partial class FAT
         /// <summary>Signature must be <see cref="FAT.FSINFO_SIGNATURE3" /></summary>
         public readonly uint signature3;
     }
+
+#endregion
+
+#region Nested type: HumanDirectoryEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct HumanDirectoryEntry
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] name1;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] extension;
+        public readonly FatAttributes attributes;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly byte[] name2;
+        public readonly ushort mtime;
+        public readonly ushort mdate;
+        public readonly ushort start_cluster;
+        public readonly uint   size;
+    }
+
+#endregion
+
+#region Nested type: HumanParameterBlock
 
     /// <summary>Human68k Parameter Block, big endian, 512 bytes even on 256 bytes/sector.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -846,41 +976,9 @@ public sealed partial class FAT
         public readonly byte[] boot_code;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryEntry
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] filename;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] extension;
-        public readonly FatAttributes attributes;
-        public readonly CaseInfo      caseinfo;
-        public readonly byte          ctime_ms;
-        public readonly ushort        ctime;
-        public readonly ushort        cdate;
-        public readonly ushort        adate;
-        public readonly ushort        ea_handle;
-        public readonly ushort        mtime;
-        public readonly ushort        mdate;
-        public readonly ushort        start_cluster;
-        public readonly uint          size;
-    }
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct HumanDirectoryEntry
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] name1;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] extension;
-        public readonly FatAttributes attributes;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public readonly byte[] name2;
-        public readonly ushort mtime;
-        public readonly ushort mdate;
-        public readonly ushort start_cluster;
-        public readonly uint   size;
-    }
+#region Nested type: LfnEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct LfnEntry
@@ -898,17 +996,66 @@ public sealed partial class FAT
         public readonly byte[] name3;
     }
 
+#endregion
+
+#region Nested type: MsxParameterBlock
+
+    /// <summary>BIOS Parameter Block as used by MSX-DOS 2.</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct EaHeader
+    struct MsxParameterBlock
     {
-        public readonly ushort  magic;
-        public readonly ushort  cluster;
-        public readonly EaFlags flags;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public readonly byte[] filename;
-        public readonly uint   unknown;
-        public readonly ushort zero;
+        /// <summary>x86 loop</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] jump;
+        /// <summary>OEM Name, 8 bytes, space-padded</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] oem_name;
+        /// <summary>Bytes per sector</summary>
+        public readonly ushort bps;
+        /// <summary>Sectors per cluster</summary>
+        public readonly byte spc;
+        /// <summary>Reserved sectors between BPB and FAT (inclusive)</summary>
+        public readonly ushort rsectors;
+        /// <summary>Number of FATs</summary>
+        public readonly byte fats_no;
+        /// <summary>Number of entries on root directory</summary>
+        public readonly ushort root_ent;
+        /// <summary>Sectors in volume</summary>
+        public ushort sectors;
+        /// <summary>Media descriptor</summary>
+        public readonly byte media;
+        /// <summary>Sectors per FAT</summary>
+        public readonly ushort spfat;
+        /// <summary>Sectors per track</summary>
+        public readonly ushort sptrk;
+        /// <summary>Heads</summary>
+        public readonly ushort heads;
+        /// <summary>Hidden sectors before BPB</summary>
+        public readonly ushort hsectors;
+        /// <summary>Jump for MSX-DOS 1 boot code</summary>
+        public readonly ushort msxdos_jmp;
+        /// <summary>Set to "VOL_ID" by MSX-DOS 2</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public readonly byte[] vol_id;
+        /// <summary>Bigger than 0 if there are deleted files (MSX-DOS 2)</summary>
+        public readonly byte undelete_flag;
+        /// <summary>Volume serial number (MSX-DOS 2)</summary>
+        public readonly uint serial_no;
+        /// <summary>Reserved (MSX-DOS 2)</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly byte[] reserved;
+        /// <summary>Jump for MSX-DOS 2 boot code (MSX-DOS 2)</summary>
+        public readonly ushort msxdos2_jmp;
+        /// <summary>Boot code.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 460)]
+        public readonly byte[] boot_code;
+        /// <summary>Always 0x55 0xAA.</summary>
+        public readonly ushort boot_signature;
     }
+
+#endregion
+
+#region Nested type: UmsdosDirectoryEntry
 
     /// <summary>This structure is 256 bytes large, depending on the name, only part of it is written to disk</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -946,6 +1093,10 @@ public sealed partial class FAT
         public readonly byte[] name;
     }
 
+#endregion
+
+#region Nested type: UmsdosFlags
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum UmsdosFlags : byte
     {
@@ -955,52 +1106,5 @@ public sealed partial class FAT
         UMSDOS_HLINK = 2
     }
 
-    sealed class CompleteDirectoryEntry
-    {
-        public DirectoryEntry       Dirent;
-        public DirectoryEntry       Fat32Ea;
-        public HumanDirectoryEntry  HumanDirent;
-        public string               HumanName;
-        public string               Lfn;
-        public UmsdosDirectoryEntry LinuxDirent;
-        public string               LinuxName;
-        public string               Longname;
-        public string               Shortname;
-
-        public override string ToString()
-        {
-            // This ensures UMSDOS takes preference when present
-            if(!string.IsNullOrEmpty(LinuxName))
-                return LinuxName;
-
-            // This ensures LFN takes preference when eCS is in use
-            if(!string.IsNullOrEmpty(Lfn))
-                return Lfn;
-
-            // This ensures Humans takes preference when present
-            if(!string.IsNullOrEmpty(HumanName))
-                return HumanName;
-
-            return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
-        }
-    }
-
-    sealed class FatFileNode : IFileNode
-    {
-        internal uint[] _clusters;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
-
-    sealed class FatDirNode : IDirNode
-    {
-        internal CompleteDirectoryEntry[] _entries;
-        internal int                      _position;
-        /// <inheritdoc />
-        public string Path { get; init; }
-    }
+#endregion
 }

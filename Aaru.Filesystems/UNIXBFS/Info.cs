@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the UNIX boot filesystem</summary>
 public sealed partial class BFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -53,7 +55,7 @@ public sealed partial class BFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(tmp, 0);
+        var magic = BitConverter.ToUInt32(tmp, 0);
 
         return magic == BFS_MAGIC;
     }
@@ -72,7 +74,7 @@ public sealed partial class BFS
         if(errno != ErrorNumber.NoError)
             return;
 
-        byte[] sbStrings = new byte[6];
+        var sbStrings = new byte[6];
 
         var bfsSb = new SuperBlock
         {
@@ -92,13 +94,13 @@ public sealed partial class BFS
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_end: 0x{0:X8}", bfsSb.s_end);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_from: 0x{0:X8}", bfsSb.s_from);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_to: 0x{0:X8}", bfsSb.s_to);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_end: 0x{0:X8}",   bfsSb.s_end);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_from: 0x{0:X8}",  bfsSb.s_from);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_to: 0x{0:X8}",    bfsSb.s_to);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_bto: 0x{0:X8}", bfsSb.s_bto);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_bto: 0x{0:X8}",   bfsSb.s_bto);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_fsname: 0x{0}",   bfsSb.s_fsname);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_volume: 0x{0}",   bfsSb.s_volume);
 
         sb.AppendLine(Localization.UNIX_Boot_Filesystem);
 
@@ -106,7 +108,7 @@ public sealed partial class BFS
                         bfsSb.s_end - bfsSb.s_start).AppendLine();
 
         sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
-        sb.AppendFormat(Localization.Volume_name_0, bfsSb.s_volume).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0,     bfsSb.s_volume).AppendLine();
 
         metadata = new FileSystem
         {
@@ -118,4 +120,6 @@ public sealed partial class BFS
 
         information = sb.ToString();
     }
+
+#endregion
 }

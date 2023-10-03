@@ -34,10 +34,13 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the VMware filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
- SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "IdentifierTypo")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class VMfs
 {
+#region Nested type: VolumeInfo
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct VolumeInfo
     {
@@ -59,4 +62,6 @@ public sealed partial class VMfs
         public readonly ulong ctime;
         public readonly ulong mtime;
     }
+
+#endregion
 }

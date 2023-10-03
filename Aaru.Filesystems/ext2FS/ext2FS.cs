@@ -44,10 +44,16 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class ext2FS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.ext2FS_Name_Linux_extended_Filesystem_2_3_and_4;
+
     /// <inheritdoc />
     public Guid Id => new("6AA91B88-150B-4A7B-AD56-F84FB2DF4184");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

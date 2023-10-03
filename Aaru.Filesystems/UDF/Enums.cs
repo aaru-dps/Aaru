@@ -37,9 +37,14 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class UDF
 {
+#region Nested type: EntityFlags
+
     [Flags]
     enum EntityFlags : byte
     {
-        Dirty = 0x01, Protected = 0x02
+        Dirty     = 0x01,
+        Protected = 0x02
     }
+
+#endregion
 }

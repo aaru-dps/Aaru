@@ -39,6 +39,31 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the b-tree filesystem (btrfs)</summary>
 public sealed partial class BTRFS
 {
+#region Nested type: DevItem
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DevItem
+    {
+        public readonly ulong id;
+        public readonly ulong bytes;
+        public readonly ulong used;
+        public readonly uint  optimal_align;
+        public readonly uint  optimal_width;
+        public readonly uint  minimal_size;
+        public readonly ulong type;
+        public readonly ulong generation;
+        public readonly ulong start_offset;
+        public readonly uint  dev_group;
+        public readonly byte  seek_speed;
+        public readonly byte  bandwidth;
+        public readonly Guid  device_uuid;
+        public readonly Guid  uuid;
+    }
+
+#endregion
+
+#region Nested type: SuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
     {
@@ -81,22 +106,5 @@ public sealed partial class BTRFS
         public readonly byte[] unused;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DevItem
-    {
-        public readonly ulong id;
-        public readonly ulong bytes;
-        public readonly ulong used;
-        public readonly uint  optimal_align;
-        public readonly uint  optimal_width;
-        public readonly uint  minimal_size;
-        public readonly ulong type;
-        public readonly ulong generation;
-        public readonly ulong start_offset;
-        public readonly uint  dev_group;
-        public readonly byte  seek_speed;
-        public readonly byte  bandwidth;
-        public readonly Guid  device_uuid;
-        public readonly Guid  uuid;
-    }
+#endregion
 }

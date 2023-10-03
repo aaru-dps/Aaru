@@ -35,10 +35,9 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class QNX4
 {
+    const string FS_TYPE = "qnx4";
     readonly byte[] _rootDirFname =
     {
         0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
-
-    const string FS_TYPE = "qnx4";
 }

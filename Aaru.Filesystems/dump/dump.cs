@@ -33,20 +33,28 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Interfaces;
-using ufs_daddr_t = System.Int32;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class dump : IFilesystem
 {
+    const string MODULE_NAME = "dump(8) plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.dump_Name;
+
     /// <inheritdoc />
     public Guid Id => new("E53B4D28-C858-4800-B092-DDAE80D361B9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "dump(8) plugin";
+
+#endregion
 }

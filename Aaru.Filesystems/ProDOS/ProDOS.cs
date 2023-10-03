@@ -37,14 +37,22 @@ namespace Aaru.Filesystems;
 // Information from Apple ProDOS 8 Technical Reference
 /// <inheritdoc />
 /// <summary>Implements detection of Apple ProDOS filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ProDOSPlugin : IFilesystem
 {
+    const string MODULE_NAME = "ProDOS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.ProDOSPlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("43874265-7B8A-4739-BCF7-07F80D5932BF");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "ProDOS plugin";
+
+#endregion
 }

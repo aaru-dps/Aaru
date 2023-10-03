@@ -43,6 +43,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ISO9660 : IReadOnlyFilesystem
 {
+    const string                              MODULE_NAME = "ISO9660 plugin";
+    ushort                                    _blockSize;
     bool                                      _cdi;
     bool                                      _debug;
     bool                                      _highSierra;
@@ -56,15 +58,19 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     bool                                      _useEvd;
     bool                                      _usePathTable;
     bool                                      _useTransTbl;
-    ushort                                    _blockSize;
     Encoding                                  Encoding;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => "ISO9660 Filesystem";
+
     /// <inheritdoc />
     public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -73,37 +79,24 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
         new (string name, Type type, string description)[]
         {
             ("use_path_table", typeof(bool), "Use path table for directory traversal"),
-            ("use_trans_tbl", typeof(bool), "Use TRANS.TBL for filenames"),
-            ("use_evd", typeof(bool),
-             "If present, use Enhanced Volume Descriptor with specified encoding (overrides namespace)")
+            ("use_trans_tbl", typeof(bool), "Use TRANS.TBL for filenames"), ("use_evd", typeof(bool),
+                                                                             "If present, use Enhanced Volume Descriptor with specified encoding (overrides namespace)")
         };
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()
     {
-        {
-            "normal", "Primary Volume Descriptor, ignoring ;1 suffixes"
-        },
-        {
-            "vms", "Primary Volume Descriptor, showing version suffixes"
-        },
-        {
-            "joliet", "Joliet Volume Descriptor (default)"
-        },
-        {
-            "rrip", "Rock Ridge"
-        },
-        {
-            "romeo", "Primary Volume Descriptor using the specified encoding codepage"
-        }
+        { "normal", "Primary Volume Descriptor, ignoring ;1 suffixes" },
+        { "vms", "Primary Volume Descriptor, showing version suffixes" },
+        { "joliet", "Joliet Volume Descriptor (default)" },
+        { "rrip", "Rock Ridge" },
+        { "romeo", "Primary Volume Descriptor using the specified encoding codepage" }
     };
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
-
-    const string MODULE_NAME = "ISO9660 plugin";
 }

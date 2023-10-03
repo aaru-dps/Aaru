@@ -39,6 +39,8 @@ public sealed partial class CPM
     // Do not translate
     const string FS_TYPE = "cpmfs";
 
+#region Nested type: FormatByte
+
     /// <summary>Enumerates the format identification byte used by CP/M-86</summary>
     enum FormatByte : byte
     {
@@ -63,4 +65,6 @@ public sealed partial class CPM
         /// <summary>3.5" double-density double-side 9 sectors/track</summary>
         k720Alt = 0x94
     }
+
+#endregion
 }

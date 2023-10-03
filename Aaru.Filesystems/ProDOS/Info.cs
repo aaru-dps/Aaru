@@ -45,25 +45,28 @@ namespace Aaru.Filesystems;
 // Information from Apple ProDOS 8 Technical Reference
 /// <inheritdoc />
 /// <summary>Implements detection of Apple ProDOS filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ProDOSPlugin
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         if(partition.Length < 3)
             return false;
 
-        uint multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+        var multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
         // Blocks 0 and 1 are boot code
-        ErrorNumber errno = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier,
+        ErrorNumber errno = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier,
                                                     out byte[] rootDirectoryKeyBlock);
 
         if(errno != ErrorNumber.NoError)
             return false;
 
-        bool apmFromHddOnCd = false;
+        var apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
@@ -72,12 +75,10 @@ public sealed partial class ProDOSPlugin
             if(errno != ErrorNumber.NoError)
                 return false;
 
-            foreach(int offset in new[]
-                    {
-                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                    }.Where(offset => tmp.Length > offset + 0x200 && BitConverter.ToUInt16(tmp, offset) == 0 &&
-                                      (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                      tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
+            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
+                        offset => tmp.Length > offset + 0x200 && BitConverter.ToUInt16(tmp, offset) == 0 &&
+                                  (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
+                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
             {
                 Array.Copy(tmp, offset, rootDirectoryKeyBlock, 0, 0x200);
                 apmFromHddOnCd = true;
@@ -86,13 +87,13 @@ public sealed partial class ProDOSPlugin
             }
         }
 
-        ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
+        var prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
         AaruConsole.DebugWriteLine(MODULE_NAME, "prePointer = {0}", prePointer);
 
         if(prePointer != 0)
             return false;
 
-        byte storageType = (byte)((rootDirectoryKeyBlock[0x04] & STORAGE_TYPE_MASK) >> 4);
+        var storageType = (byte)((rootDirectoryKeyBlock[0x04] & STORAGE_TYPE_MASK) >> 4);
         AaruConsole.DebugWriteLine(MODULE_NAME, "storage_type = {0}", storageType);
 
         if(storageType != ROOT_DIRECTORY_TYPE)
@@ -110,13 +111,13 @@ public sealed partial class ProDOSPlugin
         if(entriesPerBlock != ENTRIES_PER_BLOCK)
             return false;
 
-        ushort bitMapPointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
+        var bitMapPointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bit_map_pointer = {0}", bitMapPointer);
 
         if(bitMapPointer > partition.End)
             return false;
 
-        ushort totalBlocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
+        var totalBlocks = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
 
         if(apmFromHddOnCd)
             totalBlocks /= 4;
@@ -134,17 +135,17 @@ public sealed partial class ProDOSPlugin
         encoding    ??= new Apple2c();
         information =   "";
         metadata    =   new FileSystem();
-        var  sbInformation = new StringBuilder();
-        uint multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+        var sbInformation = new StringBuilder();
+        var multiplier    = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
         // Blocks 0 and 1 are boot code
-        ErrorNumber errno = imagePlugin.ReadSectors((2 * multiplier) + partition.Start, multiplier,
+        ErrorNumber errno = imagePlugin.ReadSectors(2 * multiplier + partition.Start, multiplier,
                                                     out byte[] rootDirectoryKeyBlockBytes);
 
         if(errno != ErrorNumber.NoError)
             return;
 
-        bool apmFromHddOnCd = false;
+        var apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
@@ -153,12 +154,10 @@ public sealed partial class ProDOSPlugin
             if(errno != ErrorNumber.NoError)
                 return;
 
-            foreach(int offset in new[]
-                    {
-                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                    }.Where(offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
-                                      (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                      tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
+            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
+                        offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
+                                  (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
+                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
             {
                 Array.Copy(tmp, offset, rootDirectoryKeyBlockBytes, 0, 0x200);
                 apmFromHddOnCd = true;
@@ -177,32 +176,32 @@ public sealed partial class ProDOSPlugin
         rootDirectoryKeyBlock.header.storage_type = (byte)((rootDirectoryKeyBlockBytes[0x04] & STORAGE_TYPE_MASK) >> 4);
 
         rootDirectoryKeyBlock.header.name_length = (byte)(rootDirectoryKeyBlockBytes[0x04] & NAME_LENGTH_MASK);
-        byte[] temporal = new byte[rootDirectoryKeyBlock.header.name_length];
+        var temporal = new byte[rootDirectoryKeyBlock.header.name_length];
         Array.Copy(rootDirectoryKeyBlockBytes, 0x05, temporal, 0, rootDirectoryKeyBlock.header.name_length);
         rootDirectoryKeyBlock.header.volume_name = encoding.GetString(temporal);
         rootDirectoryKeyBlock.header.reserved    = BitConverter.ToUInt64(rootDirectoryKeyBlockBytes, 0x14);
 
-        ushort tempTimestampLeft  = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
-        ushort tempTimestampRight = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1E);
+        var tempTimestampLeft  = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1C);
+        var tempTimestampRight = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x1E);
 
         bool dateCorrect;
 
         try
         {
-            uint tempTimestamp = (uint)((tempTimestampLeft << 16) + tempTimestampRight);
-            int  year          = (int)((tempTimestamp & YEAR_MASK)  >> 25);
-            int  month         = (int)((tempTimestamp & MONTH_MASK) >> 21);
-            int  day           = (int)((tempTimestamp & DAY_MASK)   >> 16);
-            int  hour          = (int)((tempTimestamp & HOUR_MASK)  >> 8);
-            int  minute        = (int)(tempTimestamp & MINUTE_MASK);
+            var tempTimestamp = (uint)((tempTimestampLeft << 16) + tempTimestampRight);
+            var year          = (int)((tempTimestamp & YEAR_MASK)  >> 25);
+            var month         = (int)((tempTimestamp & MONTH_MASK) >> 21);
+            var day           = (int)((tempTimestamp & DAY_MASK)   >> 16);
+            var hour          = (int)((tempTimestamp & HOUR_MASK)  >> 8);
+            var minute        = (int)(tempTimestamp & MINUTE_MASK);
             year += 1900;
 
             if(year < 1940)
                 year += 100;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_left = 0x{0:X4}", tempTimestampLeft);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_left = 0x{0:X4}",  tempTimestampLeft);
             AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp = 0x{0:X8}", tempTimestamp);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp = 0x{0:X8}",       tempTimestamp);
 
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Datetime_field_year_0_month_1_day_2_hour_3_minute_4, year, month,
@@ -227,8 +226,10 @@ public sealed partial class ProDOSPlugin
         rootDirectoryKeyBlock.header.total_blocks    = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x29);
 
         if(apmFromHddOnCd)
+        {
             sbInformation.AppendLine(Localization.ProDOS_uses_512_bytes_sector_while_device_uses_2048_bytes_sector).
                           AppendLine();
+        }
 
         if(rootDirectoryKeyBlock.header.version     != VERSION1 ||
            rootDirectoryKeyBlock.header.min_version != VERSION1)
@@ -240,22 +241,29 @@ public sealed partial class ProDOSPlugin
         if(rootDirectoryKeyBlock.header.version == VERSION1)
             sbInformation.AppendLine(Localization.ProDOS_version_one_used_to_create_this_volume);
         else
+        {
             sbInformation.AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_used_to_create_this_volume,
                                        rootDirectoryKeyBlock.header.version).AppendLine();
+        }
 
         if(rootDirectoryKeyBlock.header.min_version == VERSION1)
             sbInformation.AppendLine(Localization.ProDOS_version_one_at_least_required_for_reading_this_volume);
         else
+        {
             sbInformation.
-                AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_is_at_least_required_for_reading_this_volume,
-                             rootDirectoryKeyBlock.header.min_version).AppendLine();
+                AppendFormat(
+                    Localization.Unknown_ProDOS_version_with_field_0_is_at_least_required_for_reading_this_volume,
+                    rootDirectoryKeyBlock.header.min_version).AppendLine();
+        }
 
         sbInformation.AppendFormat(Localization.Volume_name_is_0, rootDirectoryKeyBlock.header.volume_name).
                       AppendLine();
 
         if(dateCorrect)
+        {
             sbInformation.AppendFormat(Localization.Volume_created_on_0, rootDirectoryKeyBlock.header.creation_time).
                           AppendLine();
+        }
 
         sbInformation.
             AppendFormat(Localization._0_bytes_per_directory_entry, rootDirectoryKeyBlock.header.entry_length).
@@ -291,8 +299,10 @@ public sealed partial class ProDOSPlugin
 
         // TODO: Fix mask
         if((rootDirectoryKeyBlock.header.access & RESERVED_ATTRIBUTE_MASK) != 0)
+        {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reserved_attributes_are_set_0,
                                        rootDirectoryKeyBlock.header.access);
+        }
 
         information = sbInformation.ToString();
 
@@ -312,4 +322,6 @@ public sealed partial class ProDOSPlugin
 
         metadata.CreationDate = rootDirectoryKeyBlock.header.creation_time;
     }
+
+#endregion
 }

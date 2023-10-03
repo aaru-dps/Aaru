@@ -35,16 +35,23 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class ISO9660
 {
-    const           byte MODE2_FORM2          = 0x20;
-    static readonly int  _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+    const byte MODE2_FORM2 = 0x20;
+
+    const           string FS_TYPE_HSF          = "hfs";
+    const           string FS_TYPE_CDI          = "cdi";
+    const           string FS_TYPE_ISO          = "iso9660";
+    static readonly int    _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+
+#region Nested type: Namespace
 
     enum Namespace
     {
-        Normal, Vms, Joliet,
-        Rrip, Romeo
+        Normal,
+        Vms,
+        Joliet,
+        Rrip,
+        Romeo
     }
 
-    const string FS_TYPE_HSF = "hfs";
-    const string FS_TYPE_CDI = "cdi";
-    const string FS_TYPE_ISO = "iso9660";
+#endregion
 }

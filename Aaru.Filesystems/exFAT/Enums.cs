@@ -39,10 +39,16 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class exFAT
 {
+#region Nested type: VolumeFlags
+
     [Flags]
     enum VolumeFlags : ushort
     {
-        SecondFatActive = 1, VolumeDirty = 2, MediaFailure = 4,
+        SecondFatActive = 1,
+        VolumeDirty     = 2,
+        MediaFailure    = 4,
         ClearToZero     = 8
     }
+
+#endregion
 }

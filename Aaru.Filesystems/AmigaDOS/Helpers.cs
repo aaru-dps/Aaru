@@ -37,14 +37,14 @@ public sealed partial class AmigaDOSPlugin
 {
     static RootBlock MarshalRootBlock(byte[] block)
     {
-        byte[] tmp = new byte[228];
-        Array.Copy(block, 0, tmp, 0, 24);
+        var tmp = new byte[228];
+        Array.Copy(block, 0,                  tmp, 0,  24);
         Array.Copy(block, block.Length - 200, tmp, 28, 200);
         RootBlock root = Marshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
         root.hashTable = new uint[(block.Length - 224) / 4];
 
-        for(int i = 0; i < root.hashTable.Length; i++)
-            root.hashTable[i] = BigEndianBitConverter.ToUInt32(block, 24 + (i * 4));
+        for(var i = 0; i < root.hashTable.Length; i++)
+            root.hashTable[i] = BigEndianBitConverter.ToUInt32(block, 24 + i * 4);
 
         return root;
     }
@@ -53,7 +53,7 @@ public sealed partial class AmigaDOSPlugin
     {
         uint sum = 0;
 
-        for(int i = 0; i < data.Length; i += 4)
+        for(var i = 0; i < data.Length; i += 4)
             sum += (uint)((data[i] << 24) + (data[i + 1] << 16) + (data[i + 2] << 8) + data[i + 3]);
 
         return (uint)-sum;
@@ -63,7 +63,7 @@ public sealed partial class AmigaDOSPlugin
     {
         uint sum = 0;
 
-        for(int i = 0; i < data.Length; i += 4)
+        for(var i = 0; i < data.Length; i += 4)
         {
             uint psum = sum;
 

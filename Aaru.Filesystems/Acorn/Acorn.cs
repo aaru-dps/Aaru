@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
 public sealed partial class AcornADFS : IFilesystem
 {
+    const string MODULE_NAME = "ADFS Plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.AcornADFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "ADFS Plugin";
+
+#endregion
 }

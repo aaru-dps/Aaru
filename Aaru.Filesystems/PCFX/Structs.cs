@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of NEC PC-FX headers</summary>
 public sealed partial class PCFX
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -65,4 +67,6 @@ public sealed partial class PCFX
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public readonly byte[] date;
     }
+
+#endregion
 }

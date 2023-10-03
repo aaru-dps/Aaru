@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's Journaled File System</summary>
 public sealed partial class JFS
 {
+#region Nested type: Extent
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Extent
     {
@@ -45,12 +47,9 @@ public sealed partial class JFS
         public readonly uint addr2;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct TimeStruct
-    {
-        public readonly uint tv_sec;
-        public readonly uint tv_nsec;
-    }
+#endregion
+
+#region Nested type: SuperBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -87,4 +86,17 @@ public sealed partial class JFS
         public readonly byte[] s_label;
         public readonly Guid s_loguuid;
     }
+
+#endregion
+
+#region Nested type: TimeStruct
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TimeStruct
+    {
+        public readonly uint tv_sec;
+        public readonly uint tv_nsec;
+    }
+
+#endregion
 }

@@ -39,6 +39,67 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class PascalPlugin
 {
+#region Nested type: PascalDirNode
+
+    sealed class PascalDirNode : IDirNode
+    {
+        internal string[] _contents;
+        internal int      _position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: PascalFileEntry
+
+    struct PascalFileEntry
+    {
+        /// <summary>0x00, first block of file</summary>
+        public short FirstBlock;
+        /// <summary>0x02, last block of file</summary>
+        public short LastBlock;
+        /// <summary>0x04, entry type</summary>
+        public PascalFileKind EntryType;
+        /// <summary>0x06, file name</summary>
+        public byte[] Filename;
+        /// <summary>0x16, bytes used in last block</summary>
+        public short LastBytes;
+        /// <summary>0x18, modification time</summary>
+        public short ModificationTime;
+    }
+
+#endregion
+
+#region Nested type: PascalFileNode
+
+    sealed class PascalFileNode : IFileNode
+    {
+        internal byte[] _cache;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: PascalVolumeEntry
+
     struct PascalVolumeEntry
     {
         /// <summary>0x00, first block of volume entry</summary>
@@ -61,38 +122,5 @@ public sealed partial class PascalPlugin
         public int Tail;
     }
 
-    struct PascalFileEntry
-    {
-        /// <summary>0x00, first block of file</summary>
-        public short FirstBlock;
-        /// <summary>0x02, last block of file</summary>
-        public short LastBlock;
-        /// <summary>0x04, entry type</summary>
-        public PascalFileKind EntryType;
-        /// <summary>0x06, file name</summary>
-        public byte[] Filename;
-        /// <summary>0x16, bytes used in last block</summary>
-        public short LastBytes;
-        /// <summary>0x18, modification time</summary>
-        public short ModificationTime;
-    }
-
-    sealed class PascalFileNode : IFileNode
-    {
-        internal byte[] _cache;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
-
-    sealed class PascalDirNode : IDirNode
-    {
-        internal string[] _contents;
-        internal int      _position;
-        /// <inheritdoc />
-        public string Path { get; init; }
-    }
+#endregion
 }

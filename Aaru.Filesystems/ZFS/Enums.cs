@@ -51,21 +51,45 @@ namespace Aaru.Filesystems;
  */
 /// <inheritdoc />
 /// <summary>Implements detection for the Zettabyte File System (ZFS)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
- SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class ZFS
 {
+#region Nested type: NVS_DataTypes
+
     enum NVS_DataTypes : uint
     {
-        DATA_TYPE_UNKNOWN = 0, DATA_TYPE_BOOLEAN, DATA_TYPE_BYTE,
-        DATA_TYPE_INT16, DATA_TYPE_UINT16, DATA_TYPE_INT32,
-        DATA_TYPE_UINT32, DATA_TYPE_INT64, DATA_TYPE_UINT64,
-        DATA_TYPE_STRING, DATA_TYPE_BYTE_ARRAY, DATA_TYPE_INT16_ARRAY,
-        DATA_TYPE_UINT16_ARRAY, DATA_TYPE_INT32_ARRAY, DATA_TYPE_UINT32_ARRAY,
-        DATA_TYPE_INT64_ARRAY, DATA_TYPE_UINT64_ARRAY, DATA_TYPE_STRING_ARRAY,
-        DATA_TYPE_HRTIME, DATA_TYPE_NVLIST, DATA_TYPE_NVLIST_ARRAY,
-        DATA_TYPE_BOOLEAN_VALUE, DATA_TYPE_INT8, DATA_TYPE_UINT8,
-        DATA_TYPE_BOOLEAN_ARRAY, DATA_TYPE_INT8_ARRAY, DATA_TYPE_UINT8_ARRAY,
+        DATA_TYPE_UNKNOWN = 0,
+        DATA_TYPE_BOOLEAN,
+        DATA_TYPE_BYTE,
+        DATA_TYPE_INT16,
+        DATA_TYPE_UINT16,
+        DATA_TYPE_INT32,
+        DATA_TYPE_UINT32,
+        DATA_TYPE_INT64,
+        DATA_TYPE_UINT64,
+        DATA_TYPE_STRING,
+        DATA_TYPE_BYTE_ARRAY,
+        DATA_TYPE_INT16_ARRAY,
+        DATA_TYPE_UINT16_ARRAY,
+        DATA_TYPE_INT32_ARRAY,
+        DATA_TYPE_UINT32_ARRAY,
+        DATA_TYPE_INT64_ARRAY,
+        DATA_TYPE_UINT64_ARRAY,
+        DATA_TYPE_STRING_ARRAY,
+        DATA_TYPE_HRTIME,
+        DATA_TYPE_NVLIST,
+        DATA_TYPE_NVLIST_ARRAY,
+        DATA_TYPE_BOOLEAN_VALUE,
+        DATA_TYPE_INT8,
+        DATA_TYPE_UINT8,
+        DATA_TYPE_BOOLEAN_ARRAY,
+        DATA_TYPE_INT8_ARRAY,
+        DATA_TYPE_UINT8_ARRAY,
         DATA_TYPE_DOUBLE
     }
+
+#endregion
 }

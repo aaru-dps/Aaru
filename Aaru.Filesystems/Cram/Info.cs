@@ -44,6 +44,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Cram
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -55,7 +57,7 @@ public sealed partial class Cram
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic is CRAM_MAGIC or CRAM_CIGAM;
     }
@@ -72,10 +74,10 @@ public sealed partial class Cram
         if(errno != ErrorNumber.NoError)
             return;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
-        var  crSb         = new SuperBlock();
-        bool littleEndian = true;
+        var crSb         = new SuperBlock();
+        var littleEndian = true;
 
         switch(magic)
         {
@@ -99,9 +101,9 @@ public sealed partial class Cram
         sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, encoding)).
                       AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_has_0_bytes, crSb.size).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes,  crSb.size).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks, crSb.blocks).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_files, crSb.files).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_files,  crSb.files).AppendLine();
 
         information = sbInformation.ToString();
 
@@ -114,4 +116,6 @@ public sealed partial class Cram
             FreeClusters = 0
         };
     }
+
+#endregion
 }

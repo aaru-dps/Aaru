@@ -29,9 +29,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using hammer_crc_t = System.UInt32;
-using hammer_off_t = System.UInt64;
-using hammer_tid_t = System.UInt64;
+using hammer_crc_t = uint;
+using hammer_off_t = ulong;
+using hammer_tid_t = ulong;
 
 #pragma warning disable 169
 
@@ -41,8 +41,31 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the HAMMER filesystem</summary>
 public sealed partial class HAMMER
 {
+#region Nested type: HammerBlockMap
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+    struct HammerBlockMap
+    {
+        /// <summary>zone-2 offset only used by zone-4</summary>
+        public hammer_off_t phys_offset;
+        /// <summary>zone-X offset only used by zone-3</summary>
+        public hammer_off_t first_offset;
+        /// <summary>zone-X offset for allocation</summary>
+        public hammer_off_t next_offset;
+        /// <summary>zone-X offset only used by zone-3</summary>
+        public hammer_off_t alloc_offset;
+        public uint         reserved01;
+        public hammer_crc_t entry_crc;
+    }
+
+#endregion
+
+#region Nested type: SuperBlock
+
     /// <summary>Hammer superblock</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
     readonly struct SuperBlock
     {
         /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
@@ -117,18 +140,5 @@ public sealed partial class HAMMER
         public readonly hammer_off_t[] vol0_undo_array;
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-    struct HammerBlockMap
-    {
-        /// <summary>zone-2 offset only used by zone-4</summary>
-        public hammer_off_t phys_offset;
-        /// <summary>zone-X offset only used by zone-3</summary>
-        public hammer_off_t first_offset;
-        /// <summary>zone-X offset for allocation</summary>
-        public hammer_off_t next_offset;
-        /// <summary>zone-X offset only used by zone-3</summary>
-        public hammer_off_t alloc_offset;
-        public uint         reserved01;
-        public hammer_crc_t entry_crc;
-    }
+#endregion
 }

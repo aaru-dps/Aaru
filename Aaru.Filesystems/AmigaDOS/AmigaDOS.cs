@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Amiga Fast File System (AFFS)</summary>
 public sealed partial class AmigaDOSPlugin : IFilesystem
 {
+    const string MODULE_NAME = "AmigaDOS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.AmigaDOSPlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("3c882400-208c-427d-a086-9119852a1bc7");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "AmigaDOS plugin";
+
+#endregion
 }

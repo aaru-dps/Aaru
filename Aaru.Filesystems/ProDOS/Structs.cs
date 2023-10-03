@@ -36,9 +36,81 @@ namespace Aaru.Filesystems;
 // Information from Apple ProDOS 8 Technical Reference
 /// <inheritdoc />
 /// <summary>Implements detection of Apple ProDOS filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ProDOSPlugin
 {
+#region Nested type: DirectoryBlock
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct DirectoryBlock
+    {
+        /// <summary>Pointer to previous directory block Offset 0x00, 2 bytes</summary>
+        public ushort zero;
+        /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
+        public ushort next_pointer;
+        /// <summary>Directory entries Offset 0x2F, 39 bytes each, 13 entries</summary>
+        public Entry[] entries;
+    }
+
+#endregion
+
+#region Nested type: DirectoryHeader
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct DirectoryHeader
+    {
+        /// <summary>Constant 0x0E Offset 0x04, mask 0xF0</summary>
+        public byte storage_type;
+        /// <summary>Length of volume_name pascal string Offset 0x04, mask 0x0F</summary>
+        public byte name_length;
+        /// <summary>The name of the directory. Offset 0x05, 15 bytes</summary>
+        public string directory_name;
+        /// <summary>Reserved for future expansion Offset 0x14, 8 bytes</summary>
+        public ulong reserved;
+        /// <summary>Creation time of the volume Offset 0x1C, 4 bytes</summary>
+        public DateTime creation_time;
+        /// <summary>Version number of the volume format Offset 0x20, 1 byte</summary>
+        public byte version;
+        /// <summary>Reserved for future use Offset 0x21, 1 byte</summary>
+        public byte min_version;
+        /// <summary>Permissions for the volume Offset 0x22, 1 byte</summary>
+        public byte access;
+        /// <summary>Length of an entry in this directory Const 0x27 Offset 0x23, 1 byte</summary>
+        public byte entry_length;
+        /// <summary>Number of entries per block Const 0x0D Offset 0x24, 1 byte</summary>
+        public byte entries_per_block;
+        /// <summary>Number of active files in this directory Offset 0x25, 2 bytes</summary>
+        public ushort file_count;
+        /// <summary>Block address of parent directory block that contains this entry Offset 0x27, 2 bytes</summary>
+        public ushort parent_pointer;
+        /// <summary>Entry number within the block indicated in parent_pointer Offset 0x29, 1 byte</summary>
+        public byte parent_entry_number;
+        /// <summary>Length of the entry that holds this directory, in the parent entry Const 0x27 Offset 0x2A, 1 byte</summary>
+        public byte parent_entry_length;
+    }
+
+#endregion
+
+#region Nested type: DirectoryKeyBlock
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct DirectoryKeyBlock
+    {
+        /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
+        public ushort zero;
+        /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
+        public ushort next_pointer;
+        /// <summary>Directory header Offset 0x04, 39 bytes</summary>
+        public DirectoryHeader header;
+        /// <summary>Directory entries Offset 0x2F, 39 bytes each, 12 entries</summary>
+        public Entry[] entries;
+    }
+
+#endregion
+
+#region Nested type: Entry
+
     /// <summary>ProDOS directory entry, decoded structure</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct Entry
@@ -76,6 +148,32 @@ public sealed partial class ProDOSPlugin
         public ushort header_pointer;
     }
 
+#endregion
+
+#region Nested type: IndexBlock
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct IndexBlock
+    {
+        /// <summary>Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)</summary>
+        public ushort[] block_pointer;
+    }
+
+#endregion
+
+#region Nested type: MasterIndexBlock
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct MasterIndexBlock
+    {
+        /// <summary>Up to 128 pointers to index blocks</summary>
+        public ushort[] index_block_pointer;
+    }
+
+#endregion
+
+#region Nested type: RootDirectoryHeader
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct RootDirectoryHeader
     {
@@ -110,51 +208,9 @@ public sealed partial class ProDOSPlugin
         public ushort total_blocks;
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct DirectoryHeader
-    {
-        /// <summary>Constant 0x0E Offset 0x04, mask 0xF0</summary>
-        public byte storage_type;
-        /// <summary>Length of volume_name pascal string Offset 0x04, mask 0x0F</summary>
-        public byte name_length;
-        /// <summary>The name of the directory. Offset 0x05, 15 bytes</summary>
-        public string directory_name;
-        /// <summary>Reserved for future expansion Offset 0x14, 8 bytes</summary>
-        public ulong reserved;
-        /// <summary>Creation time of the volume Offset 0x1C, 4 bytes</summary>
-        public DateTime creation_time;
-        /// <summary>Version number of the volume format Offset 0x20, 1 byte</summary>
-        public byte version;
-        /// <summary>Reserved for future use Offset 0x21, 1 byte</summary>
-        public byte min_version;
-        /// <summary>Permissions for the volume Offset 0x22, 1 byte</summary>
-        public byte access;
-        /// <summary>Length of an entry in this directory Const 0x27 Offset 0x23, 1 byte</summary>
-        public byte entry_length;
-        /// <summary>Number of entries per block Const 0x0D Offset 0x24, 1 byte</summary>
-        public byte entries_per_block;
-        /// <summary>Number of active files in this directory Offset 0x25, 2 bytes</summary>
-        public ushort file_count;
-        /// <summary>Block address of parent directory block that contains this entry Offset 0x27, 2 bytes</summary>
-        public ushort parent_pointer;
-        /// <summary>Entry number within the block indicated in parent_pointer Offset 0x29, 1 byte</summary>
-        public byte parent_entry_number;
-        /// <summary>Length of the entry that holds this directory, in the parent entry Const 0x27 Offset 0x2A, 1 byte</summary>
-        public byte parent_entry_length;
-    }
+#endregion
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct DirectoryKeyBlock
-    {
-        /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
-        public ushort zero;
-        /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
-        public ushort next_pointer;
-        /// <summary>Directory header Offset 0x04, 39 bytes</summary>
-        public DirectoryHeader header;
-        /// <summary>Directory entries Offset 0x2F, 39 bytes each, 12 entries</summary>
-        public Entry[] entries;
-    }
+#region Nested type: RootDirectoryKeyBlock
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct RootDirectoryKeyBlock
@@ -169,28 +225,5 @@ public sealed partial class ProDOSPlugin
         public Entry[] entries;
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct DirectoryBlock
-    {
-        /// <summary>Pointer to previous directory block Offset 0x00, 2 bytes</summary>
-        public ushort zero;
-        /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
-        public ushort next_pointer;
-        /// <summary>Directory entries Offset 0x2F, 39 bytes each, 13 entries</summary>
-        public Entry[] entries;
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct IndexBlock
-    {
-        /// <summary>Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)</summary>
-        public ushort[] block_pointer;
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct MasterIndexBlock
-    {
-        /// <summary>Up to 128 pointers to index blocks</summary>
-        public ushort[] index_block_pointer;
-    }
+#endregion
 }

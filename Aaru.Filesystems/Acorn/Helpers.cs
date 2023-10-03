@@ -36,8 +36,8 @@ public sealed partial class AcornADFS
 {
     static byte AcornMapChecksum(byte[] data, int length)
     {
-        int sum   = 0;
-        int carry = 0;
+        var sum   = 0;
+        var carry = 0;
 
         if(length > data.Length)
             length = data.Length;
@@ -101,7 +101,7 @@ public sealed partial class AcornADFS
             length = data.Count;
 
         // EOR r0, r1, r0, ROR #13
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             uint carry = sum & 0x1FFF;
             sum >>= 13;
@@ -109,6 +109,6 @@ public sealed partial class AcornADFS
             sum +=  carry << 19;
         }
 
-        return (byte)(((sum & 0xFF000000) >> 24) ^ ((sum & 0xFF0000) >> 16) ^ ((sum & 0xFF00) >> 8) ^ (sum & 0xFF));
+        return (byte)((sum & 0xFF000000) >> 24 ^ (sum & 0xFF0000) >> 16 ^ (sum & 0xFF00) >> 8 ^ sum & 0xFF);
     }
 }

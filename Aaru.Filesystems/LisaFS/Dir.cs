@@ -43,6 +43,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ReadLink(string path, out string dest)
     {
@@ -129,11 +131,14 @@ public sealed partial class LisaFS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     void ReadDir(short dirId, out List<string> contents) =>
 
         // Do same trick as Mac OS X, replace filesystem '/' with '-',
         // as '-' is the path separator in Lisa OS
-        contents = (from entry in _catalogCache where entry.parentID == dirId
+        contents = (from entry in _catalogCache
+                    where entry.parentID == dirId
                     select StringHandlers.CToString(entry.filename, _encoding).Replace('/', '-')).ToList();
 
     /// <summary>Reads, interprets and caches the Catalog File</summary>
@@ -154,7 +159,7 @@ public sealed partial class LisaFS
             if(error != ErrorNumber.NoError)
                 return error;
 
-            int                  offset    = 0;
+            var                  offset    = 0;
             List<CatalogEntryV2> catalogV2 = new();
 
             // For each entry on the catalog
@@ -299,12 +304,13 @@ public sealed partial class LisaFS
         // Foreach catalog block
         foreach(byte[] buf in catalogBlocks)
         {
-            int offset = 0;
+            var offset = 0;
 
             // Traverse all entries
             while(offset + 64 <= buf.Length)
 
                 // Catalog block header
+            {
                 if(buf[offset + 0x24] == 0x08)
                     offset += 78;
 
@@ -337,14 +343,16 @@ public sealed partial class LisaFS
                     };
 
                     Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                    Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
+                    Array.Copy(buf, offset + 0x38, entry.tail,     0, 8);
 
                     if(ReadExtentsFile(entry.fileID, out _) == ErrorNumber.NoError)
+                    {
                         if(!_fileSizeCache.ContainsKey(entry.fileID))
                         {
                             _catalogCache.Add(entry);
                             _fileSizeCache.Add(entry.fileID, entry.length);
                         }
+                    }
 
                     offset += 64;
                 }
@@ -380,6 +388,7 @@ public sealed partial class LisaFS
                 }
                 else
                     break;
+            }
         }
 
         return ErrorNumber.NoError;

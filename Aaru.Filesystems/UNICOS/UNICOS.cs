@@ -30,12 +30,12 @@
 
 using System;
 using Aaru.CommonTypes.Interfaces;
-using blkno_t = System.Int64;
-using daddr_t = System.Int64;
-using dev_t = System.Int64;
-using extent_t = System.Int64;
-using ino_t = System.Int64;
-using time_t = System.Int64;
+using blkno_t = long;
+using daddr_t = long;
+using dev_t = long;
+using extent_t = long;
+using ino_t = long;
+using time_t = long;
 
 namespace Aaru.Filesystems;
 
@@ -43,11 +43,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Cray UNICOS filesystem</summary>
 public sealed partial class UNICOS : IFilesystem
 {
+    const string MODULE_NAME = "UNICOS plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.UNICOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("61712F04-066C-44D5-A2A0-1E44C66B33F0");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "UNICOS plugin";
+
+#endregion
 }

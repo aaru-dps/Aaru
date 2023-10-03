@@ -34,9 +34,47 @@ namespace Aaru.Filesystems;
 // Information from the Linux kernel
 /// <inheritdoc />
 /// <summary>Implements detection for the Xia filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Xia
 {
+#region Nested type: DirectoryEntry
+
+    /// <summary>Xia directory entry</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        public readonly uint   d_ino;
+        public readonly ushort d_rec_len;
+        public readonly byte   d_name_len;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NAME_LEN + 1)]
+        public readonly byte[] d_name;
+    }
+
+#endregion
+
+#region Nested type: Inode
+
+    /// <summary>Xia inode</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Inode
+    {
+        public readonly ushort i_mode;
+        public readonly ushort i_nlinks;
+        public readonly ushort i_uid;
+        public readonly ushort i_gid;
+        public readonly uint   i_size;
+        public readonly uint   i_ctime;
+        public readonly uint   i_atime;
+        public readonly uint   i_mtime;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NUM_BLOCK_POINTERS)]
+        public readonly uint[] i_zone;
+    }
+
+#endregion
+
+#region Nested type: SuperBlock
+
     /// <summary>Xia superblock</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -78,30 +116,5 @@ public sealed partial class Xia
         public readonly uint s_magic;
     }
 
-    /// <summary>Xia directory entry</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DirectoryEntry
-    {
-        public readonly uint   d_ino;
-        public readonly ushort d_rec_len;
-        public readonly byte   d_name_len;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NAME_LEN + 1)]
-        public readonly byte[] d_name;
-    }
-
-    /// <summary>Xia inode</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Inode
-    {
-        public readonly ushort i_mode;
-        public readonly ushort i_nlinks;
-        public readonly ushort i_uid;
-        public readonly ushort i_gid;
-        public readonly uint   i_size;
-        public readonly uint   i_ctime;
-        public readonly uint   i_atime;
-        public readonly uint   i_mtime;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NUM_BLOCK_POINTERS)]
-        public readonly uint[] i_zone;
-    }
+#endregion
 }

@@ -36,10 +36,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Technology File System (NTFS)</summary>
 public sealed partial class NTFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.NTFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("33513B2C-1e6d-4d21-a660-0bbc789c3871");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Reiser v3 filesystem</summary>
 public sealed partial class Reiser : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -51,7 +53,7 @@ public sealed partial class Reiser : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -89,7 +91,7 @@ public sealed partial class Reiser : IFilesystem
         if(sbAddr == 0)
             sbAddr = 1;
 
-        uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -121,7 +123,7 @@ public sealed partial class Reiser : IFilesystem
         sb.AppendFormat(Localization.Volume_has_0_blocks_with_1_blocks_free, reiserSb.block_count,
                         reiserSb.free_blocks).AppendLine();
 
-        sb.AppendFormat(Localization._0_bytes_per_block, reiserSb.blocksize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_block,                reiserSb.blocksize).AppendLine();
         sb.AppendFormat(Localization.Root_directory_resides_on_block_0, reiserSb.root_block).AppendLine();
 
         if(reiserSb.umount_state == 2)
@@ -153,4 +155,6 @@ public sealed partial class Reiser : IFilesystem
         metadata.VolumeName   = StringHandlers.CToString(reiserSb.label, encoding);
         metadata.VolumeSerial = reiserSb.uuid.ToString();
     }
+
+#endregion
 }

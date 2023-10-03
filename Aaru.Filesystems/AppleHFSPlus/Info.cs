@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
 public sealed partial class AppleHFSPlus
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -62,7 +64,7 @@ public sealed partial class AppleHFSPlus
         if(vhSector.Length < 0x800)
             return false;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -71,13 +73,13 @@ public sealed partial class AppleHFSPlus
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
             }
             else
                 hfspOffset = 0;
@@ -118,7 +120,7 @@ public sealed partial class AppleHFSPlus
         if(errno != ErrorNumber.NoError)
             return;
 
-        ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
+        var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
         if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
         {
@@ -127,13 +129,13 @@ public sealed partial class AppleHFSPlus
             if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
             {
                 // ReSharper disable once InconsistentNaming
-                ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
+                var xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
-                uint drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
+                var drAlBlkSiz = BigEndianBitConverter.ToUInt32(vhSector, 0x414);
 
-                ushort drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
+                var drAlBlSt = BigEndianBitConverter.ToUInt16(vhSector, 0x41C);
 
-                hfspOffset = (ulong)(((drAlBlSt * 512) + (xdrStABNt * drAlBlkSiz)) / imagePlugin.Info.SectorSize);
+                hfspOffset = (ulong)((drAlBlSt * 512 + xdrStABNt * drAlBlkSiz) / imagePlugin.Info.SectorSize);
                 wrapped    = true;
             }
             else
@@ -177,7 +179,7 @@ public sealed partial class AppleHFSPlus
         if(wrapped)
             sb.AppendLine(Localization.Volume_is_wrapped_inside_an_HFS_volume);
 
-        byte[] tmp = new byte[0x400];
+        var tmp = new byte[0x400];
         Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
         vhSector = tmp;
 
@@ -223,14 +225,18 @@ public sealed partial class AppleHFSPlus
                AppendLine();
 
             if(vh.backupDate > 0)
+            {
                 sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(vh.backupDate)).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_backed_up);
 
             if(vh.backupDate > 0)
+            {
                 sb.AppendFormat(Localization.Last_check_date_0, DateHandlers.MacToDateTime(vh.checkedDate)).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_checked_up);
 
@@ -250,11 +256,11 @@ public sealed partial class AppleHFSPlus
             sb.AppendFormat(Localization.Attributes_File_is_0_bytes, vh.attributesFile_logicalSize).AppendLine();
             sb.AppendFormat(Localization.Startup_File_is_0_bytes, vh.startupFile_logicalSize).AppendLine();
             sb.AppendLine(Localization.Finder_info);
-            sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0, vh.drFndrInfo0).AppendLine();
-            sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0, vh.drFndrInfo1).AppendLine();
-            sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0, vh.drFndrInfo2).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0,        vh.drFndrInfo0).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0,  vh.drFndrInfo1).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0,      vh.drFndrInfo2).AppendLine();
             sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, vh.drFndrInfo3).AppendLine();
-            sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0, vh.drFndrInfo5).AppendLine();
+            sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0,      vh.drFndrInfo5).AppendLine();
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)
@@ -263,34 +269,28 @@ public sealed partial class AppleHFSPlus
             metadata = new FileSystem();
 
             if(vh.backupDate > 0)
-            {
                 metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
-            }
 
             metadata.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
             metadata.Clusters    =  vh.totalBlocks;
             metadata.ClusterSize =  vh.blockSize;
 
             if(vh.createDate > 0)
-            {
                 metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
-            }
 
             metadata.Dirty        = (vh.attributes & 0x100) != 0x100;
             metadata.Files        = vh.fileCount;
             metadata.FreeClusters = vh.freeBlocks;
 
             if(vh.modifyDate > 0)
-            {
                 metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
-            }
 
             metadata.Type = vh.signature switch
-            {
-                0x482B => FS_TYPE_HFSP,
-                0x4858 => FS_TYPE_HFSX,
-                _      => metadata.Type
-            };
+                            {
+                                0x482B => FS_TYPE_HFSP,
+                                0x4858 => FS_TYPE_HFSX,
+                                _      => metadata.Type
+                            };
 
             if(vh.drFndrInfo6 != 0 &&
                vh.drFndrInfo7 != 0)
@@ -306,4 +306,6 @@ public sealed partial class AppleHFSPlus
 
         information = sb.ToString();
     }
+
+#endregion
 }

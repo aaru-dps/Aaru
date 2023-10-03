@@ -35,11 +35,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Locus filesystem</summary>
 public sealed partial class RBF : IFilesystem
 {
+    const string MODULE_NAME = "RBF plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.RBF_Name;
+
     /// <inheritdoc />
     public Guid Id => new("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "RBF plugin";
+
+#endregion
 }

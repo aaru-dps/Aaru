@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber OpenDir(string path, out IDirNode node)
     {
@@ -75,10 +77,7 @@ public sealed partial class OperaFS
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntryWithPointers> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
@@ -93,7 +92,7 @@ public sealed partial class OperaFS
 
         currentDirectory = _rootDirectoryCache;
 
-        for(int p = 0; p < pieces.Length; p++)
+        for(var p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
@@ -163,6 +162,8 @@ public sealed partial class OperaFS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     Dictionary<string, DirectoryEntryWithPointers> DecodeDirectory(int firstBlock)
     {
         Dictionary<string, DirectoryEntryWithPointers> entries = new();
@@ -182,7 +183,7 @@ public sealed partial class OperaFS
             header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
             nextBlock = header.next_block + firstBlock;
 
-            int off = (int)header.first_used;
+            var off = (int)header.first_used;
 
             var entry = new DirectoryEntry();
 
@@ -197,9 +198,11 @@ public sealed partial class OperaFS
                     Pointers = new uint[entry.last_copy + 1]
                 };
 
-                for(int i = 0; i <= entry.last_copy; i++)
+                for(var i = 0; i <= entry.last_copy; i++)
+                {
                     entryWithPointers.Pointers[i] =
-                        BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + (i * 4));
+                        BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + i * 4);
+                }
 
                 entries.Add(name, entryWithPointers);
 
@@ -207,7 +210,7 @@ public sealed partial class OperaFS
                    (entry.flags & (uint)FileFlags.LastEntryInBlock) != 0)
                     break;
 
-                off += (int)(_directoryEntrySize + ((entry.last_copy + 1) * 4));
+                off += (int)(_directoryEntrySize + (entry.last_copy + 1) * 4);
             }
 
             if((entry.flags & (uint)FileFlags.LastEntry) != 0)

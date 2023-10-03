@@ -37,8 +37,10 @@ namespace Aaru.Filesystems;
 // ReSharper disable once InconsistentNaming
 public sealed partial class extFS
 {
+#region Nested type: SuperBlock
+
     /// <summary>ext superblock</summary>
-    #pragma warning disable CS0649
+#pragma warning disable CS0649
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct SuperBlock
     {
@@ -73,5 +75,7 @@ public sealed partial class extFS
         /// <summary>0x038, 0x137D (little endian)</summary>
         public ushort magic;
     }
-    #pragma warning restore CS0649
+#pragma warning restore CS0649
+
+#endregion
 }

@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -63,7 +65,7 @@ public sealed partial class XboxFatPlugin
         if(imagePlugin.Info.SectorSize < 512)
             return;
 
-        bool bigEndian = true;
+        var bigEndian = true;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
@@ -99,7 +101,7 @@ public sealed partial class XboxFatPlugin
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
                                                       bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);
 
-        sb.AppendFormat(Localization.Volume_label_0, volumeLabel).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0,     volumeLabel).AppendLine();
         sb.AppendFormat(Localization.Volume_serial_0_X8, fatxSb.id).AppendLine();
 
         information = sb.ToString();
@@ -115,4 +117,6 @@ public sealed partial class XboxFatPlugin
 
         metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;
     }
+
+#endregion
 }

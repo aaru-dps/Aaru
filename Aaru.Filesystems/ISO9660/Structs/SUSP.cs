@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region Nested type: ContinuationArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ContinuationArea
     {
@@ -49,13 +51,9 @@ public sealed partial class ISO9660
         public readonly uint   ca_length_be;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct PaddingArea
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-    }
+#endregion
+
+#region Nested type: IndicatorArea
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct IndicatorArea
@@ -67,13 +65,21 @@ public sealed partial class ISO9660
         public readonly byte   skipped;
     }
 
+#endregion
+
+#region Nested type: PaddingArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct TerminatorArea
+    readonly struct PaddingArea
     {
         public readonly ushort signature;
         public readonly byte   length;
         public readonly byte   version;
     }
+
+#endregion
+
+#region Nested type: ReferenceArea
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ReferenceArea
@@ -91,6 +97,10 @@ public sealed partial class ISO9660
         // Follows extension source for src_len bytes
     }
 
+#endregion
+
+#region Nested type: SelectorArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SelectorArea
     {
@@ -99,4 +109,18 @@ public sealed partial class ISO9660
         public readonly byte   version;
         public readonly byte   sequence;
     }
+
+#endregion
+
+#region Nested type: TerminatorArea
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TerminatorArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+    }
+
+#endregion
 }

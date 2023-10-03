@@ -35,24 +35,7 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
-    struct DecodedVolumeDescriptor
-    {
-        public string   SystemIdentifier;
-        public string   VolumeIdentifier;
-        public string   VolumeSetIdentifier;
-        public string   PublisherIdentifier;
-        public string   DataPreparerIdentifier;
-        public string   ApplicationIdentifier;
-        public DateTime CreationTime;
-        public bool     HasModificationTime;
-        public DateTime ModificationTime;
-        public bool     HasExpirationTime;
-        public DateTime ExpirationTime;
-        public bool     HasEffectiveTime;
-        public DateTime EffectiveTime;
-        public ushort   BlockSize;
-        public uint     Blocks;
-    }
+#region Nested type: DecodedDirectoryEntry
 
     sealed class DecodedDirectoryEntry
     {
@@ -94,6 +77,72 @@ public sealed partial class ISO9660
         public override string ToString() => Filename;
     }
 
+#endregion
+
+#region Nested type: DecodedVolumeDescriptor
+
+    struct DecodedVolumeDescriptor
+    {
+        public string   SystemIdentifier;
+        public string   VolumeIdentifier;
+        public string   VolumeSetIdentifier;
+        public string   PublisherIdentifier;
+        public string   DataPreparerIdentifier;
+        public string   ApplicationIdentifier;
+        public DateTime CreationTime;
+        public bool     HasModificationTime;
+        public DateTime ModificationTime;
+        public bool     HasExpirationTime;
+        public DateTime ExpirationTime;
+        public bool     HasEffectiveTime;
+        public DateTime EffectiveTime;
+        public ushort   BlockSize;
+        public uint     Blocks;
+    }
+
+#endregion
+
+#region Nested type: Iso9660DirNode
+
+    sealed class Iso9660DirNode : IDirNode
+    {
+        internal DecodedDirectoryEntry[] _entries;
+        internal int                     _position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: Iso9660FileNode
+
+    sealed class Iso9660FileNode : IFileNode
+    {
+        internal DecodedDirectoryEntry _dentry;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: PathTableEntryInternal
+
     sealed class PathTableEntryInternal
     {
         public uint   Extent;
@@ -104,22 +153,5 @@ public sealed partial class ISO9660
         public override string ToString() => Name;
     }
 
-    sealed class Iso9660FileNode : IFileNode
-    {
-        internal DecodedDirectoryEntry _dentry;
-        /// <inheritdoc />
-        public string Path { get; init; }
-        /// <inheritdoc />
-        public long Length { get; init; }
-        /// <inheritdoc />
-        public long Offset { get; set; }
-    }
-
-    sealed class Iso9660DirNode : IDirNode
-    {
-        internal DecodedDirectoryEntry[] _entries;
-        internal int                     _position;
-        /// <inheritdoc />
-        public string Path { get; init; }
-    }
+#endregion
 }

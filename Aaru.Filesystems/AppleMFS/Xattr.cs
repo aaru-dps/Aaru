@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
@@ -49,10 +51,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -62,16 +61,18 @@ public sealed partial class AppleMFS
         xattrs = new List<string>();
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
+        {
+            if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-               string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
-               string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
+               string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
+               string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
             {
                 if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.macintosh.tags");
 
                 return ErrorNumber.NoError;
             }
+        }
 
         if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
             return ErrorNumber.NoSuchFile;
@@ -105,10 +106,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -116,10 +114,12 @@ public sealed partial class AppleMFS
         path = pathElements[0];
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
+        {
+            if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-               string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
-               string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
+               string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
+               string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
+            {
                 if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                    string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                 {
@@ -157,6 +157,8 @@ public sealed partial class AppleMFS
                 }
                 else
                     return ErrorNumber.NoSuchExtendedAttribute;
+            }
+        }
 
         ErrorNumber error;
 
@@ -194,4 +196,6 @@ public sealed partial class AppleMFS
 
         return error;
     }
+
+#endregion
 }

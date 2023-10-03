@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 public sealed partial class AppleHFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -58,10 +60,8 @@ public sealed partial class AppleHFS
             if(errno != ErrorNumber.NoError)
                 return false;
 
-            foreach(int offset in new[]
-                    {
-                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                    }.Where(offset => mdbSector.Length >= offset + 0x7C + 2))
+            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
+                        offset => mdbSector.Length >= offset + 0x7C + 2))
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
@@ -111,7 +111,7 @@ public sealed partial class AppleHFS
         ushort      drSigWord;
         ErrorNumber errno;
 
-        bool apmFromHddOnCd = false;
+        var apmFromHddOnCd = false;
 
         if(imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
         {
@@ -120,10 +120,7 @@ public sealed partial class AppleHFS
             if(errno != ErrorNumber.NoError)
                 return;
 
-            foreach(int offset in new[]
-                    {
-                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                    })
+            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
 
@@ -174,7 +171,7 @@ public sealed partial class AppleHFS
             sb.AppendLine(Localization.HFS_uses_512_bytes_sector_while_device_uses_2048_bytes_sector).AppendLine();
 
         sb.AppendLine(Localization.Master_Directory_Block);
-        sb.AppendFormat(Localization.Creation_date_0, DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
+        sb.AppendFormat(Localization.Creation_date_0,          DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
         sb.AppendFormat(Localization.Last_modification_date_0, DateHandlers.MacToDateTime(mdb.drLsMod)).AppendLine();
 
         if(mdb.drVolBkUp > 0)
@@ -188,7 +185,8 @@ public sealed partial class AppleHFS
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.HardwareLock))
             sb.AppendLine(Localization.Volume_is_locked_by_hardware);
 
-        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted) ? Localization.Volume_was_unmonted
+        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted)
+                          ? Localization.Volume_was_unmonted
                           : Localization.Volume_is_mounted);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SparedBadBlocks))
@@ -212,22 +210,22 @@ public sealed partial class AppleHFS
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
             sb.AppendLine(Localization.Volume_is_locked_by_software);
 
-        sb.AppendFormat(Localization._0_files_in_root_directory, mdb.drNmFls).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_root_directory,       mdb.drNmFls).AppendLine();
         sb.AppendFormat(Localization._0_directories_in_root_directory, mdb.drNmRtDirs).AppendLine();
-        sb.AppendFormat(Localization._0_files_in_volume, mdb.drFilCnt).AppendLine();
-        sb.AppendFormat(Localization._0_directories_in_volume, mdb.drDirCnt).AppendLine();
-        sb.AppendFormat(Localization.Volume_write_count_0, mdb.drWrCnt).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_volume,               mdb.drFilCnt).AppendLine();
+        sb.AppendFormat(Localization._0_directories_in_volume,         mdb.drDirCnt).AppendLine();
+        sb.AppendFormat(Localization.Volume_write_count_0,             mdb.drWrCnt).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_bitmap_starting_sector_in_512_bytes_0, mdb.drVBMSt).AppendLine();
-        sb.AppendFormat(Localization.Next_allocation_block_0, mdb.drAllocPtr).AppendLine();
-        sb.AppendFormat(Localization._0_volume_allocation_blocks, mdb.drNmAlBlks).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_per_allocation_block, mdb.drAlBlkSiz).AppendLine();
-        sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_file, mdb.drClpSiz).AppendLine();
+        sb.AppendFormat(Localization.Volume_bitmap_starting_sector_in_512_bytes_0,         mdb.drVBMSt).AppendLine();
+        sb.AppendFormat(Localization.Next_allocation_block_0,                              mdb.drAllocPtr).AppendLine();
+        sb.AppendFormat(Localization._0_volume_allocation_blocks,                          mdb.drNmAlBlks).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_allocation_block,                        mdb.drAlBlkSiz).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_file,           mdb.drClpSiz).AppendLine();
         sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_Extents_B_Tree, mdb.drXTClpSiz).AppendLine();
         sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_Catalog_B_Tree, mdb.drCTClpSiz).AppendLine();
-        sb.AppendFormat(Localization.Sector_of_first_allocation_block_0, mdb.drAlBlSt).AppendLine();
-        sb.AppendFormat(Localization.Next_unused_CNID_0, mdb.drNxtCNID).AppendLine();
-        sb.AppendFormat(Localization._0_unused_allocation_blocks, mdb.drFreeBks).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_first_allocation_block_0,                   mdb.drAlBlSt).AppendLine();
+        sb.AppendFormat(Localization.Next_unused_CNID_0,                                   mdb.drNxtCNID).AppendLine();
+        sb.AppendFormat(Localization._0_unused_allocation_blocks,                          mdb.drFreeBks).AppendLine();
 
         sb.AppendFormat(Localization._0_bytes_in_the_Extents_B_Tree, mdb.drXTFlSize).AppendLine();
         sb.AppendFormat(Localization._0_bytes_in_the_Catalog_B_Tree, mdb.drCTFlSize).AppendLine();
@@ -235,11 +233,11 @@ public sealed partial class AppleHFS
         sb.AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(mdb.drVN, encoding)).AppendLine();
 
         sb.AppendLine(Localization.Finder_info);
-        sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0, mdb.drFndrInfo0).AppendLine();
-        sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0, mdb.drFndrInfo1).AppendLine();
-        sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0, mdb.drFndrInfo2).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0,        mdb.drFndrInfo0).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0,  mdb.drFndrInfo1).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0,      mdb.drFndrInfo2).AppendLine();
         sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, mdb.drFndrInfo3).AppendLine();
-        sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0, mdb.drFndrInfo5).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0,      mdb.drFndrInfo5).AppendLine();
 
         if(mdb.drFndrInfo6 != 0 &&
            mdb.drFndrInfo7 != 0)
@@ -248,12 +246,12 @@ public sealed partial class AppleHFS
         if(mdb.drEmbedSigWord == AppleCommon.HFSP_MAGIC)
         {
             sb.AppendLine(Localization.Volume_wraps_a_HFS_Plus_volume);
-            sb.AppendFormat(Localization.Starting_block_of_the_HFS_Plus_volume_0, mdb.xdrStABNt).AppendLine();
+            sb.AppendFormat(Localization.Starting_block_of_the_HFS_Plus_volume_0,     mdb.xdrStABNt).AppendLine();
             sb.AppendFormat(Localization.Allocations_blocks_of_the_HFS_Plus_volume_0, mdb.xdrNumABlks).AppendLine();
         }
         else
         {
-            sb.AppendFormat(Localization._0_blocks_in_volume_cache, mdb.drVCSize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume_cache,        mdb.drVCSize).AppendLine();
             sb.AppendFormat(Localization._0_blocks_in_volume_bitmap_cache, mdb.drVBMCSize).AppendLine();
             sb.AppendFormat(Localization._0_blocks_in_volume_common_cache, mdb.drCtlCSize).AppendLine();
         }
@@ -278,9 +276,7 @@ public sealed partial class AppleHFS
         metadata = new FileSystem();
 
         if(mdb.drVolBkUp > 0)
-        {
             metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
-        }
 
         metadata.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
                             mdb.drFndrInfo5 != 0;
@@ -289,18 +285,14 @@ public sealed partial class AppleHFS
         metadata.ClusterSize = mdb.drAlBlkSiz;
 
         if(mdb.drCrDate > 0)
-        {
             metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
-        }
 
         metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
         metadata.Files        = mdb.drFilCnt;
         metadata.FreeClusters = mdb.drFreeBks;
 
         if(mdb.drLsMod > 0)
-        {
             metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
-        }
 
         metadata.Type       = FS_TYPE;
         metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, encoding);
@@ -309,4 +301,6 @@ public sealed partial class AppleHFS
            mdb.drFndrInfo7 != 0)
             metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
     }
+
+#endregion
 }

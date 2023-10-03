@@ -77,6 +77,11 @@ public sealed partial class FAT
     const ushort EAT_ASN1        = 0xFFDD;
     const string FAT32_EA_TAIL   = " EA. SF";
 
+    const string FS_TYPE_FAT_PLUS = "fatplus";
+    const string FS_TYPE_FAT32    = "fat32";
+    const string FS_TYPE_FAT16    = "fat16";
+    const string FS_TYPE_FAT12    = "fat12";
+
     readonly (string hash, string name)[] _knownBootHashes =
     {
         ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
@@ -170,35 +175,31 @@ public sealed partial class FAT
         ("91e2b47c3cb46611249e4daa283a68ba21ba596a", "Human68k 2.00")
     };
 
-    [Flags]
-    enum FatAttributes : byte
-    {
-        ReadOnly    = 0x01, Hidden       = 0x02, System  = 0x04,
-        VolumeLabel = 0x08, Subdirectory = 0x10, Archive = 0x20,
-        Device      = 0x40, Reserved     = 0x80, LFN     = 0x0F
-    }
+#region Nested type: BpbKind
 
     enum BpbKind
     {
-        None, Hardcoded, Atari,
-        Msx, Dos2, Dos3,
-        Dos32, Dos33, ShortExtended,
-        Extended, ShortFat32, LongFat32,
-        Andos, Apricot, DecRainbow,
+        None,
+        Hardcoded,
+        Atari,
+        Msx,
+        Dos2,
+        Dos3,
+        Dos32,
+        Dos33,
+        ShortExtended,
+        Extended,
+        ShortFat32,
+        LongFat32,
+        Andos,
+        Apricot,
+        DecRainbow,
         Human
     }
 
-    enum Namespace
-    {
-        Dos, Nt, Lfn,
-        Os2, Ecs, Human
-    }
+#endregion
 
-    [Flags]
-    enum EaFlags : uint
-    {
-        Normal = 0, Critical = 1
-    }
+#region Nested type: CaseInfo
 
     [Flags]
     enum CaseInfo : byte
@@ -206,7 +207,8 @@ public sealed partial class FAT
         /// <summary>FASTFAT.SYS indicator that basename is lowercase</summary>
         LowerCaseBasename = 0x08,
         /// <summary>FASTFAT.SYS indicator that extension is lowercase</summary>
-        LowerCaseExtension = 0x10, AllLowerCase = 0x18,
+        LowerCaseExtension = 0x10,
+        AllLowerCase = 0x18,
         /// <summary>FAT32.IFS &lt; 0.97 indicator for normal EAs present</summary>
         NormalEaOld = 0xEA,
         /// <summary>FAT32.IFS &lt; 0.97 indicator for critical EAs present</summary>
@@ -217,8 +219,48 @@ public sealed partial class FAT
         CriticalEa = 0x80
     }
 
-    const string FS_TYPE_FAT_PLUS = "fatplus";
-    const string FS_TYPE_FAT32    = "fat32";
-    const string FS_TYPE_FAT16    = "fat16";
-    const string FS_TYPE_FAT12    = "fat12";
+#endregion
+
+#region Nested type: EaFlags
+
+    [Flags]
+    enum EaFlags : uint
+    {
+        Normal   = 0,
+        Critical = 1
+    }
+
+#endregion
+
+#region Nested type: FatAttributes
+
+    [Flags]
+    enum FatAttributes : byte
+    {
+        ReadOnly     = 0x01,
+        Hidden       = 0x02,
+        System       = 0x04,
+        VolumeLabel  = 0x08,
+        Subdirectory = 0x10,
+        Archive      = 0x20,
+        Device       = 0x40,
+        Reserved     = 0x80,
+        LFN          = 0x0F
+    }
+
+#endregion
+
+#region Nested type: Namespace
+
+    enum Namespace
+    {
+        Dos,
+        Nt,
+        Lfn,
+        Os2,
+        Ecs,
+        Human
+    }
+
+#endregion
 }

@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's Journaled File System</summary>
 public sealed partial class JFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -82,8 +84,8 @@ public sealed partial class JFS
         SuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
         sb.AppendLine(Localization.JFS_filesystem);
-        sb.AppendFormat(Localization.Version_0, jfsSb.s_version).AppendLine();
-        sb.AppendFormat(Localization._0_blocks_of_1_bytes, jfsSb.s_size, jfsSb.s_bsize).AppendLine();
+        sb.AppendFormat(Localization.Version_0,                      jfsSb.s_version).AppendLine();
+        sb.AppendFormat(Localization._0_blocks_of_1_bytes,           jfsSb.s_size, jfsSb.s_bsize).AppendLine();
         sb.AppendFormat(Localization._0_blocks_per_allocation_group, jfsSb.s_agsize).AppendLine();
 
         if(jfsSb.s_flags.HasFlag(Flags.Unicode))
@@ -184,4 +186,6 @@ public sealed partial class JFS
 
         information = sb.ToString();
     }
+
+#endregion
 }

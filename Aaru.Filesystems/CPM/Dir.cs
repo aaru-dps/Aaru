@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber OpenDir(string path, out IDirNode node)
     {
@@ -96,6 +98,8 @@ public sealed partial class CPM
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     /// <summary>
     ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
     ///     directories will fail. FAT directories will false positive if all files start with 0x05, and do not use full
@@ -110,47 +114,56 @@ public sealed partial class CPM
             if(directory == null)
                 return false;
 
-            int fileCount = 0;
+            var fileCount = 0;
 
-            for(int off = 0; off < directory.Length; off += 32)
+            for(var off = 0; off < directory.Length; off += 32)
             {
                 DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
 
                 if((entry.statusUser & 0x7F) < 0x20)
                 {
-                    for(int f = 0; f < 8; f++)
+                    for(var f = 0; f < 8; f++)
+                    {
                         if(entry.filename[f] < 0x20 &&
                            entry.filename[f] != 0x00)
                             return false;
+                    }
 
-                    for(int e = 0; e < 3; e++)
+                    for(var e = 0; e < 3; e++)
+                    {
                         if(entry.extension[e] < 0x20 &&
                            entry.extension[e] != 0x00)
                             return false;
+                    }
 
                     if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
                         fileCount++;
                 }
                 else
+                {
                     switch(entry.statusUser)
                     {
                         case 0x20:
                         {
-                            for(int f = 0; f < 8; f++)
+                            for(var f = 0; f < 8; f++)
+                            {
                                 if(entry.filename[f] < 0x20 &&
                                    entry.filename[f] != 0x00)
                                     return false;
+                            }
 
-                            for(int e = 0; e < 3; e++)
+                            for(var e = 0; e < 3; e++)
+                            {
                                 if(entry.extension[e] < 0x20 &&
                                    entry.extension[e] != 0x00)
                                     return false;
+                            }
 
                             _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
                             _labelCreationDate = new byte[4];
                             _labelUpdateDate   = new byte[4];
                             Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
-                            Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
+                            Array.Copy(directory, off + 28, _labelUpdateDate,   0, 4);
 
                             break;
                         }
@@ -163,6 +176,7 @@ public sealed partial class CPM
 
                             break;
                     }
+                }
             }
 
             return fileCount > 0;

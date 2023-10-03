@@ -38,9 +38,16 @@ namespace Aaru.Filesystems;
 /// </summary>
 public sealed partial class MicroDOS
 {
+#region Nested type: FileStatus
+
     enum FileStatus : byte
     {
-        CommonFile = 0, Protected  = 1, LogicalDisk = 2,
-        BadFile    = 0x80, Deleted = 0xFF
+        CommonFile  = 0,
+        Protected   = 1,
+        LogicalDisk = 2,
+        BadFile     = 0x80,
+        Deleted     = 0xFF
     }
+
+#endregion
 }

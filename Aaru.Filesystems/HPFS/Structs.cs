@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of IBM's High Performance File System (HPFS)</summary>
 public sealed partial class HPFS
 {
+#region Nested type: BiosParameterBlock
+
     /// <summary>BIOS Parameter Block, at sector 0</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BiosParameterBlock
@@ -94,6 +96,48 @@ public sealed partial class HPFS
         public readonly ushort signature2;
     }
 
+#endregion
+
+#region Nested type: SpareBlock
+
+    /// <summary>HPFS spareblock at sector 17</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SpareBlock
+    {
+        /// <summary>0x000, 0xF9911849</summary>
+        public readonly uint magic1;
+        /// <summary>0x004, 0xFA5229C5</summary>
+        public readonly uint magic2;
+        /// <summary>0x008, HPFS flags</summary>
+        public readonly byte flags1;
+        /// <summary>0x009, HPFS386 flags</summary>
+        public readonly byte flags2;
+        /// <summary>0x00A, Alignment</summary>
+        public readonly ushort dummy;
+        /// <summary>0x00C, LSN of hotfix directory</summary>
+        public readonly uint hotfix_start;
+        /// <summary>0x010, Used hotfixes</summary>
+        public readonly uint hotfix_used;
+        /// <summary>0x014, Total hotfixes available</summary>
+        public readonly uint hotfix_entries;
+        /// <summary>0x018, Unused spare dnodes</summary>
+        public readonly uint spare_dnodes_free;
+        /// <summary>0x01C, Length of spare dnodes list</summary>
+        public readonly uint spare_dnodes;
+        /// <summary>0x020, LSN of codepage directory</summary>
+        public readonly uint codepage_lsn;
+        /// <summary>0x024, Number of codepages used</summary>
+        public readonly uint codepages;
+        /// <summary>0x028, SuperBlock CRC32 (only HPFS386)</summary>
+        public readonly uint sb_crc32;
+        /// <summary>0x02C, SpareBlock CRC32 (only HPFS386)</summary>
+        public readonly uint sp_crc32;
+    }
+
+#endregion
+
+#region Nested type: SuperBlock
+
     /// <summary>HPFS superblock at sector 16</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -146,37 +190,5 @@ public sealed partial class HPFS
         public readonly uint acl_start;
     }
 
-    /// <summary>HPFS spareblock at sector 17</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SpareBlock
-    {
-        /// <summary>0x000, 0xF9911849</summary>
-        public readonly uint magic1;
-        /// <summary>0x004, 0xFA5229C5</summary>
-        public readonly uint magic2;
-        /// <summary>0x008, HPFS flags</summary>
-        public readonly byte flags1;
-        /// <summary>0x009, HPFS386 flags</summary>
-        public readonly byte flags2;
-        /// <summary>0x00A, Alignment</summary>
-        public readonly ushort dummy;
-        /// <summary>0x00C, LSN of hotfix directory</summary>
-        public readonly uint hotfix_start;
-        /// <summary>0x010, Used hotfixes</summary>
-        public readonly uint hotfix_used;
-        /// <summary>0x014, Total hotfixes available</summary>
-        public readonly uint hotfix_entries;
-        /// <summary>0x018, Unused spare dnodes</summary>
-        public readonly uint spare_dnodes_free;
-        /// <summary>0x01C, Length of spare dnodes list</summary>
-        public readonly uint spare_dnodes;
-        /// <summary>0x020, LSN of codepage directory</summary>
-        public readonly uint codepage_lsn;
-        /// <summary>0x024, Number of codepages used</summary>
-        public readonly uint codepages;
-        /// <summary>0x028, SuperBlock CRC32 (only HPFS386)</summary>
-        public readonly uint sb_crc32;
-        /// <summary>0x02C, SpareBlock CRC32 (only HPFS386)</summary>
-        public readonly uint sp_crc32;
-    }
+#endregion
 }

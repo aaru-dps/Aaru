@@ -46,9 +46,11 @@ namespace Aaru.Filesystems;
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         _device   = imagePlugin;
         _encoding = encoding ?? new Apple2();
@@ -85,11 +87,11 @@ public sealed partial class PascalPlugin
         _mountedVolEntry.LastBoot = BigEndianBitConverter.ToInt16(_catalogBlocks, 0x14);
         _mountedVolEntry.Tail     = BigEndianBitConverter.ToInt32(_catalogBlocks, 0x16);
 
-        if(_mountedVolEntry.FirstBlock       != 0                                       ||
-           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock             ||
-           (ulong)_mountedVolEntry.LastBlock > (_device.Info.Sectors / _multiplier) - 2 ||
-           (_mountedVolEntry.EntryType != PascalFileKind.Volume &&
-            _mountedVolEntry.EntryType != PascalFileKind.Secure)                ||
+        if(_mountedVolEntry.FirstBlock       != 0                                     ||
+           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock           ||
+           (ulong)_mountedVolEntry.LastBlock > _device.Info.Sectors / _multiplier - 2 ||
+           _mountedVolEntry.EntryType != PascalFileKind.Volume &&
+           _mountedVolEntry.EntryType != PascalFileKind.Secure                  ||
            _mountedVolEntry.VolumeName[0] > 7                                   ||
            _mountedVolEntry.Blocks        < 0                                   ||
            (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier ||
@@ -103,7 +105,7 @@ public sealed partial class PascalPlugin
         if(errno != ErrorNumber.NoError)
             return errno;
 
-        int offset = 26;
+        var offset = 26;
 
         _fileEntries = new List<PascalFileEntry>();
 
@@ -177,4 +179,6 @@ public sealed partial class PascalPlugin
 
         return ErrorNumber.NotImplemented;
     }
+
+#endregion
 }

@@ -90,6 +90,48 @@ public sealed partial class ISO9660
         return decodedVd;
     }
 
+#region Nested type: CdiDirectoryRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdiDirectoryRecord
+    {
+        public readonly byte                length;
+        public readonly byte                xattr_len;
+        public readonly uint                reserved1;
+        public readonly uint                start_lbn;
+        public readonly uint                reserved2;
+        public readonly uint                size;
+        public readonly HighSierraTimestamp date;
+        public readonly byte                reserved3;
+        public readonly CdiFileFlags        flags;
+        public readonly ushort              file_unit_size;
+        public readonly ushort              reserved4;
+        public readonly ushort              volume_sequence_number;
+        public readonly byte                name_len;
+
+        // Followed by name[name_len] and then CdiSystemArea until length arrives
+    }
+
+#endregion
+
+#region Nested type: CdiSystemArea
+
+    // Follows filename on directory record
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdiSystemArea
+    {
+        public readonly ushort        group;
+        public readonly ushort        owner;
+        public readonly CdiAttributes attributes;
+        public readonly ushort        reserved1;
+        public readonly byte          file_no;
+        public readonly byte          reserved2;
+    }
+
+#endregion
+
+#region Nested type: FileStructureVolumeDescriptor
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct FileStructureVolumeDescriptor
     {
@@ -161,35 +203,5 @@ public sealed partial class ISO9660
         public readonly byte[] reserved16;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdiDirectoryRecord
-    {
-        public readonly byte                length;
-        public readonly byte                xattr_len;
-        public readonly uint                reserved1;
-        public readonly uint                start_lbn;
-        public readonly uint                reserved2;
-        public readonly uint                size;
-        public readonly HighSierraTimestamp date;
-        public readonly byte                reserved3;
-        public readonly CdiFileFlags        flags;
-        public readonly ushort              file_unit_size;
-        public readonly ushort              reserved4;
-        public readonly ushort              volume_sequence_number;
-        public readonly byte                name_len;
-
-        // Followed by name[name_len] and then CdiSystemArea until length arrives
-    }
-
-    // Follows filename on directory record
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdiSystemArea
-    {
-        public readonly ushort        group;
-        public readonly ushort        owner;
-        public readonly CdiAttributes attributes;
-        public readonly ushort        reserved1;
-        public readonly byte          file_no;
-        public readonly byte          reserved2;
-    }
+#endregion
 }

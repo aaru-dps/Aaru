@@ -32,8 +32,9 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the VMware filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
- SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "IdentifierTypo")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class VMfs
 {
     /// <summary>Identifier for VMfs</summary>

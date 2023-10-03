@@ -46,6 +46,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the AO-DOS filesystem</summary>
 public sealed partial class AODOS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -101,7 +103,7 @@ public sealed partial class AODOS
             Bootable     = true
         };
 
-        sbInformation.AppendFormat(Localization._0_files_in_volume, bb.files).AppendLine();
+        sbInformation.AppendFormat(Localization._0_files_in_volume,        bb.files).AppendLine();
         sbInformation.AppendFormat(Localization._0_used_sectors_on_volume, bb.usedSectors).AppendLine();
 
         sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, encoding)).
@@ -109,4 +111,6 @@ public sealed partial class AODOS
 
         information = sbInformation.ToString();
     }
+
+#endregion
 }

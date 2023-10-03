@@ -39,6 +39,8 @@ namespace Aaru.Filesystems;
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber OpenDir(string path, out IDirNode node)
     {
@@ -51,7 +53,7 @@ public sealed partial class AppleMFS
            string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        List<string> contents = _idToFilename.Select(kvp => kvp.Value).ToList();
+        var contents = _idToFilename.Select(kvp => kvp.Value).ToList();
 
         if(_debug)
         {
@@ -109,13 +111,15 @@ public sealed partial class AppleMFS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     bool FillDirectory()
     {
         _idToFilename = new Dictionary<uint, string>();
         _idToEntry    = new Dictionary<uint, FileEntry>();
         _filenameToId = new Dictionary<string, uint>();
 
-        int offset = 0;
+        var offset = 0;
 
         while(offset + 51 < _directoryBlocks.Length)
         {
@@ -159,12 +163,12 @@ public sealed partial class AppleMFS
 
                 _filenameToId.Add(lowerFilename, entry.flFlNum);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlags = {0}", entry.flFlags);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flTyp = {0}", entry.flTyp);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlNum = {0}", entry.flFlNum);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flStBlk = {0}", entry.flStBlk);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flLgLen = {0}", entry.flLgLen);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flPyLen = {0}", entry.flPyLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlags = {0}",  entry.flFlags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flTyp = {0}",    entry.flTyp);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlNum = {0}",  entry.flFlNum);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flStBlk = {0}",  entry.flStBlk);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flLgLen = {0}",  entry.flLgLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flPyLen = {0}",  entry.flPyLen);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRStBlk = {0}", entry.flRStBlk);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRLgLen = {0}", entry.flRLgLen);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRPyLen = {0}", entry.flRPyLen);

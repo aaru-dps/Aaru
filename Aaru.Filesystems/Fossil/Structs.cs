@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the Plan-9 Fossil on-disk filesystem</summary>
 public sealed partial class Fossil
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -52,6 +54,10 @@ public sealed partial class Fossil
         /// <summary>How many data blocks does it have</summary>
         public readonly uint end;
     }
+
+#endregion
+
+#region Nested type: SuperBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -79,4 +85,6 @@ public sealed partial class Fossil
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public readonly byte[] name;
     }
+
+#endregion
 }

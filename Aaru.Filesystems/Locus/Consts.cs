@@ -28,25 +28,25 @@
 
 // Commit count
 
-using commitcnt_t = System.Int32;
+using commitcnt_t = int;
 
 // Disk address
-using daddr_t = System.Int32;
+using daddr_t = int;
 
 // Fstore
-using fstore_t = System.Int32;
+using fstore_t = int;
 
 // Global File System number
-using gfs_t = System.Int32;
+using gfs_t = int;
 
 // Inode number
-using ino_t = System.Int32;
+using ino_t = int;
 
 // Filesystem pack number
-using pckno_t = System.Int16;
+using pckno_t = short;
 
 // Timestamp
-using time_t = System.Int32;
+using time_t = int;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedType.Local

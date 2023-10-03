@@ -47,13 +47,15 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         Encoding = encoding ?? Encoding.GetEncoding(1252);
-        byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
-        byte[] hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
+        var vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
+        var hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
 
         options ??= GetDefaultOptions();
 
@@ -94,7 +96,8 @@ public sealed partial class ISO9660
                 _namespace = Namespace.Romeo;
 
                 break;
-            default: return ErrorNumber.InvalidArgument;
+            default:
+                return ErrorNumber.InvalidArgument;
         }
 
         PrimaryVolumeDescriptor?           pvd      = null;
@@ -121,7 +124,7 @@ public sealed partial class ISO9660
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
         _highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
-        int hsOff = 0;
+        var hsOff = 0;
 
         if(_highSierra)
             hsOff = 8;
@@ -209,13 +212,17 @@ public sealed partial class ISO9660
                     {
                         if(svd.escape_sequences[0] == '%' &&
                            svd.escape_sequences[1] == '/')
+                        {
                             if(svd.escape_sequences[2] == '@' ||
                                svd.escape_sequences[2] == 'C' ||
                                svd.escape_sequences[2] == 'E')
                                 jolietvd = svd;
                             else
+                            {
                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                            Localization.Found_unknown_supplementary_volume_descriptor);
+                            }
+                        }
 
                         if(_debug)
                             svdSectors.Add(16 + counter + partition.Start);
@@ -356,10 +363,12 @@ public sealed partial class ISO9660
 
         if(!_cdi)
         {
-            rootLocation = _highSierra ? hsvd.Value.root_directory_record.extent
+            rootLocation = _highSierra
+                               ? hsvd.Value.root_directory_record.extent
                                : pvd.Value.root_directory_record.extent;
 
-            rootXattrLength = _highSierra ? hsvd.Value.root_directory_record.xattr_len
+            rootXattrLength = _highSierra
+                                  ? hsvd.Value.root_directory_record.xattr_len
                                   : pvd.Value.root_directory_record.xattr_len;
 
             rootSize = _highSierra ? hsvd.Value.root_directory_record.size : pvd.Value.root_directory_record.size;
@@ -376,7 +385,7 @@ public sealed partial class ISO9660
                 if(errno != ErrorNumber.NoError)
                     return errno;
 
-                bool pvdWrongRoot = false;
+                var pvdWrongRoot = false;
 
                 if(_highSierra)
                 {
@@ -401,7 +410,7 @@ public sealed partial class ISO9660
                                                Localization.
                                                    PVD_does_not_point_to_correct_root_directory_checking_path_table);
 
-                    bool pathTableWrongRoot = false;
+                    var pathTableWrongRoot = false;
 
                     rootLocation = _pathTable[0].Extent;
 
@@ -511,11 +520,13 @@ public sealed partial class ISO9660
             _usePathTable = false;
 
         if(_namespace != Namespace.Joliet)
+        {
             _rootDirectoryCache = _cdi
                                       ? DecodeCdiDirectory(rootLocation + rootXattrLength, rootSize)
                                       : _highSierra
                                           ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize)
                                           : DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
+        }
 
         Metadata.Type = fsFormat;
 
@@ -537,53 +548,62 @@ public sealed partial class ISO9660
                decodedVd.SystemIdentifier.Length > decodedJolietVd.SystemIdentifier.Length)
                 Metadata.SystemIdentifier = decodedVd.SystemIdentifier;
             else
-                Metadata.SystemIdentifier = string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier) ? null
+            {
+                Metadata.SystemIdentifier = string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier)
+                                                ? null
                                                 : decodedJolietVd.SystemIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier) ||
                decodedVd.VolumeSetIdentifier.Length > decodedJolietVd.VolumeSetIdentifier.Length)
                 Metadata.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
             else
-                Metadata.VolumeSetIdentifier = string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier) ? null
+            {
+                Metadata.VolumeSetIdentifier = string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier)
+                                                   ? null
                                                    : decodedJolietVd.VolumeSetIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier) ||
                decodedVd.PublisherIdentifier.Length > decodedJolietVd.PublisherIdentifier.Length)
                 Metadata.PublisherIdentifier = decodedVd.PublisherIdentifier;
             else
-                Metadata.PublisherIdentifier = string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier) ? null
+            {
+                Metadata.PublisherIdentifier = string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier)
+                                                   ? null
                                                    : decodedJolietVd.PublisherIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ||
                decodedVd.DataPreparerIdentifier.Length > decodedJolietVd.DataPreparerIdentifier.Length)
                 Metadata.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
             else
-                Metadata.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ? null
+            {
+                Metadata.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier)
+                                                      ? null
                                                       : decodedJolietVd.DataPreparerIdentifier;
+            }
 
             if(string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ||
                decodedVd.ApplicationIdentifier.Length > decodedJolietVd.ApplicationIdentifier.Length)
                 Metadata.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
             else
-                Metadata.ApplicationIdentifier = string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ? null
+            {
+                Metadata.ApplicationIdentifier = string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier)
+                                                     ? null
                                                      : decodedJolietVd.ApplicationIdentifier;
+            }
 
             Metadata.CreationDate = decodedJolietVd.CreationTime;
 
             if(decodedJolietVd.HasModificationTime)
-            {
                 Metadata.ModificationDate = decodedJolietVd.ModificationTime;
-            }
 
             if(decodedJolietVd.HasExpirationTime)
-            {
                 Metadata.ExpirationDate = decodedJolietVd.ExpirationTime;
-            }
 
             if(decodedJolietVd.HasEffectiveTime)
-            {
                 Metadata.EffectiveDate = decodedJolietVd.EffectiveTime;
-            }
 
             decodedVd = decodedJolietVd;
         }
@@ -598,19 +618,13 @@ public sealed partial class ISO9660
             Metadata.CreationDate           = decodedVd.CreationTime;
 
             if(decodedVd.HasModificationTime)
-            {
                 Metadata.ModificationDate = decodedVd.ModificationTime;
-            }
 
             if(decodedVd.HasExpirationTime)
-            {
                 Metadata.ExpirationDate = decodedVd.ExpirationTime;
-            }
 
             if(decodedVd.HasEffectiveTime)
-            {
                 Metadata.EffectiveDate = decodedVd.EffectiveTime;
-            }
         }
 
         if(_debug)
@@ -627,6 +641,7 @@ public sealed partial class ISO9660
             });
 
             if(!_cdi)
+            {
                 _rootDirectoryCache.Add("$PATH_TABLE.LSB", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -637,6 +652,7 @@ public sealed partial class ISO9660
                     Size      = (uint)pathTableData.Length,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
             _rootDirectoryCache.Add("$PATH_TABLE.MSB", new DecodedDirectoryEntry
             {
@@ -649,7 +665,8 @@ public sealed partial class ISO9660
                 Timestamp = decodedVd.CreationTime
             });
 
-            for(int i = 0; i < bvdSectors.Count; i++)
+            for(var i = 0; i < bvdSectors.Count; i++)
+            {
                 _rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -660,8 +677,10 @@ public sealed partial class ISO9660
                     Size      = 2048,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
-            for(int i = 0; i < pvdSectors.Count; i++)
+            for(var i = 0; i < pvdSectors.Count; i++)
+            {
                 _rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -672,8 +691,10 @@ public sealed partial class ISO9660
                     Size      = 2048,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
-            for(int i = 0; i < svdSectors.Count; i++)
+            for(var i = 0; i < svdSectors.Count; i++)
+            {
                 _rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -684,8 +705,10 @@ public sealed partial class ISO9660
                     Size      = 2048,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
-            for(int i = 0; i < evdSectors.Count; i++)
+            for(var i = 0; i < evdSectors.Count; i++)
+            {
                 _rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -696,8 +719,10 @@ public sealed partial class ISO9660
                     Size      = 2048,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
-            for(int i = 0; i < vpdSectors.Count; i++)
+            for(var i = 0; i < vpdSectors.Count; i++)
+            {
                 _rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -708,8 +733,10 @@ public sealed partial class ISO9660
                     Size      = 2048,
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
             if(segaCd != null)
+            {
                 _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -720,8 +747,10 @@ public sealed partial class ISO9660
                     Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
             if(saturn != null)
+            {
                 _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -732,8 +761,10 @@ public sealed partial class ISO9660
                     Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
                     Timestamp = decodedVd.CreationTime
                 });
+            }
 
             if(dreamcast != null)
+            {
                 _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
@@ -744,6 +775,7 @@ public sealed partial class ISO9660
                     Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
                     Timestamp = decodedVd.CreationTime
                 });
+            }
         }
 
         Metadata.Bootable    |= bvd != null || segaCd != null || saturn != null || dreamcast != null;
@@ -761,12 +793,14 @@ public sealed partial class ISO9660
         _directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
 
         if(_usePathTable)
+        {
             foreach(DecodedDirectoryEntry subDirectory in _cdi
                                                               ? GetSubdirsFromCdiPathTable("")
                                                               : _highSierra
                                                                   ? GetSubdirsFromHighSierraPathTable("")
                                                                   : GetSubdirsFromIsoPathTable(""))
                 _rootDirectoryCache[subDirectory.Filename] = subDirectory;
+        }
 
         _mounted = true;
 
@@ -798,4 +832,6 @@ public sealed partial class ISO9660
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

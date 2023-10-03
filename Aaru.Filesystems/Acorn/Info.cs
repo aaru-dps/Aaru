@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Acorn's Advanced Data Filing System (ADFS)</summary>
 public sealed partial class AcornADFS
 {
+#region IFilesystem Members
+
     // TODO: BBC Master hard disks are untested...
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
@@ -77,7 +79,7 @@ public sealed partial class AcornADFS
             OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "oldMap0.checksum = {0}", oldMap0.checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "oldChk0 = {0}", oldChk0);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "oldChk0 = {0}",          oldChk0);
 
             // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
             if(oldMap0.checksum == oldChk0 &&
@@ -89,14 +91,14 @@ public sealed partial class AcornADFS
                 if(errno != ErrorNumber.NoError)
                     return false;
 
-                byte[] tmp = new byte[256];
+                var tmp = new byte[256];
                 Array.Copy(sector, 256, tmp, 0, 256);
                 oldChk1 = AcornMapChecksum(tmp, 255);
                 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "oldMap1.checksum = {0}", oldMap1.checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "oldChk1 = {0}", oldChk1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "oldChk1 = {0}",          oldChk1);
 
             if(oldMap0.checksum == oldChk0 &&
                oldMap1.checksum == oldChk1 &&
@@ -116,7 +118,7 @@ public sealed partial class AcornADFS
 
                 if(sector.Length > OLD_DIRECTORY_SIZE)
                 {
-                    byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                    var tmp = new byte[OLD_DIRECTORY_SIZE];
                     Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                     Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                     sector = tmp;
@@ -134,8 +136,8 @@ public sealed partial class AcornADFS
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dirChk at 0x200 = {0}", dirChk);
 
-                if((oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) ||
-                   (oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC))
+                if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
+                   oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC)
                     return true;
 
                 // RISC OS says the old directory can't be in the new location, hard disks created by RISC OS 3.10 do that...
@@ -152,7 +154,7 @@ public sealed partial class AcornADFS
 
                 if(sector.Length > OLD_DIRECTORY_SIZE)
                 {
-                    byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                    var tmp = new byte[OLD_DIRECTORY_SIZE];
                     Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                     Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                     sector = tmp;
@@ -170,8 +172,8 @@ public sealed partial class AcornADFS
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dirChk at 0x400 = {0}", dirChk);
 
-                if((oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC) ||
-                   (oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC))
+                if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
+                   oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC)
                     return true;
             }
         }
@@ -185,7 +187,7 @@ public sealed partial class AcornADFS
             return false;
 
         byte newChk = NewMapChecksum(sector);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "newChk = {0}", newChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "newChk = {0}",           newChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "map.zoneChecksum = {0}", sector[0]);
 
         sbSector      = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
@@ -202,15 +204,15 @@ public sealed partial class AcornADFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        int bootChk = 0;
+        var bootChk = 0;
 
         if(bootSector.Length < 512)
             return false;
 
-        for(int i = 0; i < 0x1FF; i++)
+        for(var i = 0; i < 0x1FF; i++)
             bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}", bootChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}",         bootChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bBlock.checksum = {0}", bootSector[0x1FF]);
 
         if(newChk == sector[0] &&
@@ -227,10 +229,10 @@ public sealed partial class AcornADFS
         else
             return false;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.log2secsize = {0}", drSb.log2secsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.idlen = {0}", drSb.idlen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.log2secsize = {0}",    drSb.log2secsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.idlen = {0}",          drSb.idlen);
         AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size_high = {0}", drSb.disc_size_high);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size = {0}", drSb.disc_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size = {0}",      drSb.disc_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "IsNullOrEmpty(drSb.reserved) = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved));
@@ -302,7 +304,7 @@ public sealed partial class AcornADFS
                 if(errno != ErrorNumber.NoError)
                     return;
 
-                byte[] tmp = new byte[256];
+                var tmp = new byte[256];
                 Array.Copy(sector, 256, tmp, 0, 256);
                 oldChk1 = AcornMapChecksum(tmp, 255);
                 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
@@ -314,12 +316,12 @@ public sealed partial class AcornADFS
                oldMap1.checksum != 0)
             {
                 bytes = (ulong)((oldMap0.size[2] << 16) + (oldMap0.size[1] << 8) + oldMap0.size[0]) * 256;
-                byte[] namebytes = new byte[10];
+                var namebytes = new byte[10];
 
-                for(int i = 0; i < 5; i++)
+                for(var i = 0; i < 5; i++)
                 {
-                    namebytes[i * 2]       = oldMap0.name[i];
-                    namebytes[(i * 2) + 1] = oldMap1.name[i];
+                    namebytes[i * 2]     = oldMap0.name[i];
+                    namebytes[i * 2 + 1] = oldMap1.name[i];
                 }
 
                 metadata = new FileSystem
@@ -345,7 +347,7 @@ public sealed partial class AcornADFS
 
                     if(sector.Length > OLD_DIRECTORY_SIZE)
                     {
-                        byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                        var tmp = new byte[OLD_DIRECTORY_SIZE];
                         Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
                         Array.Copy(sector, sector.Length                 - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
                         sector = tmp;
@@ -372,7 +374,7 @@ public sealed partial class AcornADFS
 
                         if(sector.Length > OLD_DIRECTORY_SIZE)
                         {
-                            byte[] tmp = new byte[OLD_DIRECTORY_SIZE];
+                            var tmp = new byte[OLD_DIRECTORY_SIZE];
                             Array.Copy(sector, 0, tmp, 0, OLD_DIRECTORY_SIZE - 53);
 
                             Array.Copy(sector, sector.Length - 54, tmp, OLD_DIRECTORY_SIZE - 54, 53);
@@ -394,7 +396,7 @@ public sealed partial class AcornADFS
 
                             if(sector.Length > NEW_DIRECTORY_SIZE)
                             {
-                                byte[] tmp = new byte[NEW_DIRECTORY_SIZE];
+                                var tmp = new byte[NEW_DIRECTORY_SIZE];
                                 Array.Copy(sector, 0, tmp, 0, NEW_DIRECTORY_SIZE - 41);
 
                                 Array.Copy(sector, sector.Length - 42, tmp, NEW_DIRECTORY_SIZE - 42, 41);
@@ -414,7 +416,7 @@ public sealed partial class AcornADFS
                 sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
                 sbInformation.AppendLine();
                 sbInformation.AppendFormat(Localization._0_bytes_per_sector, imagePlugin.Info.SectorSize).AppendLine();
-                sbInformation.AppendFormat(Localization.Volume_has_0_bytes, bytes).AppendLine();
+                sbInformation.AppendFormat(Localization.Volume_has_0_bytes,  bytes).AppendLine();
 
                 sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(namebytes, encoding)).
                               AppendLine();
@@ -443,7 +445,7 @@ public sealed partial class AcornADFS
             return;
 
         byte newChk = NewMapChecksum(sector);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "newChk = {0}", newChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "newChk = {0}",           newChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "map.zoneChecksum = {0}", sector[0]);
 
         sbSector      = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
@@ -457,12 +459,12 @@ public sealed partial class AcornADFS
         if(errno != ErrorNumber.NoError)
             return;
 
-        int bootChk = 0;
+        var bootChk = 0;
 
-        for(int i = 0; i < 0x1FF; i++)
+        for(var i = 0; i < 0x1FF; i++)
             bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}", bootChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}",         bootChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bBlock.checksum = {0}", bootSector[0x1FF]);
 
         if(newChk == sector[0] &&
@@ -480,29 +482,29 @@ public sealed partial class AcornADFS
             return;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.log2secsize = {0}", drSb.log2secsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.spt = {0}", drSb.spt);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.heads = {0}", drSb.heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.density = {0}", drSb.density);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.idlen = {0}", drSb.idlen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.log2bpmb = {0}", drSb.log2bpmb);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.skew = {0}", drSb.skew);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.bootoption = {0}", drSb.bootoption);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.lowsector = {0}", drSb.lowsector);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.nzones = {0}", drSb.nzones);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.zone_spare = {0}", drSb.zone_spare);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.root = {0}", drSb.root);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size = {0}", drSb.disc_size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_id = {0}", drSb.disc_id);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.spt = {0}",         drSb.spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.heads = {0}",       drSb.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.density = {0}",     drSb.density);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.idlen = {0}",       drSb.idlen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.log2bpmb = {0}",    drSb.log2bpmb);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.skew = {0}",        drSb.skew);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.bootoption = {0}",  drSb.bootoption);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.lowsector = {0}",   drSb.lowsector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.nzones = {0}",      drSb.nzones);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.zone_spare = {0}",  drSb.zone_spare);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.root = {0}",        drSb.root);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size = {0}",   drSb.disc_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_id = {0}",     drSb.disc_id);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_name = {0}",
                                    StringHandlers.CToString(drSb.disc_name, encoding));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_type = {0}", drSb.disc_type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_type = {0}",      drSb.disc_type);
         AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.disc_size_high = {0}", drSb.disc_size_high);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.flags = {0}", drSb.flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.nzones_high = {0}", drSb.nzones_high);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.flags = {0}",          drSb.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.nzones_high = {0}",    drSb.nzones_high);
         AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.format_version = {0}", drSb.format_version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.root_size = {0}", drSb.root_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "drSb.root_size = {0}",      drSb.root_size);
 
         if(drSb.log2secsize is < 8 or > 10)
             return;
@@ -532,20 +534,20 @@ public sealed partial class AcornADFS
 
         sbInformation.AppendLine(Localization.Acorn_Advanced_Disc_Filing_System);
         sbInformation.AppendLine();
-        sbInformation.AppendFormat(Localization.Version_0, drSb.format_version).AppendLine();
-        sbInformation.AppendFormat(Localization._0_bytes_per_sector, 1 << drSb.log2secsize).AppendLine();
+        sbInformation.AppendFormat(Localization.Version_0,            drSb.format_version).AppendLine();
+        sbInformation.AppendFormat(Localization._0_bytes_per_sector,  1 << drSb.log2secsize).AppendLine();
         sbInformation.AppendFormat(Localization._0_sectors_per_track, drSb.spt).AppendLine();
-        sbInformation.AppendFormat(Localization._0_heads, drSb.heads).AppendLine();
-        sbInformation.AppendFormat(Localization.Density_code_0, drSb.density).AppendLine();
-        sbInformation.AppendFormat(Localization.Skew_0, drSb.skew).AppendLine();
-        sbInformation.AppendFormat(Localization.Boot_option_0, drSb.bootoption).AppendLine();
+        sbInformation.AppendFormat(Localization._0_heads,             drSb.heads).AppendLine();
+        sbInformation.AppendFormat(Localization.Density_code_0,       drSb.density).AppendLine();
+        sbInformation.AppendFormat(Localization.Skew_0,               drSb.skew).AppendLine();
+        sbInformation.AppendFormat(Localization.Boot_option_0,        drSb.bootoption).AppendLine();
 
         // TODO: What the hell is this field refering to?
         sbInformation.AppendFormat(Localization.Root_starts_at_frag_0, drSb.root).AppendLine();
 
         //sbInformation.AppendFormat("Root is {0} bytes long", drSb.root_size).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_in_1_zones, bytes, zones).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_flags_0_X4, drSb.flags).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_flags_0_X4,             drSb.flags).AppendLine();
 
         if(drSb.disc_id > 0)
         {
@@ -567,4 +569,6 @@ public sealed partial class AcornADFS
         metadata.ClusterSize =  (uint)(1 << drSb.log2secsize);
         metadata.Type        =  FS_TYPE;
     }
+
+#endregion
 }

@@ -45,6 +45,8 @@ namespace Aaru.Filesystems;
 /// </summary>
 public sealed partial class MicroDOS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -87,7 +89,7 @@ public sealed partial class MicroDOS
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_contains_0_files, block0.files).AppendLine();
-        sb.AppendFormat(Localization.First_used_block_is_0, block0.firstUsedBlock).AppendLine();
+        sb.AppendFormat(Localization.First_used_block_is_0,   block0.firstUsedBlock).AppendLine();
 
         metadata = new FileSystem
         {
@@ -100,4 +102,6 @@ public sealed partial class MicroDOS
 
         information = sb.ToString();
     }
+
+#endregion
 }

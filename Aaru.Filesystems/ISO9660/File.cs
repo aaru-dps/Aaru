@@ -44,6 +44,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -128,7 +130,7 @@ public sealed partial class ISO9660
         if(length + mynode.Offset >= mynode.Length)
             read = mynode.Length - mynode.Offset;
 
-        long offset = mynode.Offset + (mynode._dentry.XattrLength * _blockSize);
+        long offset = mynode.Offset + mynode._dentry.XattrLength * _blockSize;
 
         if(mynode._dentry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
            mynode._dentry.Extents.Count                                                 != 1)
@@ -360,8 +362,10 @@ public sealed partial class ISO9660
         }
 
         if(entry.PosixDeviceNumber != null)
+        {
             stat.DeviceNo = ((ulong)entry.PosixDeviceNumber.Value.dev_t_high << 32) +
                             entry.PosixDeviceNumber.Value.dev_t_low;
+        }
 
         if(entry.RripModify != null)
             stat.LastWriteTimeUtc = DecodeIsoDateTime(entry.RripModify);
@@ -461,6 +465,8 @@ public sealed partial class ISO9660
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     ErrorNumber GetFileEntry(string path, out DecodedDirectoryEntry entry)
     {
         entry = null;
@@ -469,15 +475,12 @@ public sealed partial class ISO9660
                              ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
-        string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
 
-        string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+        var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
         if(!_directoryCache.TryGetValue(parentPath, out _))
         {
@@ -526,7 +529,7 @@ public sealed partial class ISO9660
     }, interleaved, fileNumber, out buffer);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    ErrorNumber ReadSingleExtent(long offset, long size, uint startingSector, out byte[] buffer,
+    ErrorNumber ReadSingleExtent(long offset,              long size, uint startingSector, out byte[] buffer,
                                  bool interleaved = false, byte fileNumber = 0) => ReadWithExtents(offset, size,
         new List<(uint extent, uint size)>
         {
@@ -534,13 +537,13 @@ public sealed partial class ISO9660
         }, interleaved, fileNumber, out buffer);
 
     // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
-    ErrorNumber ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents, bool interleaved,
+    ErrorNumber ReadWithExtents(long offset,     long size, List<(uint extent, uint size)> extents, bool interleaved,
                                 byte fileNumber, out byte[] buffer)
     {
         var  ms             = new MemoryStream();
         long currentFilePos = 0;
 
-        for(int i = 0; i < extents.Count; i++)
+        for(var i = 0; i < extents.Count; i++)
         {
             if(offset - currentFilePos >= extents[i].size)
             {
@@ -611,7 +614,7 @@ public sealed partial class ISO9660
     {
         var ms = new MemoryStream();
 
-        for(int i = 0; i < extents.Count; i++)
+        for(var i = 0; i < extents.Count; i++)
         {
             long leftExtentSize      = extents[i].size;
             uint currentExtentSector = 0;

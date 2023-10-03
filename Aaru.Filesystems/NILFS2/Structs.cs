@@ -37,6 +37,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the New Implementation of a Log-structured File System v2</summary>
 public sealed partial class NILFS2
 {
+#region Nested type: Superblock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Superblock
     {
@@ -83,4 +85,6 @@ public sealed partial class NILFS2
         public readonly ulong feature_compat_ro;
         public readonly ulong feature_incompat;
     }
+
+#endregion
 }

@@ -31,13 +31,14 @@
 // ****************************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
-using ufs_daddr_t = System.Int32;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class dump
 {
     /// <summary>Magic number for old dump</summary>

@@ -53,14 +53,22 @@ namespace Aaru.Filesystems;
  */
 /// <inheritdoc />
 /// <summary>Implements detection for the Zettabyte File System (ZFS)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
- SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class ZFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.ZFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0750014F-A714-4692-A369-E23F6EC3659C");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
 public sealed partial class CBM : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.CBM_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D104744E-A376-450C-BAC0-1347C93F983B");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

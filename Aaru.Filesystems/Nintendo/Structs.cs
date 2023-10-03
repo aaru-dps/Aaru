@@ -32,6 +32,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used by Nintendo Gamecube and Wii discs</summary>
 public sealed partial class NintendoPlugin
 {
+#region Nested type: NintendoFields
+
     struct NintendoFields
     {
         public string              DiscType;
@@ -66,9 +68,15 @@ public sealed partial class NintendoPlugin
         public byte                KoreaAge;
     }
 
+#endregion
+
+#region Nested type: NintendoPartition
+
     struct NintendoPartition
     {
         public uint Offset;
         public uint Type;
     }
+
+#endregion
 }

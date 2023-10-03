@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
@@ -46,10 +48,7 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -72,17 +71,14 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
 
         byte[] file;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                       string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
             file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
         else
@@ -98,7 +94,7 @@ public sealed partial class PascalPlugin
             if(error != ErrorNumber.NoError)
                 return error;
 
-            file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
+            file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier +
                             entry.LastBytes];
 
             Array.Copy(tmp, 0, file, 0, file.Length);
@@ -160,16 +156,14 @@ public sealed partial class PascalPlugin
     {
         stat = null;
 
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        {
+            if(string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
             {
                 stat = new FileEntryInfo
@@ -181,18 +175,19 @@ public sealed partial class PascalPlugin
 
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = (_catalogBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
+                    stat.Blocks = _catalogBlocks.Length / stat.BlockSize + _catalogBlocks.Length % stat.BlockSize;
 
                     stat.Length = _catalogBlocks.Length;
                 }
                 else
                 {
-                    stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
+                    stat.Blocks = _bootBlocks.Length / stat.BlockSize + _catalogBlocks.Length % stat.BlockSize;
                     stat.Length = _bootBlocks.Length;
                 }
 
                 return ErrorNumber.NoError;
             }
+        }
 
         ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
@@ -205,12 +200,14 @@ public sealed partial class PascalPlugin
             Blocks = entry.LastBlock - entry.FirstBlock,
             BlockSize = _device.Info.SectorSize * _multiplier,
             LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-            Length = ((entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier) + entry.LastBytes,
+            Length = (entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier + entry.LastBytes,
             Links = 1
         };
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 
     ErrorNumber GetFileEntry(string path, out PascalFileEntry entry)
     {

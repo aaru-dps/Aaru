@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Reiser v3 filesystem</summary>
 public sealed partial class Reiser
 {
+#region Nested type: JournalParameters
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct JournalParameters
     {
@@ -47,6 +49,10 @@ public sealed partial class Reiser
         public readonly uint journal_max_commit_age;
         public readonly uint journal_max_trans_age;
     }
+
+#endregion
+
+#region Nested type: Superblock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Superblock
@@ -79,4 +85,6 @@ public sealed partial class Reiser
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)]
         public readonly byte[] unused;
     }
+
+#endregion
 }

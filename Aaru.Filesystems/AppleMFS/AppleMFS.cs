@@ -40,32 +40,37 @@ namespace Aaru.Filesystems;
 public sealed partial class AppleMFS : IReadOnlyFilesystem
 {
     const string                MODULE_NAME = "Apple MFS plugin";
-    bool                        _mounted;
+    byte[]                      _bitmapTags;
+    uint[]                      _blockMap;
+    byte[]                      _blockMapBytes;
+    byte[]                      _bootBlocks;
+    byte[]                      _bootTags;
     bool                        _debug;
     IMediaImage                 _device;
-    ulong                       _partitionStart;
-    Dictionary<uint, string>    _idToFilename;
-    Dictionary<uint, FileEntry> _idToEntry;
-    Dictionary<string, uint>    _filenameToId;
-    MasterDirectoryBlock        _volMdb;
-    byte[]                      _bootBlocks;
-    byte[]                      _mdbBlocks;
     byte[]                      _directoryBlocks;
-    byte[]                      _blockMapBytes;
-    uint[]                      _blockMap;
-    int                         _sectorsPerBlock;
-    byte[]                      _bootTags;
-    byte[]                      _mdbTags;
     byte[]                      _directoryTags;
-    byte[]                      _bitmapTags;
     Encoding                    _encoding;
+    Dictionary<string, uint>    _filenameToId;
+    Dictionary<uint, FileEntry> _idToEntry;
+    Dictionary<uint, string>    _idToFilename;
+    byte[]                      _mdbBlocks;
+    byte[]                      _mdbTags;
+    bool                        _mounted;
+    ulong                       _partitionStart;
+    int                         _sectorsPerBlock;
+    MasterDirectoryBlock        _volMdb;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public string Name => Localization.AppleMFS_Name;
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -77,10 +82,10 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        {
-            "debug", false.ToString()
-        }
+        { "debug", false.ToString() }
     };
 }

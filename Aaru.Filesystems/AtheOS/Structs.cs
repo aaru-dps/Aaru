@@ -36,6 +36,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class AtheOS
 {
+#region Nested type: SuperBlock
+
     /// <summary>Be superblock</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
@@ -102,4 +104,6 @@ public sealed partial class AtheOS
         /// <summary>0x08C, Size of bootloader</summary>
         public readonly int boot_size;
     }
+
+#endregion
 }

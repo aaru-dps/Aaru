@@ -41,6 +41,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Professional File System</summary>
 public sealed partial class PFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -52,7 +54,7 @@ public sealed partial class PFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
+        var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
         return magic is AFS_DISK or PFS2_DISK or PFS_DISK or MUAF_DISK or MUPFS_DISK;
     }
@@ -113,8 +115,10 @@ public sealed partial class PFS
                                                                 rootBlock.creationtick)).AppendLine();
 
         if(rootBlock.extension > 0)
+        {
             sbInformation.AppendFormat(Localization.Root_block_extension_resides_at_block_0, rootBlock.extension).
                           AppendLine();
+        }
 
         information = sbInformation.ToString();
 
@@ -126,4 +130,6 @@ public sealed partial class PFS
         metadata.ClusterSize  = imagePlugin.Info.SectorSize;
         metadata.VolumeName   = StringHandlers.PascalToString(rootBlock.diskname, encoding);
     }
+
+#endregion
 }

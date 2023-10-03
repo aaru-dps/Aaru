@@ -32,9 +32,17 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the squash filesystem</summary>
 public sealed partial class Squash
 {
+#region Nested type: SquashCompression
+
     enum SquashCompression : ushort
     {
-        Zlib = 1, Lzma = 2, Lzo  = 3,
-        Xz   = 4, Lz4  = 5, Zstd = 6
+        Zlib = 1,
+        Lzma = 2,
+        Lzo  = 3,
+        Xz   = 4,
+        Lz4  = 5,
+        Zstd = 6
     }
+
+#endregion
 }

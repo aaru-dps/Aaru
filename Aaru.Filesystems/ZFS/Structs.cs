@@ -52,47 +52,24 @@ namespace Aaru.Filesystems;
  */
 /// <inheritdoc />
 /// <summary>Implements detection for the Zettabyte File System (ZFS)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
- SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class ZFS
 {
-    struct ZIO_Checksum
+#region Nested type: DVA
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DVA
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public ulong[] word;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly ulong[] word;
     }
 
-    /// <summary>
-    ///     There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I
-    ///     suppose.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ZIO_Empty
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)]
-        public readonly byte[] empty;
-        public readonly ulong        magic;
-        public readonly ZIO_Checksum checksum;
-    }
+#endregion
 
-    /// <summary>This structure indicates which encoding method and endianness is used to encode the nvlist</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct NVS_Method
-    {
-        public readonly byte encoding;
-        public readonly byte endian;
-        public readonly byte reserved1;
-        public readonly byte reserved2;
-    }
-
-    /// <summary>This structure gives information about the encoded nvlist</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct NVS_XDR_Header
-    {
-        public readonly NVS_Method encodingAndEndian;
-        public readonly uint       version;
-        public readonly uint       flags;
-    }
+#region Nested type: NVS_Item
 
     /// <summary>This represent an encoded nvpair (an item of an nvlist)</summary>
     struct NVS_Item
@@ -111,12 +88,36 @@ public sealed partial class ZFS
         public object value;
     }
 
+#endregion
+
+#region Nested type: NVS_Method
+
+    /// <summary>This structure indicates which encoding method and endianness is used to encode the nvlist</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DVA
+    struct NVS_Method
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly ulong[] word;
+        public readonly byte encoding;
+        public readonly byte endian;
+        public readonly byte reserved1;
+        public readonly byte reserved2;
     }
+
+#endregion
+
+#region Nested type: NVS_XDR_Header
+
+    /// <summary>This structure gives information about the encoded nvlist</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct NVS_XDR_Header
+    {
+        public readonly NVS_Method encodingAndEndian;
+        public readonly uint       version;
+        public readonly uint       flags;
+    }
+
+#endregion
+
+#region Nested type: SPA_BlockPointer
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct SPA_BlockPointer
@@ -137,6 +138,10 @@ public sealed partial class ZFS
         public readonly ZIO_Checksum checksum;
     }
 
+#endregion
+
+#region Nested type: ZFS_Uberblock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct ZFS_Uberblock
     {
@@ -148,4 +153,33 @@ public sealed partial class ZFS
         public readonly SPA_BlockPointer mosPtr;
         public readonly ulong            softwareVersion;
     }
+
+#endregion
+
+#region Nested type: ZIO_Checksum
+
+    struct ZIO_Checksum
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public ulong[] word;
+    }
+
+#endregion
+
+#region Nested type: ZIO_Empty
+
+    /// <summary>
+    ///     There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I
+    ///     suppose.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct ZIO_Empty
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)]
+        public readonly byte[] empty;
+        public readonly ulong        magic;
+        public readonly ZIO_Checksum checksum;
+    }
+
+#endregion
 }

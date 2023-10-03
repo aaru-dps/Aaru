@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Veritas filesystem</summary>
 public sealed partial class VxFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -53,7 +55,7 @@ public sealed partial class VxFS
         if(errno != ErrorNumber.NoError)
             return false;
 
-        uint magic = BitConverter.ToUInt32(sector, 0x00);
+        var magic = BitConverter.ToUInt32(sector, 0x00);
 
         return magic == VXFS_MAGIC;
     }
@@ -86,8 +88,8 @@ public sealed partial class VxFS
                       AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_inodes_per_block, vxSb.vs_inopb).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_free_inodes, vxSb.vs_ifree).AppendLine();
-        sbInformation.AppendFormat(Localization.Volume_has_0_free_blocks, vxSb.vs_free).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_free_inodes,      vxSb.vs_ifree).AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_free_blocks,      vxSb.vs_free).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
@@ -111,4 +113,6 @@ public sealed partial class VxFS
             FreeClusters     = (ulong)vxSb.vs_free
         };
     }
+
+#endregion
 }

@@ -37,11 +37,18 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification of IBM's High Performance Optical File System</summary>
 public sealed partial class HPOFS : IFilesystem
 {
+    const string MODULE_NAME = "HPOFS Plugin";
+
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.HPOFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
-    const string MODULE_NAME = "HPOFS Plugin";
+
+#endregion
 }

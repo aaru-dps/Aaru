@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
 public sealed partial class CBM
 {
+#region Nested type: BAM
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BAM
     {
@@ -77,6 +79,10 @@ public sealed partial class CBM
         public readonly byte[] freeCount;
     }
 
+#endregion
+
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -104,4 +110,6 @@ public sealed partial class CBM
         /// <summary>Filled with 0xA0</summary>
         public readonly short fill3;
     }
+
+#endregion
 }

@@ -34,6 +34,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the squash filesystem</summary>
 public sealed partial class Squash
 {
+#region Nested type: SuperBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SuperBlock
     {
@@ -57,4 +59,6 @@ public sealed partial class Squash
         public readonly ulong  fragment_table_start;
         public readonly ulong  lookup_table_start;
     }
+
+#endregion
 }

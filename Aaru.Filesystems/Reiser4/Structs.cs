@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Reiser v4 filesystem</summary>
 public sealed partial class Reiser4
 {
+#region Nested type: Superblock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Superblock
     {
@@ -46,4 +48,6 @@ public sealed partial class Reiser4
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] label;
     }
+
+#endregion
 }

@@ -40,6 +40,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the DEC RT-11 filesystem</summary>
 public sealed partial class RT11 : IFilesystem
 {
+#region Nested type: HomeBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HomeBlock
     {
@@ -87,4 +89,6 @@ public sealed partial class RT11 : IFilesystem
         /// <summary>Checksum of preceding 255 words (16 bit units)</summary>
         public readonly ushort checksum;
     }
+
+#endregion
 }

@@ -32,9 +32,9 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using hammer_crc_t = System.UInt32;
-using hammer_off_t = System.UInt64;
-using hammer_tid_t = System.UInt64;
+using hammer_crc_t = uint;
+using hammer_off_t = ulong;
+using hammer_tid_t = ulong;
 using Partition = Aaru.CommonTypes.Partition;
 
 #pragma warning disable 169
@@ -45,6 +45,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection for the HAMMER filesystem</summary>
 public sealed partial class HAMMER
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -61,7 +63,7 @@ public sealed partial class HAMMER
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ulong magic = BitConverter.ToUInt64(sbSector, 0);
+        var magic = BitConverter.ToUInt64(sbSector, 0);
 
         return magic is HAMMER_FSBUF_VOLUME or HAMMER_FSBUF_VOLUME_REV;
     }
@@ -86,7 +88,7 @@ public sealed partial class HAMMER
         if(errno != ErrorNumber.NoError)
             return;
 
-        ulong magic = BitConverter.ToUInt64(sbSector, 0);
+        var magic = BitConverter.ToUInt64(sbSector, 0);
 
         SuperBlock superBlock = magic == HAMMER_FSBUF_VOLUME
                                     ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
@@ -102,12 +104,12 @@ public sealed partial class HAMMER
         sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, encoding)).
            AppendLine();
 
-        sb.AppendFormat(Localization.Volume_serial_0, superBlock.vol_fsid).AppendLine();
-        sb.AppendFormat(Localization.Filesystem_type_0, superBlock.vol_fstype).AppendLine();
-        sb.AppendFormat(Localization.Boot_area_starts_at_0, superBlock.vol_bot_beg).AppendLine();
-        sb.AppendFormat(Localization.Memory_log_starts_at_0, superBlock.vol_mem_beg).AppendLine();
+        sb.AppendFormat(Localization.Volume_serial_0,                 superBlock.vol_fsid).AppendLine();
+        sb.AppendFormat(Localization.Filesystem_type_0,               superBlock.vol_fstype).AppendLine();
+        sb.AppendFormat(Localization.Boot_area_starts_at_0,           superBlock.vol_bot_beg).AppendLine();
+        sb.AppendFormat(Localization.Memory_log_starts_at_0,          superBlock.vol_mem_beg).AppendLine();
         sb.AppendFormat(Localization.First_volume_buffer_starts_at_0, superBlock.vol_buf_beg).AppendLine();
-        sb.AppendFormat(Localization.Volume_ends_at_0, superBlock.vol_buf_end).AppendLine();
+        sb.AppendFormat(Localization.Volume_ends_at_0,                superBlock.vol_buf_end).AppendLine();
 
         metadata = new FileSystem
         {
@@ -139,4 +141,6 @@ public sealed partial class HAMMER
 
         information = sb.ToString();
     }
+
+#endregion
 }

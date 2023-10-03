@@ -38,15 +38,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Partition = Aaru.CommonTypes.Partition;
-using ufs_daddr_t = System.Int32;
+using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class dump
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -57,7 +60,7 @@ public sealed partial class dump
         if(partition.Start != 0)
             return false;
 
-        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -96,7 +99,7 @@ public sealed partial class dump
         if(partition.Start != 0)
             return;
 
-        uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+        var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
         if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
             sbSize++;
@@ -113,8 +116,8 @@ public sealed partial class dump
         spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
         s_spcl   newHdr = Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
-        bool useOld = false;
-        bool useAix = false;
+        var useOld = false;
+        var useAix = false;
 
         if(newHdr.c_magic == OFS_MAGIC  ||
            newHdr.c_magic == NFS_MAGIC  ||
@@ -227,7 +230,7 @@ public sealed partial class dump
             }
 
             sb.AppendFormat(Localization.Dump_volume_number_0, newHdr.c_volume).AppendLine();
-            sb.AppendFormat(Localization.Dump_level_0, newHdr.c_level).AppendLine();
+            sb.AppendFormat(Localization.Dump_level_0,         newHdr.c_level).AppendLine();
             string dumpname = StringHandlers.CToString(newHdr.c_label);
 
             if(!string.IsNullOrEmpty(dumpname))
@@ -254,4 +257,6 @@ public sealed partial class dump
 
         information = sb.ToString();
     }
+
+#endregion
 }

@@ -38,10 +38,16 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class BeFS : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.BeFS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("dc8572b3-b6ad-46e4-8de9-cbe123ff6672");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }

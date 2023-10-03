@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ReadLink(string path, out string dest)
     {
@@ -62,7 +64,7 @@ public sealed partial class AppleDOS
            string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        List<string> contents = _catalogCache.Keys.ToList();
+        var contents = _catalogCache.Keys.ToList();
 
         if(_debug)
         {
@@ -117,10 +119,12 @@ public sealed partial class AppleDOS
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     ErrorNumber ReadCatalog()
     {
-        var   catalogMs = new MemoryStream();
-        ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
+        var catalogMs = new MemoryStream();
+        var lba       = (ulong)(_vtoc.catalogTrack * _sectorsPerTrack + _vtoc.catalogSector);
         _totalFileEntries = 0;
         _catalogCache     = new Dictionary<string, ushort>();
         _fileTypeCache    = new Dictionary<string, byte>();
@@ -151,11 +155,11 @@ public sealed partial class AppleDOS
                 _track1UsedByFiles |= entry.extentTrack == 1;
                 _track2UsedByFiles |= entry.extentTrack == 2;
 
-                byte[] filenameB = new byte[30];
-                ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
+                var filenameB = new byte[30];
+                var ts        = (ushort)(entry.extentTrack << 8 | entry.extentSector);
 
                 // Apple DOS has high byte set over ASCII.
-                for(int i = 0; i < 30; i++)
+                for(var i = 0; i < 30; i++)
                     filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
                 string filename = StringHandlers.SpacePaddedToString(filenameB, _encoding);
@@ -171,7 +175,7 @@ public sealed partial class AppleDOS
                     _lockedFiles.Add(filename);
             }
 
-            lba = (ulong)((catSector.trackOfNext * _sectorsPerTrack) + catSector.sectorOfNext);
+            lba = (ulong)(catSector.trackOfNext * _sectorsPerTrack + catSector.sectorOfNext);
 
             if(lba > _device.Info.Sectors)
                 break;

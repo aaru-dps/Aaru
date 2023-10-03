@@ -42,6 +42,8 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class QNX4
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
@@ -189,4 +191,6 @@ public sealed partial class QNX4
 
         metadata.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
     }
+
+#endregion
 }

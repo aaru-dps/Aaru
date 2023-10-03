@@ -38,6 +38,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem described in ECMA-67</summary>
 public sealed partial class ECMA67
 {
+#region Nested type: VolumeLabel
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct VolumeLabel
     {
@@ -64,4 +66,6 @@ public sealed partial class ECMA67
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
         public readonly byte[] reserved5;
     }
+
+#endregion
 }

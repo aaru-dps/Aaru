@@ -35,6 +35,8 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the UNIX boot filesystem</summary>
 public sealed partial class BFS
 {
+#region Nested type: SuperBlock
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct SuperBlock
     {
@@ -57,4 +59,6 @@ public sealed partial class BFS
         /// <summary>0x22, 6 bytes, volume name</summary>
         public string s_volume;
     }
+
+#endregion
 }

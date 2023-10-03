@@ -35,10 +35,16 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the Reiser v4 filesystem</summary>
 public sealed partial class Reiser4 : IFilesystem
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public string Name => Localization.Reiser4_Name;
+
     /// <inheritdoc />
     public Guid Id => new("301F2D00-E8D5-4F04-934E-81DFB21D15BA");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
+#endregion
 }
