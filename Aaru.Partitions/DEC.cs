@@ -47,10 +47,14 @@ public sealed class DEC : IPartition
     const int PT_MAGIC = 0x032957;
     const int PT_VALID = 1;
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.DEC_Name;
+
     /// <inheritdoc />
     public Guid Id => new("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -93,6 +97,10 @@ public sealed class DEC : IPartition
         return true;
     }
 
+#endregion
+
+#region Nested type: Label
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Label
     {
@@ -104,10 +112,16 @@ public sealed class DEC : IPartition
         public readonly Partition[] pt_part;
     }
 
+#endregion
+
+#region Nested type: Partition
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition
     {
         public readonly int  pi_nblocks;
         public readonly uint pi_blkoff;
     }
+
+#endregion
 }

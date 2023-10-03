@@ -53,10 +53,14 @@ public sealed class XENIX : IPartition
     const uint   XENIX_OFFSET = 977;
     const string MODULE_NAME  = "XENIX partitions plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.XENIX_Name;
+
     /// <inheritdoc />
     public Guid Id => new("53BE01DE-E68B-469F-A17F-EC2E4BD61CD9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -81,9 +85,9 @@ public sealed class XENIX : IPartition
         if(xnxtbl.p_magic != PAMAGIC)
             return false;
 
-        for(int i = 0; i < MAXPARTS; i++)
+        for(var i = 0; i < MAXPARTS; i++)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p[{0}].p_off = {1}", i, xnxtbl.p[i].p_off);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p[{0}].p_off = {1}",  i, xnxtbl.p[i].p_off);
             AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
 
             if(xnxtbl.p[i].p_size <= 0)
@@ -91,11 +95,11 @@ public sealed class XENIX : IPartition
 
             var part = new CommonTypes.Partition
             {
-                Start = ((ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize) +
+                Start = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
                         sectorOffset,
                 Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
                 Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
-                         (imagePlugin.Info.SectorSize * sectorOffset),
+                         imagePlugin.Info.SectorSize * sectorOffset,
                 Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
                 Sequence = (ulong)i,
                 Type     = "XENIX",
@@ -109,6 +113,10 @@ public sealed class XENIX : IPartition
         return partitions.Count > 0;
     }
 
+#endregion
+
+#region Nested type: Partable
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partable
     {
@@ -117,10 +125,16 @@ public sealed class XENIX : IPartition
         public readonly Partition[] p; /*partition headers*/
     }
 
+#endregion
+
+#region Nested type: Partition
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition
     {
         public readonly int p_off;  /*start 1K block no of partition*/
         public readonly int p_size; /*# of 1K blocks in partition*/
     }
+
+#endregion
 }

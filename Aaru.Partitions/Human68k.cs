@@ -51,10 +51,14 @@ public sealed class Human68K : IPartition
     const uint   X68K_MAGIC  = 0x5836384B;
     const string MODULE_NAME = "Human68k partitions plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.Human68K_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -89,7 +93,8 @@ public sealed class Human68K : IPartition
                 sectsPerUnit = 1;
 
                 break;
-            default: return false;
+            default:
+                return false;
         }
 
         if(errno != ErrorNumber.NoError)
@@ -102,11 +107,11 @@ public sealed class Human68K : IPartition
         if(table.magic != X68K_MAGIC)
             return false;
 
-        for(int i = 0; i < table.entries.Length; i++)
+        for(var i = 0; i < table.entries.Length; i++)
             table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size = {0:X4}", table.size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size2 = {0:X4}", table.size2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size = {0:X4}",    table.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size2 = {0:X4}",   table.size2);
         AaruConsole.DebugWriteLine(MODULE_NAME, "table.unknown = {0:X4}", table.unknown);
 
         ulong counter = 0;
@@ -117,7 +122,7 @@ public sealed class Human68K : IPartition
                                        StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.stateStart = {0}", entry.stateStart);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.length = {0}", entry.length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.length = {0}",     entry.length);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectsPerUnit = {0} {1}", sectsPerUnit,
                                        imagePlugin.Info.SectorSize);
@@ -144,6 +149,23 @@ public sealed class Human68K : IPartition
         return true;
     }
 
+#endregion
+
+#region Nested type: Entry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Entry
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] name;
+        public readonly uint stateStart;
+        public readonly uint length;
+    }
+
+#endregion
+
+#region Nested type: Table
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Table
     {
@@ -155,12 +177,5 @@ public sealed class Human68K : IPartition
         public readonly Entry[] entries;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Entry
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] name;
-        public readonly uint stateStart;
-        public readonly uint length;
-    }
+#endregion
 }

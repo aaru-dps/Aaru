@@ -57,10 +57,14 @@ public sealed class VTOC : IPartition
     const uint   XPDVERS     = 3; /* 1st version of extended pdinfo */
     const string MODULE_NAME = "UNIX VTOC plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.VTOC_Name;
+
     /// <inheritdoc />
     public Guid Id => new("6D35A66F-8D77-426F-A562-D88F6A1F1702");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -72,14 +76,11 @@ public sealed class VTOC : IPartition
         uint        magic      = 0;
         ulong       pdloc      = 0;
         byte[]      pdsector   = null;
-        bool        magicFound = false;
-        bool        absolute   = false;
+        var         magicFound = false;
+        var         absolute   = false;
         ErrorNumber errno;
 
-        foreach(ulong i in new ulong[]
-                {
-                    0, 1, 8, 29
-                }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+        foreach(ulong i in new ulong[] { 0, 1, 8, 29 }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out pdsector);
 
@@ -122,48 +123,48 @@ public sealed class VTOC : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity, PD_MAGIC);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.version = {0}", pd.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.version = {0}",    pd.version);
         AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.serial = \"{0}\"", StringHandlers.CToString(pd.serial));
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.cyls = {0}", pd.cyls);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.tracks = {0}", pd.tracks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.sectors = {0}", pd.sectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.bytes = {0}", pd.bytes);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.logicalst = {0}", pd.logicalst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.errlogst = {0}", pd.errlogst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.errlogsz = {0}", pd.errlogsz);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.mfgst = {0}", pd.mfgst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.mfgsz = {0}", pd.mfgsz);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.defectst = {0}", pd.defectst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.defectsz = {0}", pd.defectsz);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relno = {0}", pd.relno);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relst = {0}", pd.relst);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relsz = {0}", pd.relsz);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relnext = {0}", pd.relnext);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.allcstrt = {0}", pdold.allcstrt);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.allcend = {0}", pdold.allcend);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_ptr = {0}", pd.vtoc_ptr);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_len = {0}", pd.vtoc_len);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_pad = {0}", pd.vtoc_pad);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.alt_ptr = {0}", pd.alt_ptr);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.alt_len = {0}", pd.alt_len);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pcyls = {0}", pd.pcyls);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.ptracks = {0}", pd.ptracks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.psectors = {0}", pd.psectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pbytes = {0}", pd.pbytes);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.secovhd = {0}", pd.secovhd);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.cyls = {0}",       pd.cyls);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.tracks = {0}",     pd.tracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.sectors = {0}",    pd.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.bytes = {0}",      pd.bytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.logicalst = {0}",  pd.logicalst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.errlogst = {0}",   pd.errlogst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.errlogsz = {0}",   pd.errlogsz);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.mfgst = {0}",      pd.mfgst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.mfgsz = {0}",      pd.mfgsz);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.defectst = {0}",   pd.defectst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.defectsz = {0}",   pd.defectsz);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relno = {0}",      pd.relno);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relst = {0}",      pd.relst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relsz = {0}",      pd.relsz);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.relnext = {0}",    pd.relnext);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.allcstrt = {0}",   pdold.allcstrt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.allcend = {0}",    pdold.allcend);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_ptr = {0}",   pd.vtoc_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_len = {0}",   pd.vtoc_len);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.vtoc_pad = {0}",   pd.vtoc_pad);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.alt_ptr = {0}",    pd.alt_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.alt_len = {0}",    pd.alt_len);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pcyls = {0}",      pd.pcyls);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.ptracks = {0}",    pd.ptracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.psectors = {0}",   pd.psectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pbytes = {0}",     pd.pbytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.secovhd = {0}",    pd.secovhd);
         AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.interleave = {0}", pd.interleave);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.skew = {0}", pd.skew);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[0] = {0}", pd.pad[0]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[1] = {0}", pd.pad[1]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[2] = {0}", pd.pad[2]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[3] = {0}", pd.pad[3]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[4] = {0}", pd.pad[4]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[5] = {0}", pd.pad[5]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[6] = {0}", pd.pad[6]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[7] = {0}", pd.pad[7]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.skew = {0}",       pd.skew);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[0] = {0}",     pd.pad[0]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[1] = {0}",     pd.pad[1]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[2] = {0}",     pd.pad[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[3] = {0}",     pd.pad[3]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[4] = {0}",     pd.pad[4]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[5] = {0}",     pd.pad[5]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[6] = {0}",     pd.pad[6]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pdinfo.pad[7] = {0}",     pd.pad[7]);
 
         magicFound = false;
-        bool useOld = false;
+        var useOld = false;
         errno = imagePlugin.ReadSector(pdloc + sectorOffset + 1, out byte[] vtocsector);
 
         if(errno != ErrorNumber.NoError)
@@ -184,7 +185,7 @@ public sealed class VTOC : IPartition
             {
                 vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
 
-                for(int i = 0; i < vtoc.v_part.Length; i++)
+                for(var i = 0; i < vtoc.v_part.Length; i++)
                 {
                     vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
                     vtoc.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtoc.v_part[i].p_flag);
@@ -212,7 +213,7 @@ public sealed class VTOC : IPartition
                 {
                     vtocOld = Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
 
-                    for(int i = 0; i < vtocOld.v_part.Length; i++)
+                    for(var i = 0; i < vtocOld.v_part.Length; i++)
                     {
                         vtocOld.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtocOld.v_part[i].p_tag);
                         vtocOld.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtocOld.v_part[i].p_flag);
@@ -265,7 +266,7 @@ public sealed class VTOC : IPartition
                 {
                     vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
 
-                    for(int i = 0; i < vtoc.v_part.Length; i++)
+                    for(var i = 0; i < vtoc.v_part.Length; i++)
                     {
                         vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
                         vtoc.v_part[i].p_flag  = (pFlag)Swapping.Swap((ushort)vtoc.v_part[i].p_flag);
@@ -295,9 +296,9 @@ public sealed class VTOC : IPartition
                                        StringHandlers.CToString(vtocOld.v_volume));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_nparts = {0}", vtocOld.v_nparts);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_nparts = {0}",   vtocOld.v_nparts);
 
-            for(int i = 0; i < V_NUMPAR; i++)
+            for(var i = 0; i < V_NUMPAR; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
                                            vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
@@ -325,10 +326,10 @@ public sealed class VTOC : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_volume = \"{0}\"",
                                        StringHandlers.CToString(vtoc.v_volume));
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_pad = {0}", vtoc.v_pad);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_pad = {0}",    vtoc.v_pad);
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_nparts = {0}", vtoc.v_nparts);
 
-            for(int i = 0; i < V_NUMPAR; i++)
+            for(var i = 0; i < V_NUMPAR; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_tag = {1} ({2})", i, vtoc.v_part[i].p_tag,
                                            (ushort)vtoc.v_part[i].p_tag);
@@ -364,7 +365,8 @@ public sealed class VTOC : IPartition
 
         // Check for a partition describing the VTOC whose start is the same as the start we know.
         // This means partition starts are absolute, not relative, to the VTOC position
-        for(int i = 0; i < V_NUMPAR; i++)
+        for(var i = 0; i < V_NUMPAR; i++)
+        {
             if(parts[i].p_tag          == pTag.V_BACKUP &&
                (ulong)parts[i].p_start == sectorOffset)
             {
@@ -372,8 +374,10 @@ public sealed class VTOC : IPartition
 
                 break;
             }
+        }
 
-        for(int i = 0; i < V_NUMPAR; i++)
+        for(var i = 0; i < V_NUMPAR; i++)
+        {
             if(parts[i].p_tag != pTag.V_UNUSED)
             {
                 var part = new Partition
@@ -387,7 +391,7 @@ public sealed class VTOC : IPartition
                     Scheme   = Name
                 };
 
-                string info = "";
+                var info = "";
 
                 // Apparently old ones are absolute :?
                 if(!useOld &&
@@ -420,30 +424,59 @@ public sealed class VTOC : IPartition
                 if(part.End < imagePlugin.Info.Sectors)
                     partitions.Add(part);
             }
+        }
 
         return partitions.Count > 0;
     }
 
+#endregion
+
     static string DecodeUnixtag(pTag type, bool isNew) => type switch
+                                                          {
+                                                              pTag.V_UNUSED => Localization.Unused,
+                                                              pTag.V_BOOT   => Localization.Boot,
+                                                              pTag.V_ROOT   => "/",
+                                                              pTag.V_SWAP   => Localization.swap,
+                                                              pTag.V_USER   => "/usr",
+                                                              pTag.V_BACKUP => Localization.Whole_disk,
+                                                              pTag.V_STAND_OLD => isNew
+                                                                  ? "Stand"
+                                                                  : Localization.Alternate_sector_space,
+                                                              pTag.V_VAR_OLD => isNew ? "/var" : Localization.non_UNIX,
+                                                              pTag.V_HOME_OLD => isNew
+                                                                  ? "/home"
+                                                                  : Localization.Alternate_track_space,
+                                                              pTag.V_ALTSCTR_OLD => isNew
+                                                                  ? Localization.Alternate_sector_track
+                                                                  : "Stand",
+                                                              pTag.V_CACHE => isNew ? Localization.Cache : "/var",
+                                                              pTag.V_RESERVED =>
+                                                                  isNew ? Localization.Reserved : "/home",
+                                                              pTag.V_DUMP    => Localization.dump,
+                                                              pTag.V_ALTSCTR => Localization.Alternate_sector_track,
+                                                              pTag.V_VMPUBLIC => Localization.
+                                                                  volume_mgt_public_partition,
+                                                              pTag.V_VMPRIVATE => Localization.
+                                                                  volume_mgt_private_partition,
+                                                              _ => string.Format(Localization.Unknown_TAG_0, type)
+                                                          };
+
+#region Nested type: partition
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+    // ReSharper disable once InconsistentNaming
+    struct partition
     {
-        pTag.V_UNUSED      => Localization.Unused,
-        pTag.V_BOOT        => Localization.Boot,
-        pTag.V_ROOT        => "/",
-        pTag.V_SWAP        => Localization.swap,
-        pTag.V_USER        => "/usr",
-        pTag.V_BACKUP      => Localization.Whole_disk,
-        pTag.V_STAND_OLD   => isNew ? "Stand" : Localization.Alternate_sector_space,
-        pTag.V_VAR_OLD     => isNew ? "/var" : Localization.non_UNIX,
-        pTag.V_HOME_OLD    => isNew ? "/home" : Localization.Alternate_track_space,
-        pTag.V_ALTSCTR_OLD => isNew ? Localization.Alternate_sector_track : "Stand",
-        pTag.V_CACHE       => isNew ? Localization.Cache : "/var",
-        pTag.V_RESERVED    => isNew ? Localization.Reserved : "/home",
-        pTag.V_DUMP        => Localization.dump,
-        pTag.V_ALTSCTR     => Localization.Alternate_sector_track,
-        pTag.V_VMPUBLIC    => Localization.volume_mgt_public_partition,
-        pTag.V_VMPRIVATE   => Localization.volume_mgt_private_partition,
-        _                  => string.Format(Localization.Unknown_TAG_0, type)
-    };
+        public pTag  p_tag;   /*ID tag of partition*/
+        public pFlag p_flag;  /*permision flags*/
+        public int   p_start; /*start sector no of partition*/
+        public int   p_size;  /*# of blocks in partition*/
+    }
+
+#endregion
+
+#region Nested type: PDInfo
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
 
@@ -489,6 +522,10 @@ public sealed class VTOC : IPartition
         public readonly uint[] pad; /*space for more stuff*/
     }
 
+#endregion
+
+#region Nested type: PDInfoOld
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
 
     // ReSharper disable once InconsistentNaming
@@ -518,56 +555,26 @@ public sealed class VTOC : IPartition
         public readonly uint allcend;   /*end of allocatable disk*/
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+#endregion
 
-    // ReSharper disable once InconsistentNaming
-    struct vtocold
+#region Nested type: pFlag
+
+    [Flags]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    enum pFlag : ushort
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly uint[] v_bootinfo; /*info needed by mboot*/
-        public readonly uint v_sanity;     /*to verify vtoc sanity*/
-        public readonly uint v_version;    /*layout version*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] v_volume;   /*volume name*/
-        public readonly ushort v_sectorsz; /*sector size in bytes*/
-        public readonly ushort v_nparts;   /*number of partitions*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public readonly uint[] v_reserved; /*free space*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly partition[] v_part; /*partition headers*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly int[] timestamp; /* SCSI time stamp */
+        /* Partition permission flags */
+        V_UNMNT  = 0x01,  /* Unmountable partition */
+        V_RONLY  = 0x10,  /* Read only */
+        V_REMAP  = 0x20,  /* do alternate sector mapping */
+        V_OPEN   = 0x100, /* Partition open (for driver use) */
+        V_VALID  = 0x200, /* Partition is valid to use */
+        V_VOMASK = 0x300  /* mask for open and valid */
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+#endregion
 
-    // ReSharper disable once InconsistentNaming
-    struct vtoc
-    {
-        public readonly uint v_sanity;  /*to verify vtoc sanity*/
-        public readonly uint v_version; /*layout version*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] v_volume; /*volume name*/
-        public readonly ushort v_nparts; /*number of partitions*/
-        public readonly ushort v_pad;    /*pad for 286 compiler*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-        public readonly uint[] v_reserved; /*free space*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly partition[] v_part; /*partition headers*/
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly int[] timestamp; /* SCSI time stamp */
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-
-    // ReSharper disable once InconsistentNaming
-    struct partition
-    {
-        public pTag  p_tag;   /*ID tag of partition*/
-        public pFlag p_flag;  /*permision flags*/
-        public int   p_start; /*start sector no of partition*/
-        public int   p_size;  /*# of blocks in partition*/
-    }
+#region Nested type: pTag
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum pTag : ushort
@@ -618,11 +625,53 @@ public sealed class VTOC : IPartition
         V_VMPRIVATE = 0x000F
     }
 
-    [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
-    enum pFlag : ushort
+#endregion
+
+#region Nested type: vtoc
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+    // ReSharper disable once InconsistentNaming
+    struct vtoc
     {
-        /* Partition permission flags */ V_UNMNT = 0x01, /* Unmountable partition */ V_RONLY = 0x10, /* Read only */
-        V_REMAP = 0x20, /* do alternate sector mapping */ V_OPEN = 0x100, /* Partition open (for driver use) */
-        V_VALID = 0x200, /* Partition is valid to use */ V_VOMASK = 0x300 /* mask for open and valid */
+        public readonly uint v_sanity;  /*to verify vtoc sanity*/
+        public readonly uint v_version; /*layout version*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] v_volume; /*volume name*/
+        public readonly ushort v_nparts; /*number of partitions*/
+        public readonly ushort v_pad;    /*pad for 286 compiler*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly uint[] v_reserved; /*free space*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
+        public readonly partition[] v_part; /*partition headers*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
+        public readonly int[] timestamp; /* SCSI time stamp */
     }
+
+#endregion
+
+#region Nested type: vtocold
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+    // ReSharper disable once InconsistentNaming
+    struct vtocold
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly uint[] v_bootinfo; /*info needed by mboot*/
+        public readonly uint v_sanity;     /*to verify vtoc sanity*/
+        public readonly uint v_version;    /*layout version*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] v_volume;   /*volume name*/
+        public readonly ushort v_sectorsz; /*sector size in bytes*/
+        public readonly ushort v_nparts;   /*number of partitions*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly uint[] v_reserved; /*free space*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
+        public readonly partition[] v_part; /*partition headers*/
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
+        public readonly int[] timestamp; /* SCSI time stamp */
+    }
+
+#endregion
 }

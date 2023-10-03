@@ -48,10 +48,14 @@ public sealed class RioKarma : IPartition
     const ushort KARMA_MAGIC = 0xAB56;
     const byte   ENTRY_MAGIC = 0x4D;
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.RioKarma_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -72,19 +76,41 @@ public sealed class RioKarma : IPartition
 
         ulong counter = 0;
 
-        partitions = (from entry in table.entries let part = new Partition
-                         {
-                             Start    = entry.offset,
-                             Offset   = (ulong)(entry.offset * sector.Length),
-                             Size     = entry.size,
-                             Length   = (ulong)(entry.size * sector.Length),
-                             Type     = Localization.Rio_Karma,
-                             Sequence = counter++,
-                             Scheme   = Name
-                         } where entry.type == ENTRY_MAGIC select part).ToList();
+        partitions = (from entry in table.entries
+                      let part = new Partition
+                      {
+                          Start    = entry.offset,
+                          Offset   = (ulong)(entry.offset * sector.Length),
+                          Size     = entry.size,
+                          Length   = (ulong)(entry.size * sector.Length),
+                          Type     = Localization.Rio_Karma,
+                          Sequence = counter++,
+                          Scheme   = Name
+                      }
+                      where entry.type == ENTRY_MAGIC
+                      select part).ToList();
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Entry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Entry
+    {
+        public readonly uint reserved;
+        public readonly byte type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] reserved2;
+        public readonly uint offset;
+        public readonly uint size;
+    }
+
+#endregion
+
+#region Nested type: Table
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Table
@@ -98,14 +124,5 @@ public sealed class RioKarma : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Entry
-    {
-        public readonly uint reserved;
-        public readonly byte type;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] reserved2;
-        public readonly uint offset;
-        public readonly uint size;
-    }
+#endregion
 }

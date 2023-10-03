@@ -49,10 +49,14 @@ namespace Aaru.Partitions;
 /// <summary>Implements decoding of Plan-9 partitions</summary>
 public sealed class Plan9 : IPartition
 {
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.Plan9_Name;
+
     /// <inheritdoc />
     public Guid Id => new("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -95,4 +99,6 @@ public sealed class Plan9 : IPartition
 
         return partitions.Count > 0;
     }
+
+#endregion
 }

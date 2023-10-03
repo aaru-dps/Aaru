@@ -53,10 +53,14 @@ public sealed class SGI : IPartition
     const int    SGI_MAGIC   = 0x0BE5A941;
     const string MODULE_NAME = "SGI Volume Header plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.SGI_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -73,10 +77,10 @@ public sealed class SGI : IPartition
 
         Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
 
-        for(int i = 0; i < dvh.volume.Length; i++)
+        for(var i = 0; i < dvh.volume.Length; i++)
             dvh.volume[i] = (Volume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
 
-        for(int i = 0; i < dvh.partitions.Length; i++)
+        for(var i = 0; i < dvh.partitions.Length; i++)
             dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.dvh_magic_equals_0_X8_should_be_1_X8, dvh.magic,
@@ -97,8 +101,8 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_spares_cyl = {0}",
                                    dvh.device_params.dp_spares_cyl);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_cyls = {0}", dvh.device_params.dp_cyls);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_shd0 = {0}", dvh.device_params.dp_shd0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_cyls = {0}",  dvh.device_params.dp_cyls);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_shd0 = {0}",  dvh.device_params.dp_shd0);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_trks0 = {0}", dvh.device_params.dp_trks0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_ctq_depth = {0}",
@@ -122,7 +126,7 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_nretries = {0}",
                                    dvh.device_params.dp_nretries);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_mspw = {0}", dvh.device_params.dp_mspw);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_mspw = {0}",  dvh.device_params.dp_mspw);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_xgap1 = {0}", dvh.device_params.dp_xgap1);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_xsync = {0}", dvh.device_params.dp_xsync);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_xrdly = {0}", dvh.device_params.dp_xrdly);
@@ -134,7 +138,7 @@ public sealed class SGI : IPartition
 
         ulong counter = 0;
 
-        for(int i = 0; i < dvh.partitions.Length; i++)
+        for(var i = 0; i < dvh.partitions.Length; i++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.partitions[{0}].num_blocks = {1}", i,
                                        dvh.partitions[i].num_blocks);
@@ -166,86 +170,31 @@ public sealed class SGI : IPartition
         return true;
     }
 
+#endregion
+
     static string TypeToString(SGIType typ) => typ switch
-    {
-        SGIType.Header    => Localization.Volume_header,
-        SGIType.TrkRepl   => Localization.Track_replacements,
-        SGIType.SecRepl   => Localization.Sector_replacements,
-        SGIType.Swap      => Localization.Raw_data_swap,
-        SGIType.Bsd       => Localization._4_2_BSD_Fast_File_System,
-        SGIType.SystemV   => Localization.UNIX_System_V,
-        SGIType.Volume    => Localization.Whole_device,
-        SGIType.EFS       => Localization.EFS,
-        SGIType.Lvol      => Localization.Logical_volume,
-        SGIType.Rlvol     => Localization.Raw_logical_volume,
-        SGIType.XFS       => Localization.XFS,
-        SGIType.Xlvol     => Localization.XFS_log_device,
-        SGIType.Rxlvol    => Localization.XLV_volume,
-        SGIType.Xvm       => Localization.SGI_XVM,
-        SGIType.LinuxSwap => Localization.Linux_swap,
-        SGIType.Linux     => Localization.Linux,
-        SGIType.LinuxRAID => Localization.Linux_RAID,
-        _                 => Localization.Unknown_partition_type
-    };
+                                               {
+                                                   SGIType.Header    => Localization.Volume_header,
+                                                   SGIType.TrkRepl   => Localization.Track_replacements,
+                                                   SGIType.SecRepl   => Localization.Sector_replacements,
+                                                   SGIType.Swap      => Localization.Raw_data_swap,
+                                                   SGIType.Bsd       => Localization._4_2_BSD_Fast_File_System,
+                                                   SGIType.SystemV   => Localization.UNIX_System_V,
+                                                   SGIType.Volume    => Localization.Whole_device,
+                                                   SGIType.EFS       => Localization.EFS,
+                                                   SGIType.Lvol      => Localization.Logical_volume,
+                                                   SGIType.Rlvol     => Localization.Raw_logical_volume,
+                                                   SGIType.XFS       => Localization.XFS,
+                                                   SGIType.Xlvol     => Localization.XFS_log_device,
+                                                   SGIType.Rxlvol    => Localization.XLV_volume,
+                                                   SGIType.Xvm       => Localization.SGI_XVM,
+                                                   SGIType.LinuxSwap => Localization.Linux_swap,
+                                                   SGIType.Linux     => Localization.Linux,
+                                                   SGIType.LinuxRAID => Localization.Linux_RAID,
+                                                   _                 => Localization.Unknown_partition_type
+                                               };
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Label
-    {
-        /// <summary></summary>
-        public readonly uint magic;
-        /// <summary></summary>
-        public readonly short root_part_num;
-        /// <summary></summary>
-        public readonly short swap_part_num;
-        /// <summary></summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly byte[] boot_file;
-        /// <summary></summary>
-        public readonly DeviceParameters device_params;
-        /// <summary></summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        public readonly Volume[] volume;
-        /// <summary></summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly Partition[] partitions;
-        /// <summary></summary>
-        public readonly uint csum;
-        /// <summary></summary>
-        public readonly uint padding;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Volume
-    {
-        /// <summary></summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] name;
-        /// <summary></summary>
-        public readonly uint block_num;
-        /// <summary></summary>
-        public readonly uint num_bytes;
-    }
-
-    enum SGIType : uint
-    {
-        Header = 0, TrkRepl      = 1, SecRepl      = 2,
-        Swap   = 3, Bsd          = 4, SystemV      = 5,
-        Volume = 6, EFS          = 7, Lvol         = 8,
-        Rlvol  = 9, XFS          = 0xA, Xlvol      = 0xB,
-        Rxlvol = 0xC, Xvm        = 0x0D, LinuxSwap = 0x82,
-        Linux  = 0x83, LinuxRAID = 0xFD
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Partition
-    {
-        /// <summary></summary>
-        public readonly uint num_blocks;
-        /// <summary></summary>
-        public readonly uint first_block;
-        /// <summary></summary>
-        public readonly SGIType type;
-    }
+#region Nested type: DeviceParameters
 
     struct DeviceParameters
     {
@@ -273,4 +222,92 @@ public sealed class SGI : IPartition
         public ushort dp_xrgate;
         public ushort dp_xwcont;
     }
+
+#endregion
+
+#region Nested type: Label
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Label
+    {
+        /// <summary></summary>
+        public readonly uint magic;
+        /// <summary></summary>
+        public readonly short root_part_num;
+        /// <summary></summary>
+        public readonly short swap_part_num;
+        /// <summary></summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] boot_file;
+        /// <summary></summary>
+        public readonly DeviceParameters device_params;
+        /// <summary></summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+        public readonly Volume[] volume;
+        /// <summary></summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly Partition[] partitions;
+        /// <summary></summary>
+        public readonly uint csum;
+        /// <summary></summary>
+        public readonly uint padding;
+    }
+
+#endregion
+
+#region Nested type: Partition
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Partition
+    {
+        /// <summary></summary>
+        public readonly uint num_blocks;
+        /// <summary></summary>
+        public readonly uint first_block;
+        /// <summary></summary>
+        public readonly SGIType type;
+    }
+
+#endregion
+
+#region Nested type: SGIType
+
+    enum SGIType : uint
+    {
+        Header    = 0,
+        TrkRepl   = 1,
+        SecRepl   = 2,
+        Swap      = 3,
+        Bsd       = 4,
+        SystemV   = 5,
+        Volume    = 6,
+        EFS       = 7,
+        Lvol      = 8,
+        Rlvol     = 9,
+        XFS       = 0xA,
+        Xlvol     = 0xB,
+        Rxlvol    = 0xC,
+        Xvm       = 0x0D,
+        LinuxSwap = 0x82,
+        Linux     = 0x83,
+        LinuxRAID = 0xFD
+    }
+
+#endregion
+
+#region Nested type: Volume
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Volume
+    {
+        /// <summary></summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] name;
+        /// <summary></summary>
+        public readonly uint block_num;
+        /// <summary></summary>
+        public readonly uint num_bytes;
+    }
+
+#endregion
 }

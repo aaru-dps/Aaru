@@ -178,10 +178,14 @@ public sealed class AmigaRigidDiskBlock : IPartition
     const uint FLAGS_NO_AUTOMOUNT = 0x00000002;
     const string MODULE_NAME = "Amiga Rigid Disk Block (RDB) plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.AmigaRigidDiskBlock_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8D72ED97-1854-4170-9CE4-6E8446FD9863");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -190,7 +194,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
     {
         partitions = new List<Partition>();
         ulong       rdbBlock = 0;
-        bool        foundRdb = false;
+        var         foundRdb = false;
         ErrorNumber errno;
 
         while(rdbBlock < 16)
@@ -210,7 +214,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 continue;
             }
 
-            uint magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
+            var magic = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Possible_magic_at_block_0_is_1_X8, rdbBlock,
                                        magic);
@@ -280,7 +284,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
         rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x98);
         rdb.Reserved15      = BigEndianBitConverter.ToUInt32(sector, 0x9C);
 
-        byte[] tmpString = new byte[8];
+        var tmpString = new byte[8];
         Array.Copy(sector, 0xA0, tmpString, 0, 8);
         rdb.DiskVendor = StringHandlers.SpacePaddedToString(tmpString);
         tmpString      = new byte[16];
@@ -311,61 +315,61 @@ public sealed class AmigaRigidDiskBlock : IPartition
         rdb.Reserved24 = BigEndianBitConverter.ToUInt32(sector, 0xF8);
         rdb.Reserved25 = BigEndianBitConverter.ToUInt32(sector, 0xFC);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.magic = 0x{0:X8}", rdb.Magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.size = {0} longs, {1} bytes", rdb.Size, rdb.Size * 4);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.checksum = 0x{0:X8}", rdb.Checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.targetID = {0}", rdb.TargetId);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.block_size = {0}", rdb.BlockSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.badblock_ptr = {0}", rdb.BadblockPtr);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.partition_ptr = {0}", rdb.PartitionPtr);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.fsheader_ptr = {0}", rdb.FsheaderPtr);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.driveinitcode = {0}", rdb.Driveinitcode);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved1 = 0x{0:X8}", rdb.Reserved1);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved2 = 0x{0:X8}", rdb.Reserved2);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved3 = 0x{0:X8}", rdb.Reserved3);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved4 = 0x{0:X8}", rdb.Reserved4);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved5 = 0x{0:X8}", rdb.Reserved5);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved6 = 0x{0:X8}", rdb.Reserved6);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.cylinders = {0}", rdb.Cylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.spt = {0}", rdb.Spt);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.heads = {0}", rdb.Heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.interleave = {0}", rdb.Interleave);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.parking = {0}", rdb.Parking);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved7 = 0x{0:X8}", rdb.Reserved7);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved8 = 0x{0:X8}", rdb.Reserved8);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved9 = 0x{0:X8}", rdb.Reserved9);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.writeprecomp = {0}", rdb.Writeprecomp);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reducedwrite = {0}", rdb.Reducedwrite);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.steprate = {0}", rdb.Steprate);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved10 = 0x{0:X8}", rdb.Reserved10);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved11 = 0x{0:X8}", rdb.Reserved11);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved12 = 0x{0:X8}", rdb.Reserved12);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved13 = 0x{0:X8}", rdb.Reserved13);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved14 = 0x{0:X8}", rdb.Reserved14);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.RDBBlockLow = {0}", rdb.RdbBlockLow);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.RDBBlockHigh = {0}", rdb.RdbBlockHigh);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.LowCylinder = {0}", rdb.LowCylinder);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.HighCylinder = {0}", rdb.HighCylinder);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.CylBlocks = {0}", rdb.CylBlocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.AutoParkSeconds = {0}", rdb.AutoParkSeconds);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.HighCylinder = {0}", rdb.HighCylinder);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved15 = 0x{0:X8}", rdb.Reserved15);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskVendor = \"{0}\"", rdb.DiskVendor);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskProduct = \"{0}\"", rdb.DiskProduct);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskRevision = \"{0}\"", rdb.DiskRevision);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.controllerVendor = \"{0}\"", rdb.ControllerVendor);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.controllerProduct = \"{0}\"", rdb.ControllerProduct);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.magic = 0x{0:X8}",             rdb.Magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.size = {0} longs, {1} bytes",  rdb.Size, rdb.Size * 4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.checksum = 0x{0:X8}",          rdb.Checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.targetID = {0}",               rdb.TargetId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.block_size = {0}",             rdb.BlockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.badblock_ptr = {0}",           rdb.BadblockPtr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.partition_ptr = {0}",          rdb.PartitionPtr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.fsheader_ptr = {0}",           rdb.FsheaderPtr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.driveinitcode = {0}",          rdb.Driveinitcode);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved1 = 0x{0:X8}",         rdb.Reserved1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved2 = 0x{0:X8}",         rdb.Reserved2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved3 = 0x{0:X8}",         rdb.Reserved3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved4 = 0x{0:X8}",         rdb.Reserved4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved5 = 0x{0:X8}",         rdb.Reserved5);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved6 = 0x{0:X8}",         rdb.Reserved6);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.cylinders = {0}",              rdb.Cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.spt = {0}",                    rdb.Spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.heads = {0}",                  rdb.Heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.interleave = {0}",             rdb.Interleave);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.parking = {0}",                rdb.Parking);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved7 = 0x{0:X8}",         rdb.Reserved7);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved8 = 0x{0:X8}",         rdb.Reserved8);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved9 = 0x{0:X8}",         rdb.Reserved9);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.writeprecomp = {0}",           rdb.Writeprecomp);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reducedwrite = {0}",           rdb.Reducedwrite);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.steprate = {0}",               rdb.Steprate);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved10 = 0x{0:X8}",        rdb.Reserved10);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved11 = 0x{0:X8}",        rdb.Reserved11);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved12 = 0x{0:X8}",        rdb.Reserved12);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved13 = 0x{0:X8}",        rdb.Reserved13);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved14 = 0x{0:X8}",        rdb.Reserved14);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.RDBBlockLow = {0}",            rdb.RdbBlockLow);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.RDBBlockHigh = {0}",           rdb.RdbBlockHigh);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.LowCylinder = {0}",            rdb.LowCylinder);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.CylBlocks = {0}",              rdb.CylBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.AutoParkSeconds = {0}",        rdb.AutoParkSeconds);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved15 = 0x{0:X8}",        rdb.Reserved15);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskVendor = \"{0}\"",         rdb.DiskVendor);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskProduct = \"{0}\"",        rdb.DiskProduct);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.diskRevision = \"{0}\"",       rdb.DiskRevision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.controllerVendor = \"{0}\"",   rdb.ControllerVendor);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.controllerProduct = \"{0}\"",  rdb.ControllerProduct);
         AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.controllerRevision = \"{0}\"", rdb.ControllerRevision);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved16 = 0x{0:X8}", rdb.Reserved16);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved17 = 0x{0:X8}", rdb.Reserved17);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved18 = 0x{0:X8}", rdb.Reserved18);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved19 = 0x{0:X8}", rdb.Reserved19);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved20 = 0x{0:X8}", rdb.Reserved20);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved21 = 0x{0:X8}", rdb.Reserved21);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved22 = 0x{0:X8}", rdb.Reserved22);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved23 = 0x{0:X8}", rdb.Reserved23);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved24 = 0x{0:X8}", rdb.Reserved24);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved25 = 0x{0:X8}", rdb.Reserved25);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved16 = 0x{0:X8}",        rdb.Reserved16);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved17 = 0x{0:X8}",        rdb.Reserved17);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved18 = 0x{0:X8}",        rdb.Reserved18);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved19 = 0x{0:X8}",        rdb.Reserved19);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved20 = 0x{0:X8}",        rdb.Reserved20);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved21 = 0x{0:X8}",        rdb.Reserved21);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved22 = 0x{0:X8}",        rdb.Reserved22);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved23 = 0x{0:X8}",        rdb.Reserved23);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved24 = 0x{0:X8}",        rdb.Reserved24);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
 
         // Reading BadBlock list
         List<BadBlockList> badBlockChain = new();
@@ -381,7 +385,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != BAD_BLOCK_LIST_MAGIC)
                 break;
@@ -407,15 +411,15 @@ public sealed class AmigaRigidDiskBlock : IPartition
                                        chainEntry.Size * 4);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.checksum = 0x{0:X8}", chainEntry.Checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.targetID = {0}", chainEntry.TargetId);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.next_ptr = {0}", chainEntry.NextPtr);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.targetID = {0}",      chainEntry.TargetId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.next_ptr = {0}",      chainEntry.NextPtr);
             AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.reserved = 0x{0:X8}", chainEntry.Reserved);
 
             for(ulong i = 0; i < entries; i++)
             {
-                chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + (i * 8) + 0));
+                chainEntry.BlockPairs[i].BadBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 0));
 
-                chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + (i * 8) + 4));
+                chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.Bad_block_at_0_replaced_with_good_block_at_1,
@@ -441,7 +445,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != PARTITION_BLOCK_MAGIC)
                 break;
@@ -500,7 +504,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 }
             };
 
-            byte[] driveName = new byte[32];
+            var driveName = new byte[32];
             Array.Copy(sector, 0x24, driveName, 0, 32);
             partEntry.DriveName = StringHandlers.PascalToString(driveName, Encoding.GetEncoding("iso-8859-1"));
 
@@ -509,22 +513,22 @@ public sealed class AmigaRigidDiskBlock : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.size = {0} longs, {1} bytes", partEntry.Size,
                                        partEntry.Size * 4);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.checksum = 0x{0:X8}", partEntry.Checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.targetID = {0}", partEntry.TargetId);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.next_ptr = {0}", partEntry.NextPtr);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.flags = 0x{0:X8}", partEntry.Flags);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved1 = 0x{0:X8}", partEntry.Reserved1);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved2 = 0x{0:X8}", partEntry.Reserved2);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.devFlags = 0x{0:X8}", partEntry.DevFlags);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.driveNameLen = {0}", partEntry.DriveNameLen);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.driveName = \"{0}\"", partEntry.DriveName);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved3 = 0x{0:X8}", partEntry.Reserved3);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved4 = 0x{0:X8}", partEntry.Reserved4);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved5 = 0x{0:X8}", partEntry.Reserved5);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved6 = 0x{0:X8}", partEntry.Reserved6);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved7 = 0x{0:X8}", partEntry.Reserved7);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved8 = 0x{0:X8}", partEntry.Reserved8);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved9 = 0x{0:X8}", partEntry.Reserved9);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.checksum = 0x{0:X8}",   partEntry.Checksum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.targetID = {0}",        partEntry.TargetId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.next_ptr = {0}",        partEntry.NextPtr);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.flags = 0x{0:X8}",      partEntry.Flags);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved1 = 0x{0:X8}",  partEntry.Reserved1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved2 = 0x{0:X8}",  partEntry.Reserved2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.devFlags = 0x{0:X8}",   partEntry.DevFlags);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.driveNameLen = {0}",    partEntry.DriveNameLen);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.driveName = \"{0}\"",   partEntry.DriveName);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved3 = 0x{0:X8}",  partEntry.Reserved3);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved4 = 0x{0:X8}",  partEntry.Reserved4);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved5 = 0x{0:X8}",  partEntry.Reserved5);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved6 = 0x{0:X8}",  partEntry.Reserved6);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved7 = 0x{0:X8}",  partEntry.Reserved7);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved8 = 0x{0:X8}",  partEntry.Reserved8);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved9 = 0x{0:X8}",  partEntry.Reserved9);
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved10 = 0x{0:X8}", partEntry.Reserved10);
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved11 = 0x{0:X8}", partEntry.Reserved11);
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved12 = 0x{0:X8}", partEntry.Reserved12);
@@ -610,7 +614,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             if(errno != ErrorNumber.NoError)
                 break;
 
-            uint magic = BigEndianBitConverter.ToUInt32(sector, 0);
+            var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
             if(magic != FILESYSTEM_HEADER_MAGIC)
                 break;
@@ -649,10 +653,10 @@ public sealed class AmigaRigidDiskBlock : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.size = {0} longs, {1} bytes", fshd.Size,
                                        fshd.Size * 4);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.checksum = 0x{0:X8}", fshd.Checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.targetID = {0}", fshd.TargetId);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.next_ptr = {0}", fshd.NextPtr);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.flags = 0x{0:X8}", fshd.Flags);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.checksum = 0x{0:X8}",  fshd.Checksum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.targetID = {0}",       fshd.TargetId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.next_ptr = {0}",       fshd.NextPtr);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.flags = 0x{0:X8}",     fshd.Flags);
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.reserved1 = 0x{0:X8}", fshd.Reserved1);
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.reserved2 = 0x{0:X8}", fshd.Reserved2);
 
@@ -663,20 +667,20 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.patchFlags = 0x{0:X8}", fshd.PatchFlags);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.type = {0}", fshd.Dnode.Type);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.task = {0}", fshd.Dnode.Task);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.locked = {0}", fshd.Dnode.Locked);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.handler = {0}", fshd.Dnode.Handler);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.stackSize = {0}", fshd.Dnode.StackSize);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.priority = {0}", fshd.Dnode.Priority);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.startup = {0}", fshd.Dnode.Startup);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.type = {0}",        fshd.Dnode.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.task = {0}",        fshd.Dnode.Task);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.locked = {0}",      fshd.Dnode.Locked);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.handler = {0}",     fshd.Dnode.Handler);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.stackSize = {0}",   fshd.Dnode.StackSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.priority = {0}",    fshd.Dnode.Priority);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.startup = {0}",     fshd.Dnode.Startup);
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.seglist_ptr = {0}", fshd.Dnode.SeglistPtr);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
             nextBlock = fshd.Dnode.SeglistPtr;
-            bool thereAreLoadSegments = false;
-            var  sha1Ctx              = new Sha1Context();
+            var thereAreLoadSegments = false;
+            var sha1Ctx              = new Sha1Context();
 
             while(nextBlock != 0xFFFFFFFF)
             {
@@ -688,7 +692,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 if(errno != ErrorNumber.NoError)
                     break;
 
-                uint magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
+                var magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
                 if(magicSeg != LOAD_SEG_MAGIC)
                     break;
@@ -715,8 +719,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
                                            loadSeg.Size * 4);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.checksum = 0x{0:X8}", loadSeg.Checksum);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.targetID = {0}", loadSeg.TargetId);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.next_ptr = {0}", loadSeg.NextPtr);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.targetID = {0}",      loadSeg.TargetId);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.next_ptr = {0}",      loadSeg.NextPtr);
 
                 segmentEntries.Add(loadSeg);
                 nextBlock = loadSeg.NextPtr;
@@ -743,11 +747,11 @@ public sealed class AmigaRigidDiskBlock : IPartition
                     Sequence = sequence,
                     Length = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                              rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
-                    Start = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
+                    Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
                             sectorOffset,
                     Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                     Scheme = Name,
-                    Offset = ((rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
+                    Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
                               sectorOffset) * rdb.BlockSize,
                     Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
                            rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
@@ -760,34 +764,57 @@ public sealed class AmigaRigidDiskBlock : IPartition
         return true;
     }
 
+#endregion
+
     static string AmigaDosTypeToDescriptionString(uint amigaDosType)
     {
         switch(amigaDosType)
         {
-            case TYPEID_OFS:           return Localization.Amiga_Original_File_System;
-            case TYPEID_FFS:           return Localization.Amiga_Fast_File_System;
-            case TYPEID_OFS_INTL:      return Localization.Amiga_Original_File_System_with_international_characters;
-            case TYPEID_FFS_INTL:      return Localization.Amiga_Fast_File_System_with_international_characters;
-            case TYPEID_OFS_CACHE:     return Localization.Amiga_Original_File_System_with_directory_cache;
-            case TYPEID_FFS_CACHE:     return Localization.Amiga_Fast_File_System_with_directory_cache;
-            case TYPEID_OFS2:          return Localization.Amiga_Original_File_System_with_long_filenames;
-            case TYPEID_FFS2:          return Localization.Amiga_Fast_File_System_with_long_filenames;
-            case TYPEID_AMIX_SYSV:     return Localization.Amiga_UNIX_System_V_filesystem;
-            case TYPEID_AMIX_BOOT:     return Localization.Amiga_UNIX_boot_filesystem;
-            case TYPEID_AMIX_FFS:      return Localization.Amiga_UNIX_BSD_filesystem;
-            case TYPEID_AMIX_RESERVED: return Localization.Amiga_UNIX_Reserved_partition__swap_;
+            case TYPEID_OFS:
+                return Localization.Amiga_Original_File_System;
+            case TYPEID_FFS:
+                return Localization.Amiga_Fast_File_System;
+            case TYPEID_OFS_INTL:
+                return Localization.Amiga_Original_File_System_with_international_characters;
+            case TYPEID_FFS_INTL:
+                return Localization.Amiga_Fast_File_System_with_international_characters;
+            case TYPEID_OFS_CACHE:
+                return Localization.Amiga_Original_File_System_with_directory_cache;
+            case TYPEID_FFS_CACHE:
+                return Localization.Amiga_Fast_File_System_with_directory_cache;
+            case TYPEID_OFS2:
+                return Localization.Amiga_Original_File_System_with_long_filenames;
+            case TYPEID_FFS2:
+                return Localization.Amiga_Fast_File_System_with_long_filenames;
+            case TYPEID_AMIX_SYSV:
+                return Localization.Amiga_UNIX_System_V_filesystem;
+            case TYPEID_AMIX_BOOT:
+                return Localization.Amiga_UNIX_boot_filesystem;
+            case TYPEID_AMIX_FFS:
+                return Localization.Amiga_UNIX_BSD_filesystem;
+            case TYPEID_AMIX_RESERVED:
+                return Localization.Amiga_UNIX_Reserved_partition__swap_;
             case TYPEID_PFS:
             case TYPEID_PFS2:
             case TYPEID_PFS_MUSER:
-            case TYPEID_AFS: return Localization.ProfessionalFileSystem;
-            case TYPEID_SFS:       return Localization.SmartFileSystem_v1;
-            case TYPEID_SFS2:      return Localization.SmartFileSystem_v2;
-            case TYPEID_JXFS:      return Localization.JXFS;
-            case TYPEID_CROSS_DOS: return Localization.FAT_as_set_by_CrossDOS;
-            case TYPEID_CROSS_MAC: return Localization.HFS_as_set_by_CrossMac;
-            case TYPEID_BFFS:      return Localization._4_2_UFS_for_BFFS;
-            case TYPEID_OFS_MUSER: return Localization.Amiga_Original_File_System_with_multi_user_patches;
-            case TYPEID_FFS_MUSER: return Localization.Amiga_Fast_File_System_with_multi_user_patches;
+            case TYPEID_AFS:
+                return Localization.ProfessionalFileSystem;
+            case TYPEID_SFS:
+                return Localization.SmartFileSystem_v1;
+            case TYPEID_SFS2:
+                return Localization.SmartFileSystem_v2;
+            case TYPEID_JXFS:
+                return Localization.JXFS;
+            case TYPEID_CROSS_DOS:
+                return Localization.FAT_as_set_by_CrossDOS;
+            case TYPEID_CROSS_MAC:
+                return Localization.HFS_as_set_by_CrossMac;
+            case TYPEID_BFFS:
+                return Localization._4_2_UFS_for_BFFS;
+            case TYPEID_OFS_MUSER:
+                return Localization.Amiga_Original_File_System_with_multi_user_patches;
+            case TYPEID_FFS_MUSER:
+                return Localization.Amiga_Fast_File_System_with_multi_user_patches;
             case TYPEID_OFS_INTL_MUSER:
                 return Localization.Amiga_Original_File_System_with_international_characters_and_multi_user_patches;
             case TYPEID_FFS_INTL_MUSER:
@@ -796,65 +823,99 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 return Localization.Amiga_Original_File_System_with_directory_cache_and_multi_user_patches;
             case TYPEID_FFS_CACHE_MUSER:
                 return Localization.Amiga_Fast_File_System_with_directory_cache_and_multi_user_patches;
-            case TYPEID_OLD_BSD_UNUSED:     return Localization.BSD_unused;
-            case TYPEID_OLD_BSD_SWAP:       return Localization.BSD_swap;
-            case TYPEID_OLD_BSD42_FFS:      return Localization.BSD_4_2_FFS;
-            case TYPEID_OLD_BSD44_LFS:      return Localization.BSD_4_4_LFS;
-            case TYPEID_NETBSD_ROOT_UNUSED: return Localization.NetBSD_unused_root_partition;
-            case TYPEID_NETBSD_ROOT_42FFS:  return Localization.NetBSD_4_2_FFS_root_partition;
-            case TYPEID_NETBSD_ROOT_44LFS:  return Localization.NetBSD_4_4_LFS_root_partition;
-            case TYPEID_NETBSD_USER_UNUSED: return Localization.NetBSD_unused_user_partition;
-            case TYPEID_NETBSD_USER_42FFS:  return Localization.NetBSD_4_2_FFS_user_partition;
-            case TYPEID_NETBSD_USER_44LFS:  return Localization.NetBSD_4_4_LFS_user_partition;
-            case TYPEID_NETBSD_SWAP:        return Localization.NetBSD_swap_partition;
-            case TYPEID_LINUX:              return Localization.Linux_filesystem_partition;
-            case TYPEID_LINUX_SWAP:         return Localization.Linux_swap_partition;
+            case TYPEID_OLD_BSD_UNUSED:
+                return Localization.BSD_unused;
+            case TYPEID_OLD_BSD_SWAP:
+                return Localization.BSD_swap;
+            case TYPEID_OLD_BSD42_FFS:
+                return Localization.BSD_4_2_FFS;
+            case TYPEID_OLD_BSD44_LFS:
+                return Localization.BSD_4_4_LFS;
+            case TYPEID_NETBSD_ROOT_UNUSED:
+                return Localization.NetBSD_unused_root_partition;
+            case TYPEID_NETBSD_ROOT_42FFS:
+                return Localization.NetBSD_4_2_FFS_root_partition;
+            case TYPEID_NETBSD_ROOT_44LFS:
+                return Localization.NetBSD_4_4_LFS_root_partition;
+            case TYPEID_NETBSD_USER_UNUSED:
+                return Localization.NetBSD_unused_user_partition;
+            case TYPEID_NETBSD_USER_42FFS:
+                return Localization.NetBSD_4_2_FFS_user_partition;
+            case TYPEID_NETBSD_USER_44LFS:
+                return Localization.NetBSD_4_4_LFS_user_partition;
+            case TYPEID_NETBSD_SWAP:
+                return Localization.NetBSD_swap_partition;
+            case TYPEID_LINUX:
+                return Localization.Linux_filesystem_partition;
+            case TYPEID_LINUX_SWAP:
+                return Localization.Linux_swap_partition;
             case TYPEID_RAID_FRAME:
-            case TYPEID_RAID_FRAME0: return Localization.RaidFrame_partition;
+            case TYPEID_RAID_FRAME0:
+                return Localization.RaidFrame_partition;
 
             default:
             {
                 if((amigaDosType & TYPEID_OFS) == TYPEID_OFS)
+                {
                     return string.Format(Localization.Unknown_Amiga_DOS_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_AMIX_SYSV) == TYPEID_AMIX_SYSV)
+                {
                     return string.Format(Localization.Unknown_Amiga_UNIX_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & 0x50465300) == 0x50465300 ||
                    (amigaDosType & 0x41465300) == 0x41465300)
+                {
                     return string.Format(Localization.Unknown_ProfessionalFileSystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_SFS) == TYPEID_SFS)
+                {
                     return string.Format(Localization.Unknown_SmartFileSystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_OFS_MUSER) == TYPEID_OFS_MUSER)
+                {
                     return string.Format(Localization.Unknown_Amiga_DOS_multi_user_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_OLD_BSD_UNUSED) == TYPEID_OLD_BSD_UNUSED)
+                {
                     return string.Format(Localization.Unknown_BSD_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_NETBSD_ROOT_UNUSED) == TYPEID_NETBSD_ROOT_UNUSED)
+                {
                     return string.Format(Localization.Unknown_NetBSD_root_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_NETBSD_USER_UNUSED) == TYPEID_NETBSD_USER_UNUSED)
+                {
                     return string.Format(Localization.Unknown_NetBSD_user_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_NETBSD_SWAP) == TYPEID_NETBSD_SWAP)
+                {
                     return string.Format(Localization.Unknown_NetBSD_swap_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 if((amigaDosType & TYPEID_LINUX)      == TYPEID_LINUX ||
                    (amigaDosType & TYPEID_LINUX_SWAP) == TYPEID_LINUX_SWAP)
+                {
                     return string.Format(Localization.Unknown_Linux_filesystem_type_0,
                                          AmigaDosTypeToString(amigaDosType));
+                }
 
                 return string.Format(Localization.Unknown_partition_type_0, AmigaDosTypeToString(amigaDosType));
             }
@@ -863,7 +924,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
     static string AmigaDosTypeToString(uint amigaDosType, bool quoted = true)
     {
-        byte[] textPart = new byte[3];
+        var textPart = new byte[3];
 
         textPart[0] = (byte)((amigaDosType & 0xFF000000) >> 24);
         textPart[1] = (byte)((amigaDosType & 0x00FF0000) >> 16);
@@ -873,6 +934,236 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         return quoted ? $"\"{textPartString}\\{amigaDosType & 0xFF}\"" : $"{textPartString}\\{amigaDosType & 0xFF}";
     }
+
+#region Nested type: BadBlockEntry
+
+    /// <summary>Pair for spare blocks</summary>
+    struct BadBlockEntry
+    {
+        /// <summary>Bad block pointer</summary>
+        public uint BadBlock;
+        /// <summary>Replacement block pointer</summary>
+        public uint GoodBlock;
+    }
+
+#endregion
+
+#region Nested type: BadBlockList
+
+    /// <summary>List of bad blocks and spares</summary>
+    struct BadBlockList
+    {
+        /// <summary>"BADB"</summary>
+        public uint Magic;
+        /// <summary>Size in longs</summary>
+        public uint Size;
+        /// <summary>Checksum</summary>
+        public int Checksum;
+        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
+        public uint TargetId;
+        /// <summary>Pointer for next BadBlockList</summary>
+        public uint NextPtr;
+        /// <summary>Reserved</summary>
+        public uint Reserved;
+        /// <summary>Bad block entries, up to block filling, 8 bytes each</summary>
+        public BadBlockEntry[] BlockPairs;
+    }
+
+#endregion
+
+#region Nested type: DeviceNode
+
+    /// <summary>Device node, mostly useless, except for pointer to first LoadSegment block</summary>
+    struct DeviceNode
+    {
+        /// <summary>Device node type, =0</summary>
+        public uint Type;
+        /// <summary>DOS task field, =0</summary>
+        public uint Task;
+        /// <summary>Unused, =0</summary>
+        public uint Locked;
+        /// <summary>Filename handler to LoadSegment, =0</summary>
+        public uint Handler;
+        /// <summary>Stack size when starting task, =0</summary>
+        public uint StackSize;
+        /// <summary>Task priority, =0</summary>
+        public uint Priority;
+        /// <summary>Startup message, =0</summary>
+        public uint Startup;
+        /// <summary>Pointer to first LoadSegment block</summary>
+        public uint SeglistPtr;
+        /// <summary>BCPL globabl vector when starting task, =0xFFFFFFFF</summary>
+        public uint GlobalVec;
+    }
+
+#endregion
+
+#region Nested type: DosEnvironmentVector
+
+    /// <summary>DOSEnvVec, used by AmigaDOS</summary>
+    struct DosEnvironmentVector
+    {
+        /// <summary>Size in longs, should be 16, minimum 11</summary>
+        public uint Size;
+        /// <summary>Block size in longs</summary>
+        public uint BlockSize;
+        /// <summary>Unknown, 0</summary>
+        public uint SecOrg;
+        /// <summary>Heads in drive</summary>
+        public uint Surfaces;
+        /// <summary>Sectors per block</summary>
+        public uint Spb;
+        /// <summary>Blocks per track</summary>
+        public uint Bpt;
+        /// <summary>DOS reserved blocks at start of partition</summary>
+        public uint Reservedblocks;
+        /// <summary>DOS reserved blocks at end of partition</summary>
+        public uint Prealloc;
+        /// <summary>Interleave</summary>
+        public uint Interleave;
+        /// <summary>First cylinder of a partition, inclusive</summary>
+        public uint LowCylinder;
+        /// <summary>Last cylinder of a partition, inclusive</summary>
+        public uint HighCylinder;
+        /// <summary>Buffers, usually 30</summary>
+        public uint NumBuffer;
+        /// <summary>Type of memory to allocate for buffers</summary>
+        public uint BufMemType;
+        /// <summary>Maximum transfer, usually 0x7FFFFFFF</summary>
+        public uint MaxTransfer;
+        /// <summary>Address mask to block out certain memory, usually 0xFFFFFFFE</summary>
+        public uint Mask;
+        /// <summary>Boot priority</summary>
+        public uint BootPriority;
+        /// <summary>Partition type, and filesystem driver identification for AmigaDOS</summary>
+        public uint DosType;
+        /// <summary>Default baud rate for SER and AUX handlers</summary>
+        public uint Baud;
+        /// <summary>Flow control values for SER and AUX handlers</summary>
+        public uint Control;
+        /// <summary>Since Kickstart 2, how many boot blocks are to be loaded</summary>
+        public uint BootBlocks;
+    }
+
+#endregion
+
+#region Nested type: FileSystemHeader
+
+    /// <summary>File system header</summary>
+    struct FileSystemHeader
+    {
+        /// <summary>"FSHD"</summary>
+        public uint Magic;
+        /// <summary>Size in longs, 64</summary>
+        public uint Size;
+        /// <summary>Checksum</summary>
+        public int Checksum;
+        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
+        public uint TargetId;
+        /// <summary>Pointer to next FileSystemHeader block</summary>
+        public uint NextPtr;
+        /// <summary>Flags, unknown</summary>
+        public uint Flags;
+        /// <summary>Reserved</summary>
+        public uint Reserved1;
+        /// <summary>Reserved</summary>
+        public uint Reserved2;
+        /// <summary>Partition type, and filesystem driver identification for AmigaDOS</summary>
+        public uint DosType;
+        /// <summary>Filesystem version Mask 0xFFFF0000, >>16, major version Mask 0x0000FFFF, minor version</summary>
+        public uint Version;
+        /// <summary>Bits for DeviceNode fields that should be substituted into a standard device node</summary>
+        public uint PatchFlags;
+        /// <summary>Device node</summary>
+        public DeviceNode Dnode;
+    }
+
+#endregion
+
+#region Nested type: LoadSegment
+
+    /// <summary>Filesystem code</summary>
+    struct LoadSegment
+    {
+        /// <summary>"LSEG"</summary>
+        public uint Magic;
+        /// <summary>Size in longs</summary>
+        public uint Size;
+        /// <summary>Checksum</summary>
+        public int Checksum;
+        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
+        public uint TargetId;
+        /// <summary>Pointer to next LoadSegment</summary>
+        public uint NextPtr;
+        /// <summary>Executable code, with relocation hunks, til end of sector</summary>
+        public byte[] LoadData;
+    }
+
+#endregion
+
+#region Nested type: PartitionEntry
+
+    struct PartitionEntry
+    {
+        /// <summary>"PART"</summary>
+        public uint Magic;
+        /// <summary>Size in longs</summary>
+        public uint Size;
+        /// <summary>Checksum</summary>
+        public int Checksum;
+        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
+        public uint TargetId;
+        /// <summary>Pointer to next PartitionEntry</summary>
+        public uint NextPtr;
+        /// <summary>Partition flags</summary>
+        public uint Flags;
+        /// <summary>Reserved</summary>
+        public uint Reserved1;
+        /// <summary>Reserved</summary>
+        public uint Reserved2;
+        /// <summary>Preferred flags for OpenDevice()</summary>
+        public uint DevFlags;
+        /// <summary>Length of drive name</summary>
+        public uint DriveNameLen;
+        /// <summary>Drive name, 31 bytes</summary>
+        public string DriveName;
+        /// <summary>Reserved</summary>
+        public uint Reserved3;
+        /// <summary>Reserved</summary>
+        public uint Reserved4;
+        /// <summary>Reserved</summary>
+        public uint Reserved5;
+        /// <summary>Reserved</summary>
+        public uint Reserved6;
+        /// <summary>Reserved</summary>
+        public uint Reserved7;
+        /// <summary>Reserved</summary>
+        public uint Reserved8;
+        /// <summary>Reserved</summary>
+        public uint Reserved9;
+        /// <summary>Reserved</summary>
+        public uint Reserved10;
+        /// <summary>Reserved</summary>
+        public uint Reserved11;
+        /// <summary>Reserved</summary>
+        public uint Reserved12;
+        /// <summary>Reserved</summary>
+        public uint Reserved13;
+        /// <summary>Reserved</summary>
+        public uint Reserved14;
+        /// <summary>Reserved</summary>
+        public uint Reserved15;
+        /// <summary>Reserved</summary>
+        public uint Reserved16;
+        /// <summary>Reserved</summary>
+        public uint Reserved17;
+        /// <summary>DOSEnvVec, more information about partition</summary>
+        public DosEnvironmentVector DosEnvVec;
+    }
+
+#endregion
+
+#region Nested type: RigidDiskBlock
 
     /// <summary>Amiga Rigid Disk Block, header for partitioning scheme Can be in any sector from 0 to 15, inclusive</summary>
     struct RigidDiskBlock
@@ -991,203 +1282,5 @@ public sealed class AmigaRigidDiskBlock : IPartition
         public uint Reserved25;
     }
 
-    /// <summary>Pair for spare blocks</summary>
-    struct BadBlockEntry
-    {
-        /// <summary>Bad block pointer</summary>
-        public uint BadBlock;
-        /// <summary>Replacement block pointer</summary>
-        public uint GoodBlock;
-    }
-
-    /// <summary>List of bad blocks and spares</summary>
-    struct BadBlockList
-    {
-        /// <summary>"BADB"</summary>
-        public uint Magic;
-        /// <summary>Size in longs</summary>
-        public uint Size;
-        /// <summary>Checksum</summary>
-        public int Checksum;
-        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
-        public uint TargetId;
-        /// <summary>Pointer for next BadBlockList</summary>
-        public uint NextPtr;
-        /// <summary>Reserved</summary>
-        public uint Reserved;
-        /// <summary>Bad block entries, up to block filling, 8 bytes each</summary>
-        public BadBlockEntry[] BlockPairs;
-    }
-
-    /// <summary>DOSEnvVec, used by AmigaDOS</summary>
-    struct DosEnvironmentVector
-    {
-        /// <summary>Size in longs, should be 16, minimum 11</summary>
-        public uint Size;
-        /// <summary>Block size in longs</summary>
-        public uint BlockSize;
-        /// <summary>Unknown, 0</summary>
-        public uint SecOrg;
-        /// <summary>Heads in drive</summary>
-        public uint Surfaces;
-        /// <summary>Sectors per block</summary>
-        public uint Spb;
-        /// <summary>Blocks per track</summary>
-        public uint Bpt;
-        /// <summary>DOS reserved blocks at start of partition</summary>
-        public uint Reservedblocks;
-        /// <summary>DOS reserved blocks at end of partition</summary>
-        public uint Prealloc;
-        /// <summary>Interleave</summary>
-        public uint Interleave;
-        /// <summary>First cylinder of a partition, inclusive</summary>
-        public uint LowCylinder;
-        /// <summary>Last cylinder of a partition, inclusive</summary>
-        public uint HighCylinder;
-        /// <summary>Buffers, usually 30</summary>
-        public uint NumBuffer;
-        /// <summary>Type of memory to allocate for buffers</summary>
-        public uint BufMemType;
-        /// <summary>Maximum transfer, usually 0x7FFFFFFF</summary>
-        public uint MaxTransfer;
-        /// <summary>Address mask to block out certain memory, usually 0xFFFFFFFE</summary>
-        public uint Mask;
-        /// <summary>Boot priority</summary>
-        public uint BootPriority;
-        /// <summary>Partition type, and filesystem driver identification for AmigaDOS</summary>
-        public uint DosType;
-        /// <summary>Default baud rate for SER and AUX handlers</summary>
-        public uint Baud;
-        /// <summary>Flow control values for SER and AUX handlers</summary>
-        public uint Control;
-        /// <summary>Since Kickstart 2, how many boot blocks are to be loaded</summary>
-        public uint BootBlocks;
-    }
-
-    struct PartitionEntry
-    {
-        /// <summary>"PART"</summary>
-        public uint Magic;
-        /// <summary>Size in longs</summary>
-        public uint Size;
-        /// <summary>Checksum</summary>
-        public int Checksum;
-        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
-        public uint TargetId;
-        /// <summary>Pointer to next PartitionEntry</summary>
-        public uint NextPtr;
-        /// <summary>Partition flags</summary>
-        public uint Flags;
-        /// <summary>Reserved</summary>
-        public uint Reserved1;
-        /// <summary>Reserved</summary>
-        public uint Reserved2;
-        /// <summary>Preferred flags for OpenDevice()</summary>
-        public uint DevFlags;
-        /// <summary>Length of drive name</summary>
-        public uint DriveNameLen;
-        /// <summary>Drive name, 31 bytes</summary>
-        public string DriveName;
-        /// <summary>Reserved</summary>
-        public uint Reserved3;
-        /// <summary>Reserved</summary>
-        public uint Reserved4;
-        /// <summary>Reserved</summary>
-        public uint Reserved5;
-        /// <summary>Reserved</summary>
-        public uint Reserved6;
-        /// <summary>Reserved</summary>
-        public uint Reserved7;
-        /// <summary>Reserved</summary>
-        public uint Reserved8;
-        /// <summary>Reserved</summary>
-        public uint Reserved9;
-        /// <summary>Reserved</summary>
-        public uint Reserved10;
-        /// <summary>Reserved</summary>
-        public uint Reserved11;
-        /// <summary>Reserved</summary>
-        public uint Reserved12;
-        /// <summary>Reserved</summary>
-        public uint Reserved13;
-        /// <summary>Reserved</summary>
-        public uint Reserved14;
-        /// <summary>Reserved</summary>
-        public uint Reserved15;
-        /// <summary>Reserved</summary>
-        public uint Reserved16;
-        /// <summary>Reserved</summary>
-        public uint Reserved17;
-        /// <summary>DOSEnvVec, more information about partition</summary>
-        public DosEnvironmentVector DosEnvVec;
-    }
-
-    /// <summary>Device node, mostly useless, except for pointer to first LoadSegment block</summary>
-    struct DeviceNode
-    {
-        /// <summary>Device node type, =0</summary>
-        public uint Type;
-        /// <summary>DOS task field, =0</summary>
-        public uint Task;
-        /// <summary>Unused, =0</summary>
-        public uint Locked;
-        /// <summary>Filename handler to LoadSegment, =0</summary>
-        public uint Handler;
-        /// <summary>Stack size when starting task, =0</summary>
-        public uint StackSize;
-        /// <summary>Task priority, =0</summary>
-        public uint Priority;
-        /// <summary>Startup message, =0</summary>
-        public uint Startup;
-        /// <summary>Pointer to first LoadSegment block</summary>
-        public uint SeglistPtr;
-        /// <summary>BCPL globabl vector when starting task, =0xFFFFFFFF</summary>
-        public uint GlobalVec;
-    }
-
-    /// <summary>File system header</summary>
-    struct FileSystemHeader
-    {
-        /// <summary>"FSHD"</summary>
-        public uint Magic;
-        /// <summary>Size in longs, 64</summary>
-        public uint Size;
-        /// <summary>Checksum</summary>
-        public int Checksum;
-        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
-        public uint TargetId;
-        /// <summary>Pointer to next FileSystemHeader block</summary>
-        public uint NextPtr;
-        /// <summary>Flags, unknown</summary>
-        public uint Flags;
-        /// <summary>Reserved</summary>
-        public uint Reserved1;
-        /// <summary>Reserved</summary>
-        public uint Reserved2;
-        /// <summary>Partition type, and filesystem driver identification for AmigaDOS</summary>
-        public uint DosType;
-        /// <summary>Filesystem version Mask 0xFFFF0000, >>16, major version Mask 0x0000FFFF, minor version</summary>
-        public uint Version;
-        /// <summary>Bits for DeviceNode fields that should be substituted into a standard device node</summary>
-        public uint PatchFlags;
-        /// <summary>Device node</summary>
-        public DeviceNode Dnode;
-    }
-
-    /// <summary>Filesystem code</summary>
-    struct LoadSegment
-    {
-        /// <summary>"LSEG"</summary>
-        public uint Magic;
-        /// <summary>Size in longs</summary>
-        public uint Size;
-        /// <summary>Checksum</summary>
-        public int Checksum;
-        /// <summary>SCSI target ID, 7 for non-SCSI</summary>
-        public uint TargetId;
-        /// <summary>Pointer to next LoadSegment</summary>
-        public uint NextPtr;
-        /// <summary>Executable code, with relocation hunks, til end of sector</summary>
-        public byte[] LoadData;
-    }
+#endregion
 }

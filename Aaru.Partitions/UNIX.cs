@@ -1373,10 +1373,14 @@ public sealed class UNIX : IPartition
         }
     };
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.UNIX_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9ED7E30B-53BF-4619-87A0-5D2002155617");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -1465,14 +1469,17 @@ public sealed class UNIX : IPartition
                 parts = RP06;
 
                 break;
-            default: return false;
+            default:
+                return false;
         }
 
-        for(int i = 0; i < parts.Length; i++)
+        for(var i = 0; i < parts.Length; i++)
             parts[i].Scheme = "";
 
         partitions = parts.ToList();
 
         return partitions.Count > 0;
     }
+
+#endregion
 }

@@ -61,10 +61,14 @@ public sealed class AtariPartitions : IPartition
     const uint   TYPE_MINIX2      = 0x004D4E58;
     const string MODULE_NAME      = "Atari partitions plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.AtariPartitions_Name;
+
     /// <inheritdoc />
     public Guid Id => new("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -89,22 +93,22 @@ public sealed class AtariPartitions : IPartition
 
         Array.Copy(sector, 0, table.Boot, 0, 342);
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
-            table.IcdEntries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 0);
-            table.IcdEntries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 4);
-            table.IcdEntries[i].Length = BigEndianBitConverter.ToUInt32(sector, 342 + (i * 12) + 8);
+            table.IcdEntries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 0);
+            table.IcdEntries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 4);
+            table.IcdEntries[i].Length = BigEndianBitConverter.ToUInt32(sector, 342 + i * 12 + 8);
         }
 
         Array.Copy(sector, 438, table.Unused, 0, 12);
 
         table.Size = BigEndianBitConverter.ToUInt32(sector, 450);
 
-        for(int i = 0; i < 4; i++)
+        for(var i = 0; i < 4; i++)
         {
-            table.Entries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 0);
-            table.Entries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 4);
-            table.Entries[i].Length = BigEndianBitConverter.ToUInt32(sector, 454 + (i * 12) + 8);
+            table.Entries[i].Type   = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 0);
+            table.Entries[i].Start  = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 4);
+            table.Entries[i].Length = BigEndianBitConverter.ToUInt32(sector, 454 + i * 12 + 8);
         }
 
         table.BadStart  = BigEndianBitConverter.ToUInt32(sector, 502);
@@ -115,7 +119,7 @@ public sealed class AtariPartitions : IPartition
         sha1Ctx.Update(table.Boot);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Boot_code_SHA1_0, sha1Ctx.End());
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].flag = 0x{1:X2}"),
                                        i, (table.IcdEntries[i].Type & 0xFF000000) >> 24);
@@ -132,7 +136,7 @@ public sealed class AtariPartitions : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "table.size = {0}", table.Size);
 
-        for(int i = 0; i < 4; i++)
+        for(var i = 0; i < 4; i++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.entries[{0}].flag = 0x{1:X2}"), i,
                                        (table.Entries[i].Type & 0xFF000000) >> 24);
@@ -147,14 +151,14 @@ public sealed class AtariPartitions : IPartition
                                        table.Entries[i].Length);
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "table.badStart = {0}", table.BadStart);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "table.badLength = {0}", table.BadLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.badStart = {0}",      table.BadStart);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.badLength = {0}",     table.BadLength);
         AaruConsole.DebugWriteLine(MODULE_NAME, "table.checksum = 0x{0:X4}", table.Checksum);
 
-        bool  validTable        = false;
+        var   validTable        = false;
         ulong partitionSequence = 0;
 
-        for(int i = 0; i < 4; i++)
+        for(var i = 0; i < 4; i++)
         {
             uint type = table.Entries[i].Type & 0x00FFFFFF;
 
@@ -176,15 +180,17 @@ public sealed class AtariPartitions : IPartition
                     if(table.Entries[i].Start <= imagePlugin.Info.Sectors)
                     {
                         if(table.Entries[i].Start + table.Entries[i].Length > imagePlugin.Info.Sectors)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.WARNING_End_of_partition_goes_beyond_device_size);
+                        }
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
                         if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
-                        byte[] partType = new byte[3];
+                        var partType = new byte[3];
                         partType[0] = (byte)((type & 0xFF0000) >> 16);
                         partType[1] = (byte)((type & 0x00FF00) >> 8);
                         partType[2] = (byte)(type & 0x0000FF);
@@ -266,19 +272,19 @@ public sealed class AtariPartitions : IPartition
                         Entries = new AtariEntry[4]
                     };
 
-                    for(int j = 0; j < 4; j++)
+                    for(var j = 0; j < 4; j++)
                     {
                         extendedTable.Entries[j].Type =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 0);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 0);
 
                         extendedTable.Entries[j].Start =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 4);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 4);
 
                         extendedTable.Entries[j].Length =
-                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + (j * 12) + 8);
+                            BigEndianBitConverter.ToUInt32(extendedSector, 454 + j * 12 + 8);
                     }
 
-                    for(int j = 0; j < 4; j++)
+                    for(var j = 0; j < 4; j++)
                     {
                         uint extendedType = extendedTable.Entries[j].Type & 0x00FFFFFF;
 
@@ -301,15 +307,17 @@ public sealed class AtariPartitions : IPartition
                             continue;
 
                         if(extendedTable.Entries[j].Start + extendedTable.Entries[j].Length > imagePlugin.Info.Sectors)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.WARNING_End_of_partition_goes_beyond_device_size);
+                        }
 
                         ulong sectorSize = imagePlugin.Info.SectorSize;
 
                         if(sectorSize is 2448 or 2352)
                             sectorSize = 2048;
 
-                        byte[] partType = new byte[3];
+                        var partType = new byte[3];
                         partType[0] = (byte)((extendedType & 0xFF0000) >> 16);
                         partType[1] = (byte)((extendedType & 0x00FF00) >> 8);
                         partType[2] = (byte)(extendedType & 0x0000FF);
@@ -386,7 +394,7 @@ public sealed class AtariPartitions : IPartition
         if(!validTable)
             return partitions.Count > 0;
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
             uint type = table.IcdEntries[i].Type & 0x00FFFFFF;
 
@@ -407,15 +415,17 @@ public sealed class AtariPartitions : IPartition
                 continue;
 
             if(table.IcdEntries[i].Start + table.IcdEntries[i].Length > imagePlugin.Info.Sectors)
+            {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.WARNING_End_of_partition_goes_beyond_device_size);
+            }
 
             ulong sectorSize = imagePlugin.Info.SectorSize;
 
             if(sectorSize is 2448 or 2352)
                 sectorSize = 2048;
 
-            byte[] partType = new byte[3];
+            var partType = new byte[3];
             partType[0] = (byte)((type & 0xFF0000) >> 16);
             partType[1] = (byte)((type & 0x00FF00) >> 8);
             partType[2] = (byte)(type & 0x0000FF);
@@ -488,6 +498,10 @@ public sealed class AtariPartitions : IPartition
         return partitions.Count > 0;
     }
 
+#endregion
+
+#region Nested type: AtariEntry
+
     /// <summary>Atari partition entry</summary>
     struct AtariEntry
     {
@@ -498,6 +512,10 @@ public sealed class AtariPartitions : IPartition
         /// <summary>Length in sectors</summary>
         public uint Length;
     }
+
+#endregion
+
+#region Nested type: AtariTable
 
     struct AtariTable
     {
@@ -518,4 +536,6 @@ public sealed class AtariPartitions : IPartition
         /// <summary>Checksum for bootable disks</summary>
         public ushort Checksum;
     }
+
+#endregion
 }

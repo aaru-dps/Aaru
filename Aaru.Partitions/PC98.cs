@@ -47,10 +47,15 @@ namespace Aaru.Partitions;
 public sealed class PC98 : IPartition
 {
     const string MODULE_NAME = "PC-98 partitions plugin";
+
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.PC98_Name;
+
     /// <inheritdoc />
     public Guid Id => new("27333401-C7C2-447D-961C-22AD0641A09A");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -84,19 +89,19 @@ public sealed class PC98 : IPartition
 
         foreach(Partition entry in table.entries)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_mid = {0}", entry.dp_mid);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_sid = {0}", entry.dp_sid);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum1 = {0}", entry.dp_dum1);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum2 = {0}", entry.dp_dum2);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_mid = {0}",      entry.dp_mid);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_sid = {0}",      entry.dp_sid);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum1 = {0}",     entry.dp_dum1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum2 = {0}",     entry.dp_dum2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_sct = {0}",  entry.dp_ipl_sct);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ssect = {0}", entry.dp_ssect);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_shd = {0}", entry.dp_shd);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_scyl = {0}", entry.dp_scyl);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_esect = {0}", entry.dp_esect);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ehd = {0}", entry.dp_ehd);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ecyl = {0}", entry.dp_ecyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_cyl = {0}",  entry.dp_ipl_cyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ssect = {0}",    entry.dp_ssect);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_shd = {0}",      entry.dp_shd);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_scyl = {0}",     entry.dp_scyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_esect = {0}",    entry.dp_esect);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ehd = {0}",      entry.dp_ehd);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ecyl = {0}",     entry.dp_ecyl);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_name = \"{0}\"",
                                        StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
@@ -128,16 +133,16 @@ public sealed class PC98 : IPartition
 
             part.Size = part.Length * imagePlugin.Info.SectorSize;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Start = {0}", part.Start);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Type = {0}", part.Type);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Name = {0}", part.Name);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Start = {0}",    part.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Type = {0}",     part.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Name = {0}",     part.Name);
             AaruConsole.DebugWriteLine(MODULE_NAME, "part.Sequence = {0}", part.Sequence);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Offset = {0}", part.Offset);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Length = {0}", part.Length);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Size = {0}", part.Size);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Offset = {0}",   part.Offset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Length = {0}",   part.Length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Size = {0}",     part.Size);
 
-            if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
-               part.Start >= imagePlugin.Info.Sectors                           ||
+            if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
+               part.Start >= imagePlugin.Info.Sectors                         ||
                part.End   > imagePlugin.Info.Sectors)
                 continue;
 
@@ -148,33 +153,39 @@ public sealed class PC98 : IPartition
         return partitions.Count > 0;
     }
 
+#endregion
+
     static string DecodePC98Sid(byte sid)
     {
         switch(sid & 0x7F)
         {
-            case 0x01: return Localization.FAT12;
-            case 0x04: return Localization.PC_UX;
-            case 0x06: return Localization.N88_BASIC_86;
+            case 0x01:
+                return Localization.FAT12;
+            case 0x04:
+                return Localization.PC_UX;
+            case 0x06:
+                return Localization.N88_BASIC_86;
 
             // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
             case 0x11:
-            case 0x21: return Localization.FAT16;
+            case 0x21:
+                return Localization.FAT16;
             case 0x28:
             case 0x41:
-            case 0x48: return Localization.Windows_Volume_Set;
-            case 0x44: return Localization.FreeBSD;
-            case 0x61: return Localization.FAT32;
-            case 0x62: return Localization.Linux;
-            default:   return Localization.Unknown_partition_type;
+            case 0x48:
+                return Localization.Windows_Volume_Set;
+            case 0x44:
+                return Localization.FreeBSD;
+            case 0x61:
+                return Localization.FAT32;
+            case 0x62:
+                return Localization.Linux;
+            default:
+                return Localization.Unknown_partition_type;
         }
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Table
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly Partition[] entries;
-    }
+#region Nested type: Partition
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition
@@ -197,4 +208,17 @@ public sealed class PC98 : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] dp_name;
     }
+
+#endregion
+
+#region Nested type: Table
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Table
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly Partition[] entries;
+    }
+
+#endregion
 }

@@ -55,20 +55,18 @@ public sealed class BSD : IPartition
     const uint MAX_LABEL_SIZE = 500;
     const string MODULE_NAME = "BSD disklabel plugin";
     /// <summary>Known sector locations for BSD disklabel</summary>
-    readonly ulong[] _labelLocations =
-    {
-        0, 1, 2, 9
-    };
+    readonly ulong[] _labelLocations = { 0, 1, 2, 9 };
     /// <summary>Known byte offsets for BSD disklabel</summary>
-    readonly uint[] _labelOffsets =
-    {
-        0, 9, 64, 128, 516
-    };
+    readonly uint[] _labelOffsets = { 0, 9, 64, 128, 516 };
+
+#region IPartition Members
 
     /// <inheritdoc />
     public string Name => Localization.BSD_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -81,8 +79,8 @@ public sealed class BSD : IPartition
         if((MAX_LABEL_SIZE + _labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0)
             run++;
 
-        var  dl    = new DiskLabel();
-        bool found = false;
+        var dl    = new DiskLabel();
+        var found = false;
 
         foreach(ulong location in _labelLocations)
         {
@@ -96,7 +94,7 @@ public sealed class BSD : IPartition
 
             foreach(uint offset in _labelOffsets)
             {
-                byte[] sector = new byte[MAX_LABEL_SIZE];
+                var sector = new byte[MAX_LABEL_SIZE];
 
                 if(offset + MAX_LABEL_SIZE > tmp.Length)
                     break;
@@ -128,46 +126,46 @@ public sealed class BSD : IPartition
         if(dl is { d_magic: DISK_CIGAM, d_magic2: DISK_CIGAM })
             dl = SwapDiskLabel(dl);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_type = {0}", dl.d_type);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_subtype = {0}", dl.d_subtype);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_typename = {0}", StringHandlers.CToString(dl.d_typename));
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_packname = {0}", StringHandlers.CToString(dl.d_packname));
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secsize = {0}", dl.d_secsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_nsectors = {0}", dl.d_nsectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_ntracks = {0}", dl.d_ntracks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_ncylinders = {0}", dl.d_ncylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secpercyl = {0}", dl.d_secpercyl);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secperunit = {0}", dl.d_secperunit);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_type = {0}",           dl.d_type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_subtype = {0}",        dl.d_subtype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_typename = {0}",       StringHandlers.CToString(dl.d_typename));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_packname = {0}",       StringHandlers.CToString(dl.d_packname));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secsize = {0}",        dl.d_secsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_nsectors = {0}",       dl.d_nsectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_ntracks = {0}",        dl.d_ntracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_ncylinders = {0}",     dl.d_ncylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secpercyl = {0}",      dl.d_secpercyl);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_secperunit = {0}",     dl.d_secperunit);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_sparespercyl = {0}", dl.d_sparespercyl);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_acylinders = {0}", dl.d_acylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_rpm = {0}", dl.d_rpm);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_interleave = {0}", dl.d_interleave);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_trackskew = {0}", dl.d_trackskew);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_cylskeew = {0}", dl.d_cylskeew);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_headswitch = {0}", dl.d_headswitch);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_trkseek = {0}", dl.d_trkseek);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_flags = {0}", dl.d_flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[0] = {0}", dl.d_drivedata[0]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[1] = {0}", dl.d_drivedata[1]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[2] = {0}", dl.d_drivedata[2]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[3] = {0}", dl.d_drivedata[3]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[4] = {0}", dl.d_drivedata[4]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[0] = {0}", dl.d_spare[0]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[1] = {0}", dl.d_spare[1]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[2] = {0}", dl.d_spare[2]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[3] = {0}", dl.d_spare[3]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[4] = {0}", dl.d_spare[4]);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_magic2 = 0x{0:X8}", dl.d_magic2);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_checksum = 0x{0:X8}", dl.d_checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_npartitions = {0}", dl.d_npartitions);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_bbsize = {0}", dl.d_bbsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_sbsize = {0}", dl.d_sbsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_sparespercyl = {0}",   dl.d_sparespercyl);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_acylinders = {0}",     dl.d_acylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_rpm = {0}",            dl.d_rpm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_interleave = {0}",     dl.d_interleave);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_trackskew = {0}",      dl.d_trackskew);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_cylskeew = {0}",       dl.d_cylskeew);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_headswitch = {0}",     dl.d_headswitch);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_trkseek = {0}",        dl.d_trkseek);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_flags = {0}",          dl.d_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[0] = {0}",   dl.d_drivedata[0]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[1] = {0}",   dl.d_drivedata[1]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[2] = {0}",   dl.d_drivedata[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[3] = {0}",   dl.d_drivedata[3]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_drivedata[4] = {0}",   dl.d_drivedata[4]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[0] = {0}",       dl.d_spare[0]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[1] = {0}",       dl.d_spare[1]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[2] = {0}",       dl.d_spare[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[3] = {0}",       dl.d_spare[3]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_spare[4] = {0}",       dl.d_spare[4]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_magic2 = 0x{0:X8}",    dl.d_magic2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_checksum = 0x{0:X8}",  dl.d_checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_npartitions = {0}",    dl.d_npartitions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_bbsize = {0}",         dl.d_bbsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_sbsize = {0}",         dl.d_sbsize);
 
         ulong counter         = 0;
-        bool  addSectorOffset = false;
+        var   addSectorOffset = false;
 
-        for(int i = 0; i < dl.d_npartitions && i < 22; i++)
+        for(var i = 0; i < dl.d_npartitions && i < 22; i++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_partitions[i].p_offset = {0}", dl.d_partitions[i].p_offset);
 
@@ -210,40 +208,71 @@ public sealed class BSD : IPartition
         return partitions.Count > 0;
     }
 
+#endregion
+
     internal static string FSTypeToString(fsType typ)
     {
         switch(typ)
         {
-            case fsType.Unused:  return Localization.Unused_entry;
-            case fsType.Swap:    return Localization.Swap_partition;
-            case fsType.V6:      return Localization.UNIX_6th_Edition;
-            case fsType.V7:      return Localization.UNIX_7th_Edition;
-            case fsType.SystemV: return Localization.UNIX_System_V;
-            case fsType.V7_1K:   return Localization.UNIX_7th_Edition_with_1K_blocks;
-            case fsType.V8:      return Localization.UNIX_8th_Edition_with_4K_blocks;
-            case fsType.BSDFFS:  return Localization._4_2_BSD_Fast_File_System;
-            case fsType.BSDLFS:  return Localization._4_4_LFS;
-            case fsType.HPFS:    return Localization.HPFS;
-            case fsType.ISO9660: return Localization.ISO9660;
+            case fsType.Unused:
+                return Localization.Unused_entry;
+            case fsType.Swap:
+                return Localization.Swap_partition;
+            case fsType.V6:
+                return Localization.UNIX_6th_Edition;
+            case fsType.V7:
+                return Localization.UNIX_7th_Edition;
+            case fsType.SystemV:
+                return Localization.UNIX_System_V;
+            case fsType.V7_1K:
+                return Localization.UNIX_7th_Edition_with_1K_blocks;
+            case fsType.V8:
+                return Localization.UNIX_8th_Edition_with_4K_blocks;
+            case fsType.BSDFFS:
+                return Localization._4_2_BSD_Fast_File_System;
+            case fsType.BSDLFS:
+                return Localization._4_4_LFS;
+            case fsType.HPFS:
+                return Localization.HPFS;
+            case fsType.ISO9660:
+                return Localization.ISO9660;
             case fsType.Boot:
-            case fsType.SysVBoot: return Localization.Boot;
-            case fsType.AFFS:       return Localization.Amiga_FFS;
-            case fsType.HFS:        return Localization.Apple_HFS;
-            case fsType.ADVfs:      return Localization.Digital_Advanced_File_System;
-            case fsType.LSMpublic:  return Localization.Digital_LSM_Public_Region;
-            case fsType.LSMprivate: return Localization.Digital_LSM_Private_Region;
-            case fsType.LSMsimple:  return Localization.Digital_LSM_Simple_Disk;
-            case fsType.CCD:        return Localization.Concatenated_disk;
-            case fsType.JFS2:       return Localization.IBM_JFS2;
-            case fsType.HAMMER:     return Localization.Hammer;
-            case fsType.HAMMER2:    return Localization.Hammer2;
-            case fsType.UDF:        return Localization.UDF;
-            case fsType.EFS:        return Localization.EFS;
-            case fsType.ZFS:        return Localization.ZFS;
-            case fsType.NANDFS:     return Localization.FreeBSD_nandfs;
-            case fsType.MSDOS:      return Localization.FAT;
-            case fsType.Other:      return Localization.Other_or_unknown;
-            default:                return Localization.Unknown_partition_type;
+            case fsType.SysVBoot:
+                return Localization.Boot;
+            case fsType.AFFS:
+                return Localization.Amiga_FFS;
+            case fsType.HFS:
+                return Localization.Apple_HFS;
+            case fsType.ADVfs:
+                return Localization.Digital_Advanced_File_System;
+            case fsType.LSMpublic:
+                return Localization.Digital_LSM_Public_Region;
+            case fsType.LSMprivate:
+                return Localization.Digital_LSM_Private_Region;
+            case fsType.LSMsimple:
+                return Localization.Digital_LSM_Simple_Disk;
+            case fsType.CCD:
+                return Localization.Concatenated_disk;
+            case fsType.JFS2:
+                return Localization.IBM_JFS2;
+            case fsType.HAMMER:
+                return Localization.Hammer;
+            case fsType.HAMMER2:
+                return Localization.Hammer2;
+            case fsType.UDF:
+                return Localization.UDF;
+            case fsType.EFS:
+                return Localization.EFS;
+            case fsType.ZFS:
+                return Localization.ZFS;
+            case fsType.NANDFS:
+                return Localization.FreeBSD_nandfs;
+            case fsType.MSDOS:
+                return Localization.FAT;
+            case fsType.Other:
+                return Localization.Other_or_unknown;
+            default:
+                return Localization.Unknown_partition_type;
         }
     }
 
@@ -251,17 +280,141 @@ public sealed class BSD : IPartition
     {
         dl = (DiskLabel)Marshal.SwapStructureMembersEndian(dl);
 
-        for(int i = 0; i < dl.d_drivedata.Length; i++)
+        for(var i = 0; i < dl.d_drivedata.Length; i++)
             dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
 
-        for(int i = 0; i < dl.d_spare.Length; i++)
+        for(var i = 0; i < dl.d_spare.Length; i++)
             dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
 
-        for(int i = 0; i < dl.d_partitions.Length; i++)
+        for(var i = 0; i < dl.d_partitions.Length; i++)
             dl.d_partitions[i] = (BSDPartition)Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
         return dl;
     }
+
+#region Nested type: BSDPartition
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BSDPartition
+    {
+        /// <summary>Sectors in partition</summary>
+        public readonly uint p_size;
+        /// <summary>Starting sector</summary>
+        public readonly uint p_offset;
+        /// <summary>Fragment size</summary>
+        public readonly uint p_fsize;
+        /// <summary>Filesystem type, <see cref="fsType" /></summary>
+        public readonly fsType p_fstype;
+        /// <summary>Fragment size</summary>
+        public readonly byte p_frag;
+        /// <summary>Cylinder per group</summary>
+        public readonly ushort p_cpg;
+    }
+
+#endregion
+
+#region Nested type: dFlags
+
+    /// <summary>Drive flags</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [Flags]
+    enum dFlags : uint
+    {
+        /// <summary>Removable media</summary>
+        Removable = 0x01,
+        /// <summary>Drive supports ECC</summary>
+        ECC = 0x02,
+        /// <summary>Drive supports bad sector forwarding</summary>
+        BadSectorForward = 0x04,
+        /// <summary>Disk emulator</summary>
+        RAMDisk = 0x08,
+        /// <summary>Can do back to back transfer</summary>
+        Chain = 0x10,
+        /// <summary>Dynamic geometry device</summary>
+        DynamicGeometry = 0x20
+    }
+
+#endregion
+
+#region Nested type: DiskLabel
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DiskLabel
+    {
+        /// <summary>
+        ///     <see cref="BSD.DISK_MAGIC" />
+        /// </summary>
+        public readonly uint d_magic;
+        /// <summary>
+        ///     <see cref="dType" />
+        /// </summary>
+        public readonly dType d_type;
+        /// <summary>Disk subtype</summary>
+        public readonly ushort d_subtype;
+        /// <summary>Type name</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] d_typename;
+        /// <summary>Pack identifier</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] d_packname;
+        /// <summary>Bytes per sector</summary>
+        public readonly uint d_secsize;
+        /// <summary>Sectors per track</summary>
+        public readonly uint d_nsectors;
+        /// <summary>Tracks per cylinder</summary>
+        public readonly uint d_ntracks;
+        /// <summary>Cylinders per unit</summary>
+        public readonly uint d_ncylinders;
+        /// <summary>Sectors per cylinder</summary>
+        public readonly uint d_secpercyl;
+        /// <summary>Sectors per unit</summary>
+        public readonly uint d_secperunit;
+        /// <summary>Spare sectors per track</summary>
+        public readonly ushort d_sparespertrack;
+        /// <summary>Spare sectors per cylinder</summary>
+        public readonly ushort d_sparespercyl;
+        /// <summary>Alternate cylinders</summary>
+        public readonly uint d_acylinders;
+        /// <summary>Rotational speed</summary>
+        public readonly ushort d_rpm;
+        /// <summary>Hardware sector interleave</summary>
+        public readonly ushort d_interleave;
+        /// <summary>Sector 0 skew per track</summary>
+        public readonly ushort d_trackskew;
+        /// <summary>Sector 0 sker per cylinder</summary>
+        public readonly ushort d_cylskeew;
+        /// <summary>Head switch time in microseconds</summary>
+        public readonly uint d_headswitch;
+        /// <summary>Track to track seek in microseconds</summary>
+        public readonly uint d_trkseek;
+        /// <summary>
+        ///     <see cref="dFlags" />
+        /// </summary>
+        public readonly dFlags d_flags;
+        /// <summary>Drive-specific information</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly uint[] d_drivedata;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly uint[] d_spare;
+        /// <summary><see cref="BSD.DISK_MAGIC" /> again</summary>
+        public readonly uint d_magic2;
+        /// <summary>XOR of data</summary>
+        public readonly ushort d_checksum;
+        /// <summary>How many partitions</summary>
+        public readonly ushort d_npartitions;
+        /// <summary>Size of boot area in bytes</summary>
+        public readonly uint d_bbsize;
+        /// <summary>Maximum size of superblock in bytes</summary>
+        public readonly uint d_sbsize;
+        /// <summary>Partitions</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
+        public readonly BSDPartition[] d_partitions;
+    }
+
+#endregion
+
+#region Nested type: dType
 
     /// <summary>Drive type</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -312,6 +465,10 @@ public sealed class BSD : IPartition
         /// <summary>Memory disk</summary>
         MD = 22
     }
+
+#endregion
+
+#region Nested type: fsType
 
     /// <summary>Filesystem type</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -393,112 +550,5 @@ public sealed class BSD : IPartition
         NANDFS = 30
     }
 
-    /// <summary>Drive flags</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming"), Flags]
-    enum dFlags : uint
-    {
-        /// <summary>Removable media</summary>
-        Removable = 0x01,
-        /// <summary>Drive supports ECC</summary>
-        ECC = 0x02,
-        /// <summary>Drive supports bad sector forwarding</summary>
-        BadSectorForward = 0x04,
-        /// <summary>Disk emulator</summary>
-        RAMDisk = 0x08,
-        /// <summary>Can do back to back transfer</summary>
-        Chain = 0x10,
-        /// <summary>Dynamic geometry device</summary>
-        DynamicGeometry = 0x20
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DiskLabel
-    {
-        /// <summary>
-        ///     <see cref="BSD.DISK_MAGIC" />
-        /// </summary>
-        public readonly uint d_magic;
-        /// <summary>
-        ///     <see cref="dType" />
-        /// </summary>
-        public readonly dType d_type;
-        /// <summary>Disk subtype</summary>
-        public readonly ushort d_subtype;
-        /// <summary>Type name</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly byte[] d_typename;
-        /// <summary>Pack identifier</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly byte[] d_packname;
-        /// <summary>Bytes per sector</summary>
-        public readonly uint d_secsize;
-        /// <summary>Sectors per track</summary>
-        public readonly uint d_nsectors;
-        /// <summary>Tracks per cylinder</summary>
-        public readonly uint d_ntracks;
-        /// <summary>Cylinders per unit</summary>
-        public readonly uint d_ncylinders;
-        /// <summary>Sectors per cylinder</summary>
-        public readonly uint d_secpercyl;
-        /// <summary>Sectors per unit</summary>
-        public readonly uint d_secperunit;
-        /// <summary>Spare sectors per track</summary>
-        public readonly ushort d_sparespertrack;
-        /// <summary>Spare sectors per cylinder</summary>
-        public readonly ushort d_sparespercyl;
-        /// <summary>Alternate cylinders</summary>
-        public readonly uint d_acylinders;
-        /// <summary>Rotational speed</summary>
-        public readonly ushort d_rpm;
-        /// <summary>Hardware sector interleave</summary>
-        public readonly ushort d_interleave;
-        /// <summary>Sector 0 skew per track</summary>
-        public readonly ushort d_trackskew;
-        /// <summary>Sector 0 sker per cylinder</summary>
-        public readonly ushort d_cylskeew;
-        /// <summary>Head switch time in microseconds</summary>
-        public readonly uint d_headswitch;
-        /// <summary>Track to track seek in microseconds</summary>
-        public readonly uint d_trkseek;
-        /// <summary>
-        ///     <see cref="dFlags" />
-        /// </summary>
-        public readonly dFlags d_flags;
-        /// <summary>Drive-specific information</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly uint[] d_drivedata;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly uint[] d_spare;
-        /// <summary><see cref="BSD.DISK_MAGIC" /> again</summary>
-        public readonly uint d_magic2;
-        /// <summary>XOR of data</summary>
-        public readonly ushort d_checksum;
-        /// <summary>How many partitions</summary>
-        public readonly ushort d_npartitions;
-        /// <summary>Size of boot area in bytes</summary>
-        public readonly uint d_bbsize;
-        /// <summary>Maximum size of superblock in bytes</summary>
-        public readonly uint d_sbsize;
-        /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-        public readonly BSDPartition[] d_partitions;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BSDPartition
-    {
-        /// <summary>Sectors in partition</summary>
-        public readonly uint p_size;
-        /// <summary>Starting sector</summary>
-        public readonly uint p_offset;
-        /// <summary>Fragment size</summary>
-        public readonly uint p_fsize;
-        /// <summary>Filesystem type, <see cref="fsType" /></summary>
-        public readonly fsType p_fstype;
-        /// <summary>Fragment size</summary>
-        public readonly byte p_frag;
-        /// <summary>Cylinder per group</summary>
-        public readonly ushort p_cpg;
-    }
+#endregion
 }

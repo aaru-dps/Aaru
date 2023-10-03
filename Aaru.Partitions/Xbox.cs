@@ -64,10 +64,14 @@ public sealed class Xbox : IPartition
     const long XBOX360_COMPAT_LEN          = 0x10000000;
     const uint XBOX360_DEVKIT_MAGIC        = 0x00020000;
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.Xbox_Name;
+
     /// <inheritdoc />
     public Guid Id => new("E3F6FB91-D358-4F22-A550-81E92D50EB78");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -146,8 +150,8 @@ public sealed class Xbox : IPartition
                     var dataPart = new Partition
                     {
                         Description = Localization.Data_volume,
-                        Size        = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) - MEMORY_UNIT_DATA_OFF,
-                        Length      = imagePlugin.Info.Sectors                                 - sysCachePart.Length,
+                        Size        = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize - MEMORY_UNIT_DATA_OFF,
+                        Length      = imagePlugin.Info.Sectors                               - sysCachePart.Length,
                         Sequence    = 2,
                         Offset      = MEMORY_UNIT_DATA_OFF,
                         Start       = sysCachePart.Length,
@@ -266,6 +270,10 @@ public sealed class Xbox : IPartition
         }
     }
 
+#endregion
+
+#region Nested type: Xbox360DevKitPartitionTable
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Xbox360DevKitPartitionTable
     {
@@ -276,4 +284,6 @@ public sealed class Xbox : IPartition
         public readonly uint dashboardOff;
         public readonly uint dashboardLen;
     }
+
+#endregion
 }

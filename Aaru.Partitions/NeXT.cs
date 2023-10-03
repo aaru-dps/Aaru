@@ -49,7 +49,8 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of NeXT disklabels</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed class NeXTDisklabel : IPartition
 {
     /// <summary>"NeXT"</summary>
@@ -64,17 +65,21 @@ public sealed class NeXTDisklabel : IPartition
     const ushort DISKTAB_ENTRY_SIZE = 0x2C;
     const string MODULE_NAME = "NeXT disklabel plugin";
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.NeXTDisklabel_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        bool   magicFound = false;
+        var    magicFound = false;
         byte[] labelSector;
 
         uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
@@ -84,17 +89,14 @@ public sealed class NeXTDisklabel : IPartition
         ulong       labelPosition = 0;
         ErrorNumber errno;
 
-        foreach(ulong i in new ulong[]
-                {
-                    0, 4, 15, 16
-                }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+        foreach(ulong i in new ulong[] { 0, 4, 15, 16 }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out labelSector);
 
             if(errno != ErrorNumber.NoError)
                 continue;
 
-            uint magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
+            var magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
 
             if(magic != NEXT_MAGIC1 &&
                magic != NEXT_MAGIC2 &&
@@ -120,19 +122,19 @@ public sealed class NeXTDisklabel : IPartition
         if(errno != ErrorNumber.NoError)
             return false;
 
-        Label  label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
-        byte[] disktabB = new byte[498];
+        Label label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
+        var   disktabB = new byte[498];
         Array.Copy(labelSector, 44, disktabB, 0, 498);
         label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<DiskTab>(disktabB);
         label.dl_dt.d_partitions = new Entry[8];
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_version = 0x{0:X8}", label.dl_version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_label_blkno = {0}", label.dl_label_blkno);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_size = {0}", label.dl_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_label_blkno = {0}",  label.dl_label_blkno);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_size = {0}",         label.dl_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_label = \"{0}\"", StringHandlers.CToString(label.dl_label));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_flags = {0}", label.dl_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_flags = {0}",    label.dl_flags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_tag = 0x{0:X8}", label.dl_tag);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_name = \"{0}\"",
@@ -141,17 +143,17 @@ public sealed class NeXTDisklabel : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_type = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_type));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_secsize = {0}", label.dl_dt.d_secsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ntracks = {0}", label.dl_dt.d_ntracks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_nsectors = {0}", label.dl_dt.d_nsectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_secsize = {0}",    label.dl_dt.d_secsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ntracks = {0}",    label.dl_dt.d_ntracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_nsectors = {0}",   label.dl_dt.d_nsectors);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ncylinders = {0}", label.dl_dt.d_ncylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rpm = {0}", label.dl_dt.d_rpm);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_front = {0}", label.dl_dt.d_front);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_back = {0}", label.dl_dt.d_back);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ngroups = {0}", label.dl_dt.d_ngroups);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_size = {0}", label.dl_dt.d_ag_size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_alts = {0}", label.dl_dt.d_ag_alts);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_off = {0}", label.dl_dt.d_ag_off);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rpm = {0}",        label.dl_dt.d_rpm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_front = {0}",      label.dl_dt.d_front);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_back = {0}",       label.dl_dt.d_back);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ngroups = {0}",    label.dl_dt.d_ngroups);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_size = {0}",    label.dl_dt.d_ag_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_alts = {0}",    label.dl_dt.d_ag_alts);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_ag_off = {0}",     label.dl_dt.d_ag_off);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_boot0_blkno[0] = {0}", label.dl_dt.d_boot0_blkno[0]);
 
@@ -164,12 +166,12 @@ public sealed class NeXTDisklabel : IPartition
                                    StringHandlers.CToString(label.dl_dt.d_hostname));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rwpartition = {0}", label.dl_dt.d_rwpartition);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rwpartition = {0}",   label.dl_dt.d_rwpartition);
 
-        for(int i = 0; i < 8; i++)
+        for(var i = 0; i < 8; i++)
         {
-            byte[] partB = new byte[44];
-            Array.Copy(labelSector, 44 + 146 + (44 * i), partB, 0, 44);
+            var partB = new byte[44];
+            Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
             label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(partB);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
@@ -237,7 +239,7 @@ public sealed class NeXTDisklabel : IPartition
                 AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_size = {1}", i, part.Length);
             }
 
-            sb.AppendFormat(Localization._0_bytes_per_block, label.dl_dt.d_partitions[i].p_bsize).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_block,    label.dl_dt.d_partitions[i].p_bsize).AppendLine();
             sb.AppendFormat(Localization._0_bytes_per_fragment, label.dl_dt.d_partitions[i].p_fsize).AppendLine();
 
             if(label.dl_dt.d_partitions[i].p_opt == 's')
@@ -248,7 +250,7 @@ public sealed class NeXTDisklabel : IPartition
                 sb.AppendFormat(Localization.Unknown_optimization_0_X2, label.dl_dt.d_partitions[i].p_opt).AppendLine();
 
             sb.AppendFormat(Localization._0_cylinders_per_group, label.dl_dt.d_partitions[i].p_cpg).AppendLine();
-            sb.AppendFormat(Localization._0_bytes_per_inode, label.dl_dt.d_partitions[i].p_density).AppendLine();
+            sb.AppendFormat(Localization._0_bytes_per_inode,     label.dl_dt.d_partitions[i].p_density).AppendLine();
 
             sb.AppendFormat(Localization._0_of_space_must_be_free_at_minimum, label.dl_dt.d_partitions[i].p_minfree).
                AppendLine();
@@ -267,54 +269,9 @@ public sealed class NeXTDisklabel : IPartition
         return true;
     }
 
-    /// <summary>NeXT v3 disklabel, 544 bytes</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Label
-    {
-        /// <summary>Signature</summary>
-        public readonly uint dl_version;
-        /// <summary>Block on which this label resides</summary>
-        public readonly int dl_label_blkno;
-        /// <summary>Device size in blocks</summary>
-        public readonly int dl_size;
-        /// <summary>Device name</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        public readonly byte[] dl_label;
-        /// <summary>Device flags</summary>
-        public readonly uint dl_flags;
-        /// <summary>Device tag</summary>
-        public readonly uint dl_tag;
-        /// <summary>Device info and partitions</summary>
-        public DiskTab dl_dt;
-        /// <summary>Checksum</summary>
-        public readonly ushort dl_v3_checksum;
-    }
+#endregion
 
-    /// <summary>NeXT v1 and v2 disklabel, 7224 bytes</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct LabelOld
-    {
-        /// <summary>Signature</summary>
-        public readonly uint dl_version;
-        /// <summary>Block on which this label resides</summary>
-        public readonly int dl_label_blkno;
-        /// <summary>Device size in blocks</summary>
-        public readonly int dl_size;
-        /// <summary>Device name</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        public readonly byte[] dl_label;
-        /// <summary>Device flags</summary>
-        public readonly uint dl_flags;
-        /// <summary>Device tag</summary>
-        public readonly uint dl_tag;
-        /// <summary>Device info and partitions</summary>
-        public readonly DiskTab dl_dt;
-        /// <summary>Bad sector table</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
-        public readonly int[] dl_bad;
-        /// <summary>Checksum</summary>
-        public readonly ushort dl_checksum;
-    }
+#region Nested type: DiskTab
 
     /// <summary>NeXT disktab and partitions, 498 bytes</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -366,6 +323,10 @@ public sealed class NeXTDisklabel : IPartition
         public Entry[] d_partitions;
     }
 
+#endregion
+
+#region Nested type: Entry
+
     /// <summary>Partition entries, 44 bytes each</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 2)]
     struct Entry
@@ -397,4 +358,63 @@ public sealed class NeXTDisklabel : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public readonly byte[] p_type;
     }
+
+#endregion
+
+#region Nested type: Label
+
+    /// <summary>NeXT v3 disklabel, 544 bytes</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Label
+    {
+        /// <summary>Signature</summary>
+        public readonly uint dl_version;
+        /// <summary>Block on which this label resides</summary>
+        public readonly int dl_label_blkno;
+        /// <summary>Device size in blocks</summary>
+        public readonly int dl_size;
+        /// <summary>Device name</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+        public readonly byte[] dl_label;
+        /// <summary>Device flags</summary>
+        public readonly uint dl_flags;
+        /// <summary>Device tag</summary>
+        public readonly uint dl_tag;
+        /// <summary>Device info and partitions</summary>
+        public DiskTab dl_dt;
+        /// <summary>Checksum</summary>
+        public readonly ushort dl_v3_checksum;
+    }
+
+#endregion
+
+#region Nested type: LabelOld
+
+    /// <summary>NeXT v1 and v2 disklabel, 7224 bytes</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct LabelOld
+    {
+        /// <summary>Signature</summary>
+        public readonly uint dl_version;
+        /// <summary>Block on which this label resides</summary>
+        public readonly int dl_label_blkno;
+        /// <summary>Device size in blocks</summary>
+        public readonly int dl_size;
+        /// <summary>Device name</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+        public readonly byte[] dl_label;
+        /// <summary>Device flags</summary>
+        public readonly uint dl_flags;
+        /// <summary>Device tag</summary>
+        public readonly uint dl_tag;
+        /// <summary>Device info and partitions</summary>
+        public readonly DiskTab dl_dt;
+        /// <summary>Bad sector table</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
+        public readonly int[] dl_bad;
+        /// <summary>Checksum</summary>
+        public readonly ushort dl_checksum;
+    }
+
+#endregion
 }

@@ -303,10 +303,14 @@ public sealed class MBR : IPartition
         Localization.Xenix_bad_block
     };
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.MBR_Name;
+
     /// <inheritdoc />
     public Guid Id => new("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -349,7 +353,7 @@ public sealed class MBR : IPartition
         DiskManagerMasterBootRecord mbrOntrack =
             Marshal.ByteArrayToStructureLittleEndian<DiskManagerMasterBootRecord>(sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "xmlmedia = {0}", imagePlugin.Info.MetadataMediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "xmlmedia = {0}",     imagePlugin.Info.MetadataMediaType);
         AaruConsole.DebugWriteLine(MODULE_NAME, "mbr.magic = {0:X4}", mbr.magic);
 
         if(mbr.magic != MBR_MAGIC)
@@ -360,7 +364,7 @@ public sealed class MBR : IPartition
         if(errno != ErrorNumber.NoError)
             return false;
 
-        ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
+        var signature = BitConverter.ToUInt64(hdrBytes, 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "gpt.signature = 0x{0:X16}", signature);
 
@@ -392,18 +396,18 @@ public sealed class MBR : IPartition
 
         foreach(PartitionEntry entry in entries)
         {
-            byte   startSector   = (byte)(entry.start_sector & 0x3F);
-            ushort startCylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
-            byte   endSector     = (byte)(entry.end_sector & 0x3F);
-            ushort endCylinder   = (ushort)(((entry.end_sector & 0xC0) << 2) | entry.end_cylinder);
-            ulong  lbaStart      = entry.lba_start;
-            ulong  lbaSectors    = entry.lba_sectors;
+            var   startSector   = (byte)(entry.start_sector & 0x3F);
+            var   startCylinder = (ushort)((entry.start_sector & 0xC0) << 2 | entry.start_cylinder);
+            var   endSector     = (byte)(entry.end_sector & 0x3F);
+            var   endCylinder   = (ushort)((entry.end_sector & 0xC0) << 2 | entry.end_cylinder);
+            ulong lbaStart      = entry.lba_start;
+            ulong lbaSectors    = entry.lba_sectors;
 
             // Let's start the fun...
 
-            bool valid    = true;
-            bool extended = false;
-            bool minix    = false;
+            var valid    = true;
+            var extended = false;
+            var minix    = false;
 
             if(entry.status != 0x00 &&
                entry.status != 0x80)
@@ -449,27 +453,29 @@ public sealed class MBR : IPartition
             if(lbaStart + lbaSectors > imagePlugin.Info.Sectors)
                 lbaSectors = imagePlugin.Info.Sectors - lbaStart;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.status {0}", entry.status);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.type {0}", entry.type);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_start {0}", entry.lba_start);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_sectors {0}", entry.lba_sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.status {0}",         entry.status);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.type {0}",           entry.type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_start {0}",      entry.lba_start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_sectors {0}",    entry.lba_sectors);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_cylinder {0}", startCylinder);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_head {0}", entry.start_head);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_sector {0}", startSector);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_cylinder {0}", endCylinder);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_head {0}", entry.end_head);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_sector {0}", endSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_head {0}",     entry.start_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_sector {0}",   startSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_cylinder {0}",   endCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_head {0}",       entry.end_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_sector {0}",     endSector);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.minix = {0}", minix);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "lba_start {0}", lbaStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "lba_start {0}",   lbaStart);
             AaruConsole.DebugWriteLine(MODULE_NAME, "lba_sectors {0}", lbaSectors);
 
             if(valid && minix) // Let's mix the fun
+            {
                 if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize, out List<Partition> mnxParts))
                     partitions.AddRange(mnxParts);
                 else
                     minix = false;
+            }
 
             if(valid && !minix)
             {
@@ -505,7 +511,7 @@ public sealed class MBR : IPartition
             if(!extended)
                 continue;
 
-            bool  processingExtended = true;
+            var   processingExtended = true;
             ulong chainStart         = lbaStart;
 
             while(processingExtended)
@@ -526,25 +532,25 @@ public sealed class MBR : IPartition
 
                 foreach(PartitionEntry ebrEntry in ebr.entries)
                 {
-                    bool extValid = true;
+                    var extValid = true;
                     startSector   = (byte)(ebrEntry.start_sector & 0x3F);
-                    startCylinder = (ushort)(((ebrEntry.start_sector & 0xC0) << 2) | ebrEntry.start_cylinder);
+                    startCylinder = (ushort)((ebrEntry.start_sector & 0xC0) << 2 | ebrEntry.start_cylinder);
                     endSector     = (byte)(ebrEntry.end_sector & 0x3F);
-                    endCylinder   = (ushort)(((ebrEntry.end_sector & 0xC0) << 2) | ebrEntry.end_cylinder);
+                    endCylinder   = (ushort)((ebrEntry.end_sector & 0xC0) << 2 | ebrEntry.end_cylinder);
                     ulong extStart   = ebrEntry.lba_start;
                     ulong extSectors = ebrEntry.lba_sectors;
-                    bool  extMinix   = false;
+                    var   extMinix   = false;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.status {0}", ebrEntry.status);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.type {0}", ebrEntry.type);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_start {0}", ebrEntry.lba_start);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_sectors {0}", ebrEntry.lba_sectors);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.status {0}",         ebrEntry.status);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.type {0}",           ebrEntry.type);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_start {0}",      ebrEntry.lba_start);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_sectors {0}",    ebrEntry.lba_sectors);
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_cylinder {0}", startCylinder);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_head {0}", ebrEntry.start_head);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_sector {0}", startSector);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_cylinder {0}", endCylinder);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_head {0}", ebrEntry.end_head);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_sector {0}", endSector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_head {0}",     ebrEntry.start_head);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_sector {0}",   startSector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_cylinder {0}",   endCylinder);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_head {0}",       ebrEntry.end_head);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_sector {0}",     endSector);
 
                     // Let's start the fun...
                     extValid &= ebrEntry.status is 0x00 or 0x80;
@@ -569,7 +575,7 @@ public sealed class MBR : IPartition
                     extStart   /= divider;
                     extSectors /= divider;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ext_start {0}", extStart);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ext_start {0}",   extStart);
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ext_sectors {0}", extSectors);
 
                     if(ebrEntry.type is 0x05 or 0x0F or 0x15 or 0x1F or 0x85 or 0x91 or 0x9B or 0xC5 or 0xCF or 0xD5)
@@ -586,11 +592,13 @@ public sealed class MBR : IPartition
                         extSectors = imagePlugin.Info.Sectors - extStart;
 
                     if(extValid && extMinix) // Let's mix the fun
+                    {
                         if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize,
                                     out List<Partition> mnxParts))
                             partitions.AddRange(mnxParts);
                         else
                             extMinix = false;
+                    }
 
                     if(!extValid || extMinix)
                         continue;
@@ -632,6 +640,8 @@ public sealed class MBR : IPartition
         return partitions.Count != 0;
     }
 
+#endregion
+
     static bool GetMinix(IMediaImage imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
                          out List<Partition> partitions)
     {
@@ -649,28 +659,28 @@ public sealed class MBR : IPartition
         if(mnx.magic != MBR_MAGIC)
             return false;
 
-        bool anyMnx = false;
+        var anyMnx = false;
 
         foreach(PartitionEntry mnxEntry in mnx.entries)
         {
-            bool   mnxValid      = true;
-            byte   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
-            ushort startCylinder = (ushort)(((mnxEntry.start_sector & 0xC0) << 2) | mnxEntry.start_cylinder);
-            byte   endSector     = (byte)(mnxEntry.end_sector & 0x3F);
-            ushort endCylinder   = (ushort)(((mnxEntry.end_sector & 0xC0) << 2) | mnxEntry.end_cylinder);
-            ulong  mnxStart      = mnxEntry.lba_start;
-            ulong  mnxSectors    = mnxEntry.lba_sectors;
+            var   mnxValid      = true;
+            var   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
+            var   startCylinder = (ushort)((mnxEntry.start_sector & 0xC0) << 2 | mnxEntry.start_cylinder);
+            var   endSector     = (byte)(mnxEntry.end_sector & 0x3F);
+            var   endCylinder   = (ushort)((mnxEntry.end_sector & 0xC0) << 2 | mnxEntry.end_cylinder);
+            ulong mnxStart      = mnxEntry.lba_start;
+            ulong mnxSectors    = mnxEntry.lba_sectors;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.status {0}", mnxEntry.status);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.type {0}", mnxEntry.type);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_start {0}", mnxEntry.lba_start);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_sectors {0}", mnxEntry.lba_sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.status {0}",         mnxEntry.status);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.type {0}",           mnxEntry.type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_start {0}",      mnxEntry.lba_start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_sectors {0}",    mnxEntry.lba_sectors);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_cylinder {0}", startCylinder);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_head {0}", mnxEntry.start_head);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_sector {0}", startSector);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_cylinder {0}", endCylinder);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_head {0}", mnxEntry.end_head);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_sector {0}", endSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_head {0}",     mnxEntry.start_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_sector {0}",   startSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_cylinder {0}",   endCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_head {0}",       mnxEntry.end_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_sector {0}",     endSector);
 
             mnxValid &= mnxEntry.status is 0x00 or 0x80;
             mnxValid &= mnxEntry.type is 0x81 or 0x80;
@@ -692,7 +702,7 @@ public sealed class MBR : IPartition
             mnxStart   /= divider;
             mnxSectors /= divider;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_start {0}", mnxStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_start {0}",   mnxStart);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_sectors {0}", mnxSectors);
 
             if(!mnxValid)
@@ -728,20 +738,30 @@ public sealed class MBR : IPartition
 
     static string DecodeMbrType(byte type) => _mbrTypes[type];
 
+#region Nested type: DiskManagerMasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct MasterBootRecord
+    readonly struct DiskManagerMasterBootRecord
     {
         /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
         public readonly byte[] boot_code;
+        /// <summary>
+        ///     <see cref="MBR.DM_MAGIC" />
+        /// </summary>
+        public readonly ushort dm_magic;
         /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly PartitionEntry[] entries;
         /// <summary>
         ///     <see cref="MBR.MBR_MAGIC" />
         /// </summary>
         public readonly ushort magic;
     }
+
+#endregion
+
+#region Nested type: ExtendedBootRecord
 
     // TODO: IBM Boot Manager
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -759,25 +779,16 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
+#endregion
+
+#region Nested type: MasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct TimedMasterBootRecord
+    readonly struct MasterBootRecord
     {
         /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
         public readonly byte[] boot_code;
-        /// <summary>Set to 0</summary>
-        public readonly ushort zero;
-        /// <summary>Original physical drive</summary>
-        public readonly byte drive;
-        /// <summary>Disk timestamp, seconds</summary>
-        public readonly byte seconds;
-        /// <summary>Disk timestamp, minutes</summary>
-        public readonly byte minutes;
-        /// <summary>Disk timestamp, hours</summary>
-        public readonly byte hours;
-        /// <summary>Boot code, continuation</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
-        public readonly byte[] boot_code2;
         /// <summary>Partitions</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public readonly PartitionEntry[] entries;
@@ -787,24 +798,9 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SerializedMasterBootRecord
-    {
-        /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
-        public readonly byte[] boot_code;
-        /// <summary>Disk serial number</summary>
-        public readonly uint serial;
-        /// <summary>Set to 0</summary>
-        public readonly ushort zero;
-        /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly PartitionEntry[] entries;
-        /// <summary>
-        ///     <see cref="MBR.MBR_MAGIC" />
-        /// </summary>
-        public readonly ushort magic;
-    }
+#endregion
+
+#region Nested type: ModernMasterBootRecord
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ModernMasterBootRecord
@@ -838,6 +834,10 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
+#endregion
+
+#region Nested type: NecMasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct NecMasterBootRecord
     {
@@ -857,24 +857,9 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DiskManagerMasterBootRecord
-    {
-        /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
-        public readonly byte[] boot_code;
-        /// <summary>
-        ///     <see cref="MBR.DM_MAGIC" />
-        /// </summary>
-        public readonly ushort dm_magic;
-        /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly PartitionEntry[] entries;
-        /// <summary>
-        ///     <see cref="MBR.MBR_MAGIC" />
-        /// </summary>
-        public readonly ushort magic;
-    }
+#endregion
+
+#region Nested type: PartitionEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct PartitionEntry
@@ -900,4 +885,61 @@ public sealed class MBR : IPartition
         /// <summary>Total sectors</summary>
         public readonly uint lba_sectors;
     }
+
+#endregion
+
+#region Nested type: SerializedMasterBootRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SerializedMasterBootRecord
+    {
+        /// <summary>Boot code</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
+        public readonly byte[] boot_code;
+        /// <summary>Disk serial number</summary>
+        public readonly uint serial;
+        /// <summary>Set to 0</summary>
+        public readonly ushort zero;
+        /// <summary>Partitions</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly PartitionEntry[] entries;
+        /// <summary>
+        ///     <see cref="MBR.MBR_MAGIC" />
+        /// </summary>
+        public readonly ushort magic;
+    }
+
+#endregion
+
+#region Nested type: TimedMasterBootRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TimedMasterBootRecord
+    {
+        /// <summary>Boot code</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+        public readonly byte[] boot_code;
+        /// <summary>Set to 0</summary>
+        public readonly ushort zero;
+        /// <summary>Original physical drive</summary>
+        public readonly byte drive;
+        /// <summary>Disk timestamp, seconds</summary>
+        public readonly byte seconds;
+        /// <summary>Disk timestamp, minutes</summary>
+        public readonly byte minutes;
+        /// <summary>Disk timestamp, hours</summary>
+        public readonly byte hours;
+        /// <summary>Boot code, continuation</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
+        public readonly byte[] boot_code2;
+        /// <summary>Partitions</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly PartitionEntry[] entries;
+        /// <summary>
+        ///     <see cref="MBR.MBR_MAGIC" />
+        /// </summary>
+        public readonly ushort magic;
+    }
+
+#endregion
 }

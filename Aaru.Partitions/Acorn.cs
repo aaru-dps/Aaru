@@ -57,10 +57,14 @@ public sealed class Acorn : IPartition
     const    uint   TYPE_MASK        = 15;
     readonly byte[] _linuxIcsMagic   = "LinuxPart"u8.ToArray();
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.Acorn_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -77,8 +81,10 @@ public sealed class Acorn : IPartition
         return partitions.Count != 0;
     }
 
+#endregion
+
     static void GetFileCorePartitions(IMediaImage imagePlugin, List<Partition> partitions, ulong sectorOffset,
-                                      ref ulong counter)
+                                      ref ulong   counter)
     {
         // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
         if(sectorOffset != 0)
@@ -99,12 +105,12 @@ public sealed class Acorn : IPartition
 
         AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
-        int checksum = 0;
+        var checksum = 0;
 
-        for(int i = 0; i < 0x1FF; i++)
+        for(var i = 0; i < 0x1FF; i++)
             checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
-        int heads     = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
+        int heads     = bootBlock.discRecord.heads + (bootBlock.discRecord.lowsector >> 6 & 1);
         int secCyl    = bootBlock.discRecord.spt * heads;
         int mapSector = bootBlock.startCylinder  * secCyl;
 
@@ -120,8 +126,8 @@ public sealed class Acorn : IPartition
         {
             var part = new Partition
             {
-                Size = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size,
-                Length = (((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size) /
+                Size = (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
+                Length = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size) /
                          imagePlugin.Info.SectorSize,
                 Type = Localization.Filecore,
                 Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
@@ -150,11 +156,11 @@ public sealed class Acorn : IPartition
                         Sequence = counter,
                         Scheme   = "Filecore/Linux",
                         Type = entry.magic switch
-                        {
-                            LINUX_MAGIC => Localization.Linux,
-                            SWAP_MAGIC  => Localization.Linux_swap,
-                            _           => Localization.Unknown_partition_type
-                        }
+                               {
+                                   LINUX_MAGIC => Localization.Linux,
+                                   SWAP_MAGIC  => Localization.Linux_swap,
+                                   _           => Localization.Unknown_partition_type
+                               }
                     };
 
                     part.Offset = part.Start * (ulong)sector.Length;
@@ -175,6 +181,7 @@ public sealed class Acorn : IPartition
                 RiscIxTable table = Marshal.ByteArrayToStructureLittleEndian<RiscIxTable>(map);
 
                 if(table.magic == RISCIX_MAGIC)
+                {
                     foreach(RiscIxEntry entry in table.partitions)
                     {
                         var part = new Partition
@@ -196,6 +203,7 @@ public sealed class Acorn : IPartition
                         partitions.Add(part);
                         counter++;
                     }
+                }
 
                 break;
             }
@@ -216,10 +224,10 @@ public sealed class Acorn : IPartition
 
         uint icsSum = 0x50617274;
 
-        for(int i = 0; i < 508; i++)
+        for(var i = 0; i < 508; i++)
             icsSum += sector[i];
 
-        uint discCheck = BitConverter.ToUInt32(sector, 508);
+        var discCheck = BitConverter.ToUInt32(sector, 508);
 
         if(icsSum != discCheck)
             return;
@@ -281,6 +289,23 @@ public sealed class Acorn : IPartition
         }
     }
 
+#region Nested type: AcornBootBlock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AcornBootBlock
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
+        public readonly byte[] spare;
+        public readonly DiscRecord discRecord;
+        public readonly byte       flags;
+        public readonly ushort     startCylinder;
+        public readonly byte       checksum;
+    }
+
+#endregion
+
+#region Nested type: DiscRecord
+
     [StructLayout(LayoutKind.Sequential)]
     struct DiscRecord
     {
@@ -310,16 +335,43 @@ public sealed class Acorn : IPartition
         public readonly byte[] reserved;
     }
 
+#endregion
+
+#region Nested type: IcsEntry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AcornBootBlock
+    struct IcsEntry
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
-        public readonly byte[] spare;
-        public readonly DiscRecord discRecord;
-        public readonly byte       flags;
-        public readonly ushort     startCylinder;
-        public readonly byte       checksum;
+        public readonly uint start;
+        public readonly int  size;
     }
+
+#endregion
+
+#region Nested type: IcsTable
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct IcsTable
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly IcsEntry[] entries;
+    }
+
+#endregion
+
+#region Nested type: LinuxEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct LinuxEntry
+    {
+        public readonly uint magic;
+        public readonly uint start;
+        public readonly uint size;
+    }
+
+#endregion
+
+#region Nested type: LinuxTable
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct LinuxTable
@@ -330,22 +382,9 @@ public sealed class Acorn : IPartition
         public readonly byte[] padding;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct LinuxEntry
-    {
-        public readonly uint magic;
-        public readonly uint start;
-        public readonly uint size;
-    }
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct RiscIxTable
-    {
-        public readonly uint magic;
-        public readonly uint date;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly RiscIxEntry[] partitions;
-    }
+#region Nested type: RiscIxEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct RiscIxEntry
@@ -357,17 +396,18 @@ public sealed class Acorn : IPartition
         public readonly byte[] name;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IcsTable
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly IcsEntry[] entries;
-    }
+#endregion
+
+#region Nested type: RiscIxTable
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IcsEntry
+    struct RiscIxTable
     {
-        public readonly uint start;
-        public readonly int  size;
+        public readonly uint magic;
+        public readonly uint date;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly RiscIxEntry[] partitions;
     }
+
+#endregion
 }

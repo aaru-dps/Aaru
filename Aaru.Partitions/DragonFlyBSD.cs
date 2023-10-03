@@ -48,10 +48,14 @@ public sealed class DragonFlyBSD : IPartition
 {
     const uint DISK_MAGIC64 = 0xC4464C59;
 
+#region IPartition Members
+
     /// <inheritdoc />
     public string Name => Localization.DragonFlyBSD_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -84,14 +88,15 @@ public sealed class DragonFlyBSD : IPartition
         {
             var part = new Partition
             {
-                Start    = (entry.p_boffset / imagePlugin.Info.SectorSize) + sectorOffset,
-                Offset   = entry.p_boffset + (sectorOffset * imagePlugin.Info.SectorSize),
+                Start    = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
+                Offset   = entry.p_boffset                               + sectorOffset * imagePlugin.Info.SectorSize,
                 Size     = entry.p_bsize,
                 Length   = entry.p_bsize / imagePlugin.Info.SectorSize,
                 Name     = entry.p_stor_uuid.ToString(),
                 Sequence = counter,
                 Scheme   = Name,
-                Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other ? entry.p_type_uuid.ToString()
+                Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other
+                           ? entry.p_type_uuid.ToString()
                            : BSD.FSTypeToString((BSD.fsType)entry.p_fstype)
             };
 
@@ -108,6 +113,10 @@ public sealed class DragonFlyBSD : IPartition
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Disklabel64
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Disklabel64
@@ -132,6 +141,10 @@ public sealed class DragonFlyBSD : IPartition
         public readonly Partition64[] d_partitions;
     }
 
+#endregion
+
+#region Nested type: Partition64
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition64
     {
@@ -147,4 +160,6 @@ public sealed class DragonFlyBSD : IPartition
         public readonly Guid  p_type_uuid;
         public readonly Guid  p_stor_uuid;
     }
+
+#endregion
 }
