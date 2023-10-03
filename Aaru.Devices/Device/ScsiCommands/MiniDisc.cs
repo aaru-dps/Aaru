@@ -63,7 +63,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_READ_DTOC_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_DTOC_took_0_ms, duration);
 
         return sense;
     }
@@ -98,7 +98,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_READ_UTOC_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_UTOC_took_0_ms, duration);
 
         return sense;
     }
@@ -127,7 +127,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_command_D5h_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_command_D5h_took_0_ms, duration);
 
         return sense;
     }
@@ -152,7 +152,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_STOP_PLAY_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_STOP_PLAY_took_0_ms, duration);
 
         return sense;
     }
@@ -181,7 +181,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_READ_POSITION_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_POSITION_took_0_ms, duration);
 
         return sense;
     }
@@ -210,7 +210,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.MINIDISC_GET_TYPE_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_GET_TYPE_took_0_ms, duration);
 
         return sense;
     }

@@ -82,7 +82,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.IDENTIFY_PACKET_DEVICE_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.IDENTIFY_PACKET_DEVICE_took_0_ms, duration);
 
         return sense;
     }

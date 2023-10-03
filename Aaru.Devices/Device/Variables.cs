@@ -159,4 +159,9 @@ public partial class Device
     public byte[] Cis { get; private protected set; }
 
     private protected string _devicePath;
+
+    const string ATA_MODULE_NAME  = "ATA Device";
+    const string SCSI_MODULE_NAME = "SCSI Device";
+    const string SD_MODULE_NAME   = "SecureDigital Device";
+    const string MMC_MODULE_NAME  = "MultiMediaCard Device";
 }

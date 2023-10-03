@@ -102,7 +102,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        GET_CONFIGURATION_Starting_Feature_Number_1_Return_Type_2_Sense_3_Last_Error_4_took_0_ms,
                                    duration, startingFeatureNumber, rt, sense, LastError);
@@ -174,7 +174,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        READ_DISC_STRUCTURE_Media_Type_1_Address_2_Layer_Number_3_Format_4_AGID_5_Sense_6_Last_Error_7_took_0_ms,
                                    duration, mediaType, address, layerNumber, format, agid, sense, LastError);
@@ -301,7 +301,7 @@ public partial class Device
         {
             Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-            AaruConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                        Localization.
                                            READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms,
                                        duration, msf, format, trackSessionNumber, sense, LastError);
@@ -318,7 +318,7 @@ public partial class Device
 
         duration += tmpDuration;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms,
                                    duration, msf, format, trackSessionNumber, sense, LastError);
@@ -368,7 +368,7 @@ public partial class Device
         buffer = new byte[strctLength];
         Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.READ_DISC_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, dataType, sense, LastError);
 
@@ -438,7 +438,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        READ_CD_LBA_1_Block_Size_2_Transfer_Length_3_Expected_Sector_Type_4_DAP_5_Relative_Address_6_Sync_7_Headers_8_User_Data_9_ECC_EDC_10_C2_11_Subchannel_12_Sense_13_Last_Error_14_took_0_ms,
                                    duration, lba, blockSize, transferLength, expectedSectorType, dap, relAddr, sync,
@@ -507,7 +507,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        READ_CD_MSF_Start_MSF_1_End_MSF_2_Block_Size_3_Expected_Sector_Type_4_DAP_5_Sync_6_Headers_7_User_Data_8_ECC_EDC_9_C2_10_Subchannel_11_Sense_12_LastError_13_took_0_ms,
                                    duration, startMsf, endMsf, blockSize, expectedSectorType, dap, sync, headerCodes,
@@ -559,7 +559,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        PREVENT_ALLOW_MEDIUM_REMOVAL_Persistent_1_Prevent_2_Sense_3_LastError_4_took_0_ms,
                                    duration, persistent, prevent, sense, LastError);
@@ -643,7 +643,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        START_STOP_UNIT_Immediate_1_FormatLayer_2_Power_Conditions_3_Change_Format_Layer_4_Load_Eject_5_Start_6_Sense_7_Last_Error_8_took_0_ms,
                                    duration, immediate, formatLayer, powerConditions, changeFormatLayer, loadEject,
@@ -680,7 +680,8 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms,
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms,
                                    duration, sense, LastError);
 
         if(!sense &&
@@ -721,7 +722,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        READ_READ_SUB_CHANNEL_ISRC_Track_Number_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, trackNumber, sense, LastError);
@@ -760,7 +761,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.
                                        SET_CD_SPEED_Rotational_Control_1_Read_Speed_2_Write_Speed_3_Sense_4_Last_Error_5_took_0_ms,
                                    duration, rotationalControl, readSpeed, writeSpeed, sense, LastError);
@@ -801,7 +802,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
                                    Localization.READ_TRACK_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, type, sense, LastError);
 

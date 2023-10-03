@@ -68,7 +68,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.HL_DT_ST_READ_DVD_RAW_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.HL_DT_ST_READ_DVD_RAW_took_0_ms, duration);
 
         return sense;
     }

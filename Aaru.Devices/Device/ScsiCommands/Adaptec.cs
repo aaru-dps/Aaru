@@ -75,7 +75,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.ADAPTEC_TRANSLATE_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_TRANSLATE_took_0_ms, duration);
 
         return sense;
     }
@@ -116,7 +116,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.ADAPTEC_SET_ERROR_THRESHOLD_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_SET_ERROR_THRESHOLD_took_0_ms, duration);
 
         return sense;
     }
@@ -154,7 +154,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.ADAPTEC_READ_RESET_USAGE_COUNTER_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_READ_RESET_USAGE_COUNTER_took_0_ms, duration);
 
         return sense;
     }
@@ -179,7 +179,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.ADAPTEC_WRITE_DATA_BUFFER_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_WRITE_DATA_BUFFER_took_0_ms, duration);
 
         return sense;
     }
@@ -202,7 +202,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", Localization.ADAPTEC_READ_DATA_BUFFER_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_READ_DATA_BUFFER_took_0_ms, duration);
 
         return sense;
     }

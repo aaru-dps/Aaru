@@ -72,7 +72,7 @@ public partial class Device
                            statusRegisters.LbaLowPrevious);
         }
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.GET_NATIVE_MAX_ADDRESS_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.GET_NATIVE_MAX_ADDRESS_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -109,7 +109,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_DMA_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_DMA_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -142,7 +142,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_LOG_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_LOG_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -175,7 +175,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_LOG_DMA_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_LOG_DMA_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -215,7 +215,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_MULTIPLE_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_MULTIPLE_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -255,7 +255,7 @@ public partial class Device
                            statusRegisters.LbaLowPrevious);
         }
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_NATIVE_MAX_ADDRESS_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_NATIVE_MAX_ADDRESS_EXT_took_0_ms, duration);
 
         return sense;
     }
@@ -292,7 +292,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", Localization.READ_SECTORS_EXT_took_0_ms, duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_SECTORS_EXT_took_0_ms, duration);
 
         return sense;
     }
