@@ -71,4 +71,6 @@ public sealed partial class Nhdr0 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "NHDr0 plugin";
 }

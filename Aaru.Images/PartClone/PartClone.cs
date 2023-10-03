@@ -76,4 +76,6 @@ public sealed partial class PartClone : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "PartClone plugin";
 }

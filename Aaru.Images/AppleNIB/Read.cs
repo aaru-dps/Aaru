@@ -56,9 +56,9 @@ public sealed partial class AppleNib
         byte[] buffer = new byte[stream.Length];
         stream.EnsureRead(buffer, 0, buffer.Length);
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", Localization.Decoding_whole_image);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Decoding_whole_image);
         List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", Localization.Got_0_tracks, tracks.Count);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_tracks, tracks.Count);
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
@@ -88,7 +88,7 @@ public sealed partial class AppleNib
                 if(isDos)
                     skewing = _dosSkewing;
 
-                AaruConsole.DebugWriteLine("Apple NIB Plugin",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            skewing.SequenceEqual(_dosSkewing) ? Localization.Using_DOS_skewing
                                                : Localization.Using_ProDOS_skewing);
             }
@@ -100,7 +100,7 @@ public sealed partial class AppleNib
                     ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
                                               (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple NIB Plugin",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,
                                                sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
 
@@ -113,9 +113,9 @@ public sealed partial class AppleNib
                     _imageInfo.Sectors++;
                 }
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", Localization.Got_0_sectors, _imageInfo.Sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_sectors, _imageInfo.Sectors);
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", Localization.Cooking_sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cooking_sectors);
 
         _longSectors   = new Dictionary<ulong, byte[]>();
         _cookedSectors = new Dictionary<ulong, byte[]>();

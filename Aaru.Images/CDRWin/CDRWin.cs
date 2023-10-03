@@ -83,4 +83,6 @@ public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "CDRWin plugin";
 }

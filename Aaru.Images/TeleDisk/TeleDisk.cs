@@ -86,4 +86,6 @@ public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiabl
         _aDiskCrcHasFailed        = false;
         _sectorsWhereCrcHasFailed = new List<ulong>();
     }
+
+    const string MODULE_NAME = "TeleDisk plugin";
 }

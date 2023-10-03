@@ -58,11 +58,11 @@ public sealed partial class Nero
         footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-        AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", _imageStream.Length);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}", footerV1.ChunkId);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkId);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "imageStream.Length = {0}", _imageStream.Length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV1.ChunkID = 0x{0:X8}", footerV1.ChunkId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
         if(footerV2.ChunkId          == NERO_FOOTER_V2 &&
            footerV2.FirstChunkOffset < (ulong)_imageStream.Length)

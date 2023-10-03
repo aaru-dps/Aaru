@@ -70,18 +70,18 @@ public sealed partial class TeleDisk
         Array.Copy(headerBytes, headerBytesForCrc, 10);
         ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", _header.Signature);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", _header.Sequence);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", _header.DiskSet);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", _header.Version);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", _header.DataRate);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", _header.DriveType);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", _header.Stepping);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", _header.Sides);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", _header.Crc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = 0x{0:X4}", _header.Signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sequence = 0x{0:X2}", _header.Sequence);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskSet = 0x{0:X2}", _header.DiskSet);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = 0x{0:X2}", _header.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataRate = 0x{0:X2}", _header.DataRate);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.driveType = 0x{0:X2}", _header.DriveType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.stepping = 0x{0:X2}", _header.Stepping);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}", _header.Sides);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}", _header.Crc);
 
-        AaruConsole.DebugWriteLine("TeleDisk plugin", Localization.calculated_header_crc_equals_0_X4,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4,
                                    calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.

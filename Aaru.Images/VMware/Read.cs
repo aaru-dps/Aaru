@@ -166,7 +166,7 @@ public sealed partial class VMware
                         Type     = "SPARSE"
                     };
 
-                    AaruConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
                                                newExtent.Sectors, newExtent.Type, newExtent.Filename, newExtent.Offset);
 
                     _extents.Add(currentSector, newExtent);
@@ -213,22 +213,22 @@ public sealed partial class VMware
                 if(matchVersion.Success)
                 {
                     uint.TryParse(matchVersion.Groups["version"].Value, out _version);
-                    AaruConsole.DebugWriteLine("VMware plugin", "version = {0}", _version);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "version = {0}", _version);
                 }
                 else if(matchCid.Success)
                 {
                     _cid = Convert.ToUInt32(matchCid.Groups["cid"].Value, 16);
-                    AaruConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", _cid);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "cid = {0:x8}", _cid);
                 }
                 else if(matchParentCid.Success)
                 {
                     _parentCid = Convert.ToUInt32(matchParentCid.Groups["cid"].Value, 16);
-                    AaruConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", _parentCid);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "parentCID = {0:x8}", _parentCid);
                 }
                 else if(matchType.Success)
                 {
                     _imageType = matchType.Groups["type"].Value;
-                    AaruConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", _imageType);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "createType = \"{0}\"", _imageType);
                 }
                 else if(matchExtent.Success)
                 {
@@ -248,7 +248,7 @@ public sealed partial class VMware
                     uint.TryParse(matchExtent.Groups["sectors"].Value, out newExtent.Sectors);
                     newExtent.Type = matchExtent.Groups["type"].Value;
 
-                    AaruConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
                                                newExtent.Sectors, newExtent.Type, newExtent.Filename, newExtent.Offset);
 
                     _extents.Add(currentSector, newExtent);
@@ -257,7 +257,7 @@ public sealed partial class VMware
                 else if(matchParent.Success)
                 {
                     _parentName = matchParent.Groups["filename"].Value;
-                    AaruConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", _parentName);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "parentFileNameHint = \"{0}\"", _parentName);
                     _hasParent = true;
                 }
                 else if(matchCylinders.Success)
@@ -404,31 +404,31 @@ public sealed partial class VMware
         {
             case true when !cowD:
             {
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}", _vmEHdr.version);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}", _vmEHdr.capacity);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}", _vmEHdr.overhead);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.version = {0}", _vmEHdr.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.capacity = {0}", _vmEHdr.capacity);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.overhead = {0}", _vmEHdr.overhead);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.singleEndLineChar = 0x{0:X2}",
                                            _vmEHdr.singleEndLineChar);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
                                            _vmEHdr.doubleEndLineChar1);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
                                            _vmEHdr.doubleEndLineChar2);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
 
                 _grainSize = _vmEHdr.grainSize;
                 grains     = (uint)(_imageInfo.Sectors / _vmEHdr.grainSize) + 1;
@@ -443,27 +443,27 @@ public sealed partial class VMware
                 break;
             }
             case true when cowD:
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}", _vmCHdr.version);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}", _vmCHdr.sectors);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}", _vmCHdr.heads);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}", _vmCHdr.spt);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}", _vmCHdr.generation);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.version = {0}", _vmCHdr.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.sectors = {0}", _vmCHdr.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.heads = {0}", _vmCHdr.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.spt = {0}", _vmCHdr.spt);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.generation = {0}", _vmCHdr.generation);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.name = {0}",
                                            StringHandlers.CToString(_vmCHdr.name));
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.description = {0}",
                                            StringHandlers.CToString(_vmCHdr.description));
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", _vmCHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.uncleanShutdown = {0}", _vmCHdr.uncleanShutdown);
 
                 _grainSize            = _vmCHdr.grainSize;
                 grains                = (uint)(_imageInfo.Sectors / _vmCHdr.grainSize) + 1;
@@ -487,19 +487,19 @@ public sealed partial class VMware
                 return ErrorNumber.InOutError;
             }
 
-            AaruConsole.DebugWriteLine("VMware plugin", Localization._0_sectors_in_1_grains_in_2_tables,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization._0_sectors_in_1_grains_in_2_tables,
                                        _imageInfo.Sectors, grains, gdEntries);
 
             Stream gdStream = _gdFilter.GetDataForkStream();
 
             gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
-            AaruConsole.DebugWriteLine("VMware plugin", Localization.Reading_grain_directory);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_grain_directory);
             byte[] gdBytes = new byte[gdEntries * 4];
             gdStream.EnsureRead(gdBytes, 0, gdBytes.Length);
             Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
-            AaruConsole.DebugWriteLine("VMware plugin", Localization.Reading_grain_tables);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_grain_tables);
             uint currentGrain = 0;
             _gTable = new uint[grains];
 

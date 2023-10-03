@@ -82,25 +82,25 @@ public sealed partial class Cpcdsk
             return ErrorNumber.InvalidArgument;
 
         _extended = string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Extended_equals_0, _extended);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Extended_equals_0, _extended);
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.magic_equals_0_quoted, magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_equals_0_quoted, magic);
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"", StringHandlers.CToString(header.magic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = \"{0}\"", StringHandlers.CToString(header.magic));
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.creator = \"{0}\"",
                                    StringHandlers.CToString(header.creator));
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
-        AaruConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.tracks = {0}", header.tracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = {0}", header.sides);
 
         if(!_extended)
-            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.tracksize = {0}", header.tracksize);
         else
             for(int i = 0; i < header.tracks; i++)
             {
                 for(int j = 0; j < header.sides; j++)
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Track_0_Side_1_size_equals_2, i, j,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_0_Side_1_size_equals_2, i, j,
                                                header.tracksizeTable[(i * header.sides) + j] * 256);
             }
 
@@ -136,32 +136,32 @@ public sealed partial class Cpcdsk
                     return ErrorNumber.InvalidArgument;
                 }
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].magic = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].magic = \"{0}\"",
                                            StringHandlers.CToString(trackInfo.magic), i, j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].bps = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].bps = {0}",
                                            SizeCodeToBytes(trackInfo.bps), i, j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate, i,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate, i,
                                            j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler, i,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler, i,
                                            j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i, j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
                                            j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].recordingMode = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].recordingMode = {0}",
                                            trackInfo.recordingMode, i, j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
                                            j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
 
-                AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
                 if(trackInfo.sectors != sectorsPerTrack)
                     if(sectorsPerTrack == 0)
@@ -174,25 +174,25 @@ public sealed partial class Cpcdsk
 
                 for(int k = 1; k <= trackInfo.sectors; k++)
                 {
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
                                                trackInfo.sectorsInfo[k - 1].id, i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].len = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].len = {0}",
                                                trackInfo.sectorsInfo[k - 1].len, i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].side = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].side = {0}",
                                                trackInfo.sectorsInfo[k - 1].side, i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].size = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].size = {0}",
                                                SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size), i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
                                                trackInfo.sectorsInfo[k - 1].st1, i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
                                                trackInfo.sectorsInfo[k - 1].st2, i, j, k);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].track = {0}",
                                                trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                     int sectLen = _extended ? trackInfo.sectorsInfo[k - 1].len
@@ -262,9 +262,9 @@ public sealed partial class Cpcdsk
             }
         }
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Read_0_sectors, _sectors.Count);
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.Read_0_tracks, readtracks);
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.All_tracks_are_same_size_0, allTracksSameSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_sectors, _sectors.Count);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_tracks, readtracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.All_tracks_are_same_size_0, allTracksSameSize);
 
         _imageInfo.Application          = StringHandlers.CToString(header.creator);
         _imageInfo.CreationTime         = imageFilter.CreationTime;

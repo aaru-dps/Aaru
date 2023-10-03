@@ -71,4 +71,6 @@ public sealed partial class BlindWrite4 : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "BlindWrite4 plugin";
 }

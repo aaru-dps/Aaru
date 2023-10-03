@@ -53,35 +53,35 @@ public sealed partial class CopyQm
         stream.EnsureRead(hdr, 0, 133);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", _header.magic);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}", _header.mark);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}", _header.sectorSize);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", _header.sectorPerCluster);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}", _header.reservedSectors);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}", _header.fatCopy);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}", _header.rootEntries);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}", _header.sectors);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}", _header.mediaType);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}", _header.sectorsPerFat);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}", _header.heads);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}", _header.hidden);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}", _header.sectorsBig);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}", _header.description);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}", _header.blind);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}", _header.density);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}", _header.imageCylinders);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}", _header.totalCylinders);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}", _header.crc);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}", _header.volumeLabel);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}", _header.time);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}", _header.date);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}", _header.commentLength);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}", _header.secbs);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}", _header.unknown);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}", _header.interleave);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}", _header.skew);
-        AaruConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", _header.drive);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = 0x{0:X4}", _header.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mark = 0x{0:X2}", _header.mark);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorSize = {0}", _header.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorPerCluster = {0}", _header.sectorPerCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.reservedSectors = {0}", _header.reservedSectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.fatCopy = {0}", _header.fatCopy);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.rootEntries = {0}", _header.rootEntries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectors = {0}", _header.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mediaType = 0x{0:X2}", _header.mediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerFat = {0}", _header.sectorsPerFat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}", _header.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.hidden = {0}", _header.hidden);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsBig = {0}", _header.sectorsBig);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.description = {0}", _header.description);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.blind = {0}", _header.blind);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.density = {0}", _header.density);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.imageCylinders = {0}", _header.imageCylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.totalCylinders = {0}", _header.totalCylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X8}", _header.crc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.volumeLabel = {0}", _header.volumeLabel);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.time = 0x{0:X4}", _header.time);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.date = 0x{0:X4}", _header.date);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.commentLength = {0}", _header.commentLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.secbs = {0}", _header.secbs);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown = 0x{0:X4}", _header.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.interleave = {0}", _header.interleave);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.skew = {0}", _header.skew);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.drive = {0}", _header.drive);
 
         byte[] cmt = new byte[_header.commentLength];
         stream.EnsureRead(cmt, 0, _header.commentLength);
@@ -151,10 +151,10 @@ public sealed partial class CopyQm
 
         _headerChecksumOk = ((-1 * sum) & 0xFF) == _header.headerChecksum;
 
-        AaruConsole.DebugWriteLine("CopyQM plugin", Localization.Calculated_header_checksum_equals_0_X2_1,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_header_checksum_equals_0_X2_1,
                                    (-1 * sum) & 0xFF, _headerChecksumOk);
 
-        AaruConsole.DebugWriteLine("CopyQM plugin", Localization.Calculated_data_CRC_equals_0_X8_1, _calculatedDataCrc,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_CRC_equals_0_X8_1, _calculatedDataCrc,
                                    _calculatedDataCrc == _header.crc);
 
         _imageInfo.Application          = "CopyQM";

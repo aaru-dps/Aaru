@@ -159,13 +159,13 @@ public sealed partial class AaruFormat
         stopwatch.Stop();
         TimeSpan sequentialize = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_deinterleave_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_deinterleave_subchannel,
                                    deinterleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_sequentialize_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_sequentialize_subchannel,
                                    sequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_transform_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_transform_subchannel,
                                    deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
         return sequential;
@@ -292,13 +292,13 @@ public sealed partial class AaruFormat
         stopwatch.Stop();
         TimeSpan interleave = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_desequentialize_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_desequentialize_subchannel,
                                    desequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_interleave_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_interleave_subchannel,
                                    interleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Took_0_ms_to_untransform_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_untransform_subchannel,
                                    interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
         return interleaved;

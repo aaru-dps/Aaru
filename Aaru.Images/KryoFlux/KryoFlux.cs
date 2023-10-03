@@ -69,4 +69,6 @@ public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "KryoFlux plugin";
 }

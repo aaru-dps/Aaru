@@ -90,4 +90,6 @@ public sealed partial class Nero : IOpticalMediaImage
         Sessions      = new List<CommonTypes.Structs.Session>();
         Partitions    = new List<Partition>();
     }
+
+    const string MODULE_NAME = "Nero plugin";
 }

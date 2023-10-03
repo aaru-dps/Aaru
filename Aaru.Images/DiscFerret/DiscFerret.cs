@@ -70,4 +70,6 @@ public sealed partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "DiscFerret plugin";
 }

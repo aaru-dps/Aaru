@@ -65,7 +65,7 @@ public sealed partial class Cpcdsk
 
         string magic = Encoding.ASCII.GetString(headerB, 0, pos);
 
-        AaruConsole.DebugWriteLine("CPCDSK plugin", Localization.magic_equals_0_quoted, magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_equals_0_quoted, magic);
 
         return string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
                string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   == 0 ||

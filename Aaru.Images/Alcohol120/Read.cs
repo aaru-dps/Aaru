@@ -39,7 +39,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
@@ -63,39 +62,39 @@ public sealed partial class Alcohol120
         stream.EnsureRead(hdr, 0, 88);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = {0}",
                                    Encoding.ASCII.GetString(_header.signature));
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.version = {0}.{1}", _header.version[0],
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}.{1}", _header.version[0],
                                    _header.version[1]);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.type = {0}", _header.type);
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessions = {0}", _header.sessions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.type = {0}", _header.type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessions = {0}", _header.sessions);
 
         for(int i = 0; i < _header.unknown1.Length; i++)
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown1[{1}] = 0x{0:X4}", _header.unknown1[i],
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown1[{1}] = 0x{0:X4}", _header.unknown1[i],
                                        i);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaLength = {0}", _header.bcaLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.bcaLength = {0}", _header.bcaLength);
 
         for(int i = 0; i < _header.unknown2.Length; i++)
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i],
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i],
                                        i);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaOffset = {0}", _header.bcaOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.bcaOffset = {0}", _header.bcaOffset);
 
         for(int i = 0; i < _header.unknown3.Length; i++)
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown3[{1}] = 0x{0:X8}", _header.unknown3[i],
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown3[{1}] = 0x{0:X8}", _header.unknown3[i],
                                        i);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.structuresOffset = {0}", _header.structuresOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.structuresOffset = {0}", _header.structuresOffset);
 
         for(int i = 0; i < _header.unknown4.Length; i++)
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i],
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i],
                                        i);
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessionOffset = {0}", _header.sessionOffset);
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.dpmOffset = {0}", _header.dpmOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dpmOffset = {0}", _header.dpmOffset);
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION)
             return ErrorNumber.NotSupported;
@@ -109,26 +108,26 @@ public sealed partial class Alcohol120
             stream.EnsureRead(sesHdr, 0, 24);
             Session session = Marshal.SpanToStructureLittleEndian<Session>(sesHdr);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionStart = {0}", session.sessionStart,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].sessionStart = {0}", session.sessionStart,
                                        i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionEnd = {0}", session.sessionEnd, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].sessionEnd = {0}", session.sessionEnd, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionSequence = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].sessionSequence = {0}",
                                        session.sessionSequence, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].allBlocks = {0}", session.allBlocks, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].allBlocks = {0}", session.allBlocks, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].nonTrackBlocks = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].nonTrackBlocks = {0}",
                                        session.nonTrackBlocks, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].firstTrack = {0}", session.firstTrack, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].firstTrack = {0}", session.firstTrack, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].lastTrack = {0}", session.lastTrack, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].lastTrack = {0}", session.lastTrack, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].unknown = 0x{0:X8}", session.unknown, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].unknown = 0x{0:X8}", session.unknown, i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].trackOffset = {0}", session.trackOffset, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{1}].trackOffset = {0}", session.trackOffset, i);
 
             _alcSessions.Add(session.sessionSequence, session);
         }
@@ -162,64 +161,64 @@ public sealed partial class Alcohol120
                     oldIncorrectImage =  true;
                 }
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].mode = {0}", track.mode,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].mode = {0}", track.mode,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].subMode = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].subMode = {0}",
                                            track.subMode, track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].adrCtl = {0}", track.adrCtl,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].adrCtl = {0}", track.adrCtl,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].tno = {0}", track.tno,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].tno = {0}", track.tno,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].point = {0:X2}", track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].point = {0:X2}", track.point,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].min = {0}", track.min,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].min = {0}", track.min,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].sec = {0}", track.sec,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].sec = {0}", track.sec,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].frame = {0}", track.frame,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].frame = {0}", track.frame,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].zero = {0}", track.zero,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].zero = {0}", track.zero,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].pmin = {0}", track.pmin,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].pmin = {0}", track.pmin,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].psec = {0}", track.psec,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].psec = {0}", track.psec,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].pframe = {0}", track.pframe,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].pframe = {0}", track.pframe,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].extraOffset = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].extraOffset = {0}",
                                            track.extraOffset, track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].sectorSize = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].sectorSize = {0}",
                                            track.sectorSize, track.point, session.sessionSequence);
 
                 //for(int j = 0; j < track.unknown.Length; j++)
-                //    AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].unknown[{2}] = {0}", track.unknown[j], i, j, session.sessionSequence);
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].startLba = {0}",
+                //    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].unknown[{2}] = {0}", track.unknown[j], i, j, session.sessionSequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].startLba = {0}",
                                            track.startLba, track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].startOffset = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].startOffset = {0}",
                                            track.startOffset, track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].files = {0}", track.files,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].files = {0}", track.files,
                                            track.point, session.sessionSequence);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].footerOffset = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].footerOffset = {0}",
                                            track.footerOffset, track.point, session.sessionSequence);
 
                 //for(int j = 0; j < track.unknown2.Length; j++)
-                //    AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{2}].track[{1}].unknown2[{2}] = {0}", track.unknown2[j], i, j, session.sessionSequence);
+                //    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].unknown2[{2}] = {0}", track.unknown2[j], i, j, session.sessionSequence);
 
                 if(track.subMode == SubchannelMode.Interleaved)
                     track.sectorSize -= 96;
@@ -259,10 +258,10 @@ public sealed partial class Alcohol120
                 stream.EnsureRead(extHdr, 0, 8);
                 TrackExtra extra = Marshal.SpanToStructureLittleEndian<TrackExtra>(extHdr);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.pregap = {0}", extra.pregap,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "track[{1}].extra.pregap = {0}", extra.pregap,
                                            track.point);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.sectors = {0}", extra.sectors,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "track[{1}].extra.sectors = {0}", extra.sectors,
                                            track.point);
 
                 if(track.point == 1)
@@ -290,11 +289,11 @@ public sealed partial class Alcohol120
             stream.EnsureRead(footer, 0, 16);
             _alcFooter = Marshal.SpanToStructureLittleEndian<Footer>(footer);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filenameOffset = {0}", _alcFooter.filenameOffset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.filenameOffset = {0}", _alcFooter.filenameOffset);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.widechar = {0}", _alcFooter.widechar);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown1 = 0x{0:X8}", _alcFooter.unknown1);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown2 = 0x{0:X8}", _alcFooter.unknown2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.widechar = {0}", _alcFooter.widechar);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown1 = 0x{0:X8}", _alcFooter.unknown1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown2 = 0x{0:X8}", _alcFooter.unknown2);
         }
 
         string alcFile = "*.mdf";
@@ -311,7 +310,7 @@ public sealed partial class Alcohol120
             alcFile = _alcFooter.widechar == 1 ? StringHandlers.CToString(filename, Encoding.Unicode, true)
                           : StringHandlers.CToString(filename, Encoding.Default);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.filename = {0}", alcFile);
         }
 
         if(_alcFooter.filenameOffset == 0)
@@ -489,7 +488,7 @@ public sealed partial class Alcohol120
                 _imageInfo.MediaType = MediaType.CD;
         }
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
         Partitions = new List<Partition>();
         _offsetMap = new Dictionary<uint, ulong>();
@@ -595,34 +594,34 @@ public sealed partial class Alcohol120
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
         }
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.printing_partition_map);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.printing_partition_map);
 
         foreach(Partition partition in Partitions)
         {
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Partition_sequence_0, partition.Sequence);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_name_0, partition.Name);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, partition.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_name_0, partition.Name);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_description_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0,
                                        partition.Description);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_type_0, partition.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_type_0, partition.Type);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_starting_sector_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_sector_0,
                                        partition.Start);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_sectors_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_sectors_0,
                                        partition.Length);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_starting_offset_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_offset_0,
                                        partition.Offset);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\t" + Localization.Partition_size_in_bytes_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_size_in_bytes_0,
                                        partition.Size);
         }
 
         _imageInfo.Application = "Alcohol 120%";
 
-        AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Data_filename_0, alcFile);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Data_filename_0, alcFile);
 
         var filtersList = new FiltersList();
         _alcImage = filtersList.GetFilter(alcFile);
@@ -642,7 +641,7 @@ public sealed partial class Alcohol120
 
         if(!_isDvd)
         {
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", Localization.Rebuilding_TOC);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Rebuilding_TOC);
             byte firstSession = byte.MaxValue;
             byte lastSession  = 0;
             var  tocMs        = new MemoryStream();

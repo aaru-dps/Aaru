@@ -97,4 +97,6 @@ public sealed partial class Vhdx : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "VHDX plugin";
 }

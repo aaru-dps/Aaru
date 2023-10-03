@@ -72,4 +72,6 @@ public sealed partial class Apridisk : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Apridisk plugin";
 }

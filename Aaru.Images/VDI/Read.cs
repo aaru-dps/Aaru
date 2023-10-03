@@ -59,35 +59,35 @@ public sealed partial class Vdi
         stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", _vHdr.creator);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}", _vHdr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.creator = {0}", _vHdr.creator);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.magic = {0}", _vHdr.magic);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", _vHdr.majorVersion,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.version = {0}.{1}", _vHdr.majorVersion,
                                    _vHdr.minorVersion);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}", _vHdr.headerSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}", _vHdr.imageType);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}", _vHdr.imageFlags);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", _vHdr.comments);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}", _vHdr.offsetBlocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}", _vHdr.offsetData);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}", _vHdr.cylinders);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}", _vHdr.heads);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}", _vHdr.spt);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}", _vHdr.sectorSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}", _vHdr.size);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}", _vHdr.blockSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}", _vHdr.blockExtraData);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}", _vHdr.blocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", _vHdr.allocatedBlocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}", _vHdr.uuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}", _vHdr.snapshotUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", _vHdr.linkUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", _vHdr.parentUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalCylinders = {0}", _vHdr.logicalCylinders);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalHeads = {0}", _vHdr.logicalHeads);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSpt = {0}", _vHdr.logicalSpt);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.headerSize = {0}", _vHdr.headerSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageType = {0}", _vHdr.imageType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageFlags = {0}", _vHdr.imageFlags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.description = {0}", _vHdr.comments);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetBlocks = {0}", _vHdr.offsetBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetData = {0}", _vHdr.offsetData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.cylinders = {0}", _vHdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.heads = {0}", _vHdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.spt = {0}", _vHdr.spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.sectorSize = {0}", _vHdr.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.size = {0}", _vHdr.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockSize = {0}", _vHdr.blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockExtraData = {0}", _vHdr.blockExtraData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blocks = {0}", _vHdr.blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.allocatedBlocks = {0}", _vHdr.allocatedBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.uuid = {0}", _vHdr.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.snapshotUuid = {0}", _vHdr.snapshotUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.linkUuid = {0}", _vHdr.linkUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.parentUuid = {0}", _vHdr.parentUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalCylinders = {0}", _vHdr.logicalCylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalHeads = {0}", _vHdr.logicalHeads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSpt = {0}", _vHdr.logicalSpt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
 
         if(_vHdr.imageType != VdiImageType.Normal)
         {
@@ -99,14 +99,14 @@ public sealed partial class Vdi
 
         var blockMapStopwatch = new Stopwatch();
         blockMapStopwatch.Start();
-        AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Image_Block_Map);
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
         byte[] ibmB = new byte[_vHdr.blocks * 4];
         stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         blockMapStopwatch.Stop();
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", Localization.Reading_Image_Block_Map_took_0_ms,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Image_Block_Map_took_0_ms,
                                    blockMapStopwatch.Elapsed.TotalMilliseconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();

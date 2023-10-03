@@ -410,7 +410,7 @@ public sealed partial class ZZZRawImage
                 if(filter is null)
                     continue;
 
-                AaruConsole.DebugWriteLine("ZZZRawImage Plugin", Localization.Found_media_tag_0, sidecar.tag);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_media_tag_0, sidecar.tag);
                 byte[] data = new byte[filter.DataForkLength];
                 filter.GetDataForkStream().EnsureRead(data, 0, data.Length);
                 _mediaTags.Add(sidecar.tag, data);

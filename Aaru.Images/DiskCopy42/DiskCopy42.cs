@@ -86,4 +86,6 @@ public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
     };
 
     ~DiskCopy42() => Close();
+
+    const string MODULE_NAME = "DiskCopy 4.2 plugin";
 }

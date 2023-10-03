@@ -79,4 +79,6 @@ public sealed partial class CloneCd : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "CloneCD plugin";
 }

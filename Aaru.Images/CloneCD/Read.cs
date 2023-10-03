@@ -177,7 +177,7 @@ public sealed partial class CloneCd
                         if(!ccdVerMatch.Success)
                             continue;
 
-                        AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Version_at_line_0, lineNumber);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Version_at_line_0, lineNumber);
 
                         _imageInfo.Version = ccdVerMatch.Groups["value"].Value;
 
@@ -196,24 +196,24 @@ public sealed partial class CloneCd
                         Match discCatMatch  = discCatRegex.Match(line);
 
                         if(discEntMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_TocEntries_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_TocEntries_at_line_0,
                                                        lineNumber);
                         else if(discSessMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Sessions_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Sessions_at_line_0,
                                                        lineNumber);
                         else if(discScrMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.Found_DataTracksScrambled_at_line_0, lineNumber);
 
                             _scrambled |= discScrMatch.Groups["value"].Value == "1";
                         }
                         else if(cdtLenMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_CDTextLength_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CDTextLength_at_line_0,
                                                        lineNumber);
                         else if(discCatMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Catalog_at_line_0_smallcase,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Catalog_at_line_0_smallcase,
                                                        lineNumber);
 
                             _catalog = discCatMatch.Groups["value"].Value;
@@ -227,11 +227,11 @@ public sealed partial class CloneCd
                         Match cdtEntMatch  = cdtEntRegex.Match(line);
 
                         if(cdtEntsMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_CD_Text_Entries_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CD_Text_Entries_at_line_0,
                                                        lineNumber);
                         else if(cdtEntMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_CD_Text_Entry_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CD_Text_Entry_at_line_0,
                                                        lineNumber);
 
                             string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[]
@@ -251,10 +251,10 @@ public sealed partial class CloneCd
                         Match sessSubcMatch = sessSubcRegex.Match(line);
 
                         if(sessPregMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PreGapMode_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PreGapMode_at_line_0,
                                                        lineNumber);
                         else if(sessSubcMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PreGapSubC_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PreGapSubC_at_line_0,
                                                        lineNumber);
                     }
                     else if(inEntry)
@@ -276,7 +276,7 @@ public sealed partial class CloneCd
 
                         if(entSessMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Session_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Session_at_line_0,
                                                        lineNumber);
 
                             currentEntry.SessionNumber = Convert.ToByte(entSessMatch.Groups["value"].Value, 10);
@@ -289,75 +289,75 @@ public sealed partial class CloneCd
                         }
                         else if(entPointMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Point_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Point_at_line_0,
                                                        lineNumber);
 
                             currentEntry.POINT = Convert.ToByte(entPointMatch.Groups["value"].Value, 16);
                         }
                         else if(entAdrMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_ADR_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_ADR_at_line_0, lineNumber);
                             currentEntry.ADR = Convert.ToByte(entAdrMatch.Groups["value"].Value, 16);
                         }
                         else if(entCtrlMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Control_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Control_at_line_0,
                                                        lineNumber);
 
                             currentEntry.CONTROL = Convert.ToByte(entCtrlMatch.Groups["value"].Value, 16);
                         }
                         else if(entTnoMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_TrackNo_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_TrackNo_at_line_0,
                                                        lineNumber);
 
                             currentEntry.TNO = Convert.ToByte(entTnoMatch.Groups["value"].Value, 10);
                         }
                         else if(entAMinMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_AMin_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_AMin_at_line_0, lineNumber);
                             currentEntry.Min = Convert.ToByte(entAMinMatch.Groups["value"].Value, 10);
                         }
                         else if(entASecMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_ASec_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_ASec_at_line_0, lineNumber);
                             currentEntry.Sec = Convert.ToByte(entASecMatch.Groups["value"].Value, 10);
                         }
                         else if(entAFrameMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_AFrame_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_AFrame_at_line_0,
                                                        lineNumber);
 
                             currentEntry.Frame = Convert.ToByte(entAFrameMatch.Groups["value"].Value, 10);
                         }
                         else if(entAlbaMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_ALBA_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_ALBA_at_line_0, lineNumber);
                         else if(entZeroMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_Zero_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Zero_at_line_0, lineNumber);
                             currentEntry.Zero  = Convert.ToByte(entZeroMatch.Groups["value"].Value, 10);
                             currentEntry.HOUR  = (byte)((currentEntry.Zero & 0xF0) >> 4);
                             currentEntry.PHOUR = (byte)(currentEntry.Zero & 0x0F);
                         }
                         else if(entPMinMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PMin_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PMin_at_line_0, lineNumber);
                             currentEntry.PMIN = Convert.ToByte(entPMinMatch.Groups["value"].Value, 10);
                         }
                         else if(entPSecMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PSec_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PSec_at_line_0, lineNumber);
                             currentEntry.PSEC = Convert.ToByte(entPSecMatch.Groups["value"].Value, 10);
                         }
                         else if(entPFrameMatch.Success)
                         {
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PFrame_at_line_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PFrame_at_line_0,
                                                        lineNumber);
 
                             currentEntry.PFRAME = Convert.ToByte(entPFrameMatch.Groups["value"].Value, 10);
                         }
                         else if(entPlbaMatch.Success)
-                            AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Found_PLBA_at_line_0, lineNumber);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PLBA_at_line_0, lineNumber);
                     }
                     else if(inTrack)
                     {
@@ -471,7 +471,7 @@ public sealed partial class CloneCd
                         {
                             case 0xA0:
                                 byte discType = descriptor.PSEC;
-                                AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Disc_Type_0, discType);
+                                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_Type_0, discType);
 
                                 break;
                             case 0xA2:
@@ -567,7 +567,7 @@ public sealed partial class CloneCd
                                     _imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(descriptor.PSEC, frm);
 
                                     if(_imageInfo.MediaManufacturer != "")
-                                        AaruConsole.DebugWriteLine("CloneCD plugin",
+                                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                    Localization.Disc_manufactured_by_0,
                                                                    _imageInfo.MediaManufacturer);
                                 }
@@ -579,8 +579,8 @@ public sealed partial class CloneCd
                     case 6:
                     {
                         uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
-                        AaruConsole.DebugWriteLine("CloneCD plugin", Localization.Disc_ID_0_X6, id & 0x00FFFFFF);
-                        _imageInfo.MediaSerialNumber = $"{id                                       & 0x00FFFFFF:X6}";
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_ID_0_X6, id & 0x00FFFFFF);
+                        _imageInfo.MediaSerialNumber = $"{id                                  & 0x00FFFFFF:X6}";
 
                         break;
                     }

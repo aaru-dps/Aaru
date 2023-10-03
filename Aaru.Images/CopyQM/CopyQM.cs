@@ -72,4 +72,6 @@ public sealed partial class CopyQm : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "CopyQM plugin";
 }

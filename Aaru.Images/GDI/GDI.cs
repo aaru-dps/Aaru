@@ -74,4 +74,6 @@ public sealed partial class Gdi : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "GDI plugin";
 }

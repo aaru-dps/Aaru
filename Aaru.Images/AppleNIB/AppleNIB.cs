@@ -70,4 +70,6 @@ public sealed partial class AppleNib : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Apple NIB Plugin";
 }

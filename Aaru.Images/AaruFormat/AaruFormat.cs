@@ -187,4 +187,6 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Aaru Format plugin";
 }

@@ -81,4 +81,6 @@ public sealed partial class Cdrdao : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "CDRDAO plugin";
 }

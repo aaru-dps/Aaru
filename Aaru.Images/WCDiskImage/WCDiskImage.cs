@@ -79,4 +79,6 @@ public sealed partial class WCDiskImage : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "d2f plugin";
 }

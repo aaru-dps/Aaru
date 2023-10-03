@@ -83,4 +83,6 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "ZZZRawImage Plugin";
 }

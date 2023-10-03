@@ -78,4 +78,6 @@ public sealed partial class Ndif : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "NDIF plugin";
 }

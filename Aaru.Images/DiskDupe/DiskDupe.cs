@@ -104,4 +104,6 @@ public sealed partial class DiskDupe : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "DiskDupe plugin";
 }

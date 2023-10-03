@@ -71,4 +71,6 @@ public sealed partial class Virtual98 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Virtual98 plugin";
 }

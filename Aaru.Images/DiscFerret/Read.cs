@@ -68,18 +68,18 @@ public sealed partial class DiscFerret
             stream.EnsureRead(blk, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.cylinder = {1}", thisOffset,
                                        blockHeader.cylinder);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.head = {1}", thisOffset, blockHeader.head);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset, blockHeader.sector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.sector = {1}", thisOffset, blockHeader.sector);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset, blockHeader.length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.length = {1}", thisOffset, blockHeader.length);
 
             if(stream.Position + blockHeader.length > stream.Length)
             {
-                AaruConsole.DebugWriteLine("DiscFerret plugin", Localization.Invalid_track_block_found_at_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Invalid_track_block_found_at_0,
                                            thisOffset);
 
                 break;

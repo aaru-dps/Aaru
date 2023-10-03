@@ -85,4 +85,6 @@ public sealed partial class Qcow2 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "QCOW2 plugin";
 }

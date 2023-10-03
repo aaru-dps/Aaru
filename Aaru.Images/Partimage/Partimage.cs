@@ -77,4 +77,6 @@ public sealed partial class Partimage : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Partimage plugin";
 }

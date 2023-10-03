@@ -61,19 +61,19 @@ public sealed partial class Virtual98
         if(!_v98Hdr.signature.SequenceEqual(_signature))
             return false;
 
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.signature = \"{0}\"",
                                    StringHandlers.CToString(_v98Hdr.signature, shiftjis));
 
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.comment = \"{0}\"",
                                    StringHandlers.CToString(_v98Hdr.comment, shiftjis));
 
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", _v98Hdr.padding);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", _v98Hdr.mbsize);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", _v98Hdr.sectorsize);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", _v98Hdr.sectors);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", _v98Hdr.surfaces);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", _v98Hdr.cylinders);
-        AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", _v98Hdr.totals);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.padding = {0}", _v98Hdr.padding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.mbsize = {0}", _v98Hdr.mbsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.sectorsize = {0}", _v98Hdr.sectorsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.sectors = {0}", _v98Hdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.surfaces = {0}", _v98Hdr.surfaces);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.cylinders = {0}", _v98Hdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.totals = {0}", _v98Hdr.totals);
 
         return true;
     }

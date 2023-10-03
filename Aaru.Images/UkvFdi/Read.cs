@@ -56,19 +56,19 @@ public sealed partial class UkvFdi
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}", hdr.dataOff);
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}", hdr.descOff);
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}", hdr.flags);
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.addInfoLen = {0}", hdr.addInfoLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.cylinders = {0}", hdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.dataOff = {0}", hdr.dataOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.descOff = {0}", hdr.descOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.flags = {0}", hdr.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.heads = {0}", hdr.heads);
 
         stream.Seek(hdr.descOff, SeekOrigin.Begin);
         byte[] description = new byte[hdr.dataOff - hdr.descOff];
         stream.EnsureRead(description, 0, description.Length);
         _imageInfo.Comments = StringHandlers.CToString(description);
 
-        AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", _imageInfo.Comments);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.description = \"{0}\"", _imageInfo.Comments);
 
         stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
@@ -93,10 +93,10 @@ public sealed partial class UkvFdi
                 byte sectors = (byte)stream.ReadByte();
                 uint trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
-                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
-                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
-                AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.c = {0}", cyl);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.h = {0}", head);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.sectors = {0}", sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.off = {0}", trkOff);
 
                 sectorsOff[cyl][head]   = new uint[sectors];
                 _sectorsData[cyl][head] = new byte[sectors][];
@@ -116,13 +116,13 @@ public sealed partial class UkvFdi
                     stream.EnsureRead(offB, 0, 2);
                     ushort secOff = BitConverter.ToUInt16(offB, 0);
 
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}", r);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}", f);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.c = {0}", c);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.h = {0}", h);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.r = {0}", r);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.n = {0} ({1})", n, 128 << n);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.f = {0}", f);
 
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.off = {0} ({1})", secOff,
                                                secOff + trkOff + hdr.dataOff);
 
                     // TODO: This assumes sequential sectors.

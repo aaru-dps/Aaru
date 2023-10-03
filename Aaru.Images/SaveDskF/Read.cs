@@ -54,25 +54,25 @@ public sealed partial class SaveDskF
         stream.EnsureRead(hdr, 0, 40);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", _header.magic);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}", _header.mediaType);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}", _header.sectorSize);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}", _header.clusterMask);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}", _header.clusterShift);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", _header.reservedSectors);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}", _header.fatCopies);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}", _header.rootEntries);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}", _header.firstCluster);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}", _header.clustersCopied);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}", _header.sectorsPerFat);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}", _header.checksum);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}", _header.cylinders);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}", _header.heads);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}", _header.padding);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}", _header.sectorsCopied);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}", _header.commentOffset);
-        AaruConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}", _header.dataOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = 0x{0:X4}", _header.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mediaType = 0x{0:X2}", _header.mediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorSize = {0}", _header.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterMask = {0}", _header.clusterMask);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterShift = {0}", _header.clusterShift);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.reservedSectors = {0}", _header.reservedSectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.fatCopies = {0}", _header.fatCopies);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.rootEntries = {0}", _header.rootEntries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.firstCluster = {0}", _header.firstCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clustersCopied = {0}", _header.clustersCopied);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerFat = {0}", _header.sectorsPerFat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}", _header.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.cylinders = {0}", _header.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}", _header.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.padding = {0}", _header.padding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsCopied = {0}", _header.sectorsCopied);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.commentOffset = {0}", _header.commentOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataOffset = {0}", _header.dataOffset);
 
         if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD })
             _header.dataOffset = 512;
@@ -97,7 +97,7 @@ public sealed partial class SaveDskF
                 _calculatedChk += (uint)b;
         } while(b >= 0);
 
-        AaruConsole.DebugWriteLine("SaveDskF plugin", Localization.Calculated_checksum_equals_0_X8_1, _calculatedChk,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_checksum_equals_0_X8_1, _calculatedChk,
                                    _calculatedChk == _header.checksum);
 
         _imageInfo.Application          = "SaveDskF";

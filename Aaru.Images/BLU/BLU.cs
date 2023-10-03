@@ -79,4 +79,6 @@ public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
         public uint   DeviceBlocks;
         public ushort BytesPerBlock;
     }
+
+    const string MODULE_NAME = "BLU plugin";
 }

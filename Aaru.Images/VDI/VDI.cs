@@ -75,4 +75,6 @@ public sealed partial class Vdi : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "VirtualBox plugin";
 }

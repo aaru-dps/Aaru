@@ -84,4 +84,6 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Alcohol 120% plugin";
 }

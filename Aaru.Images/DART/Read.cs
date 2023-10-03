@@ -259,7 +259,7 @@ public sealed partial class Dart
         }
         catch(InvalidCastException) {}
 
-        AaruConsole.DebugWriteLine("DART plugin", Localization.Image_application_0_version_1, _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _imageInfo.Sectors              = (ulong)(header.srcSize * 2);

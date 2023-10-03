@@ -396,7 +396,7 @@ public sealed partial class Vhdx
         else
             batEntries = (long)(_dataBlocks + ((_dataBlocks - 1) / (ulong)_chunkRatio));
 
-        AaruConsole.DebugWriteLine("VHDX plugin", Localization.Reading_BAT);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_BAT);
 
         long readChunks = 0;
         _blockAllocationTable = new ulong[_dataBlocks];
@@ -423,7 +423,7 @@ public sealed partial class Vhdx
 
         if(_hasParent)
         {
-            AaruConsole.DebugWriteLine("VHDX plugin", Localization.Reading_Sector_Bitmap);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Sector_Bitmap);
 
             var sectorBmpMs = new MemoryStream();
 

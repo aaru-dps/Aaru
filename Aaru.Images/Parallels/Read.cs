@@ -57,22 +57,22 @@ public sealed partial class Parallels
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", _pHdr.version);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}", _pHdr.heads);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}", _pHdr.cylinders);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", _pHdr.cluster_size);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}", _pHdr.bat_entries);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}", _pHdr.sectors);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}", _pHdr.in_use);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}", _pHdr.data_off);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", _pHdr.flags);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", _pHdr.ext_off);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.version = {0}", _pHdr.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.heads = {0}", _pHdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.cylinders = {0}", _pHdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.cluster_size = {0}", _pHdr.cluster_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.bat_entries = {0}", _pHdr.bat_entries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.sectors = {0}", _pHdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.in_use = 0x{0:X8}", _pHdr.in_use);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.data_off = {0}", _pHdr.data_off);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.flags = {0}", _pHdr.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.ext_off = {0}", _pHdr.ext_off);
 
         _extended = _extMagic.SequenceEqual(_pHdr.magic);
-        AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", _extended);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.extended = {0}", _extended);
 
-        AaruConsole.DebugWriteLine("Parallels plugin", Localization.Reading_BAT);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_BAT);
         _bat = new uint[_pHdr.bat_entries];
         byte[] batB = new byte[_pHdr.bat_entries * 4];
         stream.EnsureRead(batB, 0, batB.Length);

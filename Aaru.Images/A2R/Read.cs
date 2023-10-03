@@ -58,13 +58,13 @@ public sealed partial class A2R
 
         Header = Marshal.ByteArrayToStructureLittleEndian<A2rHeader>(hdr);
 
-        AaruConsole.DebugWriteLine("A2R plugin", "header.signature = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = \"{0}\"",
                                    StringHandlers.CToString(Header.signature));
 
-        AaruConsole.DebugWriteLine("A2R plugin", "header.version = {0}", Header.version);
-        AaruConsole.DebugWriteLine("A2R plugin", "header.highBitTest = {0:X2}", Header.highBitTest);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}", Header.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.highBitTest = {0:X2}", Header.highBitTest);
 
-        AaruConsole.DebugWriteLine("A2R plugin", "header.lineTest = {0:X2} {1:X2} {2:X2}", Header.lineTest[0],
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.lineTest = {0:X2} {1:X2} {2:X2}", Header.lineTest[0],
                                    Header.lineTest[1], Header.lineTest[2]);
 
         byte[] infoMagic = new byte[4];
@@ -84,22 +84,22 @@ public sealed partial class A2R
                 _a2rStream.EnsureRead(infoChnk, 0, Marshal.SizeOf<InfoChunkV2>());
                 _infoChunkV2 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV2>(infoChnk);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.header.chunkId = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV2.header.chunkId));
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.header.chunkSize = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkSize = {0}",
                                            _infoChunkV2.header.chunkSize);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.version = {0}", _infoChunkV2.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.version = {0}", _infoChunkV2.version);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.creator = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.creator = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV2.creator).TrimEnd());
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.diskType = {0}", _infoChunkV2.diskType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.diskType = {0}", _infoChunkV2.diskType);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.writeProtected = {0}", _infoChunkV2.writeProtected);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.writeProtected = {0}", _infoChunkV2.writeProtected);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.synchronized = {0}", _infoChunkV2.synchronized);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.synchronized = {0}", _infoChunkV2.synchronized);
 
                 _imageInfo.Creator = Encoding.ASCII.GetString(_infoChunkV2.creator).TrimEnd();
 
@@ -129,24 +129,24 @@ public sealed partial class A2R
                 _a2rStream.EnsureRead(infoChk, 0, Marshal.SizeOf<InfoChunkV3>());
                 _infoChunkV3 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV3>(infoChk);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.header.chunkId = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV3.header.chunkId));
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.header.chunkSize = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkSize = {0}",
                                            _infoChunkV3.header.chunkSize);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.version = {0}", _infoChunkV3.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.version = {0}", _infoChunkV3.version);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.creator = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.creator = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV3.creator).TrimEnd());
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.driveType = {0}", _infoChunkV3.driveType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.driveType = {0}", _infoChunkV3.driveType);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.writeProtected = {0}", _infoChunkV3.writeProtected);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.writeProtected = {0}", _infoChunkV3.writeProtected);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.synchronized = {0}", _infoChunkV3.synchronized);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.synchronized = {0}", _infoChunkV3.synchronized);
 
-                AaruConsole.DebugWriteLine("A2R plugin", "infoChunk.hardSectorCount = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.hardSectorCount = {0}",
                                            _infoChunkV3.hardSectorCount);
 
                 _imageInfo.Creator = Encoding.ASCII.GetString(_infoChunkV3.creator).TrimEnd();

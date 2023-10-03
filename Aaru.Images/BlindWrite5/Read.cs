@@ -69,60 +69,60 @@ public sealed partial class BlindWrite5
         stream.EnsureRead(hdr, 0, 260);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = {0}",
                                    StringHandlers.CToString(_header.signature));
 
         for(int i = 0; i < _header.unknown1.Length; i++)
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", _header.unknown1[i], i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown1[{1}] = 0x{0:X8}", _header.unknown1[i], i);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", _header.profile);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", _header.sessions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.profile = {0}", _header.profile);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessions = {0}", _header.sessions);
 
         for(int i = 0; i < _header.unknown2.Length; i++)
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i], i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i], i);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", _header.mcnIsValid);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(_header.mcn));
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", _header.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mcnIsValid = {0}", _header.mcnIsValid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mcn = {0}", StringHandlers.CToString(_header.mcn));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown3 = 0x{0:X4}", _header.unknown3);
 
         for(int i = 0; i < _header.unknown4.Length; i++)
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", _header.pmaLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.atipLen = {0}", _header.atipLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdtLen = {0}", _header.cdtLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", _header.cdInfoLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", _header.bcaLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.pmaLen = {0}", _header.pmaLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.atipLen = {0}", _header.atipLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.cdtLen = {0}", _header.cdtLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.cdInfoLen = {0}", _header.cdInfoLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.bcaLen = {0}", _header.bcaLen);
 
         for(int i = 0; i < _header.unknown5.Length; i++)
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", _header.unknown5[i], i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown5[{1}] = 0x{0:X8}", _header.unknown5[i], i);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", _header.dvdStrLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", _header.dvdInfoLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dvdStrLen = {0}", _header.dvdStrLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dvdInfoLen = {0}", _header.dvdInfoLen);
 
         for(int i = 0; i < _header.unknown6.Length; i++)
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", _header.unknown6[i], i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown6[{1}] = 0x{0:X2}", _header.unknown6[i], i);
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.manufacturer = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.manufacturer = {0}",
                                    StringHandlers.CToString(_header.manufacturer));
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.product = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.product = {0}",
                                    StringHandlers.CToString(_header.product));
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.revision = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.revision = {0}",
                                    StringHandlers.CToString(_header.revision));
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.vendor = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.vendor = {0}",
                                    StringHandlers.CToString(_header.vendor));
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.volumeId = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.volumeId = {0}",
                                    StringHandlers.CToString(_header.volumeId));
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mode2ALen = {0}", _header.mode2ALen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unkBlkLen = {0}", _header.unkBlkLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dataLen = {0}", _header.dataLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessionsLen = {0}", _header.sessionsLen);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dpmLen = {0}", _header.dpmLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mode2ALen = {0}", _header.mode2ALen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.unkBlkLen = {0}", _header.unkBlkLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataLen = {0}", _header.dataLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessionsLen = {0}", _header.sessionsLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dpmLen = {0}", _header.dpmLen);
 
         _mode2A = new byte[_header.mode2ALen];
 
@@ -133,7 +133,7 @@ public sealed partial class BlindWrite5
             var decoded2A = ModePage_2A.Decode(_mode2A);
 
             if(decoded2A is not null)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.mode_page_2A_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.mode_page_2A_0,
                                            Modes.PrettifyModePage_2A(decoded2A));
             else
                 _mode2A = null;
@@ -158,7 +158,7 @@ public sealed partial class BlindWrite5
             PMA.CDPMA? decodedPma = PMA.Decode(_pma);
 
             if(decodedPma.HasValue)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.PMA_0, PMA.Prettify(decodedPma));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.PMA_0, PMA.Prettify(decodedPma));
             else
                 _pma = null;
         }
@@ -204,7 +204,7 @@ public sealed partial class BlindWrite5
             PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(_pfi, MediaType.DVDROM);
 
             if(decodedPfi.HasValue)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.PFI_0, PFI.Prettify(decodedPfi));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.PFI_0, PFI.Prettify(decodedPfi));
             else
             {
                 _pfi = null;
@@ -236,7 +236,7 @@ public sealed partial class BlindWrite5
         {
             stream.EnsureRead(_discInformation, 0, _discInformation.Length);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Disc_information_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_information_0,
                                        PrintHex.ByteArrayToHexArrayString(_discInformation, 40));
         }
         else
@@ -252,7 +252,7 @@ public sealed partial class BlindWrite5
         byte[] dataPathBytes = new byte[dataPathLen];
         stream.EnsureRead(dataPathBytes, 0, dataPathBytes.Length);
         _dataPath = Encoding.Unicode.GetString(dataPathBytes);
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Data_path_0, _dataPath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Data_path_0, _dataPath);
 
         _dataFiles = new List<DataFile>();
 
@@ -292,24 +292,24 @@ public sealed partial class BlindWrite5
             dataFile.Filename = Encoding.Unicode.GetString(dataFile.FilenameBytes);
             _dataFiles.Add(dataFile);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.type = 0x{0:X8}", dataFile.Type);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.length = {0}", dataFile.Length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.type = 0x{0:X8}", dataFile.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.length = {0}", dataFile.Length);
 
             for(int i = 0; i < dataFile.Unknown1.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i],
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.offset = {0}", dataFile.Offset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.offset = {0}", dataFile.Offset);
 
             for(int i = 0; i < dataFile.Unknown2.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i],
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.startLba = {0}", dataFile.StartLba);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.sectors = {0}", dataFile.Sectors);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filenameLen = {0}", dataFile.FilenameLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filename = {0}", dataFile.Filename);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown3 = {0}", dataFile.Unknown3);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.startLba = {0}", dataFile.StartLba);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.sectors = {0}", dataFile.Sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.filenameLen = {0}", dataFile.FilenameLen);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.filename = {0}", dataFile.Filename);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown3 = {0}", dataFile.Unknown3);
         }
 
         _bwSessions = new List<SessionDescriptor>();
@@ -328,15 +328,15 @@ public sealed partial class BlindWrite5
             session.LastTrack  = BitConverter.ToUInt16(tmpArray, 14);
             session.Tracks     = new TrackDescriptor[session.Entries];
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].filename = {1}", ses, session.Sequence);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].entries = {1}", ses, session.Entries);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].unknown = {1}", ses, session.Unknown);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].start = {1}", ses, session.Start);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].end = {1}", ses, session.End);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].filename = {1}", ses, session.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].entries = {1}", ses, session.Entries);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].unknown = {1}", ses, session.Unknown);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].start = {1}", ses, session.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].end = {1}", ses, session.End);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].firstTrack = {1}", ses, session.FirstTrack);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].firstTrack = {1}", ses, session.FirstTrack);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].lastTrack = {1}", ses, session.LastTrack);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].lastTrack = {1}", ses, session.LastTrack);
 
             for(int tSeq = 0; tSeq < session.Entries; tSeq++)
             {
@@ -351,79 +351,79 @@ public sealed partial class BlindWrite5
                     stream.Seek(-8, SeekOrigin.Current);
                 }
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].type = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].type = {2}", ses, tSeq,
                                            session.Tracks[tSeq].type);
 
                 for(int i = 0; i < session.Tracks[tSeq].unknown1.Length; i++)
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown1[i]);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses,
                                            tSeq, session.Tracks[tSeq].unknown2);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].subchannel = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].subchannel = {2}", ses, tSeq,
                                            session.Tracks[tSeq].subchannel);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses,
                                            tSeq, session.Tracks[tSeq].unknown3);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].ctl = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].ctl = {2}", ses, tSeq,
                                            session.Tracks[tSeq].ctl);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].adr = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].adr = {2}", ses, tSeq,
                                            session.Tracks[tSeq].adr);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].point = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].point = {2}", ses, tSeq,
                                            session.Tracks[tSeq].point);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
                                            tSeq, session.Tracks[tSeq].tno);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].min = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].min = {2}", ses, tSeq,
                                            session.Tracks[tSeq].min);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sec = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].sec = {2}", ses, tSeq,
                                            session.Tracks[tSeq].sec);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].frame = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].frame = {2}", ses, tSeq,
                                            session.Tracks[tSeq].frame);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].zero = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].zero = {2}", ses, tSeq,
                                            session.Tracks[tSeq].zero);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pmin = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].pmin = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pmin);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].psec = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].psec = {2}", ses, tSeq,
                                            session.Tracks[tSeq].psec);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pframe = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].pframe = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pframe);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses,
                                            tSeq, session.Tracks[tSeq].unknown5);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pregap);
 
                 for(int i = 0; i < session.Tracks[tSeq].unknown6.Length; i++)
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown6[i]);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].startLba = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].startLba = {2}", ses, tSeq,
                                            session.Tracks[tSeq].startLba);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sectors = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].sectors = {2}", ses, tSeq,
                                            session.Tracks[tSeq].sectors);
 
                 for(int i = 0; i < session.Tracks[tSeq].unknown7.Length; i++)
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}",
                                                ses, tSeq, i, session.Tracks[tSeq].unknown7[i]);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].session = {2}", ses, tSeq,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].session = {2}", ses, tSeq,
                                            session.Tracks[tSeq].session);
 
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
                                            tSeq, session.Tracks[tSeq].unknown8);
 
                 if(session.Tracks[tSeq].type is TrackType.Dvd or TrackType.NotData)
@@ -431,7 +431,7 @@ public sealed partial class BlindWrite5
 
                 {
                     for(int i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
-                        AaruConsole.DebugWriteLine("BlindWrite5 plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                    session.Tracks[tSeq].unknown9[i]);
                 }
@@ -451,7 +451,7 @@ public sealed partial class BlindWrite5
         stream.EnsureRead(footer, 0, footer.Length);
 
         if(_bw5Footer.SequenceEqual(footer))
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Correctly_arrived_end_of_image);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Correctly_arrived_end_of_image);
         else
             AaruConsole.ErrorWriteLine(Localization.
                                            BlindWrite5_image_ends_after_expected_position_Probably_new_version_with_different_data_Errors_may_occur);
@@ -622,7 +622,7 @@ public sealed partial class BlindWrite5
         _trackFlags        = new Dictionary<uint, byte>();
         _imageInfo.Sectors = 0;
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Building_maps);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_maps);
 
         foreach(SessionDescriptor ses in _bwSessions)
         {
@@ -1068,54 +1068,54 @@ public sealed partial class BlindWrite5
             track.Session = trackSession.Sequence;
         }
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.printing_track_map);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.printing_track_map);
 
         foreach(Track track in Tracks)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Partition_sequence_0, track.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, track.Sequence);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_description_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_description_0,
                                        track.Description);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_type_0, track.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_type_0, track.Type);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_starting_sector_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_starting_sector_0,
                                        track.StartSector);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Track_ending_sector_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_ending_sector_0,
                                        track.EndSector);
         }
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.printing_partition_map);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.printing_partition_map);
 
         foreach(Partition partition in Partitions)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Partition_sequence_0, partition.Sequence);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_name_0, partition.Name);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, partition.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_name_0, partition.Name);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_description_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0,
                                        partition.Description);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_type_0, partition.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_type_0, partition.Type);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_starting_sector_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_sector_0,
                                        partition.Start);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_sectors_0, partition.Length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_sectors_0, partition.Length);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_starting_offset_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_offset_0,
                                        partition.Offset);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\t" + Localization.Partition_size_in_bytes_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_size_in_bytes_0,
                                        partition.Size);
         }
 
         if(!isDvd)
         {
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.Rebuilding_TOC);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Rebuilding_TOC);
 
             _fullToc = fullTocStream.ToArray();
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", Localization.TOC_len_0, _fullToc.Length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.TOC_len_0, _fullToc.Length);
 
             _fullToc[0] = firstSession;
             _fullToc[1] = lastSession;
@@ -1269,7 +1269,7 @@ public sealed partial class BlindWrite5
                 _              => _imageInfo.MediaType
             };
 
-        AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
         if(_mode2A != null)
             _imageInfo.ReadableMediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A);

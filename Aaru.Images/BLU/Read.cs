@@ -60,12 +60,12 @@ public sealed partial class Blu
         _imageHeader.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
         _imageHeader.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.deviceName = \"{0}\"",
                                    StringHandlers.CToString(_imageHeader.DeviceName));
 
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", _imageHeader.DeviceType);
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", _imageHeader.DeviceBlocks);
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", _imageHeader.BytesPerBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.deviceType = {0}", _imageHeader.DeviceType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.deviceBlock = {0}", _imageHeader.DeviceBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.bytesPerBlock = {0}", _imageHeader.BytesPerBlock);
 
         for(int i = 0; i < 0xD; i++)
             if(_imageHeader.DeviceName[i] < 0x20)

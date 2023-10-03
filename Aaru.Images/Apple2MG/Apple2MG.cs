@@ -71,4 +71,6 @@ public sealed partial class Apple2Mg : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "2MG plugin";
 }

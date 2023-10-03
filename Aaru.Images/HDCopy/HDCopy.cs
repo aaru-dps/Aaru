@@ -111,4 +111,6 @@ public sealed partial class HdCopy : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "HDCP plugin";
 }

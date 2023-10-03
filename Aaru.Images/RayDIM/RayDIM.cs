@@ -67,4 +67,6 @@ public sealed partial class RayDim : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Ray Arachelian's Disk IMage plugin";
 }

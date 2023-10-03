@@ -82,4 +82,6 @@ public sealed partial class Udif : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "UDIF plugin";
 }

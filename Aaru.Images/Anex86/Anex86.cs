@@ -70,4 +70,6 @@ public sealed partial class Anex86 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "Anex86 plugin";
 }

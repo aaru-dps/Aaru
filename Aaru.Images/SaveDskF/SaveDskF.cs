@@ -71,4 +71,6 @@ public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "SaveDskF plugin";
 }

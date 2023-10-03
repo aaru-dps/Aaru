@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
@@ -77,4 +76,6 @@ public sealed partial class SuperCardPro : IFluxImage, IMediaImage, IWritableIma
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "SuperCardPro plugin";
 }

@@ -53,16 +53,16 @@ public sealed partial class MaxiDisk
 
         Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmpHeader.unknown);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmpHeader.diskType);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}", tmpHeader.heads);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmpHeader.cylinders);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown = {0}", tmpHeader.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskType = {0}", tmpHeader.diskType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.heads = {0}", tmpHeader.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.cylinders = {0}", tmpHeader.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
 
         // This is hardcoded
         // But its possible values are unknown...

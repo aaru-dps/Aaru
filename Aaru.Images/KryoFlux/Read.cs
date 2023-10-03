@@ -94,7 +94,7 @@ public sealed partial class KryoFlux
                 {
                     if(head == 0)
                     {
-                        AaruConsole.DebugWriteLine("KryoFlux plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
                                                        Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
 
@@ -104,7 +104,7 @@ public sealed partial class KryoFlux
                         continue;
                     }
 
-                    AaruConsole.DebugWriteLine("KryoFlux plugin",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.
                                                    Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
 
@@ -114,7 +114,7 @@ public sealed partial class KryoFlux
                 }
                 else if(cylinder == 1)
                 {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Cannot_find_cyl_1_supposing_double_stepping);
 
                     step = 2;
@@ -123,7 +123,7 @@ public sealed partial class KryoFlux
                 }
                 else
                 {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin", Localization.Arrived_end_of_disk_at_cylinder_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0,
                                                cylinder);
 
                     break;
@@ -186,7 +186,7 @@ public sealed partial class KryoFlux
                         {
                             kvp[0] = kvp[0].Trim();
                             kvp[1] = kvp[1].Trim();
-                            AaruConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
 
                             switch(kvp[0])
                             {
@@ -217,7 +217,7 @@ public sealed partial class KryoFlux
                             var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
                                                               blockTime.Hour, blockTime.Minute, blockTime.Second);
 
-                            AaruConsole.DebugWriteLine("KryoFlux plugin", Localization.Found_timestamp_0,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_timestamp_0,
                                                        blockTimestamp);
 
                             if(blockTimestamp < Info.CreationTime)

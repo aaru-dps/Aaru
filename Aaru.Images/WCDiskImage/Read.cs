@@ -57,7 +57,7 @@ public sealed partial class WCDiskImage
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
-        AaruConsole.DebugWriteLine("d2f plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.Detected_WC_DISK_IMAGE_with_0_heads_1_tracks_and_2_sectors_per_track,
                                    fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
 
@@ -93,25 +93,25 @@ public sealed partial class WCDiskImage
         /* if there are extra tracks, read them as well */
         if(fheader.extraTracks[0] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_1_head_0_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Extra_track_1_head_0_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders, 0);
         }
 
         if(fheader.extraTracks[1] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_1_head_1_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Extra_track_1_head_1_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders, 1);
         }
 
         if(fheader.extraTracks[2] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_2_head_0_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Extra_track_2_head_0_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 0);
         }
 
         if(fheader.extraTracks[3] == 1)
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Extra_track_2_head_1_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Extra_track_2_head_1_present_reading);
             ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 1);
         }
 
@@ -127,7 +127,7 @@ public sealed partial class WCDiskImage
         /* read the comment and directory data if present */
         if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Comment_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Comment_present_reading);
             byte[] sheaderBuffer = new byte[6];
             stream.EnsureRead(sheaderBuffer, 0, 6);
 
@@ -148,7 +148,7 @@ public sealed partial class WCDiskImage
 
         if(fheader.extraFlags.HasFlag(ExtraFlag.Directory))
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.Directory_listing_present_reading);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Directory_listing_present_reading);
             byte[] sheaderBuffer = new byte[6];
             stream.EnsureRead(sheaderBuffer, 0, 6);
 
@@ -187,7 +187,7 @@ public sealed partial class WCDiskImage
 
         if(_badSectors[(cylinderNumber, headNumber, sectorNumber)])
         {
-            AaruConsole.DebugWriteLine("d2f plugin", Localization.reading_bad_sector_0_1_2_3, sectorAddress,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.reading_bad_sector_0_1_2_3, sectorAddress,
                                        cylinderNumber, headNumber, sectorNumber);
 
             /* if we have sector data, return that */
@@ -274,13 +274,13 @@ public sealed partial class WCDiskImage
                     CRC16IBMContext.Data(sectorData, 512, out byte[] crc);
                     short calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                     /*
-                    AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                         cyl, head, sect, sheader.crc, 256 * crc[0] + crc[1]);
                      */
                     _badSectors[(cyl, head, sect)] = sheader.crc != calculatedCRC;
 
                     if(calculatedCRC != sheader.crc)
-                        AaruConsole.DebugWriteLine("d2f plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
                                                        CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4, cyl,
                                                    head, sect, sheader.crc, calculatedCRC);
@@ -288,7 +288,7 @@ public sealed partial class WCDiskImage
                     break;
                 case SectorFlag.BadSector:
                     /*
-                    AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Bad sector",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CHS {0},{1},{2}: Bad sector",
                         cyl, head, sect);
                      */
                     _badSectors[(cyl, head, sect)] = true;
@@ -296,7 +296,7 @@ public sealed partial class WCDiskImage
                     break;
                 case SectorFlag.RepeatByte:
                     /*
-                    AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
                         cyl, head, sect, sheader.crc & 0xff);
                      */
                     for(int i = 0; i < 512; i++)

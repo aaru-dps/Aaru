@@ -88,4 +88,6 @@ public sealed partial class VMware : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "VMware plugin";
 }

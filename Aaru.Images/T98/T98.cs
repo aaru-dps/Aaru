@@ -69,4 +69,6 @@ public sealed partial class T98 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "T98 plugin";
 }

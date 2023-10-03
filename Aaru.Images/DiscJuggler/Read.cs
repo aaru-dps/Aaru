@@ -82,14 +82,14 @@ public sealed partial class DiscJuggler
         ushort mediumType;
         byte   maxS = descriptor[0];
 
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "maxS = {0}", maxS);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "maxS = {0}", maxS);
         uint  lastSessionTrack = 0;
         ulong currentOffset    = 0;
 
         // Read sessions
         for(byte s = 0; s <= maxS; s++)
         {
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "s = {0}", s);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "s = {0}", s);
 
             // Seems all sessions start with this data
             if(descriptor[position + 0]  != 0x00 ||
@@ -151,7 +151,7 @@ public sealed partial class DiscJuggler
                 return ErrorNumber.InvalidArgument;
 
             byte maxT = descriptor[position + 1];
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "maxT = {0}", maxT);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "maxT = {0}", maxT);
 
             sessionSequence++;
 
@@ -168,7 +168,7 @@ public sealed partial class DiscJuggler
             // Read track
             for(byte t = 0; t < maxT; t++)
             {
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "t = {0}", t);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "t = {0}", t);
                 var track = new Track();
 
                 // Skip unknown
@@ -179,19 +179,19 @@ public sealed partial class DiscJuggler
                 Array.Copy(descriptor, position, trackFilenameB, 0, trackFilenameB.Length);
                 position   += trackFilenameB.Length;
                 track.File =  Path.GetFileName(Encoding.Default.GetString(trackFilenameB));
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tfilename = {0}", track.File);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tfilename = {0}", track.File);
 
                 // Skip unknown
                 position += 29;
 
                 mediumType =  BitConverter.ToUInt16(descriptor, position);
                 position   += 2;
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmediumType = {0}", mediumType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tmediumType = {0}", mediumType);
 
                 // Read indices
                 ushort maxI = BitConverter.ToUInt16(descriptor, position);
                 position += 2;
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxI = {0}", maxI);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tmaxI = {0}", maxI);
 
                 // This is not really the index position, but, the index length, go figure
                 for(ushort i = 0; i < maxI; i++)
@@ -199,13 +199,13 @@ public sealed partial class DiscJuggler
                     int index = BitConverter.ToInt32(descriptor, position);
                     track.Indexes.Add(i, index);
                     position += 4;
-                    AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tindex[{1}] = {0}", index, i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "\tindex[{1}] = {0}", index, i);
                 }
 
                 // Read CD-Text
                 uint maxC = BitConverter.ToUInt32(descriptor, position);
                 position += 4;
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxC = {0}", maxC);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tmaxC = {0}", maxC);
 
                 for(uint c = 0; c < maxC; c++)
                 {
@@ -213,7 +213,7 @@ public sealed partial class DiscJuggler
                     {
                         int bLen = descriptor[position];
                         position++;
-                        AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tc[{1}][{2}].Length = {0}", bLen, c, cb);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "\tc[{1}][{2}].Length = {0}", bLen, c, cb);
 
                         if(bLen <= 0)
                             continue;
@@ -228,14 +228,14 @@ public sealed partial class DiscJuggler
 
                         track.Description = Encoding.Default.GetString(textBlk, 0, bLen);
 
-                        AaruConsole.DebugWriteLine("DiscJuggler plugin", "\t" + Localization.Track_title_0,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_title_0,
                                                    track.Description);
                     }
                 }
 
                 position += 2;
                 uint trackMode = BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackMode = {0}", trackMode);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrackMode = {0}", trackMode);
                 position += 4;
 
                 // Skip unknown
@@ -243,11 +243,11 @@ public sealed partial class DiscJuggler
 
                 session.Sequence = (ushort)(BitConverter.ToUInt32(descriptor, position) + 1);
                 track.Session    = session.Sequence;
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tsession = {0}", session.Sequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tsession = {0}", session.Sequence);
                 position       += 4;
                 track.Sequence =  BitConverter.ToUInt32(descriptor, position) + lastSessionTrack + 1;
 
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrack = {1} + {2} + 1 = {0}", track.Sequence,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrack = {1} + {2} + 1 = {0}", track.Sequence,
                                            BitConverter.ToUInt32(descriptor, position), lastSessionTrack);
 
                 // There's always an index 0 in the image
@@ -261,7 +261,7 @@ public sealed partial class DiscJuggler
 
                 position          += 4;
                 track.StartSector =  BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackStart = {0}", track.StartSector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrackStart = {0}", track.StartSector);
                 position += 4;
                 uint trackLen = BitConverter.ToUInt32(descriptor, position);
 
@@ -286,7 +286,7 @@ public sealed partial class DiscJuggler
                 }
 
                 track.EndSector = track.StartSector + trackLen - 1;
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackEnd = {0}", track.EndSector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrackEnd = {0}", track.EndSector);
                 position += 4;
 
                 if(track.Sequence > session.EndTrack)
@@ -305,10 +305,10 @@ public sealed partial class DiscJuggler
                 position += 16;
 
                 uint readMode = BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\treadMode = {0}", readMode);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\treadMode = {0}", readMode);
                 position += 4;
                 uint trackCtl = BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackCtl = {0}", trackCtl);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrackCtl = {0}", trackCtl);
                 position += 4;
 
                 // Skip unknown
@@ -316,28 +316,28 @@ public sealed partial class DiscJuggler
 
                 byte[] isrc = new byte[12];
                 Array.Copy(descriptor, position, isrc, 0, 12);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc = {0}", StringHandlers.CToString(isrc));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tisrc = {0}", StringHandlers.CToString(isrc));
                 position += 12;
                 uint isrcValid = BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tisrc_valid = {0}", isrcValid);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tisrc_valid = {0}", isrcValid);
                 position += 4;
 
                 // Skip unknown
                 position += 87;
 
                 byte sessionType = descriptor[position];
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tsessionType = {0}", sessionType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tsessionType = {0}", sessionType);
                 position++;
 
                 // Skip unknown
                 position += 5;
 
                 byte trackFollows = descriptor[position];
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackFollows = {0}", trackFollows);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\ttrackFollows = {0}", trackFollows);
                 position += 2;
 
                 uint endAddress = BitConverter.ToUInt32(descriptor, position);
-                AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tendAddress = {0}", endAddress);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\tendAddress = {0}", endAddress);
                 position += 4;
 
                 // As to skip the lead-in
@@ -655,56 +655,56 @@ public sealed partial class DiscJuggler
 
             lastSessionTrack = session.EndTrack;
             Sessions.Add(session);
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.StartTrack = {0}", session.StartTrack);
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.StartSector = {0}", session.StartSector);
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.EndTrack = {0}", session.EndTrack);
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}", session.EndSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session.StartTrack = {0}", session.StartTrack);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session.StartSector = {0}", session.StartSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session.EndTrack = {0}", session.EndTrack);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session.EndSector = {0}", session.EndSector);
 
-            AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.Sequence = {0}", session.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "session.Sequence = {0}", session.Sequence);
         }
 
         // Skip unknown
         position += 16;
 
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", Localization.Current_position_equals_0, position);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Current_position_equals_0, position);
         byte[] filenameB = new byte[descriptor[position]];
         position++;
         Array.Copy(descriptor, position, filenameB, 0, filenameB.Length);
         position += filenameB.Length;
         string filename = Path.GetFileName(Encoding.Default.GetString(filenameB));
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "filename = {0}", filename);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "filename = {0}", filename);
 
         // Skip unknown
         position += 29;
 
         mediumType =  BitConverter.ToUInt16(descriptor, position);
         position   += 2;
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "mediumType = {0}", mediumType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "mediumType = {0}", mediumType);
 
         uint discSize = BitConverter.ToUInt32(descriptor, position);
         position += 4;
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "discSize = {0}", discSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "discSize = {0}", discSize);
 
         byte[] volidB = new byte[descriptor[position]];
         position++;
         Array.Copy(descriptor, position, volidB, 0, volidB.Length);
         position += volidB.Length;
         string volid = Path.GetFileName(Encoding.Default.GetString(volidB));
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "volid = {0}", volid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volid = {0}", volid);
 
         // Skip unknown
         position += 9;
 
         byte[] mcn = new byte[13];
         Array.Copy(descriptor, position, mcn, 0, 13);
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "mcn = {0}", StringHandlers.CToString(mcn));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "mcn = {0}", StringHandlers.CToString(mcn));
         position += 13;
         uint mcnValid = BitConverter.ToUInt32(descriptor, position);
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "mcn_valid = {0}", mcnValid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "mcn_valid = {0}", mcnValid);
         position += 4;
 
         uint cdtextLen = BitConverter.ToUInt32(descriptor, position);
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", "cdtextLen = {0}", cdtextLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "cdtextLen = {0}", cdtextLen);
         position += 4;
 
         if(cdtextLen > 0)
@@ -718,7 +718,7 @@ public sealed partial class DiscJuggler
         // Skip unknown
         position += 12;
 
-        AaruConsole.DebugWriteLine("DiscJuggler plugin", Localization.End_position_equals_0, position);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.End_position_equals_0, position);
 
         _imageInfo.MediaType = DecodeCdiMediumType(mediumType);
 

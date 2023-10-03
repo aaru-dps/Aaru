@@ -88,4 +88,6 @@ public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWrit
             DriveFirmwareRevision = null
         };
     }
+
+    const string MODULE_NAME = "A2R plugin";
 }

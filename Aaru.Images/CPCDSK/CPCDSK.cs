@@ -69,4 +69,6 @@ public sealed partial class Cpcdsk : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "CPCDSK plugin";
 }

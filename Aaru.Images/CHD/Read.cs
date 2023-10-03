@@ -85,26 +85,26 @@ public sealed partial class Chd
             {
                 HeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<HeaderV1>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (Flags)hdrV1.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.length = {0} bytes", hdrV1.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.version = {0}", hdrV1.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.flags = {0}", (Flags)hdrV1.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}", (Compression)hdrV1.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.compression = {0}", (Compression)hdrV1.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}", hdrV1.cylinders);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}", hdrV1.heads);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}", hdrV1.sectors);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.hunksize = {0}", hdrV1.hunksize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.cylinders = {0}", hdrV1.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.heads = {0}", hdrV1.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.sectors = {0}", hdrV1.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.parentmd5 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.parentmd5 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
 
                 hunkMapStopwatch.Restart();
                 _hunkTable = new ulong[hdrV1.totalhunks];
@@ -132,7 +132,7 @@ public sealed partial class Chd
 
                 hunkMapStopwatch.Stop();
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds,
                                            hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 _imageInfo.MediaType         = MediaType.GENERIC_HDD;
@@ -159,28 +159,28 @@ public sealed partial class Chd
             {
                 HeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<HeaderV2>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (Flags)hdrV2.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.length = {0} bytes", hdrV2.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.version = {0}", hdrV2.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.flags = {0}", (Flags)hdrV2.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}", (Compression)hdrV2.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.compression = {0}", (Compression)hdrV2.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}", hdrV2.cylinders);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}", hdrV2.heads);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}", hdrV2.sectors);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.hunksize = {0}", hdrV2.hunksize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.cylinders = {0}", hdrV2.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.heads = {0}", hdrV2.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.sectors = {0}", hdrV2.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.parentmd5 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.parentmd5 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV2.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.seclen = {0}", hdrV2.seclen);
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
                 hunkMapStopwatch.Restart();
 
                 _hunkTable = new ulong[hdrV2.totalhunks];
@@ -209,7 +209,7 @@ public sealed partial class Chd
 
                 hunkMapStopwatch.Stop();
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds,
                                            hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 _imageInfo.MediaType         = MediaType.GENERIC_HDD;
@@ -236,32 +236,32 @@ public sealed partial class Chd
             {
                 HeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<HeaderV3>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (Flags)hdrV3.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.length = {0} bytes", hdrV3.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.version = {0}", hdrV3.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.flags = {0}", (Flags)hdrV3.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}", (Compression)hdrV3.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.compression = {0}", (Compression)hdrV3.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentmd5 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.parentmd5 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.parentsha1 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
                 hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV3.totalhunks * 16];
@@ -269,7 +269,7 @@ public sealed partial class Chd
 
                 hunkMapStopwatch.Stop();
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds,
                                            hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV3.metaoffset;
@@ -289,29 +289,29 @@ public sealed partial class Chd
             {
                 HeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<HeaderV4>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (Flags)hdrV4.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.length = {0} bytes", hdrV4.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.version = {0}", hdrV4.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.flags = {0}", (Flags)hdrV4.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}", (Compression)hdrV4.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.compression = {0}", (Compression)hdrV4.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.parentsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.parentsha1 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV4.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.rawsha1 = {0}",
                                            ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
                 hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV4.totalhunks * 16];
@@ -319,7 +319,7 @@ public sealed partial class Chd
 
                 hunkMapStopwatch.Stop();
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds,
                                            hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV4.metaoffset;
@@ -344,42 +344,42 @@ public sealed partial class Chd
 
                 HeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<HeaderV5>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.length = {0} bytes", hdrV5.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}", hdrV5.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.length = {0} bytes", hdrV5.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.version = {0}", hdrV5.version);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor0 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.compressor0 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor0)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor1 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.compressor1 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor1)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor2 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.compressor2 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor2)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor3 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.compressor3 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor3)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.parentsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.parentsha1 = {0}",
                                            ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV5.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.rawsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.rawsha1 = {0}",
                                            ArrayHelpers.ByteArrayToHex(hdrV5.rawsha1));
 
                 // TODO: Implement compressed CHD v5
                 if(hdrV5.compressor0 == 0)
                 {
-                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_Hunk_map);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
                     hunkMapStopwatch.Restart();
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
@@ -412,7 +412,7 @@ public sealed partial class Chd
 
                     hunkMapStopwatch.Stop();
 
-                    AaruConsole.DebugWriteLine("CHD plugin", Localization.Took_0_seconds,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds,
                                                hunkMapStopwatch.Elapsed.TotalSeconds);
                 }
                 else
@@ -452,7 +452,7 @@ public sealed partial class Chd
             _swapAudio = false;
             _tracks    = new Dictionary<uint, Track>();
 
-            AaruConsole.DebugWriteLine("CHD plugin", Localization.Reading_metadata);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_metadata);
 
             ulong currentSector = 0;
             uint  currentTrack  = 1;
@@ -466,7 +466,7 @@ public sealed partial class Chd
                 byte[]         meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                 stream.EnsureRead(meta, 0, meta.Length);
 
-                AaruConsole.DebugWriteLine("CHD plugin", Localization.Found_metadata_0_,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_metadata_0_,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
 
                 switch(header.tag)

@@ -73,4 +73,6 @@ public sealed partial class DiscJuggler : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "DiscJuggler plugin";
 }

@@ -71,4 +71,6 @@ public sealed partial class DriDiskCopy : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "DRI DiskCopy plugin";
 }

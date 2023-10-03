@@ -71,4 +71,6 @@ public sealed partial class Dart : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
+
+    const string MODULE_NAME = "DART plugin";
 }

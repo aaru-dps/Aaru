@@ -66,36 +66,36 @@ public sealed partial class Apple2Mg
         {
             _imageHeader.DataSize = 0x000C8000;
 
-            AaruConsole.DebugWriteLine("2MG plugin",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Detected_incorrect_endian_on_data_size_field_correcting);
         }
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", _imageHeader.HeaderSize);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", _imageHeader.Version);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", _imageHeader.ImageFormat);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", _imageHeader.Flags);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", _imageHeader.Blocks);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", _imageHeader.DataOffset);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", _imageHeader.DataSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.headerSize = {0}", _imageHeader.HeaderSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.version = {0}", _imageHeader.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.imageFormat = {0}", _imageHeader.ImageFormat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.flags = 0x{0:X8}", _imageHeader.Flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.blocks = {0}", _imageHeader.Blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.dataOffset = 0x{0:X8}", _imageHeader.DataOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.dataSize = {0}", _imageHeader.DataSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", _imageHeader.CommentOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.commentOffset = 0x{0:X8}", _imageHeader.CommentOffset);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
                                    _imageHeader.CreatorSpecificOffset);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creatorSpecificSize = {0}",
                                    _imageHeader.CreatorSpecificSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", _imageHeader.Reserved1);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", _imageHeader.Reserved2);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved1 = 0x{0:X8}", _imageHeader.Reserved1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved2 = 0x{0:X8}", _imageHeader.Reserved2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
 
         if(_imageHeader is { DataSize: 0, Blocks: 0 } &&
            _imageHeader.ImageFormat != SectorOrder.ProDos)
