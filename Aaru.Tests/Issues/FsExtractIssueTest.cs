@@ -132,7 +132,7 @@ public abstract class FsExtractIssueTest
         ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
         Assert.AreEqual(ErrorNumber.NoError, error,
-                        string.Format(Localization.Error_0_reading_root_directory_0, error.ToString()));
+                        string.Format(Localization.Error_0_reading_root_directory, error.ToString()));
 
         while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
               entry is not null)

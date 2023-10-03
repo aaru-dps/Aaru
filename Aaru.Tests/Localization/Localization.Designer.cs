@@ -447,11 +447,11 @@ namespace Aaru.Tests {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error {0} reading root directory {0}.
+        ///   Looks up a localized string similar to Error {0} reading root directory.
         /// </summary>
-        internal static string Error_0_reading_root_directory_0 {
+        internal static string Error_0_reading_root_directory {
             get {
-                return ResourceManager.GetString("Error_0_reading_root_directory_0", resourceCulture);
+                return ResourceManager.GetString("Error_0_reading_root_directory", resourceCulture);
             }
         }
         
@@ -474,7 +474,7 @@ namespace Aaru.Tests {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error {0} setting metadata,.
+        ///   Looks up a localized string similar to Error {0} setting metadata..
         /// </summary>
         internal static string Error_0_setting_metadata {
             get {

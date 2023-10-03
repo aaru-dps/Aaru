@@ -381,8 +381,8 @@
   <data name="Expected_files_not_found" xml:space="preserve">
     <value>Expected files not found:</value>
   </data>
-  <data name="Error_0_reading_root_directory_0" xml:space="preserve">
-    <value>Error {0} reading root directory {0}</value>
+  <data name="Error_0_reading_root_directory" xml:space="preserve">
+    <value>Error {0} reading root directory</value>
   </data>
   <data name="Error_getting_stat_for_entry_0" xml:space="preserve">
     <value>Error getting stat for entry {0}</value>
@@ -454,7 +454,7 @@
     <value>Error {0} creating output image.</value>
   </data>
   <data name="Error_0_setting_metadata" xml:space="preserve">
-    <value>Error {0} setting metadata,</value>
+    <value>Error {0} setting metadata.</value>
   </data>
   <data name="Converting_media_tag_0" xml:space="preserve">
     <value>Converting media tag {0}</value>
