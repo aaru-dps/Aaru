@@ -70,14 +70,14 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.Asf ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.Asf ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -98,14 +98,14 @@ public sealed class Dump
                         out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.RpcState ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.RpcState ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -126,14 +126,14 @@ public sealed class Dump
                                out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = Array.Empty<byte>();
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.InvalidateAgid ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.InvalidateAgid ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -154,14 +154,14 @@ public sealed class Dump
                                   out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.AgidForCssCppm ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.AgidForCssCppm ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -183,14 +183,14 @@ public sealed class Dump
                            out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.Key1 ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.Key1 ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -211,14 +211,14 @@ public sealed class Dump
                                 out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.ChallengeKey ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.ChallengeKey ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -236,20 +236,20 @@ public sealed class Dump
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool SendChallenge(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] challengeKey,
-                              uint timeout, out double duration)
+    public bool SendChallenge(out byte[] buffer,  out byte[] senseBuffer, DvdCssKeyClass keyClass, byte[] challengeKey,
+                              uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[16];
 
         cdb[0]     = (byte)ScsiCommands.SendKey;
         cdb[7]     = (byte)keyClass;
         cdb[8]     = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]     = (byte)(buffer.Length & 0xFF);
-        cdb[10]    = (byte)((byte)CssSendKeyFormat.ChallengeKey ^ ((Agid & 0x03) << 6));
-        buffer[0]  = (byte)(((buffer.Length - 2) & 0xFF00) >> 8);
-        buffer[1]  = (byte)((buffer.Length - 2) & 0xFF);
+        cdb[10]    = (byte)((byte)CssSendKeyFormat.ChallengeKey ^ (Agid & 0x03) << 6);
+        buffer[0]  = (byte)((buffer.Length - 2 & 0xFF00) >> 8);
+        buffer[1]  = (byte)(buffer.Length - 2 & 0xFF);
         buffer[4]  = challengeKey[9];
         buffer[5]  = challengeKey[8];
         buffer[6]  = challengeKey[7];
@@ -283,16 +283,16 @@ public sealed class Dump
                          out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]    = (byte)ScsiCommands.SendKey;
         cdb[7]    = (byte)keyClass;
         cdb[8]    = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]    = (byte)(buffer.Length & 0xFF);
-        cdb[10]   = (byte)((byte)CssSendKeyFormat.Key2 ^ ((Agid & 0x03) << 6));
-        buffer[0] = (byte)(((buffer.Length - 2) & 0xFF00) >> 8);
-        buffer[1] = (byte)((buffer.Length - 2) & 0xFF);
+        cdb[10]   = (byte)((byte)CssSendKeyFormat.Key2 ^ (Agid & 0x03) << 6);
+        buffer[0] = (byte)((buffer.Length - 2 & 0xFF00) >> 8);
+        buffer[1] = (byte)(buffer.Length - 2 & 0xFF);
         buffer[4] = key2[4];
         buffer[5] = key2[3];
         buffer[6] = key2[2];
@@ -318,7 +318,7 @@ public sealed class Dump
     public bool ReadDiscKey(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[2052];
 
         cdb[0]  = (byte)ScsiCommands.ReadDiscStructure;
@@ -348,10 +348,10 @@ public sealed class Dump
         buffer      = Array.Empty<byte>();
         senseBuffer = new byte[64];
 
-        bool   sense     = false;
-        byte[] challenge = new byte[CHALLENGE_SIZE];
-        byte[] key1      = new byte[KEY_SIZE];
-        byte   variant   = 0;
+        var  sense     = false;
+        var  challenge = new byte[CHALLENGE_SIZE];
+        var  key1      = new byte[KEY_SIZE];
+        byte variant   = 0;
 
         for(byte i = 0; i < 4; i++)
         {
@@ -368,7 +368,8 @@ public sealed class Dump
                                               out duration);
 
                     break;
-                case CopyrightType.CPRM: throw new NotImplementedException();
+                case CopyrightType.CPRM:
+                    throw new NotImplementedException();
             }
 
             if(sense)
@@ -450,8 +451,8 @@ public sealed class Dump
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool ReadTitleKey(out byte[] buffer, out byte[] senseBuffer, DvdCssKeyClass keyClass, ulong address,
-                             uint timeout, out double duration)
+    public bool ReadTitleKey(out byte[] buffer,  out byte[] senseBuffer, DvdCssKeyClass keyClass, ulong address,
+                             uint       timeout, out double duration)
     {
         // We need to be in a bus key state to read title keys. Only CSS has title keys.
         ReadBusKey(out buffer, out senseBuffer, CopyrightType.CSS, timeout, out duration);
@@ -459,7 +460,7 @@ public sealed class Dump
         BusKey = buffer;
 
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
@@ -470,7 +471,7 @@ public sealed class Dump
         cdb[7]  = (byte)keyClass;
         cdb[8]  = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[9]  = (byte)(buffer.Length & 0xFF);
-        cdb[10] = (byte)((byte)CssReportKeyFormat.TitleKey ^ ((Agid & 0x03) << 6));
+        cdb[10] = (byte)((byte)CssReportKeyFormat.TitleKey ^ (Agid & 0x03) << 6);
 
         _dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 

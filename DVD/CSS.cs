@@ -58,99 +58,17 @@ public class CSS
 {
     static readonly byte[,] _playerKeys =
     {
-        {
-            0x01, 0xaf, 0xe3, 0x12, 0x80
-        },
-        {
-            0x12, 0x11, 0xca, 0x04, 0x3b
-        },
-        {
-            0x14, 0x0c, 0x9e, 0xd0, 0x09
-        },
-        {
-            0x14, 0x71, 0x35, 0xba, 0xe2
-        },
-        {
-            0x1a, 0xa4, 0x33, 0x21, 0xa6
-        },
-        {
-            0x26, 0xec, 0xc4, 0xa7, 0x4e
-        },
-        {
-            0x2c, 0xb2, 0xc1, 0x09, 0xee
-        },
-        {
-            0x2f, 0x25, 0x9e, 0x96, 0xdd
-        },
-        {
-            0x33, 0x2f, 0x49, 0x6c, 0xe0
-        },
-        {
-            0x35, 0x5b, 0xc1, 0x31, 0x0f
-        },
-        {
-            0x36, 0x67, 0xb2, 0xe3, 0x85
-        },
-        {
-            0x39, 0x3d, 0xf1, 0xf1, 0xbd
-        },
-        {
-            0x3b, 0x31, 0x34, 0x0d, 0x91
-        },
-        {
-            0x45, 0xed, 0x28, 0xeb, 0xd3
-        },
-        {
-            0x48, 0xb7, 0x6c, 0xce, 0x69
-        },
-        {
-            0x4b, 0x65, 0x0d, 0xc1, 0xee
-        },
-        {
-            0x4c, 0xbb, 0xf5, 0x5b, 0x23
-        },
-        {
-            0x51, 0x67, 0x67, 0xc5, 0xe0
-        },
-        {
-            0x53, 0x94, 0xe1, 0x75, 0xbf
-        },
-        {
-            0x57, 0x2c, 0x8b, 0x31, 0xae
-        },
-        {
-            0x63, 0xdb, 0x4c, 0x5b, 0x4a
-        },
-        {
-            0x7b, 0x1e, 0x5e, 0x2b, 0x57
-        },
-        {
-            0x85, 0xf3, 0x85, 0xa0, 0xe0
-        },
-        {
-            0xab, 0x1e, 0xe7, 0x7b, 0x72
-        },
-        {
-            0xab, 0x36, 0xe3, 0xeb, 0x76
-        },
-        {
-            0xb1, 0xb8, 0xf9, 0x38, 0x03
-        },
-        {
-            0xb8, 0x5d, 0xd8, 0x53, 0xbd
-        },
-        {
-            0xbf, 0x92, 0xc3, 0xb0, 0xe2
-        },
-        {
-            0xcf, 0x1a, 0xb2, 0xf8, 0x0a
-        },
-        {
-            0xec, 0xa0, 0xcf, 0xb3, 0xff
-        },
-        {
-            0xfc, 0x95, 0xa9, 0x87, 0x35
-        }
+        { 0x01, 0xaf, 0xe3, 0x12, 0x80 }, { 0x12, 0x11, 0xca, 0x04, 0x3b }, { 0x14, 0x0c, 0x9e, 0xd0, 0x09 },
+        { 0x14, 0x71, 0x35, 0xba, 0xe2 }, { 0x1a, 0xa4, 0x33, 0x21, 0xa6 }, { 0x26, 0xec, 0xc4, 0xa7, 0x4e },
+        { 0x2c, 0xb2, 0xc1, 0x09, 0xee }, { 0x2f, 0x25, 0x9e, 0x96, 0xdd }, { 0x33, 0x2f, 0x49, 0x6c, 0xe0 },
+        { 0x35, 0x5b, 0xc1, 0x31, 0x0f }, { 0x36, 0x67, 0xb2, 0xe3, 0x85 }, { 0x39, 0x3d, 0xf1, 0xf1, 0xbd },
+        { 0x3b, 0x31, 0x34, 0x0d, 0x91 }, { 0x45, 0xed, 0x28, 0xeb, 0xd3 }, { 0x48, 0xb7, 0x6c, 0xce, 0x69 },
+        { 0x4b, 0x65, 0x0d, 0xc1, 0xee }, { 0x4c, 0xbb, 0xf5, 0x5b, 0x23 }, { 0x51, 0x67, 0x67, 0xc5, 0xe0 },
+        { 0x53, 0x94, 0xe1, 0x75, 0xbf }, { 0x57, 0x2c, 0x8b, 0x31, 0xae }, { 0x63, 0xdb, 0x4c, 0x5b, 0x4a },
+        { 0x7b, 0x1e, 0x5e, 0x2b, 0x57 }, { 0x85, 0xf3, 0x85, 0xa0, 0xe0 }, { 0xab, 0x1e, 0xe7, 0x7b, 0x72 },
+        { 0xab, 0x36, 0xe3, 0xeb, 0x76 }, { 0xb1, 0xb8, 0xf9, 0x38, 0x03 }, { 0xb8, 0x5d, 0xd8, 0x53, 0xbd },
+        { 0xbf, 0x92, 0xc3, 0xb0, 0xe2 }, { 0xcf, 0x1a, 0xb2, 0xf8, 0x0a }, { 0xec, 0xa0, 0xcf, 0xb3, 0xff },
+        { 0xfc, 0x95, 0xa9, 0x87, 0x35 }
     };
 
     static readonly byte[] _cssTable1 =
@@ -341,15 +259,7 @@ public class CSS
 
     static readonly byte[,] _permutationChallenge =
     {
-        {
-            1, 3, 0, 7, 5, 2, 9, 6, 4, 8
-        },
-        {
-            6, 1, 9, 3, 8, 5, 7, 4, 0, 2
-        },
-        {
-            4, 0, 3, 5, 7, 2, 8, 6, 1, 9
-        }
+        { 1, 3, 0, 7, 5, 2, 9, 6, 4, 8 }, { 6, 1, 9, 3, 8, 5, 7, 4, 0, 2 }, { 4, 0, 3, 5, 7, 2, 8, 6, 1, 9 }
     };
 
     static readonly byte[,] _permutationVariant =
@@ -370,10 +280,7 @@ public class CSS
         0xF2, 0x2A, 0x79, 0x52, 0xFF, 0x1B, 0x7A, 0x11, 0xCA, 0x1A, 0x9B, 0x40, 0xAD, 0x01
     };
 
-    static readonly byte[] _secret =
-    {
-        0x55, 0xD6, 0xC4, 0xC5, 0x28
-    };
+    static readonly byte[] _secret = { 0x55, 0xD6, 0xC4, 0xC5, 0x28 };
 
     /// <summary>
     ///     The disc key returned by the logical unit is encoded with the bus key to prevent man-in-the-middle attacks.
@@ -391,7 +298,7 @@ public class CSS
         byte[] key = response.Skip(4).Take(2048).ToArray();
 
         for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - (i % busKey.Length)];
+            key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.DiscKey
         {
@@ -418,7 +325,7 @@ public class CSS
         byte[] key = response.Skip(5).Take(5).ToArray();
 
         for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - (i % busKey.Length)];
+            key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.TitleKey
         {
@@ -440,49 +347,49 @@ public class CSS
     /// <returns>The encrypted key.</returns>
     public static void EncryptKey(DvdCssKeyType keyType, uint variant, byte[] challenge, out byte[] key)
     {
-        byte[] bits    = new byte[30];
-        byte[] scratch = new byte[10];
-        byte   index   = sizeof(byte) * 30;
-        byte[] temp1   = new byte[5];
-        byte[] temp2   = new byte[5];
-        byte   carry   = 0;
+        var  bits    = new byte[30];
+        var  scratch = new byte[10];
+        byte index   = sizeof(byte) * 30;
+        var  temp1   = new byte[5];
+        var  temp2   = new byte[5];
+        byte carry   = 0;
         key = new byte[5];
 
-        for(int i = 9; i >= 0; --i)
+        for(var i = 9; i >= 0; --i)
             scratch[i] = challenge[_permutationChallenge[(uint)keyType, i]];
 
-        byte cssVariant = (byte)(keyType == 0 ? variant : _permutationVariant[(uint)keyType - 1, variant]);
+        var cssVariant = (byte)(keyType == 0 ? variant : _permutationVariant[(uint)keyType - 1, variant]);
 
-        for(int i = 5; --i >= 0;)
+        for(var i = 5; --i >= 0;)
             temp1[i] = (byte)(scratch[5 + i] ^ _secret[i] ^ _encryptTable2[i]);
 
-        uint lfsr0 = (uint)((temp1[0] << 17) | (temp1[1] << 9) | ((temp1[2] & ~7) << 1) | 8 | (temp1[2] & 7));
-        uint lfsr1 = (uint)((temp1[3] << 9)  | 0x100           | temp1[4]);
+        var lfsr0 = (uint)(temp1[0] << 17 | temp1[1] << 9 | (temp1[2] & ~7) << 1 | 8 | temp1[2] & 7);
+        var lfsr1 = (uint)(temp1[3] << 9  | 0x100         | temp1[4]);
 
         do
         {
             byte val = 0;
 
-            for(int bit = 0; bit < 8; ++bit)
+            for(var bit = 0; bit < 8; ++bit)
             {
-                byte oLfsr0 = (byte)(((lfsr0 >> 24) ^ (lfsr0 >> 21) ^ (lfsr0 >> 20) ^ (lfsr0 >> 12)) & 1);
-                lfsr0 = (lfsr0 << 1) | oLfsr0;
+                var oLfsr0 = (byte)((lfsr0 >> 24 ^ lfsr0 >> 21 ^ lfsr0 >> 20 ^ lfsr0 >> 12) & 1);
+                lfsr0 = lfsr0 << 1 | oLfsr0;
 
-                byte oLfsr1 = (byte)(((lfsr1 >> 16) ^ (lfsr1 >> 2)) & 1);
-                lfsr1 = (lfsr1 << 1) | oLfsr1;
+                var oLfsr1 = (byte)((lfsr1 >> 16 ^ lfsr1 >> 2) & 1);
+                lfsr1 = lfsr1 << 1 | oLfsr1;
 
-                byte combined = (byte)(Convert.ToByte(oLfsr1 == 0) + carry + Convert.ToByte(oLfsr0 == 0));
-                carry =  (byte)((combined >> 1) & 1);
+                var combined = (byte)(Convert.ToByte(oLfsr1 == 0) + carry + Convert.ToByte(oLfsr0 == 0));
+                carry =  (byte)(combined >> 1 & 1);
                 val   |= (byte)((combined & 1) << bit);
             }
 
             bits[--index] = val;
         } while(index > 0);
 
-        byte cse  = (byte)(_variants[cssVariant] ^ _encryptTable2[cssVariant]);
-        int  term = 0;
+        var cse  = (byte)(_variants[cssVariant] ^ _encryptTable2[cssVariant]);
+        var term = 0;
 
-        for(int i = 5; --i >= 0; term = scratch[i])
+        for(var i = 5; --i >= 0; term = scratch[i])
         {
             index = (byte)(bits[25 + i]          ^ scratch[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -493,7 +400,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[20 + i]          ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -504,7 +411,7 @@ public class CSS
         temp2[4] ^= temp2[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp2[i])
+        for(var i = 5; --i >= 0; term = temp2[i])
         {
             index = (byte)(bits[15 + i]          ^ temp2[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -516,7 +423,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[10 + i]          ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -528,7 +435,7 @@ public class CSS
         temp2[4] ^= temp2[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp2[i])
+        for(var i = 5; --i >= 0; term = temp2[i])
         {
             index = (byte)(bits[5 + i]           ^ temp2[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -539,7 +446,7 @@ public class CSS
         temp1[4] ^= temp1[0];
         term     =  0;
 
-        for(int i = 5; --i >= 0; term = temp1[i])
+        for(var i = 5; --i >= 0; term = temp1[i])
         {
             index = (byte)(bits[i]               ^ temp1[i]);
             index = (byte)(_encryptTable1[index] ^ ~_encryptTable2[index] ^ cse);
@@ -556,27 +463,27 @@ public class CSS
     static void DecryptKey(byte invert, byte[] cryptoKey, byte[] encryptedKey, out byte[] decryptedKey)
     {
         decryptedKey = new byte[5];
-        byte[] k = new byte[5];
+        var k = new byte[5];
 
-        uint lfsr1Lo = (uint)(cryptoKey[0] | 0x100);
+        var  lfsr1Lo = (uint)(cryptoKey[0] | 0x100);
         uint lfsr1Hi = cryptoKey[1];
 
-        uint lfsr0 = (uint)(((cryptoKey[4] << 17) | (cryptoKey[3] << 9) | (cryptoKey[2] << 1)) + 8 -
-                            (cryptoKey[2] & 7));
+        var lfsr0 = (uint)((cryptoKey[4] << 17 | cryptoKey[3] << 9 | cryptoKey[2] << 1) + 8 -
+                           (cryptoKey[2] & 7));
 
-        lfsr0 = (uint)((_cssTable4[lfsr0 & 0xff] << 24) | (_cssTable4[(lfsr0 >> 8) & 0xff] << 16) |
-                       (_cssTable4[(lfsr0 >> 16) & 0xff] << 8) | _cssTable4[(lfsr0 >> 24) & 0xff]);
+        lfsr0 = (uint)(_cssTable4[lfsr0 & 0xff] << 24 | _cssTable4[lfsr0 >> 8 & 0xff] << 16 |
+                       _cssTable4[lfsr0 >> 16 & 0xff] << 8 | _cssTable4[lfsr0 >> 24 & 0xff]);
 
         uint combined = 0;
 
         for(uint i = 0; i < 5; i++)
         {
-            byte oLfsr1 = (byte)(_cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo]);
+            var oLfsr1 = (byte)(_cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo]);
             lfsr1Hi = lfsr1Lo >> 1;
-            lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+            lfsr1Lo = (lfsr1Lo & 1) << 8 ^ oLfsr1;
             oLfsr1  = _cssTable4[oLfsr1];
-            byte oLfsr0 = (byte)(((((((lfsr0 >> 8) ^ lfsr0) >> 1) ^ lfsr0) >> 3) ^ lfsr0) >> 7);
-            lfsr0    =   (lfsr0 >> 8) | ((uint)oLfsr0 << 24);
+            var oLfsr0 = (byte)((((lfsr0 >> 8 ^ lfsr0) >> 1 ^ lfsr0) >> 3 ^ lfsr0) >> 7);
+            lfsr0    =   lfsr0 >> 8 | (uint)oLfsr0 << 24;
             combined +=  (uint)((oLfsr0 ^ invert) + oLfsr1);
             k[i]     =   (byte)(combined & 0xff);
             combined >>= 8;
@@ -636,14 +543,14 @@ public class CSS
     /// <param name="blockSize">Size of one sector.</param>
     /// <returns>The decrypted sector.</returns>
     public static byte[] DecryptSector(byte[] sectorData, byte[] keyData, byte[]? cmiData, uint blocks = 1,
-                                       uint blockSize = 2048)
+                                       uint   blockSize = 2048)
     {
         // None of the sectors are encrypted
-        if((cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0)) ||
+        if(cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0) ||
            keyData.All(static k => k == 0))
             return sectorData;
 
-        byte[] decryptedBuffer = new byte[sectorData.Length];
+        var decryptedBuffer = new byte[sectorData.Length];
 
         for(uint i = 0; i < blocks; i++)
         {
@@ -665,21 +572,21 @@ public class CSS
     }
 
     /// <summary>
-    /// Unscrambles a DVD sector with a title key.
+    ///     Unscrambles a DVD sector with a title key.
     /// </summary>
     /// <param name="key">The title key.</param>
     /// <param name="sector">The scrambled sector.</param>
     /// <returns>The unscrambled sector.</returns>
     static byte[] UnscrambleSector(IReadOnlyList<byte> key, byte[] sector)
     {
-        long lfsr1Lo = (key[0] ^ sector[0x54]) | 0x100;
+        long lfsr1Lo = key[0] ^ sector[0x54] | 0x100;
         long lfsr1Hi = key[1] ^ sector[0x55];
 
-        long lfsr0 = (key[2]       | (key[3]       << 8) | (key[4]       << 16)) ^
-                     (sector[0x56] | (sector[0x57] << 8) | (sector[0x58] << 16));
+        long lfsr0 = (key[2]       | key[3]       << 8 | key[4]       << 16) ^
+                     (sector[0x56] | sector[0x57] << 8 | sector[0x58] << 16);
 
         long oLfsr1 = lfsr0 & 7;
-        lfsr0 = (lfsr0 * 2) + 8 - oLfsr1;
+        lfsr0 = lfsr0 * 2 + 8 - oLfsr1;
 
         long combined = 0;
 
@@ -687,13 +594,13 @@ public class CSS
         {
             oLfsr1  = _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
             lfsr1Hi = lfsr1Lo >> 1;
-            lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+            lfsr1Lo = (lfsr1Lo & 1) << 8 ^ oLfsr1;
             oLfsr1  = _cssTable5[oLfsr1];
-            long oLfsr0 = (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
-            lfsr0     =   (lfsr0 << 8) | oLfsr0;
+            long oLfsr0 = (((lfsr0 >> 3 ^ lfsr0) >> 1 ^ lfsr0) >> 8 ^ lfsr0) >> 5 & 0xff;
+            lfsr0     =   lfsr0 << 8 | oLfsr0;
             oLfsr0    =   _cssTable4[oLfsr0];
             combined  +=  oLfsr0 + oLfsr1;
-            sector[i] =   (byte)(_cssTable1[sector[i]] ^ (combined & 0xff));
+            sector[i] =   (byte)(_cssTable1[sector[i]] ^ combined & 0xff);
             combined  >>= 8;
         }
 
@@ -705,14 +612,17 @@ public class CSS
     }
 
     /// <summary>
-    /// Analyzes data to try to figure out if the sector is encrypted, including
-    /// <list type="bullet">
-    /// <item>If the packet is not an MPEG packet</item>
-    /// <item>If the CMI tells us the sector isn't encrypted</item>
-    /// <item>If the key is all zeroes</item>
-    /// <item>If the MPEG Packetized Elementary Stream scrambling control value tells us the packet is not scrambled</item>
-    /// <item>If if the packet is system_header, padding_stream or private_stream2 (cannot be encrypted according to libdvdcss)</item>
-    /// </list>
+    ///     Analyzes data to try to figure out if the sector is encrypted, including
+    ///     <list type="bullet">
+    ///         <item>If the packet is not an MPEG packet</item>
+    ///         <item>If the CMI tells us the sector isn't encrypted</item>
+    ///         <item>If the key is all zeroes</item>
+    ///         <item>If the MPEG Packetized Elementary Stream scrambling control value tells us the packet is not scrambled</item>
+    ///         <item>
+    ///             If if the packet is system_header, padding_stream or private_stream2 (cannot be encrypted according to
+    ///             libdvdcss)
+    ///         </item>
+    ///     </list>
     /// </summary>
     /// <param name="cmi">The Copyright Management Information.</param>
     /// <param name="key">The title key.</param>
@@ -754,21 +664,21 @@ public class CSS
         if(cmi.RegionInformation is 0xFF or 0x00)
             return true;
 
-        return ((rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01) ||
-               ((rpc.RegionMask & 0x02) == (cmi.RegionInformation & 0x02) && (rpc.RegionMask & 0x02) != 0x02) ||
-               ((rpc.RegionMask & 0x04) == (cmi.RegionInformation & 0x04) && (rpc.RegionMask & 0x04) != 0x04) ||
-               ((rpc.RegionMask & 0x08) == (cmi.RegionInformation & 0x08) && (rpc.RegionMask & 0x08) != 0x08) ||
-               ((rpc.RegionMask & 0x10) == (cmi.RegionInformation & 0x10) && (rpc.RegionMask & 0x10) != 0x10) ||
-               ((rpc.RegionMask & 0x20) == (cmi.RegionInformation & 0x20) && (rpc.RegionMask & 0x20) != 0x20) ||
-               ((rpc.RegionMask & 0x40) == (cmi.RegionInformation & 0x40) && (rpc.RegionMask & 0x40) != 0x40) ||
-               ((rpc.RegionMask & 0x80) == (cmi.RegionInformation & 0x80) && (rpc.RegionMask & 0x80) != 0x80);
+        return (rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01 ||
+               (rpc.RegionMask & 0x02) == (cmi.RegionInformation & 0x02) && (rpc.RegionMask & 0x02) != 0x02 ||
+               (rpc.RegionMask & 0x04) == (cmi.RegionInformation & 0x04) && (rpc.RegionMask & 0x04) != 0x04 ||
+               (rpc.RegionMask & 0x08) == (cmi.RegionInformation & 0x08) && (rpc.RegionMask & 0x08) != 0x08 ||
+               (rpc.RegionMask & 0x10) == (cmi.RegionInformation & 0x10) && (rpc.RegionMask & 0x10) != 0x10 ||
+               (rpc.RegionMask & 0x20) == (cmi.RegionInformation & 0x20) && (rpc.RegionMask & 0x20) != 0x20 ||
+               (rpc.RegionMask & 0x40) == (cmi.RegionInformation & 0x40) && (rpc.RegionMask & 0x40) != 0x40 ||
+               (rpc.RegionMask & 0x80) == (cmi.RegionInformation & 0x80) && (rpc.RegionMask & 0x80) != 0x80;
     }
 
     /// <summary>
-    /// This tries to find a title key for a range of sectors by doing a brute force pattern search developed by
-    /// Ethan Hawke of DeCSSPlus. CSS encrypted sectors have parts of them that are unencrypted (byte 0x0 - 0x80).
-    /// We try to find a long pattern of repeated bytes just before the encryption starts. If we assume this
-    /// pattern continues into the encrypted part, we can force keys until one of them satisfies this condition.
+    ///     This tries to find a title key for a range of sectors by doing a brute force pattern search developed by
+    ///     Ethan Hawke of DeCSSPlus. CSS encrypted sectors have parts of them that are unencrypted (byte 0x0 - 0x80).
+    ///     We try to find a long pattern of repeated bytes just before the encryption starts. If we assume this
+    ///     pattern continues into the encrypted part, we can force keys until one of them satisfies this condition.
     /// </summary>
     /// <param name="sector">The sector to analyze.</param>
     /// <param name="key">The key found.</param>
@@ -782,7 +692,7 @@ public class CSS
         for(uint i = 2; i < 0x30; i++)
         {
             // Find the number of bytes that repeats in cycles.
-            for(uint j = i + 1; j < 0x80 && sector[0x7F - (j % i)] == sector[0x7F - j]; j++)
+            for(uint j = i + 1; j < 0x80 && sector[0x7F - j % i] == sector[0x7F - j]; j++)
             {
                 if(j <= bestPatternLength)
                     continue;
@@ -798,18 +708,18 @@ public class CSS
            bestPatternLength / bestPattern < 2)
             return false;
 
-        int offset = (int)(0x80 - ((bestPatternLength / bestPattern) * bestPattern));
+        var offset = (int)(0x80 - bestPatternLength / bestPattern * bestPattern);
 
         int result = RecoverTitleKey(0, sector.Skip(0x80).Take(sector.Length - 0x80).ToArray(),
-                                     sector.Skip(offset).Take((int)(sector.Length - offset)).ToArray(),
+                                     sector.Skip(offset).Take(sector.Length  - offset).ToArray(),
                                      sector.Skip(0x54).Take(5).ToArray(), out key);
 
         return result >= 0;
     }
 
     /// <summary>
-    /// Takes a guessed plain text and a encrypted bytes and tries to recover the title key
-    /// from those. Attack developed by Frank Stevenson.
+    ///     Takes a guessed plain text and a encrypted bytes and tries to recover the title key
+    ///     from those. Attack developed by Frank Stevenson.
     /// </summary>
     /// <param name="start">Start position.</param>
     /// <param name="encryptedBytes">Buffer with encrypted bytes.</param>
@@ -817,15 +727,15 @@ public class CSS
     /// <param name="sectorSeed">This sector's seed values.</param>
     /// <param name="key">The title key.</param>
     /// <returns>Positive values on success.</returns>
-    static int RecoverTitleKey(uint start, byte[] encryptedBytes, byte[] decryptedBytes, byte[] sectorSeed,
+    static int RecoverTitleKey(uint       start, byte[] encryptedBytes, byte[] decryptedBytes, byte[] sectorSeed,
                                out byte[] key)
     {
-        byte[] buffer = new byte[10];
-        long   oLfsr1;
-        long   oLfsr0;
-        long   iTry;
-        uint   i;
-        int    exit = -1;
+        var  buffer = new byte[10];
+        long oLfsr1;
+        long oLfsr0;
+        long iTry;
+        uint i;
+        int  exit = -1;
         key = new byte[5];
 
         for(i = 0; i < 10; i++)
@@ -833,7 +743,7 @@ public class CSS
 
         for(iTry = start; iTry < 0x10000; iTry++)
         {
-            long lfsr1Lo  = (iTry >> 8) | 0x100;
+            long lfsr1Lo  = iTry >> 8 | 0x100;
             long lfsr1Hi  = iTry & 0xff;
             long lfsr0    = 0;
             long combined = 0;
@@ -844,12 +754,12 @@ public class CSS
                 // Advance LFSR1 normally 
                 oLfsr1  = _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
                 lfsr1Hi = lfsr1Lo >> 1;
-                lfsr1Lo = ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+                lfsr1Lo = (lfsr1Lo & 1) << 8 ^ oLfsr1;
                 oLfsr1  = _cssTable5[oLfsr1];
                 oLfsr0  = buffer[i];
 
                 if(combined > 0)
-                    oLfsr0 = (oLfsr0 + 0xff) & 0x0ff;
+                    oLfsr0 = oLfsr0 + 0xff & 0x0ff;
 
                 if(oLfsr0 < oLfsr1)
                     oLfsr0 += 0x100;
@@ -857,7 +767,7 @@ public class CSS
                 oLfsr0   -=  oLfsr1;
                 combined +=  oLfsr0 + oLfsr1;
                 oLfsr0   =   _cssTable4[oLfsr0];
-                lfsr0    =   (lfsr0 << 8) | oLfsr0;
+                lfsr0    =   lfsr0 << 8 | oLfsr0;
                 combined >>= 8;
             }
 
@@ -868,10 +778,10 @@ public class CSS
             {
                 oLfsr1   =  _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
                 lfsr1Hi  =  lfsr1Lo >> 1;
-                lfsr1Lo  =  ((lfsr1Lo & 1) << 8) ^ oLfsr1;
+                lfsr1Lo  =  (lfsr1Lo & 1) << 8 ^ oLfsr1;
                 oLfsr1   =  _cssTable5[oLfsr1];
-                oLfsr0   =  (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
-                lfsr0    =  (lfsr0                                                    << 8) | oLfsr0;
+                oLfsr0   =  (((lfsr0 >> 3 ^ lfsr0) >> 1 ^ lfsr0) >> 8 ^ lfsr0) >> 5 & 0xff;
+                lfsr0    =  lfsr0                                              << 8 | oLfsr0;
                 oLfsr0   =  _cssTable4[oLfsr0];
                 combined += oLfsr0 + oLfsr1;
 
@@ -889,12 +799,12 @@ public class CSS
             for(i = 0; i < 4; i++)
             {
                 lfsr1Lo = lfsr0 & 0xff;
-                lfsr0   = (lfsr0 >> 8);
+                lfsr0   = lfsr0 >> 8;
 
                 for(uint j = 0; j < 256; j++)
                 {
-                    lfsr0  = (lfsr0 & 0x1ffff) | (j                                    << 17);
-                    oLfsr0 = (((((((lfsr0 >> 3) ^ lfsr0) >> 1) ^ lfsr0) >> 8) ^ lfsr0) >> 5) & 0xff;
+                    lfsr0  = lfsr0 & 0x1ffff | j                                << 17;
+                    oLfsr0 = (((lfsr0 >> 3 ^ lfsr0) >> 1 ^ lfsr0) >> 8 ^ lfsr0) >> 5 & 0xff;
 
                     if(oLfsr0 == lfsr1Lo)
                         break;
@@ -905,14 +815,14 @@ public class CSS
 
             for(combined = 0; combined < 8; combined++)
             {
-                if(((oLfsr1 + combined) * 2) + 8 - ((oLfsr1 + combined) & 7) != lfsr0)
+                if((oLfsr1 + combined) * 2 + 8 - (oLfsr1 + combined & 7) != lfsr0)
                     continue;
 
                 key[0] = (byte)(iTry >> 8);
-                key[1] = (byte)(iTry                        & 0xFF);
-                key[2] = (byte)(((oLfsr1 + combined) >> 0)  & 0xFF);
-                key[3] = (byte)(((oLfsr1 + combined) >> 8)  & 0xFF);
-                key[4] = (byte)(((oLfsr1 + combined) >> 16) & 0xFF);
+                key[1] = (byte)(iTry                    & 0xFF);
+                key[2] = (byte)(oLfsr1 + combined >> 0  & 0xFF);
+                key[3] = (byte)(oLfsr1 + combined >> 8  & 0xFF);
+                key[4] = (byte)(oLfsr1 + combined >> 16 & 0xFF);
                 exit   = (int)(iTry + 1);
             }
         }
@@ -930,7 +840,7 @@ public class CSS
     }
 
     /// <summary>
-    /// Tries to find a title key by attacking CSS vulnerabilities.
+    ///     Tries to find a title key by attacking CSS vulnerabilities.
     /// </summary>
     /// <param name="input"><c>IOpticalMediaImage</c> to find the title key in.</param>
     /// <param name="startSector">Sector index to begin search.</param>
@@ -938,7 +848,7 @@ public class CSS
     /// <returns>The title key.</returns>
     static byte[] FindTitleKey(IOpticalMediaImage input, ulong startSector, ulong sectorsToSearch = 20000)
     {
-        byte[] titleKey = new byte[5];
+        var titleKey = new byte[5];
 
         for(ulong i = 0; i < sectorsToSearch; i++)
         {
@@ -955,7 +865,7 @@ public class CSS
     }
 
     /// <summary>
-    /// Generates title keys for all sectors in a track.
+    ///     Generates title keys for all sectors in a track.
     /// </summary>
     /// <param name="input"><c>IOpticalMediaImage</c> to generate keys for.</param>
     /// <param name="partitions">List of <c>Partition</c> to analyze.</param>
@@ -963,9 +873,9 @@ public class CSS
     /// <param name="pluginType"></param>
     /// <returns>A byte array with keys for every sector in the track. One key is 5 bytes.</returns>
     public static byte[] GenerateTitleKeys(IOpticalMediaImage input, List<Partition> partitions, ulong trackSectors,
-                                           Type pluginType)
+                                           Type               pluginType)
     {
-        byte[] keys = new byte[trackSectors * 5];
+        var keys = new byte[trackSectors * 5];
 
         foreach(Partition partition in partitions)
         {
@@ -1004,7 +914,7 @@ public class CSS
     }
 
     /// <summary>
-    /// DVD video discs always have a <c>VIDEO_TS</c> folder. If it doesn't have one, it's not a DVD video.
+    ///     DVD video discs always have a <c>VIDEO_TS</c> folder. If it doesn't have one, it's not a DVD video.
     /// </summary>
     /// <param name="input"><c>IOpticalMediaImage</c> to check for <c>VIDEO_TS</c> folder in.</param>
     /// <param name="fs"><c>IReadOnlyFilesystem</c> to check in.</param>
