@@ -41,6 +41,7 @@ namespace Aaru.Checksums;
 /// <summary>Implements ReedSolomon and CRC32 algorithms as used by CD-ROM</summary>
 public static class CdChecksums
 {
+    const  string MODULE_NAME = "CD checksums";
     static byte[] _eccFTable;
     static byte[] _eccBTable;
     static uint[] _edcTable;
@@ -190,7 +191,7 @@ public static class CdChecksums
            channel[0x00B] != 0x00)
             return null;
 
-        //AaruConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
+        //AaruConsole.DebugWriteLine(MODULE_NAME, "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
         //                          channel[0x00D], channel[0x00E]);
 
         switch(channel[0x00F] & 0x03)
@@ -198,12 +199,12 @@ public static class CdChecksums
             // mode (1 byte)
             case 0x00:
             {
-                //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //AaruConsole.DebugWriteLine(MODULE_NAME, "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 for(int i = 0x010; i < 0x930; i++)
                     if(channel[i] != 0x00)
                     {
-                        AaruConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -214,13 +215,13 @@ public static class CdChecksums
             }
 
             // mode (1 byte)
-            //AaruConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
+            //AaruConsole.DebugWriteLine(MODULE_NAME, "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
             //                          channel[0x00C], channel[0x00D], channel[0x00E]);
             case 0x01 when channel[0x814] != 0x00 || // reserved (8 bytes)
                            channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
                            channel[0x818] != 0x00 || channel[0x819] != 0x00 || channel[0x81A] != 0x00 ||
                            channel[0x81B] != 0x00:
-                AaruConsole.DebugWriteLine("CD checksums",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
                                            channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -246,12 +247,12 @@ public static class CdChecksums
                 correctEccQ = !failedEccQ;
 
                 if(failedEccP)
-                    AaruConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if(failedEccQ)
-                    AaruConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -263,7 +264,7 @@ public static class CdChecksums
                 if(calculatedEdc == storedEdc)
                     return !failedEccP && !failedEccQ;
 
-                AaruConsole.DebugWriteLine("CD checksums",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                            channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
 
@@ -273,7 +274,7 @@ public static class CdChecksums
             // mode (1 byte)
             case 0x02:
             {
-                //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //AaruConsole.DebugWriteLine(MODULE_NAME, "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 byte[] mode2Sector = new byte[channel.Length - 0x10];
                 Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
@@ -284,7 +285,7 @@ public static class CdChecksums
                        channel[0x011] != channel[0x015] ||
                        channel[0x012] != channel[0x016] ||
                        channel[0x013] != channel[0x017])
-                        AaruConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -301,7 +302,7 @@ public static class CdChecksums
                     if(calculatedEdc == storedEdc)
                         return true;
 
-                    AaruConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                                channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
                                                storedEdc);
@@ -314,7 +315,7 @@ public static class CdChecksums
                        channel[0x011] != channel[0x015] ||
                        channel[0x012] != channel[0x016] ||
                        channel[0x013] != channel[0x017])
-                        AaruConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -332,12 +333,12 @@ public static class CdChecksums
                     correctEccQ = !failedEccQ;
 
                     if(failedEccP)
-                        AaruConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     if(failedEccQ)
-                        AaruConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                    channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -349,7 +350,7 @@ public static class CdChecksums
                     if(calculatedEdc == storedEdc)
                         return !failedEccP && !failedEccQ;
 
-                    AaruConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                "Mode 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                                channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
                                                storedEdc);
@@ -358,7 +359,7 @@ public static class CdChecksums
                 }
             }
             default:
-                AaruConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
                                            channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 return null;
@@ -508,35 +509,35 @@ public static class CdChecksums
         switch(cdSubRwPack1[0])
         {
             case 0x00:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_Zero_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_Zero_Pack_in_subchannel);
 
                 break;
             case 0x08:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_Line_Graphics_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_Line_Graphics_Pack_in_subchannel);
 
                 break;
             case 0x09:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_G_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_CD_G_Pack_in_subchannel);
 
                 break;
             case 0x0A:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_EG_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_CD_EG_Pack_in_subchannel);
 
                 break;
             case 0x14:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_TEXT_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_CD_TEXT_Pack_in_subchannel);
 
                 break;
             case 0x18:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_CD_MIDI_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_CD_MIDI_Pack_in_subchannel);
 
                 break;
             case 0x38:
-                AaruConsole.DebugWriteLine("CD checksums", Localization.Detected_User_Pack_in_subchannel);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Detected_User_Pack_in_subchannel);
 
                 break;
             default:
-                AaruConsole.DebugWriteLine("CD checksums",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.Detected_unknown_Pack_type_in_subchannel_mode_0_item_1,
                                            Convert.ToString(cdSubRwPack1[0] & 0x38, 2),
                                            Convert.ToString(cdSubRwPack1[0] & 0x07, 2));
@@ -551,7 +552,7 @@ public static class CdChecksums
 
         if(qSubChannelCrc != calculatedQcrc)
         {
-            AaruConsole.DebugWriteLine("CD checksums", Localization.Q_subchannel_CRC_0_expected_1, calculatedQcrc,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Q_subchannel_CRC_0_expected_1, calculatedQcrc,
                                        qSubChannelCrc);
 
             status = false;
@@ -567,7 +568,7 @@ public static class CdChecksums
             if(cdTextPack1Crc != calculatedCdtp1Crc &&
                cdTextPack1Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_one_CRC_0_expected_1,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_one_CRC_0_expected_1,
                                            cdTextPack1Crc, calculatedCdtp1Crc);
 
                 status = false;
@@ -581,13 +582,13 @@ public static class CdChecksums
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
 
-            AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP2_0_Calc_CDTP2_1, cdTextPack2Crc,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP2_0_Calc_CDTP2_1, cdTextPack2Crc,
                                        calculatedCdtp2Crc);
 
             if(cdTextPack2Crc != calculatedCdtp2Crc &&
                cdTextPack2Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_two_CRC_0_expected_1,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_two_CRC_0_expected_1,
                                            cdTextPack2Crc, calculatedCdtp2Crc);
 
                 status = false;
@@ -601,13 +602,13 @@ public static class CdChecksums
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
 
-            AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP3_0_Calc_CDTP3_1, cdTextPack3Crc,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP3_0_Calc_CDTP3_1, cdTextPack3Crc,
                                        calculatedCdtp3Crc);
 
             if(cdTextPack3Crc != calculatedCdtp3Crc &&
                cdTextPack3Crc != 0)
             {
-                AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_three_CRC_0_expected_1,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_three_CRC_0_expected_1,
                                            cdTextPack3Crc, calculatedCdtp3Crc);
 
                 status = false;
@@ -622,14 +623,14 @@ public static class CdChecksums
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
 
-        AaruConsole.DebugWriteLine("CD checksums", Localization.Cyclic_CDTP4_0_Calc_CDTP4_1, cdTextPack4Crc,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP4_0_Calc_CDTP4_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);
 
         if(cdTextPack4Crc == calculatedCdtp4Crc ||
            cdTextPack4Crc == 0)
             return status;
 
-        AaruConsole.DebugWriteLine("CD checksums", Localization.CD_Text_Pack_four_CRC_0_expected_1, cdTextPack4Crc,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_four_CRC_0_expected_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);
 
         return false;

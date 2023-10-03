@@ -67,6 +67,7 @@ public class ReedSolomon
 {
     /// <summary>Alpha exponent for the first root of the generator polynomial</summary>
     const int B0 = 1;
+    const string MODULE_NAME = "Reed Solomon";
     /// <summary>No legal value in index form represents zero, so we need a special value for this purpose</summary>
     int _a0;
     /// <summary>index->polynomial form conversion table</summary>
@@ -494,18 +495,18 @@ public class ReedSolomon
 
             if(count != noEras)
             {
-                AaruConsole.DebugWriteLine("Reed Solomon", Localization.lambda_is_wrong);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.lambda_is_wrong);
 
                 return -1;
             }
 
-            AaruConsole.DebugWriteLine("Reed Solomon",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly);
 
             for(i = 0; i < count; i++)
-                AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
 
-            AaruConsole.DebugWriteLine("Reed Solomon", "\n");
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\n");
         #endif
         }
 
@@ -612,12 +613,12 @@ public class ReedSolomon
         }
 
     #if DEBUG
-        AaruConsole.DebugWriteLine("Reed Solomon", Localization.Final_error_positions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Final_error_positions);
 
         for(i = 0; i < count; i++)
-            AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
 
-        AaruConsole.DebugWriteLine("Reed Solomon", "\n");
+        AaruConsole.DebugWriteLine(MODULE_NAME, "\n");
     #endif
 
         if(degLambda != count)
@@ -669,7 +670,7 @@ public class ReedSolomon
 
             if(den == 0)
             {
-                AaruConsole.DebugWriteLine("Reed Solomon", Localization.ERROR_denominator_equals_zero);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.ERROR_denominator_equals_zero);
 
                 return -1;
             }
