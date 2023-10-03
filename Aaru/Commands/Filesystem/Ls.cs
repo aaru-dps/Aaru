@@ -50,6 +50,8 @@ namespace Aaru.Commands.Filesystem;
 
 sealed class LsCommand : Command
 {
+    const string MODULE_NAME = "Ls command";
+
     public LsCommand() : base("list", UI.Filesystem_List_Command_Description)
     {
         AddAlias("ls");
@@ -114,11 +116,11 @@ sealed class LsCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        AaruConsole.DebugWriteLine("Ls command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Ls command", "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine("Ls command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Ls command", "--options={0}", options);
-        AaruConsole.DebugWriteLine("Ls command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}", options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("ls");
 
         var     filtersList = new FiltersList();
@@ -131,10 +133,10 @@ sealed class LsCommand : Command
         });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-        AaruConsole.DebugWriteLine("Ls command", UI.Parsed_options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
 
         foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-            AaruConsole.DebugWriteLine("Ls command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
         parsedOptions.Add("debug", debug.ToString());
 
@@ -213,14 +215,14 @@ sealed class LsCommand : Command
                     return (int)opened;
                 }
 
-                AaruConsole.DebugWriteLine("Ls command", UI.Correctly_opened_image_file);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-                AaruConsole.DebugWriteLine("Ls command", UI.Image_without_headers_is_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_without_headers_is_0_bytes,
                                            imageFormat.Info.ImageSize);
 
-                AaruConsole.DebugWriteLine("Ls command", UI.Image_has_0_sectors, imageFormat.Info.Sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine("Ls command", UI.Image_identifies_media_type_as_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);
@@ -247,7 +249,7 @@ sealed class LsCommand : Command
 
             if(partitions.Count == 0)
             {
-                AaruConsole.DebugWriteLine("Ls command", UI.No_partitions_found);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                 partitions.Add(new Partition
                 {
@@ -343,7 +345,7 @@ sealed class LsCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine("Ls command", ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;
         }

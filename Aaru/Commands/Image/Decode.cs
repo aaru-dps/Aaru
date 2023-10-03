@@ -48,6 +48,8 @@ namespace Aaru.Commands.Image;
 
 sealed class DecodeCommand : Command
 {
+    const string MODULE_NAME = "Decode command";
+
     public DecodeCommand() : base("decode", UI.Image_Decode_Command_Description)
     {
         Add(new Option<bool>(new[]
@@ -112,13 +114,13 @@ sealed class DecodeCommand : Command
 
         Statistics.AddCommand("decode");
 
-        AaruConsole.DebugWriteLine("Decode command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Decode command", "--disk-tags={0}", diskTags);
-        AaruConsole.DebugWriteLine("Decode command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Decode command", "--length={0}", length);
-        AaruConsole.DebugWriteLine("Decode command", "--sector-tags={0}", sectorTags);
-        AaruConsole.DebugWriteLine("Decode command", "--start={0}", startSector);
-        AaruConsole.DebugWriteLine("Decode command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--disk-tags={0}", diskTags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}", length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--sector-tags={0}", sectorTags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}", startSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;

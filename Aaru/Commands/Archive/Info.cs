@@ -43,6 +43,8 @@ namespace Aaru.Commands.Archive;
 
 sealed class ArchiveInfoCommand : Command
 {
+    const string MODULE_NAME = "Analyze command";
+
     public ArchiveInfoCommand() : base("info", UI.Archive_Info_Command_Description)
     {
         AddArgument(new Argument<string>
@@ -86,9 +88,9 @@ sealed class ArchiveInfoCommand : Command
 
         Statistics.AddCommand("archive-info");
 
-        AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         /* TODO: This is just a stub for now */
 

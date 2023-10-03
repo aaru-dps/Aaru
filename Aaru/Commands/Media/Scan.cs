@@ -46,6 +46,7 @@ namespace Aaru.Commands.Media;
 
 sealed class MediaScanCommand : Command
 {
+    const  string       MODULE_NAME = "Media-Scan command";
     static ProgressTask _progressTask1;
 
     public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
@@ -107,12 +108,12 @@ sealed class MediaScanCommand : Command
 
         Statistics.AddCommand("media-scan");
 
-        AaruConsole.DebugWriteLine("Media-Scan command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--device={0}", devicePath);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--use-buffered-reads={0}", useBufferedReads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}", devicePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}", ibgLog);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}", mhddLog);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--use-buffered-reads={0}", useBufferedReads);
 
         if(devicePath.Length == 2   &&
            devicePath[1]     == ':' &&

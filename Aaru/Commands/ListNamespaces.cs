@@ -46,6 +46,8 @@ namespace Aaru.Commands;
 
 sealed class ListNamespacesCommand : Command
 {
+    const string MODULE_NAME = "List-Namespaces command";
+
     public ListNamespacesCommand() : base("list-namespaces", UI.List_Namespaces_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
@@ -78,8 +80,8 @@ sealed class ListNamespacesCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-namespaces");
 
         PluginBase plugins = PluginBase.Singleton;

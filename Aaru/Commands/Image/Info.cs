@@ -45,6 +45,8 @@ namespace Aaru.Commands.Image;
 
 sealed class ImageInfoCommand : Command
 {
+    const string MODULE_NAME = "Image-info command";
+
     public ImageInfoCommand() : base("info", UI.Image_Info_Command_Description)
     {
         AddArgument(new Argument<string>
@@ -88,9 +90,9 @@ sealed class ImageInfoCommand : Command
 
         Statistics.AddCommand("image-info");
 
-        AaruConsole.DebugWriteLine("Image-info command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Image-info command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Image-info command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -156,7 +158,7 @@ sealed class ImageInfoCommand : Command
             {
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-                AaruConsole.DebugWriteLine("Image-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
@@ -164,7 +166,7 @@ sealed class ImageInfoCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;
         }

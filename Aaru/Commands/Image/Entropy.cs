@@ -44,6 +44,7 @@ namespace Aaru.Commands.Image;
 
 sealed class EntropyCommand : Command
 {
+    const  string       MODULE_NAME = "Entropy command";
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
@@ -106,12 +107,12 @@ sealed class EntropyCommand : Command
 
         Statistics.AddCommand("entropy");
 
-        AaruConsole.DebugWriteLine("Entropy command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", duplicatedSectors);
-        AaruConsole.DebugWriteLine("Entropy command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", separatedTracks);
-        AaruConsole.DebugWriteLine("Entropy command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", wholeDisc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--duplicated-sectors={0}", duplicatedSectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--separated-tracks={0}", separatedTracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--whole-disc={0}", wholeDisc);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;

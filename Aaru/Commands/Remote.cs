@@ -46,6 +46,8 @@ namespace Aaru.Commands;
 
 sealed class RemoteCommand : Command
 {
+    const string MODULE_NAME = "Remote command";
+
     public RemoteCommand() : base("remote", UI.Remote_Command_Description)
     {
         AddArgument(new Argument<string>
@@ -89,9 +91,9 @@ sealed class RemoteCommand : Command
 
         Statistics.AddCommand("remote");
 
-        AaruConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Remote command", "--host={0}", host);
-        AaruConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--host={0}", host);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         try
         {

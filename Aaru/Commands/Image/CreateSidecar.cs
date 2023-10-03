@@ -54,6 +54,7 @@ namespace Aaru.Commands.Image;
 
 sealed class CreateSidecarCommand : Command
 {
+    const  string       MODULE_NAME = "Create sidecar command";
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
@@ -116,12 +117,12 @@ sealed class CreateSidecarCommand : Command
 
         Statistics.AddCommand("create-sidecar");
 
-        AaruConsole.DebugWriteLine("Create sidecar command", "--block-size={0}", blockSize);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--encoding={0}", encodingName);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--tape={0}", tape);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--block-size={0}", blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encodingName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--tape={0}", tape);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         Encoding encodingClass = null;
 
@@ -205,7 +206,7 @@ sealed class CreateSidecarCommand : Command
                         return (int)opened;
                     }
 
-                    AaruConsole.DebugWriteLine("Create sidecar command", UI.Correctly_opened_image_file);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
                 }
                 catch(Exception ex)
                 {
@@ -297,7 +298,7 @@ sealed class CreateSidecarCommand : Command
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-                AaruConsole.DebugWriteLine("Create sidecar command", ex.StackTrace);
+                AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
                 return (int)ErrorNumber.UnexpectedException;
             }

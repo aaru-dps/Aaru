@@ -51,6 +51,8 @@ namespace Aaru.Commands.Image;
 
 sealed class CompareCommand : Command
 {
+    const string MODULE_NAME = "Compare command";
+
     public CompareCommand() : base("compare", UI.Image_Compare_Command_Description)
     {
         AddAlias("cmp");
@@ -103,10 +105,10 @@ sealed class CompareCommand : Command
 
         Statistics.AddCommand("compare");
 
-        AaruConsole.DebugWriteLine("Compare command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Compare command", "--input1={0}", imagePath1);
-        AaruConsole.DebugWriteLine("Compare command", "--input2={0}", imagePath2);
-        AaruConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input1={0}", imagePath1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}", imagePath2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         var     filtersList  = new FiltersList();
         IFilter inputFilter1 = null;

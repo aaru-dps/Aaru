@@ -45,6 +45,8 @@ namespace Aaru.Commands;
 
 sealed class ListEncodingsCommand : Command
 {
+    const string MODULE_NAME = "List-Encodings command";
+
     public ListEncodingsCommand() : base("list-encodings", UI.List_Encodings_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
@@ -79,8 +81,8 @@ sealed class ListEncodingsCommand : Command
 
         Statistics.AddCommand("list-encodings");
 
-        AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
         {

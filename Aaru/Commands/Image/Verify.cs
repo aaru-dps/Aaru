@@ -51,6 +51,8 @@ namespace Aaru.Commands.Image;
 
 sealed class VerifyCommand : Command
 {
+    const string MODULE_NAME = "Verify command";
+
     public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
         Add(new Option<bool>(new[]
@@ -115,13 +117,13 @@ sealed class VerifyCommand : Command
 
         Statistics.AddCommand("verify");
 
-        AaruConsole.DebugWriteLine("Verify command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Verify command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Verify command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Verify command", "--verify-disc={0}", verifyDisc);
-        AaruConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
-        AaruConsole.DebugWriteLine("Verify command", "--create-graph={0}", createGraph);
-        AaruConsole.DebugWriteLine("Verify command", "--dimensions={0}", dimensions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-disc={0}", verifyDisc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-sectors={0}", verifySectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--create-graph={0}", createGraph);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--dimensions={0}", dimensions);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;

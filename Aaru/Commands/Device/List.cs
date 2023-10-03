@@ -45,6 +45,8 @@ namespace Aaru.Commands.Device;
 
 sealed class ListDevicesCommand : Command
 {
+    const string MODULE_NAME = "List-Devices command";
+
     public ListDevicesCommand() : base("list", UI.Device_List_Command_Description)
     {
         AddArgument(new Argument<string>
@@ -88,8 +90,8 @@ sealed class ListDevicesCommand : Command
 
         Statistics.AddCommand("list-devices");
 
-        AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
                                                           out string serverVersion, out string serverOperatingSystem,

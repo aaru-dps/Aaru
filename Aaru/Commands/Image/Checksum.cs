@@ -51,7 +51,8 @@ sealed class ChecksumCommand : Command
     const uint SECTORS_TO_READ = 256;
 
     // How many bytes to read at once
-    const int BYTES_TO_READ = 65536;
+    const int    BYTES_TO_READ = 65536;
+    const string MODULE_NAME   = "Checksum command";
 
     public ChecksumCommand() : base("checksum", UI.Image_Checksum_Command_Description)
     {
@@ -145,23 +146,23 @@ sealed class ChecksumCommand : Command
 
         Statistics.AddCommand("checksum");
 
-        AaruConsole.DebugWriteLine("Checksum command", "--adler32={0}", adler32);
-        AaruConsole.DebugWriteLine("Checksum command", "--crc16={0}", crc16);
-        AaruConsole.DebugWriteLine("Checksum command", "--crc32={0}", crc32);
-        AaruConsole.DebugWriteLine("Checksum command", "--crc64={0}", crc64);
-        AaruConsole.DebugWriteLine("Checksum command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", fletcher16);
-        AaruConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", fletcher32);
-        AaruConsole.DebugWriteLine("Checksum command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Checksum command", "--md5={0}", md5);
-        AaruConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", separatedTracks);
-        AaruConsole.DebugWriteLine("Checksum command", "--sha1={0}", sha1);
-        AaruConsole.DebugWriteLine("Checksum command", "--sha256={0}", sha256);
-        AaruConsole.DebugWriteLine("Checksum command", "--sha384={0}", sha384);
-        AaruConsole.DebugWriteLine("Checksum command", "--sha512={0}", sha512);
-        AaruConsole.DebugWriteLine("Checksum command", "--spamsum={0}", spamSum);
-        AaruConsole.DebugWriteLine("Checksum command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", wholeDisc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--adler32={0}", adler32);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--crc16={0}", crc16);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--crc32={0}", crc32);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--crc64={0}", crc64);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--fletcher16={0}", fletcher16);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--fletcher32={0}", fletcher32);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--md5={0}", md5);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--separated-tracks={0}", separatedTracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--sha1={0}", sha1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--sha256={0}", sha256);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--sha384={0}", sha384);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--sha512={0}", sha512);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--spamsum={0}", spamSum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--whole-disc={0}", wholeDisc);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -294,7 +295,7 @@ sealed class ChecksumCommand : Command
                                             }
                                         */
 
-                                        AaruConsole.DebugWriteLine("Checksum command",
+                                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                    UI.Track_0_starts_at_sector_1_and_ends_at_sector_2,
                                                                    currentTrack.Sequence, currentTrack.StartSector,
                                                                    currentTrack.EndSector);
@@ -469,7 +470,7 @@ sealed class ChecksumCommand : Command
                                         preFileTask.StopTask();
                                     }
 
-                                    AaruConsole.DebugWriteLine("Checksum command",
+                                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                UI.File_0_starts_at_block_1_and_ends_at_block_2,
                                                                currentFile.File, currentFile.FirstBlock,
                                                                currentFile.LastBlock);

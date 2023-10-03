@@ -52,7 +52,8 @@ namespace Aaru.Commands.Filesystem;
 
 sealed class ExtractFilesCommand : Command
 {
-    const long BUFFER_SIZE = 16777216;
+    const long   BUFFER_SIZE = 16777216;
+    const string MODULE_NAME = "Extract-Files command";
 
     public ExtractFilesCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
     {
@@ -125,13 +126,13 @@ sealed class ExtractFilesCommand : Command
 
         Statistics.AddCommand("extract-files");
 
-        AaruConsole.DebugWriteLine("Extract-Files command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--options={0}", options);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--output={0}", outputDir);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}", xattrs);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}", options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}", outputDir);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--xattrs={0}", xattrs);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -143,10 +144,10 @@ sealed class ExtractFilesCommand : Command
         });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-        AaruConsole.DebugWriteLine("Extract-Files command", UI.Parsed_options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
 
         foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-            AaruConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
         parsedOptions.Add("debug", debug.ToString());
 
@@ -242,14 +243,14 @@ sealed class ExtractFilesCommand : Command
                     return (int)opened;
                 }
 
-                AaruConsole.DebugWriteLine("Extract-Files command", UI.Correctly_opened_image_file);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-                AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_without_headers_is_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_without_headers_is_0_bytes,
                                            imageFormat.Info.ImageSize);
 
-                AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_has_0_sectors, imageFormat.Info.Sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine("Extract-Files command", UI.Image_identifies_media_type_as_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);
@@ -276,7 +277,7 @@ sealed class ExtractFilesCommand : Command
 
             if(partitions.Count == 0)
             {
-                AaruConsole.DebugWriteLine("Ls command", UI.No_partitions_found);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                 partitions.Add(new Partition
                 {
@@ -380,7 +381,7 @@ sealed class ExtractFilesCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;
         }

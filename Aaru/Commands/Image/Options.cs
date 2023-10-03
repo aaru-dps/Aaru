@@ -47,6 +47,8 @@ namespace Aaru.Commands.Image;
 
 sealed class ListOptionsCommand : Command
 {
+    const string MODULE_NAME = "List-Options command";
+
     public ListOptionsCommand() : base("options", UI.Image_Options_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
@@ -79,8 +81,8 @@ sealed class ListOptionsCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        AaruConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-options");
 
         PluginBase plugins = PluginBase.Singleton;

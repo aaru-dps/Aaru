@@ -65,6 +65,8 @@ namespace Aaru.Commands.Image;
 
 sealed class ConvertImageCommand : Command
 {
+    const string MODULE_NAME = "Convert-image command";
+
     public ConvertImageCommand() : base("convert", UI.Image_Convert_Command_Description)
     {
         Add(new Option<string>(new[]
@@ -217,43 +219,43 @@ sealed class ConvertImageCommand : Command
 
         Statistics.AddCommand("convert-image");
 
-        AaruConsole.DebugWriteLine("Image convert command", "--cicm-xml={0}", cicmXml);
-        AaruConsole.DebugWriteLine("Image convert command", "--comments={0}", comments);
-        AaruConsole.DebugWriteLine("Image convert command", "--count={0}", count);
-        AaruConsole.DebugWriteLine("Image convert command", "--creator={0}", creator);
-        AaruConsole.DebugWriteLine("Image convert command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Image convert command", "--drive-manufacturer={0}", driveManufacturer);
-        AaruConsole.DebugWriteLine("Image convert command", "--drive-model={0}", driveModel);
-        AaruConsole.DebugWriteLine("Image convert command", "--drive-revision={0}", driveFirmwareRevision);
-        AaruConsole.DebugWriteLine("Image convert command", "--drive-serial={0}", driveSerialNumber);
-        AaruConsole.DebugWriteLine("Image convert command", "--force={0}", force);
-        AaruConsole.DebugWriteLine("Image convert command", "--format={0}", format);
-        AaruConsole.DebugWriteLine("Image convert command", "--geometry={0}", geometry);
-        AaruConsole.DebugWriteLine("Image convert command", "--input={0}", inputPath);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-barcode={0}", mediaBarcode);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-lastsequence={0}", lastMediaSequence);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-manufacturer={0}", mediaManufacturer);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-model={0}", mediaModel);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-partnumber={0}", mediaPartNumber);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-sequence={0}", mediaSequence);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-serial={0}", mediaSerialNumber);
-        AaruConsole.DebugWriteLine("Image convert command", "--media-title={0}", mediaTitle);
-        AaruConsole.DebugWriteLine("Image convert command", "--options={0}", options);
-        AaruConsole.DebugWriteLine("Image convert command", "--output={0}", outputPath);
-        AaruConsole.DebugWriteLine("Image convert command", "--resume-file={0}", resumeFile);
-        AaruConsole.DebugWriteLine("Image convert command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-position={0}", fixSubchannelPosition);
-        AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel={0}", fixSubchannel);
-        AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
-        AaruConsole.DebugWriteLine("Image convert command", "--generate-subchannels={0}", generateSubchannels);
-        AaruConsole.DebugWriteLine("Image convert command", "--decrypt={0}", decrypt);
-        AaruConsole.DebugWriteLine("Image convert command", "--aaru-metadata={0}", aaruMetadata);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--cicm-xml={0}", cicmXml);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--comments={0}", comments);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--count={0}", count);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--creator={0}", creator);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--drive-manufacturer={0}", driveManufacturer);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--drive-model={0}", driveModel);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--drive-revision={0}", driveFirmwareRevision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--drive-serial={0}", driveSerialNumber);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--force={0}", force);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--format={0}", format);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--geometry={0}", geometry);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", inputPath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-barcode={0}", mediaBarcode);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-lastsequence={0}", lastMediaSequence);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-manufacturer={0}", mediaManufacturer);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-model={0}", mediaModel);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-partnumber={0}", mediaPartNumber);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-sequence={0}", mediaSequence);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-serial={0}", mediaSerialNumber);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--media-title={0}", mediaTitle);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}", options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}", outputPath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--resume-file={0}", resumeFile);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-subchannel-position={0}", fixSubchannelPosition);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-subchannel={0}", fixSubchannel);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-subchannel-crc={0}", fixSubchannelCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--generate-subchannels={0}", generateSubchannels);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--decrypt={0}", decrypt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--aaru-metadata={0}", aaruMetadata);
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-        AaruConsole.DebugWriteLine("Image convert command", UI.Parsed_options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
 
         foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-            AaruConsole.DebugWriteLine("Image convert command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
         if(count == 0)
         {
@@ -325,7 +327,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
-                    AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
 
                     return (int)ErrorNumber.InvalidSidecar;
                 }
@@ -357,7 +359,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
-                    AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
 
                     return (int)ErrorNumber.InvalidSidecar;
                 }
@@ -404,7 +406,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_resume_file_not_continuing);
-                    AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
 
                     return (int)ErrorNumber.InvalidResume;
                 }
@@ -502,14 +504,14 @@ sealed class ConvertImageCommand : Command
             };
             #pragma warning restore 612
 
-            AaruConsole.DebugWriteLine("Convert-image command", UI.Correctly_opened_image_file);
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-            AaruConsole.DebugWriteLine("Convert-image command", UI.Image_without_headers_is_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_without_headers_is_0_bytes,
                                        inputFormat.Info.ImageSize);
 
-            AaruConsole.DebugWriteLine("Convert-image command", UI.Image_has_0_sectors, inputFormat.Info.Sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, inputFormat.Info.Sectors);
 
-            AaruConsole.DebugWriteLine("Convert-image command", UI.Image_identifies_media_type_as_0, mediaType);
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_identifies_media_type_as_0, mediaType);
 
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(mediaType, false);
@@ -519,7 +521,7 @@ sealed class ConvertImageCommand : Command
         {
             AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
             AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-            AaruConsole.DebugWriteLine("Convert-image command", Localization.Core.Stack_trace_0, ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
 
             return (int)ErrorNumber.CannotOpenFormat;
         }
@@ -895,7 +897,7 @@ sealed class ConvertImageCommand : Command
                                                         if(generatedTitleKeys == null)
                                                         {
                                                             List<Partition> partitions =
-                                                                Aaru.Core.Partitions.GetAll(inputOptical);
+                                                                Core.Partitions.GetAll(inputOptical);
 
                                                             partitions = partitions.FindAll(p =>
                                                             {
@@ -909,7 +911,7 @@ sealed class ConvertImageCommand : Command
                                                                        TryGetValue("iso9660 filesystem",
                                                                            out Type pluginType))
                                                             {
-                                                                AaruConsole.DebugWriteLine("Convert-image command",
+                                                                AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
 
                                                                 generatedTitleKeys = CSS.GenerateTitleKeys(inputOptical,
@@ -938,7 +940,7 @@ sealed class ConvertImageCommand : Command
                                                         if(generatedTitleKeys == null)
                                                         {
                                                             List<Partition> partitions =
-                                                                Aaru.Core.Partitions.GetAll(inputOptical);
+                                                                Core.Partitions.GetAll(inputOptical);
 
                                                             partitions = partitions.FindAll(p =>
                                                             {
@@ -952,7 +954,7 @@ sealed class ConvertImageCommand : Command
                                                                        TryGetValue("iso9660 filesystem",
                                                                            out Type pluginType))
                                                             {
-                                                                AaruConsole.DebugWriteLine("Convert-image command",
+                                                                AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
 
                                                                 generatedTitleKeys = CSS.GenerateTitleKeys(inputOptical,

@@ -46,6 +46,8 @@ namespace Aaru.Commands.Image;
 
 sealed class PrintHexCommand : Command
 {
+    const string MODULE_NAME = "PrintHex command";
+
     public PrintHexCommand() : base("print", UI.Image_Print_Command_Description)
     {
         Add(new Option<ulong>(new[]
@@ -110,13 +112,13 @@ sealed class PrintHexCommand : Command
 
         Statistics.AddCommand("print-hex");
 
-        AaruConsole.DebugWriteLine("PrintHex command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("PrintHex command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("PrintHex command", "--length={0}", length);
-        AaruConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", longSectors);
-        AaruConsole.DebugWriteLine("PrintHex command", "--start={0}", start);
-        AaruConsole.DebugWriteLine("PrintHex command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("PrintHex command", "--width={0}", width);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}", length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--long-sectors={0}", longSectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}", start);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--width={0}", width);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;

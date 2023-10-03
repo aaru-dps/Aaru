@@ -47,7 +47,8 @@ namespace Aaru.Commands.Database;
 
 sealed class UpdateCommand : Command
 {
-    readonly bool _mainDbUpdate;
+    const    string MODULE_NAME = "Update command";
+    readonly bool   _mainDbUpdate;
 
     public UpdateCommand(bool mainDbUpdate) : base("update", UI.Database_Update_Command_Description)
     {
@@ -91,8 +92,8 @@ sealed class UpdateCommand : Command
                     AnsiConsole.Markup(format, objects);
             };
 
-        AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         if(clearAll)
             try

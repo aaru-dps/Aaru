@@ -49,6 +49,8 @@ namespace Aaru.Commands.Filesystem;
 
 sealed class FilesystemInfoCommand : Command
 {
+    const string MODULE_NAME = "Fs-info command";
+
     public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
         Add(new Option<string>(new[]
@@ -108,12 +110,12 @@ sealed class FilesystemInfoCommand : Command
 
         Statistics.AddCommand("fs-info");
 
-        AaruConsole.DebugWriteLine("Fs-info command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Fs-info command", "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine("Fs-info command", "--filesystems={0}", filesystems);
-        AaruConsole.DebugWriteLine("Fs-info command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Fs-info command", "--partitions={0}", partitions);
-        AaruConsole.DebugWriteLine("Fs-info command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--filesystems={0}", filesystems);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}", partitions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
@@ -217,7 +219,7 @@ sealed class FilesystemInfoCommand : Command
             {
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-                AaruConsole.DebugWriteLine("Fs-info command", Localization.Core.Stack_trace_0, ex.StackTrace);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
@@ -240,7 +242,7 @@ sealed class FilesystemInfoCommand : Command
 
                 if(partitionsList.Count == 0)
                 {
-                    AaruConsole.DebugWriteLine("Fs-info command", UI.No_partitions_found);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                     if(!filesystems)
                     {
@@ -412,7 +414,7 @@ sealed class FilesystemInfoCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine("Fs-info command", ex.StackTrace);
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;
         }

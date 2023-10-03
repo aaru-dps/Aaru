@@ -47,6 +47,8 @@ namespace Aaru.Commands;
 
 sealed class FormatsCommand : Command
 {
+    const string MODULE_NAME = "Formats command";
+
     public FormatsCommand() : base("formats", UI.List_Formats_Command_Description) =>
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
@@ -81,8 +83,8 @@ sealed class FormatsCommand : Command
 
         Statistics.AddCommand("formats");
 
-        AaruConsole.DebugWriteLine("Formats command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Formats command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         PluginBase plugins     = PluginBase.Singleton;
         var        filtersList = new FiltersList();
