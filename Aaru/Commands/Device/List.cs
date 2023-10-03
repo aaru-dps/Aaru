@@ -71,26 +71,28 @@ sealed class ListDevicesCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("list-devices");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
@@ -99,8 +101,10 @@ sealed class ListDevicesCommand : Command
                                                           out string serverArchitecture, aaruRemoteHost);
 
         if(isRemote)
+        {
             Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem, serverOperatingSystemVersion,
                                  serverArchitecture);
+        }
 
         if(devices        == null ||
            devices.Length == 0)
@@ -116,9 +120,11 @@ sealed class ListDevicesCommand : Command
             table.AddColumn(UI.Supported_Question);
 
             foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
+            {
                 table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),
                              Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
                              Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
+            }
 
             AnsiConsole.Write(table);
         }

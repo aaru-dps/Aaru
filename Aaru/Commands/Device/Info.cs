@@ -68,10 +68,7 @@ sealed class DeviceInfoCommand : Command
 
     public DeviceInfoCommand() : base("info", UI.Device_Info_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--output-prefix", "-w"
-        }, () => null, UI.Prefix_for_saving_binary_information));
+        Add(new Option<string>(new[] { "--output-prefix", "-w" }, () => null, UI.Prefix_for_saving_binary_information));
 
         AddArgument(new Argument<string>
         {
@@ -95,29 +92,31 @@ sealed class DeviceInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("device-info");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}", devicePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",         debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",        devicePath);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--output-prefix={0}", outputPrefix);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",       verbose);
 
         if(devicePath.Length == 2   &&
            devicePath[1]     == ':' &&
@@ -167,11 +166,11 @@ sealed class DeviceInfoCommand : Command
             if(dev.UsbDescriptors != null)
                 table.AddRow(UI.Title_Descriptor_size, $"{dev.UsbDescriptors.Length}");
 
-            table.AddRow(UI.Title_Vendor_ID, $"{dev.UsbVendorId:X4}");
-            table.AddRow(UI.Title_Product_ID, $"{dev.UsbProductId:X4}");
-            table.AddRow(UI.Title_Manufacturer, Markup.Escape(dev.UsbManufacturerString ?? ""));
-            table.AddRow(UI.Title_Product, Markup.Escape(dev.UsbProductString           ?? ""));
-            table.AddRow(UI.Title_Serial_number, Markup.Escape(dev.UsbSerialString      ?? ""));
+            table.AddRow(UI.Title_Vendor_ID,     $"{dev.UsbVendorId:X4}");
+            table.AddRow(UI.Title_Product_ID,    $"{dev.UsbProductId:X4}");
+            table.AddRow(UI.Title_Manufacturer,  Markup.Escape(dev.UsbManufacturerString ?? ""));
+            table.AddRow(UI.Title_Product,       Markup.Escape(dev.UsbProductString      ?? ""));
+            table.AddRow(UI.Title_Serial_number, Markup.Escape(dev.UsbSerialString       ?? ""));
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();
@@ -190,10 +189,10 @@ sealed class DeviceInfoCommand : Command
             table.Columns[0].RightAligned();
 
             table.AddRow(UI.Title_Vendor_ID, $"{dev.FireWireVendor:X6}");
-            table.AddRow(UI.Title_Model_ID, $"{dev.FireWireModel:X6}");
-            table.AddRow(UI.Title_Vendor, $"{Markup.Escape(dev.FireWireVendorName ?? "")}");
-            table.AddRow(UI.Title_Model, $"{Markup.Escape(dev.FireWireModelName   ?? "")}");
-            table.AddRow(UI.Title_GUID, $"{dev.FireWireGuid:X16}");
+            table.AddRow(UI.Title_Model_ID,  $"{dev.FireWireModel:X6}");
+            table.AddRow(UI.Title_Vendor,    $"{Markup.Escape(dev.FireWireVendorName ?? "")}");
+            table.AddRow(UI.Title_Model,     $"{Markup.Escape(dev.FireWireModelName  ?? "")}");
+            table.AddRow(UI.Title_GUID,      $"{dev.FireWireGuid:X16}");
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();
@@ -206,11 +205,14 @@ sealed class DeviceInfoCommand : Command
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
 
             if(tuples != null)
+            {
                 foreach(Tuple tuple in tuples)
+                {
                     switch(tuple.Code)
                     {
                         case TupleCodes.CISTPL_NULL:
-                        case TupleCodes.CISTPL_END: break;
+                        case TupleCodes.CISTPL_END:
+                            break;
                         case TupleCodes.CISTPL_DEVICEGEO:
                         case TupleCodes.CISTPL_DEVICEGEO_A:
                             AaruConsole.WriteLine("{0}", CIS.PrettifyDeviceGeometryTuple(tuple));
@@ -268,6 +270,8 @@ sealed class DeviceInfoCommand : Command
 
                             break;
                     }
+                }
+            }
             else
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Could_not_get_tuples);
         }
@@ -318,8 +322,8 @@ sealed class DeviceInfoCommand : Command
                 if((devInfo.AtaMcptError.Value.DeviceHead & 0x08) == 0x08)
                     AaruConsole.WriteLine(Localization.Core.Media_card_is_write_protected);
 
-                ushort specificData = (ushort)((devInfo.AtaMcptError.Value.CylinderHigh * 0x100) +
-                                               devInfo.AtaMcptError.Value.CylinderLow);
+                var specificData = (ushort)(devInfo.AtaMcptError.Value.CylinderHigh * 0x100 +
+                                            devInfo.AtaMcptError.Value.CylinderLow);
 
                 if(specificData != 0)
                     AaruConsole.WriteLine(Localization.Core.Card_specific_data_0, specificData);
@@ -332,8 +336,10 @@ sealed class DeviceInfoCommand : Command
                 ulong blocks;
 
                 if(ataid is { CurrentCylinders: > 0, CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
+                {
                     blocks = (ulong)Math.Max(ataid.CurrentCylinders * ataid.CurrentHeads * ataid.CurrentSectorsPerTrack,
                                              ataid.CurrentSectors);
+                }
                 else
                     blocks = (ulong)(ataid.Cylinders * ataid.Heads * ataid.SectorsPerTrack);
 
@@ -375,7 +381,9 @@ sealed class DeviceInfoCommand : Command
             AaruConsole.WriteLine(Inquiry.Prettify(devInfo.ScsiInquiry));
 
             if(devInfo.ScsiEvpdPages != null)
+            {
                 foreach(KeyValuePair<byte, byte[]> page in devInfo.ScsiEvpdPages)
+                {
                     switch(page.Key)
                     {
                         case >= 0x01 and <= 0x7F:
@@ -563,19 +571,27 @@ sealed class DeviceInfoCommand : Command
                             break;
                         }
                     }
+                }
+            }
 
             if(devInfo.ScsiModeSense6 != null)
+            {
                 DataFile.WriteTo(MODULE_NAME, outputPrefix, "_scsi_modesense6.bin", "SCSI MODE SENSE",
                                  devInfo.ScsiModeSense6);
+            }
 
             if(devInfo.ScsiModeSense10 != null)
+            {
                 DataFile.WriteTo(MODULE_NAME, outputPrefix, "_scsi_modesense10.bin", "SCSI MODE SENSE",
                                  devInfo.ScsiModeSense10);
+            }
 
             if(devInfo.ScsiMode.HasValue)
+            {
                 PrintScsiModePages.Print(devInfo.ScsiMode.Value,
                                          (PeripheralDeviceTypes)devInfo.ScsiInquiry.Value.PeripheralDeviceType,
                                          devInfo.ScsiInquiry.Value.VendorIdentification);
+            }
 
             if(devInfo.MmcConfiguration != null)
             {
@@ -841,8 +857,10 @@ sealed class DeviceInfoCommand : Command
                     }
                 }
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
+                }
             }
 
             if(devInfo.RPC != null)
@@ -879,26 +897,34 @@ sealed class DeviceInfoCommand : Command
                 if(devInfo.PlextorFeatures.PoweRecEnabled)
                 {
                     if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
+                    {
                         AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_is_enabled_and_recommends_0,
                                               devInfo.PlextorFeatures.PoweRecRecommendedSpeed);
+                    }
                     else
                         AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_and_has_it_enabled);
 
                     if(devInfo.PlextorFeatures.PoweRecSelected > 0)
+                    {
                         AaruConsole.
                             WriteLine(Localization.Core.Selected_PoweRec_speed_for_currently_inserted_media_is_0_1,
                                       devInfo.PlextorFeatures.PoweRecSelected,
                                       devInfo.PlextorFeatures.PoweRecSelected / 177);
+                    }
 
                     if(devInfo.PlextorFeatures.PoweRecMax > 0)
+                    {
                         AaruConsole.
                             WriteLine(Localization.Core.Maximum_PoweRec_speed_for_currently_inserted_media_is_0_1,
                                       devInfo.PlextorFeatures.PoweRecMax, devInfo.PlextorFeatures.PoweRecMax / 177);
+                    }
 
                     if(devInfo.PlextorFeatures.PoweRecLast > 0)
+                    {
                         AaruConsole.WriteLine(Localization.Core.Last_used_PoweRec_was_0_1,
                                               devInfo.PlextorFeatures.PoweRecLast,
                                               devInfo.PlextorFeatures.PoweRecLast / 177);
+                    }
                 }
                 else
                     AaruConsole.WriteLine(Localization.Core.Drive_supports_PoweRec_and_has_it_disabled);
@@ -917,17 +943,23 @@ sealed class DeviceInfoCommand : Command
                                                       : Localization.Core.Access_time_is_fast));
 
                     if(devInfo.PlextorFeatures.CdReadSpeedLimit > 0)
+                    {
                         AaruConsole.WriteLine("\t" + Localization.Core.CD_read_speed_limited_to_0,
                                               devInfo.PlextorFeatures.CdReadSpeedLimit);
+                    }
 
                     if(devInfo.PlextorFeatures.DvdReadSpeedLimit > 0 &&
                        devInfo.PlextorFeatures.IsDvd)
+                    {
                         AaruConsole.WriteLine("\t" + Localization.Core.DVD_read_speed_limited_to_0,
                                               devInfo.PlextorFeatures.DvdReadSpeedLimit);
+                    }
 
                     if(devInfo.PlextorFeatures.CdWriteSpeedLimit > 0)
+                    {
                         AaruConsole.WriteLine("\t" + Localization.Core.CD_write_speed_limited_to_0,
                                               devInfo.PlextorFeatures.CdWriteSpeedLimit);
+                    }
                 }
             }
 
@@ -938,9 +970,11 @@ sealed class DeviceInfoCommand : Command
                 AaruConsole.WriteLine(Localization.Core.Drive_supports_Plextor_SecuRec);
 
             if(devInfo.PlextorFeatures?.SpeedRead == true)
+            {
                 AaruConsole.WriteLine(devInfo.PlextorFeatures.SpeedReadEnabled
                                           ? Localization.Core.Drive_supports_Plextor_SpeedRead_and_has_it_enabled
                                           : Localization.Core.Drive_supports_Plextor_SpeedRead);
+            }
 
             if(devInfo.PlextorFeatures?.Hiding == true)
             {
@@ -1046,7 +1080,7 @@ sealed class DeviceInfoCommand : Command
         {
             case DeviceType.MMC:
             {
-                bool noInfo = true;
+                var noInfo = true;
 
                 if(devInfo.CID != null)
                 {
@@ -1086,7 +1120,7 @@ sealed class DeviceInfoCommand : Command
                 break;
             case DeviceType.SecureDigital:
             {
-                bool noInfo = true;
+                var noInfo = true;
 
                 if(devInfo.CID != null)
                 {
@@ -1166,7 +1200,8 @@ sealed class DeviceInfoCommand : Command
                                                d.Manufacturer == dev.Manufacturer.Replace('/', '-')) &&
                                               (d.Model == dev.Model || d.Model == dev.Model.Replace('/', '-')));
 
-        AaruConsole.WriteLine(cdOffset is null ? "CD reading offset not found in database."
+        AaruConsole.WriteLine(cdOffset is null
+                                  ? "CD reading offset not found in database."
                                   : $"CD reading offset is {cdOffset.Offset} samples ({cdOffset.Offset * 4} bytes).");
 
         return (int)ErrorNumber.NoError;

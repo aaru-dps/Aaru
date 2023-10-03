@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -62,29 +61,31 @@ sealed class ListEncodingsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("list-encodings");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+        var encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
         {
             Name        = info.Name,
             DisplayName = info.GetEncoding().EncodingName
@@ -108,9 +109,13 @@ sealed class ListEncodingsCommand : Command
         return (int)ErrorNumber.NoError;
     }
 
+#region Nested type: CommonEncodingInfo
+
     struct CommonEncodingInfo
     {
         public string Name;
         public string DisplayName;
     }
+
+#endregion
 }

@@ -84,28 +84,28 @@ class MainClass
             return Gui.Main.Start(args);
 
         AaruConsole.WriteLineEvent += (format, objects) =>
-        {
-            if(objects is null)
-                AnsiConsole.MarkupLine(format);
-            else
-                AnsiConsole.MarkupLine(format, objects);
-        };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.MarkupLine(format);
+                                          else
+                                              AnsiConsole.MarkupLine(format, objects);
+                                      };
 
         AaruConsole.WriteEvent += (format, objects) =>
-        {
-            if(objects is null)
-                AnsiConsole.Markup(format);
-            else
-                AnsiConsole.Markup(format, objects);
-        };
+                                  {
+                                      if(objects is null)
+                                          AnsiConsole.Markup(format);
+                                      else
+                                          AnsiConsole.Markup(format, objects);
+                                  };
 
         AaruConsole.ErrorWriteLineEvent += (format, objects) =>
-        {
-            if(objects is null)
-                stderrConsole.MarkupLine(format);
-            else
-                stderrConsole.MarkupLine(format, objects);
-        };
+                                           {
+                                               if(objects is null)
+                                                   stderrConsole.MarkupLine(format);
+                                               else
+                                                   stderrConsole.MarkupLine(format, objects);
+                                           };
 
         Settings.Settings.LoadSettings();
 
@@ -136,9 +136,11 @@ class MainClass
                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
+            {
                 ctx.Database.
                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
                         migration}', '0.0.0')");
+            }
 
             ctx.SaveChanges();
         }
@@ -151,16 +153,18 @@ class MainClass
                     a.Revision,
                     a.Bus
                 }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+        {
             ctx.RemoveRange(ctx.SeenDevices.
                                 Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
                                            d.Revision     == duplicate.Revision     && d.Bus == duplicate.Bus).Skip(1));
+        }
 
         // Remove nulls
         ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null && d.Revision == null));
 
         ctx.SaveChanges();
 
-        bool mainDbUpdate = false;
+        var mainDbUpdate = false;
 
         if(!File.Exists(Settings.Settings.MainDbPath))
         {
@@ -193,8 +197,8 @@ class MainClass
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
-           (args.Length < 1 || (args.Length                >= 1 && args[0].ToLowerInvariant() != "gui" &&
-                                args[0].ToLowerInvariant() != "configure")))
+           (args.Length < 1 || args.Length >= 1 && args[0].ToLowerInvariant() != "gui" &&
+            args[0].ToLowerInvariant()     != "configure"))
             new ConfigureCommand().DoConfigure(true);
 
         Statistics.LoadStats();
@@ -203,20 +207,13 @@ class MainClass
 
         var rootCommand = new RootCommand();
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[]
-        {
-            "--verbose", "-v"
-        }, () => false, UI.Shows_verbose_output));
+        rootCommand.AddGlobalOption(new Option<bool>(new[] { "--verbose", "-v" }, () => false,
+                                                     UI.Shows_verbose_output));
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[]
-        {
-            "--debug", "-d"
-        }, () => false, UI.Shows_debug_output_from_plugins));
+        rootCommand.AddGlobalOption(new Option<bool>(new[] { "--debug", "-d" }, () => false,
+                                                     UI.Shows_debug_output_from_plugins));
 
-        Option<bool> pauseOption = new(new[]
-        {
-            "--pause"
-        }, () => false, UI.Pauses_before_exiting);
+        Option<bool> pauseOption = new(new[] { "--pause" }, () => false, UI.Pauses_before_exiting);
 
         rootCommand.AddGlobalOption(pauseOption);
 

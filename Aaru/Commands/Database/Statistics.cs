@@ -59,22 +59,24 @@ sealed class StatisticsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -91,7 +93,7 @@ sealed class StatisticsCommand : Command
             return (int)ErrorNumber.NothingFound;
         }
 
-        bool  thereAreStats = false;
+        var   thereAreStats = false;
         Table table;
 
         if(ctx.Commands.Any())
@@ -116,19 +118,21 @@ sealed class StatisticsCommand : Command
                 ulong count = 0;
 
                 foreach(Aaru.Database.Models.Command fsInfo in ctx.Commands.Where(c => c.Name == "fs-info" &&
-                            c.Synchronized))
+                                         c.Synchronized))
                 {
                     count += fsInfo.Count;
                     ctx.Remove(fsInfo);
                 }
 
                 if(count > 0)
+                {
                     ctx.Commands.Add(new Aaru.Database.Models.Command
                     {
                         Count        = count,
                         Name         = "fs-info",
                         Synchronized = true
                     });
+                }
 
                 ctx.SaveChanges();
             }
@@ -281,8 +285,10 @@ sealed class StatisticsCommand : Command
 
             foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model).
                                          ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
+            {
                 table.AddRow(Markup.Escape(ds.Manufacturer ?? ""), Markup.Escape(ds.Model ?? ""),
                              Markup.Escape(ds.Revision     ?? ""), Markup.Escape(ds.Bus   ?? ""));
+            }
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();

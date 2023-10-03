@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.IO;
@@ -60,20 +59,11 @@ sealed class CreateSidecarCommand : Command
 
     public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
-        Add(new Option<int>(new[]
-        {
-            "--block-size", "-b"
-        }, () => 512, UI.Tape_block_size_argument_help));
+        Add(new Option<int>(new[] { "--block-size", "-b" }, () => 512, UI.Tape_block_size_argument_help));
 
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-        {
-            "--tape", "-t"
-        }, () => false, UI.Tape_argument_input_help));
+        Add(new Option<bool>(new[] { "--tape", "-t" }, () => false, UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {
@@ -85,7 +75,7 @@ sealed class CreateSidecarCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, uint blockSize, [CanBeNull] string encodingName,
+    public static int Invoke(bool   debug,     bool verbose, uint blockSize, [CanBeNull] string encodingName,
                              string imagePath, bool tape)
     {
         MainClass.PrintCopyright();
@@ -98,35 +88,38 @@ sealed class CreateSidecarCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("create-sidecar");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--block-size={0}", blockSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encodingName);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--tape={0}", tape);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",      debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",   encodingName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",      imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--tape={0}",       tape);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",    verbose);
 
         Encoding encodingClass = null;
 
         if(encodingName != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encodingName);
@@ -140,6 +133,7 @@ sealed class CreateSidecarCommand : Command
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
         if(File.Exists(imagePath))
         {
@@ -154,10 +148,10 @@ sealed class CreateSidecarCommand : Command
             IFilter inputFilter = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                inputFilter = filtersList.GetFilter(imagePath);
-            });
+                                               {
+                                                   ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                                   inputFilter = filtersList.GetFilter(imagePath);
+                                               });
 
             if(inputFilter == null)
             {
@@ -171,10 +165,10 @@ sealed class CreateSidecarCommand : Command
                 IBaseImage imageFormat = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                    imageFormat = ImageFormat.Detect(inputFilter);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                                       imageFormat = ImageFormat.Detect(inputFilter);
+                                                   });
 
                 if(imageFormat == null)
                 {
@@ -193,10 +187,10 @@ sealed class CreateSidecarCommand : Command
                     ErrorNumber opened = ErrorNumber.NoData;
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
-                    {
-                        ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                        opened = imageFormat.Open(inputFilter);
-                    });
+                                                       {
+                                                           ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                                           opened = imageFormat.Open(inputFilter);
+                                                       });
 
                     if(opened != ErrorNumber.NoError)
                     {
@@ -225,75 +219,80 @@ sealed class CreateSidecarCommand : Command
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
-                            {
-                                sidecarClass.InitProgressEvent += () =>
-                                {
-                                    _progressTask1 = ctx.AddTask("Progress");
-                                };
+                                  {
+                                      sidecarClass.InitProgressEvent += () =>
+                                                                        {
+                                                                            _progressTask1 = ctx.AddTask("Progress");
+                                                                        };
 
-                                sidecarClass.InitProgressEvent2 += () =>
-                                {
-                                    _progressTask2 = ctx.AddTask("Progress");
-                                };
+                                      sidecarClass.InitProgressEvent2 += () =>
+                                                                         {
+                                                                             _progressTask2 = ctx.AddTask("Progress");
+                                                                         };
 
-                                sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
-                                {
-                                    _progressTask1             ??= ctx.AddTask("Progress");
-                                    _progressTask1.Description =   Markup.Escape(text);
-                                    _progressTask1.Value       =   current;
-                                    _progressTask1.MaxValue    =   maximum;
-                                };
+                                      sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
+                                                                          {
+                                                                              _progressTask1 ??=
+                                                                                  ctx.AddTask("Progress");
+                                                                              _progressTask1.Description =
+                                                                                  Markup.Escape(text);
+                                                                              _progressTask1.Value    = current;
+                                                                              _progressTask1.MaxValue = maximum;
+                                                                          };
 
-                                sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
-                                {
-                                    _progressTask2             ??= ctx.AddTask("Progress");
-                                    _progressTask2.Description =   Markup.Escape(text);
-                                    _progressTask2.Value       =   current;
-                                    _progressTask2.MaxValue    =   maximum;
-                                };
+                                      sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
+                                                                           {
+                                                                               _progressTask2 ??=
+                                                                                   ctx.AddTask("Progress");
+                                                                               _progressTask2.Description =
+                                                                                   Markup.Escape(text);
+                                                                               _progressTask2.Value    = current;
+                                                                               _progressTask2.MaxValue = maximum;
+                                                                           };
 
-                                sidecarClass.EndProgressEvent += () =>
-                                {
-                                    _progressTask1?.StopTask();
-                                    _progressTask1 = null;
-                                };
+                                      sidecarClass.EndProgressEvent += () =>
+                                                                       {
+                                                                           _progressTask1?.StopTask();
+                                                                           _progressTask1 = null;
+                                                                       };
 
-                                sidecarClass.EndProgressEvent2 += () =>
-                                {
-                                    _progressTask2?.StopTask();
-                                    _progressTask2 = null;
-                                };
+                                      sidecarClass.EndProgressEvent2 += () =>
+                                                                        {
+                                                                            _progressTask2?.StopTask();
+                                                                            _progressTask2 = null;
+                                                                        };
 
-                                sidecarClass.UpdateStatusEvent += text =>
-                                {
-                                    AaruConsole.WriteLine(Markup.Escape(text));
-                                };
+                                      sidecarClass.UpdateStatusEvent += text =>
+                                                                        {
+                                                                            AaruConsole.WriteLine(Markup.Escape(text));
+                                                                        };
 
-                                System.Console.CancelKeyPress += (_, e) =>
-                                {
-                                    e.Cancel = true;
-                                    sidecarClass.Abort();
-                                };
+                                      System.Console.CancelKeyPress += (_, e) =>
+                                                                       {
+                                                                           e.Cancel = true;
+                                                                           sidecarClass.Abort();
+                                                                       };
 
-                                sidecar = sidecarClass.Create();
-                            });
+                                      sidecar = sidecarClass.Create();
+                                  });
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
+                                                   {
+                                                       ctx.AddTask(Localization.Core.Writing_metadata_sidecar).
+                                                           IsIndeterminate();
 
-                    var jsonFs =
-                        new
-                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
-                                       FileMode.Create);
+                                                       var jsonFs =
+                                                           new
+                                                               FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                                                          FileMode.Create);
 
-                    JsonSerializer.Serialize(jsonFs, new MetadataJson
-                    {
-                        AaruMetadata = sidecar
-                    }, typeof(MetadataJson), MetadataJsonContext.Default);
+                                                       JsonSerializer.Serialize(jsonFs, new MetadataJson
+                                                       {
+                                                           AaruMetadata = sidecar
+                                                       }, typeof(MetadataJson), MetadataJsonContext.Default);
 
-                    jsonFs.Close();
-                });
+                                                       jsonFs.Close();
+                                                   });
             }
             catch(Exception ex)
             {
@@ -312,8 +311,8 @@ sealed class CreateSidecarCommand : Command
                 return (int)ErrorNumber.IsDirectory;
             }
 
-            string[]     contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);
-            List<string> files    = contents.Where(file => new FileInfo(file).Length % blockSize == 0).ToList();
+            string[] contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);
+            var      files    = contents.Where(file => new FileInfo(file).Length % blockSize == 0).ToList();
 
             files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
@@ -323,75 +322,75 @@ sealed class CreateSidecarCommand : Command
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                        {
-                            sidecarClass.InitProgressEvent += () =>
-                            {
-                                _progressTask1 = ctx.AddTask("Progress");
-                            };
+                              {
+                                  sidecarClass.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                            sidecarClass.InitProgressEvent2 += () =>
-                            {
-                                _progressTask2 = ctx.AddTask("Progress");
-                            };
+                                  sidecarClass.InitProgressEvent2 += () =>
+                                                                     {
+                                                                         _progressTask2 = ctx.AddTask("Progress");
+                                                                     };
 
-                            sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
-                            {
-                                _progressTask1             ??= ctx.AddTask("Progress");
-                                _progressTask1.Description =   Markup.Escape(text);
-                                _progressTask1.Value       =   current;
-                                _progressTask1.MaxValue    =   maximum;
-                            };
+                                  sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
+                                                                      {
+                                                                          _progressTask1 ??= ctx.AddTask("Progress");
+                                                                          _progressTask1.Description =
+                                                                              Markup.Escape(text);
+                                                                          _progressTask1.Value    = current;
+                                                                          _progressTask1.MaxValue = maximum;
+                                                                      };
 
-                            sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
-                            {
-                                _progressTask2             ??= ctx.AddTask("Progress");
-                                _progressTask2.Description =   Markup.Escape(text);
-                                _progressTask2.Value       =   current;
-                                _progressTask2.MaxValue    =   maximum;
-                            };
+                                  sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
+                                                                       {
+                                                                           _progressTask2 ??= ctx.AddTask("Progress");
+                                                                           _progressTask2.Description =
+                                                                               Markup.Escape(text);
+                                                                           _progressTask2.Value    = current;
+                                                                           _progressTask2.MaxValue = maximum;
+                                                                       };
 
-                            sidecarClass.EndProgressEvent += () =>
-                            {
-                                _progressTask1?.StopTask();
-                                _progressTask1 = null;
-                            };
+                                  sidecarClass.EndProgressEvent += () =>
+                                                                   {
+                                                                       _progressTask1?.StopTask();
+                                                                       _progressTask1 = null;
+                                                                   };
 
-                            sidecarClass.EndProgressEvent2 += () =>
-                            {
-                                _progressTask2?.StopTask();
-                                _progressTask2 = null;
-                            };
+                                  sidecarClass.EndProgressEvent2 += () =>
+                                                                    {
+                                                                        _progressTask2?.StopTask();
+                                                                        _progressTask2 = null;
+                                                                    };
 
-                            sidecarClass.UpdateStatusEvent += text =>
-                            {
-                                AaruConsole.WriteLine(Markup.Escape(text));
-                            };
+                                  sidecarClass.UpdateStatusEvent += text =>
+                                                                    {
+                                                                        AaruConsole.WriteLine(Markup.Escape(text));
+                                                                    };
 
-                            System.Console.CancelKeyPress += (_, e) =>
-                            {
-                                e.Cancel = true;
-                                sidecarClass.Abort();
-                            };
+                                  System.Console.CancelKeyPress += (_, e) =>
+                                                                   {
+                                                                       e.Cancel = true;
+                                                                       sidecarClass.Abort();
+                                                                   };
 
-                            sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
-                        });
+                                  sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
+                              });
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
+                                               {
+                                                   ctx.AddTask(Localization.Core.Writing_metadata_sidecar).
+                                                       IsIndeterminate();
 
-                var jsonFs =
-                    new
-                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
-                                   FileMode.Create);
+                                                   var jsonFs =
+                                                       new
+                                                           FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                                                      FileMode.Create);
 
-                JsonSerializer.Serialize(jsonFs, new MetadataJson
-                {
-                    AaruMetadata = sidecar
-                }, typeof(MetadataJson), MetadataJsonContext.Default);
+                                                   JsonSerializer.Serialize(jsonFs, new MetadataJson
+                                                   {
+                                                       AaruMetadata = sidecar
+                                                   }, typeof(MetadataJson), MetadataJsonContext.Default);
 
-                jsonFs.Close();
-            });
+                                                   jsonFs.Close();
+                                               });
         }
         else
             AaruConsole.ErrorWriteLine(UI.The_specified_input_file_cannot_be_found);

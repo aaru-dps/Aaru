@@ -53,20 +53,12 @@ sealed class FilesystemInfoCommand : Command
 
     public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-        {
-            "--filesystems", "-f"
-        }, () => true, UI.Searches_and_prints_information_about_filesystems));
+        Add(new Option<bool>(new[] { "--filesystems", "-f" }, () => true,
+                             UI.Searches_and_prints_information_about_filesystems));
 
-        Add(new Option<bool>(new[]
-        {
-            "--partitions", "-p"
-        }, () => true, UI.Searches_and_interprets_partitions));
+        Add(new Option<bool>(new[] { "--partitions", "-p" }, () => true, UI.Searches_and_interprets_partitions));
 
         AddArgument(new Argument<string>
         {
@@ -78,7 +70,7 @@ sealed class FilesystemInfoCommand : Command
         Handler = CommandHandler.Create(typeof(FilesystemInfoCommand).GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions,
+    public static int Invoke(bool   verbose, bool debug, string encoding, bool filesystems, bool partitions,
                              string imagePath)
     {
         MainClass.PrintCopyright();
@@ -91,40 +83,42 @@ sealed class FilesystemInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("fs-info");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",       debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",    encoding);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--filesystems={0}", filesystems);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}", partitions);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}",  partitions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                               inputFilter = filtersList.GetFilter(imagePath);
+                                           });
 
         if(inputFilter == null)
         {
@@ -136,6 +130,7 @@ sealed class FilesystemInfoCommand : Command
         Encoding encodingClass = null;
 
         if(encoding != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
@@ -149,10 +144,11 @@ sealed class FilesystemInfoCommand : Command
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
         PluginBase plugins = PluginBase.Singleton;
 
-        bool checkRaw = false;
+        var checkRaw = false;
 
         try
         {
@@ -160,11 +156,11 @@ sealed class FilesystemInfoCommand : Command
             IBaseImage  baseImage   = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                baseImage   = ImageFormat.Detect(inputFilter);
-                imageFormat = baseImage as IMediaImage;
-            });
+                                               {
+                                                   ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                                   baseImage   = ImageFormat.Detect(inputFilter);
+                                                   imageFormat = baseImage as IMediaImage;
+                                               });
 
             if(baseImage == null)
             {
@@ -192,10 +188,10 @@ sealed class FilesystemInfoCommand : Command
                 ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                    opened = imageFormat.Open(inputFilter);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                                       opened = imageFormat.Open(inputFilter);
+                                                   });
 
                 if(opened != ErrorNumber.NoError)
                 {
@@ -233,10 +229,10 @@ sealed class FilesystemInfoCommand : Command
                 List<Partition> partitionsList = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
-                    partitionsList = Core.Partitions.GetAll(imageFormat);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                                                       partitionsList = Core.Partitions.GetAll(imageFormat);
+                                                   });
 
                 Core.Partitions.AddSchemesToStats(partitionsList);
 
@@ -257,7 +253,7 @@ sealed class FilesystemInfoCommand : Command
                 {
                     AaruConsole.WriteLine(UI._0_partitions_found, partitionsList.Count);
 
-                    for(int i = 0; i < partitionsList.Count; i++)
+                    for(var i = 0; i < partitionsList.Count; i++)
                     {
                         Table table = new()
                         {
@@ -279,7 +275,7 @@ sealed class FilesystemInfoCommand : Command
                                      string.Format(UI._0_sectors_1_bytes, partitionsList[i].Length,
                                                    partitionsList[i].Size));
 
-                        table.AddRow(UI.Title_Scheme, Markup.Escape(partitionsList[i].Scheme           ?? ""));
+                        table.AddRow(UI.Title_Scheme,      Markup.Escape(partitionsList[i].Scheme      ?? ""));
                         table.AddRow(UI.Title_Description, Markup.Escape(partitionsList[i].Description ?? ""));
 
                         AnsiConsole.Write(table);
@@ -288,10 +284,12 @@ sealed class FilesystemInfoCommand : Command
                             continue;
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
-                        {
-                            ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
-                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
-                        });
+                                                           {
+                                                               ctx.AddTask(UI.Identifying_filesystems_on_partition).
+                                                                   IsIndeterminate();
+                                                               Core.Filesystems.Identify(imageFormat, out idPlugins,
+                                                                   partitionsList[i]);
+                                                           });
 
                         switch(idPlugins.Count)
                         {
@@ -305,6 +303,7 @@ sealed class FilesystemInfoCommand : Command
                                                                                idPlugins.Count)}[/]");
 
                                 foreach(string pluginName in idPlugins)
+                                {
                                     if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                                     {
                                         if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
@@ -319,6 +318,7 @@ sealed class FilesystemInfoCommand : Command
                                         AaruConsole.Write(information);
                                         Statistics.AddFilesystem(fsMetadata.Type);
                                     }
+                                }
 
                                 break;
                             }
@@ -357,10 +357,10 @@ sealed class FilesystemInfoCommand : Command
                 };
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Identifying_filesystems).IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Identifying_filesystems).IsIndeterminate();
+                                                       Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                                                   });
 
                 switch(idPlugins.Count)
                 {
@@ -374,6 +374,7 @@ sealed class FilesystemInfoCommand : Command
                         }[/]");
 
                         foreach(string pluginName in idPlugins)
+                        {
                             if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                             {
                                 if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
@@ -387,6 +388,7 @@ sealed class FilesystemInfoCommand : Command
                                 AaruConsole.Write(information);
                                 Statistics.AddFilesystem(fsMetadata.Type);
                             }
+                        }
 
                         break;
                     }

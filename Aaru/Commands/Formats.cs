@@ -64,26 +64,28 @@ sealed class FormatsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("formats");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         PluginBase plugins     = PluginBase.Singleton;
@@ -100,10 +102,12 @@ sealed class FormatsCommand : Command
         table.AddColumn(UI.Title_Filter);
 
         foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
+        {
             if(verbose)
                 table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
             else
                 table.AddRow(Markup.Escape(kvp.Value.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -113,7 +117,7 @@ sealed class FormatsCommand : Command
         {
             Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
                                                  plugins.MediaImages.Count(t => !t.Value.GetInterfaces().
-                                                                               Contains(typeof(IWritableImage)))))
+                                                                                   Contains(typeof(IWritableImage)))))
         };
 
         if(verbose)
@@ -122,7 +126,7 @@ sealed class FormatsCommand : Command
         table.AddColumn(UI.Title_Media_image_format);
 
         foreach(KeyValuePair<string, Type> kvp in plugins.MediaImages.Where(t => !t.Value.GetInterfaces().
-                                                                                Contains(typeof(IWritableImage))))
+                                                                                    Contains(typeof(IWritableImage))))
         {
             if(Activator.CreateInstance(kvp.Value) is not IMediaImage imagePlugin)
                 continue;
@@ -166,8 +170,8 @@ sealed class FormatsCommand : Command
         {
             Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
                                                  plugins.Filesystems.Count(t => !t.Value.GetInterfaces().
-                                                                               Contains(typeof(
-                                                                                   IReadOnlyFilesystem)))))
+                                                                                   Contains(typeof(
+                                                                                                IReadOnlyFilesystem)))))
         };
 
         if(verbose)
@@ -176,8 +180,8 @@ sealed class FormatsCommand : Command
         table.AddColumn(UI.Title_Filesystem);
 
         foreach(KeyValuePair<string, Type> kvp in plugins.Filesystems.Where(t => !t.Value.GetInterfaces().
-                                                                                Contains(typeof(
-                                                                                    IReadOnlyFilesystem))))
+                                                                                    Contains(typeof(
+                                                                                                 IReadOnlyFilesystem))))
         {
             if(Activator.CreateInstance(kvp.Value) is not IFilesystem fs)
                 continue;

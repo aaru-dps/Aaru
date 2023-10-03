@@ -57,25 +57,14 @@ sealed class ExtractFilesCommand : Command
 
     public ExtractFilesCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<string>(new[]
-        {
-            "--options", "-O"
-        }, () => null, UI.Comma_separated_name_value_pairs_of_filesystem_options));
+        Add(new Option<string>(new[] { "--options", "-O" }, () => null,
+                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<bool>(new[]
-        {
-            "--xattrs", "-x"
-        }, () => false, UI.Extract_extended_attributes_if_present));
+        Add(new Option<bool>(new[] { "--xattrs", "-x" }, () => false, UI.Extract_extended_attributes_if_present));
 
-        Add(new Option<string>(new[]
-        {
-            "--namespace", "-n"
-        }, () => null, UI.Namespace_to_use_for_filenames));
+        Add(new Option<string>(new[] { "--namespace", "-n" }, () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -94,7 +83,7 @@ sealed class ExtractFilesCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, string encoding, bool xattrs, string imagePath,
+    public static int Invoke(bool   debug,      bool   verbose,   string encoding, bool xattrs, string imagePath,
                              string @namespace, string outputDir, string options)
     {
         MainClass.PrintCopyright();
@@ -107,41 +96,43 @@ sealed class ExtractFilesCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("extract-files");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}", options);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}", outputDir);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--xattrs={0}", xattrs);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",  options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}",   outputDir);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--xattrs={0}",   xattrs);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                               inputFilter = filtersList.GetFilter(imagePath);
+                                           });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
         AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
@@ -161,6 +152,7 @@ sealed class ExtractFilesCommand : Command
         Encoding encodingClass = null;
 
         if(encoding != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
@@ -174,6 +166,7 @@ sealed class ExtractFilesCommand : Command
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
         PluginBase plugins = PluginBase.Singleton;
 
@@ -183,11 +176,11 @@ sealed class ExtractFilesCommand : Command
             IBaseImage  baseImage   = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                baseImage   = ImageFormat.Detect(inputFilter);
-                imageFormat = baseImage as IMediaImage;
-            });
+                                               {
+                                                   ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                                   baseImage   = ImageFormat.Detect(inputFilter);
+                                                   imageFormat = baseImage as IMediaImage;
+                                               });
 
             if(baseImage == null)
             {
@@ -230,10 +223,10 @@ sealed class ExtractFilesCommand : Command
                 ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                    opened = imageFormat.Open(inputFilter);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                                       opened = imageFormat.Open(inputFilter);
+                                                   });
 
                 if(opened != ErrorNumber.NoError)
                 {
@@ -268,10 +261,10 @@ sealed class ExtractFilesCommand : Command
             List<Partition> partitions = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
-                partitions = Core.Partitions.GetAll(imageFormat);
-            });
+                                               {
+                                                   ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                                                   partitions = Core.Partitions.GetAll(imageFormat);
+                                               });
 
             Core.Partitions.AddSchemesToStats(partitions);
 
@@ -292,7 +285,7 @@ sealed class ExtractFilesCommand : Command
 
             AaruConsole.WriteLine(UI._0_partitions_found, partitions.Count);
 
-            for(int i = 0; i < partitions.Count; i++)
+            for(var i = 0; i < partitions.Count; i++)
             {
                 AaruConsole.WriteLine();
                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Partition_0, partitions[i].Sequence)}[/]");
@@ -300,10 +293,12 @@ sealed class ExtractFilesCommand : Command
                 List<string> idPlugins = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
-                });
+                                                   {
+                                                       ctx.AddTask(UI.Identifying_filesystems_on_partition).
+                                                           IsIndeterminate();
+                                                       Core.Filesystems.Identify(imageFormat, out idPlugins,
+                                                           partitions[i]);
+                                                   });
 
                 if(idPlugins.Count == 0)
                     AaruConsole.WriteLine(UI.Filesystem_not_identified);
@@ -318,6 +313,7 @@ sealed class ExtractFilesCommand : Command
                         }[/]");
 
                         foreach(string pluginName in idPlugins)
+                        {
                             if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
                             {
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, pluginType.Name)
@@ -327,16 +323,19 @@ sealed class ExtractFilesCommand : Command
                                     continue;
 
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
+                                                                   {
+                                                                       ctx.AddTask(UI.Mounting_filesystem).
+                                                                           IsIndeterminate();
 
-                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
-                                                     @namespace);
-                                });
+                                                                       error = fs.Mount(imageFormat, partitions[i],
+                                                                           encodingClass, parsedOptions,
+                                                                           @namespace);
+                                                                   });
 
                                 if(error == ErrorNumber.NoError)
                                 {
-                                    string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName) ? "NO NAME"
+                                    string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName)
+                                                            ? "NO NAME"
                                                             : fs.Metadata.VolumeName;
 
                                     ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
@@ -346,6 +345,7 @@ sealed class ExtractFilesCommand : Command
                                 else
                                     AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
                             }
+                        }
                     }
                     else
                     {
@@ -358,14 +358,17 @@ sealed class ExtractFilesCommand : Command
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, pluginType.Name)}[/]");
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
-                        {
-                            ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
-                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
-                        });
+                                                           {
+                                                               ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
+                                                               error = fs.Mount(imageFormat, partitions[i],
+                                                                                    encodingClass, parsedOptions,
+                                                                                    @namespace);
+                                                           });
 
                         if(error == ErrorNumber.NoError)
                         {
-                            string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName) ? "NO NAME"
+                            string volumeName = string.IsNullOrEmpty(fs.Metadata.VolumeName)
+                                                    ? "NO NAME"
                                                     : fs.Metadata.VolumeName;
 
                             ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
@@ -390,7 +393,7 @@ sealed class ExtractFilesCommand : Command
     }
 
     static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName, string outputDir,
-                                  bool doXattrs)
+                                  bool   doXattrs)
     {
         if(path.StartsWith('/'))
             path = path[1..];
@@ -410,10 +413,10 @@ sealed class ExtractFilesCommand : Command
             FileEntryInfo stat = new();
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
-                error = fs.Stat(path + "/" + entry, out stat);
-            });
+                                               {
+                                                   ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
+                                                   error = fs.Stat(path + "/" + entry, out stat);
+                                               });
 
             if(error == ErrorNumber.NoError)
             {
@@ -424,9 +427,11 @@ sealed class ExtractFilesCommand : Command
                     outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, path, entry);
 
                     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
                         outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
                                                 Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                                Replace('*', '\uFF0A').Replace('/', '\\');
+                                                Replace('*',  '\uFF0A').Replace('/', '\\');
+                    }
 
                     Directory.CreateDirectory(outputPath);
 
@@ -436,7 +441,7 @@ sealed class ExtractFilesCommand : Command
 
                     var di = new DirectoryInfo(outputPath);
 
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
                         if(stat.CreationTimeUtc.HasValue)
@@ -466,7 +471,7 @@ sealed class ExtractFilesCommand : Command
                     {
                         // ignored
                     }
-                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
                     continue;
                 }
@@ -478,21 +483,25 @@ sealed class ExtractFilesCommand : Command
                     List<string> xattrs = null;
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
-                    {
-                        ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
-                        error = fs.ListXAttr(path + "/" + entry, out xattrs);
-                    });
+                                                       {
+                                                           ctx.AddTask(UI.Listing_extended_attributes).
+                                                               IsIndeterminate();
+                                                           error = fs.ListXAttr(path + "/" + entry, out xattrs);
+                                                       });
 
                     if(error == ErrorNumber.NoError)
+                    {
                         foreach(string xattr in xattrs)
                         {
                             byte[] xattrBuf = Array.Empty<byte>();
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
-                            {
-                                ctx.AddTask(UI.Reading_extended_attribute).IsIndeterminate();
-                                error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
-                            });
+                                                               {
+                                                                   ctx.AddTask(UI.Reading_extended_attribute).
+                                                                       IsIndeterminate();
+                                                                   error = fs.GetXattr(path + "/" + entry, xattr,
+                                                                       ref xattrBuf);
+                                                               });
 
                             if(error != ErrorNumber.NoError)
                                 continue;
@@ -500,10 +509,12 @@ sealed class ExtractFilesCommand : Command
                             outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, ".xattrs", path, xattr);
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                            {
                                 outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
                                                         Replace(':', '\uFF1A').Replace('\"', '\uFF02').
                                                         Replace('|', '\uFF5C').Replace('?', '\uFF1F').
                                                         Replace('*', '\uFF0A').Replace('/', '\\');
+                            }
 
                             Directory.CreateDirectory(outputPath);
 
@@ -513,26 +524,32 @@ sealed class ExtractFilesCommand : Command
                                              : Path.Combine(outputPath, entry);
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                            {
                                 outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
                                                         Replace(':', '\uFF1A').Replace('\"', '\uFF02').
                                                         Replace('|', '\uFF5C').Replace('?', '\uFF1F').
                                                         Replace('*', '\uFF0A').Replace('/', '\\');
+                            }
 
                             if(!File.Exists(outputPath))
                             {
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask(UI.Writing_extended_attribute).IsIndeterminate();
+                                                                   {
+                                                                       ctx.AddTask(UI.Writing_extended_attribute).
+                                                                           IsIndeterminate();
 
-                                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
-                                                                FileShare.None);
+                                                                       outputFile =
+                                                                           new FileStream(outputPath,
+                                                                               FileMode.CreateNew,
+                                                                               FileAccess.ReadWrite,
+                                                                               FileShare.None);
 
-                                    outputFile.Write(xattrBuf, 0, xattrBuf.Length);
-                                    outputFile.Close();
-                                });
+                                                                       outputFile.Write(xattrBuf, 0, xattrBuf.Length);
+                                                                       outputFile.Close();
+                                                                   });
 
                                 var fi = new FileInfo(outputPath);
-                                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 try
                                 {
                                     if(stat.CreationTimeUtc.HasValue)
@@ -562,21 +579,24 @@ sealed class ExtractFilesCommand : Command
                                 {
                                     // ignored
                                 }
-                                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 AaruConsole.WriteLine(UI.Written_0_bytes_of_xattr_1_from_file_2_to_3, xattrBuf.Length,
                                                       xattr, entry, outputPath);
                             }
                             else
                                 AaruConsole.ErrorWriteLine(UI.Cannot_write_xattr_0_for_1_output_exists, xattr, entry);
                         }
+                    }
                 }
 
                 outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, path);
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
                                             Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                            Replace('*', '\uFF0A').Replace('/', '\\');
+                                            Replace('*',  '\uFF0A').Replace('/', '\\');
+                }
 
                 Directory.CreateDirectory(outputPath);
 
@@ -585,9 +605,11 @@ sealed class ExtractFilesCommand : Command
                                  : Path.Combine(outputPath, entry);
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
                                             Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                            Replace('*', '\uFF0A').Replace('/', '\\');
+                                            Replace('*',  '\uFF0A').Replace('/', '\\');
+                }
 
                 if(!File.Exists(outputPath))
                 {
@@ -598,50 +620,52 @@ sealed class ExtractFilesCommand : Command
                     AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                                 Start(ctx =>
-                                {
-                                    ProgressTask task =
-                                        ctx.AddTask(string.Format(UI.Reading_file_0, Markup.Escape(entry)));
+                                      {
+                                          ProgressTask task =
+                                              ctx.AddTask(string.Format(UI.Reading_file_0, Markup.Escape(entry)));
 
-                                    task.MaxValue = stat.Length;
-                                    byte[] outBuf = new byte[BUFFER_SIZE];
-                                    error = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
+                                          task.MaxValue = stat.Length;
+                                          var outBuf = new byte[BUFFER_SIZE];
+                                          error = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
-                                    if(error == ErrorNumber.NoError)
-                                    {
-                                        while(position < stat.Length)
-                                        {
-                                            long bytesToRead;
+                                          if(error == ErrorNumber.NoError)
+                                          {
+                                              while(position < stat.Length)
+                                              {
+                                                  long bytesToRead;
 
-                                            if(stat.Length - position > BUFFER_SIZE)
-                                                bytesToRead = BUFFER_SIZE;
-                                            else
-                                                bytesToRead = stat.Length - position;
+                                                  if(stat.Length - position > BUFFER_SIZE)
+                                                      bytesToRead = BUFFER_SIZE;
+                                                  else
+                                                      bytesToRead = stat.Length - position;
 
-                                            error = fs.ReadFile(fileNode, bytesToRead, outBuf, out long bytesRead);
+                                                  error = fs.ReadFile(fileNode, bytesToRead, outBuf,
+                                                                      out long bytesRead);
 
-                                            if(error == ErrorNumber.NoError)
-                                                outputFile.Write(outBuf, 0, (int)bytesRead);
-                                            else
-                                            {
-                                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
+                                                  if(error == ErrorNumber.NoError)
+                                                      outputFile.Write(outBuf, 0, (int)bytesRead);
+                                                  else
+                                                  {
+                                                      AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error,
+                                                          entry);
 
-                                                break;
-                                            }
+                                                      break;
+                                                  }
 
-                                            position += bytesToRead;
-                                            task.Increment(bytesToRead);
-                                        }
+                                                  position += bytesToRead;
+                                                  task.Increment(bytesToRead);
+                                              }
 
-                                        fs.CloseFile(fileNode);
-                                    }
-                                    else
-                                        AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
-                                });
+                                              fs.CloseFile(fileNode);
+                                          }
+                                          else
+                                              AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
+                                      });
 
                     outputFile.Close();
 
                     var fi = new FileInfo(outputPath);
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
                         if(stat.CreationTimeUtc.HasValue)
@@ -671,7 +695,7 @@ sealed class ExtractFilesCommand : Command
                     {
                         // ignored
                     }
-                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2, position, Markup.Escape(entry),
                                           Markup.Escape(outputPath));
                 }

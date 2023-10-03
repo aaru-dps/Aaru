@@ -55,25 +55,13 @@ sealed class VerifyCommand : Command
 
     public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
-        Add(new Option<bool>(new[]
-        {
-            "--verify-disc", "-w"
-        }, () => true, UI.Verify_media_image_if_supported));
+        Add(new Option<bool>(new[] { "--verify-disc", "-w" }, () => true, UI.Verify_media_image_if_supported));
 
-        Add(new Option<bool>(new[]
-        {
-            "--verify-sectors", "-s"
-        }, () => true, UI.Verify_all_sectors_if_supported));
+        Add(new Option<bool>(new[] { "--verify-sectors", "-s" }, () => true, UI.Verify_all_sectors_if_supported));
 
-        Add(new Option<bool>(new[]
-        {
-            "--create-graph", "-g"
-        }, () => true, UI.Create_graph_of_verified_disc));
+        Add(new Option<bool>(new[] { "--create-graph", "-g" }, () => true, UI.Create_graph_of_verified_disc));
 
-        Add(new Option<uint>(new[]
-        {
-            "--dimensions"
-        }, () => 1080, UI.Verify_dimensions_paramater_help));
+        Add(new Option<uint>(new[] { "--dimensions" }, () => 1080, UI.Verify_dimensions_paramater_help));
 
         AddArgument(new Argument<string>
         {
@@ -85,7 +73,7 @@ sealed class VerifyCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc, bool verifySectors,
+    public static int Invoke(bool debug,       bool verbose, string imagePath, bool verifyDisc, bool verifySectors,
                              bool createGraph, uint dimensions)
     {
         MainClass.PrintCopyright();
@@ -98,41 +86,43 @@ sealed class VerifyCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("verify");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-disc={0}", verifyDisc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",          debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",          imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",        verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-disc={0}",    verifyDisc);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-sectors={0}", verifySectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--create-graph={0}", createGraph);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--dimensions={0}", dimensions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--create-graph={0}",   createGraph);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--dimensions={0}",     dimensions);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                               inputFilter = filtersList.GetFilter(imagePath);
+                                           });
 
         if(inputFilter == null)
         {
@@ -144,10 +134,10 @@ sealed class VerifyCommand : Command
         IBaseImage inputFormat = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-            inputFormat = ImageFormat.Detect(inputFilter);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                               inputFormat = ImageFormat.Detect(inputFilter);
+                                           });
 
         if(inputFormat == null)
         {
@@ -159,10 +149,10 @@ sealed class VerifyCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-            opened = inputFormat.Open(inputFilter);
-        });
+                                           {
+                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                               opened = inputFormat.Open(inputFilter);
+                                           });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -197,13 +187,13 @@ sealed class VerifyCommand : Command
             bool? discCheckStatus = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Verifying_image_checksums).IsIndeterminate();
+                                               {
+                                                   ctx.AddTask(UI.Verifying_image_checksums).IsIndeterminate();
 
-                chkWatch.Start();
-                discCheckStatus = verifiableImage.VerifyMediaImage();
-                chkWatch.Stop();
-            });
+                                                   chkWatch.Start();
+                                                   discCheckStatus = verifiableImage.VerifyMediaImage();
+                                                   chkWatch.Stop();
+                                               });
 
             switch(discCheckStatus)
             {
@@ -228,19 +218,21 @@ sealed class VerifyCommand : Command
         }
 
         if(!verifySectors)
+        {
             return correctImage switch
-            {
-                null  => (int)ErrorNumber.NotVerifiable,
-                false => (int)ErrorNumber.BadImageSectorsNotVerified,
-                true  => (int)ErrorNumber.CorrectImageSectorsNotVerified
-            };
+                   {
+                       null  => (int)ErrorNumber.NotVerifiable,
+                       false => (int)ErrorNumber.BadImageSectorsNotVerified,
+                       true  => (int)ErrorNumber.CorrectImageSectorsNotVerified
+                   };
+        }
 
         var         stopwatch   = new Stopwatch();
         List<ulong> failingLbas = new();
         List<ulong> unknownLbas = new();
         IMediaGraph mediaGraph  = null;
 
-        if(verifiableSectorsImage is IOpticalMediaImage { Tracks: {} } opticalMediaImage)
+        if(verifiableSectorsImage is IOpticalMediaImage { Tracks: not null } opticalMediaImage)
         {
             Spiral.DiscParameters spiralParameters = null;
 
@@ -248,8 +240,10 @@ sealed class VerifyCommand : Command
                 spiralParameters = Spiral.DiscParametersFromMediaType(opticalMediaImage.Info.MediaType);
 
             if(spiralParameters is not null)
+            {
                 mediaGraph = new Spiral((int)dimensions, (int)dimensions, spiralParameters,
                                         opticalMediaImage.Info.Sectors);
+            }
             else if(createGraph)
                 mediaGraph = new BlockMap((int)dimensions, (int)dimensions, opticalMediaImage.Info.Sectors);
 
@@ -261,88 +255,96 @@ sealed class VerifyCommand : Command
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                        {
-                            ProgressTask discTask = ctx.AddTask(UI.Checking_tracks);
-                            discTask.MaxValue = inputTracks.Count;
+                              {
+                                  ProgressTask discTask = ctx.AddTask(UI.Checking_tracks);
+                                  discTask.MaxValue = inputTracks.Count;
 
-                            foreach(Track currentTrack in inputTracks)
-                            {
-                                discTask.Description =
-                                    string.Format(UI.Checking_track_0_of_1, discTask.Value + 1, inputTracks.Count);
+                                  foreach(Track currentTrack in inputTracks)
+                                  {
+                                      discTask.Description =
+                                          string.Format(UI.Checking_track_0_of_1, discTask.Value + 1,
+                                                        inputTracks.Count);
 
-                                ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
+                                      ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
-                                ulong currentSector = 0;
+                                      ulong currentSector = 0;
 
-                                ProgressTask trackTask = ctx.AddTask(UI.Checking_sector);
-                                trackTask.MaxValue = remainingSectors;
+                                      ProgressTask trackTask = ctx.AddTask(UI.Checking_sector);
+                                      trackTask.MaxValue = remainingSectors;
 
-                                while(remainingSectors > 0)
-                                {
-                                    trackTask.Description =
-                                        string.Format(UI.Checking_sector_0_of_1_on_track_2, currentSectorAll,
-                                                      inputFormat.Info.Sectors, currentTrack.Sequence);
+                                      while(remainingSectors > 0)
+                                      {
+                                          trackTask.Description =
+                                              string.Format(UI.Checking_sector_0_of_1_on_track_2, currentSectorAll,
+                                                            inputFormat.Info.Sectors, currentTrack.Sequence);
 
-                                    List<ulong> tempFailingLbas;
-                                    List<ulong> tempUnknownLbas;
+                                          List<ulong> tempFailingLbas;
+                                          List<ulong> tempUnknownLbas;
 
-                                    if(remainingSectors < 512)
-                                        opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                        currentTrack.Sequence, out tempFailingLbas,
-                                                                        out tempUnknownLbas);
-                                    else
-                                        opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
-                                                                        out tempFailingLbas, out tempUnknownLbas);
+                                          if(remainingSectors < 512)
+                                          {
+                                              opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                              currentTrack.Sequence,
+                                                                              out tempFailingLbas,
+                                                                              out tempUnknownLbas);
+                                          }
+                                          else
+                                          {
+                                              opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
+                                                                              out tempFailingLbas, out tempUnknownLbas);
+                                          }
 
-                                    if(mediaGraph != null)
-                                    {
-                                        List<ulong> tempCorrectLbas = new();
+                                          if(mediaGraph != null)
+                                          {
+                                              List<ulong> tempCorrectLbas = new();
 
-                                        for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
-                                            tempCorrectLbas.Add(currentSector + l);
+                                              for(ulong l = 0;
+                                                  l < (remainingSectors < 512 ? remainingSectors : 512);
+                                                  l++)
+                                                  tempCorrectLbas.Add(currentSector + l);
 
-                                        foreach(ulong f in tempFailingLbas)
-                                            tempCorrectLbas.Remove(f);
+                                              foreach(ulong f in tempFailingLbas)
+                                                  tempCorrectLbas.Remove(f);
 
-                                        foreach(ulong u in tempUnknownLbas)
-                                        {
-                                            tempCorrectLbas.Remove(u);
-                                            mediaGraph.PaintSectorUnknown(currentTrack.StartSector + u);
-                                        }
+                                              foreach(ulong u in tempUnknownLbas)
+                                              {
+                                                  tempCorrectLbas.Remove(u);
+                                                  mediaGraph.PaintSectorUnknown(currentTrack.StartSector + u);
+                                              }
 
-                                        foreach(ulong lba in tempCorrectLbas)
-                                            mediaGraph.PaintSectorGood(currentTrack.StartSector + lba);
+                                              foreach(ulong lba in tempCorrectLbas)
+                                                  mediaGraph.PaintSectorGood(currentTrack.StartSector + lba);
 
-                                        foreach(ulong f in tempFailingLbas)
-                                            mediaGraph.PaintSectorBad(currentTrack.StartSector + f);
-                                    }
+                                              foreach(ulong f in tempFailingLbas)
+                                                  mediaGraph.PaintSectorBad(currentTrack.StartSector + f);
+                                          }
 
-                                    failingLbas.AddRange(tempFailingLbas);
+                                          failingLbas.AddRange(tempFailingLbas);
 
-                                    unknownLbas.AddRange(tempUnknownLbas);
+                                          unknownLbas.AddRange(tempUnknownLbas);
 
-                                    if(remainingSectors < 512)
-                                    {
-                                        currentSector    += remainingSectors;
-                                        currentSectorAll += remainingSectors;
-                                        trackTask.Value  += remainingSectors;
-                                        remainingSectors =  0;
-                                    }
-                                    else
-                                    {
-                                        currentSector    += 512;
-                                        currentSectorAll += 512;
-                                        trackTask.Value  += 512;
-                                        remainingSectors -= 512;
-                                    }
-                                }
+                                          if(remainingSectors < 512)
+                                          {
+                                              currentSector    += remainingSectors;
+                                              currentSectorAll += remainingSectors;
+                                              trackTask.Value  += remainingSectors;
+                                              remainingSectors =  0;
+                                          }
+                                          else
+                                          {
+                                              currentSector    += 512;
+                                              currentSectorAll += 512;
+                                              trackTask.Value  += 512;
+                                              remainingSectors -= 512;
+                                          }
+                                      }
 
-                                trackTask.StopTask();
-                                discTask.Increment(1);
-                            }
+                                      trackTask.StopTask();
+                                      discTask.Increment(1);
+                                  }
 
-                            stopwatch.Stop();
-                        });
+                                  stopwatch.Stop();
+                              });
         }
         else if(verifiableSectorsImage != null)
         {
@@ -352,65 +354,71 @@ sealed class VerifyCommand : Command
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                        {
-                            ProgressTask diskTask = ctx.AddTask(UI.Checking_sectors);
-                            diskTask.MaxValue = inputFormat.Info.Sectors;
+                              {
+                                  ProgressTask diskTask = ctx.AddTask(UI.Checking_sectors);
+                                  diskTask.MaxValue = inputFormat.Info.Sectors;
 
-                            stopwatch.Restart();
+                                  stopwatch.Restart();
 
-                            while(remainingSectors > 0)
-                            {
-                                diskTask.Description =
-                                    string.Format(UI.Checking_sector_0_of_1, currentSector, inputFormat.Info.Sectors);
+                                  while(remainingSectors > 0)
+                                  {
+                                      diskTask.Description =
+                                          string.Format(UI.Checking_sector_0_of_1, currentSector,
+                                                        inputFormat.Info.Sectors);
 
-                                List<ulong> tempFailingLbas;
-                                List<ulong> tempUnknownLbas;
+                                      List<ulong> tempFailingLbas;
+                                      List<ulong> tempUnknownLbas;
 
-                                if(remainingSectors < 512)
-                                    verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                         out tempFailingLbas, out tempUnknownLbas);
-                                else
-                                    verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
-                                                                         out tempUnknownLbas);
+                                      if(remainingSectors < 512)
+                                      {
+                                          verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                               out tempFailingLbas,
+                                                                               out tempUnknownLbas);
+                                      }
+                                      else
+                                      {
+                                          verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                                                                               out tempUnknownLbas);
+                                      }
 
-                                failingLbas.AddRange(tempFailingLbas);
+                                      failingLbas.AddRange(tempFailingLbas);
 
-                                unknownLbas.AddRange(tempUnknownLbas);
+                                      unknownLbas.AddRange(tempUnknownLbas);
 
-                                if(mediaGraph != null)
-                                {
-                                    List<ulong> tempCorrectLbas = new();
+                                      if(mediaGraph != null)
+                                      {
+                                          List<ulong> tempCorrectLbas = new();
 
-                                    for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
-                                        tempCorrectLbas.Add(currentSector + l);
+                                          for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
+                                              tempCorrectLbas.Add(currentSector + l);
 
-                                    foreach(ulong f in tempFailingLbas)
-                                        tempCorrectLbas.Remove(f);
+                                          foreach(ulong f in tempFailingLbas)
+                                              tempCorrectLbas.Remove(f);
 
-                                    foreach(ulong u in tempUnknownLbas)
-                                        tempCorrectLbas.Remove(u);
+                                          foreach(ulong u in tempUnknownLbas)
+                                              tempCorrectLbas.Remove(u);
 
-                                    mediaGraph.PaintSectorsUnknown(tempUnknownLbas);
-                                    mediaGraph.PaintSectorsGood(tempCorrectLbas);
-                                    mediaGraph.PaintSectorsBad(tempFailingLbas);
-                                }
+                                          mediaGraph.PaintSectorsUnknown(tempUnknownLbas);
+                                          mediaGraph.PaintSectorsGood(tempCorrectLbas);
+                                          mediaGraph.PaintSectorsBad(tempFailingLbas);
+                                      }
 
-                                if(remainingSectors < 512)
-                                {
-                                    currentSector    += remainingSectors;
-                                    diskTask.Value   += remainingSectors;
-                                    remainingSectors =  0;
-                                }
-                                else
-                                {
-                                    currentSector    += 512;
-                                    diskTask.Value   += 512;
-                                    remainingSectors -= 512;
-                                }
-                            }
+                                      if(remainingSectors < 512)
+                                      {
+                                          currentSector    += remainingSectors;
+                                          diskTask.Value   += remainingSectors;
+                                          remainingSectors =  0;
+                                      }
+                                      else
+                                      {
+                                          currentSector    += 512;
+                                          diskTask.Value   += 512;
+                                          remainingSectors -= 512;
+                                      }
+                                  }
 
-                            stopwatch.Stop();
-                        });
+                                  stopwatch.Stop();
+                              });
         }
 
         if(unknownLbas.Count > 0)
@@ -433,16 +441,20 @@ sealed class VerifyCommand : Command
             if(failingLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[red]{UI.all_sectors}[/]");
             else
+            {
                 foreach(ulong t in failingLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
+            }
 
             AaruConsole.WriteLine($"[yellow3_1]{UI.LBAs_without_checksum}[/]");
 
             if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[yellow3_1]{UI.all_sectors}[/]");
             else
+            {
                 foreach(ulong t in unknownLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
+            }
         }
 
         // TODO: Convert to table
@@ -459,16 +471,16 @@ sealed class VerifyCommand : Command
             correctSectors = true;
 
         return correctImage switch
-        {
-            null when correctSectors is null   => (int)ErrorNumber.NotVerifiable,
-            null when correctSectors == false  => (int)ErrorNumber.BadSectorsImageNotVerified,
-            null                               => (int)ErrorNumber.CorrectSectorsImageNotVerified,
-            false when correctSectors is null  => (int)ErrorNumber.BadImageSectorsNotVerified,
-            false when correctSectors == false => (int)ErrorNumber.BadImageBadSectors,
-            false                              => (int)ErrorNumber.CorrectSectorsBadImage,
-            true when correctSectors is null   => (int)ErrorNumber.CorrectImageSectorsNotVerified,
-            true when correctSectors == false  => (int)ErrorNumber.CorrectImageBadSectors,
-            true                               => (int)ErrorNumber.NoError
-        };
+               {
+                   null when correctSectors is null   => (int)ErrorNumber.NotVerifiable,
+                   null when correctSectors == false  => (int)ErrorNumber.BadSectorsImageNotVerified,
+                   null                               => (int)ErrorNumber.CorrectSectorsImageNotVerified,
+                   false when correctSectors is null  => (int)ErrorNumber.BadImageSectorsNotVerified,
+                   false when correctSectors == false => (int)ErrorNumber.BadImageBadSectors,
+                   false                              => (int)ErrorNumber.CorrectSectorsBadImage,
+                   true when correctSectors is null   => (int)ErrorNumber.CorrectImageSectorsNotVerified,
+                   true when correctSectors == false  => (int)ErrorNumber.CorrectImageBadSectors,
+                   true                               => (int)ErrorNumber.NoError
+               };
     }
 }

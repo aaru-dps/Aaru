@@ -51,20 +51,13 @@ sealed class MediaScanCommand : Command
 
     public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--mhdd-log", "-m"
-        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
+        Add(new Option<string>(new[] { "--mhdd-log", "-m" }, () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
-        Add(new Option<string>(new[]
-        {
-            "--ibg-log", "-b"
-        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
+        Add(new Option<string>(new[] { "--ibg-log", "-b" }, () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
-        Add(new Option<bool>(new[]
-        {
-            "--use-buffered-reads"
-        }, () => true, UI.OS_buffered_reads_help));
+        Add(new Option<bool>(new[] { "--use-buffered-reads" }, () => true, UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {
@@ -89,30 +82,32 @@ sealed class MediaScanCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("media-scan");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}", devicePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}", ibgLog);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}", mhddLog);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",              debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",             devicePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}",            ibgLog);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}",           mhddLog);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--use-buffered-reads={0}", useBufferedReads);
 
         if(devicePath.Length == 2   &&
@@ -125,10 +120,10 @@ sealed class MediaScanCommand : Command
         ErrorNumber    devErrno = ErrorNumber.NoError;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Opening_device).IsIndeterminate();
-            dev = Devices.Device.Create(devicePath, out devErrno);
-        });
+                                           {
+                                               ctx.AddTask(UI.Opening_device).IsIndeterminate();
+                                               dev = Devices.Device.Create(devicePath, out devErrno);
+                                           });
 
         switch(dev)
         {
@@ -159,51 +154,47 @@ sealed class MediaScanCommand : Command
         AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                     Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
                     {
-                        scanner.UpdateStatus += text =>
-                        {
-                            AaruConsole.WriteLine(Markup.Escape(text));
-                        };
+                        scanner.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
                         scanner.StoppingErrorMessage += text =>
-                        {
-                            AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                        };
+                                                        {
+                                                            AaruConsole.
+                                                                ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                                                        };
 
                         scanner.UpdateProgress += (text, current, maximum) =>
-                        {
-                            _progressTask1             ??= ctx.AddTask("Progress");
-                            _progressTask1.Description =   Markup.Escape(text);
-                            _progressTask1.Value       =   current;
-                            _progressTask1.MaxValue    =   maximum;
-                        };
+                                                  {
+                                                      _progressTask1             ??= ctx.AddTask("Progress");
+                                                      _progressTask1.Description =   Markup.Escape(text);
+                                                      _progressTask1.Value       =   current;
+                                                      _progressTask1.MaxValue    =   maximum;
+                                                  };
 
                         scanner.PulseProgress += text =>
-                        {
-                            if(_progressTask1 is null)
-                                ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
-                            else
-                            {
-                                _progressTask1.Description     = Markup.Escape(text);
-                                _progressTask1.IsIndeterminate = true;
-                            }
-                        };
+                                                 {
+                                                     if(_progressTask1 is null)
+                                                         ctx.AddTask(Markup.Escape(text)).
+                                                             IsIndeterminate();
+                                                     else
+                                                     {
+                                                         _progressTask1.Description     = Markup.Escape(text);
+                                                         _progressTask1.IsIndeterminate = true;
+                                                     }
+                                                 };
 
-                        scanner.InitProgress += () =>
-                        {
-                            _progressTask1 = ctx.AddTask("Progress");
-                        };
+                        scanner.InitProgress += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
                         scanner.EndProgress += () =>
-                        {
-                            _progressTask1?.StopTask();
-                            _progressTask1 = null;
-                        };
+                                               {
+                                                   _progressTask1?.StopTask();
+                                                   _progressTask1 = null;
+                                               };
 
                         System.Console.CancelKeyPress += (_, e) =>
-                        {
-                            e.Cancel = true;
-                            scanner.Abort();
-                        };
+                                                         {
+                                                             e.Cancel = true;
+                                                             scanner.Abort();
+                                                         };
 
                         results = scanner.Scan();
                     });
@@ -244,8 +235,10 @@ sealed class MediaScanCommand : Command
                                                        results.UnreadableSectors.Count)}[/]");
 
         if(results.UnreadableSectors.Count > 0)
+        {
             foreach(ulong bad in results.UnreadableSectors)
                 AaruConsole.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
+        }
 
         AaruConsole.WriteLine();
 
@@ -253,9 +246,11 @@ sealed class MediaScanCommand : Command
            results.SeekMin   < double.MaxValue ||
            results.SeekMax   > double.MinValue)
 
+        {
             AaruConsole.
                 WriteLine(Localization.Core.Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average,
                           results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
+        }
 
         dev.Close();
 

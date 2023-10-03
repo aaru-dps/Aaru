@@ -58,22 +58,24 @@ sealed class ConfigureCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         return DoConfigure(false);
     }
@@ -100,7 +102,8 @@ sealed class ConfigureCommand : Command
         Settings.Settings.Current.EnableDecryption =
             AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_enable_decryption_of_copy_protected_media_Q}[/]");
 
-        #region Device reports
+    #region Device reports
+
         AaruConsole.WriteLine();
 
         AaruConsole.WriteLine(UI.Configure_Device_Report_information_disclaimer);
@@ -114,9 +117,11 @@ sealed class ConfigureCommand : Command
 
         Settings.Settings.Current.ShareReports =
             AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_your_device_reports_with_us_Q}[/]");
-        #endregion Device reports
 
-        #region Statistics
+    #endregion Device reports
+
+    #region Statistics
+
         AaruConsole.WriteLine();
 
         AaruConsole.WriteLine(UI.Statistics_disclaimer);
@@ -151,7 +156,8 @@ sealed class ConfigureCommand : Command
         }
         else
             Settings.Settings.Current.Stats = null;
-        #endregion Statistics
+
+    #endregion Statistics
 
         Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
         Settings.Settings.SaveSettings();

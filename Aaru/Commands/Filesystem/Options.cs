@@ -64,24 +64,26 @@ sealed class ListOptionsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-options");
 
@@ -94,7 +96,7 @@ sealed class ListOptionsCommand : Command
             if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
                 continue;
 
-            List<(string name, Type type, string description)> options = fs.SupportedOptions.ToList();
+            var options = fs.SupportedOptions.ToList();
 
             if(options.Count == 0)
                 continue;
@@ -109,8 +111,10 @@ sealed class ListOptionsCommand : Command
             table.AddColumn(UI.Title_Description);
 
             foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
+            {
                 table.AddRow(Markup.Escape(option.name), $"[italic]{TypeToString(option.type)}[/]",
                              Markup.Escape(option.description));
+            }
 
             AnsiConsole.Write(table);
             AaruConsole.WriteLine();

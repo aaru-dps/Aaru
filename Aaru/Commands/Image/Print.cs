@@ -50,25 +50,13 @@ sealed class PrintHexCommand : Command
 
     public PrintHexCommand() : base("print", UI.Image_Print_Command_Description)
     {
-        Add(new Option<ulong>(new[]
-        {
-            "--length", "-l"
-        }, () => 1, UI.How_many_sectors_to_print));
+        Add(new Option<ulong>(new[] { "--length", "-l" }, () => 1, UI.How_many_sectors_to_print));
 
-        Add(new Option<bool>(new[]
-        {
-            "--long-sectors", "-r"
-        }, () => false, UI.Print_sectors_with_tags_included));
+        Add(new Option<bool>(new[] { "--long-sectors", "-r" }, () => false, UI.Print_sectors_with_tags_included));
 
-        Add(new Option<ulong>(new[]
-        {
-            "--start", "-s"
-        }, UI.Starting_sector));
+        Add(new Option<ulong>(new[] { "--start", "-s" }, UI.Starting_sector));
 
-        Add(new Option<ushort>(new[]
-        {
-            "--width", "-w"
-        }, () => 32, UI.How_many_bytes_to_print_per_line));
+        Add(new Option<ushort>(new[] { "--width", "-w" }, () => 32, UI.How_many_bytes_to_print_per_line));
 
         AddArgument(new Argument<string>
         {
@@ -80,7 +68,7 @@ sealed class PrintHexCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool debug, bool verbose, string imagePath, ulong length, bool longSectors, ulong start,
+    public static int Invoke(bool   debug, bool verbose, string imagePath, ulong length, bool longSectors, ulong start,
                              ushort width)
     {
         MainClass.PrintCopyright();
@@ -93,41 +81,43 @@ sealed class PrintHexCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("print-hex");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}", length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",        debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",        imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}",       length);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--long-sectors={0}", longSectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}", start);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--width={0}", width);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}",        start);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",      verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--width={0}",        width);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                               inputFilter = filtersList.GetFilter(imagePath);
+                                           });
 
         if(inputFilter == null)
         {
@@ -139,10 +129,10 @@ sealed class PrintHexCommand : Command
         IBaseImage inputFormat = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-            inputFormat = ImageFormat.Detect(inputFilter);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                               inputFormat = ImageFormat.Detect(inputFilter);
+                                           });
 
         if(inputFormat == null)
         {
@@ -154,10 +144,10 @@ sealed class PrintHexCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-            opened = inputFormat.Open(inputFilter);
-        });
+                                           {
+                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                               opened = inputFormat.Open(inputFilter);
+                                           });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -173,22 +163,23 @@ sealed class PrintHexCommand : Command
 
             AaruConsole.WriteLine($"[bold][italic]{string.Format(UI.Start_0_as_in_sector_start, start)}[/][/]");
 
-            byte[]      data      = new byte[length];
+            var         data      = new byte[length];
             ErrorNumber errno     = ErrorNumber.NoError;
-            int         bytesRead = 0;
+            var         bytesRead = 0;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Reading_data).IsIndeterminate();
+                                               {
+                                                   ctx.AddTask(UI.Reading_data).IsIndeterminate();
 
-                errno = byteAddressableImage?.ReadBytesAt((long)start, data, 0, (int)length, out bytesRead) ??
-                        ErrorNumber.InvalidArgument;
-            });
+                                                   errno = byteAddressableImage?.ReadBytesAt((long)start, data, 0,
+                                                               (int)length, out bytesRead) ??
+                                                           ErrorNumber.InvalidArgument;
+                                               });
 
             // TODO: Span
             if(bytesRead != (int)length)
             {
-                byte[] tmp = new byte[bytesRead];
+                var tmp = new byte[bytesRead];
                 Array.Copy(data, 0, tmp, 0, bytesRead);
                 data = tmp;
             }
@@ -199,6 +190,7 @@ sealed class PrintHexCommand : Command
                 AaruConsole.ErrorWriteLine(string.Format(UI.Error_0_reading_data_from_1, errno, start));
         }
         else
+        {
             for(ulong i = 0; i < length; i++)
             {
                 if(inputFormat is not IMediaImage blockImage)
@@ -231,18 +223,20 @@ sealed class PrintHexCommand : Command
                 ErrorNumber errno  = ErrorNumber.NoError;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(UI.Reading_sector).IsIndeterminate();
+                                                   {
+                                                       ctx.AddTask(UI.Reading_sector).IsIndeterminate();
 
-                    errno = longSectors ? blockImage.ReadSectorLong(start + i, out sector)
-                                : blockImage.ReadSector(start             + i, out sector);
-                });
+                                                       errno = longSectors
+                                                                   ? blockImage.ReadSectorLong(start + i, out sector)
+                                                                   : blockImage.ReadSector(start     + i, out sector);
+                                                   });
 
                 if(errno == ErrorNumber.NoError)
                     AaruConsole.WriteLine(Markup.Escape(PrintHex.ByteArrayToHexArrayString(sector, width, true)));
                 else
                     AaruConsole.ErrorWriteLine(string.Format(UI.Error_0_reading_sector_1, errno, start + i));
             }
+        }
 
         return (int)ErrorNumber.NoError;
     }

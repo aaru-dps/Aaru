@@ -52,25 +52,14 @@ sealed class DecodeCommand : Command
 
     public DecodeCommand() : base("decode", UI.Image_Decode_Command_Description)
     {
-        Add(new Option<bool>(new[]
-        {
-            "--disk-tags", "-f"
-        }, () => true, UI.Decode_media_tags));
+        Add(new Option<bool>(new[] { "--disk-tags", "-f" }, () => true, UI.Decode_media_tags));
 
-        Add(new Option<string>(new[]
-        {
-            "--length", "-l"
-        }, () => UI.Parameter_response_all_sectors, UI.How_many_sectors_to_decode_or_all));
+        Add(new Option<string>(new[] { "--length", "-l" }, () => UI.Parameter_response_all_sectors,
+                               UI.How_many_sectors_to_decode_or_all));
 
-        Add(new Option<bool>(new[]
-        {
-            "--sector-tags", "-p"
-        }, () => true, UI.Decode_sector_tags));
+        Add(new Option<bool>(new[] { "--sector-tags", "-p" }, () => true, UI.Decode_sector_tags));
 
-        Add(new Option<ulong>(new[]
-        {
-            "--start", "-s"
-        }, () => 0, UI.Sector_to_start_decoding_from));
+        Add(new Option<ulong>(new[] { "--start", "-s" }, () => 0, UI.Sector_to_start_decoding_from));
 
         AddArgument(new Argument<string>
         {
@@ -82,7 +71,7 @@ sealed class DecodeCommand : Command
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
+    public static int Invoke(bool  verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
                              ulong startSector)
     {
         MainClass.PrintCopyright();
@@ -95,41 +84,43 @@ sealed class DecodeCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("decode");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--disk-tags={0}", diskTags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}", length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",       debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--disk-tags={0}",   diskTags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}",      length);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--sector-tags={0}", sectorTags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}", startSector);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}",       startSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);
 
         var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                                               inputFilter = filtersList.GetFilter(imagePath);
+                                           });
 
         if(inputFilter == null)
         {
@@ -142,11 +133,11 @@ sealed class DecodeCommand : Command
         IBaseImage  baseImage   = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-            baseImage   = ImageFormat.Detect(inputFilter);
-            inputFormat = baseImage as IMediaImage;
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                                               baseImage   = ImageFormat.Detect(inputFilter);
+                                               inputFormat = baseImage as IMediaImage;
+                                           });
 
         if(baseImage == null)
         {
@@ -165,10 +156,10 @@ sealed class DecodeCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-            opened = inputFormat.Open(inputFilter);
-        });
+                                           {
+                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                                               opened = inputFormat.Open(inputFilter);
+                                           });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -184,10 +175,13 @@ sealed class DecodeCommand : Command
         ErrorNumber errno;
 
         if(diskTags)
+        {
             if(inputFormat.Info.ReadableMediaTags.Count == 0)
                 AaruConsole.WriteLine(UI.There_are_no_media_tags_in_chosen_disc_image);
             else
+            {
                 foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
+                {
                     switch(tag)
                     {
                         case MediaTagType.SCSI_INQUIRY:
@@ -216,8 +210,10 @@ sealed class DecodeCommand : Command
                             errno = inputFormat.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out byte[] identify);
 
                             if(errno != ErrorNumber.NoError)
+                            {
                                 AaruConsole.WriteLine(UI.Error_0_reading_ATA_IDENTIFY_DEVICE_response_from_disc_image,
                                                       errno);
+                            }
                             else
                             {
                                 AaruConsole.WriteLine($"[bold]{UI.ATA_IDENTIFY_DEVICE_command_response}[/]");
@@ -238,9 +234,11 @@ sealed class DecodeCommand : Command
                             errno = inputFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out byte[] identify);
 
                             if(identify == null)
+                            {
                                 AaruConsole.
                                     WriteLine(UI.Error_0_reading_ATA_IDENTIFY_PACKET_DEVICE_response_from_disc_image,
                                               errno);
+                            }
                             else
                             {
                                 AaruConsole.WriteLine($"[bold]{UI.ATA_IDENTIFY_PACKET_DEVICE_command_response}[/]");
@@ -388,6 +386,9 @@ sealed class DecodeCommand : Command
 
                             break;
                     }
+                }
+            }
+        }
 
         if(!sectorTags)
             return (int)ErrorNumber.NoError;
@@ -407,7 +408,9 @@ sealed class DecodeCommand : Command
         if(inputFormat.Info.ReadableSectorTags.Count == 0)
             AaruConsole.WriteLine(UI.There_are_no_sector_tags_in_chosen_disc_image);
         else
+        {
             foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+            {
                 switch(tag)
                 {
                     default:
@@ -415,6 +418,8 @@ sealed class DecodeCommand : Command
 
                         break;
                 }
+            }
+        }
 
         // TODO: Not implemented
 

@@ -54,7 +54,7 @@ sealed class UpdateCommand : Command
     {
         _mainDbUpdate = mainDbUpdate;
 
-        Add(new Option<bool>("--clear", () => false, UI.Clear_existing_main_database));
+        Add(new Option<bool>("--clear",     () => false, UI.Clear_existing_main_database));
         Add(new Option<bool>("--clear-all", () => false, UI.Clear_existing_main_and_local_database));
 
         Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
@@ -75,27 +75,30 @@ sealed class UpdateCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         if(clearAll)
+        {
             try
             {
                 File.Delete(Settings.Settings.LocalDbPath);
@@ -113,8 +116,10 @@ sealed class UpdateCommand : Command
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
+        }
 
         if(clear || clearAll)
+        {
             try
             {
                 File.Delete(Settings.Settings.MainDbPath);
@@ -128,6 +133,7 @@ sealed class UpdateCommand : Command
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
+        }
 
         DoUpdate(clear || clearAll);
 

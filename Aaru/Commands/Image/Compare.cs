@@ -86,28 +86,30 @@ sealed class CompareCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    stderrConsole.MarkupLine(format);
-                else
-                    stderrConsole.MarkupLine(format, objects);
-            };
+                                               {
+                                                   if(objects is null)
+                                                       stderrConsole.MarkupLine(format);
+                                                   else
+                                                       stderrConsole.MarkupLine(format, objects);
+                                               };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
-            {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
-            };
+                                      {
+                                          if(objects is null)
+                                              AnsiConsole.Markup(format);
+                                          else
+                                              AnsiConsole.Markup(format, objects);
+                                      };
+        }
 
         Statistics.AddCommand("compare");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}", debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input1={0}", imagePath1);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}", imagePath2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input1={0}",  imagePath1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}",  imagePath2);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         var     filtersList  = new FiltersList();
@@ -115,18 +117,18 @@ sealed class CompareCommand : Command
         IFilter inputFilter2 = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_first_file_filter).IsIndeterminate();
-            inputFilter1 = filtersList.GetFilter(imagePath1);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_first_file_filter).IsIndeterminate();
+                                               inputFilter1 = filtersList.GetFilter(imagePath1);
+                                           });
 
         filtersList = new FiltersList();
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_second_file_filter).IsIndeterminate();
-            inputFilter2 = filtersList.GetFilter(imagePath2);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_second_file_filter).IsIndeterminate();
+                                               inputFilter2 = filtersList.GetFilter(imagePath2);
+                                           });
 
         if(inputFilter1 == null)
         {
@@ -146,16 +148,16 @@ sealed class CompareCommand : Command
         IBaseImage input2Format = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_first_image_format).IsIndeterminate();
-            input1Format = ImageFormat.Detect(inputFilter1);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_first_image_format).IsIndeterminate();
+                                               input1Format = ImageFormat.Detect(inputFilter1);
+                                           });
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Identifying_second_image_format).IsIndeterminate();
-            input2Format = ImageFormat.Detect(inputFilter2);
-        });
+                                           {
+                                               ctx.AddTask(UI.Identifying_second_image_format).IsIndeterminate();
+                                               input2Format = ImageFormat.Detect(inputFilter2);
+                                           });
 
         if(input1Format == null)
         {
@@ -165,8 +167,10 @@ sealed class CompareCommand : Command
         }
 
         if(verbose)
+        {
             AaruConsole.VerboseWriteLine(UI.First_input_file_format_identified_by_0_1, input1Format.Name,
                                          input1Format.Id);
+        }
         else
             AaruConsole.WriteLine(UI.First_input_file_format_identified_by_0, input1Format.Name);
 
@@ -178,8 +182,10 @@ sealed class CompareCommand : Command
         }
 
         if(verbose)
+        {
             AaruConsole.VerboseWriteLine(UI.Second_input_file_format_identified_by_0_1, input2Format.Name,
                                          input2Format.Id);
+        }
         else
             AaruConsole.WriteLine(UI.Second_input_file_format_identified_by_0, input2Format.Name);
 
@@ -187,10 +193,10 @@ sealed class CompareCommand : Command
         ErrorNumber opened2 = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Opening_first_image_file).IsIndeterminate();
-            opened1 = input1Format.Open(inputFilter1);
-        });
+                                           {
+                                               ctx.AddTask(UI.Opening_first_image_file).IsIndeterminate();
+                                               opened1 = input1Format.Open(inputFilter1);
+                                           });
 
         if(opened1 != ErrorNumber.NoError)
         {
@@ -201,10 +207,10 @@ sealed class CompareCommand : Command
         }
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Opening_second_image_file).IsIndeterminate();
-            opened2 = input2Format.Open(inputFilter2);
-        });
+                                           {
+                                               ctx.AddTask(UI.Opening_second_image_file).IsIndeterminate();
+                                               opened2 = input2Format.Open(inputFilter2);
+                                           });
 
         if(opened2 != ErrorNumber.NoError)
         {
@@ -230,8 +236,8 @@ sealed class CompareCommand : Command
 
         if(verbose)
         {
-            table.AddRow(UI.Title_File, Markup.Escape(imagePath1), Markup.Escape(imagePath2));
-            table.AddRow(UI.Title_Media_image_format, input1Format.Name, input2Format.Name);
+            table.AddRow(UI.Title_File,               Markup.Escape(imagePath1), Markup.Escape(imagePath2));
+            table.AddRow(UI.Title_Media_image_format, input1Format.Name,         input2Format.Name);
         }
         else
         {
@@ -239,7 +245,7 @@ sealed class CompareCommand : Command
             sb.AppendFormat($"[bold]{UI.Title_Second_Media_image}:[/] {imagePath2}").AppendLine();
         }
 
-        bool        imagesDiffer = false;
+        var         imagesDiffer = false;
         ErrorNumber errno;
 
         ImageInfo                        image1Info       = input1Format.Info;
@@ -250,6 +256,7 @@ sealed class CompareCommand : Command
         var                              input2MediaImage = input2Format as IMediaImage;
 
         if(input1MediaImage != null)
+        {
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
                 errno = input1MediaImage.ReadMediaTag(diskTag, out byte[] tempArray);
@@ -257,8 +264,10 @@ sealed class CompareCommand : Command
                 if(errno == ErrorNumber.NoError)
                     image1DiskTags.Add(diskTag, tempArray);
             }
+        }
 
         if(input2MediaImage != null)
+        {
             foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
                 errno = input2MediaImage.ReadMediaTag(diskTag, out byte[] tempArray);
@@ -266,6 +275,7 @@ sealed class CompareCommand : Command
                 if(errno == ErrorNumber.NoError)
                     image2DiskTags.Add(diskTag, tempArray);
             }
+        }
 
         if(verbose)
         {
@@ -335,76 +345,78 @@ sealed class CompareCommand : Command
 
             foreach(MediaTagType diskTag in
                     (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
+            {
                 table.AddRow(string.Format(UI.Has_tag_0_Question, diskTag),
                              image1DiskTags.ContainsKey(diskTag).ToString(),
                              image2DiskTags.ContainsKey(diskTag).ToString());
+            }
         }
 
         ulong leastSectors = 0;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-        {
-            ctx.AddTask(UI.Comparing_media_image_characteristics).IsIndeterminate();
+                                           {
+                                               ctx.AddTask(UI.Comparing_media_image_characteristics).IsIndeterminate();
 
-            if(image1Info.HasPartitions != image2Info.HasPartitions)
-            {
-                imagesDiffer = true;
+                                               if(image1Info.HasPartitions != image2Info.HasPartitions)
+                                               {
+                                                   imagesDiffer = true;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Image_partitioned_status_differ);
-            }
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Image_partitioned_status_differ);
+                                               }
 
-            if(image1Info.HasSessions != image2Info.HasSessions)
-            {
-                imagesDiffer = true;
+                                               if(image1Info.HasSessions != image2Info.HasSessions)
+                                               {
+                                                   imagesDiffer = true;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Image_session_status_differ);
-            }
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Image_session_status_differ);
+                                               }
 
-            if(image1Info.Sectors != image2Info.Sectors)
-            {
-                imagesDiffer = true;
+                                               if(image1Info.Sectors != image2Info.Sectors)
+                                               {
+                                                   imagesDiffer = true;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Image_sectors_differ);
-            }
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Image_sectors_differ);
+                                               }
 
-            if(image1Info.SectorSize != image2Info.SectorSize)
-            {
-                imagesDiffer = true;
+                                               if(image1Info.SectorSize != image2Info.SectorSize)
+                                               {
+                                                   imagesDiffer = true;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Image_sector_size_differ);
-            }
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Image_sector_size_differ);
+                                               }
 
-            if(image1Info.MediaType != image2Info.MediaType)
-            {
-                imagesDiffer = true;
+                                               if(image1Info.MediaType != image2Info.MediaType)
+                                               {
+                                                   imagesDiffer = true;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Media_type_differs);
-            }
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Media_type_differs);
+                                               }
 
-            if(image1Info.Sectors < image2Info.Sectors)
-            {
-                imagesDiffer = true;
-                leastSectors = image1Info.Sectors;
+                                               if(image1Info.Sectors < image2Info.Sectors)
+                                               {
+                                                   imagesDiffer = true;
+                                                   leastSectors = image1Info.Sectors;
 
-                if(!verbose)
-                    sb.AppendLine(UI.Second_image_has_more_sectors);
-            }
-            else if(image1Info.Sectors > image2Info.Sectors)
-            {
-                imagesDiffer = true;
-                leastSectors = image2Info.Sectors;
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.Second_image_has_more_sectors);
+                                               }
+                                               else if(image1Info.Sectors > image2Info.Sectors)
+                                               {
+                                                   imagesDiffer = true;
+                                                   leastSectors = image2Info.Sectors;
 
-                if(!verbose)
-                    sb.AppendLine(UI.First_image_has_more_sectors);
-            }
-            else
-                leastSectors = image1Info.Sectors;
-        });
+                                                   if(!verbose)
+                                                       sb.AppendLine(UI.First_image_has_more_sectors);
+                                               }
+                                               else
+                                                   leastSectors = image1Info.Sectors;
+                                           });
 
         var input1ByteAddressable = input1Format as IByteAddressableImage;
         var input2ByteAddressable = input2Format as IByteAddressableImage;
@@ -427,94 +439,105 @@ sealed class CompareCommand : Command
 
         if(input1MediaImage is not null &&
            input2MediaImage is not null)
+        {
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                        {
-                            ProgressTask task = ctx.AddTask(UI.Comparing_sectors);
-                            task.MaxValue = leastSectors;
+                              {
+                                  ProgressTask task = ctx.AddTask(UI.Comparing_sectors);
+                                  task.MaxValue = leastSectors;
 
-                            for(ulong sector = 0; sector < leastSectors; sector++)
-                            {
-                                task.Value       = sector;
-                                task.Description = string.Format(UI.Comparing_sector_0_of_1, sector + 1, leastSectors);
+                                  for(ulong sector = 0; sector < leastSectors; sector++)
+                                  {
+                                      task.Value = sector;
+                                      task.Description =
+                                          string.Format(UI.Comparing_sector_0_of_1, sector + 1, leastSectors);
 
-                                try
-                                {
-                                    errno = input1MediaImage.ReadSector(sector, out byte[] image1Sector);
+                                      try
+                                      {
+                                          errno = input1MediaImage.ReadSector(sector, out byte[] image1Sector);
 
-                                    if(errno != ErrorNumber.NoError)
-                                        AaruConsole.
-                                            ErrorWriteLine(string.Format(UI.Error_0_reading_sector_1_from_first_image,
-                                                                         errno, sector));
+                                          if(errno != ErrorNumber.NoError)
+                                          {
+                                              AaruConsole.
+                                                  ErrorWriteLine(string.
+                                                                     Format(UI.Error_0_reading_sector_1_from_first_image,
+                                                                            errno, sector));
+                                          }
 
-                                    errno = input2MediaImage.ReadSector(sector, out byte[] image2Sector);
+                                          errno = input2MediaImage.ReadSector(sector, out byte[] image2Sector);
 
-                                    if(errno != ErrorNumber.NoError)
-                                        AaruConsole.
-                                            ErrorWriteLine(string.Format(UI.Error_0_reading_sector_1_from_second_image,
-                                                                         errno, sector));
+                                          if(errno != ErrorNumber.NoError)
+                                          {
+                                              AaruConsole.
+                                                  ErrorWriteLine(string.
+                                                                     Format(UI.Error_0_reading_sector_1_from_second_image,
+                                                                            errno, sector));
+                                          }
 
-                                    ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
-                                                              image2Sector);
+                                          ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
+                                                                    image2Sector);
 
-                                    if(different)
-                                        imagesDiffer = true;
+                                          if(different)
+                                              imagesDiffer = true;
 
-                                    //       sb.AppendFormat("Sector {0} is different", sector).AppendLine();
-                                    else if(!sameSize)
-                                        imagesDiffer = true;
-                                    /*     sb.
+                                          //       sb.AppendFormat("Sector {0} is different", sector).AppendLine();
+                                          else if(!sameSize)
+                                              imagesDiffer = true;
+                                          /*     sb.
                                                  AppendFormat("Sector {0} has different sizes ({1} bytes in image 1, {2} in image 2) but are otherwise identical",
                                                               sector, image1Sector.LongLength, image2Sector.LongLength).AppendLine();*/
-                                }
-                                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                                catch
-                                {
-                                    // ignored
-                                }
-                                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            }
-                        });
+                                      }
+                                  #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                      catch
+                                      {
+                                          // ignored
+                                      }
+                                  #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                  }
+                              });
+        }
 
         if(input1ByteAddressable is not null &&
            input2ByteAddressable is not null)
+        {
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                        {
-                            ProgressTask task = ctx.AddTask(UI.Comparing_images);
-                            task.IsIndeterminate = true;
+                              {
+                                  ProgressTask task = ctx.AddTask(UI.Comparing_images);
+                                  task.IsIndeterminate = true;
 
-                            byte[] data1 = new byte[input1ByteAddressable.Info.Sectors];
-                            byte[] data2 = new byte[input2ByteAddressable.Info.Sectors];
-                            byte[] tmp;
+                                  var    data1 = new byte[input1ByteAddressable.Info.Sectors];
+                                  var    data2 = new byte[input2ByteAddressable.Info.Sectors];
+                                  byte[] tmp;
 
-                            input1ByteAddressable.ReadBytes(data1, 0, data1.Length, out int bytesRead);
+                                  input1ByteAddressable.ReadBytes(data1, 0, data1.Length, out int bytesRead);
 
-                            if(bytesRead != data1.Length)
-                            {
-                                tmp = new byte[bytesRead];
-                                Array.Copy(data1, 0, tmp, 0, bytesRead);
-                                data1 = tmp;
-                            }
+                                  if(bytesRead != data1.Length)
+                                  {
+                                      tmp = new byte[bytesRead];
+                                      Array.Copy(data1, 0, tmp, 0, bytesRead);
+                                      data1 = tmp;
+                                  }
 
-                            input2ByteAddressable.ReadBytes(data2, 0, data2.Length, out bytesRead);
+                                  input2ByteAddressable.ReadBytes(data2, 0, data2.Length, out bytesRead);
 
-                            if(bytesRead != data2.Length)
-                            {
-                                tmp = new byte[bytesRead];
-                                Array.Copy(data2, 0, tmp, 0, bytesRead);
-                                data2 = tmp;
-                            }
+                                  if(bytesRead != data2.Length)
+                                  {
+                                      tmp = new byte[bytesRead];
+                                      Array.Copy(data2, 0, tmp, 0, bytesRead);
+                                      data2 = tmp;
+                                  }
 
-                            ArrayHelpers.CompareBytes(out bool different, out bool sameSize, data1, data2);
+                                  ArrayHelpers.CompareBytes(out bool different, out bool sameSize, data1, data2);
 
-                            if(different)
-                                imagesDiffer = true;
-                            else if(!sameSize)
-                                imagesDiffer = true;
-                        });
+                                  if(different)
+                                      imagesDiffer = true;
+                                  else if(!sameSize)
+                                      imagesDiffer = true;
+                              });
+        }
 
         AaruConsole.WriteLine();
 

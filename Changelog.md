@@ -3,76 +3,96 @@
 ## Added
 
 ### - Adler checksum
+
 - SSSE3 implementation if supported by running host.
 
 ### - Apple Data Compression algorithm
+
 - Use faster native library if supported by running host.
 
 ### - Apple RLE compression algorithm
+
 - Use faster native library if supported by running host.
 
 ### - Apple Universal Disk Image Format
+
 - Support for LZFSE compressed images (ULFO).
 - Support for XZ compressed images (ULMO).
 
 ### - Atari Lynx cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 
 ### - BZIP2 compression algorithm
+
 - Faster non-native implementation.
 - Use faster native library if supported by running host.
 
 ### - Console
+
 - Use new console system that allows to show colors, tables and progress bars in command line.
 
 ### - CRC32 checksum
+
 - ARM specific instructions if supported by running host.
 - PCLMUL implementation if supported by running host.
 
 ### - CRC64 checksum
+
 - PCLMUL implementation if supported by running host.
 
 ### - Dumping
+
 - Draw the MHDD log as an image.
 - For most spiral media (CD/DVD/BD) draw a graph with the dump status.
 - For non-spiral media draw a block map.
 
 ### - FLAC compression algorithm
+
 - Use faster native library if supported by running host.
 
 ### - LZFSE compression algorithm
+
 - Now available if native library is supported by running host.
 
 ### - LZMA compression algorithm
+
 - Use faster native library if supported by running host.
 
 ### - LZIP compression algorithm
+
 - Use faster native library if supported by running host.
 
 ### - NES / Famicom cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Support for iNES and NES 2.0 formats
 
 ### - Nintendo 64 cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Support for `z64` and `n64` formats.
 
 ### - Nintendo Game Boy cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 
 ### - Nintendo Game Boy Advance cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 
 ### - Nintendo Game Boy Color cartridge dumps
+
 - Dumping by supported hardware.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 
 ### - Retrode cartridge dumping hardware
+
 - Dumping Nintendo 64 cartridges.
 - Dumping Nintendo Game Boy cartridges.
 - Dumping Nintendo Game Boy Advance cartridges.
@@ -83,34 +103,42 @@
 - Dumping Super Nintendo / Super Famicom cartridges.
 
 ### - Sega 32X cartridge dumps
+
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - Sega Game Gear cartridge dumps
+
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - Sega Master System / Mark III cartridge dumps
+
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - Sega Mega Drive / Genesis cartridge dumps
+
 - Full support for converting between `smd` and `bin` formats.
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - Sega Pico cartridge dumps
+
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - Super Nintendo / Super Famicom cartridge dumps
+
 - Support by `print`, `convert`, `info`, `entropy`, `checksum`, `compare` and `create sidecar` commands.
 - Dumping by supported hardware.
 
 ### - ZSTD compression algorithm
+
 - Now available if native library is supported by running host.
 
 ## Changes
+
 - All used checksums now call a much faster native library if supported.
 - CICM metadata XML sidecars are deprecated, new more complete JSON format is used instead.
 - Remove FreeBSD support code. Use `aaruremote` for dumping devices connected to FreeBSD systems.
@@ -122,45 +150,57 @@
 ## Fixed
 
 ### - Aaru Image Format
+
 - DDT verification when its size on-image is bigger than 1MiB.
 - Parent block identifier in AaruFormat.
 - Track indexes in when a disc contains a hidden track.
 
 ### - Apple DOS filesystem
+
 - Calculation of file sizes
 
 ### - Apple Macintosh filesystem
+
 - Calculation of file sizes
 
 ### - BlindWrite 5/6/7 disc images
+
 - Opening split images in Windows
 
 ### - CDRWin cuesheet disc images
+
 - Do not report ISRC as present if no tracks contain ISRC data.
 
 ### - Device report
+
 - Add workaround for device report the AccessTek/Optorite DD0203 drive.
 
 ### - Devices
+
 - Add transfer size to ATA(PI) IDENTIFY (PACKET) DEVICE commands as required by a recent change in the Linux kernel API.
 
 ### - Dumping
+
 - Correct offset fixing when trimming or re-reading errored audio sectors.
 - Do not set INDEX 1 to a value higher than what the TOC already said.
 
 ### - FAT filesystem
+
 - Fix that first 2 FAT entries are not considered part of the allocation ones, allocating two more.
 - Return current clusters when a file overflows the FAT.
 
 ### - ISO9660 filesystem
+
 - Do not try to interpret an 0-length Continuation Area.
 
 ### - SGI Volume Header
+
 - Partition types not properly interpreted.
 
 ## Changes
 
-- Do not allow dumping or converting to image formats that do not properly support hidden tracks when there is a hidden track in the media.
+- Do not allow dumping or converting to image formats that do not properly support hidden tracks when there is a hidden
+  track in the media.
 - Update Newtonson.Json dependency due to security issues.
 
 # [5.3.1] - 2022-03-06
@@ -192,11 +232,13 @@
 ### - Dumping
 
 - Fix detecting errors from OS buffered reads in Linux.
-- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
+- When dumping an SD/MMC card try to detect if OS buffered reads are failing, and max readable blocks using sequential
+  commands, and downgrade accordingly. Now also detects cards that are totally unreadable.
 
 ### - ISO9660 filesystem
 
-- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector read.
+- Do not break when an ISO9660/HighSierra/CD-i directory spans several sectors if we only have a partial last sector
+  read.
 - Do not try to decode empty path table in ISO9660/CD-i/HighSierra.
 
 ### - Media detection

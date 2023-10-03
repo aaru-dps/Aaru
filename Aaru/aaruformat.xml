@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
-  <mime-type type="application/vnd.aaruformat">
-    <comment>Aaru Image Format</comment>
-    <glob pattern="*.dicf"/>
-    <glob pattern="*.dicformat"/>
-    <glob pattern="*.aaruf"/>
-    <glob pattern="*.aaruformat"/>
-    <glob pattern="*.aif"/>
-    <alias type="application/x-aaru"/>
-    <alias type="application/aaru"/>
-    <magic>
-      <match type="string" offset="0" value="DICMFRMT"/>
-      <match type="string" offset="0" value="AARUFRMT"/>
-    </magic>
-  </mime-type>
+    <mime-type type="application/vnd.aaruformat">
+        <comment>Aaru Image Format</comment>
+        <glob pattern="*.dicf"/>
+        <glob pattern="*.dicformat"/>
+        <glob pattern="*.aaruf"/>
+        <glob pattern="*.aaruformat"/>
+        <glob pattern="*.aif"/>
+        <alias type="application/x-aaru"/>
+        <alias type="application/aaru"/>
+        <magic>
+            <match type="string" offset="0" value="DICMFRMT"/>
+            <match type="string" offset="0" value="AARUFRMT"/>
+        </magic>
+    </mime-type>
 </mime-info>
