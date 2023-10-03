@@ -105,7 +105,7 @@ static class Pioneer
             AaruConsole.WriteLine(Localization.LBA_0, address);
             AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
             AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sectors, blockSize);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -303,7 +303,7 @@ static class Pioneer
             AaruConsole.WriteLine(Localization.Start_0_1_2, startMinute, startSecond, startFrame);
             AaruConsole.WriteLine(Localization.End_0_1_2, endMinute, endSecond, endFrame);
             AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sectors, blockSize);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);

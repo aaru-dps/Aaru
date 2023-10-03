@@ -1109,7 +1109,7 @@ static class Plextor
             AaruConsole.WriteLine(Localization.LBA_0, address);
             AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
             AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sectors, blockSize);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);

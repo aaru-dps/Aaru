@@ -100,7 +100,7 @@ static partial class ScsiMmc
         dev.AllowMediumRemoval(out _, dev.Timeout, out _);
         dev.EjectTray(out _, dev.Timeout, out _);
 
-        AaruConsole.WriteLine(Localization.Please_insert_the_trap_disc_inside);
+        AaruConsole.WriteLine(Localization.Please_insert_trap_disc_inside);
         AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
         System.Console.ReadLine();
 

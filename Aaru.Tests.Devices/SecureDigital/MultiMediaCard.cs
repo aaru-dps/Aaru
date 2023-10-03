@@ -196,7 +196,7 @@ static class MultiMediaCard
                         }
                     }
 
-                    AaruConsole.Write(Localization.How_many_bytes_to_expect_in_a_block_Q);
+                    AaruConsole.Write(Localization.How_many_bytes_to_expect_per_block_Q);
                     strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
