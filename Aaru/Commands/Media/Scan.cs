@@ -82,23 +82,23 @@ sealed class MediaScanCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("media-scan");
@@ -120,10 +120,10 @@ sealed class MediaScanCommand : Command
         ErrorNumber    devErrno = ErrorNumber.NoError;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Opening_device).IsIndeterminate();
-                                               dev = Devices.Device.Create(devicePath, out devErrno);
-                                           });
+        {
+            ctx.AddTask(UI.Opening_device).IsIndeterminate();
+            dev = Devices.Device.Create(devicePath, out devErrno);
+        });
 
         switch(dev)
         {
@@ -157,44 +157,46 @@ sealed class MediaScanCommand : Command
                         scanner.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
                         scanner.StoppingErrorMessage += text =>
-                                                        {
-                                                            AaruConsole.
-                                                                ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                                                        };
+                        {
+                            AaruConsole.
+                                ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                        };
 
                         scanner.UpdateProgress += (text, current, maximum) =>
-                                                  {
-                                                      _progressTask1             ??= ctx.AddTask("Progress");
-                                                      _progressTask1.Description =   Markup.Escape(text);
-                                                      _progressTask1.Value       =   current;
-                                                      _progressTask1.MaxValue    =   maximum;
-                                                  };
+                        {
+                            _progressTask1             ??= ctx.AddTask("Progress");
+                            _progressTask1.Description =   Markup.Escape(text);
+                            _progressTask1.Value       =   current;
+                            _progressTask1.MaxValue    =   maximum;
+                        };
 
                         scanner.PulseProgress += text =>
-                                                 {
-                                                     if(_progressTask1 is null)
-                                                         ctx.AddTask(Markup.Escape(text)).
-                                                             IsIndeterminate();
-                                                     else
-                                                     {
-                                                         _progressTask1.Description     = Markup.Escape(text);
-                                                         _progressTask1.IsIndeterminate = true;
-                                                     }
-                                                 };
+                        {
+                            if(_progressTask1 is null)
+                            {
+                                ctx.AddTask(Markup.Escape(text)).
+                                    IsIndeterminate();
+                            }
+                            else
+                            {
+                                _progressTask1.Description     = Markup.Escape(text);
+                                _progressTask1.IsIndeterminate = true;
+                            }
+                        };
 
                         scanner.InitProgress += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
                         scanner.EndProgress += () =>
-                                               {
-                                                   _progressTask1?.StopTask();
-                                                   _progressTask1 = null;
-                                               };
+                        {
+                            _progressTask1?.StopTask();
+                            _progressTask1 = null;
+                        };
 
                         System.Console.CancelKeyPress += (_, e) =>
-                                                         {
-                                                             e.Cancel = true;
-                                                             scanner.Abort();
-                                                         };
+                        {
+                            e.Cancel = true;
+                            scanner.Abort();
+                        };
 
                         results = scanner.Scan();
                     });

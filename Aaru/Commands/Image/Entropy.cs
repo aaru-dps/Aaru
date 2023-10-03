@@ -81,23 +81,23 @@ sealed class EntropyCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("entropy");
@@ -113,10 +113,10 @@ sealed class EntropyCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         if(inputFilter == null)
         {
@@ -128,10 +128,10 @@ sealed class EntropyCommand : Command
         IBaseImage inputFormat = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                               inputFormat = ImageFormat.Detect(inputFilter);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+            inputFormat = ImageFormat.Detect(inputFilter);
+        });
 
         if(inputFormat == null)
         {
@@ -143,10 +143,10 @@ sealed class EntropyCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                               opened = inputFormat.Open(inputFilter);
-                                           });
+        {
+            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+            opened = inputFormat.Open(inputFilter);
+        });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -166,48 +166,48 @@ sealed class EntropyCommand : Command
                     Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
                     {
                         entropyCalculator.InitProgressEvent += () =>
-                                                               {
-                                                                   _progressTask1 =
-                                                                       ctx.AddTask("Progress");
-                                                               };
+                        {
+                            _progressTask1 =
+                                ctx.AddTask("Progress");
+                        };
 
                         entropyCalculator.InitProgress2Event += () =>
-                                                                {
-                                                                    _progressTask2 =
-                                                                        ctx.AddTask("Progress");
-                                                                };
+                        {
+                            _progressTask2 =
+                                ctx.AddTask("Progress");
+                        };
 
                         entropyCalculator.UpdateProgressEvent += (text, current, maximum) =>
-                                                                 {
-                                                                     _progressTask1 ??=
-                                                                         ctx.AddTask("Progress");
-                                                                     _progressTask1.Description =
-                                                                         Markup.Escape(text);
-                                                                     _progressTask1.Value    = current;
-                                                                     _progressTask1.MaxValue = maximum;
-                                                                 };
+                        {
+                            _progressTask1 ??=
+                                ctx.AddTask("Progress");
+                            _progressTask1.Description =
+                                Markup.Escape(text);
+                            _progressTask1.Value    = current;
+                            _progressTask1.MaxValue = maximum;
+                        };
 
                         entropyCalculator.UpdateProgress2Event += (text, current, maximum) =>
-                                                                  {
-                                                                      _progressTask2 ??=
-                                                                          ctx.AddTask("Progress");
-                                                                      _progressTask2.Description =
-                                                                          Markup.Escape(text);
-                                                                      _progressTask2.Value    = current;
-                                                                      _progressTask2.MaxValue = maximum;
-                                                                  };
+                        {
+                            _progressTask2 ??=
+                                ctx.AddTask("Progress");
+                            _progressTask2.Description =
+                                Markup.Escape(text);
+                            _progressTask2.Value    = current;
+                            _progressTask2.MaxValue = maximum;
+                        };
 
                         entropyCalculator.EndProgressEvent += () =>
-                                                              {
-                                                                  _progressTask1?.StopTask();
-                                                                  _progressTask1 = null;
-                                                              };
+                        {
+                            _progressTask1?.StopTask();
+                            _progressTask1 = null;
+                        };
 
                         entropyCalculator.EndProgress2Event += () =>
-                                                               {
-                                                                   _progressTask2?.StopTask();
-                                                                   _progressTask2 = null;
-                                                               };
+                        {
+                            _progressTask2?.StopTask();
+                            _progressTask2 = null;
+                        };
 
                         if(wholeDisc && inputFormat is IOpticalMediaImage opticalFormat)
                         {

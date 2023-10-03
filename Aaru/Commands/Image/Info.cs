@@ -71,23 +71,23 @@ sealed class ImageInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("image-info");
@@ -100,10 +100,10 @@ sealed class ImageInfoCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         if(inputFilter == null)
         {
@@ -117,10 +117,10 @@ sealed class ImageInfoCommand : Command
             IBaseImage imageFormat = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                                   imageFormat = ImageFormat.Detect(inputFilter);
-                                               });
+            {
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                imageFormat = ImageFormat.Detect(inputFilter);
+            });
 
             if(imageFormat == null)
             {
@@ -137,10 +137,10 @@ sealed class ImageInfoCommand : Command
                 ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                                       opened = imageFormat.Open(inputFilter);
-                                                   });
+                {
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                    opened = imageFormat.Open(inputFilter);
+                });
 
                 if(opened != ErrorNumber.NoError)
                 {

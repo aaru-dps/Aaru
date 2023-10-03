@@ -1,211 +1,211 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
-        <OutputType>Exe</OutputType>
-        <RootNamespace>Aaru</RootNamespace>
-        <AssemblyName>aaru</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <TargetFramework>net8.0</TargetFramework>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0~alpha9</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <!-- TODO win-arm doesn't seem to work in RC1, try again in final -->
-        <RuntimeIdentifiers>linux-musl-arm;linux-musl-arm64;linux-musl-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-x64;win-x86</RuntimeIdentifiers>
-        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-        <LangVersion>12</LangVersion>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>false</NrtShowRevision>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DebugPackage>-dbg</DebugPackage>
-        <NoWarn>CS1591;CS1574</NoWarn>
-    </PropertyGroup>
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <InternalsVisibleTo Include="Aaru.Tests"/>
-        <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="Packaging.Targets"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\README.md">
-            <Link>README.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\.travis.yml">
-            <Link>.travis.yml</Link>
-        </None>
-        <None Include="..\CONTRIBUTING.md">
-            <Link>CONTRIBUTING.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\NEEDED.md">
-            <Link>NEEDED.md</Link>
-        </None>
-        <None Include="..\Changelog.md">
-            <Link>Changelog.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
-        <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
-        <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj"/>
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
-        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
-        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
-        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.MIT">
-            <Link>LICENSE.MIT</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <Folder Include="..\LICENSE"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\.github\CODE_OF_CONDUCT.md"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md"/>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Humanizer" Version="2.14.1"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.1.23419.6"/>
-        <PackageReference Include="Spectre.Console" Version="0.47.0"/>
-        <PackageReference Include="Spectre.Console.Analyzer" Version="0.47.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
-        <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1"/>
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4"/>
-        <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4"/>
-        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.Collections" Version="4.3.0"/>
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
-        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
-        <PackageReference Include="System.Runtime.Extensions" Version="4.3.1"/>
-        <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
-        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
-        <PackageReference Include="System.Net.Primitives" Version="4.3.1"/>
-        <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
-        <PackageReference Update="Packaging.Targets" Version="0.1.220"/>
-        <PackageReference Include="Packaging.Targets" Version="0.1.220"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Aaru</RootNamespace>
+    <AssemblyName>aaru</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0~alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <!-- TODO win-arm doesn't seem to work in RC1, try again in final -->
+    <RuntimeIdentifiers>linux-musl-arm;linux-musl-arm64;linux-musl-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-x64;win-x86</RuntimeIdentifiers>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <LangVersion>12</LangVersion>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>false</NrtShowRevision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugPackage>-dbg</DebugPackage>
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Packaging.Targets"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\.travis.yml">
+      <Link>.travis.yml</Link>
+    </None>
+    <None Include="..\CONTRIBUTING.md">
+      <Link>CONTRIBUTING.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\NEEDED.md">
+      <Link>NEEDED.md</Link>
+    </None>
+    <None Include="..\Changelog.md">
+      <Link>Changelog.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
+    <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
+    <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
+    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Folder Include="..\LICENSE"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.github\CODE_OF_CONDUCT.md"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Humanizer" Version="2.14.1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0-rc.1.23419.6"/>
+    <PackageReference Include="Spectre.Console" Version="0.47.0"/>
+    <PackageReference Include="Spectre.Console.Analyzer" Version="0.47.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Collections" Version="4.3.0"/>
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1"/>
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
+    <PackageReference Include="System.Net.Primitives" Version="4.3.1"/>
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
+    <PackageReference Update="Packaging.Targets" Version="0.1.220"/>
+    <PackageReference Include="Packaging.Targets" Version="0.1.220"/>
+  </ItemGroup>
 
-    <PropertyGroup>
-        <PackageVersion>6.0.0-alpha9</PackageVersion>
-        <PackagePrefix>aaru</PackagePrefix>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <Section>net</Section>
-        <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackageVersion>6.0.0-alpha9</PackageVersion>
+    <PackagePrefix>aaru</PackagePrefix>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <Section>net</Section>
+    <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
-            <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
-        </Content>
-    </ItemGroup>
+  <ItemGroup>
+    <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
+      <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
+    </Content>
+  </ItemGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_aarch64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_armhf$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_arm64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_arm64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_macos_applesilicon$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_macos_applesilicon$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_aarch64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_arm$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_arm$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <!-- TODO: Distribution specific RIDs where removed in .NET 8.0. We need to detect packaging in another way
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm64'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_armhf$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-x64'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_amd64$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    
-      <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
-      </PropertyGroup>
-    -->
+  <!-- TODO: Distribution specific RIDs where removed in .NET 8.0. We need to detect packaging in another way
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm64'">
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm'">
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_armhf$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-x64'">
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_amd64$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm64'">
+      <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-x64'">
+      <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  
+    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
+      <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
+    </PropertyGroup>
+  -->
 </Project>

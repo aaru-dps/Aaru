@@ -58,23 +58,23 @@ sealed class ConfigureCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         return DoConfigure(false);

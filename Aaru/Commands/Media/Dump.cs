@@ -178,23 +178,23 @@ sealed class DumpMediaCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         fixSubchannel         |= fixSubchannelCrc;
@@ -395,10 +395,10 @@ sealed class DumpMediaCommand : Command
             ErrorNumber    devErrno = ErrorNumber.NoError;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Opening_device).IsIndeterminate();
-                                                   dev = Devices.Device.Create(devicePath, out devErrno);
-                                               });
+            {
+                ctx.AddTask(UI.Opening_device).IsIndeterminate();
+                dev = Devices.Device.Create(devicePath, out devErrno);
+            });
 
             switch(dev)
             {
@@ -635,119 +635,119 @@ sealed class DumpMediaCommand : Command
             AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
-                              {
-                                  dumper.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
+                        {
+                            dumper.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
-                                  dumper.ErrorMessage += text =>
-                                                         {
-                                                             AaruConsole.
-                                                                 ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                                                         };
+                            dumper.ErrorMessage += text =>
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                            };
 
-                                  dumper.StoppingErrorMessage += text =>
-                                                                 {
-                                                                     AaruConsole.
-                                                                         ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                                                                 };
+                            dumper.StoppingErrorMessage += text =>
+                            {
+                                AaruConsole.
+                                    ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                            };
 
-                                  dumper.UpdateProgress += (text, current, maximum) =>
-                                                           {
-                                                               _progressTask1             ??= ctx.AddTask("Progress");
-                                                               _progressTask1.Description =   Markup.Escape(text);
-                                                               _progressTask1.Value       =   current;
-                                                               _progressTask1.MaxValue    =   maximum;
-                                                           };
+                            dumper.UpdateProgress += (text, current, maximum) =>
+                            {
+                                _progressTask1             ??= ctx.AddTask("Progress");
+                                _progressTask1.Description =   Markup.Escape(text);
+                                _progressTask1.Value       =   current;
+                                _progressTask1.MaxValue    =   maximum;
+                            };
 
-                                  dumper.PulseProgress += text =>
-                                                          {
-                                                              if(_progressTask1 is null)
-                                                                  ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
-                                                              else
-                                                              {
-                                                                  _progressTask1.Description     = Markup.Escape(text);
-                                                                  _progressTask1.IsIndeterminate = true;
-                                                              }
-                                                          };
+                            dumper.PulseProgress += text =>
+                            {
+                                if(_progressTask1 is null)
+                                    ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
+                                else
+                                {
+                                    _progressTask1.Description     = Markup.Escape(text);
+                                    _progressTask1.IsIndeterminate = true;
+                                }
+                            };
 
-                                  dumper.InitProgress += () => { _progressTask1 = ctx.AddTask("Progress"); };
+                            dumper.InitProgress += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                                  dumper.EndProgress += () =>
-                                                        {
-                                                            _progressTask1?.StopTask();
-                                                            _progressTask1 = null;
-                                                        };
+                            dumper.EndProgress += () =>
+                            {
+                                _progressTask1?.StopTask();
+                                _progressTask1 = null;
+                            };
 
-                                  dumper.InitProgress2 += () => { _progressTask2 = ctx.AddTask("Progress"); };
+                            dumper.InitProgress2 += () => { _progressTask2 = ctx.AddTask("Progress"); };
 
-                                  dumper.EndProgress2 += () =>
-                                                         {
-                                                             _progressTask2?.StopTask();
-                                                             _progressTask2 = null;
-                                                         };
+                            dumper.EndProgress2 += () =>
+                            {
+                                _progressTask2?.StopTask();
+                                _progressTask2 = null;
+                            };
 
-                                  dumper.UpdateProgress2 += (text, current, maximum) =>
-                                                            {
-                                                                _progressTask2             ??= ctx.AddTask("Progress");
-                                                                _progressTask2.Description =   Markup.Escape(text);
-                                                                _progressTask2.Value       =   current;
-                                                                _progressTask2.MaxValue    =   maximum;
-                                                            };
+                            dumper.UpdateProgress2 += (text, current, maximum) =>
+                            {
+                                _progressTask2             ??= ctx.AddTask("Progress");
+                                _progressTask2.Description =   Markup.Escape(text);
+                                _progressTask2.Value       =   current;
+                                _progressTask2.MaxValue    =   maximum;
+                            };
 
-                                  System.Console.CancelKeyPress += (_, e) =>
-                                                                   {
-                                                                       e.Cancel = true;
-                                                                       dumper.Abort();
-                                                                   };
+                            System.Console.CancelKeyPress += (_, e) =>
+                            {
+                                e.Cancel = true;
+                                dumper.Abort();
+                            };
 
-                                  dumper.Start();
-                              });
+                            dumper.Start();
+                        });
 
             if(eject && dev.IsRemovable)
             {
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Ejecting_media).IsIndeterminate();
+                {
+                    ctx.AddTask(UI.Ejecting_media).IsIndeterminate();
 
-                                                       switch(dev.Type)
-                                                       {
-                                                           case DeviceType.ATA:
-                                                               dev.DoorUnlock(out _, dev.Timeout, out _);
-                                                               dev.MediaEject(out _, dev.Timeout, out _);
+                    switch(dev.Type)
+                    {
+                        case DeviceType.ATA:
+                            dev.DoorUnlock(out _, dev.Timeout, out _);
+                            dev.MediaEject(out _, dev.Timeout, out _);
 
-                                                               break;
-                                                           case DeviceType.ATAPI:
-                                                           case DeviceType.SCSI:
-                                                               switch(dev.ScsiType)
-                                                               {
-                                                                   case PeripheralDeviceTypes.DirectAccess:
-                                                                   case PeripheralDeviceTypes.SimplifiedDevice:
-                                                                   case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                                                   case PeripheralDeviceTypes.WriteOnceDevice:
-                                                                   case PeripheralDeviceTypes.OpticalDevice:
-                                                                   case PeripheralDeviceTypes.OCRWDevice:
-                                                                       dev.SpcAllowMediumRemoval(out _, dev.Timeout,
-                                                                           out _);
-                                                                       dev.EjectTray(out _, dev.Timeout, out _);
+                            break;
+                        case DeviceType.ATAPI:
+                        case DeviceType.SCSI:
+                            switch(dev.ScsiType)
+                            {
+                                case PeripheralDeviceTypes.DirectAccess:
+                                case PeripheralDeviceTypes.SimplifiedDevice:
+                                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                                case PeripheralDeviceTypes.WriteOnceDevice:
+                                case PeripheralDeviceTypes.OpticalDevice:
+                                case PeripheralDeviceTypes.OCRWDevice:
+                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout,
+                                                              out _);
+                                    dev.EjectTray(out _, dev.Timeout, out _);
 
-                                                                       break;
-                                                                   case PeripheralDeviceTypes.MultiMediaDevice:
-                                                                       dev.AllowMediumRemoval(out _, dev.Timeout,
-                                                                           out _);
-                                                                       dev.EjectTray(out _, dev.Timeout, out _);
+                                    break;
+                                case PeripheralDeviceTypes.MultiMediaDevice:
+                                    dev.AllowMediumRemoval(out _, dev.Timeout,
+                                                           out _);
+                                    dev.EjectTray(out _, dev.Timeout, out _);
 
-                                                                       break;
-                                                                   case PeripheralDeviceTypes.SequentialAccess:
-                                                                       dev.SpcAllowMediumRemoval(out _, dev.Timeout,
-                                                                           out _);
-                                                                       dev.LoadUnload(out _, true, false, false, false,
-                                                                           false, dev.Timeout, out _);
+                                    break;
+                                case PeripheralDeviceTypes.SequentialAccess:
+                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout,
+                                                              out _);
+                                    dev.LoadUnload(out _, true, false, false, false,
+                                                   false, dev.Timeout, out _);
 
-                                                                       break;
-                                                               }
+                                    break;
+                            }
 
-                                                               break;
-                                                       }
-                                                   });
+                            break;
+                    }
+                });
             }
 
             dev.Close();

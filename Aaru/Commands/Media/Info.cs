@@ -93,23 +93,23 @@ sealed class MediaInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("media-info");
@@ -129,10 +129,10 @@ sealed class MediaInfoCommand : Command
         ErrorNumber    devErrno = ErrorNumber.NoError;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Opening_device).IsIndeterminate();
-                                               dev = Devices.Device.Create(devicePath, out devErrno);
-                                           });
+        {
+            ctx.AddTask(UI.Opening_device).IsIndeterminate();
+            dev = Devices.Device.Create(devicePath, out devErrno);
+        });
 
         switch(dev)
         {
@@ -196,10 +196,10 @@ sealed class MediaInfoCommand : Command
         ScsiInfo scsiInfo = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Retrieving_SCSI_information).IsIndeterminate();
-                                               scsiInfo = new ScsiInfo(dev);
-                                           });
+        {
+            ctx.AddTask(UI.Retrieving_SCSI_information).IsIndeterminate();
+            scsiInfo = new ScsiInfo(dev);
+        });
 
         if(!scsiInfo.MediaInserted)
             return;
@@ -519,7 +519,7 @@ sealed class MediaInfoCommand : Command
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Cartridge_Status}:[/]",
                                       $"\n{Markup.Escape(Decoders.Bluray.Cartridge.Prettify(scsiInfo.
-                                                                      BlurayCartridgeStatus))}");
+                                                                 BlurayCartridgeStatus))}");
             }
 
             if(scsiInfo.BluraySpareAreaInformation != null)
@@ -529,7 +529,7 @@ sealed class MediaInfoCommand : Command
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Spare_Area_Information}:[/]",
                                       $"\n{Markup.Escape(Decoders.Bluray.Spare.Prettify(scsiInfo.
-                                                                      BluraySpareAreaInformation))}");
+                                                                 BluraySpareAreaInformation))}");
             }
 
             if(scsiInfo.BlurayRawDfl != null)
@@ -589,7 +589,7 @@ sealed class MediaInfoCommand : Command
                 {
                     AaruConsole.WriteLine($"[bold]{Localization.Core.Standard_Disc_Information}:[/]",
                                           $"\n{Markup.Escape(DiscInformation.Prettify000b(scsiInfo.
-                                                                          DecodedDiscInformation))}");
+                                                                     DecodedDiscInformation))}");
                 }
             }
 

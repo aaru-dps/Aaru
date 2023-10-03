@@ -81,23 +81,23 @@ sealed class PrintHexCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("print-hex");
@@ -114,10 +114,10 @@ sealed class PrintHexCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         if(inputFilter == null)
         {
@@ -129,10 +129,10 @@ sealed class PrintHexCommand : Command
         IBaseImage inputFormat = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                               inputFormat = ImageFormat.Detect(inputFilter);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+            inputFormat = ImageFormat.Detect(inputFilter);
+        });
 
         if(inputFormat == null)
         {
@@ -144,10 +144,10 @@ sealed class PrintHexCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                               opened = inputFormat.Open(inputFilter);
-                                           });
+        {
+            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+            opened = inputFormat.Open(inputFilter);
+        });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -168,13 +168,13 @@ sealed class PrintHexCommand : Command
             var         bytesRead = 0;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Reading_data).IsIndeterminate();
+            {
+                ctx.AddTask(UI.Reading_data).IsIndeterminate();
 
-                                                   errno = byteAddressableImage?.ReadBytesAt((long)start, data, 0,
-                                                               (int)length, out bytesRead) ??
-                                                           ErrorNumber.InvalidArgument;
-                                               });
+                errno = byteAddressableImage?.ReadBytesAt((long)start, data, 0,
+                                                          (int)length, out bytesRead) ??
+                        ErrorNumber.InvalidArgument;
+            });
 
             // TODO: Span
             if(bytesRead != (int)length)
@@ -223,13 +223,13 @@ sealed class PrintHexCommand : Command
                 ErrorNumber errno  = ErrorNumber.NoError;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Reading_sector).IsIndeterminate();
+                {
+                    ctx.AddTask(UI.Reading_sector).IsIndeterminate();
 
-                                                       errno = longSectors
-                                                                   ? blockImage.ReadSectorLong(start + i, out sector)
-                                                                   : blockImage.ReadSector(start     + i, out sector);
-                                                   });
+                    errno = longSectors
+                                ? blockImage.ReadSectorLong(start + i, out sector)
+                                : blockImage.ReadSector(start     + i, out sector);
+                });
 
                 if(errno == ErrorNumber.NoError)
                     AaruConsole.WriteLine(Markup.Escape(PrintHex.ByteArrayToHexArrayString(sector, width, true)));

@@ -83,23 +83,23 @@ sealed class FilesystemInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("fs-info");
@@ -115,10 +115,10 @@ sealed class FilesystemInfoCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         if(inputFilter == null)
         {
@@ -156,11 +156,11 @@ sealed class FilesystemInfoCommand : Command
             IBaseImage  baseImage   = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                                   baseImage   = ImageFormat.Detect(inputFilter);
-                                                   imageFormat = baseImage as IMediaImage;
-                                               });
+            {
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                baseImage   = ImageFormat.Detect(inputFilter);
+                imageFormat = baseImage as IMediaImage;
+            });
 
             if(baseImage == null)
             {
@@ -188,10 +188,10 @@ sealed class FilesystemInfoCommand : Command
                 ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                                       opened = imageFormat.Open(inputFilter);
-                                                   });
+                {
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                    opened = imageFormat.Open(inputFilter);
+                });
 
                 if(opened != ErrorNumber.NoError)
                 {
@@ -229,10 +229,10 @@ sealed class FilesystemInfoCommand : Command
                 List<Partition> partitionsList = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
-                                                       partitionsList = Core.Partitions.GetAll(imageFormat);
-                                                   });
+                {
+                    ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                    partitionsList = Core.Partitions.GetAll(imageFormat);
+                });
 
                 Core.Partitions.AddSchemesToStats(partitionsList);
 
@@ -284,12 +284,12 @@ sealed class FilesystemInfoCommand : Command
                             continue;
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                           {
-                                                               ctx.AddTask(UI.Identifying_filesystems_on_partition).
-                                                                   IsIndeterminate();
-                                                               Core.Filesystems.Identify(imageFormat, out idPlugins,
-                                                                   partitionsList[i]);
-                                                           });
+                        {
+                            ctx.AddTask(UI.Identifying_filesystems_on_partition).
+                                IsIndeterminate();
+                            Core.Filesystems.Identify(imageFormat, out idPlugins,
+                                                      partitionsList[i]);
+                        });
 
                         switch(idPlugins.Count)
                         {
@@ -357,10 +357,10 @@ sealed class FilesystemInfoCommand : Command
                 };
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Identifying_filesystems).IsIndeterminate();
-                                                       Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
-                                                   });
+                {
+                    ctx.AddTask(UI.Identifying_filesystems).IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                });
 
                 switch(idPlugins.Count)
                 {

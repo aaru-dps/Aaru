@@ -88,23 +88,23 @@ sealed class LsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(Markup.Escape(format));
-                                                   else
-                                                       stderrConsole.MarkupLine(Markup.Escape(format), objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(Markup.Escape(format));
+                else
+                    stderrConsole.MarkupLine(Markup.Escape(format), objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
@@ -118,10 +118,10 @@ sealed class LsCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
         AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
@@ -165,11 +165,11 @@ sealed class LsCommand : Command
             IBaseImage  baseImage   = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                                   baseImage   = ImageFormat.Detect(inputFilter);
-                                                   imageFormat = baseImage as IMediaImage;
-                                               });
+            {
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                baseImage   = ImageFormat.Detect(inputFilter);
+                imageFormat = baseImage as IMediaImage;
+            });
 
             if(baseImage == null)
             {
@@ -195,10 +195,10 @@ sealed class LsCommand : Command
                 ErrorNumber opened = ErrorNumber.NoData;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                                       opened = imageFormat.Open(inputFilter);
-                                                   });
+                {
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                    opened = imageFormat.Open(inputFilter);
+                });
 
                 if(opened != ErrorNumber.NoError)
                 {
@@ -233,10 +233,10 @@ sealed class LsCommand : Command
             List<Partition> partitions = null;
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
-                                               {
-                                                   ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
-                                                   partitions = Core.Partitions.GetAll(imageFormat);
-                                               });
+            {
+                ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                partitions = Core.Partitions.GetAll(imageFormat);
+            });
 
             Core.Partitions.AddSchemesToStats(partitions);
 
@@ -265,12 +265,12 @@ sealed class LsCommand : Command
                 List<string> idPlugins = null;
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                   {
-                                                       ctx.AddTask(UI.Identifying_filesystems_on_partition).
-                                                           IsIndeterminate();
-                                                       Core.Filesystems.Identify(imageFormat, out idPlugins,
-                                                           partitions[i]);
-                                                   });
+                {
+                    ctx.AddTask(UI.Identifying_filesystems_on_partition).
+                        IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins,
+                                              partitions[i]);
+                });
 
                 if(idPlugins.Count == 0)
                     AaruConsole.WriteLine(UI.Filesystem_not_identified);
@@ -294,14 +294,14 @@ sealed class LsCommand : Command
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
 
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                                   {
-                                                                       ctx.AddTask(UI.Mounting_filesystem).
-                                                                           IsIndeterminate();
+                                {
+                                    ctx.AddTask(UI.Mounting_filesystem).
+                                        IsIndeterminate();
 
-                                                                       error = fs.Mount(imageFormat, partitions[i],
-                                                                           encodingClass, parsedOptions,
-                                                                           @namespace);
-                                                                   });
+                                    error = fs.Mount(imageFormat, partitions[i],
+                                                     encodingClass, parsedOptions,
+                                                     @namespace);
+                                });
 
                                 if(error == ErrorNumber.NoError)
                                 {
@@ -324,12 +324,12 @@ sealed class LsCommand : Command
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                                           {
-                                                               ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
-                                                               error = fs.Mount(imageFormat, partitions[i],
-                                                                                    encodingClass, parsedOptions,
-                                                                                    @namespace);
-                                                           });
+                        {
+                            ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
+                            error = fs.Mount(imageFormat, partitions[i],
+                                             encodingClass, parsedOptions,
+                                             @namespace);
+                        });
 
                         if(error == ErrorNumber.NoError)
                         {
@@ -367,10 +367,10 @@ sealed class LsCommand : Command
                                   : string.Format(UI.Directory_0, Markup.Escape(path)));
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Reading_directory).IsIndeterminate();
-                                               error = fs.OpenDir(path, out node);
-                                           });
+        {
+            ctx.AddTask(UI.Reading_directory).IsIndeterminate();
+            error = fs.OpenDir(path, out node);
+        });
 
         if(error != ErrorNumber.NoError)
         {
@@ -382,19 +382,19 @@ sealed class LsCommand : Command
         Dictionary<string, FileEntryInfo> stats = new();
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
+        {
+            ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
 
-                                               while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-                                                     entry is not null)
-                                               {
-                                                   fs.Stat(path + "/" + entry, out FileEntryInfo stat);
+            while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
+                  entry is not null)
+            {
+                fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-                                                   stats.Add(entry, stat);
-                                               }
+                stats.Add(entry, stat);
+            }
 
-                                               fs.CloseDir(node);
-                                           });
+            fs.CloseDir(node);
+        });
 
         foreach(KeyValuePair<string, FileEntryInfo> entry in
                 stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))

@@ -84,23 +84,23 @@ sealed class DecodeCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("decode");
@@ -117,10 +117,10 @@ sealed class DecodeCommand : Command
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-                                               inputFilter = filtersList.GetFilter(imagePath);
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = filtersList.GetFilter(imagePath);
+        });
 
         if(inputFilter == null)
         {
@@ -133,11 +133,11 @@ sealed class DecodeCommand : Command
         IBaseImage  baseImage   = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
-                                               baseImage   = ImageFormat.Detect(inputFilter);
-                                               inputFormat = baseImage as IMediaImage;
-                                           });
+        {
+            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+            baseImage   = ImageFormat.Detect(inputFilter);
+            inputFormat = baseImage as IMediaImage;
+        });
 
         if(baseImage == null)
         {
@@ -156,10 +156,10 @@ sealed class DecodeCommand : Command
         ErrorNumber opened = ErrorNumber.NoData;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
-                                           {
-                                               ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
-                                               opened = inputFormat.Open(inputFilter);
-                                           });
+        {
+            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+            opened = inputFormat.Open(inputFilter);
+        });
 
         if(opened != ErrorNumber.NoError)
         {
@@ -195,12 +195,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.SCSI_INQUIRY_command_response}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(Inquiry.Prettify(inquiry));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -219,12 +221,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.ATA_IDENTIFY_DEVICE_command_response}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(Identify.Prettify(identify));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -244,12 +248,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.ATA_IDENTIFY_PACKET_DEVICE_command_response}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(Identify.Prettify(identify));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -265,12 +271,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.CD_ATIP}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(ATIP.Prettify(atip));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -286,12 +294,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.CD_full_TOC}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(FullTOC.Prettify(fullToc));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -307,12 +317,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{"CD PMA:"}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(PMA.Prettify(pma));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -328,12 +340,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.CD_session_information}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(Session.Prettify(sessionInfo));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -349,12 +363,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.CD_TEXT}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(CDTextOnLeadIn.Prettify(cdText));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;
@@ -371,12 +387,14 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine($"[bold]{UI.CD_TOC}[/]");
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
 
                                 AaruConsole.WriteLine(TOC.Prettify(toc));
 
                                 AaruConsole.
-                                    WriteLine("================================================================================");
+                                    WriteLine(
+                                        "================================================================================");
                             }
 
                             break;

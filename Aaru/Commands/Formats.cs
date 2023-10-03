@@ -64,23 +64,23 @@ sealed class FormatsCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("formats");
@@ -171,7 +171,7 @@ sealed class FormatsCommand : Command
             Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
                                                  plugins.Filesystems.Count(t => !t.Value.GetInterfaces().
                                                                                    Contains(typeof(
-                                                                                                IReadOnlyFilesystem)))))
+                                                                                           IReadOnlyFilesystem)))))
         };
 
         if(verbose)
@@ -181,7 +181,7 @@ sealed class FormatsCommand : Command
 
         foreach(KeyValuePair<string, Type> kvp in plugins.Filesystems.Where(t => !t.Value.GetInterfaces().
                                                                                     Contains(typeof(
-                                                                                                 IReadOnlyFilesystem))))
+                                                                                            IReadOnlyFilesystem))))
         {
             if(Activator.CreateInstance(kvp.Value) is not IFilesystem fs)
                 continue;

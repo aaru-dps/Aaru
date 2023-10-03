@@ -84,28 +84,28 @@ class MainClass
             return Gui.Main.Start(args);
 
         AaruConsole.WriteLineEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.MarkupLine(format);
-                                          else
-                                              AnsiConsole.MarkupLine(format, objects);
-                                      };
+        {
+            if(objects is null)
+                AnsiConsole.MarkupLine(format);
+            else
+                AnsiConsole.MarkupLine(format, objects);
+        };
 
         AaruConsole.WriteEvent += (format, objects) =>
-                                  {
-                                      if(objects is null)
-                                          AnsiConsole.Markup(format);
-                                      else
-                                          AnsiConsole.Markup(format, objects);
-                                  };
+        {
+            if(objects is null)
+                AnsiConsole.Markup(format);
+            else
+                AnsiConsole.Markup(format, objects);
+        };
 
         AaruConsole.ErrorWriteLineEvent += (format, objects) =>
-                                           {
-                                               if(objects is null)
-                                                   stderrConsole.MarkupLine(format);
-                                               else
-                                                   stderrConsole.MarkupLine(format, objects);
-                                           };
+        {
+            if(objects is null)
+                stderrConsole.MarkupLine(format);
+            else
+                stderrConsole.MarkupLine(format, objects);
+        };
 
         Settings.Settings.LoadSettings();
 
@@ -133,7 +133,8 @@ class MainClass
             ctx.Database.EnsureCreated();
 
             ctx.Database.
-                ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                ExecuteSqlRaw(
+                    "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
             {

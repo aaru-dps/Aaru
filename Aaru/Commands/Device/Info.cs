@@ -92,23 +92,23 @@ sealed class DeviceInfoCommand : Command
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
-                                               {
-                                                   if(objects is null)
-                                                       stderrConsole.MarkupLine(format);
-                                                   else
-                                                       stderrConsole.MarkupLine(format, objects);
-                                               };
+            {
+                if(objects is null)
+                    stderrConsole.MarkupLine(format);
+                else
+                    stderrConsole.MarkupLine(format, objects);
+            };
         }
 
         if(verbose)
         {
             AaruConsole.WriteEvent += (format, objects) =>
-                                      {
-                                          if(objects is null)
-                                              AnsiConsole.Markup(format);
-                                          else
-                                              AnsiConsole.Markup(format, objects);
-                                      };
+            {
+                if(objects is null)
+                    AnsiConsole.Markup(format);
+                else
+                    AnsiConsole.Markup(format, objects);
+            };
         }
 
         Statistics.AddCommand("device-info");
@@ -355,8 +355,9 @@ sealed class DeviceInfoCommand : Command
                                                                      dev.IsCompactFlash, dev.IsPcmcia, blocks);
 
                 AaruConsole.
-                    WriteLine(removable ? Localization.Core.Media_identified_as_0 : Localization.Core.Device_identified_as_0,
-                              mediaType);
+                    WriteLine(
+                        removable ? Localization.Core.Media_identified_as_0 : Localization.Core.Device_identified_as_0,
+                        mediaType);
 
                 Statistics.AddMedia(mediaType, true);
             }
