@@ -61,7 +61,7 @@ public delegate void InitTwoProgressHandler();
 
 /// <summary>Updates two progress indicators with text</summary>
 public delegate void UpdateTwoProgressHandler(string text, long current, long maximum, string text2, long current2,
-                                              long maximum2);
+                                              long   maximum2);
 
 /// <summary>Pulses a progress indicator with indeterminate boundaries</summary>
 public delegate void PulseTwoProgressHandler(string text, string text2);

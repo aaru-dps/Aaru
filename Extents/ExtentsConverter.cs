@@ -58,11 +58,13 @@ public static class ExtentsConverter
         List<Extent>          list   = new();
 
         for(ulong i = 0; i < (ulong)tuples.LongLength; i++)
+        {
             list.Add(new Extent
             {
                 Start = tuples[i].Item1,
                 End   = tuples[i].Item2
             });
+        }
 
         return list;
     }
@@ -75,8 +77,8 @@ public static class ExtentsConverter
         if(extents == null)
             return null;
 
-        List<Tuple<ulong, ulong>> tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).
-                                                   ToList();
+        var tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).
+                             ToList();
 
         return new ExtentsULong(tuples);
     }

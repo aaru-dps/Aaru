@@ -61,8 +61,10 @@ public struct Partition : IEquatable<Partition>, IComparable<Partition>
     public ulong Length;
     /// <summary>Information that does not find space in this struct</summary>
     public string Description;
+
     /// <summary>LBA of last partition sector</summary>
     public readonly ulong End => Start + Length - 1;
+
     /// <summary>Name of partition scheme that contains this partition</summary>
     public string Scheme;
 

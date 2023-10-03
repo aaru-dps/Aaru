@@ -57,12 +57,19 @@ public class ResumeJson
 }
 
 /// <summary>Information that allows to resume a dump</summary>
-[Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
+[Serializable]
+[XmlRoot("DicResume", Namespace = "", IsNullable = false)]
 public class Resume
 {
     /// <summary>List of blocks that returned an error on reading</summary>
     [XmlArrayItem("Block")]
     public List<ulong> BadBlocks;
+    /// <summary>List of CD subchannels that did not read correctly</summary>
+    [XmlArrayItem("Block")]
+    public List<int> BadSubchannels;
+    /// <summary>Extents of BLANK sectors for magneto-opticals</summary>
+    [XmlArrayItem("Extent")]
+    public Extent[] BlankExtents;
     /// <summary>Date/time this resume file was created</summary>
     [XmlElement(DataType = "dateTime")]
     public DateTime CreationDate;
@@ -71,21 +78,15 @@ public class Resume
     /// <summary>Date/time this resume file was last written to</summary>
     [XmlElement(DataType = "dateTime")]
     public DateTime LastWriteDate;
+    /// <summary>Title keys that has not been read</summary>
+    [XmlArrayItem("Block")]
+    public List<ulong> MissingTitleKeys;
     /// <summary>Next block to read</summary>
     public ulong NextBlock;
     /// <summary>Is media removable?</summary>
     public bool Removable;
     /// <summary>Is media a tape?</summary>
     public bool Tape;
-    /// <summary>List of CD subchannels that did not read correctly</summary>
-    [XmlArrayItem("Block")]
-    public List<int> BadSubchannels;
-    /// <summary>Extents of BLANK sectors for magneto-opticals</summary>
-    [XmlArrayItem("Extent")]
-    public Extent[] BlankExtents;
-    /// <summary>Title keys that has not been read</summary>
-    [XmlArrayItem("Block")]
-    public List<ulong> MissingTitleKeys;
     /// <summary>List of dump tries</summary>
     [XmlArrayItem("DumpTry")]
     public List<DumpHardware> Tries;

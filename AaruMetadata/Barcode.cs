@@ -47,15 +47,33 @@ namespace Aaru.CommonTypes.AaruMetadata;
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum BarcodeType
 {
-    Aztec, Codabar, Code11,
-    Code128, Code39, Code93,
-    CPC_Binary, EZcode, FIM,
-    ITF, ITF14, EAN13,
-    EAN8, MaxiCode, ISBN,
-    ISRC, MSI, ShotCode,
-    RM4SCC, QR, EAN5,
-    EAN2, POSTNET, PostBar,
-    Plessey, Pharmacode, PDF417,
+    Aztec,
+    Codabar,
+    Code11,
+    Code128,
+    Code39,
+    Code93,
+    CPC_Binary,
+    EZcode,
+    FIM,
+    ITF,
+    ITF14,
+    EAN13,
+    EAN8,
+    MaxiCode,
+    ISBN,
+    ISRC,
+    MSI,
+    ShotCode,
+    RM4SCC,
+    QR,
+    EAN5,
+    EAN2,
+    POSTNET,
+    PostBar,
+    Plessey,
+    Pharmacode,
+    PDF417,
     PatchCode
 }
 
@@ -65,9 +83,11 @@ public class Barcode
     public string      Value { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Barcode(Schemas.BarcodeType cicm) => cicm is null ? null : new Barcode
-    {
-        Type  = (BarcodeType)cicm.type,
-        Value = cicm.Value
-    };
+    public static implicit operator Barcode(Schemas.BarcodeType cicm) => cicm is null
+                                                                             ? null
+                                                                             : new Barcode
+                                                                             {
+                                                                                 Type  = (BarcodeType)cicm.type,
+                                                                                 Value = cicm.Value
+                                                                             };
 }

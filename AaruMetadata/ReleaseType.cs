@@ -46,8 +46,16 @@ namespace Aaru.CommonTypes.AaruMetadata;
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ReleaseType
 {
-    Retail, Bundle, Coverdisc,
-    Subscription, Demo, OEM,
-    Shareware, FOSS, Adware,
-    Donationware, DigitalDownload, SaaS
+    Retail,
+    Bundle,
+    Coverdisc,
+    Subscription,
+    Demo,
+    OEM,
+    Shareware,
+    FOSS,
+    Adware,
+    Donationware,
+    DigitalDownload,
+    SaaS
 }

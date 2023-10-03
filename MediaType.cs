@@ -50,14 +50,19 @@ namespace Aaru.CommonTypes;
 
 public enum MediaEncoding
 {
-    Unknown, FM, MFM,
-    M2FM, AppleGCR, CommodoreGCR
+    Unknown,
+    FM,
+    MFM,
+    M2FM,
+    AppleGCR,
+    CommodoreGCR
 }
 
 /// <summary>Contains an enumeration of all known types of media.</summary>
 public enum MediaType : uint
 {
-    #region Generics, types 0 to 9
+#region Generics, types 0 to 9
+
     /// <summary>Unknown disk type</summary>
     Unknown = 0,
     /// <summary>Unknown magneto-optical</summary>
@@ -72,9 +77,11 @@ public enum MediaType : uint
     FlashDrive = 5,
     /// <summary>Unknown data tape</summary>
     UnknownTape = 6,
-    #endregion Generics, types 0 to 9
 
-    #region Somewhat standard Compact Disc formats, types 10 to 39
+#endregion Generics, types 0 to 9
+
+#region Somewhat standard Compact Disc formats, types 10 to 39
+
     /// <summary>Any unknown or standard violating CD</summary>
     CD = 10,
     /// <summary>CD Digital Audio (Red Book)</summary>
@@ -127,10 +134,13 @@ public enum MediaType : uint
     ///     CD-i Ready, contains a track before the first TOC track, in mode 2, and all TOC tracks are Audio. Subchannel
     ///     marks track as audio pause.
     /// </summary>
-    CDIREADY = 34, FMTOWNS = 35,
-    #endregion Somewhat standard Compact Disc formats, types 10 to 39
+    CDIREADY = 34,
+    FMTOWNS = 35,
 
-    #region Standard DVD formats, types 40 to 50
+#endregion Somewhat standard Compact Disc formats, types 10 to 39
+
+#region Standard DVD formats, types 40 to 50
+
     /// <summary>DVD-ROM (applies to DVD Video and DVD Audio)</summary>
     DVDROM = 40,
     /// <summary>DVD-R</summary>
@@ -153,9 +163,11 @@ public enum MediaType : uint
     DVDRWDL = 49,
     /// <summary>DVD-Download</summary>
     DVDDownload = 50,
-    #endregion Standard DVD formats, types 40 to 50
 
-    #region Standard HD-DVD formats, types 51 to 59
+#endregion Standard DVD formats, types 40 to 50
+
+#region Standard HD-DVD formats, types 51 to 59
+
     /// <summary>HD DVD-ROM (applies to HD DVD Video)</summary>
     HDDVDROM = 51,
     /// <summary>HD DVD-RAM</summary>
@@ -168,9 +180,11 @@ public enum MediaType : uint
     HDDVDRDL = 55,
     /// <summary>HD DVD-RW DL</summary>
     HDDVDRWDL = 56,
-    #endregion Standard HD-DVD formats, types 51 to 59
 
-    #region Standard Blu-ray formats, types 60 to 69
+#endregion Standard HD-DVD formats, types 51 to 59
+
+#region Standard Blu-ray formats, types 60 to 69
+
     /// <summary>BD-ROM (and BD Video)</summary>
     BDROM = 60,
     /// <summary>BD-R</summary>
@@ -183,9 +197,11 @@ public enum MediaType : uint
     BDREXL = 64,
     /// <summary>Ultra HD Blu-ray</summary>
     UHDBD = 65,
-    #endregion Standard Blu-ray formats, types 60 to 69
 
-    #region Rare or uncommon optical standards, types 70 to 79
+#endregion Standard Blu-ray formats, types 60 to 69
+
+#region Rare or uncommon optical standards, types 70 to 79
+
     /// <summary>Enhanced Versatile Disc</summary>
     EVD = 70,
     /// <summary>Forward Versatile Disc</summary>
@@ -204,18 +220,25 @@ public enum MediaType : uint
     FDDVD = 77,
     /// <summary>China Video Disc</summary>
     CVD = 78,
-    #endregion Rare or uncommon optical standards, types 70 to 79
 
-    #region LaserDisc based, types 80 to 89
+#endregion Rare or uncommon optical standards, types 70 to 79
+
+#region LaserDisc based, types 80 to 89
+
     /// <summary>Pioneer LaserDisc</summary>
     LD = 80,
     /// <summary>Pioneer LaserDisc data</summary>
-    LDROM = 81, LDROM2 = 82, LVROM = 83, MegaLD = 84,
+    LDROM = 81,
+    LDROM2 = 82,
+    LVROM  = 83,
+    MegaLD = 84,
     /// <summary>Writable LaserDisc with support for component video</summary>
     CRVdisc = 85,
-    #endregion LaserDisc based, types 80 to 89
 
-    #region MiniDisc based, types 90 to 99
+#endregion LaserDisc based, types 80 to 89
+
+#region MiniDisc based, types 90 to 99
+
     /// <summary>Sony Hi-MD</summary>
     HiMD = 90,
     /// <summary>Sony MiniDisc</summary>
@@ -230,19 +253,24 @@ public enum MediaType : uint
     MD74 = 95,
     /// <summary>Sony MiniDisc, 80 minutes, formatted with Hi-MD format</summary>
     MD80 = 96,
-    #endregion MiniDisc based, types 90 to 99
 
-    #region Plasmon UDO, types 100 to 109
+#endregion MiniDisc based, types 90 to 99
+
+#region Plasmon UDO, types 100 to 109
+
     /// <summary>5.25", Phase-Change, 1834348 sectors, 8192 bytes/sector, Ultra Density Optical, ECMA-350, ISO 17345</summary>
     UDO = 100,
     /// <summary>5.25", Phase-Change, 3669724 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
     UDO2 = 101,
     /// <summary>5.25", Write-Once, 3668759 sectors, 8192 bytes/sector, Ultra Density Optical 2, ECMA-380, ISO 11976</summary>
     UDO2_WORM = 102,
-    #endregion Plasmon UDO, types 100 to 109
 
-    #region Sony game media, types 110 to 129
-    PlayStationMemoryCard = 110, PlayStationMemoryCard2 = 111,
+#endregion Plasmon UDO, types 100 to 109
+
+#region Sony game media, types 110 to 129
+
+    PlayStationMemoryCard  = 110,
+    PlayStationMemoryCard2 = 111,
     /// <summary>Sony PlayStation game CD</summary>
     PS1CD = 112,
     /// <summary>Sony PlayStation 2 game CD</summary>
@@ -256,12 +284,15 @@ public enum MediaType : uint
     /// <summary>Sony PlayStation 4 game Blu-ray</summary>
     PS4BD = 117,
     /// <summary>Sony PlayStation Portable Universal Media Disc (ECMA-365)</summary>
-    UMD = 118, PlayStationVitaGameCard = 119,
+    UMD = 118,
+    PlayStationVitaGameCard = 119,
     /// <summary>Sony PlayStation 5 game Ultra HD Blu-ray</summary>
     PS5BD = 120,
-    #endregion Sony game media, types 110 to 129
 
-    #region Microsoft game media, types 130 to 149
+#endregion Sony game media, types 110 to 129
+
+#region Microsoft game media, types 130 to 149
+
     /// <summary>Microsoft X-box Game Disc</summary>
     XGD = 130,
     /// <summary>Microsoft X-box 360 Game Disc</summary>
@@ -270,9 +301,11 @@ public enum MediaType : uint
     XGD3 = 132,
     /// <summary>Microsoft X-box One Game Disc</summary>
     XGD4 = 133,
-    #endregion Microsoft game media, types 130 to 149
 
-    #region Sega game media, types 150 to 169
+#endregion Microsoft game media, types 130 to 149
+
+#region Sega game media, types 150 to 169
+
     /// <summary>Sega MegaCD</summary>
     MEGACD = 150,
     /// <summary>Sega Saturn disc</summary>
@@ -280,12 +313,20 @@ public enum MediaType : uint
     /// <summary>Sega/Yamaha Gigabyte Disc</summary>
     GDROM = 152,
     /// <summary>Sega/Yamaha recordable Gigabyte Disc</summary>
-    GDR = 153, SegaCard = 154, MilCD               = 155, MegaDriveCartridge    = 156,
-    _32XCartridge       = 157, SegaPicoCartridge   = 158, MasterSystemCartridge = 159,
-    GameGearCartridge   = 160, SegaSaturnCartridge = 161,
-    #endregion Sega game media, types 150 to 169
+    GDR = 153,
+    SegaCard              = 154,
+    MilCD                 = 155,
+    MegaDriveCartridge    = 156,
+    _32XCartridge         = 157,
+    SegaPicoCartridge     = 158,
+    MasterSystemCartridge = 159,
+    GameGearCartridge     = 160,
+    SegaSaturnCartridge   = 161,
 
-    #region Other game media, types 170 to 179
+#endregion Sega game media, types 150 to 169
+
+#region Other game media, types 170 to 179
+
     /// <summary>PC-Engine / TurboGrafx cartridge</summary>
     HuCard = 170,
     /// <summary>PC-Engine / TurboGrafx CD</summary>
@@ -306,9 +347,11 @@ public enum MediaType : uint
     Nuon = 178,
     /// <summary>Bandai Playdia</summary>
     Playdia = 179,
-    #endregion Other game media, types 170 to 179
 
-    #region Apple standard floppy format, types 180 to 189
+#endregion Other game media, types 170 to 179
+
+#region Apple standard floppy format, types 180 to 189
+
     /// <summary>5.25", SS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
     Apple32SS = 180,
     /// <summary>5.25", DS, DD, 35 tracks, 13 spt, 256 bytes/sector, GCR</summary>
@@ -323,9 +366,11 @@ public enum MediaType : uint
     AppleSonyDS = 185,
     /// <summary>5.25", DS, ?D, ?? tracks, ?? spt, 512 bytes/sector, GCR, opposite side heads, aka Twiggy</summary>
     AppleFileWare = 186,
-    #endregion Apple standard floppy format
 
-    #region IBM/Microsoft PC floppy formats, types 190 to 209
+#endregion Apple standard floppy format
+
+#region IBM/Microsoft PC floppy formats, types 190 to 209
+
     /// <summary>5.25", SS, DD, 40 tracks, 8 spt, 512 bytes/sector, MFM</summary>
     DOS_525_SS_DD_8 = 190,
     /// <summary>5.25", SS, DD, 40 tracks, 9 spt, 512 bytes/sector, MFM</summary>
@@ -362,9 +407,11 @@ public enum MediaType : uint
     ///     bytes/sector, falsified to DOS as 23 spt, 512 bps
     /// </summary>
     XDF_35 = 204,
-    #endregion IBM/Microsoft PC standard floppy formats, types 190 to 209
 
-    #region IBM standard floppy formats, types 210 to 219
+#endregion IBM/Microsoft PC standard floppy formats, types 190 to 209
+
+#region IBM standard floppy formats, types 210 to 219
+
     /// <summary>8", SS, SD, 32 tracks, 8 spt, 319 bytes/sector, FM</summary>
     IBM23FD = 210,
     /// <summary>8", SS, SD, 73 tracks, 26 spt, 128 bytes/sector, FM</summary>
@@ -392,9 +439,11 @@ public enum MediaType : uint
     ///     side 1 = 26 sectors, 256 bytes/sector
     /// </summary>
     IBM53FD_1024 = 218,
-    #endregion IBM standard floppy formats, types 210 to 219
 
-    #region DEC standard floppy formats, types 220 to 229
+#endregion IBM standard floppy formats, types 210 to 219
+
+#region DEC standard floppy formats, types 220 to 229
+
     /// <summary>8", SS, DD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
     RX01 = 220,
     /// <summary>8", SS, DD, 77 tracks, 26 spt, 256 bytes/sector, FM/MFM</summary>
@@ -403,9 +452,11 @@ public enum MediaType : uint
     RX03 = 222,
     /// <summary>5.25", SS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM</summary>
     RX50 = 223,
-    #endregion DEC standard floppy formats, types 220 to 229
 
-    #region Acorn standard floppy formats, types 230 to 239
+#endregion DEC standard floppy formats, types 220 to 229
+
+#region Acorn standard floppy formats, types 230 to 239
+
     /// <summary>5,25", SS, SD, 40 tracks, 10 spt, 256 bytes/sector, FM</summary>
     ACORN_525_SS_SD_40 = 230,
     /// <summary>5,25", SS, SD, 80 tracks, 10 spt, 256 bytes/sector, FM</summary>
@@ -420,9 +471,11 @@ public enum MediaType : uint
     ACORN_35_DS_DD = 235,
     /// <summary>3,5", DS, HD, 80 tracks, 10 spt, 1024 bytes/sector, MFM</summary>
     ACORN_35_DS_HD = 236,
-    #endregion Acorn standard floppy formats, types 230 to 239
 
-    #region Atari standard floppy formats, types 240 to 249
+#endregion Acorn standard floppy formats, types 230 to 239
+
+#region Atari standard floppy formats, types 240 to 249
+
     /// <summary>5,25", SS, SD, 40 tracks, 18 spt, 128 bytes/sector, FM</summary>
     ATARI_525_SD = 240,
     /// <summary>5,25", SS, ED, 40 tracks, 26 spt, 128 bytes/sector, MFM</summary>
@@ -437,9 +490,11 @@ public enum MediaType : uint
     ATARI_35_SS_DD_11 = 245,
     /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM</summary>
     ATARI_35_DS_DD_11 = 246,
-    #endregion Atari standard floppy formats, types 240 to 249
 
-    #region Commodore standard floppy formats, types 250 to 259
+#endregion Atari standard floppy formats, types 240 to 249
+
+#region Commodore standard floppy formats, types 250 to 259
+
     /// <summary>3,5", DS, DD, 80 tracks, 10 spt, 512 bytes/sector, MFM (1581)</summary>
     CBM_35_DD = 250,
     /// <summary>3,5", DS, DD, 80 tracks, 11 spt, 512 bytes/sector, MFM (Amiga)</summary>
@@ -452,9 +507,11 @@ public enum MediaType : uint
     CBM_1540_Ext = 254,
     /// <summary>5,25", DS, DD, 35 tracks, GCR</summary>
     CBM_1571 = 255,
-    #endregion Commodore standard floppy formats, types 250 to 259
 
-    #region NEC/SHARP standard floppy formats, types 260 to 269
+#endregion Commodore standard floppy formats, types 250 to 259
+
+#region NEC/SHARP standard floppy formats, types 260 to 269
+
     /// <summary>8", DS, SD, 77 tracks, 26 spt, 128 bytes/sector, FM</summary>
     NEC_8_SD = 260,
     /// <summary>8", DS, DD, 77 tracks, 26 spt, 256 bytes/sector, MFM</summary>
@@ -479,9 +536,11 @@ public enum MediaType : uint
     SHARP_35 = NEC_35_HD_8,
     /// <summary>3,5", DS, HD, 80 tracks, 9 spt, 1024 bytes/sector, MFM</summary>
     SHARP_35_9 = 269,
-    #endregion NEC/SHARP standard floppy formats, types 260 to 269
 
-    #region ECMA floppy standards, types 270 to 289
+#endregion NEC/SHARP standard floppy formats, types 260 to 269
+
+#region ECMA floppy standards, types 270 to 289
+
     /// <summary>
     ///     5,25", DS, DD, 80 tracks, 8 spt, 1024 bytes/sector, MFM, track 0 side 0 = 26 sectors, 128 bytes/sector, track
     ///     0 side 1 = 26 sectors, 256 bytes/sector
@@ -536,9 +595,11 @@ public enum MediaType : uint
     ECMA_78 = 280,
     /// <summary>5,25", DS, DD, 80 tracks, 9 spt, 512 bytes/sector, FM</summary>
     ECMA_78_2 = 281,
-    #endregion ECMA floppy standards, types 270 to 289
 
-    #region Non-standard PC formats (FDFORMAT, 2M, etc), types 290 to 308
+#endregion ECMA floppy standards, types 270 to 289
+
+#region Non-standard PC formats (FDFORMAT, 2M, etc), types 290 to 308
+
     /// <summary>5,25", DS, DD, 82 tracks, 10 spt, 512 bytes/sector, MFM</summary>
     FDFORMAT_525_DD = 290,
     /// <summary>5,25", DS, HD, 82 tracks, 17 spt, 512 bytes/sector, MFM</summary>
@@ -547,35 +608,61 @@ public enum MediaType : uint
     FDFORMAT_35_DD = 292,
     /// <summary>3,5", DS, HD, 82 tracks, 21 spt, 512 bytes/sector, MFM</summary>
     FDFORMAT_35_HD = 293,
-    #endregion Non-standard PC formats (FDFORMAT, 2M, etc), types 290 to 308
 
-    #region Apricot ACT standard floppy formats, type 309
+#endregion Non-standard PC formats (FDFORMAT, 2M, etc), types 290 to 308
+
+#region Apricot ACT standard floppy formats, type 309
+
     /// <summary>3.5", DS, DD, 70 tracks, 9 spt, 512 bytes/sector, MFM</summary>
     Apricot_35 = 309,
-    #endregion Apricot ACT standard floppy formats, type 309
 
-    #region OnStream ADR, types 310 to 319
-    ADR2120 = 310, ADR260 = 311, ADR30 = 312,
+#endregion Apricot ACT standard floppy formats, type 309
+
+#region OnStream ADR, types 310 to 319
+
+    ADR2120 = 310,
+    ADR260  = 311,
+    ADR30   = 312,
     ADR50   = 313,
-    #endregion OnStream ADR, types 310 to 319
 
-    #region Advanced Intelligent Tape, types 320 to 339
-    AIT1      = 320, AIT1Turbo = 321, AIT2   = 322,
-    AIT2Turbo = 323, AIT3      = 324, AIT3Ex = 325,
-    AIT3Turbo = 326, AIT4      = 327, AIT5   = 328,
-    AITETurbo = 329, SAIT1     = 330, SAIT2  = 331,
-    #endregion Advanced Intelligent Tape, types 320 to 339
+#endregion OnStream ADR, types 310 to 319
 
-    #region Iomega, types 340 to 359
+#region Advanced Intelligent Tape, types 320 to 339
+
+    AIT1      = 320,
+    AIT1Turbo = 321,
+    AIT2      = 322,
+    AIT2Turbo = 323,
+    AIT3      = 324,
+    AIT3Ex    = 325,
+    AIT3Turbo = 326,
+    AIT4      = 327,
+    AIT5      = 328,
+    AITETurbo = 329,
+    SAIT1     = 330,
+    SAIT2     = 331,
+
+#endregion Advanced Intelligent Tape, types 320 to 339
+
+#region Iomega, types 340 to 359
+
     /// <summary>Obsolete type for 8"x11" Bernoulli Box disk</summary>
     [Obsolete]
     Bernoulli = 340,
     /// <summary>Obsolete type for 5⅓" Bernoulli Box II disks</summary>
     [Obsolete]
-    Bernoulli2 = 341, Ditto = 342, DittoMax  = 343, Jaz    = 344,
-    Jaz2                    = 345, PocketZip = 346, REV120 = 347,
-    REV35                   = 348, REV70     = 349, ZIP100 = 350,
-    ZIP250                  = 351, ZIP750    = 352,
+    Bernoulli2 = 341,
+    Ditto     = 342,
+    DittoMax  = 343,
+    Jaz       = 344,
+    Jaz2      = 345,
+    PocketZip = 346,
+    REV120    = 347,
+    REV35     = 348,
+    REV70     = 349,
+    ZIP100    = 350,
+    ZIP250    = 351,
+    ZIP750    = 352,
     /// <summary>5⅓" Bernoulli Box II disk with 35Mb capacity</summary>
     Bernoulli35 = 353,
     /// <summary>5⅓" Bernoulli Box II disk with 44Mb capacity</summary>
@@ -590,50 +677,94 @@ public enum MediaType : uint
     Bernoulli150 = 358,
     /// <summary>5⅓" Bernoulli Box II disk with 230Mb capacity</summary>
     Bernoulli230 = 359,
-    #endregion Iomega, types 340 to 359
 
-    #region Audio or video media, types 360 to 369
-    CompactCassette = 360, Data8 = 361, MiniDV = 362,
+#endregion Iomega, types 340 to 359
+
+#region Audio or video media, types 360 to 369
+
+    CompactCassette = 360,
+    Data8           = 361,
+    MiniDV          = 362,
     /// <summary>D/CAS-25: Digital data on Compact Cassette form factor, special magnetic media, 9-track</summary>
     Dcas25 = 363,
     /// <summary>D/CAS-85: Digital data on Compact Cassette form factor, special magnetic media, 17-track</summary>
     Dcas85 = 364,
     /// <summary>D/CAS-103: Digital data on Compact Cassette form factor, special magnetic media, 21-track</summary>
     Dcas103 = 365,
-    #endregion Audio media, types 360 to 369
 
-    #region CompactFlash Association, types 370 to 379
-    CFast = 370, CompactFlash = 371, CompactFlashType2 = 372,
-    #endregion CompactFlash Association, types 370 to 379
+#endregion Audio media, types 360 to 369
 
-    #region Digital Audio Tape / Digital Data Storage, types 380 to 389
-    DigitalAudioTape = 380, DAT160 = 381, DAT320 = 382,
-    DAT72            = 383, DDS1   = 384, DDS2   = 385,
-    DDS3             = 386, DDS4   = 387,
-    #endregion Digital Audio Tape / Digital Data Storage, types 380 to 389
+#region CompactFlash Association, types 370 to 379
 
-    #region DEC, types 390 to 399
-    CompactTapeI = 390, CompactTapeII = 391, DECtapeII = 392,
-    DLTtapeIII   = 393, DLTtapeIIIxt  = 394, DLTtapeIV = 395,
-    DLTtapeS4    = 396, SDLT1         = 397, SDLT2     = 398,
-    VStapeI      = 399,
-    #endregion DEC, types 390 to 399
+    CFast             = 370,
+    CompactFlash      = 371,
+    CompactFlashType2 = 372,
 
-    #region Exatape, types 400 to 419
-    Exatape15m  = 400, Exatape22m  = 401, Exatape22mAME = 402,
-    Exatape28m  = 403, Exatape40m  = 404, Exatape45m    = 405,
-    Exatape54m  = 406, Exatape75m  = 407, Exatape76m    = 408,
-    Exatape80m  = 409, Exatape106m = 410, Exatape160mXL = 411,
-    Exatape112m = 412, Exatape125m = 413, Exatape150m   = 414,
-    Exatape170m = 415, Exatape225m = 416,
-    #endregion Exatape, types 400 to 419
+#endregion CompactFlash Association, types 370 to 379
 
-    #region PCMCIA / ExpressCard, types 420 to 429
-    ExpressCard34 = 420, ExpressCard54 = 421, PCCardTypeI  = 422,
-    PCCardTypeII  = 423, PCCardTypeIII = 424, PCCardTypeIV = 425,
-    #endregion PCMCIA / ExpressCard, types 420 to 429
+#region Digital Audio Tape / Digital Data Storage, types 380 to 389
 
-    #region SyQuest, types 430 to 449
+    DigitalAudioTape = 380,
+    DAT160           = 381,
+    DAT320           = 382,
+    DAT72            = 383,
+    DDS1             = 384,
+    DDS2             = 385,
+    DDS3             = 386,
+    DDS4             = 387,
+
+#endregion Digital Audio Tape / Digital Data Storage, types 380 to 389
+
+#region DEC, types 390 to 399
+
+    CompactTapeI  = 390,
+    CompactTapeII = 391,
+    DECtapeII     = 392,
+    DLTtapeIII    = 393,
+    DLTtapeIIIxt  = 394,
+    DLTtapeIV     = 395,
+    DLTtapeS4     = 396,
+    SDLT1         = 397,
+    SDLT2         = 398,
+    VStapeI       = 399,
+
+#endregion DEC, types 390 to 399
+
+#region Exatape, types 400 to 419
+
+    Exatape15m    = 400,
+    Exatape22m    = 401,
+    Exatape22mAME = 402,
+    Exatape28m    = 403,
+    Exatape40m    = 404,
+    Exatape45m    = 405,
+    Exatape54m    = 406,
+    Exatape75m    = 407,
+    Exatape76m    = 408,
+    Exatape80m    = 409,
+    Exatape106m   = 410,
+    Exatape160mXL = 411,
+    Exatape112m   = 412,
+    Exatape125m   = 413,
+    Exatape150m   = 414,
+    Exatape170m   = 415,
+    Exatape225m   = 416,
+
+#endregion Exatape, types 400 to 419
+
+#region PCMCIA / ExpressCard, types 420 to 429
+
+    ExpressCard34 = 420,
+    ExpressCard54 = 421,
+    PCCardTypeI   = 422,
+    PCCardTypeII  = 423,
+    PCCardTypeIII = 424,
+    PCCardTypeIV  = 425,
+
+#endregion PCMCIA / ExpressCard, types 420 to 429
+
+#region SyQuest, types 430 to 449
+
     /// <summary>SyQuest 135Mb cartridge for use in EZ135 and EZFlyer drives</summary>
     EZ135 = 430,
     /// <summary>SyQuest EZFlyer 230Mb cartridge for use in EZFlyer drive</summary>
@@ -663,84 +794,173 @@ public enum MediaType : uint
     SQ2000 = 442,
     /// <summary>SyQuest 1.5Gb cartridge for SyJet drive</summary>
     SyJet = 443,
-    #endregion SyQuest, types 430 to 449
 
-    #region Nintendo, types 450 to 469
-    FamicomGamePak = 450, GameBoyAdvanceGamePak = 451, GameBoyGamePak = 452,
+#endregion SyQuest, types 430 to 449
+
+#region Nintendo, types 450 to 469
+
+    FamicomGamePak        = 450,
+    GameBoyAdvanceGamePak = 451,
+    GameBoyGamePak        = 452,
     /// <summary>Nintendo GameCube Optical Disc</summary>
-    GOD = 453, N64DD    = 454, N64GamePak       = 455, NESGamePak         = 456,
-    Nintendo3DSGameCard = 457, NintendoDiskCard = 458, NintendoDSGameCard = 459,
-    NintendoDSiGameCard = 460, SNESGamePak      = 461, SNESGamePakUS      = 462,
+    GOD = 453,
+    N64DD               = 454,
+    N64GamePak          = 455,
+    NESGamePak          = 456,
+    Nintendo3DSGameCard = 457,
+    NintendoDiskCard    = 458,
+    NintendoDSGameCard  = 459,
+    NintendoDSiGameCard = 460,
+    SNESGamePak         = 461,
+    SNESGamePakUS       = 462,
     /// <summary>Nintendo Wii Optical Disc</summary>
     WOD = 463,
     /// <summary>Nintendo Wii U Optical Disc</summary>
-    WUOD = 464, SwitchGameCard = 465,
-    #endregion Nintendo, types 450 to 469
+    WUOD = 464,
+    SwitchGameCard = 465,
 
-    #region IBM Tapes, types 470 to 479
-    IBM3470  = 470, IBM3480 = 471, IBM3490 = 472,
-    IBM3490E = 473, IBM3592 = 474,
-    #endregion IBM Tapes, types 470 to 479
+#endregion Nintendo, types 450 to 469
 
-    #region LTO Ultrium, types 480 to 509
-    LTO      = 480, LTO2     = 481, LTO3     = 482,
-    LTO3WORM = 483, LTO4     = 484, LTO4WORM = 485,
-    LTO5     = 486, LTO5WORM = 487, LTO6     = 488,
-    LTO6WORM = 489, LTO7     = 490, LTO7WORM = 491,
-    #endregion LTO Ultrium, types 480 to 509
+#region IBM Tapes, types 470 to 479
 
-    #region MemoryStick, types 510 to 519
-    MemoryStick    = 510, MemoryStickDuo    = 511, MemoryStickMicro = 512,
-    MemoryStickPro = 513, MemoryStickProDuo = 514,
-    #endregion MemoryStick, types 510 to 519
+    IBM3470  = 470,
+    IBM3480  = 471,
+    IBM3490  = 472,
+    IBM3490E = 473,
+    IBM3592  = 474,
 
-    #region SecureDigital, types 520 to 529
-    microSD = 520, miniSD = 521, SecureDigital = 522,
-    #endregion SecureDigital, types 520 to 529
+#endregion IBM Tapes, types 470 to 479
 
-    #region MultiMediaCard, types 530 to 539
-    MMC     = 530, MMCmicro  = 531, RSMMC = 532,
-    MMCplus = 533, MMCmobile = 534,
-    #endregion MultiMediaCard, types 530 to 539
+#region LTO Ultrium, types 480 to 509
 
-    #region SLR, types 540 to 569
-    MLR1        = 540, MLR1SL     = 541, MLR3       = 542,
-    SLR1        = 543, SLR2       = 544, SLR3       = 545,
-    SLR32       = 546, SLR32SL    = 547, SLR4       = 548,
-    SLR5        = 549, SLR5SL     = 550, SLR6       = 551,
-    SLRtape7    = 552, SLRtape7SL = 553, SLRtape24  = 554,
-    SLRtape24SL = 555, SLRtape40  = 556, SLRtape50  = 557,
-    SLRtape60   = 558, SLRtape75  = 559, SLRtape100 = 560,
+    LTO      = 480,
+    LTO2     = 481,
+    LTO3     = 482,
+    LTO3WORM = 483,
+    LTO4     = 484,
+    LTO4WORM = 485,
+    LTO5     = 486,
+    LTO5WORM = 487,
+    LTO6     = 488,
+    LTO6WORM = 489,
+    LTO7     = 490,
+    LTO7WORM = 491,
+
+#endregion LTO Ultrium, types 480 to 509
+
+#region MemoryStick, types 510 to 519
+
+    MemoryStick       = 510,
+    MemoryStickDuo    = 511,
+    MemoryStickMicro  = 512,
+    MemoryStickPro    = 513,
+    MemoryStickProDuo = 514,
+
+#endregion MemoryStick, types 510 to 519
+
+#region SecureDigital, types 520 to 529
+
+    microSD       = 520,
+    miniSD        = 521,
+    SecureDigital = 522,
+
+#endregion SecureDigital, types 520 to 529
+
+#region MultiMediaCard, types 530 to 539
+
+    MMC       = 530,
+    MMCmicro  = 531,
+    RSMMC     = 532,
+    MMCplus   = 533,
+    MMCmobile = 534,
+
+#endregion MultiMediaCard, types 530 to 539
+
+#region SLR, types 540 to 569
+
+    MLR1        = 540,
+    MLR1SL      = 541,
+    MLR3        = 542,
+    SLR1        = 543,
+    SLR2        = 544,
+    SLR3        = 545,
+    SLR32       = 546,
+    SLR32SL     = 547,
+    SLR4        = 548,
+    SLR5        = 549,
+    SLR5SL      = 550,
+    SLR6        = 551,
+    SLRtape7    = 552,
+    SLRtape7SL  = 553,
+    SLRtape24   = 554,
+    SLRtape24SL = 555,
+    SLRtape40   = 556,
+    SLRtape50   = 557,
+    SLRtape60   = 558,
+    SLRtape75   = 559,
+    SLRtape100  = 560,
     SLRtape140  = 561,
-    #endregion SLR, types 540 to 569
 
-    #region QIC, types 570 to 589
-    QIC11   = 570, QIC120  = 571, QIC1350 = 572,
-    QIC150  = 573, QIC24   = 574, QIC3010 = 575,
-    QIC3020 = 576, QIC3080 = 577, QIC3095 = 578,
-    QIC320  = 579, QIC40   = 580, QIC525  = 581,
+#endregion SLR, types 540 to 569
+
+#region QIC, types 570 to 589
+
+    QIC11   = 570,
+    QIC120  = 571,
+    QIC1350 = 572,
+    QIC150  = 573,
+    QIC24   = 574,
+    QIC3010 = 575,
+    QIC3020 = 576,
+    QIC3080 = 577,
+    QIC3095 = 578,
+    QIC320  = 579,
+    QIC40   = 580,
+    QIC525  = 581,
     QIC80   = 582,
-    #endregion QIC, types 570 to 589
 
-    #region StorageTek tapes, types 590 to 609
-    STK4480 = 590, STK4490 = 591, STK9490 = 592,
-    T9840A  = 593, T9840B  = 594, T9840C  = 595,
-    T9840D  = 596, T9940A  = 597, T9940B  = 598,
-    T10000A = 599, T10000B = 600, T10000C = 601,
+#endregion QIC, types 570 to 589
+
+#region StorageTek tapes, types 590 to 609
+
+    STK4480 = 590,
+    STK4490 = 591,
+    STK9490 = 592,
+    T9840A  = 593,
+    T9840B  = 594,
+    T9840C  = 595,
+    T9840D  = 596,
+    T9940A  = 597,
+    T9940B  = 598,
+    T10000A = 599,
+    T10000B = 600,
+    T10000C = 601,
     T10000D = 602,
-    #endregion StorageTek tapes, types 590 to 609
 
-    #region Travan, types 610 to 619
-    Travan    = 610, Travan1Ex = 611, Travan3 = 612,
-    Travan3Ex = 613, Travan4   = 614, Travan5 = 615,
+#endregion StorageTek tapes, types 590 to 609
+
+#region Travan, types 610 to 619
+
+    Travan    = 610,
+    Travan1Ex = 611,
+    Travan3   = 612,
+    Travan3Ex = 613,
+    Travan4   = 614,
+    Travan5   = 615,
     Travan7   = 616,
-    #endregion Travan, types 610 to 619
 
-    #region VXA, types 620 to 629
-    VXA1 = 620, VXA2 = 621, VXA3 = 622,
-    #endregion VXA, types 620 to 629
+#endregion Travan, types 610 to 619
 
-    #region Magneto-optical, types 630 to 659
+#region VXA, types 620 to 629
+
+    VXA1 = 620,
+    VXA2 = 621,
+    VXA3 = 622,
+
+#endregion VXA, types 620 to 629
+
+#region Magneto-optical, types 630 to 659
+
     /// <summary>5,25", M.O., WORM, 650Mb, 318750 sectors, 1024 bytes/sector, ECMA-153, ISO 11560</summary>
     ECMA_153 = 630,
     /// <summary>5,25", M.O., WORM, 600Mb, 581250 sectors, 512 bytes/sector, ECMA-153, ISO 11560</summary>
@@ -801,33 +1021,62 @@ public enum MediaType : uint
     ISO_10089 = 658,
     /// <summary>5,25", M.O., ?????? sectors, 512 bytes/sector, ISO 10089, 594Mb/cart</summary>
     ISO_10089_512 = 659,
-    #endregion Magneto-optical, types 630 to 659
 
-    #region Other floppy standards, types 660 to 689
-    CompactFloppy = 660, DemiDiskette = 661,
+#endregion Magneto-optical, types 630 to 659
+
+#region Other floppy standards, types 660 to 689
+
+    CompactFloppy = 660,
+    DemiDiskette  = 661,
     /// <summary>3.5", 652 tracks, 2 sides, 512 bytes/sector, Floptical, ECMA-207, ISO 14169</summary>
-    Floptical = 662, HiFD = 663, QuickDisk = 664, UHD144       = 665,
-    VideoFloppy           = 666, Wafer     = 667, ZXMicrodrive = 668,
+    Floptical = 662,
+    HiFD         = 663,
+    QuickDisk    = 664,
+    UHD144       = 665,
+    VideoFloppy  = 666,
+    Wafer        = 667,
+    ZXMicrodrive = 668,
     /// <summary>5.25", SS, DD, 77 tracks, 16 spt, 256 bytes/sector, MFM, 100 tpi, 300rpm</summary>
     MetaFloppy_Mod_II = 669,
-    #endregion Other floppy standards, types 660 to 669
 
-    #region Miscellaneous, types 670 to 689
-    BeeCard    = 670, Borsu       = 671, DataStore   = 672,
-    DIR        = 673, DST         = 674, DTF         = 675,
-    DTF2       = 676, Flextra3020 = 677, Flextra3225 = 678,
-    HiTC1      = 679, HiTC2       = 680, LT1         = 681,
-    MiniCard   = 872, Orb         = 683, Orb5        = 684,
-    SmartMedia = 685, xD          = 686, XQD         = 687,
-    DataPlay   = 688,
-    #endregion Miscellaneous, types 670 to 689
+#endregion Other floppy standards, types 660 to 669
 
-    #region Apple specific media, types 690 to 699
-    AppleProfile   = 690, AppleWidget = 691, AppleHD20 = 692,
-    PriamDataTower = 693, Pippin      = 694,
-    #endregion Apple specific media, types 690 to 699
+#region Miscellaneous, types 670 to 689
 
-    #region DEC hard disks, types 700 to 729
+    BeeCard     = 670,
+    Borsu       = 671,
+    DataStore   = 672,
+    DIR         = 673,
+    DST         = 674,
+    DTF         = 675,
+    DTF2        = 676,
+    Flextra3020 = 677,
+    Flextra3225 = 678,
+    HiTC1       = 679,
+    HiTC2       = 680,
+    LT1         = 681,
+    MiniCard    = 872,
+    Orb         = 683,
+    Orb5        = 684,
+    SmartMedia  = 685,
+    xD          = 686,
+    XQD         = 687,
+    DataPlay    = 688,
+
+#endregion Miscellaneous, types 670 to 689
+
+#region Apple specific media, types 690 to 699
+
+    AppleProfile   = 690,
+    AppleWidget    = 691,
+    AppleHD20      = 692,
+    PriamDataTower = 693,
+    Pippin         = 694,
+
+#endregion Apple specific media, types 690 to 699
+
+#region DEC hard disks, types 700 to 729
+
     /// <summary>
     ///     2382 cylinders, 4 tracks/cylinder, 42 sectors/track, 128 words/sector, 32 bits/word, 512 bytes/sector,
     ///     204890112 bytes
@@ -963,33 +1212,49 @@ public enum MediaType : uint
     ///     178387200 bytes
     /// </summary>
     RP06_18 = 726,
-    #endregion DEC hard disks, types 700 to 729
 
-    #region Imation, types 730 to 739
-    LS120 = 730, LS240 = 731, FD32MB = 732,
-    RDX   = 733,
+#endregion DEC hard disks, types 700 to 729
+
+#region Imation, types 730 to 739
+
+    LS120  = 730,
+    LS240  = 731,
+    FD32MB = 732,
+    RDX    = 733,
     /// <summary>Imation 320Gb RDX</summary>
     RDX320 = 734,
-    #endregion Imation, types 730 to 739
 
-    #region VideoNow, types 740 to 749
-    VideoNow = 740, VideoNowColor = 741, VideoNowXp = 742,
-    #endregion
+#endregion Imation, types 730 to 739
 
-    #region Iomega, types 750 to 759
+#region VideoNow, types 740 to 749
+
+    VideoNow      = 740,
+    VideoNowColor = 741,
+    VideoNowXp    = 742,
+
+#endregion
+
+#region Iomega, types 750 to 759
+
     /// <summary>8"x11" Bernoulli Box disk with 10Mb capacity</summary>
     Bernoulli10 = 750,
     /// <summary>8"x11" Bernoulli Box disk with 20Mb capacity</summary>
     Bernoulli20 = 751,
     /// <summary>5⅓" Bernoulli Box II disk with 20Mb capacity</summary>
     BernoulliBox2_20 = 752,
-    #endregion Iomega, types 750 to 759
 
-    #region Kodak, types 760 to 769
-    KodakVerbatim3 = 760, KodakVerbatim6 = 761, KodakVerbatim12 = 762,
-    #endregion Kodak, types 760 to 769
+#endregion Iomega, types 750 to 759
 
-    #region Sony and Panasonic Blu-ray derived, types 770 to 799
+#region Kodak, types 760 to 769
+
+    KodakVerbatim3  = 760,
+    KodakVerbatim6  = 761,
+    KodakVerbatim12 = 762,
+
+#endregion Kodak, types 760 to 769
+
+#region Sony and Panasonic Blu-ray derived, types 770 to 799
+
     /// <summary>Professional Disc for video, single layer, rewritable, 23Gb</summary>
     ProfessionalDisc = 770,
     /// <summary>Professional Disc for video, dual layer, rewritable, 50Gb</summary>
@@ -1024,9 +1289,11 @@ public enum MediaType : uint
     ODC3300R = 785,
     /// <summary>Optical Disc archive, 5th gen., write once, 5500Gb</summary>
     ODC5500R = 786,
-    #endregion Sony and Panasonic Blu-ray derived, types 770 to 799
 
-    #region Magneto-optical, types 800 to 819
+#endregion Sony and Panasonic Blu-ray derived, types 770 to 799
+
+#region Magneto-optical, types 800 to 819
+
     /// <summary>5,25", M.O., 4383356 sectors, 1024 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
     ECMA_322_1k = 800,
     /// <summary>5,25", M.O., ??????? sectors, 512 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
@@ -1037,16 +1304,20 @@ public enum MediaType : uint
     ISO_14517_512 = 803,
     /// <summary>3,5", M.O., 1041500 sectors, 512 bytes/sector, ISO 15041, 540Mb/cart</summary>
     ISO_15041_512 = 804,
-    #endregion Magneto-optical, types 800 to 819
 
-    #region More floppy formats, types 820 to deprecated
+#endregion Magneto-optical, types 800 to 819
+
+#region More floppy formats, types 820 to deprecated
+
     /// <summary>5.25", SS, DD, 35 tracks, 16 spt, 256 bytes/sector, MFM, 48 tpi, ???rpm</summary>
     MetaFloppy_Mod_I = 820,
     /// <summary>HyperFlex (12Mb), 5.25", DS, 301 tracks, 78 spt, 256 bytes/sector, MFM, 333 tpi, 600rpm</summary>
     HF12 = 823,
     /// <summary>HyperFlex (24Mb), 5.25", DS, 506 tracks, 78 spt, 256 bytes/sector, MFM, 666 tpi, 720rpm</summary>
     HF24 = 824,
-    #endregion
 
-    AtariLynxCard = 821, AtariJaguarCartridge = 822
+#endregion
+
+    AtariLynxCard        = 821,
+    AtariJaguarCartridge = 822
 }

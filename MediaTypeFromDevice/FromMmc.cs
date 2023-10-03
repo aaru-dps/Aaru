@@ -50,12 +50,13 @@ public static partial class MediaTypeFromDevice
     /// <param name="opticalDisc">Is the media an optical disc</param>
     /// <returns>Media type</returns>
     static MediaType GetFromMmc(string model, byte mediumType, byte densityCode, ulong blocks, uint blockSize,
-                                bool isUsb, bool opticalDisc)
+                                bool   isUsb, bool opticalDisc)
     {
         switch(mediumType)
         {
             case 0x00:
                 if(blockSize == 512)
+                {
                     if(blocks == 1281856)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -74,6 +75,7 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.PD650;
                     }
+                }
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc,
@@ -144,6 +146,7 @@ public static partial class MediaTypeFromDevice
                 return MediaType.FlashDrive;
             case 0x80:
                 if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
+                {
                     switch(densityCode)
                     {
                         case 0x42:
@@ -175,6 +178,7 @@ public static partial class MediaTypeFromDevice
 
                             return MediaType.LTO5;
                     }
+                }
 
                 break;
         }

@@ -72,7 +72,7 @@ public class ExtentsLong
         Tuple<long, long> removeTwo = null;
         Tuple<long, long> itemToAdd = null;
 
-        for(int i = 0; i < _backend.Count; i++)
+        for(var i = 0; i < _backend.Count; i++)
         {
             // Already contained in an extent
             if(item >= _backend[i].Item1 &&

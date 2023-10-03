@@ -52,11 +52,13 @@ public class SecureDigital
     public Dump OCR { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator SecureDigital(SecureDigitalType cicm) => cicm is null ? null : new SecureDigital
-    {
-        CID = cicm.CID,
-        CSD = cicm.CSD,
-        SCR = cicm.SCR,
-        OCR = cicm.OCR
-    };
+    public static implicit operator SecureDigital(SecureDigitalType cicm) => cicm is null
+                                                                                 ? null
+                                                                                 : new SecureDigital
+                                                                                 {
+                                                                                     CID = cicm.CID,
+                                                                                     CSD = cicm.CSD,
+                                                                                     SCR = cicm.SCR,
+                                                                                     OCR = cicm.OCR
+                                                                                 };
 }

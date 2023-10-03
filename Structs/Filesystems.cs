@@ -156,32 +156,46 @@ public class FileEntryInfo
 {
     /// <summary>File attributes</summary>
     public FileAttributes Attributes { get; set; }
+
     /// <summary>File length in blocks</summary>
     public long Blocks { get; set; }
+
     /// <summary>File block size in bytes</summary>
     public long BlockSize { get; set; }
+
     /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
     public ulong? DeviceNo { get; set; }
+
     /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
     public ulong? GID { get; set; }
+
     /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
     public ulong Inode { get; set; }
+
     /// <summary>File length in bytes</summary>
     public long Length { get; set; }
+
     /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
     public ulong Links { get; set; }
+
     /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
     public uint? Mode { get; set; }
+
     /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
     public ulong? UID { get; set; }
+
     /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? CreationTimeUtc { get; set; }
+
     /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? AccessTimeUtc { get; set; }
+
     /// <summary>File attributes change date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? StatusChangeTimeUtc { get; set; }
+
     /// <summary>File last backup date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? BackupTimeUtc { get; set; }
+
     /// <summary>File last modification date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? LastWriteTimeUtc { get; set; }
 

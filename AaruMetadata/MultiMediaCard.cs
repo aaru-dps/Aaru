@@ -52,11 +52,13 @@ public class MultiMediaCard
     public Dump OCR         { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator MultiMediaCard(MultiMediaCardType cicm) => cicm is null ? null : new MultiMediaCard
-    {
-        CSD         = cicm.CSD,
-        CID         = cicm.CID,
-        ExtendedCSD = cicm.ExtendedCSD,
-        OCR         = cicm.OCR
-    };
+    public static implicit operator MultiMediaCard(MultiMediaCardType cicm) => cicm is null
+                                                                                   ? null
+                                                                                   : new MultiMediaCard
+                                                                                   {
+                                                                                       CSD         = cicm.CSD,
+                                                                                       CID         = cicm.CID,
+                                                                                       ExtendedCSD = cicm.ExtendedCSD,
+                                                                                       OCR         = cicm.OCR
+                                                                                   };
 }

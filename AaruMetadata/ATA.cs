@@ -49,8 +49,10 @@ public class ATA
     public Dump Identify { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator ATA(ATAType cicm) => cicm is null ? null : new ATA
-    {
-        Identify = cicm.Identify
-    };
+    public static implicit operator ATA(ATAType cicm) => cicm is null
+                                                             ? null
+                                                             : new ATA
+                                                             {
+                                                                 Identify = cicm.Identify
+                                                             };
 }

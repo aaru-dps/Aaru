@@ -89,11 +89,13 @@ public class Extent
     public ulong End   { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Extent(ExtentType cicm) => cicm is null ? null : new Extent
-    {
-        Start = cicm.Start,
-        End   = cicm.End
-    };
+    public static implicit operator Extent(ExtentType cicm) => cicm is null
+                                                                   ? null
+                                                                   : new Extent
+                                                                   {
+                                                                       Start = cicm.Start,
+                                                                       End   = cicm.End
+                                                                   };
 }
 
 public class Software
@@ -103,10 +105,12 @@ public class Software
     public string OperatingSystem { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Software(SoftwareType cicm) => cicm is null ? null : new Software
-    {
-        Name            = cicm.Name,
-        Version         = cicm.Version,
-        OperatingSystem = cicm.OperatingSystem
-    };
+    public static implicit operator Software(SoftwareType cicm) => cicm is null
+                                                                       ? null
+                                                                       : new Software
+                                                                       {
+                                                                           Name            = cicm.Name,
+                                                                           Version         = cicm.Version,
+                                                                           OperatingSystem = cicm.OperatingSystem
+                                                                       };
 }

@@ -50,16 +50,22 @@ public interface IBaseWritableImage : IBaseImage
 {
     /// <summary>Contains a description of the last error</summary>
     string ErrorMessage { get; }
+
     /// <summary>If set to <c>true</c> means the image is opened for writing</summary>
     bool IsWriting { get; }
+
     /// <summary>Gets a list of known extensions for format auto-choosing</summary>
     IEnumerable<string> KnownExtensions { get; }
+
     /// <summary>Gets a list of <see cref="MediaTagType" /> that are supported by the media image format</summary>
     IEnumerable<MediaTagType> SupportedMediaTags { get; }
+
     /// <summary>Gets a list of <see cref="MediaType" /> that are supported by the media image format</summary>
     IEnumerable<MediaType> SupportedMediaTypes { get; }
+
     /// <summary>Retrieves a list of options supported by the filesystem, with name, type and description</summary>
     IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions { get; }
+
     /// <summary>Gets a list of <see cref="SectorTagType" /> that are supported by the media image format</summary>
     IEnumerable<SectorTagType> SupportedSectorTags { get; }
 

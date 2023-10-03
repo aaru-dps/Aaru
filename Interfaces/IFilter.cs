@@ -50,8 +50,10 @@ public interface IFilter
 {
     /// <summary>Descriptive name of the plugin</summary>
     string Name { get; }
+
     /// <summary>Unique UUID of the plugin</summary>
     Guid Id { get; }
+
     /// <summary>Plugin author</summary>
     string Author { get; }
 

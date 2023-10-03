@@ -56,14 +56,25 @@ public class Pcmcia
     public List<string> AdditionalInformation { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Pcmcia(PCMCIAType cicm) => cicm is null ? null : new Pcmcia
-    {
-        Cis                   = cicm.CIS,
-        Compliance            = cicm.Compliance,
-        ManufacturerCode      = cicm.ManufacturerCodeSpecified ? cicm.ManufacturerCode : null,
-        CardCode              = cicm.CardCodeSpecified ? cicm.CardCode : null,
-        Manufacturer          = cicm.Manufacturer,
-        ProductName           = cicm.ProductName,
-        AdditionalInformation = cicm.AdditionalInformation is null ? null : new List<string>(cicm.AdditionalInformation)
-    };
+    public static implicit operator Pcmcia(PCMCIAType cicm) => cicm is null
+                                                                   ? null
+                                                                   : new Pcmcia
+                                                                   {
+                                                                       Cis        = cicm.CIS,
+                                                                       Compliance = cicm.Compliance,
+                                                                       ManufacturerCode =
+                                                                           cicm.ManufacturerCodeSpecified
+                                                                               ? cicm.ManufacturerCode
+                                                                               : null,
+                                                                       CardCode = cicm.CardCodeSpecified
+                                                                           ? cicm.CardCode
+                                                                           : null,
+                                                                       Manufacturer = cicm.Manufacturer,
+                                                                       ProductName  = cicm.ProductName,
+                                                                       AdditionalInformation =
+                                                                           cicm.AdditionalInformation is null
+                                                                               ? null
+                                                                               : new List<string>(
+                                                                                   cicm.AdditionalInformation)
+                                                                   };
 }

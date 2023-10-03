@@ -202,21 +202,28 @@ public struct LinearMemoryDevice
 {
     /// <summary>Device manufacturer</summary>
     public string Manufacturer { get; set; }
+
     /// <summary>Device model</summary>
     public string Model { get; set; }
+
     /// <summary>Device package, e.g. DIP28</summary>
     public string Package { get; set; }
+
     /// <summary>Device location marking in PCB, e.g. U28</summary>
     public string Location { get; set; }
+
     /// <summary>Device functional type</summary>
     public LinearMemoryType Type { get; set; }
+
     /// <summary>Arbitrary device information</summary>
     public string Description { get; set; }
+
     /// <summary>
     ///     Physical addressing is the address considering all devices in the linear memory media, starting at the lowest
     ///     marking in PCB and going up incrementally. This is the view of the memory inside Aaru.
     /// </summary>
     public LinearMemoryAddressing PhysicalAddress { get; set; }
+
     /// <summary>
     ///     Virtual addressing is the address as seen by the hardware directly accessing the linear memory media. This
     ///     allows devices to be overlapped or banked.
@@ -229,8 +236,10 @@ public class LinearMemoryAddressing
 {
     /// <summary>Start in memory where the device is mapped</summary>
     public ulong Start { get; set; }
+
     /// <summary>Length in bytes of the device, not including interleaving</summary>
     public ulong Length { get; set; }
+
     /// <summary>Interleaving information</summary>
     public LinearMemoryInterleave Interleave { get; set; }
 }
@@ -240,6 +249,7 @@ public class LinearMemoryInterleave
 {
     /// <summary>How many bytes to skip from start of map before device first byte starts</summary>
     public uint Offset { get; set; }
+
     /// <summary>How many bytes in memory to skip every device byte</summary>
     public uint Value { get; set; }
 }

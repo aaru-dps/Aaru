@@ -79,10 +79,12 @@ public class XboxSecuritySector
 
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator XboxSecuritySector(XboxSecuritySectorsType cicm) =>
-        cicm is null ? null : new XboxSecuritySector
-        {
-            RequestNumber   = cicm.RequestNumber,
-            RequestVersion  = cicm.RequestVersion,
-            SecuritySectors = cicm.SecuritySectors
-        };
+        cicm is null
+            ? null
+            : new XboxSecuritySector
+            {
+                RequestNumber   = cicm.RequestNumber,
+                RequestVersion  = cicm.RequestVersion,
+                SecuritySectors = cicm.SecuritySectors
+            };
 }

@@ -51,10 +51,12 @@ public class Usb
     public Dump   Descriptors { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Usb(USBType cicm) => cicm is null ? null : new Usb
-    {
-        VendorID    = cicm.VendorID,
-        ProductID   = cicm.ProductID,
-        Descriptors = cicm.Descriptors
-    };
+    public static implicit operator Usb(USBType cicm) => cicm is null
+                                                             ? null
+                                                             : new Usb
+                                                             {
+                                                                 VendorID    = cicm.VendorID,
+                                                                 ProductID   = cicm.ProductID,
+                                                                 Descriptors = cicm.Descriptors
+                                                             };
 }

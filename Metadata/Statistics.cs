@@ -52,34 +52,45 @@ public class Stats
 {
     /// <summary>Executed commands</summary>
     public CommandsStats Commands;
+
     /// <summary>Operating systems Aaru has run from</summary>
     [XmlArrayItem("OperatingSystem")]
     public List<OsStats> OperatingSystems { get; set; }
+
     /// <summary>Aaru versions</summary>
     [XmlArrayItem("Version")]
     public List<NameValueStats> Versions { get; set; }
+
     /// <summary>Detected filesystems</summary>
     [XmlArrayItem("Filesystem")]
     public List<NameValueStats> Filesystems { get; set; }
+
     /// <summary>Detected partitioning schemes</summary>
     [XmlArrayItem("Scheme")]
     public List<NameValueStats> Partitions { get; set; }
+
     /// <summary>Media image formats</summary>
     [XmlArrayItem("Format")]
     public List<NameValueStats> MediaImages { get; set; }
+
     /// <summary>Used filters</summary>
     [XmlArrayItem("Filter", IsNullable = true)]
     public List<NameValueStats> Filters { get; set; }
+
     /// <summary>Found devices</summary>
     [XmlArrayItem("Device", IsNullable = true)]
     public List<DeviceStats> Devices { get; set; }
+
     /// <summary>Found media types, real, and in image</summary>
     [XmlArrayItem("Media")]
     public List<MediaStats> Medias { get; set; }
+
     /// <summary>Benchmark statistics</summary>
     public BenchmarkStats Benchmark { get; set; }
+
     /// <summary>Media scanning statistics</summary>
     public MediaScanStats MediaScan { get; set; }
+
     /// <summary>Image verification statistics</summary>
     public VerifyStats Verify { get; set; }
 }
@@ -96,26 +107,37 @@ public class StatsDto
 {
     /// <summary>Executed commands</summary>
     public List<NameValueStats> Commands { get; set; }
+
     /// <summary>Operating systems Aaru has run from</summary>
     public List<OsStats> OperatingSystems { get; set; }
+
     /// <summary>Aaru versions</summary>
     public List<NameValueStats> Versions { get; set; }
+
     /// <summary>Detected filesystems</summary>
     public List<NameValueStats> Filesystems { get; set; }
+
     /// <summary>Detected partitioning schemes</summary>
     public List<NameValueStats> Partitions { get; set; }
+
     /// <summary>Media image formats</summary>
     public List<NameValueStats> MediaFormats { get; set; }
+
     /// <summary>Used filters</summary>
     public List<NameValueStats> Filters { get; set; }
+
     /// <summary>Found devices</summary>
     public List<DeviceStats> Devices { get; set; }
+
     /// <summary>Found media types, real, and in image</summary>
     public List<MediaStats> Medias { get; set; }
+
     /// <summary>Remote applications</summary>
     public List<OsStats> RemoteApplications { get; set; }
+
     /// <summary>Remote application architectures</summary>
     public List<NameValueStats> RemoteArchitectures { get; set; }
+
     /// <summary>Operating systems where a remote application has been running</summary>
     public List<OsStats> RemoteOperatingSystems { get; set; }
 }
@@ -260,13 +282,13 @@ public class BenchmarkStats
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MediaStats
 {
-    /// <summary>Found in a real device?</summary>
-    [XmlAttribute]
-    public bool real;
     /// <summary>Media type</summary>
     [XmlAttribute(AttributeName = "type")]
     [JsonPropertyName("type")]
     public string MediaType;
+    /// <summary>Found in a real device?</summary>
+    [XmlAttribute]
+    public bool real;
     /// <summary>Number of times it has been found</summary>
     [XmlText]
     public long Value;
@@ -278,12 +300,16 @@ public class DeviceStats
     /// <summary>Is manufacturer null?</summary>
     [XmlIgnore]
     public bool ManufacturerSpecified;
+
     /// <summary>Manufacturer string</summary>
     public string Manufacturer { get; set; }
+
     /// <summary>Model string</summary>
     public string Model { get; set; }
+
     /// <summary>Revision or firmware version</summary>
     public string Revision { get; set; }
+
     /// <summary>Bus the device was attached to</summary>
     public string Bus { get; set; }
 }
@@ -295,6 +321,7 @@ public class NameValueStats
     /// <summary>Name</summary>
     [XmlAttribute]
     public string name { get; set; }
+
     /// <summary>Number of times it has been used/found</summary>
     [XmlText]
     public long Value { get; set; }
@@ -307,9 +334,11 @@ public class OsStats
     /// <summary>Operating system name</summary>
     [XmlAttribute]
     public string name { get; set; }
+
     /// <summary>Operating system version</summary>
     [XmlAttribute]
     public string version { get; set; }
+
     /// <summary>Number of times Aaru run on it</summary>
     [XmlText]
     public long Value { get; set; }

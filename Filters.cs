@@ -60,6 +60,7 @@ public sealed class FiltersList
         Filters = new SortedDictionary<string, IFilter>();
 
         foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
+        {
             try
             {
                 var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
@@ -72,6 +73,7 @@ public sealed class FiltersList
             {
                 AaruConsole.ErrorWriteLine(Localization.Exception_0, exception);
             }
+        }
     }
 
     /// <summary>Gets the filter that allows to read the specified path</summary>
@@ -82,6 +84,7 @@ public sealed class FiltersList
         IFilter noFilter = null;
 
         foreach(IFilter filter in Filters.Values)
+        {
             try
             {
                 if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
@@ -102,6 +105,7 @@ public sealed class FiltersList
             {
                 // Ignore and continue
             }
+        }
 
         if(!noFilter?.Identify(path) == true)
             return null;

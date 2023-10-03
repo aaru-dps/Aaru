@@ -47,7 +47,7 @@ public static partial class MediaTypeFromDevice
     /// <param name="blocks">Number of blocks in device</param>
     /// <returns>The media type</returns>
     public static MediaType GetFromAta(string manufacturer, string model, bool removable, bool compactFlash,
-                                       bool pcmcia, ulong blocks)
+                                       bool   pcmcia,       ulong  blocks)
     {
         if(!removable)
         {

@@ -55,10 +55,7 @@ public static class Version
     {
         Assembly assembly = typeof(GCSettings).Assembly;
 
-        string[] assemblyPath = assembly.CodeBase?.Split(new[]
-        {
-            '/', '\\'
-        }, StringSplitOptions.RemoveEmptyEntries);
+        string[] assemblyPath = assembly.CodeBase?.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
         if(assemblyPath is null)
             return null;

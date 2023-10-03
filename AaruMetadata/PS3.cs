@@ -50,9 +50,11 @@ public class Ps3Encryption
     public string Serial { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Ps3Encryption(PS3EncryptionType cicm) => cicm is null ? null : new Ps3Encryption
-    {
-        Key    = cicm.Key,
-        Serial = cicm.Serial
-    };
+    public static implicit operator Ps3Encryption(PS3EncryptionType cicm) => cicm is null
+                                                                                 ? null
+                                                                                 : new Ps3Encryption
+                                                                                 {
+                                                                                     Key    = cicm.Key,
+                                                                                     Serial = cicm.Serial
+                                                                                 };
 }

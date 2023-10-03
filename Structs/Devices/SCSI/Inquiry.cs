@@ -47,8 +47,9 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 ///     Information from the following standards: T9/375-D revision 10l T10/995-D revision 10 T10/1236-D revision 20
 ///     T10/1416-D revision 23 T10/1731-D revision 16 T10/502 revision 05 RFC 7144 ECMA-111
 /// </summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public struct Inquiry
 {
     const string MODULE_NAME = "SCSI INQUIRY decoder";
@@ -149,7 +150,8 @@ public struct Inquiry
 
     // Per DLT4000/DLT4500/DLT4700 Cartridge Tape Subsystem Product Manual
 
-    #region Quantum vendor unique inquiry data structure
+#region Quantum vendor unique inquiry data structure
+
     /// <summary>Means that the INQUIRY response contains 56 bytes or more, so this data has been filled</summary>
     public bool QuantumPresent;
     /// <summary>The product family. Byte 36, bits 7 to 5</summary>
@@ -188,9 +190,11 @@ public struct Inquiry
     public bool Qt_LibraryPresent;
     /// <summary>The module revision. Bytes 52 to 55</summary>
     public byte[] Qt_ModuleRevision;
-    #endregion Quantum vendor unique inquiry data structure
 
-    #region IBM vendor unique inquiry data structure
+#endregion Quantum vendor unique inquiry data structure
+
+#region IBM vendor unique inquiry data structure
+
     /// <summary>Means that the INQUIRY response contains 56 bytes or more, so this data has been filled</summary>
     public bool IBMPresent;
     /// <summary>Drive is not capable of automation Byte 36 bit 0</summary>
@@ -199,9 +203,11 @@ public struct Inquiry
     public byte IBM_PerformanceLimit;
     /// <summary>Byte 41</summary>
     public byte IBM_OEMSpecific;
-    #endregion IBM vendor unique inquiry data structure
 
-    #region HP vendor unique inquiry data structure
+#endregion IBM vendor unique inquiry data structure
+
+#region HP vendor unique inquiry data structure
+
     /// <summary>Means that the INQUIRY response contains 49 bytes or more, so this data has been filled</summary>
     public bool HPPresent;
     /// <summary>WORM version Byte 40 bits 7 to 1</summary>
@@ -210,9 +216,11 @@ public struct Inquiry
     public bool HP_WORM;
     /// <summary>Bytes 43 to 48</summary>
     public byte[] HP_OBDR;
-    #endregion HP vendor unique inquiry data structure
 
-    #region Seagate vendor unique inquiry data structure
+#endregion HP vendor unique inquiry data structure
+
+#region Seagate vendor unique inquiry data structure
+
     /// <summary>Means that bytes 36 to 43 are filled</summary>
     public bool SeagatePresent;
     /// <summary>Drive Serial Number Bytes 36 to 43</summary>
@@ -225,9 +233,11 @@ public struct Inquiry
     public bool Seagate3Present;
     /// <summary>Reserved Seagate field Bytes 144 to 147</summary>
     public byte[] Seagate_ServoPROMPartNo;
-    #endregion Seagate vendor unique inquiry data structure
 
-    #region Kreon vendor unique inquiry data structure
+#endregion Seagate vendor unique inquiry data structure
+
+#region Kreon vendor unique inquiry data structure
+
     /// <summary>Means that firmware is Kreon</summary>
     public bool KreonPresent;
     /// <summary>Kreon identifier Bytes 36 to 40</summary>
@@ -236,23 +246,28 @@ public struct Inquiry
     public byte KreonSpace;
     /// <summary>Kreon version string Bytes 42 to 46</summary>
     public byte[] KreonVersion;
-    #endregion Kreon vendor unique inquiry data structure
 
-    #region Sony Hi-MD data
+#endregion Kreon vendor unique inquiry data structure
+
+#region Sony Hi-MD data
+
     /// <summary>Set if Hi-MD signature is present</summary>
     public bool IsHiMD;
     /// <summary>Hi-MD signature, bytes 36 to 44</summary>
     public byte[] HiMDSignature;
     /// <summary>Unknown data, bytes 44 to 55</summary>
     public byte[] HiMDSpecific;
-    #endregion Sony Hi-MD data
+
+#endregion Sony Hi-MD data
 
     static readonly byte[] HiMDSignatureContents = "Hi-MD   "u8.ToArray();
 
     /// <summary>Decodes a SCSI INQUIRY response</summary>
     /// <param name="SCSIInquiryResponse">INQUIRY raw response data</param>
     /// <returns>Decoded SCSI INQUIRY</returns>
-    #region Public methods
+
+#region Public methods
+
     public static Inquiry? Decode(byte[] SCSIInquiryResponse)
     {
         if(SCSIInquiryResponse == null)
@@ -465,8 +480,8 @@ public struct Inquiry
 
             decoded.VersionDescriptors = new ushort[descriptorsNo];
 
-            for(int i = 0; i < descriptorsNo; i++)
-                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + (i * 2));
+            for(var i = 0; i < descriptorsNo; i++)
+                decoded.VersionDescriptors[i] = BitConverter.ToUInt16(SCSIInquiryResponse, 58 + i * 2);
         }
 
         switch(SCSIInquiryResponse.Length)
@@ -518,8 +533,8 @@ public struct Inquiry
 
         Inquiry decoded = inq.Value;
 
-        byte[] buffer = new byte[512];
-        byte   length = 0;
+        var  buffer = new byte[512];
+        byte length = 0;
 
         buffer[0] =  (byte)(decoded.PeripheralQualifier << 5);
         buffer[0] += decoded.PeripheralDeviceType;
@@ -682,7 +697,7 @@ public struct Inquiry
             Array.Copy(decoded.Seagate_DriveSerialNumber, 0, buffer, 36, 8);
         }
 
-        if(decoded is { KreonIdentifier: {}, KreonVersion: {} })
+        if(decoded is { KreonIdentifier: not null, KreonVersion: not null })
         {
             length = 46;
             Array.Copy(decoded.KreonIdentifier, 0, buffer, 36, 5);
@@ -712,7 +727,7 @@ public struct Inquiry
                 Array.Copy(decoded.HiMDSpecific, 0, buffer, 44, 12);
         }
 
-        if(decoded is { VendorSpecific: {}, IsHiMD: false })
+        if(decoded is { VendorSpecific: not null, IsHiMD: false })
         {
             length = 56;
             Array.Copy(decoded.VendorSpecific, 0, buffer, 36, 20);
@@ -742,10 +757,10 @@ public struct Inquiry
 
         if(decoded.VersionDescriptors != null)
         {
-            length = (byte)(58 + (decoded.VersionDescriptors.Length * 2));
+            length = (byte)(58 + decoded.VersionDescriptors.Length * 2);
 
-            for(int i = 0; i < decoded.VersionDescriptors.Length; i++)
-                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + (i * 2), 2);
+            for(var i = 0; i < decoded.VersionDescriptors.Length; i++)
+                Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + i * 2, 2);
         }
 
         if(decoded.Reserved5 != null)
@@ -773,10 +788,11 @@ public struct Inquiry
         }
 
         buffer[4] = length;
-        byte[] dest = new byte[length];
+        var dest = new byte[length];
         Array.Copy(buffer, 0, dest, 0, length);
 
         return dest;
     }
-    #endregion Public methods
+
+#endregion Public methods
 }

@@ -126,8 +126,10 @@ public static class DetectOS
         int error = uname(out utsname unixname);
 
         if(error != 0)
+        {
             throw new Exception(string.Format(Localization.Unhandled_exception_calling_uname_0,
                                               Marshal.GetLastWin32Error()));
+        }
 
         switch(unixname.sysname)
         {
@@ -173,43 +175,63 @@ public static class DetectOS
                 Marshal.FreeHGlobal(pLen);
 
                 if(machine != null &&
-                   (machine.StartsWith("iPad", StringComparison.Ordinal) ||
-                    machine.StartsWith("iPod", StringComparison.Ordinal) ||
+                   (machine.StartsWith("iPad",   StringComparison.Ordinal) ||
+                    machine.StartsWith("iPod",   StringComparison.Ordinal) ||
                     machine.StartsWith("iPhone", StringComparison.Ordinal)))
                     return PlatformID.iOS;
 
                 return PlatformID.MacOSX;
             }
 
-            case "GNU": return PlatformID.Hurd;
+            case "GNU":
+                return PlatformID.Hurd;
             case "FreeBSD":
-            case "GNU/kFreeBSD": return PlatformID.FreeBSD;
-            case "DragonFly": return PlatformID.DragonFly;
-            case "Haiku":     return PlatformID.Haiku;
-            case "HP-UX":     return PlatformID.HPUX;
-            case "AIX":       return PlatformID.AIX;
-            case "OS400":     return PlatformID.OS400;
+            case "GNU/kFreeBSD":
+                return PlatformID.FreeBSD;
+            case "DragonFly":
+                return PlatformID.DragonFly;
+            case "Haiku":
+                return PlatformID.Haiku;
+            case "HP-UX":
+                return PlatformID.HPUX;
+            case "AIX":
+                return PlatformID.AIX;
+            case "OS400":
+                return PlatformID.OS400;
             case "IRIX":
-            case "IRIX64": return PlatformID.IRIX;
-            case "Minix":          return PlatformID.Minix;
-            case "NetBSD":         return PlatformID.NetBSD;
-            case "NONSTOP_KERNEL": return PlatformID.NonStop;
-            case "OpenBSD":        return PlatformID.OpenBSD;
-            case "QNX":            return PlatformID.QNX;
-            case "SINIX-Y":        return PlatformID.SINIX;
-            case "SunOS":          return PlatformID.Solaris;
-            case "OSF1":           return PlatformID.Tru64;
-            case "ULTRIX":         return PlatformID.Ultrix;
-            case "SCO_SV":         return PlatformID.OpenServer;
-            case "UnixWare":       return PlatformID.UnixWare;
+            case "IRIX64":
+                return PlatformID.IRIX;
+            case "Minix":
+                return PlatformID.Minix;
+            case "NetBSD":
+                return PlatformID.NetBSD;
+            case "NONSTOP_KERNEL":
+                return PlatformID.NonStop;
+            case "OpenBSD":
+                return PlatformID.OpenBSD;
+            case "QNX":
+                return PlatformID.QNX;
+            case "SINIX-Y":
+                return PlatformID.SINIX;
+            case "SunOS":
+                return PlatformID.Solaris;
+            case "OSF1":
+                return PlatformID.Tru64;
+            case "ULTRIX":
+                return PlatformID.Ultrix;
+            case "SCO_SV":
+                return PlatformID.OpenServer;
+            case "UnixWare":
+                return PlatformID.UnixWare;
             case "Interix":
-            case "UWIN-W7": return PlatformID.Win32NT;
+            case "UWIN-W7":
+                return PlatformID.Win32NT;
             default:
             {
-                if(unixname.sysname.StartsWith("CYGWIN_NT", StringComparison.Ordinal)  ||
+                if(unixname.sysname.StartsWith("CYGWIN_NT",  StringComparison.Ordinal) ||
                    unixname.sysname.StartsWith("MINGW32_NT", StringComparison.Ordinal) ||
-                   unixname.sysname.StartsWith("MSYS_NT", StringComparison.Ordinal)    ||
-                   unixname.sysname.StartsWith("UWIN", StringComparison.Ordinal))
+                   unixname.sysname.StartsWith("MSYS_NT",    StringComparison.Ordinal) ||
+                   unixname.sysname.StartsWith("UWIN",       StringComparison.Ordinal))
                     return PlatformID.Win32NT;
 
                 return PlatformID.Unknown;
@@ -234,20 +256,25 @@ public static class DetectOS
 
                 switch(Environment.OSVersion.Version.Minor)
                 {
-                    case 3: return "10.0";
-                    case 4: return "10.1";
+                    case 3:
+                        return "10.0";
+                    case 4:
+                        return "10.1";
                 }
 
                 goto default;
             case PlatformID.Win32NT:
                 // From Windows 8.1 the reported version is simply falsified...
                 if(Environment.OSVersion.Version.Major is 6 and >= 2 or > 6)
+                {
                     return FileVersionInfo.
                            GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                                                        "KERNEL32.DLL")).ProductVersion;
+                }
 
                 return environ;
-            default: return environ;
+            default:
+                return environ;
         }
     }
 
@@ -259,15 +286,24 @@ public static class DetectOS
     {
         switch(id)
         {
-            case PlatformID.AIX:       return "AIX";
-            case PlatformID.Android:   return "Android";
-            case PlatformID.DragonFly: return "DragonFly BSD";
-            case PlatformID.FreeBSD:   return "FreeBSD";
-            case PlatformID.Haiku:     return "Haiku";
-            case PlatformID.HPUX:      return "HP/UX";
-            case PlatformID.Hurd:      return "Hurd";
-            case PlatformID.iOS:       return "iOS";
-            case PlatformID.IRIX:      return "IRIX";
+            case PlatformID.AIX:
+                return "AIX";
+            case PlatformID.Android:
+                return "Android";
+            case PlatformID.DragonFly:
+                return "DragonFly BSD";
+            case PlatformID.FreeBSD:
+                return "FreeBSD";
+            case PlatformID.Haiku:
+                return "Haiku";
+            case PlatformID.HPUX:
+                return "HP/UX";
+            case PlatformID.Hurd:
+                return "Hurd";
+            case PlatformID.iOS:
+                return "iOS";
+            case PlatformID.IRIX:
+                return "IRIX";
             case PlatformID.Linux:
                 if(!File.Exists("/proc/version"))
                     return "Linux";
@@ -294,24 +330,42 @@ public static class DetectOS
 
                 return minor >= 8 ? "OS X" : "Mac OS X";
 
-            case PlatformID.Minix:        return "MINIX";
-            case PlatformID.NetBSD:       return "NetBSD";
-            case PlatformID.NonStop:      return "NonStop OS";
-            case PlatformID.OpenBSD:      return "OpenBSD";
-            case PlatformID.OpenServer:   return "SCO OpenServer";
-            case PlatformID.OS400:        return "OS/400";
-            case PlatformID.PlayStation3: return "Sony CellOS";
-            case PlatformID.PlayStation4: return "Sony Orbis OS";
-            case PlatformID.QNX:          return "QNX";
-            case PlatformID.SINIX:        return "SINIX";
-            case PlatformID.Solaris:      return "Sun Solaris";
-            case PlatformID.Tizen:        return "Samsung Tizen";
-            case PlatformID.Tru64:        return "Tru64 UNIX";
-            case PlatformID.Ultrix:       return "Ultrix";
-            case PlatformID.Unix:         return "UNIX";
-            case PlatformID.UnixWare:     return "SCO UnixWare";
-            case PlatformID.Wii:          return "Nintendo Wii";
-            case PlatformID.WiiU:         return "Nintendo Wii U";
+            case PlatformID.Minix:
+                return "MINIX";
+            case PlatformID.NetBSD:
+                return "NetBSD";
+            case PlatformID.NonStop:
+                return "NonStop OS";
+            case PlatformID.OpenBSD:
+                return "OpenBSD";
+            case PlatformID.OpenServer:
+                return "SCO OpenServer";
+            case PlatformID.OS400:
+                return "OS/400";
+            case PlatformID.PlayStation3:
+                return "Sony CellOS";
+            case PlatformID.PlayStation4:
+                return "Sony Orbis OS";
+            case PlatformID.QNX:
+                return "QNX";
+            case PlatformID.SINIX:
+                return "SINIX";
+            case PlatformID.Solaris:
+                return "Sun Solaris";
+            case PlatformID.Tizen:
+                return "Samsung Tizen";
+            case PlatformID.Tru64:
+                return "Tru64 UNIX";
+            case PlatformID.Ultrix:
+                return "Ultrix";
+            case PlatformID.Unix:
+                return "UNIX";
+            case PlatformID.UnixWare:
+                return "SCO UnixWare";
+            case PlatformID.Wii:
+                return "Nintendo Wii";
+            case PlatformID.WiiU:
+                return "Nintendo Wii U";
             case PlatformID.Win32NT:
                 if(string.IsNullOrEmpty(version))
                     return "Windows NT/2000/XP/Vista/7/10";
@@ -344,10 +398,12 @@ public static class DetectOS
                 if(version.StartsWith("10.0", StringComparison.Ordinal))
                     return "Windows 10";
 
-                return version.StartsWith("11.0", StringComparison.Ordinal) ? "Windows 11"
+                return version.StartsWith("11.0", StringComparison.Ordinal)
+                           ? "Windows 11"
                            : "Windows NT/2000/XP/Vista/7/10/11";
 
-            case PlatformID.Win32S: return "Windows 3.x with win32s";
+            case PlatformID.Win32S:
+                return "Windows 3.x with win32s";
             case PlatformID.Win32Windows:
                 if(string.IsNullOrEmpty(version))
                     return "Windows 9x/Me";
@@ -363,13 +419,20 @@ public static class DetectOS
 
                 return version.StartsWith("4.9", StringComparison.Ordinal) ? "Windows Me" : "Windows 9x/Me";
 
-            case PlatformID.WinCE:        return "Windows CE/Mobile";
-            case PlatformID.WindowsPhone: return "Windows Phone";
-            case PlatformID.Xbox:         return "Xbox OS";
-            case PlatformID.zOS:          return "z/OS";
-            default:                      return id.ToString();
+            case PlatformID.WinCE:
+                return "Windows CE/Mobile";
+            case PlatformID.WindowsPhone:
+                return "Windows Phone";
+            case PlatformID.Xbox:
+                return "Xbox OS";
+            case PlatformID.zOS:
+                return "z/OS";
+            default:
+                return id.ToString();
         }
     }
+
+#region Nested type: utsname
 
     /// <summary>POSIX uname structure, size from OSX, big enough to handle extra fields</summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -391,4 +454,6 @@ public static class DetectOS
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public readonly string machine;
     }
+
+#endregion
 }

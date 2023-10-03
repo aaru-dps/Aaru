@@ -62,7 +62,7 @@ public interface IFluxImage : IBaseImage
     /// <param name="subTrack">Physical sub-step of track (e.g. half-track)</param>
     /// <param name="captureIndex">Which capture to read. See also <see cref="CapturesLength" /></param>
     /// <param name="resolution">The resolution of the index capture in picoseconds</param>
-    ErrorNumber ReadFluxIndexResolution(uint head, ushort track, byte subTrack, uint captureIndex,
+    ErrorNumber ReadFluxIndexResolution(uint      head, ushort track, byte subTrack, uint captureIndex,
                                         out ulong resolution);
 
     /// <summary>Reads the resolution (sample rate) of a data signal capture in picoseconds.</summary>

@@ -309,11 +309,13 @@ public class TrackSequence
     public uint Session { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator TrackSequence(TrackSequenceType cicm) => cicm is null ? null : new TrackSequence
-    {
-        Number  = cicm.TrackNumber,
-        Session = cicm.Session
-    };
+    public static implicit operator TrackSequence(TrackSequenceType cicm) => cicm is null
+                                                                                 ? null
+                                                                                 : new TrackSequence
+                                                                                 {
+                                                                                     Number  = cicm.TrackNumber,
+                                                                                     Session = cicm.Session
+                                                                                 };
 }
 
 public class TrackIndex
@@ -322,11 +324,13 @@ public class TrackIndex
     public int    Value { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator TrackIndex(TrackIndexType cicm) => cicm is null ? null : new TrackIndex
-    {
-        Index = cicm.index,
-        Value = cicm.Value
-    };
+    public static implicit operator TrackIndex(TrackIndexType cicm) => cicm is null
+                                                                           ? null
+                                                                           : new TrackIndex
+                                                                           {
+                                                                               Index = cicm.index,
+                                                                               Value = cicm.Value
+                                                                           };
 }
 
 public class TrackFlags
@@ -337,21 +341,29 @@ public class TrackFlags
     public bool PreEmphasis   { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator TrackFlags(TrackFlagsType cicm) => cicm is null ? null : new TrackFlags
-    {
-        CopyPermitted = cicm.CopyPermitted,
-        Data          = cicm.Data,
-        PreEmphasis   = cicm.PreEmphasis,
-        Quadraphonic  = cicm.Quadraphonic
-    };
+    public static implicit operator TrackFlags(TrackFlagsType cicm) => cicm is null
+                                                                           ? null
+                                                                           : new TrackFlags
+                                                                           {
+                                                                               CopyPermitted = cicm.CopyPermitted,
+                                                                               Data          = cicm.Data,
+                                                                               PreEmphasis   = cicm.PreEmphasis,
+                                                                               Quadraphonic  = cicm.Quadraphonic
+                                                                           };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum TrackType
 {
-    Audio, Mode0, Mode1,
-    Mode2, Mode2Form1, Mode2Form2,
-    Dvd, HdDvd, Bluray,
+    Audio,
+    Mode0,
+    Mode1,
+    Mode2,
+    Mode2Form1,
+    Mode2Form2,
+    Dvd,
+    HdDvd,
+    Bluray,
     Ddcd
 }
 

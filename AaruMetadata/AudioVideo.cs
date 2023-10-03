@@ -93,6 +93,7 @@ public class VideoTrack
     public uint           Horizontal  { get; set; }
     public uint           Vertical    { get; set; }
     public long           MeanBitrate { get; set; }
+
     [JsonPropertyName("3D")]
     public bool ThreeD { get; set; }
 
@@ -196,69 +197,137 @@ public class Coordinates
     public double Longitude { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Coordinates(CoordinatesType cicm) => cicm is null ? null : new Coordinates
-    {
-        Latitude  = cicm.Latitude,
-        Longitude = cicm.Longitude
-    };
+    public static implicit operator Coordinates(CoordinatesType cicm) => cicm is null
+                                                                             ? null
+                                                                             : new Coordinates
+                                                                             {
+                                                                                 Latitude  = cicm.Latitude,
+                                                                                 Longitude = cicm.Longitude
+                                                                             };
 }
 
-[JsonConverter(typeof(JsonStringEnumMemberConverter)), SuppressMessage("ReSharper", "InconsistentNaming")]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum SourceFormat
 {
     [JsonPropertyName("ITU-A")]
-    ITUA, [JsonPropertyName("ITU-B")]
-    ITUB, [JsonPropertyName("ITU-C")]
-    ITUC, [JsonPropertyName("ITU-D")]
-    ITUD, [JsonPropertyName("ITU-E")]
-    ITUE, [JsonPropertyName("ITU-F")]
-    ITUF, [JsonPropertyName("ITU-G")]
-    ITUG, [JsonPropertyName("ITU-H")]
-    ITUH, [JsonPropertyName("ITU-I")]
-    ITUI, [JsonPropertyName("ITU-J")]
-    ITUJ, [JsonPropertyName("ITU-K")]
-    ITUK, [JsonPropertyName("ITU-L")]
-    ITUL, [JsonPropertyName("ITU-M")]
-    ITUM, [JsonPropertyName("ITU-N")]
-    ITUN, [JsonPropertyName("PAL-B")]
-    PALB, [JsonPropertyName("SECAM-B")]
-    SECAMB, [JsonPropertyName("PAL-D")]
-    PALD, [JsonPropertyName("SECAM-D")]
-    SECAMD, [JsonPropertyName("PAL-G")]
-    PALG, [JsonPropertyName("SECAM-G")]
-    SECAMG, [JsonPropertyName("PAL-H")]
-    PALH, [JsonPropertyName("PAL-I")]
-    PALI, [JsonPropertyName("PAL-K")]
-    PALK, [JsonPropertyName("SECAM-K")]
-    SECAMK, [JsonPropertyName("NTSC-M")]
-    NTSCM, [JsonPropertyName("PAL-N")]
-    PALN, [JsonPropertyName("PAL-M")]
-    PALM, [JsonPropertyName("SECAM-M")]
-    SECAMM, MUSE, PALplus, FM,
-    AM, COFDM, [JsonPropertyName("CAM-D")]
-    CAMD, DAB, [JsonPropertyName("DAB+")]
-    DAB1, DRM, [JsonPropertyName("DRM+")]
-    DRM1, FMeXtra, ATSC, ATSC2,
-    ATSC3, [JsonPropertyName("ATSC-M/H")]
-    ATSCMH, [JsonPropertyName("DVB-T")]
-    DVBT, [JsonPropertyName("DVB-T2")]
-    DVBT2, [JsonPropertyName("DVB-S")]
-    DVBS, [JsonPropertyName("DVB-S2")]
-    DVBS2, [JsonPropertyName("DVB-S2X")]
-    DVBS2X, [JsonPropertyName("DVB-C")]
-    DVBC, [JsonPropertyName("DVB-C2")]
-    DVBC2, [JsonPropertyName("DVB-H")]
-    DVBH, [JsonPropertyName("DVB-NGH")]
-    DVBNGH, [JsonPropertyName("DVB-SH")]
-    DVBSH, [JsonPropertyName("ISDB-T")]
-    ISDBT, [JsonPropertyName("ISDB-Tb")]
-    ISDBTb, [JsonPropertyName("ISDB-S")]
-    ISDBS, [JsonPropertyName("ISDB-C")]
-    ISDBC, [JsonPropertyName("1seg")]
-    Item1seg, DTMB, CCMB, [JsonPropertyName("T-DMB")]
-    TDMB, [JsonPropertyName("S-DMB")]
-    SDMB, IPTV, [JsonPropertyName("DVB-MT")]
-    DVBMT, [JsonPropertyName("DVB-MC")]
-    DVBMC, [JsonPropertyName("DVB-MS")]
-    DVBMS, ADR, SDR
+    ITUA,
+    [JsonPropertyName("ITU-B")]
+    ITUB,
+    [JsonPropertyName("ITU-C")]
+    ITUC,
+    [JsonPropertyName("ITU-D")]
+    ITUD,
+    [JsonPropertyName("ITU-E")]
+    ITUE,
+    [JsonPropertyName("ITU-F")]
+    ITUF,
+    [JsonPropertyName("ITU-G")]
+    ITUG,
+    [JsonPropertyName("ITU-H")]
+    ITUH,
+    [JsonPropertyName("ITU-I")]
+    ITUI,
+    [JsonPropertyName("ITU-J")]
+    ITUJ,
+    [JsonPropertyName("ITU-K")]
+    ITUK,
+    [JsonPropertyName("ITU-L")]
+    ITUL,
+    [JsonPropertyName("ITU-M")]
+    ITUM,
+    [JsonPropertyName("ITU-N")]
+    ITUN,
+    [JsonPropertyName("PAL-B")]
+    PALB,
+    [JsonPropertyName("SECAM-B")]
+    SECAMB,
+    [JsonPropertyName("PAL-D")]
+    PALD,
+    [JsonPropertyName("SECAM-D")]
+    SECAMD,
+    [JsonPropertyName("PAL-G")]
+    PALG,
+    [JsonPropertyName("SECAM-G")]
+    SECAMG,
+    [JsonPropertyName("PAL-H")]
+    PALH,
+    [JsonPropertyName("PAL-I")]
+    PALI,
+    [JsonPropertyName("PAL-K")]
+    PALK,
+    [JsonPropertyName("SECAM-K")]
+    SECAMK,
+    [JsonPropertyName("NTSC-M")]
+    NTSCM,
+    [JsonPropertyName("PAL-N")]
+    PALN,
+    [JsonPropertyName("PAL-M")]
+    PALM,
+    [JsonPropertyName("SECAM-M")]
+    SECAMM,
+    MUSE,
+    PALplus,
+    FM,
+    AM,
+    COFDM,
+    [JsonPropertyName("CAM-D")]
+    CAMD,
+    DAB,
+    [JsonPropertyName("DAB+")]
+    DAB1,
+    DRM,
+    [JsonPropertyName("DRM+")]
+    DRM1,
+    FMeXtra,
+    ATSC,
+    ATSC2,
+    ATSC3,
+    [JsonPropertyName("ATSC-M/H")]
+    ATSCMH,
+    [JsonPropertyName("DVB-T")]
+    DVBT,
+    [JsonPropertyName("DVB-T2")]
+    DVBT2,
+    [JsonPropertyName("DVB-S")]
+    DVBS,
+    [JsonPropertyName("DVB-S2")]
+    DVBS2,
+    [JsonPropertyName("DVB-S2X")]
+    DVBS2X,
+    [JsonPropertyName("DVB-C")]
+    DVBC,
+    [JsonPropertyName("DVB-C2")]
+    DVBC2,
+    [JsonPropertyName("DVB-H")]
+    DVBH,
+    [JsonPropertyName("DVB-NGH")]
+    DVBNGH,
+    [JsonPropertyName("DVB-SH")]
+    DVBSH,
+    [JsonPropertyName("ISDB-T")]
+    ISDBT,
+    [JsonPropertyName("ISDB-Tb")]
+    ISDBTb,
+    [JsonPropertyName("ISDB-S")]
+    ISDBS,
+    [JsonPropertyName("ISDB-C")]
+    ISDBC,
+    [JsonPropertyName("1seg")]
+    Item1seg,
+    DTMB,
+    CCMB,
+    [JsonPropertyName("T-DMB")]
+    TDMB,
+    [JsonPropertyName("S-DMB")]
+    SDMB,
+    IPTV,
+    [JsonPropertyName("DVB-MT")]
+    DVBMT,
+    [JsonPropertyName("DVB-MC")]
+    DVBMC,
+    [JsonPropertyName("DVB-MS")]
+    DVBMS,
+    ADR,
+    SDR
 }

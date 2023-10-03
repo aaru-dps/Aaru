@@ -132,7 +132,8 @@ public static class Geometry
                                                          geom.bytesPerSector  == geometry.bytesPerSector  &&
                                                          geom.encoding        == geometry.encoding        &&
                                                          geom.variableSectorsPerTrack ==
-                                                         geometry.variableSectorsPerTrack select geom.type).
+                                                         geometry.variableSectorsPerTrack
+                                                   select geom.type).
         FirstOrDefault();
 
     /// <summary>Gets the geometry for a given media type</summary>

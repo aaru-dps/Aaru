@@ -135,25 +135,45 @@ public class Case
     public Scans    Scans { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Case(Schemas.CaseType cicm) => cicm is null ? null : new Case
-    {
-        Type  = (CaseType)cicm.CaseType1,
-        Scans = cicm.Scans
-    };
+    public static implicit operator Case(Schemas.CaseType cicm) => cicm is null
+                                                                       ? null
+                                                                       : new Case
+                                                                       {
+                                                                           Type  = (CaseType)cicm.CaseType1,
+                                                                           Scans = cicm.Scans
+                                                                       };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum CaseType
 {
-    Jewel, BigJewel, SlimJewel,
-    Sleeve, Qpack, Digisleeve,
-    DiscboxSlider, CompacPlus, KeepCase,
-    SnapCase, SoftCase, EcoPack,
-    Liftlock, Spindle, Ps2Case,
-    Ps3Case, BlurayKeepCase, PsCase,
-    DcCase, SaturnCase, XboxCase,
-    Xbox360Case, XboxOneCase, SaturnBigCase,
-    GcCase, WiiCase, Unknown
+    Jewel,
+    BigJewel,
+    SlimJewel,
+    Sleeve,
+    Qpack,
+    Digisleeve,
+    DiscboxSlider,
+    CompacPlus,
+    KeepCase,
+    SnapCase,
+    SoftCase,
+    EcoPack,
+    Liftlock,
+    Spindle,
+    Ps2Case,
+    Ps3Case,
+    BlurayKeepCase,
+    PsCase,
+    DcCase,
+    SaturnCase,
+    XboxCase,
+    Xbox360Case,
+    XboxOneCase,
+    SaturnBigCase,
+    GcCase,
+    WiiCase,
+    Unknown
 }
 
 public class Scans
@@ -162,11 +182,13 @@ public class Scans
     public MediaScan Media { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Scans(ScansType cicm) => cicm is null ? null : new Scans
-    {
-        Case  = cicm.CaseScan,
-        Media = cicm.Scan
-    };
+    public static implicit operator Scans(ScansType cicm) => cicm is null
+                                                                 ? null
+                                                                 : new Scans
+                                                                 {
+                                                                     Case  = cicm.CaseScan,
+                                                                     Media = cicm.Scan
+                                                                 };
 }
 
 public class CaseScan
@@ -175,19 +197,28 @@ public class CaseScan
     public Scan            Scan    { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator CaseScan(CaseScanType cicm) => cicm is null ? null : new CaseScan
-    {
-        Element = (CaseScanElement)cicm.CaseScanElement,
-        Scan    = cicm.Scan
-    };
+    public static implicit operator CaseScan(CaseScanType cicm) => cicm is null
+                                                                       ? null
+                                                                       : new CaseScan
+                                                                       {
+                                                                           Element = (CaseScanElement)cicm.
+                                                                               CaseScanElement,
+                                                                           Scan = cicm.Scan
+                                                                       };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum CaseScanElement
 {
-    Sleeve, Inner, Inlay,
-    FrontBack, FrontFull, BoxFront,
-    BoxBack, BoxSpine, External
+    Sleeve,
+    Inner,
+    Inlay,
+    FrontBack,
+    FrontFull,
+    BoxFront,
+    BoxBack,
+    BoxSpine,
+    External
 }
 
 public class MediaScan
@@ -196,18 +227,25 @@ public class MediaScan
     public Scan             Scan    { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator MediaScan(MediaScanType cicm) => cicm is null ? null : new MediaScan
-    {
-        Element = (MediaScanElement)cicm.MediaScanElement,
-        Scan    = cicm.Scan
-    };
+    public static implicit operator MediaScan(MediaScanType cicm) => cicm is null
+                                                                         ? null
+                                                                         : new MediaScan
+                                                                         {
+                                                                             Element = (MediaScanElement)cicm.
+                                                                                 MediaScanElement,
+                                                                             Scan = cicm.Scan
+                                                                         };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum MediaScanElement
 {
-    Up, Down, Front,
-    Back, Left, Right
+    Up,
+    Down,
+    Front,
+    Back,
+    Left,
+    Right
 }
 
 public class Scanner
@@ -220,15 +258,17 @@ public class Scanner
     public string SoftwareVersion { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Scanner(ScannerType cicm) => cicm is null ? null : new Scanner
-    {
-        Author          = cicm.Author,
-        Manufacturer    = cicm.Manufacturer,
-        Model           = cicm.Model,
-        Serial          = cicm.Serial,
-        Software        = cicm.Software,
-        SoftwareVersion = cicm.SoftwareVersion
-    };
+    public static implicit operator Scanner(ScannerType cicm) => cicm is null
+                                                                     ? null
+                                                                     : new Scanner
+                                                                     {
+                                                                         Author          = cicm.Author,
+                                                                         Manufacturer    = cicm.Manufacturer,
+                                                                         Model           = cicm.Model,
+                                                                         Serial          = cicm.Serial,
+                                                                         Software        = cicm.Software,
+                                                                         SoftwareVersion = cicm.SoftwareVersion
+                                                                     };
 }
 
 public class ScanProcessing
@@ -238,12 +278,15 @@ public class ScanProcessing
     public string SoftwareVersion { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator ScanProcessing(ScanProcessingType cicm) => cicm is null ? null : new ScanProcessing
-    {
-        Author          = cicm.Author,
-        Software        = cicm.Software,
-        SoftwareVersion = cicm.SoftwareVersion
-    };
+    public static implicit operator ScanProcessing(ScanProcessingType cicm) => cicm is null
+                                                                                   ? null
+                                                                                   : new ScanProcessing
+                                                                                   {
+                                                                                       Author   = cicm.Author,
+                                                                                       Software = cicm.Software,
+                                                                                       SoftwareVersion =
+                                                                                           cicm.SoftwareVersion
+                                                                                   };
 }
 
 public class OCR

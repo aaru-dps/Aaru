@@ -49,7 +49,7 @@ public static partial class MediaTypeFromDevice
     /// <param name="blockSize">Size of a block in bytes</param>
     /// <returns>Media type</returns>
     public static MediaType GetFromSsc(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                       byte densityCode, ulong blocks, uint blockSize)
+                                       byte densityCode,        ulong  blocks, uint   blockSize)
     {
         switch(mediumType)
         {
@@ -1073,8 +1073,8 @@ public static partial class MediaTypeFromDevice
                             return MediaType.Exatape106m;
                         }
 
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -1127,8 +1127,8 @@ public static partial class MediaTypeFromDevice
                     case 0x88:
                     case 0x89:
                     {
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -1174,8 +1174,8 @@ public static partial class MediaTypeFromDevice
                             return MediaType.Exatape160mXL;
                         }
 
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SDLT,
@@ -1205,8 +1205,8 @@ public static partial class MediaTypeFromDevice
                     case 0x92:
                     case 0x93:
                     {
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SDLT,
@@ -1228,8 +1228,8 @@ public static partial class MediaTypeFromDevice
                     case 0x00:
                     case 0x4A:
                     {
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -1254,8 +1254,8 @@ public static partial class MediaTypeFromDevice
                     case 0x98:
                     case 0x99:
                     {
-                        if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal)  ||
-                           model.ToLowerInvariant().StartsWith("sdlt", StringComparison.Ordinal) ||
+                        if(model.ToLowerInvariant().StartsWith("dlt",      StringComparison.Ordinal) ||
+                           model.ToLowerInvariant().StartsWith("sdlt",     StringComparison.Ordinal) ||
                            model.ToLowerInvariant().StartsWith("superdlt", StringComparison.Ordinal))
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME,

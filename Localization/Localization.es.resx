@@ -1,621 +1,631 @@
 <root>
-  <!-- ReSharper disable MarkupTextTypo -->
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>1.3</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="Drive_manufacturer_is_SyQuest_media_has_1961069_blocks_of_512_bytes_setting_media_type_to_SparQ" xml:space="preserve">
+    <!-- ReSharper disable MarkupTextTypo -->
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Drive_manufacturer_is_SyQuest_media_has_1961069_blocks_of_512_bytes_setting_media_type_to_SparQ"
+          xml:space="preserve">
     <value>El fabricante es SyQuest, el medio tiene 1961069 bloques de 512 bytes, estableciendo tipo como SparQ.</value>
   </data>
-  <data name="Exception_0" xml:space="preserve">
+    <data name="Exception_0" xml:space="preserve">
     <value>Excepción {0}</value>
   </data>
-  <data name="IDENTIFY_response_is_different_than_512_bytes_not_decoding" xml:space="preserve">
+    <data name="IDENTIFY_response_is_different_than_512_bytes_not_decoding" xml:space="preserve">
     <value>La respuesta a IDENTIFY es diferente de 512, no se decodificará.</value>
   </data>
-  <data name="INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes" xml:space="preserve">
+    <data name="INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes" xml:space="preserve">
     <value>La respuesta a INQUIRY es de {0} bytes, menor del mínimo de 36 bytes, los datos decodificados podrían ser incorrect, no se decodificará.</value>
   </data>
-  <data name="INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field" xml:space="preserve">
+    <data name="INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field" xml:space="preserve">
     <value>El tamaño de la respuesta a INQUIRY ({0} bytes) es diferente a la especificada en el campo de longitud ({1} bytes), los datos decodificados podrían ser incorrectos, no se decodificará.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Acorn_MD1DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Acorn_MD1DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Acorn_MD1DD_80" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Acorn_MD1DD_80" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" y 80 pistas en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Acorn_MD1SD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Acorn_MD1SD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de densidad sencilla de 5¼" en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Acorn_MF2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Acorn_MF2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 3½" en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Acorn_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Acorn_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Amiga_MF2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Amiga_MF2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 3½" en formato Amiga.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Amiga_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Amiga_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" en formato Amiga.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apple_DOS32" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apple_DOS32" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato Apple DOS 3.2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apple_DOS32_DS" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apple_DOS32_DS" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" de doble cara en formato Apple DOS 3.2</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apple_DOS33" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apple_DOS33" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato Apple DOS 3.3</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apple_DOS33_DS" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apple_DOS33_DS" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" de doble cara en formato Apple DOS 3.3</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apple_MF1DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apple_MF1DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 3½" en formato Apple.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Apricot_MF2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Apricot_MF2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 3½" en formato Apricot.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Atari_MD1SD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Atari_MD1SD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de densidad sencilla de 5¼" en formato Atari.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Atari_MD1DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Atari_MD1DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" en formato Acorn.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Bernoulli10" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Bernoulli10" xml:space="preserve">
     <value>El fabricante es IOMEGA, el medio tiene {0} bloques de 256 bytes, estableciendo tipo como Bernoulli Box de 10Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Bernoulli2_150" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Bernoulli2_150" xml:space="preserve">
     <value>El fabricante es IOMEGA, el medio tiene 294918 bloques de 512 bytes, estableciendo tipo como Bernoulli Box II de 150Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Bernoulli2_44" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Bernoulli2_44" xml:space="preserve">
     <value>El fabricante es IOMEGA, el medio tiene 87040 bloques de 512 bytes, estableciendo tipo como Bernoulli Box II de 44Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Bernoulli2_90" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Bernoulli2_90" xml:space="preserve">
     <value>El fabricante es IOMEGA, el medio tiene 175856 bloques de 512 bytes, estableciendo tipo como Bernoulli Box II de 90Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_CompactTape" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_CompactTape" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dlt", estableciendo tipo como CompacTape.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_CompactTapeII" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_CompactTapeII" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dlt", estableciendo tipo como CompacTape II.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DLTtapeIII" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DLTtapeIII" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dlt", estableciendo tipo como DLTtapeIII.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DLTtapeIIIxt" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DLTtapeIIIxt" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dlt", estableciendo tipo como DLTtape IIIxt.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DLTtapeIV" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DLTtapeIV" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dlt", estableciendo tipo como DLTtape IV.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DAT72_dat" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DAT72_dat" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dat", estableciendo tipo como DAT72.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS2_dat" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS2_dat" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dat", estableciendo tipo como DDS-2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS3_dat" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS3_dat" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dat", estableciendo tipo como DDS-3.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS4_alt" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS4_alt" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, el modelo de la unidad comienza con "dat", estableciendo tipo como DDS-4.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como DDS.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como DDS-2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS3" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS3" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como DDS-3.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DDS4" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DDS4" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como DDS-4.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DEC_RX02" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DEC_RX02" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete DEC RX02.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_DMF_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_DMF_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" en formato Microsoft DMF.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA154" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA154" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" conforme con ECMA-154 / ISO 10090.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA201" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA201" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" conforme con ECMA-201 / ISO 13963.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA201_embossed" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA201_embossed" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico estampado de 3½" conforme con ECMA-201 / ISO 13963.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA223" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA223" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" conforme con ECMA-223.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA239" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA239" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" conforme con ECMA-239 / ISO 15498.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_FDFORMAT_MF2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MF2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 3½" en formato FDFORMAT.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_FDFORMAT_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" en formato FDFORMAT.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_GigaMO" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_GigaMO" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" modelo GigaMO.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_GigaMO2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_GigaMO2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" modelo GigaMO 2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF1DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF1DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 3½" con formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF1DD_8" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF1DD_8" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 3½" con formato IBM (8 sectores).</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 3½" con formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF2DD_8" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF2DD_8" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 3½" con formato IBM (8 sectores).</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF2ED" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF2ED" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de densidad extra de 3½" con formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" con formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LS_PC98_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LS_PC98_MF2HD" xml:space="preserve">
     <value>El modelo de la unidad es LS (SuperDisk), el medio tiene 2880 bloques de 512 bytes, estableciendo tipo como disquete de alta densidad de 3½" con formato PC-98.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_PC98_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_PC98_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" con formato PC-98.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA183" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA183" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-183 / ISO 13481.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA184" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA184" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-184 / ISO 13549.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA195" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA195" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-195 / ISO 13482.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA238" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA238" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-238 / ISO 15486.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA280" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA280" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-280 / ISO 18093.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA322" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA322" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ECMA-322 / ISO 22092.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA260" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA260" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 356mm conforme con ECMA-260 / ISO 15898.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA317" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA317" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 300mm conforme con ECMA-317 / ISO 20162.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA56" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA56" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" en formato ECMA-56.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA66" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA66" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato ECMA-66.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA70" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA70" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato ECMA-70.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA78" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA78" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato ECMA-78.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA99" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA99" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 5¼" en formato ECMA-99.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA54" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA54" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato ECMA-54.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA59" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA59" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato ECMA-59.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ECMA69" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ECMA69" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato ECMA-69.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_FDFORMAT_MD2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MD2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 5¼" en formato FDFORMAT.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MD1DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MD1DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 5¼" en formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MD1DD_8" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MD1DD_8" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 5¼" en formato IBM (8 sectores).</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MD2DD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MD2DD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" en formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MD2DD_8" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MD2DD_8" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad de 5¼" en formato IBM (8 sectores.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_MD2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_MD2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 5¼" en formato IBM.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ISO10089" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ISO10089" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ISO 10089.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ISO14517" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ISO14517" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ISO 14517.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ISO15041" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ISO15041" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 3½" conforme con ISO 15041.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ISO15286" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ISO15286" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico de 5¼" conforme con ISO 15286.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LS120" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LS120" xml:space="preserve">
     <value>El modelo de la unidad es LS (SuperDisk), el medio tiene 246528 bloques de 512 bytes, estableciendo tipo como LS-120.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LS240" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LS240" xml:space="preserve">
     <value>El modelo de la unidad es LS (SuperDisk), el medio tiene 469504 bloques de 512 bytes, estableciendo tipo como LS-120.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_JAZ" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_JAZ" xml:space="preserve">
     <value>El fabricante de la unidad es IOMEGA, el modelo es JAZ y el medio tiene 2091050 bloques de 512 bytes, estableciendo tipo como JAZ de 1Gb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_JAZ2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_JAZ2" xml:space="preserve">
     <value>El fabricante de la unidad es IOMEGA, el modelo es JAZ y el medio tiene 3915600 bloques de 512 bytes, estableciendo tipo como JAZ de 2Gb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ZIP100" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ZIP100" xml:space="preserve">
     <value>El fabricante de la unidad es IOMEGA, el modelo es ZIP y el medio tiene 196608 bloques de 512 bytes, estableciendo tipo como ZIP de 100Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ZIP250" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ZIP250" xml:space="preserve">
     <value>El fabricante de la unidad es IOMEGA, el modelo es ZIP y el medio tiene 196608 bloques de 512 bytes, estableciendo tipo como ZIP de 250Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como LTO.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como LTO-2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_QIC11" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_QIC11" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como QIC-11.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_QIC120" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_QIC120" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como QIC-120.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_QIC150" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_QIC150" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como QIC-150.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_QIC24" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_QIC24" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como QIC-24.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Travan5" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Travan5" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como Travan 5.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Travan4" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Travan4" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como Travan 4.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T10000A" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T10000A" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T10000A.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T10000B" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T10000B" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T10000B.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T10000C" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T10000C" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T10000C.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T10000D" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T10000D" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T10000D.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T9840A" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T9840A" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T9840A.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T9840D" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T9840D" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T9840D.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T9940A" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T9940A" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T9940A.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T9940B" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T9940B" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T9940B.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_T9940C" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_T9940C" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante es StorageTek, estableciendo tipo como T9840C.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_106m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_106m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 106m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_112m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_112m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 112m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_125m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_125m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 125m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_150m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_150m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 150m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_15m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_15m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 15m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_160m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_160m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape XL de 160m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_170m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_170m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 170m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_225m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_225m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 225m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_22m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_22m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 22m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_22m_AME" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_22m_AME" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape AME de 22m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_28m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_28m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 28m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_40m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_40m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 40m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_45m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_45m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 45m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_54m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_54m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 54m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_75m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_75m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 75m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_76m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_76m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 76.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Exatape_80m" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Exatape_80m" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "exb", estableciendo tipo como Exatape de 80m.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO2_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO2_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO3" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO3" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-3.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO4" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO4" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-4.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO5" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO5" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-5.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO6_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO6_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-6.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO7_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO7_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-7.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_LTO_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_LTO_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SAIT" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SAIT" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "sdz", estableciendo tipo como Super AIT.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SDLT" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SDLT" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "dlt", estableciendo tipo como SuperDLT.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SDLT2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SDLT2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "dlt", estableciendo tipo como SuperDLT 2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Travan5_stt" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Travan5_stt" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "stt", estableciendo tipo como Travan 5.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Travan7" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Travan7" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "stt", estableciendo tipo como Travan 7.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_VStape" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_VStape" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "dlt", estableciendo tipo como VStape I.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_VXA" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_VXA" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "vxa", estableciendo tipo como VXA.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_VXA2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_VXA2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "vxa", estableciendo tipo como VXA 2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_VXA3" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_VXA3" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "vxa", estableciendo tipo como VXA 3.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_LTO3" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_LTO3" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como WORM LTO-3.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_LTO4" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_LTO4" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como WORM LTO-4.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_LTO5" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_LTO5" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como WORM LTO-5.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_LTO6_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_LTO6_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como WORM LTO-6.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_LTO7_ult" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_LTO7_ult" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "uly", estableciendo tipo como WORM LTO-7.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO2" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO2"
+          xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-2.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO3" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO3"
+          xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-3.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO4" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO4"
+          xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-4.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO5" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO5"
+          xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el modelo de la unidad comienza por "ult", estableciendo tipo como LTO-5.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Floptical" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Floptical" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como Floptical.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_HiMD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_HiMD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como Sony HiMD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD60" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD60" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 60 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD74" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD74" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 74 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD80" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD80" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 80 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_REV120" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_REV120" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como REV de 120Gb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_REV35" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_REV35" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como REV de 35Gb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_REV70" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_REV70" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como REV de 70Gb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_UDO" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_UDO" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como UDO.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_UDO2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_UDO2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como UDO2.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Unknown" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Unknown" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como desconocido.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Unknown_MO" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Unknown_MO" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como magneto-óptico desconocido.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_WORM_UDO2" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_WORM_UDO2" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como WORM UDO 2.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como PD-650.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_WORM_PD_650" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_WORM_PD_650"
+          xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como WORM PD-650.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_23FD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_23FD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato IBM 23FD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_33FD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_33FD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato IBM 33FD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_43FD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_43FD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato IBM 43FD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM_53FD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM_53FD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de 8" en formato IBM 53FD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_PC98_MD2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_PC98_MD2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 5¼" en formato PC-98.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Sharp_MF2HD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Sharp_MF2HD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de alta densidad de 3½" con formato Sharp.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_HF12" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_HF12" xml:space="preserve">
     <value>El medio tiene 46956 bloques de 256 bytes, estableciendo tipo como HyperFlex de 12Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_HF24" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_HF24" xml:space="preserve">
     <value>El medio tiene 46956 bloques de 256 bytes, estableciendo tipo como HyperFlex de 24Mb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_Orb" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_Orb" xml:space="preserve">
     <value>El modelo de la unidad es Castlewood Orb, el medio tiene 4307184 bloques de 512 bytes, estableciendo tipo como Orb.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_RDX320" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_RDX320" xml:space="preserve">
     <value>El modelo de la unidad es RDX, el medio tiene {0} bloques de {1} bytes, estableciendo tipo como RDX320.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SQ2000" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SQ2000" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 390696 bloques de 512 bytes, estableciendo tipo como SQ2000.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SQ310" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SQ310" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 215440 bloques de 512 bytes, estableciendo tipo como SQ310.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SQ327" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SQ327" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 524288 bloques de 512 bytes, estableciendo tipo como SQ327.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SQ400" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SQ400" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 87600 bloques de 512 bytes, estableciendo tipo como SQ400.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SQ800" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SQ800" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 173456 bloques de 512 bytes, estableciendo tipo como SQ800.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_SyJet" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_SyJet" xml:space="preserve">
     <value>El fabricante de la unidad es SyQuest, el medio tiene 2929800 bloques de 512 bytes, estableciendo tipo como SyJet.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_PocketZIP" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_PocketZIP" xml:space="preserve">
     <value>El fabricante de la unidad es IOMEGA, el medio tiene 78882 bloques de 512 bytes, estableciendo tipo como PocketZIP.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_HiFD" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_HiFD" xml:space="preserve">
     <value>El modelo de la unidad es HiFD, el medio tiene 393380 bloques de 512 bytes, estableciendo tipo como HiFD.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_FD32MB" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_FD32MB" xml:space="preserve">
     <value>El modelo de la unidad es LS (SuperDisk), el medio tiene 65536 bloques de 512 bytes, estableciendo tipo como FD32MB.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_EZ135" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_EZ135" xml:space="preserve">
     <value>El fabricante es SyQuest, el medio tiene 262144 bloques de 512 bytes, estableciendo tipo como EZ135.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_EZ230" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_EZ230" xml:space="preserve">
     <value>El fabricante es SyQuest, el medio tiene 450560 bloques de 512 bytes, estableciendo tipo como EZ230.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM3490" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM3490" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como IBM 3490.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM3490E" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM3490E" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h, estableciendo tipo como IBM 3490E.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_IBM3592" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_IBM3592" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el código de densidad es {1:X2}h y el fabricante de la unidad es IBM, estableciendo tipo como IBM 3592.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD60_MDDATA" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD60_MDDATA" xml:space="preserve">
     <value>El tipo de periférico SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 60 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD74_MDDATA" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD74_MDDATA" xml:space="preserve">
     <value>El tipo de periférico SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 74 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MD80_MDDATA" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MD80_MDDATA" xml:space="preserve">
     <value>El tipo de periférico SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc de 80 minutos.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MDDATA" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MDDATA" xml:space="preserve">
     <value>El tipo de periférico SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como MiniDisc for Data.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_MetaFloppy" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_MetaFloppy" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, el medio tiene {1} bloques de {2} bytes, estableciendo tipo como disquete de doble densidad y una cara de 5¼" en formato MetaFloppy.</value>
   </data>
-  <data name="SCSI_Media_Type_Description_ZBC_Host_Managed" xml:space="preserve">
+    <data name="SCSI_Media_Type_Description_ZBC_Host_Managed" xml:space="preserve">
     <value>El tipo de periférico SCSI es {0:X2}h, estableciendo tipo como dispositivo de zonas de bloques gestionado.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_and_device_is_USB_setting_media_type_to_Flash_Drive" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_and_device_is_USB_setting_media_type_to_Flash_Drive" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h y el dispositivo es USB, estableciendo tipo como unidad Flash.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_CDR" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CDR" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como CD-R.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_CDRW" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CDRW" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como CD-RW.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_Plus" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_Plus" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como CD+.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_ROM" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_ROM" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como CD-ROM.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como Compact Disc.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc_Digital_Audio" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc_Digital_Audio" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como Compact Disc Digital Audio.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_Photo_CD" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Photo_CD" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como Photo CD.</value>
   </data>
-  <data name="SCSI_medium_type_is_0_setting_media_type_to_unknown_magneto_optical" xml:space="preserve">
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_unknown_magneto_optical" xml:space="preserve">
     <value>El tipo de medio SCSI es {0:X2}h, estableciendo tipo como magneto-óptico desconocido.</value>
   </data>
-  <data name="Unhandled_exception_calling_uname_0" xml:space="preserve">
+    <data name="Unhandled_exception_calling_uname_0" xml:space="preserve">
     <value>Excepción no manejada llamando a uname: {0}</value>
   </data>
 </root>

@@ -54,8 +54,8 @@ public interface IWritableFluxImage : IFluxImage, IWritableImage
     /// <param name="track">Physical track (position of the heads over the floppy media, 0-based)</param>
     /// <param name="subTrack">Physical sub-step of track (e.g. half-track)</param>
     /// <param name="captureIndex">Which capture slot to write to. See also <see cref="IFluxImage.CapturesLength" /></param>
-    ErrorNumber WriteFluxCapture(ulong indexResolution, ulong dataResolution, byte[] indexBuffer, byte[] dataBuffer,
-                                 uint head, ushort track, byte subTrack, uint captureIndex);
+    ErrorNumber WriteFluxCapture(ulong indexResolution, ulong  dataResolution, byte[] indexBuffer, byte[] dataBuffer,
+                                 uint  head,            ushort track,          byte   subTrack,    uint   captureIndex);
 
     /// <summary>Writes a capture's index stream.</summary>
     /// <returns>Error number</returns>
@@ -66,7 +66,7 @@ public interface IWritableFluxImage : IFluxImage, IWritableImage
     /// <param name="subTrack">Physical sub-step of track (e.g. half-track)</param>
     /// <param name="captureIndex">Which capture to read. See also <see cref="CapturesLength" /></param>
     ErrorNumber WriteFluxIndexCapture(ulong resolution, byte[] index, uint head, ushort track, byte subTrack,
-                                      uint captureIndex);
+                                      uint  captureIndex);
 
     /// <summary>Writes a capture's data stream.</summary>
     /// <returns>Error number</returns>
@@ -77,5 +77,5 @@ public interface IWritableFluxImage : IFluxImage, IWritableImage
     /// <param name="subTrack">Physical sub-step of track (e.g. half-track)</param>
     /// <param name="captureIndex">Which capture to read. See also <see cref="CapturesLength" /></param>
     ErrorNumber WriteFluxDataCapture(ulong resolution, byte[] data, uint head, ushort track, byte subTrack,
-                                     uint captureIndex);
+                                     uint  captureIndex);
 }

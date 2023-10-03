@@ -52,13 +52,22 @@ public class Dimensions
     public double  Thickness { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Dimensions(DimensionsType cicm) => cicm is null ? null : new Dimensions
-    {
-        Diameter  = cicm.DiameterSpecified ? cicm.Diameter : null,
-        Height    = cicm.HeightSpecified ? cicm.Height : null,
-        Width     = cicm.WidthSpecified ? cicm.Width : null,
-        Thickness = cicm.Thickness
-    };
+    public static implicit operator Dimensions(DimensionsType cicm) => cicm is null
+                                                                           ? null
+                                                                           : new Dimensions
+                                                                           {
+                                                                               Diameter =
+                                                                                   cicm.DiameterSpecified
+                                                                                       ? cicm.Diameter
+                                                                                       : null,
+                                                                               Height = cicm.HeightSpecified
+                                                                                   ? cicm.Height
+                                                                                   : null,
+                                                                               Width = cicm.WidthSpecified
+                                                                                   ? cicm.Width
+                                                                                   : null,
+                                                                               Thickness = cicm.Thickness
+                                                                           };
 
     /// <summary>Gets the physical dimensions, in metadata expected format, for a given media type</summary>
     /// <param name="mediaType">Media type</param>
@@ -69,7 +78,8 @@ public class Dimensions
 
         switch(mediaType)
         {
-            #region 5.25" floppy disk
+        #region 5.25" floppy disk
+
             case MediaType.Apple32SS:
             case MediaType.Apple32DS:
             case MediaType.Apple33SS:
@@ -112,9 +122,11 @@ public class Dimensions
                 dmns.Thickness = 1.65;
 
                 return dmns;
-            #endregion 5.25" floppy disk
 
-            #region 3.5" floppy disk
+        #endregion 5.25" floppy disk
+
+        #region 3.5" floppy disk
+
             case MediaType.AppleSonySS:
             case MediaType.AppleSonyDS:
             case MediaType.DOS_35_SS_DD_8:
@@ -147,9 +159,11 @@ public class Dimensions
                 dmns.Thickness = 3.3;
 
                 return dmns;
-            #endregion 3.5" floppy disk
 
-            #region 8" floppy disk
+        #endregion 3.5" floppy disk
+
+        #region 8" floppy disk
+
             case MediaType.IBM23FD:
             case MediaType.IBM33FD_128:
             case MediaType.IBM33FD_256:
@@ -176,9 +190,11 @@ public class Dimensions
                 dmns.Thickness = 1.65;
 
                 return dmns;
-            #endregion 8" floppy disk
 
-            #region 356mm magneto optical
+        #endregion 8" floppy disk
+
+        #region 356mm magneto optical
+
             case MediaType.ECMA_260:
             case MediaType.ECMA_260_Double:
                 // According to ECMA-260 et al
@@ -189,9 +205,11 @@ public class Dimensions
                 dmns.Thickness = 25.4;
 
                 return dmns;
-            #endregion 356mm magneto optical
 
-            #region 300mm magneto optical
+        #endregion 356mm magneto optical
+
+        #region 300mm magneto optical
+
             case MediaType.ECMA_189:
             case MediaType.ECMA_190:
             case MediaType.ECMA_317:
@@ -203,9 +221,11 @@ public class Dimensions
                 dmns.Thickness = 17;
 
                 return dmns;
-            #endregion 300mm magneto optical
 
-            #region 5.25" magneto optical
+        #endregion 300mm magneto optical
+
+        #region 5.25" magneto optical
+
             case MediaType.ECMA_153:
             case MediaType.ECMA_153_512:
             case MediaType.ECMA_183_512:
@@ -238,9 +258,11 @@ public class Dimensions
                 dmns.Thickness = 11;
 
                 return dmns;
-            #endregion 5.25" magneto optical
 
-            #region 3.5" magneto optical
+        #endregion 5.25" magneto optical
+
+        #region 3.5" magneto optical
+
             case MediaType.ECMA_154:
             case MediaType.ECMA_201:
             case MediaType.ECMA_201_ROM:
@@ -257,7 +279,8 @@ public class Dimensions
                 dmns.Thickness = 6;
 
                 return dmns;
-            #endregion 3.5" magneto optical
+
+        #endregion 3.5" magneto optical
 
             case MediaType.PD650:
             case MediaType.PD650_WORM:
@@ -983,7 +1006,8 @@ public class Dimensions
 
                 return dmns;
 
-            #region CD/DVD/BD
+        #region CD/DVD/BD
+
             case MediaType.CDDA:
             case MediaType.CDG:
             case MediaType.CDEG:
@@ -1083,9 +1107,11 @@ public class Dimensions
                 dmns.Thickness = 1.2;
 
                 return dmns;
-            #endregion CD/DVD/BD
 
-            #region Apple Hard Disks
+        #endregion CD/DVD/BD
+
+        #region Apple Hard Disks
+
             // TODO: Find Apple Widget size
             case MediaType.AppleProfile:
                 dmns.Height = 223.8;
@@ -1103,7 +1129,8 @@ public class Dimensions
                 dmns.Thickness = 78.7;
 
                 return dmns;
-            #endregion Apple Hard Disks
+
+        #endregion Apple Hard Disks
 
             case MediaType.UMD:
                 dmns.Height = 64;
@@ -1122,7 +1149,8 @@ public class Dimensions
                 dmns.Thickness = 5.64;
 
                 return dmns;
-            default: return null;
+            default:
+                return null;
         }
     }
 }

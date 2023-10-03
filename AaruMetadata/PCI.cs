@@ -55,11 +55,13 @@ public class Pci
     public LinearMedia ExpansionRom { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Pci(PCIType cicm) => cicm is null ? null : new Pci
-    {
-        VendorID      = cicm.VendorID,
-        DeviceID      = cicm.DeviceID,
-        Configuration = cicm.Configuration,
-        ExpansionRom  = cicm.ExpansionROM
-    };
+    public static implicit operator Pci(PCIType cicm) => cicm is null
+                                                             ? null
+                                                             : new Pci
+                                                             {
+                                                                 VendorID      = cicm.VendorID,
+                                                                 DeviceID      = cicm.DeviceID,
+                                                                 Configuration = cicm.Configuration,
+                                                                 ExpansionRom  = cicm.ExpansionROM
+                                                             };
 }

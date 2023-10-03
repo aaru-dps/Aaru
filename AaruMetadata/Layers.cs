@@ -75,10 +75,12 @@ public class Layers
     }
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), JsonConverter(typeof(JsonStringEnumMemberConverter))]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum LayerType
 {
-    PTP, OTP
+    PTP,
+    OTP
 }
 
 public class LayeredText
@@ -87,11 +89,15 @@ public class LayeredText
     public string Text  { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator LayeredText(LayeredTextType cicm) => cicm is null ? null : new LayeredText
-    {
-        Layer = cicm.layerSpecified ? cicm.layer : null,
-        Text  = cicm.Value
-    };
+    public static implicit operator LayeredText(LayeredTextType cicm) => cicm is null
+                                                                             ? null
+                                                                             : new LayeredText
+                                                                             {
+                                                                                 Layer = cicm.layerSpecified
+                                                                                     ? cicm.layer
+                                                                                     : null,
+                                                                                 Text = cicm.Value
+                                                                             };
 }
 
 public class Sectors
@@ -100,9 +106,12 @@ public class Sectors
     public ulong Value { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Sectors(SectorsType cicm) => cicm is null ? null : new Sectors
-    {
-        Layer = cicm.layerSpecified ? cicm.layer : null,
-        Value = cicm.Value
-    };
+    public static implicit operator Sectors(SectorsType cicm) => cicm is null
+                                                                     ? null
+                                                                     : new Sectors
+                                                                     {
+                                                                         Layer =
+                                                                             cicm.layerSpecified ? cicm.layer : null,
+                                                                         Value = cicm.Value
+                                                                     };
 }

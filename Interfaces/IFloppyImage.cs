@@ -108,7 +108,7 @@ public interface IFloppyImage : IMediaImage
     /// <param name="sector">Logical sector ID.</param>
     /// <param name="status">Status of request.</param>
     /// <param name="buffer">Buffer where the sector data will be stored.</param>
-    ErrorNumber ReadSectorLong(ushort track, byte head, ushort sector, out FloppySectorStatus status,
+    ErrorNumber ReadSectorLong(ushort     track, byte head, ushort sector, out FloppySectorStatus status,
                                out byte[] buffer);
 
     /// <summary>Verifies a track.</summary>

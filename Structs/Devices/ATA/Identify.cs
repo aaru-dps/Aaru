@@ -55,11 +55,12 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA;
 ///     T13-1699D rev. 3f (ATA8-ACS) T13-1699D rev. 4a (ATA8-ACS) T13-2015D rev. 2 (ACS-2) T13-2161D rev. 5 (ACS-3) CF+
 ///     &amp; CF Specification rev. 1.4 (CFA)
 /// </summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Identify
 {
-    const string MODULE_NAME = "ATA/ATAPI IDENTIFY decoder";
+#region CapabilitiesBit enum
 
     /// <summary>Capabilities flag bits.</summary>
     [Flags]
@@ -101,6 +102,10 @@ public static class Identify
         PhysicalAlignment0 = 0x0001
     }
 
+#endregion
+
+#region CapabilitiesBit2 enum
+
     /// <summary>More capabilities flag bits.</summary>
     [Flags]
     public enum CapabilitiesBit2 : ushort
@@ -109,16 +114,28 @@ public static class Identify
         MustBeClear = 0x8000,
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
-        #pragma warning disable 1591
-        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
-        Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
-        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
-        Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
+    #pragma warning disable 1591
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+        Reserved07 = 0x0080,
+        Reserved06 = 0x0040,
+        Reserved05 = 0x0020,
+        Reserved04 = 0x0010,
+        Reserved03 = 0x0008,
+        Reserved02 = 0x0004,
         Reserved01 = 0x0002,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>Indicates a device specific minimum standby timer value</summary>
         SpecificStandbyTimer = 0x0001
     }
+
+#endregion
+
+#region CapabilitiesBit3 enum
 
     /// <summary>Even more capabilities flag bits.</summary>
     [Flags]
@@ -136,12 +153,16 @@ public static class Identify
         SanitizeCommands = 0x0008,
         /// <summary>SANITIZE ANTIFREEZE LOCK EXT is supported</summary>
         SanitizeAntifreeze = 0x0004,
-        #pragma warning disable 1591
+    #pragma warning disable 1591
         Reserved01 = 0x0002,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>Multiple logical sector setting is valid</summary>
         MultipleValid = 0x0001
     }
+
+#endregion
+
+#region CommandSetBit enum
 
     /// <summary>Command set flag bits.</summary>
     [Flags]
@@ -181,6 +202,10 @@ public static class Identify
         SMART = 0x0001
     }
 
+#endregion
+
+#region CommandSetBit2 enum
+
     /// <summary>More command set flag bits.</summary>
     [Flags]
     public enum CommandSetBit2 : ushort
@@ -218,6 +243,10 @@ public static class Identify
         /// <summary>DOWNLOAD MICROCODE is supported</summary>
         DownloadMicrocode = 0x0001
     }
+
+#endregion
+
+#region CommandSetBit3 enum
 
     /// <summary>Even more command set flag bits.</summary>
     [Flags]
@@ -257,6 +286,10 @@ public static class Identify
         SMARTLog = 0x0001
     }
 
+#endregion
+
+#region CommandSetBit4 enum
+
     /// <summary>Yet more command set flag bits.</summary>
     [Flags]
     public enum CommandSetBit4 : ushort
@@ -265,10 +298,12 @@ public static class Identify
         MustBeClear = 0x8000,
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
-        #pragma warning disable 1591
-        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
+    #pragma warning disable 1591
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
         Reserved10 = 0x0400,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>DSN feature set is supported</summary>
         DSN = 0x0200,
         /// <summary>Accessible Max Address Configuration is supported</summary>
@@ -290,6 +325,10 @@ public static class Identify
         /// <summary>Reserved for DT1825</summary>
         DT1825 = 0x0001
     }
+
+#endregion
+
+#region CommandSetBit5 enum
 
     /// <summary>Yet again more command set flag bits.</summary>
     [Flags]
@@ -329,20 +368,38 @@ public static class Identify
         ZonedBit0 = 0x0001
     }
 
+#endregion
+
+#region DataSetMgmtBit enum
+
     /// <summary>Data set management flag bits.</summary>
     [Flags]
     public enum DataSetMgmtBit : ushort
     {
-        #pragma warning disable 1591
-        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
-        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
-        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
-        Reserved06 = 0x0040, Reserved05 = 0x0020, Reserved04 = 0x0010,
-        Reserved03 = 0x0008, Reserved02 = 0x0004, Reserved01 = 0x0002,
-        #pragma warning restore 1591
+    #pragma warning disable 1591
+        Reserved15 = 0x8000,
+        Reserved14 = 0x4000,
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+        Reserved07 = 0x0080,
+        Reserved06 = 0x0040,
+        Reserved05 = 0x0020,
+        Reserved04 = 0x0010,
+        Reserved03 = 0x0008,
+        Reserved02 = 0x0004,
+        Reserved01 = 0x0002,
+    #pragma warning restore 1591
         /// <summary>TRIM is supported</summary>
         Trim = 0x0001
     }
+
+#endregion
+
+#region DeviceFormFactorEnum enum
 
     /// <summary>Device form factor</summary>
     public enum DeviceFormFactorEnum : ushort
@@ -360,6 +417,10 @@ public static class Identify
         /// <summary>Less than 1.8"</summary>
         LessThanOnePointEight = 5
     }
+
+#endregion
+
+#region ExtendedIdentifyBit enum
 
     /// <summary>Extended identify flag bits.</summary>
     [Flags]
@@ -382,6 +443,10 @@ public static class Identify
         /// <summary>Identify words 54 to 58 are valid</summary>
         Words54to58Valid = 0x01
     }
+
+#endregion
+
+#region GeneralConfigurationBit enum
 
     /// <summary>General configuration flag bits.</summary>
     [Flags]
@@ -423,14 +488,20 @@ public static class Identify
         Reserved = 0x0001
     }
 
+#endregion
+
+#region MajorVersionBit enum
+
     /// <summary>Word 80 Major version</summary>
     [Flags]
     public enum MajorVersionBit : ushort
     {
-        #pragma warning disable 1591
-        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
+    #pragma warning disable 1591
+        Reserved15 = 0x8000,
+        Reserved14 = 0x4000,
+        Reserved13 = 0x2000,
         Reserved12 = 0x1000,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>ACS-4</summary>
         ACS4 = 0x0800,
         /// <summary>ACS-3</summary>
@@ -453,10 +524,14 @@ public static class Identify
         Ata2 = 0x0004,
         /// <summary>ATA-1</summary>
         Ata1 = 0x0002,
-        #pragma warning disable 1591
+    #pragma warning disable 1591
         Reserved00 = 0x0001
-        #pragma warning restore 1591
+    #pragma warning restore 1591
     }
+
+#endregion
+
+#region SATACapabilitiesBit enum
 
     /// <summary>SATA capabilities flags</summary>
     [Flags]
@@ -478,10 +553,12 @@ public static class Identify
         PowerReceipt = 0x0200,
         /// <summary>Supports NCQ</summary>
         NCQ = 0x0100,
-        #pragma warning disable 1591
-        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
+    #pragma warning disable 1591
+        Reserved07 = 0x0080,
+        Reserved06 = 0x0040,
+        Reserved05 = 0x0020,
         Reserved04 = 0x0010,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)</summary>
         Gen3Speed = 0x0008,
         /// <summary>Supports SATA Gen. 2 Signaling Speed (3.0Gb/s)</summary>
@@ -492,15 +569,25 @@ public static class Identify
         Clear = 0x0001
     }
 
+#endregion
+
+#region SATACapabilitiesBit2 enum
+
     /// <summary>More SATA capabilities flags</summary>
     [Flags]
     public enum SATACapabilitiesBit2 : ushort
     {
-        #pragma warning disable 1591
-        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
-        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
-        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
-        #pragma warning restore 1591
+    #pragma warning disable 1591
+        Reserved15 = 0x8000,
+        Reserved14 = 0x4000,
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+        Reserved07 = 0x0080,
+    #pragma warning restore 1591
         /// <summary>Supports RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED</summary>
         FPDMAQ = 0x0040,
         /// <summary>Supports NCQ Queue Management</summary>
@@ -521,15 +608,24 @@ public static class Identify
         Clear = 0x0001
     }
 
+#endregion
+
+#region SATAFeaturesBit enum
+
     /// <summary>SATA features flags</summary>
     [Flags]
     public enum SATAFeaturesBit : ushort
     {
-        #pragma warning disable 1591
-        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
-        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
-        Reserved09 = 0x0200, Reserved08 = 0x0100,
-        #pragma warning restore 1591
+    #pragma warning disable 1591
+        Reserved15 = 0x8000,
+        Reserved14 = 0x4000,
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+    #pragma warning restore 1591
         /// <summary>Supports NCQ autosense</summary>
         NCQAutoSense = 0x0080,
         /// <summary>Automatic Partial to Slumber transitions are enabled</summary>
@@ -552,16 +648,26 @@ public static class Identify
         Clear = 0x0001
     }
 
+#endregion
+
+#region SCTCommandTransportBit enum
+
     /// <summary>SCT Command Transport flags</summary>
     [Flags]
     public enum SCTCommandTransportBit : ushort
     {
-        #pragma warning disable 1591
-        Vendor15   = 0x8000, Vendor14   = 0x4000, Vendor13   = 0x2000,
-        Vendor12   = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
-        Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
+    #pragma warning disable 1591
+        Vendor15   = 0x8000,
+        Vendor14   = 0x4000,
+        Vendor13   = 0x2000,
+        Vendor12   = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+        Reserved07 = 0x0080,
         Reserved06 = 0x0040,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>SCT Command Transport Data Tables supported</summary>
         DataTables = 0x0020,
         /// <summary>SCT Command Transport Features Control supported</summary>
@@ -576,20 +682,29 @@ public static class Identify
         Supported = 0x0001
     }
 
+#endregion
+
+#region SecurityStatusBit enum
+
     /// <summary>Security status flag bits.</summary>
     [Flags]
     public enum SecurityStatusBit : ushort
     {
-        #pragma warning disable 1591
-        Reserved15 = 0x8000, Reserved14 = 0x4000, Reserved13 = 0x2000,
-        Reserved12 = 0x1000, Reserved11 = 0x0800, Reserved10 = 0x0400,
+    #pragma warning disable 1591
+        Reserved15 = 0x8000,
+        Reserved14 = 0x4000,
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
         Reserved09 = 0x0200,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>Maximum security level</summary>
         Maximum = 0x0100,
-        #pragma warning disable 1591
-        Reserved07 = 0x0080, Reserved06 = 0x0040,
-        #pragma warning restore 1591
+    #pragma warning disable 1591
+        Reserved07 = 0x0080,
+        Reserved06 = 0x0040,
+    #pragma warning restore 1591
         /// <summary>Supports enhanced security erase</summary>
         Enhanced = 0x0020,
         /// <summary>Security count expired</summary>
@@ -604,6 +719,10 @@ public static class Identify
         Supported = 0x0001
     }
 
+#endregion
+
+#region SpecificConfigurationEnum enum
+
     /// <summary>Specific configuration flags</summary>
     public enum SpecificConfigurationEnum : ushort
     {
@@ -617,16 +736,29 @@ public static class Identify
         NotRequiresSetCompleteResponse = 0xC837
     }
 
+#endregion
+
+#region TransferMode enum
+
     /// <summary>Transfer mode flags</summary>
     [Flags]
     public enum TransferMode : byte
     {
-        #pragma warning disable 1591
-        Mode7 = 0x80, Mode6 = 0x40, Mode5 = 0x20,
-        Mode4 = 0x10, Mode3 = 0x08, Mode2 = 0x04,
-        Mode1 = 0x02, Mode0 = 0x01
-        #pragma warning restore 1591
+    #pragma warning disable 1591
+        Mode7 = 0x80,
+        Mode6 = 0x40,
+        Mode5 = 0x20,
+        Mode4 = 0x10,
+        Mode3 = 0x08,
+        Mode2 = 0x04,
+        Mode1 = 0x02,
+        Mode0 = 0x01
+    #pragma warning restore 1591
     }
+
+#endregion
+
+#region TrustedComputingBit enum
 
     /// <summary>Trusted Computing flags</summary>
     [Flags]
@@ -636,16 +768,157 @@ public static class Identify
         Clear = 0x8000,
         /// <summary>MUST be set</summary>
         Set = 0x4000,
-        #pragma warning disable 1591
-        Reserved13 = 0x2000, Reserved12 = 0x1000, Reserved11 = 0x0800,
-        Reserved10 = 0x0400, Reserved09 = 0x0200, Reserved08 = 0x0100,
-        Reserved07 = 0x0080, Reserved06 = 0x0040, Reserved05 = 0x0020,
-        Reserved04 = 0x0010, Reserved03 = 0x0008, Reserved02 = 0x0004,
+    #pragma warning disable 1591
+        Reserved13 = 0x2000,
+        Reserved12 = 0x1000,
+        Reserved11 = 0x0800,
+        Reserved10 = 0x0400,
+        Reserved09 = 0x0200,
+        Reserved08 = 0x0100,
+        Reserved07 = 0x0080,
+        Reserved06 = 0x0040,
+        Reserved05 = 0x0020,
+        Reserved04 = 0x0010,
+        Reserved03 = 0x0008,
+        Reserved02 = 0x0004,
         Reserved01 = 0x0002,
-        #pragma warning restore 1591
+    #pragma warning restore 1591
         /// <summary>Trusted Computing feature set is supported</summary>
         TrustedComputing = 0x0001
     }
+
+#endregion
+
+    const string MODULE_NAME = "ATA/ATAPI IDENTIFY decoder";
+
+    /// <summary>Decodes a raw IDENTIFY DEVICE response</summary>
+    /// <param name="IdentifyDeviceResponse">Raw IDENTIFY DEVICE response</param>
+    /// <returns>Decoded IDENTIFY DEVICE</returns>
+    public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
+    {
+        if(IdentifyDeviceResponse == null)
+            return null;
+
+        if(IdentifyDeviceResponse.Length != 512)
+        {
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.IDENTIFY_response_is_different_than_512_bytes_not_decoding);
+
+            return null;
+        }
+
+        IdentifyDevice ATAID = Marshal.ByteArrayToStructureLittleEndian<IdentifyDevice>(IdentifyDeviceResponse);
+
+        ATAID.WWN          = DescrambleWWN(ATAID.WWN);
+        ATAID.WWNExtension = DescrambleWWN(ATAID.WWNExtension);
+
+        ATAID.SerialNumber      = DescrambleATAString(IdentifyDeviceResponse, 10  * 2, 20);
+        ATAID.FirmwareRevision  = DescrambleATAString(IdentifyDeviceResponse, 23  * 2, 8);
+        ATAID.Model             = DescrambleATAString(IdentifyDeviceResponse, 27  * 2, 40);
+        ATAID.AdditionalPID     = DescrambleATAString(IdentifyDeviceResponse, 170 * 2, 8);
+        ATAID.MediaSerial       = DescrambleATAString(IdentifyDeviceResponse, 176 * 2, 40);
+        ATAID.MediaManufacturer = DescrambleATAString(IdentifyDeviceResponse, 196 * 2, 20);
+
+        return ATAID;
+    }
+
+    /// <summary>Encodes a raw IDENTIFY DEVICE response</summary>
+    /// <param name="identify">Decoded IDENTIFY DEVICE</param>
+    /// <returns>Raw IDENTIFY DEVICE response</returns>
+    public static byte[] Encode(IdentifyDevice? identify)
+    {
+        if(identify is null)
+            return null;
+
+        IdentifyDevice ataId = identify.Value;
+
+        ataId.WWN          = DescrambleWWN(ataId.WWN);
+        ataId.WWNExtension = DescrambleWWN(ataId.WWNExtension);
+
+        var  buf = new byte[512];
+        nint ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+        System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, false);
+        System.Runtime.InteropServices.Marshal.Copy(ptr, buf, 0, 512);
+        System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
+
+        byte[] str = ScrambleATAString(ataId.SerialNumber, 20);
+        Array.Copy(str, 0, buf, 10 * 2, 20);
+        str = ScrambleATAString(ataId.FirmwareRevision, 8);
+        Array.Copy(str, 0, buf, 23 * 2, 8);
+        str = ScrambleATAString(ataId.Model, 40);
+        Array.Copy(str, 0, buf, 27 * 2, 40);
+        str = ScrambleATAString(ataId.AdditionalPID, 8);
+        Array.Copy(str, 0, buf, 170 * 2, 8);
+        str = ScrambleATAString(ataId.MediaSerial, 40);
+        Array.Copy(str, 0, buf, 176 * 2, 40);
+        str = ScrambleATAString(ataId.MediaManufacturer, 20);
+        Array.Copy(str, 0, buf, 196 * 2, 20);
+
+        return buf;
+    }
+
+    static ulong DescrambleWWN(ulong WWN)
+    {
+        byte[] qwb   = BitConverter.GetBytes(WWN);
+        var    qword = new byte[8];
+
+        qword[7] = qwb[1];
+        qword[6] = qwb[0];
+        qword[5] = qwb[3];
+        qword[4] = qwb[2];
+        qword[3] = qwb[5];
+        qword[2] = qwb[4];
+        qword[1] = qwb[7];
+        qword[0] = qwb[6];
+
+        return BitConverter.ToUInt64(qword, 0);
+    }
+
+    static string DescrambleATAString(IList<byte> buffer, int offset, int length)
+    {
+        byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
+
+        for(var i = 0; i < length; i += 2)
+        {
+            outbuf[i] = buffer[offset + i                  + 1];
+            outbuf[i                  + 1] = buffer[offset + i];
+        }
+
+        string outStr = StringHandlers.CToString(outbuf);
+
+        return outStr.Trim();
+    }
+
+    static byte[] ScrambleATAString(string str, int length)
+    {
+        var buf = new byte[length];
+
+        for(var i = 0; i < length; i++)
+            buf[i] = 0x20;
+
+        if(str is null)
+            return buf;
+
+        byte[] bytes = Encoding.ASCII.GetBytes(str);
+
+        if(bytes.Length % 2 != 0)
+        {
+            var tmp = new byte[bytes.Length + 1];
+            tmp[^1] = 0x20;
+            Array.Copy(bytes, 0, tmp, 0, bytes.Length);
+            bytes = tmp;
+        }
+
+        for(var i = 0; i < bytes.Length; i += 2)
+        {
+            buf[i] = bytes[i + 1];
+            buf[i            + 1] = bytes[i];
+        }
+
+        return buf;
+    }
+
+#region Nested type: IdentifyDevice
 
     /// <summary>IDENTIFY DEVICE decoded response</summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 2)]
@@ -999,130 +1272,5 @@ public static class Identify
         public byte Checksum;
     }
 
-    /// <summary>Decodes a raw IDENTIFY DEVICE response</summary>
-    /// <param name="IdentifyDeviceResponse">Raw IDENTIFY DEVICE response</param>
-    /// <returns>Decoded IDENTIFY DEVICE</returns>
-    public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
-    {
-        if(IdentifyDeviceResponse == null)
-            return null;
-
-        if(IdentifyDeviceResponse.Length != 512)
-        {
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.IDENTIFY_response_is_different_than_512_bytes_not_decoding);
-
-            return null;
-        }
-
-        IdentifyDevice ATAID = Marshal.ByteArrayToStructureLittleEndian<IdentifyDevice>(IdentifyDeviceResponse);
-
-        ATAID.WWN          = DescrambleWWN(ATAID.WWN);
-        ATAID.WWNExtension = DescrambleWWN(ATAID.WWNExtension);
-
-        ATAID.SerialNumber      = DescrambleATAString(IdentifyDeviceResponse, 10  * 2, 20);
-        ATAID.FirmwareRevision  = DescrambleATAString(IdentifyDeviceResponse, 23  * 2, 8);
-        ATAID.Model             = DescrambleATAString(IdentifyDeviceResponse, 27  * 2, 40);
-        ATAID.AdditionalPID     = DescrambleATAString(IdentifyDeviceResponse, 170 * 2, 8);
-        ATAID.MediaSerial       = DescrambleATAString(IdentifyDeviceResponse, 176 * 2, 40);
-        ATAID.MediaManufacturer = DescrambleATAString(IdentifyDeviceResponse, 196 * 2, 20);
-
-        return ATAID;
-    }
-
-    /// <summary>Encodes a raw IDENTIFY DEVICE response</summary>
-    /// <param name="identify">Decoded IDENTIFY DEVICE</param>
-    /// <returns>Raw IDENTIFY DEVICE response</returns>
-    public static byte[] Encode(IdentifyDevice? identify)
-    {
-        if(identify is null)
-            return null;
-
-        IdentifyDevice ataId = identify.Value;
-
-        ataId.WWN          = DescrambleWWN(ataId.WWN);
-        ataId.WWNExtension = DescrambleWWN(ataId.WWNExtension);
-
-        byte[] buf = new byte[512];
-        nint   ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
-        System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, false);
-        System.Runtime.InteropServices.Marshal.Copy(ptr, buf, 0, 512);
-        System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
-
-        byte[] str = ScrambleATAString(ataId.SerialNumber, 20);
-        Array.Copy(str, 0, buf, 10 * 2, 20);
-        str = ScrambleATAString(ataId.FirmwareRevision, 8);
-        Array.Copy(str, 0, buf, 23 * 2, 8);
-        str = ScrambleATAString(ataId.Model, 40);
-        Array.Copy(str, 0, buf, 27 * 2, 40);
-        str = ScrambleATAString(ataId.AdditionalPID, 8);
-        Array.Copy(str, 0, buf, 170 * 2, 8);
-        str = ScrambleATAString(ataId.MediaSerial, 40);
-        Array.Copy(str, 0, buf, 176 * 2, 40);
-        str = ScrambleATAString(ataId.MediaManufacturer, 20);
-        Array.Copy(str, 0, buf, 196 * 2, 20);
-
-        return buf;
-    }
-
-    static ulong DescrambleWWN(ulong WWN)
-    {
-        byte[] qwb   = BitConverter.GetBytes(WWN);
-        byte[] qword = new byte[8];
-
-        qword[7] = qwb[1];
-        qword[6] = qwb[0];
-        qword[5] = qwb[3];
-        qword[4] = qwb[2];
-        qword[3] = qwb[5];
-        qword[2] = qwb[4];
-        qword[1] = qwb[7];
-        qword[0] = qwb[6];
-
-        return BitConverter.ToUInt64(qword, 0);
-    }
-
-    static string DescrambleATAString(IList<byte> buffer, int offset, int length)
-    {
-        byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
-
-        for(int i = 0; i < length; i += 2)
-        {
-            outbuf[i] = buffer[offset + i                  + 1];
-            outbuf[i                  + 1] = buffer[offset + i];
-        }
-
-        string outStr = StringHandlers.CToString(outbuf);
-
-        return outStr.Trim();
-    }
-
-    static byte[] ScrambleATAString(string str, int length)
-    {
-        byte[] buf = new byte[length];
-
-        for(int i = 0; i < length; i++)
-            buf[i] = 0x20;
-
-        if(str is null)
-            return buf;
-
-        byte[] bytes = Encoding.ASCII.GetBytes(str);
-
-        if(bytes.Length % 2 != 0)
-        {
-            byte[] tmp = new byte[bytes.Length + 1];
-            tmp[^1] = 0x20;
-            Array.Copy(bytes, 0, tmp, 0, bytes.Length);
-            bytes = tmp;
-        }
-
-        for(int i = 0; i < bytes.Length; i += 2)
-        {
-            buf[i] = bytes[i + 1];
-            buf[i            + 1] = bytes[i];
-        }
-
-        return buf;
-    }
+#endregion
 }

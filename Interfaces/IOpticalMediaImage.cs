@@ -49,6 +49,7 @@ public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVe
     /// <summary>Gets the disc track extents (start, length).</summary>
     /// <value>The track extents.</value>
     List<Track> Tracks { get; }
+
     /// <summary>Gets the sessions (optical discs only).</summary>
     /// <value>The sessions.</value>
     List<Session> Sessions { get; }
@@ -117,6 +118,6 @@ public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVe
     /// <param name="track">Track.</param>
     /// <param name="failingLbas">List of incorrect sectors</param>
     /// <param name="unknownLbas">List of uncheckable sectors</param>
-    bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+    bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                         out List<ulong> unknownLbas);
 }

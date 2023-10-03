@@ -71,8 +71,8 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <param name="encoding">Which encoding to use for this filesystem.</param>
     /// <param name="options">Dictionary of key=value pairs containing options to pass to the filesystem</param>
     /// <param name="namespace">Filename namespace</param>
-    ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                      Dictionary<string, string> options, string @namespace);
+    ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                      Dictionary<string, string> options,     string    @namespace);
 
     /// <summary>Frees all internal structures created by <see cref="Mount" /></summary>
     ErrorNumber Unmount();
@@ -132,11 +132,11 @@ public interface IReadOnlyFilesystem : IFilesystem
             return ErrorNumber.InvalidArgument;
 
         long desiredPosition = origin switch
-        {
-            SeekOrigin.Begin => position,
-            SeekOrigin.End   => node.Length + position,
-            _                => node.Offset + position
-        };
+                               {
+                                   SeekOrigin.Begin => position,
+                                   SeekOrigin.End   => node.Length + position,
+                                   _                => node.Offset + position
+                               };
 
         if(desiredPosition < 0)
             return ErrorNumber.InvalidArgument;
@@ -169,9 +169,11 @@ public interface IReadOnlyFilesystem : IFilesystem
 
     /// <summary>Reads the next entry in the directory.</summary>
     /// <param name="node">Represent an opened directory.</param>
-    /// <param name="filename">The next entry name.
+    /// <param name="filename">
+    ///     The next entry name.
     ///     <value>null</value>
-    ///     if there are no more entries.</param>
+    ///     if there are no more entries.
+    /// </param>
     /// <returns>Error number.</returns>
     ErrorNumber ReadDir(IDirNode node, out string filename);
 }
@@ -181,8 +183,10 @@ public interface IFileNode
 {
     /// <summary>Path to the file</summary>
     string Path { get; }
+
     /// <summary>File length</summary>
     long Length { get; }
+
     /// <summary>Current position in file</summary>
     long Offset { get; set; }
 }

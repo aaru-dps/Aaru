@@ -67,15 +67,18 @@ public static partial class MediaTypeFromDevice
                 return GetFromSbc(vendor, model, mediumType, blocks, blockSize);
 
             // Sequential access device
-            case 0x01: return GetFromSsc(scsiPeripheralType, vendor, model, mediumType, densityCode, blocks, blockSize);
+            case 0x01:
+                return GetFromSsc(scsiPeripheralType, vendor, model, mediumType, densityCode, blocks, blockSize);
 
             // Write-once device
             case 0x04:
             // Optical device
-            case 0x07: return GetFromOdc(mediumType, blocks, blockSize);
+            case 0x07:
+                return GetFromOdc(mediumType, blocks, blockSize);
 
             // MultiMedia Device
-            case 0x05: return GetFromMmc(model, mediumType, densityCode, blocks, blockSize, isUsb, opticalDisc);
+            case 0x05:
+                return GetFromMmc(model, mediumType, densityCode, blocks, blockSize, isUsb, opticalDisc);
 
             // MD DATA drives
             case 0x10 when model.StartsWith("MDM", StringComparison.Ordinal) ||

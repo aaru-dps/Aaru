@@ -50,23 +50,42 @@ public class Checksum
     public string       Value { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Checksum(Schemas.ChecksumType cicm) => cicm is null ? null : new Checksum
-    {
-        Value = cicm.Value,
-        Type  = (ChecksumType)cicm.type
-    };
+    public static implicit operator Checksum(Schemas.ChecksumType cicm) => cicm is null
+                                                                               ? null
+                                                                               : new Checksum
+                                                                               {
+                                                                                   Value = cicm.Value,
+                                                                                   Type  = (ChecksumType)cicm.type
+                                                                               };
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ChecksumType
 {
-    Fletcher16, Fletcher32, Adler32,
-    CRC16, CRC16Ccitt, CRC32,
-    CRC64, Md4, Md5,
-    Dm6, Ripemd128, Ripemd160,
-    Ripemed320, Sha1, Sha224,
-    Sha256, Sha384, Sha512,
-    Sha3, Skein, Snefru,
-    Blake256, Blake512, Tiger,
-    Whirlpool, SpamSum
+    Fletcher16,
+    Fletcher32,
+    Adler32,
+    CRC16,
+    CRC16Ccitt,
+    CRC32,
+    CRC64,
+    Md4,
+    Md5,
+    Dm6,
+    Ripemd128,
+    Ripemd160,
+    Ripemed320,
+    Sha1,
+    Sha224,
+    Sha256,
+    Sha384,
+    Sha512,
+    Sha3,
+    Skein,
+    Snefru,
+    Blake256,
+    Blake512,
+    Tiger,
+    Whirlpool,
+    SpamSum
 }

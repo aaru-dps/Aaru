@@ -52,12 +52,14 @@ public class Image
     public string Value  { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator Image(ImageType cicm) => cicm is null ? null : new Image
-    {
-        Format = cicm.format,
-        Offset = cicm.offsetSpecified ? cicm.offset : null,
-        Value  = cicm.Value
-    };
+    public static implicit operator Image(ImageType cicm) => cicm is null
+                                                                 ? null
+                                                                 : new Image
+                                                                 {
+                                                                     Format = cicm.format,
+                                                                     Offset = cicm.offsetSpecified ? cicm.offset : null,
+                                                                     Value  = cicm.Value
+                                                                 };
 }
 
 public class Dump
@@ -128,11 +130,13 @@ public class File
     public string Value  { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator File(FileType cicm) => cicm is null ? null : new File
-    {
-        Format = cicm.format,
-        Value  = cicm.Value
-    };
+    public static implicit operator File(FileType cicm) => cicm is null
+                                                               ? null
+                                                               : new File
+                                                               {
+                                                                   Format = cicm.format,
+                                                                   Value  = cicm.Value
+                                                               };
 }
 
 public class BlockSize
@@ -141,9 +145,11 @@ public class BlockSize
     public uint Value         { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator BlockSize(BlockSizeType cicm) => cicm is null ? null : new BlockSize
-    {
-        StartingBlock = cicm.startingBlock,
-        Value         = cicm.Value
-    };
+    public static implicit operator BlockSize(BlockSizeType cicm) => cicm is null
+                                                                         ? null
+                                                                         : new BlockSize
+                                                                         {
+                                                                             StartingBlock = cicm.startingBlock,
+                                                                             Value         = cicm.Value
+                                                                         };
 }

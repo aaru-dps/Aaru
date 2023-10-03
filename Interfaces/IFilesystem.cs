@@ -47,8 +47,10 @@ public interface IFilesystem
 {
     /// <summary>Plugin name (translatable).</summary>
     string Name { get; }
+
     /// <summary>Plugin UUID.</summary>
     Guid Id { get; }
+
     /// <summary>Plugin author</summary>
     string Author { get; }
 
@@ -64,6 +66,6 @@ public interface IFilesystem
     /// <param name="encoding">Which encoding to use for this filesystem.</param>
     /// <param name="information">Filesystem information.</param>
     /// <param name="metadata">Information about the filesystem as expected by Aaru Metadata</param>
-    void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+    void GetInformation(IMediaImage    imagePlugin, Partition partition, Encoding encoding, out string information,
                         out FileSystem metadata);
 }
