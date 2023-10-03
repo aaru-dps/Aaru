@@ -81,7 +81,7 @@ resharper_braces_for_for                                                        
 resharper_braces_for_foreach                                                                      = required_for_multiline
 resharper_braces_for_ifelse                                                                       = required_for_multiline
 resharper_braces_for_while                                                                        = required_for_multiline
-resharper_builtin_type_apply_to_native_integer                                                    = true
+resharper_builtin_type_apply_to_native_integer                                                    = false
 resharper_constructor_or_destructor_body                                                          = expression_body
 resharper_csharp_align_first_arg_by_paren                                                         = false
 resharper_csharp_empty_block_style                                                                = together_same_line
