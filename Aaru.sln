@@ -61,6 +61,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NEEDED.md = NEEDED.md
 		README.md = README.md
 		azure-pipelines.yml = azure-pipelines.yml
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		codealike.json = codealike.json
+		release-checklist.md = release-checklist.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}"
