@@ -55,6 +55,8 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class CDTextOnLeadIn
 {
+    const string MODULE_NAME = "CD-TEXT decoder";
+
     public enum PackTypeIndicator : byte
     {
         /// <summary>Title of the track (or album if track == 0)</summary>
@@ -110,7 +112,7 @@ public static class CDTextOnLeadIn
 
         if(decoded.DataLength + 2 != CDTextResponse.Length)
         {
-            AaruConsole.DebugWriteLine("CD-TEXT decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Expected_CD_TEXT_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDTextResponse.Length);

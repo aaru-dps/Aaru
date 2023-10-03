@@ -91,6 +91,7 @@ public static class DI
 
     /// <summary>Disc Information Unit Identifier "DI"</summary>
     const ushort DIUIdentifier = 0x4449;
+    const string MODULE_NAME = "BD Disc Information decoder";
     #endregion Private constants
 
     #region Public methods
@@ -101,7 +102,7 @@ public static class DI
 
         if(DIResponse.Length != 4100)
         {
-            AaruConsole.DebugWriteLine("BD Disc Information decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
                                        DIResponse.Length);
 
@@ -192,7 +193,7 @@ public static class DI
 
                 default:
                 {
-                    AaruConsole.DebugWriteLine("BD Disc Information decoder",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Found_unknown_disc_type_identifier_0,
                                                Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 

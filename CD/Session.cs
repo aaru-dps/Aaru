@@ -53,6 +53,8 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Session
 {
+    const string MODULE_NAME = "CD Session Info decoder";
+
     public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
     {
         if(CDSessionInfoResponse is not { Length: > 4 })
@@ -69,7 +71,7 @@ public static class Session
 
         if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
         {
-            AaruConsole.DebugWriteLine("CD Session Info decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Expected_CDSessionInfo_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDSessionInfoResponse.Length);

@@ -58,6 +58,7 @@ public static class DDS
     #region Private constants
     /// <summary>Disc Definition Structure Identifier "DS"</summary>
     const ushort DDSIdentifier = 0x4453;
+    const string MODULE_NAME = "BD DDS decoder";
     #endregion Private constants
 
     #region Public structures
@@ -132,7 +133,7 @@ public static class DDS
 
         if(decoded.Signature != DDSIdentifier)
         {
-            AaruConsole.DebugWriteLine("BD DDS decoder", Localization.Found_incorrect_DDS_signature_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_DDS_signature_0,
                                        decoded.Signature);
 
             return null;

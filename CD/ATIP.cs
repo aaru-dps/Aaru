@@ -55,6 +55,8 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class ATIP
 {
+    const string MODULE_NAME = "CD ATIP decoder";
+
     public static CDATIP Decode(byte[] CDATIPResponse)
     {
         if(CDATIPResponse is not { Length: > 4 })
@@ -65,7 +67,7 @@ public static class ATIP
         if(CDATIPResponse.Length != 32 &&
            CDATIPResponse.Length != 28)
         {
-            AaruConsole.DebugWriteLine("CD ATIP decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Expected_CD_ATIP_size_32_bytes_is_not_received_size_0_bytes_not_decoding,
                                        CDATIPResponse.Length);

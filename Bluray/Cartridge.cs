@@ -56,6 +56,7 @@ namespace Aaru.Decoders.Bluray;
  SuppressMessage("ReSharper", "UnassignedField.Global")]
 public static class Cartridge
 {
+    const string MODULE_NAME = "BD Cartridge Status decoder";
     #region Public structures
     public struct CartridgeStatus
     {
@@ -91,7 +92,7 @@ public static class Cartridge
 
         if(CSResponse.Length != 8)
         {
-            AaruConsole.DebugWriteLine("BD Cartridge Status decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Found_incorrect_Blu_ray_Cartridge_Status_size_0_bytes,
                                        CSResponse.Length);
 

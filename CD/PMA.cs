@@ -55,6 +55,8 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class PMA
 {
+    const string MODULE_NAME = "CD PMA decoder";
+
     public static CDPMA? Decode(byte[] CDPMAResponse)
     {
         if(CDPMAResponse is not { Length: > 4 })
@@ -74,7 +76,7 @@ public static class PMA
 
         if(decoded.DataLength + 2 != CDPMAResponse.Length)
         {
-            AaruConsole.DebugWriteLine("CD PMA decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Expected_CD_PMA_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDPMAResponse.Length);

@@ -55,6 +55,7 @@ namespace Aaru.Decoders.Bluray;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class BCA
 {
+    const string MODULE_NAME = "BD BCA decoder";
     #region Public structures
     public struct BurstCuttingArea
     {
@@ -76,7 +77,7 @@ public static class BCA
 
         if(BCAResponse.Length != 68)
         {
-            AaruConsole.DebugWriteLine("BD BCA decoder", Localization.Found_incorrect_Blu_ray_BCA_size_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_Blu_ray_BCA_size_0_bytes,
                                        BCAResponse.Length);
 
             return null;

@@ -60,6 +60,8 @@ namespace Aaru.Decoders.CD;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class FullTOC
 {
+    const string MODULE_NAME = "CD full TOC decoder";
+
     public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
     {
         if(CDFullTOCResponse is not { Length: > 4 })
@@ -76,7 +78,7 @@ public static class FullTOC
 
         if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
         {
-            AaruConsole.DebugWriteLine("CD full TOC decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Expected_CDFullTOC_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
                                        decoded.DataLength + 2, CDFullTOCResponse.Length);

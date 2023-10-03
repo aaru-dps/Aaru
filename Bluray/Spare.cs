@@ -54,6 +54,7 @@ namespace Aaru.Decoders.Bluray;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class Spare
 {
+    const string MODULE_NAME = "BD Spare Area Information decoder";
     #region Public structures
     public struct SpareAreaInformation
     {
@@ -79,7 +80,7 @@ public static class Spare
 
         if(SAIResponse.Length != 16)
         {
-            AaruConsole.DebugWriteLine("BD Spare Area Information decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            Spare_Decode_Found_incorrect_Blu_ray_Spare_Area_Information_size_0_bytes,
                                        SAIResponse.Length);
