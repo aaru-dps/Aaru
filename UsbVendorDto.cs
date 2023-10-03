@@ -37,6 +37,7 @@ public class UsbVendorDto
 {
     /// <summary>Vendor ID</summary>
     public ushort VendorId { get; set; }
+
     /// <summary>Vendor</summary>
     public string Vendor { get; set; }
 }
