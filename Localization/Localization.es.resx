@@ -4238,7 +4238,7 @@
     <value>Título doméstico: {0}</value>
   </data>
   <data name="Double_Byte_Character_Code_is_used" xml:space="preserve">
-    <value>Se utiliza un código de carácteres de doble byte</value>
+    <value>Se utiliza un código de caracteres de doble byte</value>
   </data>
   <data name="DOWNLOAD_MICROCODE_DMA_is_supported" xml:space="preserve">
     <value>DOWNLOAD MICROCODE DMA está soportado</value>
