@@ -41,6 +41,7 @@ public class Nilfs2 : FilesystemTest
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "New Implementation of a Log-structured File System 2");
+
     public override IFilesystem Plugin     => new NILFS2();
     public override bool        Partitions => true;
 

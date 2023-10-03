@@ -57,7 +57,7 @@ public class Xz
         IFilter filter = new XZ();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[1048576];
+        var    data = new byte[1048576];
         str.EnsureRead(data, 0, 1048576);
         str.Close();
         str.Dispose();
@@ -85,10 +85,10 @@ public class Xz
     {
         IFilter filter = new XZ();
         Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-        Assert.AreEqual(1048576, filter.DataForkLength);
+        Assert.AreEqual(1048576,             filter.DataForkLength);
         Assert.AreNotEqual(null, filter.GetDataForkStream());
-        Assert.AreEqual(0, filter.ResourceForkLength);
-        Assert.AreEqual(null, filter.GetResourceForkStream());
+        Assert.AreEqual(0,     filter.ResourceForkLength);
+        Assert.AreEqual(null,  filter.GetResourceForkStream());
         Assert.AreEqual(false, filter.HasResourceFork);
         filter.Close();
     }

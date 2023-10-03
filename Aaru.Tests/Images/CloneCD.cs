@@ -35,7 +35,8 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CloneCD : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CloneCD");
@@ -1427,7 +1428,9 @@ public class CloneCD : OpticalMediaImageTest
                 }
             }
         },
-        #region These test images violate the specifications and are not expected to work yet
+
+    #region These test images violate the specifications and are not expected to work yet
+
         /*
         new OpticalImageTestExpected
         {
@@ -1846,6 +1849,7 @@ public class CloneCD : OpticalMediaImageTest
             }
         },
         */
-        #endregion
+
+    #endregion
     };
 }

@@ -34,7 +34,8 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CDRWin10 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CDRWin 10");

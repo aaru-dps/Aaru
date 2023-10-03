@@ -71,7 +71,7 @@ public abstract class FsExtractHashIssueTest
             });
         }
 
-        bool filesystemFound = false;
+        var filesystemFound = false;
 
         Assert.True(File.Exists($"{TestFile}.unittest.json"));
 
@@ -97,7 +97,7 @@ public abstract class FsExtractHashIssueTest
                         string.Format(Localization.Excepted_0_partitions_but_found_1, expectedData.Partitions.Length,
                                       partitions.Count));
 
-        for(int i = 0; i < partitions.Count; i++)
+        for(var i = 0; i < partitions.Count; i++)
         {
             Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
@@ -117,7 +117,7 @@ public abstract class FsExtractHashIssueTest
                             string.Format(Localization.Expected_0_filesystems_identified_in_partition_1_but_found_2,
                                           expectedData.Partitions[i].Volumes.Length, i, idPlugins.Count));
 
-            for(int j = 0; j < idPlugins.Count; j++)
+            for(var j = 0; j < idPlugins.Count; j++)
             {
                 string pluginName = idPlugins[j];
 
@@ -139,9 +139,10 @@ public abstract class FsExtractHashIssueTest
 
                 Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.Metadata.VolumeName,
                                 string.
-                                    Format(Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
-                                           expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
-                                           fs.Metadata.VolumeName));
+                                    Format(
+                                        Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
+                                        expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
+                                        fs.Metadata.VolumeName));
 
                 VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 
@@ -225,6 +226,7 @@ public abstract class FsExtractHashIssueTest
                 Dictionary<string, string> expectedXattrs = fileData.XattrsWithMd5;
 
                 if(error == ErrorNumber.NoError)
+                {
                     foreach(string xattr in xattrs)
                     {
                         Assert.IsTrue(expectedXattrs.TryGetValue(xattr, out string expectedXattrMd5),
@@ -246,13 +248,16 @@ public abstract class FsExtractHashIssueTest
                                         string.Format(Localization.Invalid_checksum_for_xattr_0_for_file_1, xattr,
                                                       path + "/" + entry));
                     }
+                }
 
                 expectedXattrs.Should().
-                               BeEmpty(string.Format(Localization.Expected_extended_attributes_not_found_for_file_0, path + "/" + entry),
-                                       expectedXattrs);
+                               BeEmpty(
+                                   string.Format(Localization.Expected_extended_attributes_not_found_for_file_0,
+                                                 path + "/" + entry),
+                                   expectedXattrs);
             }
 
-            byte[]      buffer = new byte[stat.Length];
+            var         buffer = new byte[stat.Length];
             ErrorNumber ret    = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
             Assert.AreEqual(ErrorNumber.NoError, ret,

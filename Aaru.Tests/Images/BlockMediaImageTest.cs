@@ -53,6 +53,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors,
@@ -64,6 +65,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                         Assert.AreEqual(test.MediaType, image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
                     });
+                }
             }
         });
     }
@@ -168,6 +170,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 List<Partition> partitions = Core.Partitions.GetAll(image);
 
                 if(partitions.Count == 0)
+                {
                     partitions.Add(new Partition
                     {
                         Description = "Whole device",
@@ -177,30 +180,36 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                         Sequence    = 1,
                         Start       = 0
                     });
+                }
 
                 Assert.AreEqual(test.Partitions.Length, partitions.Count,
                                 string.Format(Localization.Expected_0_partitions_in_1_but_found_2,
                                               test.Partitions.Length, testFile, partitions.Count));
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
-                        for(int i = 0; i < test.Partitions.Length; i++)
+                        for(var i = 0; i < test.Partitions.Length; i++)
                         {
                             BlockPartitionVolumes expectedPartition = test.Partitions[i];
                             Partition             foundPartition    = partitions[i];
 
                             Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
                                             string.
-                                                Format(Localization.Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
-                                                       i, expectedPartition.Start, foundPartition.Start, testFile));
+                                                Format(
+                                                    Localization.
+                                                        Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
+                                                    i, expectedPartition.Start, foundPartition.Start, testFile));
 
                             Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
                                             string.
-                                                Format(Localization.Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
-                                                       i, expectedPartition.Length, foundPartition.Length, testFile));
+                                                Format(
+                                                    Localization.
+                                                        Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
+                                                    i, expectedPartition.Length, foundPartition.Length, testFile));
 
-                            string expectedDataFilename = $"{testFile}.contents.partition{i}.json";
+                            var expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 
                             if(!File.Exists(expectedDataFilename))
                                 continue;
@@ -273,7 +282,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                             $"Expected {expectedData.Length} filesystems identified in partition {i
                                             } but found {idPlugins.Count} in {testFile}");
 
-                            for(int j = 0; j < idPlugins.Count; j++)
+                            for(var j = 0; j < idPlugins.Count; j++)
                             {
                                 string pluginName = idPlugins[j];
 
@@ -296,7 +305,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                 VolumeData volumeData = expectedData[j];
 
-                                int currentDepth = 0;
+                                var currentDepth = 0;
 
                                 ReadOnlyFilesystemTest.TestDirectory(fs, "/", volumeData.Files, testFile, true,
                                                                      out List<ReadOnlyFilesystemTest.NextLevel>
@@ -322,6 +331,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             }
                         }
                     });
+                }
             }
         });
     }

@@ -39,6 +39,7 @@ public class RdWr : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "NDIF", "RdWr");
+
     public override IMediaImage Plugin => new Ndif();
 
     public override BlockImageTestExpected[] Tests => new[]

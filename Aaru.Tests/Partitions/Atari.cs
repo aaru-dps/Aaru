@@ -36,6 +36,7 @@ namespace Aaru.Tests.Partitions;
 public class Atari : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Atari ST");
+
     public override PartitionTest[] Tests => new[]
     {
         new PartitionTest

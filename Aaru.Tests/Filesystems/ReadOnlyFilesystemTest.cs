@@ -32,7 +32,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                bool   found     = false;
+                var    found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -128,8 +128,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 };
 
                 if(test.ContentsJson != null)
+                {
                     test.Contents =
                         JsonSerializer.Deserialize<Dictionary<string, FileData>>(test.ContentsJson, serializerOptions);
+                }
                 else if(File.Exists($"{testFile}.contents.json"))
                 {
                     var sr = new FileStream($"{testFile}.contents.json", FileMode.Open);
@@ -139,7 +141,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 if(test.Contents is null)
                     continue;
 
-                int currentDepth = 0;
+                var currentDepth = 0;
 
                 TestDirectory(fs, "/", test.Contents, testFile, true, out List<NextLevel> currentLevel, currentDepth);
 
@@ -150,7 +152,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
                     foreach(NextLevel subLevel in currentLevel)
                     {
-                        TestDirectory(fs, subLevel.Path, subLevel.Children, testFile, true,
+                        TestDirectory(fs,                            subLevel.Path, subLevel.Children, testFile, true,
                                       out List<NextLevel> nextLevel, currentDepth);
 
                         nextLevels.AddRange(nextLevel);
@@ -162,7 +164,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         });
     }
 
-    [Test, Ignore("Not a test, do not run")]
+    [Test]
+    [Ignore("Not a test, do not run")]
     public void Build()
     {
         Environment.CurrentDirectory = DataFolder;
@@ -170,7 +173,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         foreach(FileSystemTest test in Tests)
         {
             string testFile  = test.TestFile;
-            bool   found     = false;
+            var    found     = false;
             var    partition = new Partition();
 
             bool exists = File.Exists(testFile);
@@ -275,7 +278,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         while(fs.ReadDir(node, out string child) == ErrorNumber.NoError &&
               child is not null)
         {
-            string childPath = $"{path}/{child}";
+            var childPath = $"{path}/{child}";
             fs.Stat(childPath, out FileEntryInfo stat);
 
             var data = new FileData
@@ -311,7 +314,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
     static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
     {
-        byte[] buffer = new byte[length];
+        var buffer = new byte[length];
 
         ErrorNumber error = fs.OpenFile(path, out IFileNode fileNode);
 
@@ -340,7 +343,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             string      data;
 
             data = ret != ErrorNumber.NoError && ret != ErrorNumber.OutOfRange
-                       ? Md5Context.Data(Array.Empty<byte>(), out _) : Md5Context.Data(buffer, out _);
+                       ? Md5Context.Data(Array.Empty<byte>(), out _)
+                       : Md5Context.Data(buffer,              out _);
 
             xattrs[xattr] = data;
         }
@@ -348,9 +352,9 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         return xattrs;
     }
 
-    internal static void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children,
-                                       string testFile, bool testXattr, out List<NextLevel> nextLevels,
-                                       int currentDepth)
+    internal static void TestDirectory(IReadOnlyFilesystem fs,       string path, Dictionary<string, FileData> children,
+                                       string              testFile, bool   testXattr, out List<NextLevel> nextLevels,
+                                       int                 currentDepth)
     {
         currentDepth++;
         nextLevels = new List<NextLevel>();
@@ -386,12 +390,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(KeyValuePair<string, FileData> child in children)
         {
-            string childPath = $"{path}/{child.Key}";
+            var childPath = $"{path}/{child.Key}";
             ret = fs.Stat(childPath, out FileEntryInfo stat);
 
             if(ret == ErrorNumber.NoSuchFile ||
                contents is null              ||
-               (ret == ErrorNumber.NoError && !contents.Contains(child.Key)))
+               ret == ErrorNumber.NoError && !contents.Contains(child.Key))
             {
                 expectedNotFound.Add(child.Key);
 
@@ -454,8 +458,9 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 {
                     Assert.IsNotNull(child.Value.Children,
                                      string.
-                                         Format(Localization.Contents_for_0_in_1_must_be_defined_in_unit_test_declaration,
-                                                childPath, testFile));
+                                         Format(
+                                             Localization.Contents_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                             childPath, testFile));
 
                     if(child.Value.Children != null)
                     {
@@ -491,8 +496,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             {
                 Assert.IsNull(child.Value.XattrsWithMd5,
                               string.
-                                  Format(Localization.Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem,
-                                         childPath, testFile));
+                                  Format(
+                                      Localization.
+                                          Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem,
+                                      childPath, testFile));
 
                 continue;
             }
@@ -502,10 +509,14 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                           ret, childPath, testFile));
 
             if(xattrs.Count > 0)
+            {
                 Assert.IsNotNull(child.Value.XattrsWithMd5,
                                  string.
-                                     Format(Localization.Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration,
-                                            childPath, testFile));
+                                     Format(
+                                         Localization.
+                                             Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                         childPath, testFile));
+            }
 
             if(xattrs.Count                     > 0 ||
                child.Value.XattrsWithMd5?.Count > 0)
@@ -517,14 +528,16 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                      string.Join(" ", expectedNotFound)));
 
         if(contents != null)
+        {
             Assert.IsEmpty(contents,
                            string.Format(Localization.Found_the_following_unexpected_children_of_0_in_1_2, path,
                                          testFile, string.Join(" ", contents)));
+        }
     }
 
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
     {
-        byte[]      buffer = new byte[length];
+        var         buffer = new byte[length];
         ErrorNumber ret    = fs.OpenFile(path, out IFileNode fileNode);
 
         Assert.AreEqual(ErrorNumber.NoError, ret,
@@ -578,9 +591,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             // Partially read extended attribute... dunno why it happens with some Toast images
             if(ret != ErrorNumber.OutOfRange)
+            {
                 Assert.AreEqual(ErrorNumber.NoError, ret,
                                 string.Format(Localization.Unexpected_error_0_retrieving_extended_attributes_for_1_in_2,
                                               ret, path, testFile));
+            }
 
             string data = Md5Context.Data(buffer, out _);
 
@@ -598,5 +613,9 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                      testFile, string.Join(" ", contents)));
     }
 
+#region Nested type: NextLevel
+
     internal sealed record NextLevel(string Path, Dictionary<string, FileData> Children);
+
+#endregion
 }

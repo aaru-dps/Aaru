@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.cdrdao.raw;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class rw_raw : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "cdrdao", "raw", "rw_raw");
+
     public override IMediaImage Plugin => new Cdrdao();
 
     public override OpticalImageTestExpected[] Tests => new[]
@@ -569,7 +571,9 @@ public class rw_raw : OpticalMediaImageTest
                 }
             }
         },
-        #region These test images violate the specifications and are not expected to work yet
+
+    #region These test images violate the specifications and are not expected to work yet
+
         /*
         new OpticalImageTestExpected
         {
@@ -692,6 +696,7 @@ public class rw_raw : OpticalMediaImageTest
             }
         },
         */
-        #endregion
+
+    #endregion
     };
 }

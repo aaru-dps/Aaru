@@ -60,14 +60,17 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors,
                                         string.Format(Localization.Sectors_0, testFile));
 
                         if(test.SectorSize > 0)
+                        {
                             Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
                                             string.Format(Localization.Sector_size_0, testFile));
+                        }
 
                         Assert.AreEqual(test.MediaType, image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
@@ -94,10 +97,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
                                              string.Format(Localization.Track_pregap_0, testFile));
 
-                        int trackNo = 0;
+                        var trackNo = 0;
 
-                        byte?[] flags           = new byte?[image.Tracks.Count];
-                        ulong   latestEndSector = 0;
+                        var   flags           = new byte?[image.Tracks.Count];
+                        ulong latestEndSector = 0;
 
                         foreach(Track currentTrack in image.Tracks)
                         {
@@ -126,6 +129,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                         string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
                                                       latestEndSector, image.Info.Sectors));
                     });
+                }
             }
         });
     }
@@ -163,6 +167,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         foreach(TrackInfoTestExpected track in test.Tracks)
@@ -188,7 +193,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                             string.Format(Localization.Expected_0_filesystems_in_1_but_found_2,
                                                           track.FileSystems.Length, testFile, idPlugins.Count));
 
-                            for(int i = 0; i < track.FileSystems.Length; i++)
+                            for(var i = 0; i < track.FileSystems.Length; i++)
                             {
                                 PluginBase plugins = PluginBase.Singleton;
                                 bool       found   = plugins.Filesystems.TryGetValue(idPlugins[i], out Type pluginType);
@@ -207,9 +212,11 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                                 if(track.FileSystems[i].ApplicationId != null)
+                                {
                                     Assert.AreEqual(track.FileSystems[i].ApplicationId,
                                                     fsMetadata.ApplicationIdentifier,
                                                     string.Format(Localization.Application_ID_0, testFile));
+                                }
 
                                 Assert.AreEqual(track.FileSystems[i].Bootable, fsMetadata.Bootable,
                                                 string.Format(Localization.Bootable_0, testFile));
@@ -221,8 +228,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                 string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
+                                {
                                     Assert.AreEqual(track.FileSystems[i].SystemId, fsMetadata.SystemIdentifier,
                                                     string.Format(Localization.System_ID_0, testFile));
+                                }
 
                                 Assert.AreEqual(track.FileSystems[i].Type, fsMetadata.Type,
                                                 string.Format(Localization.Filesystem_type_0, testFile));
@@ -238,10 +247,14 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                     if(track.FileSystems[i].Contents     != null ||
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
+                                    {
                                         Assert.NotNull(null,
                                                        string.
-                                                           Format(Localization.Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
-                                                                  testFile, track.Number, i));
+                                                           Format(
+                                                               Localization.
+                                                                   Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
+                                                               testFile, track.Number, i));
+                                    }
 
                                     continue;
                                 }
@@ -267,10 +280,12 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 };
 
                                 if(track.FileSystems[i].ContentsJson != null)
+                                {
                                     track.FileSystems[i].Contents =
                                         JsonSerializer.
                                             Deserialize<Dictionary<string, FileData>>(track.FileSystems[i].ContentsJson,
                                                 serializerOptions);
+                                }
                                 else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                 {
                                     var sr =
@@ -284,7 +299,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 if(track.FileSystems[i].Contents is null)
                                     continue;
 
-                                int currentDepth = 0;
+                                var currentDepth = 0;
 
                                 ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents, testFile,
                                                                      true,
@@ -318,6 +333,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             }
                         }
                     });
+                }
             }
         });
     }
@@ -359,10 +375,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                 if(image.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
                 {
-                    foreach(bool @long in new[]
-                            {
-                                false, true
-                            })
+                    foreach(bool @long in new[] { false, true })
                     {
                         ctx = new Md5Context();
 
@@ -377,8 +390,9 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                                 if(sectors - doneSectors >= SECTORS_TO_READ)
                                 {
-                                    errno = @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
-                                                                          currentTrack.Sequence, out sector)
+                                    errno = @long
+                                                ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
+                                                                        currentTrack.Sequence, out sector)
                                                 : image.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
                                                                     out sector);
 
@@ -386,8 +400,9 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 }
                                 else
                                 {
-                                    errno = @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                          currentTrack.Sequence, out sector)
+                                    errno = @long
+                                                ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
+                                                                        currentTrack.Sequence, out sector)
                                                 : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
                                                                     currentTrack.Sequence, out sector);
 

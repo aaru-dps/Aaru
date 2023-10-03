@@ -1,544 +1,544 @@
 <root>
-  <!-- ReSharper disable MarkupTextTypo -->
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>1.3</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <data name="Application_ID_0" xml:space="preserve">
+    <!-- ReSharper disable MarkupTextTypo -->
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Application_ID_0" xml:space="preserve">
     <value>ID de aplicación: {0}</value>
   </data>
-  <data name="Bootable_0" xml:space="preserve">
+    <data name="Bootable_0" xml:space="preserve">
     <value>Arrancable: {0}</value>
   </data>
-  <data name="Bus_widths_0" xml:space="preserve">
+    <data name="Bus_widths_0" xml:space="preserve">
     <value>Anchos del bus - {0}</value>
   </data>
-  <data name="Cannot_open_image_for_0" xml:space="preserve">
+    <data name="Cannot_open_image_for_0" xml:space="preserve">
     <value>No se pudo abrir la imagen para {0}</value>
   </data>
-  <data name="Cannot_open_image_for_test_file" xml:space="preserve">
+    <data name="Cannot_open_image_for_test_file" xml:space="preserve">
     <value>No se pudo abrir la imagen de prueba</value>
   </data>
-  <data name="Cannot_open_specified_file" xml:space="preserve">
+    <data name="Cannot_open_specified_file" xml:space="preserve">
     <value>No se pudo abrir el fichero especificado</value>
   </data>
-  <data name="Card_size_0" xml:space="preserve">
+    <data name="Card_size_0" xml:space="preserve">
     <value>Tamaño de la tarjeta - {0}</value>
   </data>
-  <data name="Card_size_multiplier_0" xml:space="preserve">
+    <data name="Card_size_multiplier_0" xml:space="preserve">
     <value>Multiplicador del tamaño de la tarjeta - {0}</value>
   </data>
-  <data name="Classes_0" xml:space="preserve">
+    <data name="Classes_0" xml:space="preserve">
     <value>Clases - {0}</value>
   </data>
-  <data name="Clusters_0" xml:space="preserve">
+    <data name="Clusters_0" xml:space="preserve">
     <value>Clústeres: {0}</value>
   </data>
-  <data name="Cluster_size_0" xml:space="preserve">
+    <data name="Cluster_size_0" xml:space="preserve">
     <value>Tamaño del clúster: {0}</value>
   </data>
-  <data name="Command_support_0" xml:space="preserve">
+    <data name="Command_support_0" xml:space="preserve">
     <value>Soporte de comandos - {0}</value>
   </data>
-  <data name="Contents_for_0_in_1_must_be_defined_in_unit_test_declaration" xml:space="preserve">
+    <data name="Contents_for_0_in_1_must_be_defined_in_unit_test_declaration" xml:space="preserve">
     <value>¡Los contenidos para "{0}" en {1} deben definirse en la declaración de la prueba!</value>
   </data>
-  <data name="Converting_media_tag_0" xml:space="preserve">
+    <data name="Converting_media_tag_0" xml:space="preserve">
     <value>Convirtiendo etiqueta de medio {0}</value>
   </data>
-  <data name="Copy_0" xml:space="preserve">
+    <data name="Copy_0" xml:space="preserve">
     <value>Copia - {0}</value>
   </data>
-  <data name="Could_not_find_the_children_of_0_in_1_2" xml:space="preserve">
+    <data name="Could_not_find_the_children_of_0_in_1_2" xml:space="preserve">
     <value>No se pudieron encontrar los hijos de "{0}" en {1}: {2}</value>
   </data>
-  <data name="Could_not_find_the_following_extended_attributes_of_0_in_1_2" xml:space="preserve">
+    <data name="Could_not_find_the_following_extended_attributes_of_0_in_1_2" xml:space="preserve">
     <value>No se pudieron encontrado los siguientes atributos extendidos de "{0}" en {1}: {2}</value>
   </data>
-  <data name="Could_not_instantiate_filesystem_0" xml:space="preserve">
+    <data name="Could_not_instantiate_filesystem_0" xml:space="preserve">
     <value>No se pudo instanciar el sistema de ficheros {0}</value>
   </data>
-  <data name="Could_not_instantiate_filesystem_for_0" xml:space="preserve">
+    <data name="Could_not_instantiate_filesystem_for_0" xml:space="preserve">
     <value>No se pudo instanciar el sistema de ficheros para {0}</value>
   </data>
-  <data name="Could_not_instantiate_filesystem_for_0_track_1_filesystem_2" xml:space="preserve">
+    <data name="Could_not_instantiate_filesystem_for_0_track_1_filesystem_2" xml:space="preserve">
     <value>No se pudo instanciar el sistema de ficheros para {0}, pista {1}, sistema de ficheros {2}</value>
   </data>
-  <data name="Could_not_instantiate_filesystem_plugin" xml:space="preserve">
+    <data name="Could_not_instantiate_filesystem_plugin" xml:space="preserve">
     <value>No se pudo instanciar la extensión del sistema de ficheros</value>
   </data>
-  <data name="Could_not_instantiate_input_plugin_for_0" xml:space="preserve">
+    <data name="Could_not_instantiate_input_plugin_for_0" xml:space="preserve">
     <value>No se pudo instanciar la extensión de entrada para {0}</value>
   </data>
-  <data name="Could_not_instantiate_output_plugin_for_0" xml:space="preserve">
+    <data name="Could_not_instantiate_output_plugin_for_0" xml:space="preserve">
     <value>No se pudo instanciar la extensión de salida para {0}</value>
   </data>
-  <data name="Could_not_mount_0_in_partition_1" xml:space="preserve">
+    <data name="Could_not_mount_0_in_partition_1" xml:space="preserve">
     <value>No se pudo montar {0} en la partición {1}.</value>
   </data>
-  <data name="Could_not_treat_existing_image_as_optical_disc" xml:space="preserve">
+    <data name="Could_not_treat_existing_image_as_optical_disc" xml:space="preserve">
     <value>No se pudo tratar la imagen existente como un disco óptico.</value>
   </data>
-  <data name="Could_not_treat_new_image_as_optical_disc" xml:space="preserve">
+    <data name="Could_not_treat_new_image_as_optical_disc" xml:space="preserve">
     <value>No se pudo tratar la nueva imagen como un disco óptico.</value>
   </data>
-  <data name="CRC_0" xml:space="preserve">
+    <data name="CRC_0" xml:space="preserve">
     <value>CRC - {0}</value>
   </data>
-  <data name="Data_stat_after_erase_0" xml:space="preserve">
+    <data name="Data_stat_after_erase_0" xml:space="preserve">
     <value>Estado de datos después del borrado - {0}</value>
   </data>
-  <data name="Decoded_0" xml:space="preserve">
+    <data name="Decoded_0" xml:space="preserve">
     <value>Descodificado - {0}</value>
   </data>
-  <data name="Default_ECC_0" xml:space="preserve">
+    <data name="Default_ECC_0" xml:space="preserve">
     <value>ECC por defecto - {0}</value>
   </data>
-  <data name="Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem" xml:space="preserve">
+    <data name="Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem" xml:space="preserve">
     <value>Los atributos extendidos definidos para "{0}" en {1} no están soportados por el sistema de ficheros.</value>
   </data>
-  <data name="DSR_implemented_0" xml:space="preserve">
+    <data name="DSR_implemented_0" xml:space="preserve">
     <value>DSR implementada - {0}</value>
   </data>
-  <data name="ECC_0" xml:space="preserve">
+    <data name="ECC_0" xml:space="preserve">
     <value>ECC - {0}</value>
   </data>
-  <data name="Erase_block_enable_0" xml:space="preserve">
+    <data name="Erase_block_enable_0" xml:space="preserve">
     <value>Activación de bloque de borrado - {0}</value>
   </data>
-  <data name="Erase_group_size_0" xml:space="preserve">
+    <data name="Erase_group_size_0" xml:space="preserve">
     <value>Tamaño de grupo de borrado - {0}</value>
   </data>
-  <data name="Erase_sector_size_0" xml:space="preserve">
+    <data name="Erase_sector_size_0" xml:space="preserve">
     <value>Tamaño de sector de borrado - {0}</value>
   </data>
-  <data name="Error_0_closing_output_image_Contents_are_not_correct" xml:space="preserve">
+    <data name="Error_0_closing_output_image_Contents_are_not_correct" xml:space="preserve">
     <value>Error {0} cerrando la imagen... Los contenidos no son correctos.</value>
   </data>
-  <data name="Error_0_creating_output_image" xml:space="preserve">
+    <data name="Error_0_creating_output_image" xml:space="preserve">
     <value>Error {0} creando la imagen.</value>
   </data>
-  <data name="Error_0_getting_extended_attributes_for_entry_1" xml:space="preserve">
+    <data name="Error_0_getting_extended_attributes_for_entry_1" xml:space="preserve">
     <value>Error {0} obteniendo los atributos extendidos para {1}</value>
   </data>
-  <data name="Error_0_reading_extended_attributes_for_entry_1" xml:space="preserve">
+    <data name="Error_0_reading_extended_attributes_for_entry_1" xml:space="preserve">
     <value>Error {0} leyendo los atributos extendidos para {1}</value>
   </data>
-  <data name="Error_0_reading_file_1" xml:space="preserve">
+    <data name="Error_0_reading_file_1" xml:space="preserve">
     <value>Error {0} leyendo el fichero {1}</value>
   </data>
-  <data name="Error_0_reading_root_directory" xml:space="preserve">
+    <data name="Error_0_reading_root_directory" xml:space="preserve">
     <value>Error {0} leyendo el directorio raíz</value>
   </data>
-  <data name="Error_0_reading_tag_not_continuing" xml:space="preserve">
+    <data name="Error_0_reading_tag_not_continuing" xml:space="preserve">
     <value>Error {0} leyendo etiqueta, no se continuará</value>
   </data>
-  <data name="Error_0_sending_tracks_list_to_output_image" xml:space="preserve">
+    <data name="Error_0_sending_tracks_list_to_output_image" xml:space="preserve">
     <value>Error {0} enviado lista de pistas a la imagen.</value>
   </data>
-  <data name="Error_0_setting_metadata" xml:space="preserve">
+    <data name="Error_0_setting_metadata" xml:space="preserve">
     <value>Error {0} estableciendo metadatos.</value>
   </data>
-  <data name="Error_0_writing_sector_1" xml:space="preserve">
+    <data name="Error_0_writing_sector_1" xml:space="preserve">
     <value>Error {0} escribiendo sector {1}...</value>
   </data>
-  <data name="Error_0_writing_sector_1_not_continuing" xml:space="preserve">
+    <data name="Error_0_writing_sector_1_not_continuing" xml:space="preserve">
     <value>Error {0} escribiendo sector {1}, no se continuará...</value>
   </data>
-  <data name="Error_0_writing_tag_for_sector_1_not_continuing" xml:space="preserve">
+    <data name="Error_0_writing_tag_for_sector_1_not_continuing" xml:space="preserve">
     <value>Error {0} escribiendo etiqueta del sector {1}, no se continuará...</value>
   </data>
-  <data name="Error_0_writing_tag_not_continuing" xml:space="preserve">
+    <data name="Error_0_writing_tag_not_continuing" xml:space="preserve">
     <value>Error {0} escribiendo etiqueta, no se continuará...</value>
   </data>
-  <data name="Error_getting_stat_for_entry_0" xml:space="preserve">
+    <data name="Error_getting_stat_for_entry_0" xml:space="preserve">
     <value>Error obtenido información de entrada {0}</value>
   </data>
-  <data name="Excepted_0_partitions_but_found_1" xml:space="preserve">
+    <data name="Excepted_0_partitions_but_found_1" xml:space="preserve">
     <value>Se esperaban {0} particiones pero se encontraron {1}</value>
   </data>
-  <data name="Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3" xml:space="preserve">
+    <data name="Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3" xml:space="preserve">
     <value>Se esperaba nombre de volumen "{0}" para el sistema de ficheros {1} en la partición {2} pero se encontró "{3}"</value>
   </data>
-  <data name="Existing_image_contains_no_tracks" xml:space="preserve">
+    <data name="Existing_image_contains_no_tracks" xml:space="preserve">
     <value>La imagen no contiene pistas.</value>
   </data>
-  <data name="Expected_0_filesystems_identified_in_partition_1_but_found_2" xml:space="preserve">
+    <data name="Expected_0_filesystems_identified_in_partition_1_but_found_2" xml:space="preserve">
     <value>Se esperaba identificar {0} sistemas de ficheros en la partición {1} pero se identificaron {2}</value>
   </data>
-  <data name="Expected_0_filesystems_in_1_but_found_2" xml:space="preserve">
+    <data name="Expected_0_filesystems_in_1_but_found_2" xml:space="preserve">
     <value>Se esperaba identificar {0} sistemas de ficheros en {1} pero se identificarón {2}</value>
   </data>
-  <data name="Expected_0_partitions_in_1_but_found_2" xml:space="preserve">
+    <data name="Expected_0_partitions_in_1_but_found_2" xml:space="preserve">
     <value>Se esperaban {0} particiones en {1} pero se encontraron {2}</value>
   </data>
-  <data name="Expected_directories_not_found" xml:space="preserve">
+    <data name="Expected_directories_not_found" xml:space="preserve">
     <value>Directorios esperados no encontrados:</value>
   </data>
-  <data name="Expected_extended_attributes_not_found_for_file_0" xml:space="preserve">
+    <data name="Expected_extended_attributes_not_found_for_file_0" xml:space="preserve">
     <value>Atributos extendidos esperados no encontrados para el fichero {0}:</value>
   </data>
-  <data name="Expected_files_not_found" xml:space="preserve">
+    <data name="Expected_files_not_found" xml:space="preserve">
     <value>Ficheros esperados no encontrados:</value>
   </data>
-  <data name="Expected_no_filesystems_identified_in_partition_0_but_found_1" xml:space="preserve">
+    <data name="Expected_no_filesystems_identified_in_partition_0_but_found_1" xml:space="preserve">
     <value>No se esperaba identificar ningún sistema de ficheros en la partición {0} pero se identificaron {1}</value>
   </data>
-  <data name="Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3" xml:space="preserve">
+    <data name="Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3" xml:space="preserve">
     <value>Se esperaba que la partición {0} tuviera {1} sectores pero tiene {2} en {3}</value>
   </data>
-  <data name="Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3" xml:space="preserve">
+    <data name="Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3" xml:space="preserve">
     <value>Se esperaba que la partición {0} empezara en el sector {1} pero lo hace en el {2} en {3}</value>
   </data>
-  <data name="Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration" xml:space="preserve">
+    <data name="Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration" xml:space="preserve">
     <value>¡Los atributos extendidos para "{0}" en {1} deben definirse en la declaración de la prueba!</value>
   </data>
-  <data name="Extended_security_0" xml:space="preserve">
+    <data name="Extended_security_0" xml:space="preserve">
     <value>Seguridad extendida - {0}</value>
   </data>
-  <data name="Filesystem_not_identified_for_0" xml:space="preserve">
+    <data name="Filesystem_not_identified_for_0" xml:space="preserve">
     <value>Sistema de ficheros no identificado para {0}</value>
   </data>
-  <data name="Filesystem_type_0" xml:space="preserve">
+    <data name="Filesystem_type_0" xml:space="preserve">
     <value>Tipo de sistema de ficheros: {0}</value>
   </data>
-  <data name="File_format_0" xml:space="preserve">
+    <data name="File_format_0" xml:space="preserve">
     <value>Formato de fichero - {0}</value>
   </data>
-  <data name="File_format_group_0" xml:space="preserve">
+    <data name="File_format_group_0" xml:space="preserve">
     <value>Grupo de formato de fichero - {0}</value>
   </data>
-  <data name="Filter_0" xml:space="preserve">
+    <data name="Filter_0" xml:space="preserve">
     <value>Filtro: {0}</value>
   </data>
-  <data name="Filter_for_test_file_is_not_detected" xml:space="preserve">
+    <data name="Filter_for_test_file_is_not_detected" xml:space="preserve">
     <value>No se detectó el filtro para el fichero de prueba</value>
   </data>
-  <data name="Found_the_following_unexpected_children_of_0_in_1_2" xml:space="preserve">
+    <data name="Found_the_following_unexpected_children_of_0_in_1_2" xml:space="preserve">
     <value>Encontrados los siguientes hijos de "{0}" en {1} no esperados: {2}</value>
   </data>
-  <data name="Found_the_following_unexpected_extended_attributes_of_0_in_1_2" xml:space="preserve">
+    <data name="Found_the_following_unexpected_extended_attributes_of_0_in_1_2" xml:space="preserve">
     <value>Encontrados los siguientes atributos extendidos de "{0}" en {1} no esperados: {2}</value>
   </data>
-  <data name="Found_unexpected_directory_0" xml:space="preserve">
+    <data name="Found_unexpected_directory_0" xml:space="preserve">
     <value>Encontrado directorio {0} no esperado</value>
   </data>
-  <data name="Found_unexpected_extended_attribute_0_in_file_1" xml:space="preserve">
+    <data name="Found_unexpected_extended_attribute_0_in_file_1" xml:space="preserve">
     <value>Encontrado atributo extendido {0} en el fichero {1} no esperado</value>
   </data>
-  <data name="Found_unexpected_file_0" xml:space="preserve">
+    <data name="Found_unexpected_file_0" xml:space="preserve">
     <value>Encontrado fichero {0} no esperado</value>
   </data>
-  <data name="Got_less_bytes_0_than_expected_1_when_reading_2_in_3" xml:space="preserve">
+    <data name="Got_less_bytes_0_than_expected_1_when_reading_2_in_3" xml:space="preserve">
     <value>Se obtuvieron menos bytes ({0}) de lo esperado ({1}) al leer {2} en {3}</value>
   </data>
-  <data name="Got_MD5_0_for_1_in_2_but_expected_3" xml:space="preserve">
+    <data name="Got_MD5_0_for_1_in_2_but_expected_3" xml:space="preserve">
     <value>Se obtuvo el MD5 {0} para "{1}" en {2} pero se esperaba {3}</value>
   </data>
-  <data name="Got_MD5_0_for_1_of_2_in_3_but_expected_4" xml:space="preserve">
+    <data name="Got_MD5_0_for_1_of_2_in_3_but_expected_4" xml:space="preserve">
     <value>Se obtuvo el MD5 {0} para {1} de "{2}" en {3} pero se esperaba {4}</value>
   </data>
-  <data name="Got_wrong_data_for_directory_0_in_1" xml:space="preserve">
+    <data name="Got_wrong_data_for_directory_0_in_1" xml:space="preserve">
     <value>Se obtuvieron datos incorrectos para el directorio "{0}" en {1}</value>
   </data>
-  <data name="Got_wrong_data_for_symbolic_link_0_in_1" xml:space="preserve">
+    <data name="Got_wrong_data_for_symbolic_link_0_in_1" xml:space="preserve">
     <value>Se obtuvieron datos incorrectos para el enlace simbólico "{0}" en {1}</value>
   </data>
-  <data name="Hashes_are_different" xml:space="preserve">
+    <data name="Hashes_are_different" xml:space="preserve">
     <value>Los hash son diferentes</value>
   </data>
-  <data name="Hash_0" xml:space="preserve">
+    <data name="Hash_0" xml:space="preserve">
     <value>Hash: {0}</value>
   </data>
-  <data name="Hash_output" xml:space="preserve">
+    <data name="Hash_output" xml:space="preserve">
     <value>Hash (salida)</value>
   </data>
-  <data name="Image_format_0" xml:space="preserve">
+    <data name="Image_format_0" xml:space="preserve">
     <value>Format de imagen: {0}</value>
   </data>
-  <data name="Image_format_for_test_file_is_not_detected" xml:space="preserve">
+    <data name="Image_format_for_test_file_is_not_detected" xml:space="preserve">
     <value>No se detectó el formato del fichero de prueba</value>
   </data>
-  <data name="Image_format_for_test_file_is_not_for_an_optical_disc" xml:space="preserve">
+    <data name="Image_format_for_test_file_is_not_for_an_optical_disc" xml:space="preserve">
     <value>El formato del fichero de prueba no es para un disco óptico</value>
   </data>
-  <data name="Input_image_format_not_identified_not_proceeding_with_conversion" xml:space="preserve">
+    <data name="Input_image_format_not_identified_not_proceeding_with_conversion" xml:space="preserve">
     <value>No se identificó el formato de la imagen de entrada, no se procederá con la conversión</value>
   </data>
-  <data name="Input_image_does_not_support_long_sectors" xml:space="preserve">
+    <data name="Input_image_does_not_support_long_sectors" xml:space="preserve">
     <value>La imagen de entrada no soporta sectores largos.</value>
   </data>
-  <data name="Image_format_not_identified_not_proceeding_with_analysis" xml:space="preserve">
+    <data name="Image_format_not_identified_not_proceeding_with_analysis" xml:space="preserve">
     <value>No se identificó el formato de la imagen, no se procederá con el análisis</value>
   </data>
-  <data name="Invalid_checksum_for_file_0" xml:space="preserve">
+    <data name="Invalid_checksum_for_file_0" xml:space="preserve">
     <value>Checksum no válido para el fichero {0}</value>
   </data>
-  <data name="Invalid_checksum_for_xattr_0_for_file_1" xml:space="preserve">
+    <data name="Invalid_checksum_for_xattr_0_for_file_1" xml:space="preserve">
     <value>Checksum no válido para el atributo extendido {0} del fichero {1}</value>
   </data>
-  <data name="Invalid_target_for_symbolic_link_0_in_1" xml:space="preserve">
+    <data name="Invalid_target_for_symbolic_link_0_in_1" xml:space="preserve">
     <value>Objetivo no válido para el enlace simbólico "{0}" en {1}</value>
   </data>
-  <data name="Is_tape_0" xml:space="preserve">
+    <data name="Is_tape_0" xml:space="preserve">
     <value>¿Es una cinta?: {0}</value>
   </data>
-  <data name="Last_sector_for_tracks_is_0_but_it_is_1_for_image" xml:space="preserve">
+    <data name="Last_sector_for_tracks_is_0_but_it_is_1_for_image" xml:space="preserve">
     <value>El último sector de las pistas es {0}, pero es {1} en la imagen</value>
   </data>
-  <data name="Last_sector_for_tracks_is_0_but_it_is_1_for_image_output" xml:space="preserve">
+    <data name="Last_sector_for_tracks_is_0_but_it_is_1_for_image_output" xml:space="preserve">
     <value>El último sector de las pistas es {0}, pero es {1} en la imagen (salida)</value>
   </data>
-  <data name="Long_hash_output" xml:space="preserve">
+    <data name="Long_hash_output" xml:space="preserve">
     <value>Hash largo (salida)</value>
   </data>
-  <data name="Manufacturer_0" xml:space="preserve">
+    <data name="Manufacturer_0" xml:space="preserve">
     <value>Fabricante - {0}</value>
   </data>
-  <data name="Manufacturer_reserved_0" xml:space="preserve">
+    <data name="Manufacturer_reserved_0" xml:space="preserve">
     <value>Reservado del fabricante - {0}</value>
   </data>
-  <data name="Manufacturing_date_0" xml:space="preserve">
+    <data name="Manufacturing_date_0" xml:space="preserve">
     <value>Fecha de fabricación - {0}</value>
   </data>
-  <data name="Media_type_0" xml:space="preserve">
+    <data name="Media_type_0" xml:space="preserve">
     <value>Tipo de medio: {0}</value>
   </data>
-  <data name="Not_decoded_0" xml:space="preserve">
+    <data name="Not_decoded_0" xml:space="preserve">
     <value>No descodificado - {0}</value>
   </data>
-  <data name="Not_identified_for_0" xml:space="preserve">
+    <data name="Not_identified_for_0" xml:space="preserve">
     <value>No identificado para {0}</value>
   </data>
-  <data name="No_filesystems_found" xml:space="preserve">
+    <data name="No_filesystems_found" xml:space="preserve">
     <value>No se encontraron sistemas de ficheros.</value>
   </data>
-  <data name="No_filesystems_found_for_0" xml:space="preserve">
+    <data name="No_filesystems_found_for_0" xml:space="preserve">
     <value>No se encontraron sistemas de ficheros para {0}</value>
   </data>
-  <data name="No_partitions_found" xml:space="preserve">
+    <data name="No_partitions_found" xml:space="preserve">
     <value>No se encontraron particiones</value>
   </data>
-  <data name="No_partitions_found_for_0" xml:space="preserve">
+    <data name="No_partitions_found_for_0" xml:space="preserve">
     <value>No se encontraron particiones para {0}</value>
   </data>
-  <data name="NSAC_0" xml:space="preserve">
+    <data name="NSAC_0" xml:space="preserve">
     <value>NSAC - {0}</value>
   </data>
-  <data name="Open_0" xml:space="preserve">
+    <data name="Open_0" xml:space="preserve">
     <value>Abierto: {0}</value>
   </data>
-  <data name="Open_created_0" xml:space="preserve">
+    <data name="Open_created_0" xml:space="preserve">
     <value>Abierto el creado: {0}</value>
   </data>
-  <data name="Output_file_already_exists_not_continuing" xml:space="preserve">
+    <data name="Output_file_already_exists_not_continuing" xml:space="preserve">
     <value>El fichero de salida ya existe, no se continuará.</value>
   </data>
-  <data name="Output_format_does_not_support_media_type_cannot_continue" xml:space="preserve">
+    <data name="Output_format_does_not_support_media_type_cannot_continue" xml:space="preserve">
     <value>El formato de salida no soporta el tipo de medio, no se puede continuar...</value>
   </data>
-  <data name="Partitions_0" xml:space="preserve">
+    <data name="Partitions_0" xml:space="preserve">
     <value>Particiones: {0}</value>
   </data>
-  <data name="Permanent_write_protect_0" xml:space="preserve">
+    <data name="Permanent_write_protect_0" xml:space="preserve">
     <value>Protección contra escritura permanente - {0}</value>
   </data>
-  <data name="Product_name_0" xml:space="preserve">
+    <data name="Product_name_0" xml:space="preserve">
     <value>Nombre del producto - {0}</value>
   </data>
-  <data name="Product_revision_0" xml:space="preserve">
+    <data name="Product_revision_0" xml:space="preserve">
     <value>Revisión del producto - {0}</value>
   </data>
-  <data name="Reading_current_at_maximum_Vdd_0" xml:space="preserve">
+    <data name="Reading_current_at_maximum_Vdd_0" xml:space="preserve">
     <value>Corriente de lectura en el Vdd máximo - {0}</value>
   </data>
-  <data name="Reading_current_at_minimum_Vdd_0" xml:space="preserve">
+    <data name="Reading_current_at_minimum_Vdd_0" xml:space="preserve">
     <value>Corriente de lectura en el Vdd mínimo - {0}</value>
   </data>
-  <data name="Reads_misaligned_blocks_0" xml:space="preserve">
+    <data name="Reads_misaligned_blocks_0" xml:space="preserve">
     <value>Lee bloques no alineados - {0}</value>
   </data>
-  <data name="Reads_partial_blocks_0" xml:space="preserve">
+    <data name="Reads_partial_blocks_0" xml:space="preserve">
     <value>Lee bloques parciales - {0}</value>
   </data>
-  <data name="Read_block_length_0" xml:space="preserve">
+    <data name="Read_block_length_0" xml:space="preserve">
     <value>Longitud del bloque de lectura - {0}</value>
   </data>
-  <data name="Read_to_write_factor_0" xml:space="preserve">
+    <data name="Read_to_write_factor_0" xml:space="preserve">
     <value>Factor entre lectura y escritura - {0}</value>
   </data>
-  <data name="Sectors_0" xml:space="preserve">
+    <data name="Sectors_0" xml:space="preserve">
     <value>Sectores: {0}</value>
   </data>
-  <data name="Sectors_output_0" xml:space="preserve">
+    <data name="Sectors_output_0" xml:space="preserve">
     <value>Sectores (salida): {0}</value>
   </data>
-  <data name="Sector_size_0" xml:space="preserve">
+    <data name="Sector_size_0" xml:space="preserve">
     <value>Tamaño de sector: {0}</value>
   </data>
-  <data name="Sector_size_output_0" xml:space="preserve">
+    <data name="Sector_size_output_0" xml:space="preserve">
     <value>Tamaño de sector (salida): {0}</value>
   </data>
-  <data name="Security_0" xml:space="preserve">
+    <data name="Security_0" xml:space="preserve">
     <value>Seguridad - {0}</value>
   </data>
-  <data name="Serial_number_0" xml:space="preserve">
+    <data name="Serial_number_0" xml:space="preserve">
     <value>Número de serie - {0}</value>
   </data>
-  <data name="Size_0" xml:space="preserve">
+    <data name="Size_0" xml:space="preserve">
     <value>Tamaño - {0}</value>
   </data>
-  <data name="Specification_version_0" xml:space="preserve">
+    <data name="Specification_version_0" xml:space="preserve">
     <value>Versión de especificación - {0}</value>
   </data>
-  <data name="Spec_3_0" xml:space="preserve">
+    <data name="Spec_3_0" xml:space="preserve">
     <value>Spec 3 - {0}</value>
   </data>
-  <data name="Spec_4_0" xml:space="preserve">
+    <data name="Spec_4_0" xml:space="preserve">
     <value>Spec 4 - {0}</value>
   </data>
-  <data name="Spec_X_0" xml:space="preserve">
+    <data name="Spec_X_0" xml:space="preserve">
     <value>Spec X - {0}</value>
   </data>
-  <data name="Structure_version_0" xml:space="preserve">
+    <data name="Structure_version_0" xml:space="preserve">
     <value>Versión de estructura - {0}</value>
   </data>
-  <data name="Subchannel_hash_0" xml:space="preserve">
+    <data name="Subchannel_hash_0" xml:space="preserve">
     <value>Hash del subcanal: {0}</value>
   </data>
-  <data name="Subchannel_hash_output_0" xml:space="preserve">
+    <data name="Subchannel_hash_output_0" xml:space="preserve">
     <value>Hash del subcanal (salida): {0}</value>
   </data>
-  <data name="System_ID_0" xml:space="preserve">
+    <data name="System_ID_0" xml:space="preserve">
     <value>ID de sistema: {0}</value>
   </data>
-  <data name="TAAC_0" xml:space="preserve">
+    <data name="TAAC_0" xml:space="preserve">
     <value>TAAC - {0}</value>
   </data>
-  <data name="Tape_files_0" xml:space="preserve">
+    <data name="Tape_files_0" xml:space="preserve">
     <value>Ficheros de cinta: {0}</value>
   </data>
-  <data name="Tape_partitions_0" xml:space="preserve">
+    <data name="Tape_partitions_0" xml:space="preserve">
     <value>Particiones de cinta: {0}</value>
   </data>
-  <data name="Temporary_write_protect_0" xml:space="preserve">
+    <data name="Temporary_write_protect_0" xml:space="preserve">
     <value>Protección contra escritura temporal - {0}</value>
   </data>
-  <data name="Test_file_not_found" xml:space="preserve">
+    <data name="Test_file_not_found" xml:space="preserve">
     <value>Fichero de prueba no encontrado</value>
   </data>
-  <data name="Tracks_0" xml:space="preserve">
+    <data name="Tracks_0" xml:space="preserve">
     <value>Pistas: {0}</value>
   </data>
-  <data name="Tracks_output_0" xml:space="preserve">
+    <data name="Tracks_output_0" xml:space="preserve">
     <value>Pistas (salida): {0}</value>
   </data>
-  <data name="Track_end_0" xml:space="preserve">
+    <data name="Track_end_0" xml:space="preserve">
     <value>Fin de pista: {0}</value>
   </data>
-  <data name="Track_end_output_0" xml:space="preserve">
+    <data name="Track_end_output_0" xml:space="preserve">
     <value>Fin de pista (salida): {0}</value>
   </data>
-  <data name="Track_flags_0" xml:space="preserve">
+    <data name="Track_flags_0" xml:space="preserve">
     <value>Banderas de pista: {0}</value>
   </data>
-  <data name="Track_flags_output_0" xml:space="preserve">
+    <data name="Track_flags_output_0" xml:space="preserve">
     <value>Banderas de pista (salida): {0}</value>
   </data>
-  <data name="Track_pregap_0" xml:space="preserve">
+    <data name="Track_pregap_0" xml:space="preserve">
     <value>Hueco anterior de pista: {0}</value>
   </data>
-  <data name="Track_pregap_output_0" xml:space="preserve">
+    <data name="Track_pregap_output_0" xml:space="preserve">
     <value>Hueco anterior de pista (salida): {0}</value>
   </data>
-  <data name="Track_session_0" xml:space="preserve">
+    <data name="Track_session_0" xml:space="preserve">
     <value>Sesión de la pista: {0}</value>
   </data>
-  <data name="Track_session_output_0" xml:space="preserve">
+    <data name="Track_session_output_0" xml:space="preserve">
     <value>Sesión de la pista (salida): {0}</value>
   </data>
-  <data name="Track_start_0" xml:space="preserve">
+    <data name="Track_start_0" xml:space="preserve">
     <value>Comienzo de pista: {0}</value>
   </data>
-  <data name="Track_start_output_0" xml:space="preserve">
+    <data name="Track_start_output_0" xml:space="preserve">
     <value>Comienzo de pista (salida): {0}</value>
   </data>
-  <data name="Transfer_speed_0" xml:space="preserve">
+    <data name="Transfer_speed_0" xml:space="preserve">
     <value>Velocidad de transferencia - {0}</value>
   </data>
-  <data name="Trying_to_convert_unsupported_media_type_0_for_1" xml:space="preserve">
+    <data name="Trying_to_convert_unsupported_media_type_0_for_1" xml:space="preserve">
     <value>Intentando convertir tipo de medio {0} no soportado para {1}</value>
   </data>
-  <data name="Unable_to_open_image_format" xml:space="preserve">
+    <data name="Unable_to_open_image_format" xml:space="preserve">
     <value>No se pudo abrir la imagen</value>
   </data>
-  <data name="Unexpected_error_0_retrieving_extended_attributes_for_1_in_2" xml:space="preserve">
+    <data name="Unexpected_error_0_retrieving_extended_attributes_for_1_in_2" xml:space="preserve">
     <value>Error inesperado {0} obteniendo los atributos extendidos para "{1}" en {2}</value>
   </data>
-  <data name="Unexpected_error_0_retrieving_stats_for_1_in_2" xml:space="preserve">
+    <data name="Unexpected_error_0_retrieving_stats_for_1_in_2" xml:space="preserve">
     <value>Error inesperado {0} obteniendo información para "{1}" en {2}</value>
   </data>
-  <data name="Unexpected_error_0_when_listing_extended_attributes_for_1_in_2" xml:space="preserve">
+    <data name="Unexpected_error_0_when_listing_extended_attributes_for_1_in_2" xml:space="preserve">
     <value>Error inesperado {0} listando los atributos extendidos para "{1}" en {2}</value>
   </data>
-  <data name="Unexpected_error_0_when_reading_1_in_2" xml:space="preserve">
+    <data name="Unexpected_error_0_when_reading_1_in_2" xml:space="preserve">
     <value>Error inesperado {0} leyendo "{1}" en {2}</value>
   </data>
-  <data name="Unexpected_error_0_when_reading_directory_1_of_2" xml:space="preserve">
+    <data name="Unexpected_error_0_when_reading_directory_1_of_2" xml:space="preserve">
     <value>Error inesperado {0} leyendo el directorio "{1}" en {2}</value>
   </data>
-  <data name="Unmountable_0" xml:space="preserve">
+    <data name="Unmountable_0" xml:space="preserve">
     <value>No montable: {0}</value>
   </data>
-  <data name="Version_0" xml:space="preserve">
+    <data name="Version_0" xml:space="preserve">
     <value>Versión - {0}</value>
   </data>
-  <data name="Volume_name_0" xml:space="preserve">
+    <data name="Volume_name_0" xml:space="preserve">
     <value>Nombre del volumen: {0}</value>
   </data>
-  <data name="Volume_serial_0" xml:space="preserve">
+    <data name="Volume_serial_0" xml:space="preserve">
     <value>Número de serie del volumen: {0}</value>
   </data>
-  <data name="Writes_misaligned_blocks_0" xml:space="preserve">
+    <data name="Writes_misaligned_blocks_0" xml:space="preserve">
     <value>Escribe bloques no alineados - {0}</value>
   </data>
-  <data name="Writes_partial_blocks_0" xml:space="preserve">
+    <data name="Writes_partial_blocks_0" xml:space="preserve">
     <value>Escribe bloques parciales - {0}</value>
   </data>
-  <data name="write_block_length_0" xml:space="preserve">
+    <data name="write_block_length_0" xml:space="preserve">
     <value>longitud del bloque de escritura - {0}</value>
   </data>
-  <data name="Write_protect_group_enable_0" xml:space="preserve">
+    <data name="Write_protect_group_enable_0" xml:space="preserve">
     <value>Activa grupo de protección contra escritura - {0}</value>
   </data>
-  <data name="Write_protect_group_size_0" xml:space="preserve">
+    <data name="Write_protect_group_size_0" xml:space="preserve">
     <value>Tamaño del grupo de protección contra escritura - {0}</value>
   </data>
-  <data name="Writing_current_at_maximum_Vdd_0" xml:space="preserve">
+    <data name="Writing_current_at_maximum_Vdd_0" xml:space="preserve">
     <value>Corriente escribiendo al Vdd máximo - {0}</value>
   </data>
-  <data name="Writing_current_at_minimum_Vdd_0" xml:space="preserve">
+    <data name="Writing_current_at_minimum_Vdd_0" xml:space="preserve">
     <value>Corriente escribiendo al Vdd mínimo - {0}</value>
   </data>
-  <data name="Wrong_info_for_0_in_1" xml:space="preserve">
+    <data name="Wrong_info_for_0_in_1" xml:space="preserve">
     <value>Información incorrecta para "{0}" en {1}</value>
   </data>
-  <data name="_0_not_found" xml:space="preserve">
+    <data name="_0_not_found" xml:space="preserve">
     <value>{0} no encontrado</value>
   </data>
-  <data name="_0_sectors_to_convert" xml:space="preserve">
+    <data name="_0_sectors_to_convert" xml:space="preserve">
     <value>{0} sectores para convertir</value>
   </data>
 </root>

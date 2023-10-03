@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.DiskCopy65;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class UDRo_obsolete : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRo_OBS");
+
     public override IMediaImage Plugin => new Udif();
 
     public override BlockImageTestExpected[] Tests => new[]

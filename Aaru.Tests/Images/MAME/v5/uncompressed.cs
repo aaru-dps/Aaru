@@ -39,6 +39,7 @@ public class Uncompressed : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v5", "uncompressed");
+
     public override IMediaImage Plugin => new Chd();
 
     public override OpticalImageTestExpected[] Tests => new[]

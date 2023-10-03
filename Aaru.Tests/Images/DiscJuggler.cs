@@ -38,6 +38,7 @@ public class DiscJuggler : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiscJuggler");
     public override IMediaImage Plugin     => new DiscImages.DiscJuggler();
+
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected
@@ -1959,7 +1960,9 @@ public class DiscJuggler : OpticalMediaImageTest
                 }
             }
         },
-        #region These test images violate the specifications and are not expected to work yet
+
+    #region These test images violate the specifications and are not expected to work yet
+
         /*
         new OpticalImageTestExpected
         {
@@ -2106,6 +2109,7 @@ public class DiscJuggler : OpticalMediaImageTest
             }
         },
         */
-        #endregion
+
+    #endregion
     };
 }

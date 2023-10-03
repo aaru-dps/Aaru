@@ -39,6 +39,7 @@ public class Compressed : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v5", "compressed");
+
     public override IMediaImage Plugin => new Chd();
 
     public override OpticalImageTestExpected[] Tests => new[]

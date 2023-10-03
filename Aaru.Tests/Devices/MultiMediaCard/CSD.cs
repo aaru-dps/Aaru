@@ -11,176 +11,82 @@ namespace Aaru.Tests.Devices.MultiMediaCard;
 [TestFixture]
 public class CSD
 {
-    readonly string[] cards =
-    {
-        "mmc_6600_32mb", "mmc_pretec_32mb", "mmc_takems_256mb"
-    };
+    readonly string[] cards = { "mmc_6600_32mb", "mmc_pretec_32mb", "mmc_takems_256mb" };
 
     readonly string[] csds =
     {
         "8c26012a0f5901e9f6d983e392404001", "8c0e012a0ff981e9f6d981e18a400001", "905e002a1f5983d3edb683ff96400001"
     };
 
-    readonly byte[] structure_versions =
-    {
-        2, 2, 2
-    };
+    readonly byte[] structure_versions = { 2, 2, 2 };
 
-    readonly byte[] spec_versions =
-    {
-        3, 3, 4
-    };
+    readonly byte[] spec_versions = { 3, 3, 4 };
 
-    readonly byte[] taacs =
-    {
-        38, 14, 94
-    };
+    readonly byte[] taacs = { 38, 14, 94 };
 
-    readonly byte[] nsacs =
-    {
-        1, 1, 0
-    };
+    readonly byte[] nsacs = { 1, 1, 0 };
 
-    readonly byte[] speeds =
-    {
-        42, 42, 42
-    };
+    readonly byte[] speeds = { 42, 42, 42 };
 
-    readonly ushort[] classes =
-    {
-        245, 255, 501
-    };
+    readonly ushort[] classes = { 245, 255, 501 };
 
-    readonly byte[] read_block_lengths =
-    {
-        9, 9, 9
-    };
+    readonly byte[] read_block_lengths = { 9, 9, 9 };
 
-    readonly bool[] read_partial_blocks =
-    {
-        false, true, true
-    };
+    readonly bool[] read_partial_blocks = { false, true, true };
 
-    readonly bool[] write_misaligned_block =
-    {
-        false, false, false
-    };
+    readonly bool[] write_misaligned_block = { false, false, false };
 
-    readonly bool[] read_misaligned_block =
-    {
-        false, false, false
-    };
+    readonly bool[] read_misaligned_block = { false, false, false };
 
-    readonly bool[] dsr_implemented =
-    {
-        false, false, false
-    };
+    readonly bool[] dsr_implemented = { false, false, false };
 
-    readonly uint[] card_sizes =
-    {
-        1959, 1959, 3919
-    };
+    readonly uint[] card_sizes = { 1959, 1959, 3919 };
 
-    readonly byte[] min_read_current =
-    {
-        6, 6, 5
-    };
+    readonly byte[] min_read_current = { 6, 6, 5 };
 
-    readonly byte[] max_read_current =
-    {
-        6, 6, 5
-    };
+    readonly byte[] max_read_current = { 6, 6, 5 };
 
-    readonly byte[] min_write_current =
-    {
-        6, 6, 5
-    };
+    readonly byte[] min_write_current = { 6, 6, 5 };
 
-    readonly byte[] max_write_current =
-    {
-        6, 6, 5
-    };
+    readonly byte[] max_write_current = { 6, 6, 5 };
 
-    readonly byte[] size_multiplier =
-    {
-        3, 3, 5
-    };
+    readonly byte[] size_multiplier = { 3, 3, 5 };
 
-    readonly byte[] sector_sizes =
-    {
-        0, 0, 0
-    };
+    readonly byte[] sector_sizes = { 0, 0, 0 };
 
-    readonly byte[] erase_sector_sizes =
-    {
-        31, 15, 31
-    };
+    readonly byte[] erase_sector_sizes = { 31, 15, 31 };
 
-    readonly byte[] write_protect_group_size =
-    {
-        3, 1, 31
-    };
+    readonly byte[] write_protect_group_size = { 3, 1, 31 };
 
-    readonly bool[] write_protect_group_enable =
-    {
-        true, true, true
-    };
+    readonly bool[] write_protect_group_enable = { true, true, true };
 
-    readonly byte[] default_eccs =
-    {
-        0, 0, 0
-    };
+    readonly byte[] default_eccs = { 0, 0, 0 };
 
-    readonly byte[] r2w_factors =
-    {
-        4, 2, 5
-    };
+    readonly byte[] r2w_factors = { 4, 2, 5 };
 
-    readonly byte[] write_block_lengths =
-    {
-        9, 9, 9
-    };
+    readonly byte[] write_block_lengths = { 9, 9, 9 };
 
-    readonly bool[] write_partial_blocks =
-    {
-        false, false, false
-    };
+    readonly bool[] write_partial_blocks = { false, false, false };
 
-    readonly bool[] file_format_group =
-    {
-        false, false, false
-    };
+    readonly bool[] file_format_group = { false, false, false };
 
-    readonly bool[] copy =
-    {
-        true, false, false
-    };
+    readonly bool[] copy = { true, false, false };
 
-    readonly bool[] permanent_write_protect =
-    {
-        false, false, false
-    };
+    readonly bool[] permanent_write_protect = { false, false, false };
 
-    readonly bool[] temporary_write_protect =
-    {
-        false, false, false
-    };
+    readonly bool[] temporary_write_protect = { false, false, false };
 
-    readonly byte[] file_format =
-    {
-        0, 0, 0
-    };
+    readonly byte[] file_format = { 0, 0, 0 };
 
-    readonly byte[] ecc =
-    {
-        0, 0, 0
-    };
+    readonly byte[] ecc = { 0, 0, 0 };
 
     [Test]
     public void Test()
     {
-        for(int i = 0; i < cards.Length; i++)
+        for(var i = 0; i < cards.Length; i++)
+        {
             using(new AssertionScope())
+            {
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(csds[i], out byte[] response);
@@ -194,10 +100,10 @@ public class CSD
                     Assert.AreEqual(spec_versions[i], csd.Version,
                                     string.Format(Localization.Specification_version_0, cards[i]));
 
-                    Assert.AreEqual(taacs[i], csd.TAAC, string.Format(Localization.TAAC_0, cards[i]));
-                    Assert.AreEqual(nsacs[i], csd.NSAC, string.Format(Localization.NSAC_0, cards[i]));
-                    Assert.AreEqual(speeds[i], csd.Speed, string.Format(Localization.Transfer_speed_0, cards[i]));
-                    Assert.AreEqual(classes[i], csd.Classes, string.Format(Localization.Classes_0, cards[i]));
+                    Assert.AreEqual(taacs[i],   csd.TAAC,    string.Format(Localization.TAAC_0,           cards[i]));
+                    Assert.AreEqual(nsacs[i],   csd.NSAC,    string.Format(Localization.NSAC_0,           cards[i]));
+                    Assert.AreEqual(speeds[i],  csd.Speed,   string.Format(Localization.Transfer_speed_0, cards[i]));
+                    Assert.AreEqual(classes[i], csd.Classes, string.Format(Localization.Classes_0,        cards[i]));
 
                     Assert.AreEqual(read_block_lengths[i], csd.ReadBlockLength,
                                     string.Format(Localization.Read_block_length_0, cards[i]));
@@ -271,5 +177,7 @@ public class CSD
 
                     Assert.AreEqual(ecc[i], csd.ECC, string.Format(Localization.ECC_0, cards[i]));
                 });
+            }
+        }
     }
 }

@@ -43,7 +43,7 @@ public class SpamSum
     [Test]
     public void EmptyData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -58,7 +58,7 @@ public class SpamSum
     [Test]
     public void EmptyInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -75,7 +75,7 @@ public class SpamSum
     [Test]
     public void RandomData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
@@ -90,7 +90,7 @@ public class SpamSum
     [Test]
     public void RandomInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);

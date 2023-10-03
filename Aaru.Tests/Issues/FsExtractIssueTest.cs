@@ -65,9 +65,9 @@ public abstract class FsExtractIssueTest
             });
         }
 
-        bool filesystemFound = false;
+        var filesystemFound = false;
 
-        for(int i = 0; i < partitions.Count; i++)
+        for(var i = 0; i < partitions.Count; i++)
         {
             Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
@@ -80,6 +80,7 @@ public abstract class FsExtractIssueTest
             if(idPlugins.Count > 1)
             {
                 foreach(string pluginName in idPlugins)
+                {
                     if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
                     {
                         Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
@@ -98,6 +99,7 @@ public abstract class FsExtractIssueTest
 
                         ExtractFilesInDir("/", fs, Xattrs);
                     }
+                }
             }
             else
             {
@@ -158,6 +160,7 @@ public abstract class FsExtractIssueTest
                                               path + "/" + entry));
 
                 if(error == ErrorNumber.NoError)
+                {
                     foreach(string xattr in xattrs)
                     {
                         byte[] xattrBuf = Array.Empty<byte>();
@@ -167,9 +170,10 @@ public abstract class FsExtractIssueTest
                                         string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1,
                                                       error, path + "/" + entry));
                     }
+                }
             }
 
-            byte[]      buffer = new byte[stat.Length];
+            var         buffer = new byte[stat.Length];
             ErrorNumber ret    = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
             Assert.AreEqual(ErrorNumber.NoError, ret,

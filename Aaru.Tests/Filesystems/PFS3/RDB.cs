@@ -41,6 +41,7 @@ public class RDB : FilesystemTest
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "Professional File System 3 (RDB)");
+
     public override IFilesystem Plugin     => new PFS();
     public override bool        Partitions => true;
 

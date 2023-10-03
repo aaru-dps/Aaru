@@ -35,7 +35,8 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.UFS;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class NeXT_Floppy : FilesystemTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (NeXT)");

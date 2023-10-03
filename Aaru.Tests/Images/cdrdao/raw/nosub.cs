@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.cdrdao.raw;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class nosub : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "cdrdao", "raw", "nosub");
+
     public override IMediaImage Plugin => new Cdrdao();
 
     public override OpticalImageTestExpected[] Tests => new[]

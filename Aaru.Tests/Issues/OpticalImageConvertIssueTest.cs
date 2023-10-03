@@ -71,12 +71,14 @@ public abstract class OpticalImageConvertIssueTest
         var inputOptical  = inputFormat as IOpticalMediaImage;
         var outputOptical = OutputFormat as IWritableOpticalImage;
 
-        Assert.IsNotNull(inputOptical, Localization.Could_not_treat_existing_image_as_optical_disc);
-        Assert.IsNotNull(outputOptical, Localization.Could_not_treat_new_image_as_optical_disc);
+        Assert.IsNotNull(inputOptical,        Localization.Could_not_treat_existing_image_as_optical_disc);
+        Assert.IsNotNull(outputOptical,       Localization.Could_not_treat_new_image_as_optical_disc);
         Assert.IsNotNull(inputOptical.Tracks, Localization.Existing_image_contains_no_tracks);
 
-        Assert.IsTrue(outputOptical.Create(outputPath, inputFormat.Info.MediaType, ParsedOptions, inputFormat.Info.Sectors, inputFormat.Info.SectorSize),
-                      string.Format(Localization.Error_0_creating_output_image, outputOptical.ErrorMessage));
+        Assert.IsTrue(
+            outputOptical.Create(outputPath, inputFormat.Info.MediaType, ParsedOptions, inputFormat.Info.Sectors,
+                                 inputFormat.Info.SectorSize),
+            string.Format(Localization.Error_0_creating_output_image, outputOptical.ErrorMessage));
 
         var metadata = new ImageInfo
         {
@@ -137,19 +139,22 @@ public abstract class OpticalImageConvertIssueTest
                 else
                     sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                bool useNotLong = false;
-                bool result     = false;
+                var useNotLong = false;
+                var result     = false;
 
                 if(UseLong)
                 {
-                    errno = sectorsToDo == 1 ? inputFormat.ReadSectorLong(doneSectors + track.StartSector, out sector)
+                    errno = sectorsToDo == 1
+                                ? inputFormat.ReadSectorLong(doneSectors  + track.StartSector, out sector)
                                 : inputFormat.ReadSectorsLong(doneSectors + track.StartSector, sectorsToDo, out sector);
 
                     if(errno == ErrorNumber.NoError)
+                    {
                         result = sectorsToDo == 1
                                      ? outputOptical.WriteSectorLong(sector, doneSectors + track.StartSector)
                                      : outputOptical.WriteSectorsLong(sector, doneSectors + track.StartSector,
                                                                       sectorsToDo);
+                    }
                     else
                         result = true;
 
@@ -160,12 +165,14 @@ public abstract class OpticalImageConvertIssueTest
 
                 if(!UseLong || useNotLong)
                 {
-                    errno = sectorsToDo == 1 ? inputFormat.ReadSector(doneSectors + track.StartSector, out sector)
+                    errno = sectorsToDo == 1
+                                ? inputFormat.ReadSector(doneSectors  + track.StartSector, out sector)
                                 : inputFormat.ReadSectors(doneSectors + track.StartSector, sectorsToDo, out sector);
 
                     Assert.AreEqual(ErrorNumber.NoError, errno);
 
-                    result = sectorsToDo == 1 ? outputOptical.WriteSector(sector, doneSectors + track.StartSector)
+                    result = sectorsToDo == 1
+                                 ? outputOptical.WriteSector(sector, doneSectors  + track.StartSector)
                                  : outputOptical.WriteSectors(sector, doneSectors + track.StartSector, sectorsToDo);
                 }
 
@@ -182,9 +189,9 @@ public abstract class OpticalImageConvertIssueTest
         string                   mcn                       = null;
         HashSet<int>             subchannelExtents         = new();
         Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
-        Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
+        var                      tracks                    = new Track[inputOptical.Tracks.Count];
 
-        for(int i = 0; i < tracks.Length; i++)
+        for(var i = 0; i < tracks.Length; i++)
         {
             tracks[i] = new Track
             {
@@ -340,8 +347,10 @@ public abstract class OpticalImageConvertIssueTest
                             result = true;
                         }
                         else
+                        {
                             result = outputOptical.WriteSectorsTag(sector, doneSectors + track.StartSector, sectorsToDo,
                                                                    tag);
+                        }
                     }
 
                     Assert.IsTrue(result,
@@ -354,15 +363,18 @@ public abstract class OpticalImageConvertIssueTest
         }
 
         if(isrcs.Count > 0)
+        {
             foreach(KeyValuePair<byte, string> isrc in isrcs)
                 outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key, SectorTagType.CdTrackIsrc);
+        }
 
         if(trackFlags.Count > 0)
+        {
             foreach((byte track, byte flags) in trackFlags)
-                outputOptical.WriteSectorTag(new[]
-                {
-                    flags
-                }, track, SectorTagType.CdTrackFlags);
+            {
+                outputOptical.WriteSectorTag(new[] { flags }, track, SectorTagType.CdTrackFlags);
+            }
+        }
 
         if(mcn != null)
             outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);

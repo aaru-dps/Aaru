@@ -40,25 +40,13 @@ namespace Aaru.Tests.Devices;
 [TestFixture]
 public class Ls120
 {
-    readonly string[] _testFiles =
-    {
-        "ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"
-    };
+    readonly string[] _testFiles = { "ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz" };
 
-    readonly MediaType[] _mediaTypes =
-    {
-        MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
-    };
+    readonly MediaType[] _mediaTypes = { MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD };
 
-    readonly ulong[] _sectors =
-    {
-        246528, 1440, 2880
-    };
+    readonly ulong[] _sectors = { 246528, 1440, 2880 };
 
-    readonly uint[] _sectorSize =
-    {
-        512, 512, 512
-    };
+    readonly uint[] _sectorSize = { 512, 512, 512 };
 
     readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "LS-120");
 
@@ -69,7 +57,7 @@ public class Ls120
 
         Assert.Multiple(() =>
         {
-            for(int i = 0; i < _testFiles.Length; i++)
+            for(var i = 0; i < _testFiles.Length; i++)
             {
                 var filter = new LZip();
                 filter.Open(_testFiles[i]);
@@ -83,6 +71,7 @@ public class Ls120
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(_sectors[i], image.Info.Sectors,
@@ -94,6 +83,7 @@ public class Ls120
                         Assert.AreEqual(_mediaTypes[i], image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, _testFiles[i]));
                     });
+                }
             }
         });
     }

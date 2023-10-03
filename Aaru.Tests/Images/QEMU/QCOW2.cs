@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.QEMU;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class QCOW2 : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "QEMU Copy On Write 2");
+
     public override IMediaImage Plugin => new Qcow2();
 
     public override BlockImageTestExpected[] Tests => new[]

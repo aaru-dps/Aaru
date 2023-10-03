@@ -35,7 +35,8 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CPCDSK : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CPCDSK");

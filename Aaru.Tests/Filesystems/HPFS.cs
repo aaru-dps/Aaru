@@ -41,6 +41,7 @@ public class Hpfs : FilesystemTest
 
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "High Performance File System");
+
     public override IFilesystem Plugin     => new HPFS();
     public override bool        Partitions => true;
 

@@ -14,10 +14,13 @@ namespace Aaru.Tests.Issues._288;
 public class ArcadeHits : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
+
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue288", "arcadehits");
+
     public override string InputPath =>
         "Midway's Greatest Arcade Hits Volume 1 v1.001 (2000)(Midway)(US)[!][compilation].gdi";
+
     public override string         SuggestedOutputFilename => "AaruTestIssue288_arcadehits.aif";
     public override IWritableImage OutputFormat            => new AaruFormat();
     public override string         Md5                     => null;

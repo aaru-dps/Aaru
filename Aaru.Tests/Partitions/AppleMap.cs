@@ -37,6 +37,7 @@ public class AppleMap : PartitionSchemeTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Apple Partition Map");
+
     public override PartitionTest[] Tests => new[]
     {
         new PartitionTest

@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.UltraISO;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CloneCD : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "CloneCD");
+
     public override IMediaImage Plugin => new CloneCd();
 
     public override OpticalImageTestExpected[] Tests => new[]

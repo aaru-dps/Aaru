@@ -40,6 +40,7 @@ public class GPT : FilesystemTest
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (GPT)");
+
     public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
     public override bool        Partitions => true;
 

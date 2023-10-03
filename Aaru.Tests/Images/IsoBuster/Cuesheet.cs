@@ -39,6 +39,7 @@ public class Cuesheet : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "IsoBuster", "Cuesheet");
+
     public override IMediaImage Plugin => new CdrWin();
 
     public override OpticalImageTestExpected[] Tests => new[]

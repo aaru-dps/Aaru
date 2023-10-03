@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class IPOD : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "IPOD");
+
     public override IMediaImage Plugin => new Udif();
 
     public override BlockImageTestExpected[] Tests => new[]

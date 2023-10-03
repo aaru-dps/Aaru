@@ -39,6 +39,7 @@ public class Raw : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "disk-analyse", "raw");
+
     public override IMediaImage Plugin => new ZZZRawImage();
 
     public override BlockImageTestExpected[] Tests => new[]

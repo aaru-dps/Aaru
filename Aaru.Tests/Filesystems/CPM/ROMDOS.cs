@@ -33,7 +33,8 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.CPM;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ROMDOS : FilesystemTest
 {
     public ROMDOS() : base("cpmfs") {}

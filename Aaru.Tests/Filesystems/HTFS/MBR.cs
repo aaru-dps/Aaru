@@ -41,6 +41,7 @@ public class MBR : FilesystemTest
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughput File System (MBR)");
+
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 

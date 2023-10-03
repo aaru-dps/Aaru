@@ -39,6 +39,7 @@ public class RdWr : BlockMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "ShrinkWrap 3",
                                                       "NDIF", "No compression", "No encryption");
+
     public override IMediaImage Plugin => new Ndif();
 
     public override BlockImageTestExpected[] Tests => new[]

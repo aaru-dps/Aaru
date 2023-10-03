@@ -35,13 +35,15 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems.AOFS;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class MBR_RDB : FilesystemTest
 {
     public MBR_RDB() : base("aofs") {}
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR+RDB)");
+
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 

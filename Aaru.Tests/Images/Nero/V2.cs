@@ -38,6 +38,7 @@ public class V2 : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "Nero Burning ROM", "V2");
+
     public override IMediaImage Plugin => new DiscImages.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]
@@ -3403,7 +3404,9 @@ public class V2 : OpticalMediaImageTest
                 }
             }
         },
-        #region These test images violate the specifications and are not expected to work yet
+
+    #region These test images violate the specifications and are not expected to work yet
+
         /*
         new OpticalImageTestExpected
         {
@@ -3682,6 +3685,7 @@ public class V2 : OpticalMediaImageTest
             }
         },
         */
-        #endregion
+
+    #endregion
     };
 }

@@ -65,7 +65,7 @@ public abstract class FilesystemTest
                     Assert.Greater(partitionsList.Count, 0,
                                    string.Format(Localization.No_partitions_found_for_0, testFile));
 
-                    bool found = false;
+                    var found = false;
 
                     foreach(Partition p in partitionsList)
                     {
@@ -136,8 +136,8 @@ public abstract class FilesystemTest
                 Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
                                 string.Format(Localization.Cannot_open_image_for_0, testFile));
 
-                Assert.AreEqual(test.MediaType, image.Info.MediaType, testFile);
-                Assert.AreEqual(test.Sectors, image.Info.Sectors, testFile);
+                Assert.AreEqual(test.MediaType,  image.Info.MediaType,  testFile);
+                Assert.AreEqual(test.Sectors,    image.Info.Sectors,    testFile);
                 Assert.AreEqual(test.SectorSize, image.Info.SectorSize, testFile);
             }
         });
@@ -153,7 +153,7 @@ public abstract class FilesystemTest
             foreach(FileSystemTest test in Tests)
             {
                 string testFile  = test.TestFile;
-                bool   found     = false;
+                var    found     = false;
                 var    partition = new Partition();
 
                 bool exists = File.Exists(testFile);
@@ -233,8 +233,10 @@ public abstract class FilesystemTest
                 fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                 if(test.ApplicationId != null)
+                {
                     Assert.AreEqual(test.ApplicationId, fsMetadata.ApplicationIdentifier,
                                     string.Format(Localization.Application_ID_0, testFile));
+                }
 
                 Assert.AreEqual(test.Bootable, fsMetadata.Bootable, string.Format(Localization.Bootable_0, testFile));
                 Assert.AreEqual(test.Clusters, fsMetadata.Clusters, string.Format(Localization.Clusters_0, testFile));
@@ -243,8 +245,10 @@ public abstract class FilesystemTest
                                 string.Format(Localization.Cluster_size_0, testFile));
 
                 if(test.SystemId != null)
+                {
                     Assert.AreEqual(test.SystemId, fsMetadata.SystemIdentifier,
                                     string.Format(Localization.System_ID_0, testFile));
+                }
 
                 Assert.AreEqual(_fileSystemType ?? test.Type, fsMetadata.Type,
                                 string.Format(Localization.Filesystem_type_0, testFile));

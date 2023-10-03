@@ -10,6 +10,7 @@ public class FromAaru : WritableOpticalMediaImageTest
     public override IMediaImage InputPlugin => new DiscImages.AaruFormat();
     public override IWritableImage OutputPlugin => new DiscImages.AaruFormat();
     public override string OutputExtension => "aif";
+
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected

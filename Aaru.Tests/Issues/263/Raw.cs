@@ -4,7 +4,7 @@ using System.IO;
 namespace Aaru.Tests.Issues._263;
 
 /* https://github.com/aaru-dps/Aaru/issues/263
- * 
+ *
  * SilasLaspada commented on Jan 2, 2020
  * Trying to extract the files from a DICF image results in the error "Error reading file: Object reference not
  * set to an instance of an object." Dumping and extracting as ISO does work, but there are issues with that too.

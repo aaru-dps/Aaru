@@ -39,6 +39,7 @@ public class ProDOS : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apple ProDOS Order");
+
     public override IMediaImage Plugin => new AppleDos();
 
     public override BlockImageTestExpected[] Tests => new[]

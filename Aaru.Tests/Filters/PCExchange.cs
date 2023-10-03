@@ -52,7 +52,7 @@ public class PcExchange
         IFilter filter = new Aaru.Filters.PcExchange();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[737280];
+        var    data = new byte[737280];
         str.EnsureRead(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -83,7 +83,7 @@ public class PcExchange
         IFilter filter = new Aaru.Filters.PcExchange();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        byte[] data = new byte[546];
+        var    data = new byte[546];
         str.EnsureRead(data, 0, 546);
         str.Close();
         str.Dispose();
@@ -97,7 +97,7 @@ public class PcExchange
     {
         IFilter filter = new Aaru.Filters.PcExchange();
         Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-        Assert.AreEqual(737280, filter.DataForkLength);
+        Assert.AreEqual(737280,              filter.DataForkLength);
         Assert.AreNotEqual(null, filter.GetDataForkStream());
         Assert.AreEqual(546, filter.ResourceForkLength);
         Assert.AreNotEqual(null, filter.GetResourceForkStream());

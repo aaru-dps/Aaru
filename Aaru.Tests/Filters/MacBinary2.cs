@@ -52,7 +52,7 @@ public class MacBinary2
         IFilter filter = new MacBinary();
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
-        byte[] data = new byte[737280];
+        var    data = new byte[737280];
         str.EnsureRead(data, 0, 737280);
         str.Close();
         str.Dispose();
@@ -81,7 +81,7 @@ public class MacBinary2
         IFilter filter = new MacBinary();
         filter.Open(_location);
         Stream str  = filter.GetResourceForkStream();
-        byte[] data = new byte[286];
+        var    data = new byte[286];
         str.EnsureRead(data, 0, 286);
         str.Close();
         str.Dispose();
@@ -95,7 +95,7 @@ public class MacBinary2
     {
         IFilter filter = new MacBinary();
         Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-        Assert.AreEqual(737280, filter.DataForkLength);
+        Assert.AreEqual(737280,              filter.DataForkLength);
         Assert.AreNotEqual(null, filter.GetDataForkStream());
         Assert.AreEqual(286, filter.ResourceForkLength);
         Assert.AreNotEqual(null, filter.GetResourceForkStream());

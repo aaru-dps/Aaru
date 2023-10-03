@@ -11,6 +11,7 @@ public class FromAaru : WritableOpticalMediaImageTest
     public override IMediaImage InputPlugin => new DiscImages.AaruFormat();
     public override IWritableImage OutputPlugin => new Cdrdao();
     public override string OutputExtension => "toc";
+
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected

@@ -52,6 +52,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 Assert.AreEqual(true, image.IsTape, string.Format(Localization.Is_tape_0, testFile));
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         image.Files.Should().
@@ -60,6 +61,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                         image.TapePartitions.Should().
                               BeEquivalentTo(test.Partitions, string.Format(Localization.Tape_partitions_0, testFile));
                     });
+                }
             }
         });
     }
@@ -97,6 +99,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(test.Sectors, image.Info.Sectors,
@@ -108,6 +111,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                         Assert.AreEqual(test.MediaType, image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
                     });
+                }
             }
         });
     }

@@ -41,6 +41,7 @@ public class APM : FilesystemTest
 
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (APM)");
+
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 

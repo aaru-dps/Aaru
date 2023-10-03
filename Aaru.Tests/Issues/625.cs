@@ -12,6 +12,7 @@ public class _625 : WritableOpticalMediaImageTest
     public override IMediaImage    InputPlugin     => new Cdrdao();
     public override IWritableImage OutputPlugin    => new CloneCd();
     public override string         OutputExtension => "mds";
+
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected

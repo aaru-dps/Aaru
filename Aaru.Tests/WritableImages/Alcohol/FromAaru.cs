@@ -11,6 +11,7 @@ public class FromAaru : WritableOpticalMediaImageTest
     public override IMediaImage InputPlugin => new DiscImages.AaruFormat();
     public override IWritableImage OutputPlugin => new Alcohol120();
     public override string OutputExtension => "mds";
+
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected

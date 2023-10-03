@@ -40,25 +40,13 @@ namespace Aaru.Tests.Devices;
 [TestFixture]
 public class PocketZip
 {
-    readonly string[] _testFiles =
-    {
-        "clik!.bin.lz", "pocketzip.bin.lz"
-    };
+    readonly string[] _testFiles = { "clik!.bin.lz", "pocketzip.bin.lz" };
 
-    readonly MediaType[] _mediaTypes =
-    {
-        MediaType.PocketZip, MediaType.PocketZip
-    };
+    readonly MediaType[] _mediaTypes = { MediaType.PocketZip, MediaType.PocketZip };
 
-    readonly ulong[] _sectors =
-    {
-        78882, 78882
-    };
+    readonly ulong[] _sectors = { 78882, 78882 };
 
-    readonly uint[] _sectorSize =
-    {
-        512, 512
-    };
+    readonly uint[] _sectorSize = { 512, 512 };
 
     readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "PocketZIP");
 
@@ -69,7 +57,7 @@ public class PocketZip
 
         Assert.Multiple(() =>
         {
-            for(int i = 0; i < _testFiles.Length; i++)
+            for(var i = 0; i < _testFiles.Length; i++)
             {
                 var filter = new LZip();
                 filter.Open(_testFiles[i]);
@@ -83,6 +71,7 @@ public class PocketZip
                     continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         Assert.AreEqual(_sectors[i], image.Info.Sectors,
@@ -94,6 +83,7 @@ public class PocketZip
                         Assert.AreEqual(_mediaTypes[i], image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, _testFiles[i]));
                     });
+                }
             }
         });
     }

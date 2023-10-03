@@ -38,36 +38,21 @@ namespace Aaru.Tests.Checksums;
 [TestFixture]
 public class Crc32
 {
-    static readonly byte[] _expectedEmpty =
-    {
-        0xa7, 0x38, 0xea, 0x1c
-    };
+    static readonly byte[] _expectedEmpty = { 0xa7, 0x38, 0xea, 0x1c };
     static readonly byte[] _expectedRandom =
     {
         // ReSharper disable once UseUtf8StringLiteral
         0x2b, 0x6e, 0x68, 0x54
     };
-    static readonly byte[] _expectedRandom15 =
-    {
-        0xad, 0x6d, 0xa7, 0x27
-    };
-    static readonly byte[] _expectedRandom31 =
-    {
-        0xa2, 0xad, 0x2f, 0xaa
-    };
-    static readonly byte[] _expectedRandom63 =
-    {
-        0xbf, 0xf6, 0xa3, 0x41
-    };
-    static readonly byte[] _expectedRandom2352 =
-    {
-        0x08, 0xba, 0x93, 0xea
-    };
+    static readonly byte[] _expectedRandom15   = { 0xad, 0x6d, 0xa7, 0x27 };
+    static readonly byte[] _expectedRandom31   = { 0xa2, 0xad, 0x2f, 0xaa };
+    static readonly byte[] _expectedRandom63   = { 0xbf, 0xf6, 0xa3, 0x41 };
+    static readonly byte[] _expectedRandom2352 = { 0x08, 0xba, 0x93, 0xea };
 
     [Test]
     public void EmptyData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -89,7 +74,7 @@ public class Crc32
     [Test]
     public void EmptyInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
                                 FileAccess.Read);
@@ -104,9 +89,77 @@ public class Crc32
     }
 
     [Test]
+    public void PartialInstance15()
+    {
+        var data = new byte[15];
+
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
+
+        fs.EnsureRead(data, 0, 15);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Crc32Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom15);
+    }
+
+    [Test]
+    public void PartialInstance2352()
+    {
+        var data = new byte[2352];
+
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
+
+        fs.EnsureRead(data, 0, 2352);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Crc32Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom2352);
+    }
+
+    [Test]
+    public void PartialInstance31()
+    {
+        var data = new byte[31];
+
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
+
+        fs.EnsureRead(data, 0, 31);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Crc32Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom31);
+    }
+
+    [Test]
+    public void PartialInstance63()
+    {
+        var data = new byte[63];
+
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+                                FileAccess.Read);
+
+        fs.EnsureRead(data, 0, 63);
+        fs.Close();
+        fs.Dispose();
+        IChecksum ctx = new Crc32Context();
+        ctx.Update(data);
+        byte[] result = ctx.Final();
+        result.Should().BeEquivalentTo(_expectedRandom63);
+    }
+
+    [Test]
     public void RandomData()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
@@ -128,7 +181,7 @@ public class Crc32
     [Test]
     public void RandomInstance()
     {
-        byte[] data = new byte[1048576];
+        var data = new byte[1048576];
 
         var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
                                 FileAccess.Read);
@@ -140,73 +193,5 @@ public class Crc32
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom);
-    }
-
-    [Test]
-    public void PartialInstance15()
-    {
-        byte[] data = new byte[15];
-
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                FileAccess.Read);
-
-        fs.EnsureRead(data, 0, 15);
-        fs.Close();
-        fs.Dispose();
-        IChecksum ctx = new Crc32Context();
-        ctx.Update(data);
-        byte[] result = ctx.Final();
-        result.Should().BeEquivalentTo(_expectedRandom15);
-    }
-
-    [Test]
-    public void PartialInstance31()
-    {
-        byte[] data = new byte[31];
-
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                FileAccess.Read);
-
-        fs.EnsureRead(data, 0, 31);
-        fs.Close();
-        fs.Dispose();
-        IChecksum ctx = new Crc32Context();
-        ctx.Update(data);
-        byte[] result = ctx.Final();
-        result.Should().BeEquivalentTo(_expectedRandom31);
-    }
-
-    [Test]
-    public void PartialInstance63()
-    {
-        byte[] data = new byte[63];
-
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                FileAccess.Read);
-
-        fs.EnsureRead(data, 0, 63);
-        fs.Close();
-        fs.Dispose();
-        IChecksum ctx = new Crc32Context();
-        ctx.Update(data);
-        byte[] result = ctx.Final();
-        result.Should().BeEquivalentTo(_expectedRandom63);
-    }
-
-    [Test]
-    public void PartialInstance2352()
-    {
-        byte[] data = new byte[2352];
-
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                FileAccess.Read);
-
-        fs.EnsureRead(data, 0, 2352);
-        fs.Close();
-        fs.Dispose();
-        IChecksum ctx = new Crc32Context();
-        ctx.Update(data);
-        byte[] result = ctx.Final();
-        result.Should().BeEquivalentTo(_expectedRandom2352);
     }
 }

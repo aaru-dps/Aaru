@@ -73,7 +73,9 @@ public class Dart : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "93e71b9ecdb39d3ec9245b4f451856d4"
         }
-        #region Unsupported LZH compression
+
+    #region Unsupported LZH compression
+
         /*
         new BlockImageTestExpected
         {
@@ -108,6 +110,7 @@ public class Dart : BlockMediaImageTest
             MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
         },
         */
-        #endregion Unsupported LZH compression
+
+    #endregion Unsupported LZH compression
     };
 }

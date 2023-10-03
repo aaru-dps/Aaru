@@ -35,11 +35,13 @@ using NUnit.Framework;
 
 namespace Aaru.Tests.Images.DiskCopy633.NDIF;
 
-[TestFixture, SuppressMessage("ReSharper", "InconsistentNaming")]
+[TestFixture]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ROCo : BlockMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.3.3", "NDIF", "ROCo");
+
     public override IMediaImage Plugin => new Ndif();
 
     public override BlockImageTestExpected[] Tests => new[]
