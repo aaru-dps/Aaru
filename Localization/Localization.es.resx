@@ -1,4 +1,5 @@
 <root>
+  <!-- ReSharper disable MarkupTextTypo -->
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -91,7 +92,7 @@
     <value>Información adicional:</value>
   </data>
   <data name="Additional_product_ID_0" xml:space="preserve">
-    <value>ID de producto adicional:</value>
+    <value>ID de producto adicional: {0}</value>
   </data>
   <data name="Address_for_administrative_configuration_service_0" xml:space="preserve">
     <value>Dirección para el servicio de configuración administrativa: {0}</value>
@@ -805,10 +806,10 @@
     <value>Página de control de modos de la interfaz Central:</value>
   </data>
   <data name="Certance_Reel_Motor_1_Serial_Number_0" xml:space="preserve">
-    <value>Número de serie del motor del carrete 1:</value>
+    <value>Número de serie del motor del carrete 1: {0}</value>
   </data>
   <data name="Certance_Reel_Motor_2_Serial_Number_0" xml:space="preserve">
-    <value>Número de serie del motor del carrete 2:</value>
+    <value>Número de serie del motor del carrete 2: {0}</value>
   </data>
   <data name="Certance_Variant_0" xml:space="preserve">
     <value>Variante: {0}</value>
