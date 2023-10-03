@@ -48,7 +48,8 @@ namespace Aaru.Partitions;
 public sealed class Human68K : IPartition
 {
     // ReSharper disable once InconsistentNaming
-    const uint X68K_MAGIC = 0x5836384B;
+    const uint   X68K_MAGIC  = 0x5836384B;
+    const string MODULE_NAME = "Human68k partitions plugin";
 
     /// <inheritdoc />
     public string Name => Localization.Human68K_Name;
@@ -66,7 +67,7 @@ public sealed class Human68K : IPartition
         ulong       sectsPerUnit;
         ErrorNumber errno;
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
         if(sectorOffset + 4 >= imagePlugin.Info.Sectors)
             return false;
@@ -96,7 +97,7 @@ public sealed class Human68K : IPartition
 
         Table table = Marshal.ByteArrayToStructureBigEndian<Table>(sector);
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.magic = {0:X4}", table.magic);
 
         if(table.magic != X68K_MAGIC)
             return false;
@@ -104,21 +105,21 @@ public sealed class Human68K : IPartition
         for(int i = 0; i < table.entries.Length; i++)
             table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size = {0:X4}", table.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size2 = {0:X4}", table.size2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.unknown = {0:X4}", table.unknown);
 
         ulong counter = 0;
 
         foreach(Entry entry in table.entries)
         {
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.name = {0}",
                                        StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
 
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.stateStart = {0}", entry.stateStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.length = {0}", entry.length);
 
-            AaruConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "sectsPerUnit = {0} {1}", sectsPerUnit,
                                        imagePlugin.Info.SectorSize);
 
             var part = new Partition

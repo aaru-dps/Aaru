@@ -48,8 +48,9 @@ namespace Aaru.Partitions;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed class GuidPartitionTable : IPartition
 {
-    const ulong GPT_MAGIC     = 0x5452415020494645;
-    const uint  GPT_REVISION1 = 0x00010000;
+    const ulong  GPT_MAGIC     = 0x5452415020494645;
+    const uint   GPT_REVISION1 = 0x00010000;
+    const string MODULE_NAME   = "GUID Partition Table (GPT) Plugin";
 
     /// <inheritdoc />
     public string Name => Localization.GuidPartitionTable_Name;
@@ -76,7 +77,7 @@ public sealed class GuidPartitionTable : IPartition
         ulong signature  = BitConverter.ToUInt64(hdrBytes, 0);
         bool  misaligned = false;
 
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.signature = 0x{0:X16}", signature);
 
         if(signature != GPT_MAGIC)
             if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
@@ -87,11 +88,11 @@ public sealed class GuidPartitionTable : IPartition
                     return false;
 
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
-                AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.signature @ 0x200 = 0x{0:X16}", signature);
 
                 if(signature == GPT_MAGIC)
                 {
-                    AaruConsole.DebugWriteLine("GPT Plugin", Localization.Found_unaligned_signature, signature);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_unaligned_signature, signature);
                     byte[] real = new byte[512];
                     Array.Copy(hdrBytes, 512, real, 0, 512);
                     hdrBytes   = real;
@@ -112,19 +113,19 @@ public sealed class GuidPartitionTable : IPartition
             return false;
         }
 
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}", hdr.revision);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}", hdr.headerSize);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}", hdr.headerCrc);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}", hdr.reserved);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}", hdr.myLBA);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}", hdr.alternateLBA);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}", hdr.firstUsableLBA);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}", hdr.lastUsableLBA);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}", hdr.diskGuid);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}", hdr.entryLBA);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}", hdr.entries);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}", hdr.entriesSize);
-        AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.revision = 0x{0:X8}", hdr.revision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.headerSize = {0}", hdr.headerSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.headerCrc = 0x{0:X8}", hdr.headerCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.reserved = 0x{0:X8}", hdr.reserved);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.myLBA = {0}", hdr.myLBA);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.alternateLBA = {0}", hdr.alternateLBA);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.firstUsableLBA = {0}", hdr.firstUsableLBA);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.lastUsableLBA = {0}", hdr.lastUsableLBA);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.diskGuid = {0}", hdr.diskGuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entryLBA = {0}", hdr.entryLBA);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entries = {0}", hdr.entries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entriesSize = {0}", hdr.entriesSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
         if(hdr.signature != GPT_MAGIC)
             return false;
@@ -185,12 +186,12 @@ public sealed class GuidPartitionTable : IPartition
         foreach(Entry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
                                                       entry.partitionId   != Guid.Empty))
         {
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}", entry.endLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
-            AaruConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.partitionType = {0}", entry.partitionType);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.partitionId = {0}", entry.partitionId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.startLBA = {0}", entry.startLBA);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.endLBA = {0}", entry.endLBA);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.attributes = 0x{0:X16}", entry.attributes);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.name = {0}", entry.name);
 
             if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
                entry.endLBA   / divisor > imagePlugin.Info.Sectors)
@@ -209,7 +210,7 @@ public sealed class GuidPartitionTable : IPartition
                 Scheme      = Name
             };
 
-            AaruConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.PartitionType = {0}", part.Type);
             partitions.Add(part);
         }
 

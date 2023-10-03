@@ -46,6 +46,7 @@ namespace Aaru.Partitions;
 /// <summary>Implements decoding of NEC PC-9800 partitions</summary>
 public sealed class PC98 : IPartition
 {
+    const string MODULE_NAME = "PC-98 partitions plugin";
     /// <inheritdoc />
     public string Name => Localization.PC98_Name;
     /// <inheritdoc />
@@ -83,21 +84,21 @@ public sealed class PC98 : IPartition
 
         foreach(Partition entry in table.entries)
         {
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}", entry.dp_mid);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}", entry.dp_sid);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}", entry.dp_dum1);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}", entry.dp_dum2);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}", entry.dp_ssect);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}", entry.dp_shd);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}", entry.dp_scyl);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}", entry.dp_esect);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}", entry.dp_ehd);
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}", entry.dp_ecyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_mid = {0}", entry.dp_mid);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_sid = {0}", entry.dp_sid);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum1 = {0}", entry.dp_dum1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_dum2 = {0}", entry.dp_dum2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ssect = {0}", entry.dp_ssect);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_shd = {0}", entry.dp_shd);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_scyl = {0}", entry.dp_scyl);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_esect = {0}", entry.dp_esect);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ehd = {0}", entry.dp_ehd);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ecyl = {0}", entry.dp_ecyl);
 
-            AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_name = \"{0}\"",
                                        StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
             if(entry.dp_scyl  == entry.dp_ecyl                   ||
@@ -127,13 +128,13 @@ public sealed class PC98 : IPartition
 
             part.Size = part.Length * imagePlugin.Info.SectorSize;
 
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
-            AaruConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Start = {0}", part.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Type = {0}", part.Type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Name = {0}", part.Name);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Sequence = {0}", part.Sequence);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Offset = {0}", part.Offset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Length = {0}", part.Length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "part.Size = {0}", part.Size);
 
             if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
                part.Start >= imagePlugin.Info.Sectors                           ||
