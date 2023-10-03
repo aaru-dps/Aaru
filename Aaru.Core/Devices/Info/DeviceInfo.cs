@@ -89,7 +89,7 @@ public partial class DeviceInfo
                 if(sense)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "STATUS = 0x{0:X2}", errorRegisters.Status);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}", errorRegisters.Error);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}",  errorRegisters.Error);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
@@ -132,7 +132,7 @@ public partial class DeviceInfo
                 if(sense)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "STATUS = 0x{0:X2}", errorRegisters.Status);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}", errorRegisters.Error);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}",  errorRegisters.Error);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
@@ -183,6 +183,7 @@ public partial class DeviceInfo
                     byte[] pages = EVPD.DecodePage00(inqBuf);
 
                     if(pages != null)
+                    {
                         foreach(byte page in pages)
                         {
                             sense = dev.ScsiInquiry(out inqBuf, out senseBuf, page);
@@ -192,6 +193,7 @@ public partial class DeviceInfo
 
                             ScsiEvpdPages.Add(page, inqBuf);
                         }
+                    }
                 }
 
                 var devType = (PeripheralDeviceTypes)ScsiInquiry.Value.PeripheralDeviceType;
@@ -318,11 +320,12 @@ public partial class DeviceInfo
                         }
                         */
 
-                        #region Plextor
+                    #region Plextor
+
                         if(dev.Manufacturer == "PLEXTOR")
                         {
-                            bool   plxtSense = true;
-                            bool   plxtDvd   = false;
+                            var    plxtSense = true;
+                            var    plxtDvd   = false;
                             byte[] plxtBuf   = null;
 
                             switch(dev.Model)
@@ -362,8 +365,10 @@ public partial class DeviceInfo
                                 default:
                                 {
                                     if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
+                                    {
                                         plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
                                                                              out _);
+                                    }
 
                                     break;
                                 }
@@ -423,6 +428,7 @@ public partial class DeviceInfo
                             plxtSense = dev.PlextorGetSilentMode(out plxtBuf, out senseBuf, dev.Timeout, out _);
 
                             if(!plxtSense)
+                            {
                                 if(plxtBuf[0] == 1)
                                 {
                                     PlextorFeatures.SilentModeEnabled = true;
@@ -442,6 +448,7 @@ public partial class DeviceInfo
                                                                  plxtBuf[7] - 47);
                                     */
                                 }
+                            }
 
                             plxtSense = dev.PlextorGetGigaRec(out plxtBuf, out senseBuf, dev.Timeout, out _);
 
@@ -507,11 +514,14 @@ public partial class DeviceInfo
                                     PlextorFeatures.DvdPlusWriteTest = true;
                             }
                         }
-                        #endregion Plextor
+
+                    #endregion Plextor
 
                         if(ScsiInquiry.Value.KreonPresent)
+                        {
                             if(!dev.KreonGetFeatureList(out senseBuf, out KreonFeatures krFeatures, dev.Timeout, out _))
                                 KreonFeatures = krFeatures;
+                        }
 
                         break;
                     }
@@ -538,8 +548,10 @@ public partial class DeviceInfo
                         sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else
                         {
                             MediumDensitySupport   = seqBuf;

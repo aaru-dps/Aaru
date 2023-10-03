@@ -79,7 +79,7 @@ partial class Dump
                          ref string mcn, HashSet<int> subchannelExtents,
                          Dictionary<byte, int> smallestPregapLbaPerTrack, bool supportsLongSectors)
     {
-        bool              sense  = true;     // Sense indicator
+        var               sense  = true;     // Sense indicator
         byte[]            cmdBuf = null;     // Data buffer
         double            cmdDuration;       // Command execution time
         const uint        sectorSize = 2352; // Full sector size
@@ -88,21 +88,21 @@ partial class Dump
         var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
         supportedPlextorSubchannel = supportedSubchannel switch
-        {
-            MmcSubchannel.None => PlextorSubchannel.None,
-            MmcSubchannel.Raw  => PlextorSubchannel.Pack,
-            MmcSubchannel.Q16  => PlextorSubchannel.Q16,
-            _                  => PlextorSubchannel.None
-        };
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         if(_resume.BadBlocks.Count <= 0 ||
            _aborted                     ||
            _retryPasses <= 0)
             return;
 
-        int  pass              = 1;
-        bool forward           = true;
-        bool runningPersistent = false;
+        var pass              = 1;
+        var forward           = true;
+        var runningPersistent = false;
 
         Modes.ModePage? currentModePage = null;
         byte[]          md6;
@@ -125,9 +125,11 @@ partial class Dump
                     Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                     if(dcMode10?.Pages != null)
+                    {
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
                                     modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
+                    }
                 }
             }
             else
@@ -135,9 +137,11 @@ partial class Dump
                 Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                 if(dcMode6?.Pages != null)
+                {
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
                                 modePage is { Page: 0x01, Subpage: 0x00 }))
                         currentModePage = modePage;
+                }
             }
 
             if(currentModePage == null)
@@ -203,11 +207,11 @@ partial class Dump
         }
 
         InitProgress?.Invoke();
-        cdRepeatRetry:
+    cdRepeatRetry:
         ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
         List<ulong> sectorsNotEvenPartial = new();
 
-        for(int i = 0; i < tmpArray.Length; i++)
+        for(var i = 0; i < tmpArray.Length; i++)
         {
             ulong badSector = tmpArray[i];
 
@@ -220,24 +224,32 @@ partial class Dump
             }
 
             if(forward)
+            {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                     badSector, pass)
+                                              Format(
+                                                  Localization.Core.
+                                                               Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                  badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
                                                           pass));
+            }
             else
+            {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                     badSector, pass)
+                                              Format(
+                                                  Localization.Core.
+                                                               Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                  badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
                                                           pass));
+            }
 
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             byte sectorsToReRead   = 1;
-            uint badSectorToReRead = (uint)badSector;
+            var  badSectorToReRead = (uint)badSector;
 
             if(_fixOffset                       &&
                audioExtents.Contains(badSector) &&
@@ -256,7 +268,7 @@ partial class Dump
 
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
             {
-                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToReRead, blockSize,
+                sense = ReadPlextorWithSubchannel(out cmdBuf,      out senseBuf, badSectorToReRead, blockSize,
                                                   sectorsToReRead, supportedPlextorSubchannel, out cmdDuration);
 
                 totalDuration += cmdDuration;
@@ -324,8 +336,10 @@ partial class Dump
 
                 // MEDIUM ERROR, retry with ignore error below
                 if(decSense is { ASC: 0x11 })
+                {
                     if(!sectorsNotEvenPartial.Contains(badSector))
                         sectorsNotEvenPartial.Add(badSector);
+                }
             }
 
             // Because one block has been partially used to fix the offset
@@ -336,7 +350,7 @@ partial class Dump
                 uint blocksToRead = sectorsToReRead;
 
                 FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead, subSize,
-                              ref cmdBuf, blockSize, false);
+                              ref cmdBuf,  blockSize,  false);
             }
 
             if(!sense &&
@@ -357,10 +371,10 @@ partial class Dump
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                byte[] data = new byte[sectorSize];
-                byte[] sub  = new byte[subSize];
-                Array.Copy(cmdBuf, 0, data, 0, sectorSize);
-                Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
+                var data = new byte[sectorSize];
+                var sub  = new byte[subSize];
+                Array.Copy(cmdBuf, 0,          data, 0, sectorSize);
+                Array.Copy(cmdBuf, sectorSize, sub,  0, subSize);
 
                 if(supportsLongSectors)
                     outputOptical.WriteSectorLong(data, badSector);
@@ -454,7 +468,7 @@ partial class Dump
 
                 InitProgress?.Invoke();
 
-                for(int i = 0; i < sectorsNotEvenPartial.Count; i++)
+                for(var i = 0; i < sectorsNotEvenPartial.Count; i++)
                 {
                     ulong badSector = sectorsNotEvenPartial[i];
 
@@ -492,10 +506,10 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize];
-                        byte[] sub  = new byte[subSize];
-                        Array.Copy(cmdBuf, 0, data, 0, sectorSize);
-                        Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
+                        var data = new byte[sectorSize];
+                        var sub  = new byte[subSize];
+                        Array.Copy(cmdBuf, 0,          data, 0, sectorSize);
+                        Array.Copy(cmdBuf, sectorSize, sub,  0, subSize);
 
                         if(supportsLongSectors)
                             outputOptical.WriteSectorLong(data, badSector);
@@ -532,10 +546,7 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
-                    currentModePage.Value
-                }
+                Pages  = new[] { currentModePage.Value }
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -568,7 +579,7 @@ partial class Dump
                          Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                          Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        bool              sense  = true;   // Sense indicator
+        var               sense  = true;   // Sense indicator
         byte[]            cmdBuf = null;   // Data buffer
         double            cmdDuration;     // Command execution time
         byte[]            senseBuf = null; // Sense buffer
@@ -580,22 +591,22 @@ partial class Dump
             return;
 
         supportedPlextorSubchannel = supportedSubchannel switch
-        {
-            MmcSubchannel.Raw => PlextorSubchannel.All,
-            MmcSubchannel.Q16 => PlextorSubchannel.Q16,
-            MmcSubchannel.Rw  => PlextorSubchannel.Pack,
-            _                 => PlextorSubchannel.None
-        };
+                                     {
+                                         MmcSubchannel.Raw => PlextorSubchannel.All,
+                                         MmcSubchannel.Q16 => PlextorSubchannel.Q16,
+                                         MmcSubchannel.Rw  => PlextorSubchannel.Pack,
+                                         _                 => PlextorSubchannel.None
+                                     };
 
         if(_aborted)
             return;
 
-        int  pass    = 1;
-        bool forward = true;
+        var pass    = 1;
+        var forward = true;
 
         InitProgress?.Invoke();
 
-        cdRepeatRetry:
+    cdRepeatRetry:
 
         _resume.BadSubchannels = new List<int>();
         _resume.BadSubchannels.AddRange(subchannelExtents);
@@ -608,7 +619,7 @@ partial class Dump
 
         foreach(int bs in tmpArray)
         {
-            uint badSector = (uint)bs;
+            var badSector = (uint)bs;
 
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 

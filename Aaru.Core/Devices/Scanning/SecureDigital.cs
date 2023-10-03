@@ -58,8 +58,8 @@ public sealed partial class MediaScan
         const ushort sdProfile     = 0x0001;
         ushort       blocksToRead  = 128;
         uint         blockSize     = 512;
-        bool         byteAddressed = true;
-        bool         supportsCmd23 = false;
+        var          byteAddressed = true;
+        var          supportsCmd23 = false;
 
         switch(_dev.Type)
         {
@@ -108,8 +108,9 @@ public sealed partial class MediaScan
                 {
                     Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
 
-                    results.Blocks = (ulong)(csd.Structure == 0 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
-                                                 : (csd.Size                + 1) * 1024);
+                    results.Blocks = (ulong)(csd.Structure == 0
+                                                 ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
+                                                 : (csd.Size + 1) * 1024);
 
                     blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
 
@@ -126,8 +127,10 @@ public sealed partial class MediaScan
                     sense = _dev.ReadScr(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
+                    {
                         supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
                                                  HasFlag(CommandSupport.SetBlockCount) ?? false;
+                    }
                 }
 
                 break;
@@ -189,13 +192,13 @@ public sealed partial class MediaScan
             }
         }
 
-        results.A       = 0; // <3ms
-        results.B       = 0; // >=3ms, <10ms
-        results.C       = 0; // >=10ms, <50ms
-        results.D       = 0; // >=50ms, <150ms
-        results.E       = 0; // >=150ms, <500ms
-        results.F       = 0; // >=500ms
-        results.Errored = 0;
+        results.A              = 0; // <3ms
+        results.B              = 0; // >=3ms, <10ms
+        results.C              = 0; // >=10ms, <50ms
+        results.D              = 0; // >=50ms, <150ms
+        results.E              = 0; // >=150ms, <500ms
+        results.F              = 0; // >=500ms
+        results.Errored        = 0;
         results.ProcessingTime = 0;
         double currentSpeed = 0;
         results.MaxSpeed          = double.MinValue;
@@ -211,11 +214,15 @@ public sealed partial class MediaScan
         if(supportsCmd23 || blocksToRead == 1)
             UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
         else if(_useBufferedReads)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time_using_OS_buffered_reads,
                                                blocksToRead));
+        }
         else
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_using_sequential_single_commands,
                                                blocksToRead));
+        }
 
         InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, sdProfile);
         var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
@@ -223,7 +230,7 @@ public sealed partial class MediaScan
 
         _scanStopwatch.Restart();
         _speedStopwatch.Restart();
-        ulong    sectorSpeedStart = 0;
+        ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
         for(ulong i = 0; i < results.Blocks; i += blocksToRead)
@@ -243,22 +250,30 @@ public sealed partial class MediaScan
                 results.MinSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)results.Blocks);
+                Invoke(
+                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
+                                  ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
+                    (long)i, (long)results.Blocks);
 
             bool error;
 
             if(blocksToRead == 1)
+            {
                 error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
                                              out duration);
+            }
             else if(supportsCmd23)
+            {
                 error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                 timeout, out duration);
+            }
             else if(_useBufferedReads)
                 error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead, out duration);
             else
+            {
                 error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                      timeout, out duration);
+            }
 
             if(!error)
             {
@@ -330,12 +345,12 @@ public sealed partial class MediaScan
 
         InitProgress?.Invoke();
 
-        for(int i = 0; i < seekTimes; i++)
+        for(var i = 0; i < seekTimes; i++)
         {
             if(_aborted || !_seekTest)
                 break;
 
-            uint seekPos = (uint)rnd.Next((int)results.Blocks);
+            var seekPos = (uint)rnd.Next((int)results.Blocks);
 
             PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 

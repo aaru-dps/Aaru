@@ -54,6 +54,7 @@ public static class PrintScsiModePages
         foreach(Modes.ModePage page in decMode.Pages)
 
             //AaruConsole.WriteLine("Page {0:X2}h subpage {1:X2}h is {2} bytes long", page.Page, page.Subpage, page.PageResponse.Length);
+        {
             switch(page.Page)
             {
                 case 0x00:
@@ -64,8 +65,10 @@ public static class PrintScsiModePages
                     else
                     {
                         if(page.Subpage != 0)
+                        {
                             AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0_subpage_1,
                                                   page.Page, page.Subpage);
+                        }
                         else
                             AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0, page.Page);
                     }
@@ -75,9 +78,11 @@ public static class PrintScsiModePages
                 case 0x01:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_01(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -131,9 +136,11 @@ public static class PrintScsiModePages
                 case 0x07:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_07(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -198,9 +205,11 @@ public static class PrintScsiModePages
                 case 0x10:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.SequentialAccess
                                                   ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                   : Modes.PrettifyModePage_10(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -249,9 +258,11 @@ public static class PrintScsiModePages
                 case 0x1C:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                   : Modes.PrettifyModePage_1C(page.PageResponse));
+                    }
                     else if(page.Subpage == 1)
                         AaruConsole.WriteLine(Modes.PrettifyModePage_1C_S01(page.PageResponse));
                     else
@@ -365,13 +376,16 @@ public static class PrintScsiModePages
                 default:
                 {
                     if(page.Subpage != 0)
+                    {
                         AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0_subpage_1, page.Page,
                                               page.Subpage);
+                    }
                     else
                         AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0, page.Page);
 
                     break;
                 }
             }
+        }
     }
 }

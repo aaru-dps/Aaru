@@ -385,81 +385,103 @@ public sealed class Checksum
         List<CommonTypes.AaruMetadata.Checksum> chks = new();
 
         if(_enabled.HasFlag(EnableChecksum.Adler32))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Adler32,
                 Value = _adler32Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Crc16))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC16,
                 Value = _crc16Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Crc32))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC32,
                 Value = _crc32Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Crc64))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC64,
                 Value = _crc64Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Md5))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Md5,
                 Value = _md5Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Sha1))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha1,
                 Value = _sha1Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Sha256))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha256,
                 Value = _sha256Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Sha384))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha384,
                 Value = _sha384Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Sha512))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha512,
                 Value = _sha512Ctx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.SpamSum))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.SpamSum,
                 Value = _ssCtx.End()
             });
+        }
 
         if(_enabled.HasFlag(EnableChecksum.Fletcher16))
+        {
             chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Fletcher16,
                 Value = _f16Ctx.End()
             });
+        }
 
         if(!_enabled.HasFlag(EnableChecksum.Fletcher32))
             return chks;
@@ -674,81 +696,103 @@ public sealed class Checksum
         List<CommonTypes.AaruMetadata.Checksum> dataChecksums = new();
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Adler32,
                 Value = adler32CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC16,
                 Value = crc16CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Crc32))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC32,
                 Value = crc32CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Crc64))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.CRC64,
                 Value = crc64CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Md5))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Md5,
                 Value = md5CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Sha1))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha1,
                 Value = sha1CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Sha256))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha256,
                 Value = sha256CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Sha384))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha384,
                 Value = sha384CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Sha512))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Sha512,
                 Value = sha512CtxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.SpamSum))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.SpamSum,
                 Value = ssctxData.End()
             });
+        }
 
         if(enabled.HasFlag(EnableChecksum.Fletcher16))
+        {
             dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
                 Type  = ChecksumType.Fletcher16,
                 Value = f16CtxData.End()
             });
+        }
 
         if(!enabled.HasFlag(EnableChecksum.Fletcher32))
             return dataChecksums;
@@ -762,7 +806,8 @@ public sealed class Checksum
         return dataChecksums;
     }
 
-    #region Threading helpers
+#region Threading helpers
+
     struct HashPacket
     {
         public IChecksum Context;
@@ -770,5 +815,6 @@ public sealed class Checksum
     }
 
     static void UpdateHash(object packet) => ((HashPacket)packet).Context.Update(((HashPacket)packet).Data);
-    #endregion Threading helpers
+
+#endregion Threading helpers
 }

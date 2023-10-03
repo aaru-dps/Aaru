@@ -65,9 +65,9 @@ sealed partial class Reader
             return true;
 
         byte[] senseBuf;
-        int    tries      = 0;
+        var    tries      = 0;
         uint   lba        = 0;
-        bool   mediumScan = false;
+        var    mediumScan = false;
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
         {
@@ -131,8 +131,9 @@ sealed partial class Reader
             }
             case true when !_read10 && !_read12 && !_read16 && Blocks > 0x001FFFFF + 1:
                 ErrorMessage =
-                    string.Format(Localization.Core.Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
-                                  0x001FFFFF + 1, Blocks);
+                    string.Format(
+                        Localization.Core.Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
+                        0x001FFFFF + 1, Blocks);
 
                 return true;
         }
@@ -147,8 +148,9 @@ sealed partial class Reader
            Blocks > 0xFFFFFFFF + (long)1)
         {
             ErrorMessage =
-                string.Format(Localization.Core.Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
-                              0xFFFFFFFF + (long)1, Blocks);
+                string.Format(
+                    Localization.Core.Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
+                    0xFFFFFFFF + (long)1, Blocks);
 
             return true;
         }
@@ -226,6 +228,7 @@ sealed partial class Reader
                 }
 
                 if(CanReadRaw && LongBlockSize == LogicalBlockSize)
+                {
                     switch(LogicalBlockSize)
                     {
                         case 512:
@@ -389,6 +392,7 @@ sealed partial class Reader
                             break;
                         }
                     }
+                }
 
                 if(!CanReadRaw &&
                    _dev.Manufacturer == "SYQUEST")
@@ -400,6 +404,7 @@ sealed partial class Reader
                         decSense = Sense.Decode(senseBuf);
 
                         if(decSense.HasValue)
+                        {
                             if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
                                decSense.Value.ASC      == 0x24                     &&
                                decSense.Value.ASCQ     == 0x00)
@@ -469,6 +474,7 @@ sealed partial class Reader
                                     }
                                 }
                             }
+                        }
                     }
 
                     if(!CanReadRaw &&
@@ -575,7 +581,7 @@ sealed partial class Reader
                     return true;
                 case false:
                 {
-                    byte[] temp = new byte[8];
+                    var temp = new byte[8];
 
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
@@ -656,7 +662,7 @@ sealed partial class Reader
     }
 
     bool ScsiReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
-                        out bool blankCheck)
+                        out bool   blankCheck)
     {
         bool   sense;
         byte[] senseBuf;
@@ -666,39 +672,59 @@ sealed partial class Reader
         blankCheck     = false;
 
         if(CanReadRaw)
+        {
             if(_readLong16)
                 sense = _dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, _timeout, out duration);
             else if(_readLong10)
+            {
                 sense = _dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)LongBlockSize,
                                         _timeout, out duration);
+            }
             else if(_syqReadLong10)
+            {
                 sense = _dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                                out duration);
+            }
             else if(_syqReadLong6)
+            {
                 sense = _dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                               out duration);
+            }
             else if(_hldtstReadRaw)
+            {
                 sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                               out duration);
+            }
             else if(_plextorReadRaw)
+            {
                 sense = _dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                                out duration);
+            }
             else
                 return true;
+        }
         else
         {
             if(_read6)
+            {
                 sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,
                                    out duration);
+            }
             else if(_read10)
+            {
                 sense = _dev.Read10(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                     LogicalBlockSize, 0, (ushort)count, _timeout, out duration);
+            }
             else if(_read12)
+            {
                 sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                     LogicalBlockSize, 0, count, false, _timeout, out duration);
+            }
             else if(_read16)
+            {
                 sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0, count,
                                     false, _timeout, out duration);
+            }
             else
                 return true;
         }
@@ -721,7 +747,7 @@ sealed partial class Reader
 
     bool ScsiSeek(ulong block, out double duration)
     {
-        bool sense = true;
+        var sense = true;
         duration = 0;
 
         if(_seek6)

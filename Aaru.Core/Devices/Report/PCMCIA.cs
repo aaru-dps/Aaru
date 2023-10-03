@@ -52,6 +52,7 @@ public sealed partial class DeviceReport
             return pcmciaReport;
 
         foreach(Tuple tuple in tuples)
+        {
             switch(tuple.Code)
             {
                 case TupleCodes.CISTPL_MANFID:
@@ -77,6 +78,7 @@ public sealed partial class DeviceReport
 
                     break;
             }
+        }
 
         return pcmciaReport;
     }

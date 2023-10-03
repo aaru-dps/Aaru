@@ -48,7 +48,7 @@ partial class Dump
         bool    recoveredError;
         bool    blankCheck;
         byte[]  buffer;
-        bool    newBlank = false;
+        var     newBlank = false;
 
         if(_outputPlugin is not IWritableImage outputFormat)
         {

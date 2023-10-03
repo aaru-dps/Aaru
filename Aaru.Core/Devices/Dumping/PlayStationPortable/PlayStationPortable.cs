@@ -103,7 +103,7 @@ public partial class Dump
             return;
         }
 
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
 
         Array.Copy(buffer, 0x36, tmp, 0, 8);
 
@@ -115,9 +115,9 @@ public partial class Dump
             return;
         }
 
-        ushort fatStart      = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
-        ushort sectorsPerFat = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
-        ushort rootStart     = (ushort)((sectorsPerFat * 2) + fatStart);
+        var fatStart      = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
+        var sectorsPerFat = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
+        var rootStart     = (ushort)(sectorsPerFat * 2   + fatStart);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
         _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
@@ -151,7 +151,7 @@ public partial class Dump
         UpdateStatus?.Invoke(Localization.Core.Reading_FAT);
         _dumpLog.WriteLine(Localization.Core.Reading_FAT);
 
-        byte[] fat = new byte[sectorsPerFat * 512];
+        var fat = new byte[sectorsPerFat * 512];
 
         uint position = 0;
 
@@ -181,11 +181,11 @@ public partial class Dump
         UpdateStatus?.Invoke(Localization.Core.Traversing_FAT);
         _dumpLog.WriteLine(Localization.Core.Traversing_FAT);
 
-        ushort previousCluster = BitConverter.ToUInt16(fat, 4);
+        var previousCluster = BitConverter.ToUInt16(fat, 4);
 
-        for(int i = 3; i < fat.Length / 2; i++)
+        for(var i = 3; i < fat.Length / 2; i++)
         {
-            ushort nextCluster = BitConverter.ToUInt16(fat, i * 2);
+            var nextCluster = BitConverter.ToUInt16(fat, i * 2);
 
             if(nextCluster == previousCluster + 1)
             {

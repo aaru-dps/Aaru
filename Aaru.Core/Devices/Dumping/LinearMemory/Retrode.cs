@@ -67,7 +67,7 @@ public partial class Dump
             return;
         }
 
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
 
         Array.Copy(buffer, 0x36, tmp, 0, 8);
 
@@ -80,11 +80,11 @@ public partial class Dump
             return;
         }
 
-        ushort fatStart          = (ushort)((buffer[0x0F] << 8) + buffer[0x0E]);
-        ushort sectorsPerFat     = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
-        ushort rootStart         = (ushort)((sectorsPerFat * 2) + fatStart);
-        ushort rootSize          = (ushort)(((buffer[0x12] << 8) + buffer[0x11]) * 32 / 512);
-        byte   sectorsPerCluster = buffer[0x0D];
+        var  fatStart          = (ushort)((buffer[0x0F] << 8)                      + buffer[0x0E]);
+        var  sectorsPerFat     = (ushort)((buffer[0x17] << 8)                      + buffer[0x16]);
+        var  rootStart         = (ushort)(sectorsPerFat                        * 2 + fatStart);
+        var  rootSize          = (ushort)(((buffer[0x12] << 8) + buffer[0x11]) * 32 / 512);
+        byte sectorsPerCluster = buffer[0x0D];
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
         _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
@@ -99,14 +99,14 @@ public partial class Dump
             return;
         }
 
-        int  romPos;
-        bool sfcFound     = false;
-        bool genesisFound = false;
-        bool smsFound     = false;
-        bool n64Found     = false;
-        bool gbFound      = false;
-        bool gbcFound     = false;
-        bool gbaFound     = false;
+        int romPos;
+        var sfcFound     = false;
+        var genesisFound = false;
+        var smsFound     = false;
+        var n64Found     = false;
+        var gbFound      = false;
+        var gbcFound     = false;
+        var gbaFound     = false;
         tmp = new byte[3];
 
         for(romPos = 0; romPos < buffer.Length; romPos += 0x20)
@@ -174,8 +174,8 @@ public partial class Dump
             return;
         }
 
-        ushort cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
-        uint   romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
+        var cluster = BitConverter.ToUInt16(buffer, romPos + 0x1A);
+        var romSize = BitConverter.ToUInt32(buffer, romPos + 0x1C);
 
         MediaType mediaType = gbaFound
                                   ? MediaType.GameBoyAdvanceGamePak
@@ -218,7 +218,7 @@ public partial class Dump
             return;
         }
 
-        uint startSector  = (uint)(rootStart + rootSize + ((cluster - 2) * sectorsPerCluster));
+        var  startSector  = (uint)(rootStart + rootSize + (cluster - 2) * sectorsPerCluster);
         uint romSectors   = romSize / 512;
         uint romRemaining = romSize % 512;
 
@@ -266,10 +266,10 @@ public partial class Dump
             _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, romSectors);
 
         _dumpStopwatch.Restart();
-        double   imageWriteDuration = 0;
+        double imageWriteDuration = 0;
 
         _speedStopwatch.Restart();
-        ulong    sectorSpeedStart = 0;
+        ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
         for(ulong i = 0; i < romSectors; i += blocksToRead)
@@ -294,8 +294,10 @@ public partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, i * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i * 512, romSize);
+                Invoke(
+                    string.Format(Localization.Core.Reading_byte_0_of_1_2, i * 512, romSize,
+                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                    (long)i * 512, romSize);
 
             sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(startSector + i),
                                 512, 0, (ushort)blocksToRead, _dev.Timeout, out double cmdDuration);
@@ -351,8 +353,10 @@ public partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2, romSectors * 512, romSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)romSectors * 512, romSize);
+                Invoke(
+                    string.Format(Localization.Core.Reading_byte_0_of_1_2, romSectors * 512, romSize,
+                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                    (long)romSectors * 512, romSize);
 
             sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, romSectors, 512, 0, 1,
                                 _dev.Timeout, out double cmdDuration);
@@ -411,8 +415,10 @@ public partial class Dump
         };
 
         if(!outputBai.SetImageInfo(metadata))
+        {
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputBai.ErrorMessage);
+        }
 
         // TODO: Set dump hardware
         //outputBAI.SetDumpHardware();
@@ -446,24 +452,29 @@ public partial class Dump
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+            Invoke(string.Format(
+                       Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                       _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                       totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                       _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(512 * (romSectors + 1)).Per(totalDuration.Milliseconds()).
                                                     Humanize()));
 
         if(maxSpeed > 0)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
                                                ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
+        }
 
         if(minSpeed is > 0 and < double.MaxValue)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
                                                ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
+        }
 
         UpdateStatus?.Invoke("");
 

@@ -63,9 +63,9 @@ partial class Dump
         MediaType     dskType = MediaType.Unknown;
         bool          sense;
         byte[]        tmpBuf;
-        bool          compactDisc      = true;
-        bool          gotConfiguration = false;
-        bool          isXbox           = false;
+        var           compactDisc      = true;
+        var           gotConfiguration = false;
+        var           isXbox           = false;
         DVDDecryption dvdDecrypt       = null;
         _speedMultiplier = 1;
 
@@ -257,7 +257,7 @@ partial class Dump
            _dev.IsUsb        &&
            !gotConfiguration &&
            decMode.Value.Header.MediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
-               or MediumTypes.ReadWriteBlockDevice)
+            or MediumTypes.ReadWriteBlockDevice)
         {
             _speedMultiplier = -1;
             Sbc(null, MediaType.Unknown, false);
@@ -281,16 +281,19 @@ partial class Dump
         Dictionary<MediaTagType, byte[]> mediaTags = new();
 
         if(dskType == MediaType.PD650)
+        {
             dskType = (blocks + 1) switch
-            {
-                1281856  => MediaType.PD650_WORM,
-                58620544 => MediaType.REV120,
-                17090880 => MediaType.REV35,
-                34185728 => MediaType.REV70,
-                _        => dskType
-            };
+                      {
+                          1281856  => MediaType.PD650_WORM,
+                          58620544 => MediaType.REV120,
+                          17090880 => MediaType.REV35,
+                          34185728 => MediaType.REV70,
+                          _        => dskType
+                      };
+        }
 
-        #region Nintendo
+    #region Nintendo
+
         switch(dskType)
         {
             case MediaType.Unknown when blocks > 0:
@@ -353,22 +356,26 @@ partial class Dump
 
                         // False book types
                         dskType = decPfi.DiskCategory switch
-                        {
-                            DiskCategory.DVDPR    => MediaType.DVDPR,
-                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                            DiskCategory.DVDR     => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
-                            DiskCategory.DVDRAM   => MediaType.DVDRAM,
-                            DiskCategory.DVDRW    => decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
-                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                            DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD,
-                            DiskCategory.UMD      => MediaType.UMD,
-                            _                     => MediaType.DVDROM
-                        };
+                                  {
+                                      DiskCategory.DVDPR => MediaType.DVDPR,
+                                      DiskCategory.DVDPRDL => MediaType.DVDPRDL,
+                                      DiskCategory.DVDPRW => MediaType.DVDPRW,
+                                      DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                      DiskCategory.DVDR => decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
+                                      DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                      DiskCategory.DVDRW => decPfi.PartVersion >= 15
+                                                                ? MediaType.DVDRWDL
+                                                                : MediaType.DVDRW,
+                                      DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                      DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                      DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                      DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                      DiskCategory.Nintendo => decPfi.DiscSize == DVDSize.Eighty
+                                                                   ? MediaType.GOD
+                                                                   : MediaType.WOD,
+                                      DiskCategory.UMD => MediaType.UMD,
+                                      _                => MediaType.DVDROM
+                                  };
                     }
                 }
 
@@ -434,12 +441,15 @@ partial class Dump
 
                 break;
         }
-        #endregion Nintendo
 
-        #region All DVD and HD DVD types
-        #endregion All DVD and HD DVD types
+    #endregion Nintendo
 
-        #region DVD-ROM
+    #region All DVD and HD DVD types
+
+    #endregion All DVD and HD DVD types
+
+    #region DVD-ROM
+
         if(dskType is MediaType.DVDDownload or MediaType.DVDROM)
         {
             _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
@@ -448,6 +458,7 @@ partial class Dump
                                            MmcDiscStructureFormat.CopyrightInformation, 0, _dev.Timeout, out _);
 
             if(!sense)
+            {
                 if(CSS_CPRM.DecodeLeadInCopyright(cmdBuf).HasValue)
                 {
                     tmpBuf = new byte[cmdBuf.Length - 4];
@@ -461,8 +472,10 @@ partial class Dump
                     else
                     {
                         if(!Settings.Settings.Current.EnableDecryption)
+                        {
                             UpdateStatus?.Invoke(Localization.Core.
                                                               Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled);
+                        }
                         else
                         {
                             if(cmi?.CopyrightType == CopyrightType.CSS)
@@ -490,6 +503,7 @@ partial class Dump
                                                                    _dev.Timeout, out _);
 
                                         if(!sense)
+                                        {
                                             if(cmdBuf[7] == 1)
                                             {
                                                 UpdateStatus?.Invoke(Localization.Core.
@@ -505,11 +519,13 @@ partial class Dump
                                                         CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
 
                                                     if(rpc.HasValue)
+                                                    {
                                                         UpdateStatus?.Invoke(CSS.CheckRegion(rpc.Value, cmi.Value)
                                                                                  ? Localization.Core.
                                                                                      Disc_and_drive_regions_match
                                                                                  : Localization.Core.
                                                                                      Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect);
+                                                    }
                                                 }
 
                                                 if(decodedDiscKey.HasValue)
@@ -528,28 +544,38 @@ partial class Dump
                                                         mediaTags.Add(MediaTagType.DVD_DiscKey_Decrypted, discKey);
                                                     }
                                                     else
+                                                    {
                                                         UpdateStatus?.Invoke(Localization.Core.
                                                                                  Decryption_of_disc_key_failed);
+                                                    }
                                                 }
                                             }
+                                        }
                                     }
                                 }
                             }
                             else
+                            {
                                 UpdateStatus?.
                                     Invoke(string.
-                                               Format(Localization.Core.Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
-                                                      (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
-                                                       CopyrightType.NoProtection).ToString()));
+                                               Format(
+                                                   Localization.Core.
+                                                                Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
+                                                   (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
+                                                    CopyrightType.NoProtection).ToString()));
+                            }
                         }
                     }
                 }
+            }
         }
-        #endregion DVD-ROM
+
+    #endregion DVD-ROM
 
         switch(dskType)
         {
-            #region DVD-ROM and HD DVD-ROM
+        #region DVD-ROM and HD DVD-ROM
+
             case MediaType.DVDDownload:
             case MediaType.DVDROM:
             case MediaType.HDDVDROM:
@@ -566,9 +592,11 @@ partial class Dump
                 }
 
                 break;
-            #endregion DVD-ROM and HD DVD-ROM
 
-            #region DVD-RAM and HD DVD-RAM
+        #endregion DVD-ROM and HD DVD-ROM
+
+        #region DVD-RAM and HD DVD-RAM
+
             case MediaType.DVDRAM:
             case MediaType.HDDVDRAM:
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Description_Structure);
@@ -577,12 +605,14 @@ partial class Dump
                                                MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout, out _);
 
                 if(!sense)
+                {
                     if(DDS.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVDRAM_DDS, tmpBuf);
                     }
+                }
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Spare_Area_Information);
 
@@ -591,17 +621,21 @@ partial class Dump
                                                out _);
 
                 if(!sense)
+                {
                     if(Spare.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVDRAM_SpareArea, tmpBuf);
                     }
+                }
 
                 break;
-            #endregion DVD-RAM and HD DVD-RAM
 
-            #region DVD-R and DVD-RW
+        #endregion DVD-RAM and HD DVD-RAM
+
+        #region DVD-R and DVD-RW
+
             case MediaType.DVDR:
             case MediaType.DVDRW:
                 _dumpLog.WriteLine(Localization.Core.Reading_Pre_Recorded_Information);
@@ -617,12 +651,14 @@ partial class Dump
                 }
 
                 break;
-            #endregion DVD-R and DVD-RW
+
+        #endregion DVD-R and DVD-RW
         }
 
         switch(dskType)
         {
-            #region DVD-R, DVD-RW and HD DVD-R
+        #region DVD-R, DVD-RW and HD DVD-R
+
             case MediaType.DVDR:
             case MediaType.DVDRW:
             case MediaType.HDDVDR:
@@ -651,9 +687,11 @@ partial class Dump
                 }
 
                 break;
-            #endregion DVD-R, DVD-RW and HD DVD-R
 
-            #region All DVD+
+        #endregion DVD-R, DVD-RW and HD DVD-R
+
+        #region All DVD+
+
             case MediaType.DVDPR:
             case MediaType.DVDPRDL:
             case MediaType.DVDPRW:
@@ -683,9 +721,11 @@ partial class Dump
                 }
 
                 break;
-            #endregion All DVD+
 
-            #region HD DVD-ROM
+        #endregion All DVD+
+
+        #region HD DVD-ROM
+
             case MediaType.HDDVDROM:
                 _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
 
@@ -701,9 +741,11 @@ partial class Dump
                 }
 
                 break;
-            #endregion HD DVD-ROM
 
-            #region All Blu-ray
+        #endregion HD DVD-ROM
+
+        #region All Blu-ray
+
             case MediaType.BDR:
             case MediaType.BDRE:
             case MediaType.BDROM:
@@ -716,12 +758,14 @@ partial class Dump
                                                MmcDiscStructureFormat.DiscInformation, 0, _dev.Timeout, out _);
 
                 if(!sense)
+                {
                     if(DI.Decode(cmdBuf).HasValue)
                     {
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.BD_DI, tmpBuf);
                     }
+                }
 
                 // TODO: PAC
                 /*
@@ -735,12 +779,14 @@ partial class Dump
                     mediaTags.Add(MediaTagType.PAC, tmpBuf);
                 }*/
                 break;
-            #endregion All Blu-ray
+
+        #endregion All Blu-ray
         }
 
         switch(dskType)
         {
-            #region BD-ROM only
+        #region BD-ROM only
+
             case MediaType.BDROM:
             case MediaType.UHDBD:
                 _dumpLog.WriteLine(Localization.Core.Reading_Burst_Cutting_Area);
@@ -756,9 +802,11 @@ partial class Dump
                 }
 
                 break;
-            #endregion BD-ROM only
 
-            #region Writable Blu-ray only
+        #endregion BD-ROM only
+
+        #region Writable Blu-ray only
+
             case MediaType.BDR:
             case MediaType.BDRE:
             case MediaType.BDRXL:
@@ -788,7 +836,8 @@ partial class Dump
                 }
 
                 break;
-            #endregion Writable Blu-ray only
+
+        #endregion Writable Blu-ray only
         }
 
         if(isXbox)
@@ -833,7 +882,7 @@ partial class Dump
                     Checksums = Checksum.GetChecksums(tag)
                 };
 
-                byte[] tmp = new byte[tag.Length + 4];
+                var tmp = new byte[tag.Length + 4];
                 Array.Copy(tag, 0, tmp, 4, tag.Length);
                 tmp[0] = (byte)((tag.Length & 0xFF00) >> 8);
                 tmp[1] = (byte)(tag.Length & 0xFF);

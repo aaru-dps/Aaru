@@ -52,7 +52,7 @@ partial class Dump
     /// <param name="sessions">Sessions</param>
     /// <param name="firstTrackLastSession">First track in last session</param>
     void ReadCdTags(ref MediaType mediaType, Dictionary<MediaTagType, byte[]> mediaTags, out int sessions,
-                    out int firstTrackLastSession)
+                    out int       firstTrackLastSession)
     {
         byte[] cmdBuf; // Data buffer
         bool   sense;  // Sense indicator
@@ -93,12 +93,14 @@ partial class Dump
 
             if(discInfo.HasValue &&
                mediaType == MediaType.CD)
+            {
                 mediaType = discInfo.Value.DiscType switch
-                {
-                    0x10 => MediaType.CDI,
-                    0x20 => MediaType.CDROMXA,
-                    _    => mediaType
-                };
+                            {
+                                0x10 => MediaType.CDI,
+                                0x20 => MediaType.CDROMXA,
+                                _    => mediaType
+                            };
+            }
         }
 
         _dumpLog.WriteLine(Localization.Core.Reading_PMA);

@@ -68,61 +68,61 @@ public enum DumpSubchannel
 
 public partial class Dump
 {
-    readonly bool                       _createGraph;
-    readonly bool                       _debug;
-    readonly Device                     _dev;
-    readonly string                     _devicePath;
-    readonly uint                       _dimensions;
-    readonly bool                       _doResume;
-    readonly DumpLog                    _dumpLog;
-    readonly bool                       _dumpRaw;
-    readonly Encoding                   _encoding;
-    readonly ErrorLog                   _errorLog;
-    readonly bool                       _fixSubchannel;
-    readonly bool                       _fixSubchannelCrc;
-    readonly bool                       _fixSubchannelPosition;
-    readonly bool                       _force;
-    readonly Dictionary<string, string> _formatOptions;
-    readonly bool                       _generateSubchannels;
-    readonly uint                       _ignoreCdrRunOuts;
-    readonly bool                       _metadata;
-    readonly string                     _outputPath;
-    readonly IBaseWritableImage         _outputPlugin;
-    readonly string                     _outputPrefix;
-    readonly bool                       _persistent;
-    readonly Metadata                   _preSidecar;
-    readonly bool                       _private;
-    readonly ushort                     _retryPasses;
-    readonly bool                       _retrySubchannel;
-    readonly bool                       _stopOnError;
-    readonly bool                       _storeEncrypted;
-    readonly DumpSubchannel             _subchannel;
-    readonly bool                       _titleKeys;
-    readonly bool                       _trim;
-    bool                                _aborted;
-    AaruContext                         _ctx;   // Main database context
-    Database.Models.Device              _dbDev; // Device database entry
-    bool                                _dumpFirstTrackPregap;
-    bool                                _fixOffset;
-    uint                                _maximumReadable; // Maximum number of sectors drive can read at once
-    IMediaGraph                         _mediaGraph;
-    Resume                              _resume;
-    Sidecar                             _sidecarClass;
-    uint                                _skip;
-    bool                                _skipCdireadyHole;
-    int                                 _speed;
-    int                                 _speedMultiplier;
-    bool                                _supportsPlextorD8;
-    bool                                _useBufferedReads;
-    static readonly TimeSpan            _oneSecond = 1.Seconds();
-    readonly        Stopwatch           _dumpStopwatch;
-    readonly        Stopwatch           _sidecarStopwatch;
-    readonly        Stopwatch           _speedStopwatch;
-    readonly        Stopwatch           _trimStopwatch;
-    readonly        Stopwatch           _writeStopwatch;
-    readonly        Stopwatch           _imageCloseStopwatch;
-    const           string              PREGAP_MODULE_NAME = "Pregap calculator";
-    const           string              MODULE_NAME        = "Media dumping";
+    const           string                     PREGAP_MODULE_NAME = "Pregap calculator";
+    const           string                     MODULE_NAME        = "Media dumping";
+    static readonly TimeSpan                   _oneSecond         = 1.Seconds();
+    readonly        bool                       _createGraph;
+    readonly        bool                       _debug;
+    readonly        Device                     _dev;
+    readonly        string                     _devicePath;
+    readonly        uint                       _dimensions;
+    readonly        bool                       _doResume;
+    readonly        DumpLog                    _dumpLog;
+    readonly        bool                       _dumpRaw;
+    readonly        Stopwatch                  _dumpStopwatch;
+    readonly        Encoding                   _encoding;
+    readonly        ErrorLog                   _errorLog;
+    readonly        bool                       _fixSubchannel;
+    readonly        bool                       _fixSubchannelCrc;
+    readonly        bool                       _fixSubchannelPosition;
+    readonly        bool                       _force;
+    readonly        Dictionary<string, string> _formatOptions;
+    readonly        bool                       _generateSubchannels;
+    readonly        uint                       _ignoreCdrRunOuts;
+    readonly        Stopwatch                  _imageCloseStopwatch;
+    readonly        bool                       _metadata;
+    readonly        string                     _outputPath;
+    readonly        IBaseWritableImage         _outputPlugin;
+    readonly        string                     _outputPrefix;
+    readonly        bool                       _persistent;
+    readonly        Metadata                   _preSidecar;
+    readonly        bool                       _private;
+    readonly        ushort                     _retryPasses;
+    readonly        bool                       _retrySubchannel;
+    readonly        Stopwatch                  _sidecarStopwatch;
+    readonly        Stopwatch                  _speedStopwatch;
+    readonly        bool                       _stopOnError;
+    readonly        bool                       _storeEncrypted;
+    readonly        DumpSubchannel             _subchannel;
+    readonly        bool                       _titleKeys;
+    readonly        bool                       _trim;
+    readonly        Stopwatch                  _trimStopwatch;
+    readonly        Stopwatch                  _writeStopwatch;
+    bool                                       _aborted;
+    AaruContext                                _ctx;   // Main database context
+    Database.Models.Device                     _dbDev; // Device database entry
+    bool                                       _dumpFirstTrackPregap;
+    bool                                       _fixOffset;
+    uint                                       _maximumReadable; // Maximum number of sectors drive can read at once
+    IMediaGraph                                _mediaGraph;
+    Resume                                     _resume;
+    Sidecar                                    _sidecarClass;
+    uint                                       _skip;
+    bool                                       _skipCdireadyHole;
+    int                                        _speed;
+    int                                        _speedMultiplier;
+    bool                                       _supportsPlextorD8;
+    bool                                       _useBufferedReads;
 
     /// <summary>Initializes dumpers</summary>
     /// <param name="doResume">Should resume?</param>
@@ -165,14 +165,14 @@ public partial class Dump
     /// <param name="storeEncrypted">Store encrypted data as is</param>
     /// <param name="titleKeys">Dump DVD CSS title keys</param>
     /// <param name="ignoreCdrRunOuts">How many CD-R(W) run end sectors to ignore and regenerate</param>
-    public Dump(bool doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
-                bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
+    public Dump(bool     doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
+                bool     force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                 Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                 Metadata preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap, bool fixOffset,
-                bool debug, DumpSubchannel subchannel, int speed, bool @private, bool fixSubchannelPosition,
-                bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc, bool skipCdireadyHole,
+                bool     debug, DumpSubchannel subchannel, int speed, bool @private, bool fixSubchannelPosition,
+                bool     retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc, bool skipCdireadyHole,
                 ErrorLog errorLog, bool generateSubchannels, uint maximumReadable, bool useBufferedReads,
-                bool storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions)
+                bool     storeEncrypted, bool titleKeys, uint ignoreCdrRunOuts, bool createGraph, uint dimensions)
     {
         _doResume              = doResume;
         _dev                   = dev;
@@ -241,7 +241,7 @@ public partial class Dump
         }
         else
         {
-            _dumpLog.WriteLine(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
+            _dumpLog.WriteLine(string.Format(Localization.Core.Device_in_database_since_0,   _dbDev.LastSynchronized));
             UpdateStatus?.Invoke(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
 
             if(_dbDev.OptimalMultipleSectorsRead > 0)
@@ -331,22 +331,31 @@ public partial class Dump
 
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgress;
+
     /// <summary>Event raised when a progress bar is needed</summary>
     public event InitProgressHandler InitProgress;
+
     /// <summary>Event raised to report status updates</summary>
     public event UpdateStatusHandler UpdateStatus;
+
     /// <summary>Event raised to report a non-fatal error</summary>
     public event ErrorMessageHandler ErrorMessage;
+
     /// <summary>Event raised to report a fatal error that stops the dumping operation and should call user's attention</summary>
     public event ErrorMessageHandler StoppingErrorMessage;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler UpdateProgress;
+
     /// <summary>Event raised to update the status of an undeterminate progress bar</summary>
     public event PulseProgressHandler PulseProgress;
+
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler2 EndProgress2;
+
     /// <summary>Event raised when a progress bar is needed</summary>
     public event InitProgressHandler2 InitProgress2;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler2 UpdateProgress2;
 }

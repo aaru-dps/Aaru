@@ -133,7 +133,7 @@ public sealed class Spiral : IMediaGraph
             smallerDimension * parameters.RecordableInformationEnd / parameters.DiscDiameter;
 
         _maxSector = parameters.NominalMaxSectors;
-        long lastSector1 = (long)lastSector;
+        var lastSector1 = (long)lastSector;
 
         // If the dumped media is overburnt
         if(lastSector1 > _maxSector)
@@ -197,10 +197,12 @@ public sealed class Spiral : IMediaGraph
         });
 
         // If there's a recordable information area, get its points
-        if(recordableAreaEndDiameter > 0 &&
+        if(recordableAreaEndDiameter   > 0 &&
            recordableAreaStartDiameter > 0)
+        {
             _recordableInformationPoints = GetSpiralPoints(center, recordableAreaStartDiameter / 2,
                                                            recordableAreaEndDiameter / 2, _gdrom ? a : a * 1.5f);
+        }
 
         if(_gdrom)
         {
@@ -262,7 +264,7 @@ public sealed class Spiral : IMediaGraph
         else
             lastPoint = lastSector1 / sectorsPerPoint;
 
-        for(int index = 0; index < lastPoint; index++)
+        for(var index = 0; index < lastPoint; index++)
         {
             SKPoint point = _points[index];
             path.LineTo(point);
@@ -277,6 +279,8 @@ public sealed class Spiral : IMediaGraph
     }
 
     public SKBitmap Bitmap { get; }
+
+#region IMediaGraph Members
 
     /// <inheritdoc />
     /// <summary>Paints the segment of the spiral that corresponds to the specified sector in green</summary>
@@ -377,6 +381,8 @@ public sealed class Spiral : IMediaGraph
         SKData data  = image.Encode();
         data.SaveTo(stream);
     }
+
+#endregion
 
     public static DiscParameters DiscParametersFromMediaType(MediaType mediaType, bool smallDisc = false) =>
         mediaType switch
@@ -524,7 +530,7 @@ public sealed class Spiral : IMediaGraph
 
             path.MoveTo(points[(int)firstPoint]);
 
-            for(int i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
+            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
                 path.LineTo(points[i]);
 
             _canvas.DrawPath(path, paint);
@@ -583,7 +589,7 @@ public sealed class Spiral : IMediaGraph
 
             path.MoveTo(_leadInPoints[(int)firstPoint]);
 
-            for(int i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
+            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
                 path.LineTo(_leadInPoints[i]);
 
             _canvas.DrawPath(path, paint);
@@ -633,8 +639,8 @@ public sealed class Spiral : IMediaGraph
                 continue;
 
             // Convert to Cartesian coordinates.
-            float x = (float)(r * Math.Cos(theta));
-            float y = (float)(r * Math.Sin(theta));
+            var x = (float)(r * Math.Cos(theta));
+            var y = (float)(r * Math.Sin(theta));
 
             // Center.
             x += center.X;
@@ -651,6 +657,8 @@ public sealed class Spiral : IMediaGraph
         return points;
     }
 
+#region Nested type: DiscParameters
+
     /// <summary>Defines the physical disc parameters</summary>
     /// <param name="DiscDiameter">Diameter of the whole disc</param>
     /// <param name="CenterHole">Diameter of the hole at the center</param>
@@ -662,8 +670,10 @@ public sealed class Spiral : IMediaGraph
     /// <param name="RecordableInformationEnd">Diameter at which the information specific to recordable media starts</param>
     /// <param name="NominalMaxSectors">Number of maximum sectors, for discs following the specifications</param>
     /// <param name="DiscColor">Typical disc color</param>
-    public sealed record DiscParameters(float DiscDiameter, float CenterHole, float ClampingMinimum,
-                                        float InformationAreaStart, float LeadInEnd, float InformationAreaEnd,
-                                        float RecordableInformationStart, float RecordableInformationEnd,
-                                        int NominalMaxSectors, SKColor DiscColor);
+    public sealed record DiscParameters(float DiscDiameter,               float   CenterHole, float ClampingMinimum,
+                                        float InformationAreaStart,       float   LeadInEnd,  float InformationAreaEnd,
+                                        float RecordableInformationStart, float   RecordableInformationEnd,
+                                        int   NominalMaxSectors,          SKColor DiscColor);
+
+#endregion
 }

@@ -60,6 +60,7 @@ public static class Partitions
 
         // Create partitions from image files
         if(tapeImage?.Files != null)
+        {
             foreach(TapeFile tapeFile in tapeImage.Files)
             {
                 foreach(Type pluginType in plugins.Partitions.Values)
@@ -78,9 +79,11 @@ public static class Partitions
 
                 checkedLocations.Add(tapeFile.FirstBlock);
             }
+        }
 
         // Getting all partitions from device (e.g. tracks)
         if(partitionableImage?.Partitions != null)
+        {
             foreach(Partition imagePartition in partitionableImage.Partitions)
             {
                 foreach(Type pluginType in plugins.Partitions.Values)
@@ -99,6 +102,7 @@ public static class Partitions
 
                 checkedLocations.Add(imagePartition.Start);
             }
+        }
 
         // Getting all partitions at start of device
         if(!checkedLocations.Contains(0))
@@ -156,10 +160,12 @@ public static class Partitions
                 foundPartitions.RemoveAt(0);
 
                 foreach(Partition child in children)
+                {
                     if(checkedLocations.Contains(child.Start))
                         childPartitions.Add(child);
                     else
                         foundPartitions.Add(child);
+                }
             }
             else
             {
@@ -167,16 +173,17 @@ public static class Partitions
                 foundPartitions.RemoveAt(0);
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_parents, foundPartitions.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_parents,    foundPartitions.Count);
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_partitions, childPartitions.Count);
         }
 
         // Be sure that device partitions are not excluded if not mapped by any scheme...
         if(tapeImage is not null)
         {
-            List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+            var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
             if(tapeImage.Files != null)
+            {
                 childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock)).
                                                    Select(tapeFile => new Partition
                                                    {
@@ -184,16 +191,19 @@ public static class Partitions
                                                        Length   = tapeFile.LastBlock - tapeFile.FirstBlock + 1,
                                                        Sequence = tapeFile.File
                                                    }));
+            }
         }
 
         if(partitionableImage is not null)
         {
-            List<ulong> startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+            var startLocations = childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
             if(partitionableImage.Partitions != null)
+            {
                 childPartitions.AddRange(partitionableImage.Partitions.Where(imagePartition =>
                                                                                  !startLocations.
                                                                                      Contains(imagePartition.Start)));
+            }
         }
 
         Partition[] childArray = childPartitions.OrderBy(part => part.Start).ThenBy(part => part.Length).

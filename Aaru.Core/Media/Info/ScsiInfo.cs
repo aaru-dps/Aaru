@@ -68,17 +68,17 @@ public sealed class ScsiInfo
 
         MediaType     = MediaType.Unknown;
         MediaInserted = false;
-        int    resets = 0;
+        var    resets = 0;
         bool   sense;
         byte[] cmdBuf;
         byte[] senseBuf;
-        bool   containsFloppyPage    = false;
-        int    sessions              = 1;
-        int    firstTrackLastSession = 1;
+        var    containsFloppyPage    = false;
+        var    sessions              = 1;
+        var    firstTrackLastSession = 1;
 
         if(dev.IsRemovable)
         {
-            deviceGotReset:
+        deviceGotReset:
             sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
 
             if(sense)
@@ -100,7 +100,7 @@ public sealed class ScsiInfo
                     {
                         case 0x3A:
                         {
-                            int leftRetries = 5;
+                            var leftRetries = 5;
 
                             while(leftRetries > 0)
                             {
@@ -125,7 +125,7 @@ public sealed class ScsiInfo
                         }
                         case 0x04 when decSense?.ASCQ == 0x01:
                         {
-                            int leftRetries = 10;
+                            var leftRetries = 10;
 
                             while(leftRetries > 0)
                             {
@@ -215,15 +215,17 @@ public sealed class ScsiInfo
                 {
                     if(ReadCapacity16 == null &&
                        Blocks         == 0)
+                    {
                         if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                         {
                             AaruConsole.ErrorWriteLine(Localization.Core.Unable_to_get_media_capacity);
                             AaruConsole.ErrorWriteLine("{0}", Sense.PrettifySense(senseBuf));
                         }
+                    }
 
                     if(ReadCapacity16 != null)
                     {
-                        byte[] temp = new byte[8];
+                        var temp = new byte[8];
 
                         Array.Copy(cmdBuf, 0, temp, 0, 8);
                         Array.Reverse(temp);
@@ -326,17 +328,17 @@ public sealed class ScsiInfo
                         break;
                     case 0x0002:
                         MediaType = scsiMediumType switch
-                        {
-                            0x01 => MediaType.PD650,
-                            0x41 => Blocks switch
-                            {
-                                58620544 => MediaType.REV120,
-                                17090880 => MediaType.REV35,
-                                34185728 => MediaType.REV70,
-                                _        => MediaType
-                            },
-                            _ => MediaType.Unknown
-                        };
+                                    {
+                                        0x01 => MediaType.PD650,
+                                        0x41 => Blocks switch
+                                                {
+                                                    58620544 => MediaType.REV120,
+                                                    17090880 => MediaType.REV35,
+                                                    34185728 => MediaType.REV70,
+                                                    _        => MediaType
+                                                },
+                                        _ => MediaType.Unknown
+                                    };
 
                         break;
                     case 0x0005:
@@ -461,9 +463,11 @@ public sealed class ScsiInfo
                                           MmcDiscStructureFormat.RecognizedFormatLayers, 0, dev.Timeout, out _);
 
             if(sense)
+            {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.Core.READ_DISC_STRUCTURE_Recognized_Format_Layers_0,
                                            Sense.PrettifySense(senseBuf));
+            }
             else
                 RecognizedFormatLayers = cmdBuf;
 
@@ -471,9 +475,11 @@ public sealed class ScsiInfo
                                           MmcDiscStructureFormat.WriteProtectionStatus, 0, dev.Timeout, out _);
 
             if(sense)
+            {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.Core.READ_DISC_STRUCTURE_Write_Protection_Status_0,
                                            Sense.PrettifySense(senseBuf));
+            }
             else
                 WriteProtectionStatus = cmdBuf;
 
@@ -486,45 +492,57 @@ public sealed class ScsiInfo
                 DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_capabilitylist.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
             */
 
-            #region All DVD and HD DVD types
+        #region All DVD and HD DVD types
+
             if(MediaType is MediaType.DVDDownload or MediaType.DVDPR or MediaType.DVDPRDL or MediaType.DVDPRW
-               or MediaType.DVDPRWDL or MediaType.DVDR or MediaType.DVDRAM or MediaType.DVDRDL or MediaType.DVDROM
-               or MediaType.DVDRW or MediaType.DVDRWDL or MediaType.HDDVDR or MediaType.HDDVDRAM or MediaType.HDDVDRDL
-               or MediaType.HDDVDROM or MediaType.HDDVDRW or MediaType.HDDVDRWDL)
+                         or MediaType.DVDPRWDL or MediaType.DVDR or MediaType.DVDRAM or MediaType.DVDRDL
+                         or MediaType.DVDROM
+                         or MediaType.DVDRW or MediaType.DVDRWDL or MediaType.HDDVDR or MediaType.HDDVDRAM
+                         or MediaType.HDDVDRDL
+                         or MediaType.HDDVDROM or MediaType.HDDVDRW or MediaType.HDDVDRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_PFI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                 {
                     DvdPfi     = cmdBuf;
                     DecodedPfi = PFI.Decode(cmdBuf, MediaType);
 
                     if(DecodedPfi.HasValue)
+                    {
                         if(MediaType == MediaType.DVDROM)
+                        {
                             MediaType = DecodedPfi.Value.DiskCategory switch
-                            {
-                                DiskCategory.DVDPR    => MediaType.DVDPR,
-                                DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                                DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                                DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                DiskCategory.DVDR => DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
-                                                         : MediaType.DVDR,
-                                DiskCategory.DVDRAM => MediaType.DVDRAM,
-                                DiskCategory.DVDRW => DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
-                                                          : MediaType.DVDRW,
-                                DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                DiskCategory.Nintendo => DecodedPfi.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD
-                                                             : MediaType.WOD,
-                                DiskCategory.UMD => MediaType.UMD,
-                                _                => MediaType.DVDROM
-                            };
+                                        {
+                                            DiskCategory.DVDPR    => MediaType.DVDPR,
+                                            DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                            DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                            DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                            DiskCategory.DVDR => DecodedPfi.Value.PartVersion >= 6
+                                                                     ? MediaType.DVDRDL
+                                                                     : MediaType.DVDR,
+                                            DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                            DiskCategory.DVDRW => DecodedPfi.Value.PartVersion >= 15
+                                                                      ? MediaType.DVDRWDL
+                                                                      : MediaType.DVDRW,
+                                            DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                            DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                            DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                            DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                            DiskCategory.Nintendo => DecodedPfi.Value.DiscSize == DVDSize.Eighty
+                                                                         ? MediaType.GOD
+                                                                         : MediaType.WOD,
+                                            DiskCategory.UMD => MediaType.UMD,
+                                            _                => MediaType.DVDROM
+                                        };
+                        }
+                    }
                 }
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -532,8 +550,10 @@ public sealed class ScsiInfo
                                               out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DMI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                 {
                     DvdDmi = cmdBuf;
@@ -550,25 +570,31 @@ public sealed class ScsiInfo
                     }
                 }
             }
-            #endregion All DVD and HD DVD types
 
-            #region DVD-ROM
+        #endregion All DVD and HD DVD types
+
+        #region DVD-ROM
+
             if(MediaType is MediaType.DVDDownload or MediaType.DVDROM)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.CopyrightInformation, 0, dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_CMI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                     DvdCmi = cmdBuf;
             }
-            #endregion DVD-ROM
+
+        #endregion DVD-ROM
 
             switch(MediaType)
             {
-                #region DVD-ROM and HD DVD-ROM
+            #region DVD-ROM and HD DVD-ROM
+
                 case MediaType.DVDDownload:
                 case MediaType.DVDROM:
                 case MediaType.HDDVDROM:
@@ -576,8 +602,10 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.BurstCuttingArea, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_BCA_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdBca = cmdBuf;
 
@@ -585,24 +613,30 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.DvdAacs, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_DVD_AACS_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdAacs = cmdBuf;
 
                     break;
-                #endregion DVD-ROM and HD DVD-ROM
 
-                #region DVD-RAM and HD DVD-RAM
+            #endregion DVD-ROM and HD DVD-ROM
+
+            #region DVD-RAM and HD DVD-RAM
+
                 case MediaType.DVDRAM:
                 case MediaType.HDDVDRAM:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.DvdramDds, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DDS_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdRamDds = cmdBuf;
 
@@ -610,9 +644,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.DvdramMediumStatus, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Medium_Status_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdRamCartridgeStatus = cmdBuf;
 
@@ -621,29 +657,36 @@ public sealed class ScsiInfo
                                                   out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_SAI_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdRamSpareArea = cmdBuf;
 
                     break;
-                #endregion DVD-RAM and HD DVD-RAM
 
-                #region DVD-R and HD DVD-R
+            #endregion DVD-RAM and HD DVD-RAM
+
+            #region DVD-R and HD DVD-R
+
                 case MediaType.DVDR:
                 case MediaType.HDDVDR:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.LastBorderOutRmd, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Last_Out_Border_RMD_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         LastBorderOutRmd = cmdBuf;
 
                     break;
-                #endregion DVD-R and HD DVD-R
+
+            #endregion DVD-R and HD DVD-R
             }
 
             var dvdDecrypt = new DVDDecryption(dev);
@@ -655,8 +698,10 @@ public sealed class ScsiInfo
                                               MmcDiscStructureFormat.DiscKey, dvdDecrypt.Agid, dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_Disc_Key_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                     DvdDiscKey = cmdBuf;
 
@@ -665,13 +710,16 @@ public sealed class ScsiInfo
                                               dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_Sector_CMI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                     DvdSectorCmi = cmdBuf;
             }
 
-            #region Require drive authentication, won't work
+        #region Require drive authentication, won't work
+
             /*
             sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MediaIdentifier, 0, dev.Timeout, out _);
             if(sense)
@@ -719,18 +767,22 @@ public sealed class ScsiInfo
             else
                 DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_aacsdatakeys.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
             */
-            #endregion Require drive authentication, won't work
 
-            #region DVD-R and DVD-RW
+        #endregion Require drive authentication, won't work
+
+        #region DVD-R and DVD-RW
+
             if(MediaType is MediaType.DVDR or MediaType.DVDRW or MediaType.DVDRDL or MediaType.DVDRWDL)
             {
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.PreRecordedInfo, 0, dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Core.READ_DISC_STRUCTURE_Pre_Recorded_Info_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                 {
                     DvdPreRecordedInfo = cmdBuf;
@@ -738,11 +790,13 @@ public sealed class ScsiInfo
                     DecodedDvdPrePitInformation = PRI.Decode(cmdBuf);
                 }
             }
-            #endregion DVD-R and DVD-RW
+
+        #endregion DVD-R and DVD-RW
 
             switch(MediaType)
             {
-                #region DVD-R, DVD-RW and HD DVD-R
+            #region DVD-R, DVD-RW and HD DVD-R
+
                 case MediaType.DVDR:
                 case MediaType.DVDRW:
                 case MediaType.DVDRDL:
@@ -752,9 +806,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_DVD_R_Media_ID_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrMediaIdentifier = cmdBuf;
 
@@ -763,9 +819,11 @@ public sealed class ScsiInfo
                                                   out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_DVD_R_PFI_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                     {
                         DvdrPhysicalInformation = cmdBuf;
@@ -774,9 +832,11 @@ public sealed class ScsiInfo
                     }
 
                     break;
-                #endregion DVD-R, DVD-RW and HD DVD-R
 
-                #region All DVD+
+            #endregion DVD-R, DVD-RW and HD DVD-R
+
+            #region All DVD+
+
                 case MediaType.DVDPR:
                 case MediaType.DVDPRDL:
                 case MediaType.DVDPRW:
@@ -785,8 +845,10 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.Adip, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_ADIP_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdPlusAdip = cmdBuf;
 
@@ -794,43 +856,53 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.Dcb, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DCB_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdPlusDcb = cmdBuf;
 
                     break;
-                #endregion All DVD+
 
-                #region HD DVD-ROM
+            #endregion All DVD+
+
+            #region HD DVD-ROM
+
                 case MediaType.HDDVDROM:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.HddvdCopyrightInformation, 0, dev.Timeout,
                                                   out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_HD_DVD_CMI_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         HddvdCopyrightInformation = cmdBuf;
 
                     break;
-                #endregion HD DVD-ROM
+
+            #endregion HD DVD-ROM
             }
 
             switch(MediaType)
             {
-                #region HD DVD-R
+            #region HD DVD-R
+
                 case MediaType.HDDVDR:
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.HddvdrMediumStatus, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_HD_DVD_R_Medium_Status,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         HddvdrMediumStatus = cmdBuf;
 
@@ -838,44 +910,55 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.HddvdrLastRmd, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Last_RMD_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         HddvdrLastRmd = cmdBuf;
 
                     break;
                 }
-                #endregion HD DVD-R
-                #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
+
+            #endregion HD DVD-R
+
+            #region DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
+
                 case MediaType.DVDPRDL or MediaType.DVDRDL or MediaType.DVDRWDL or MediaType.DVDPRWDL:
                 {
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.DvdrLayerCapacity, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Layer_Capacity_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrLayerCapacity = cmdBuf;
 
                     break;
                 }
-                #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
+
+            #endregion DVD-R DL, DVD-RW DL, DVD+R DL, DVD+RW DL
             }
 
             switch(MediaType)
             {
-                #region DVD-R DL
+            #region DVD-R DL
+
                 case MediaType.DVDRDL:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                                   MmcDiscStructureFormat.MiddleZoneStart, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Middle_Zone_Start_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrDlMiddleZoneStart = cmdBuf;
 
@@ -883,9 +966,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.JumpIntervalSize, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Jump_Interval_Size_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrDlJumpIntervalSize = cmdBuf;
 
@@ -894,9 +979,11 @@ public sealed class ScsiInfo
                                                   out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Manual_Layer_Jump_Start_LBA_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrDlManualLayerJumpStartLba = cmdBuf;
 
@@ -904,16 +991,20 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.RemapAnchorPoint, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Remap_Anchor_Point_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         DvdrDlRemapAnchorPoint = cmdBuf;
 
                     break;
-                #endregion DVD-R DL
 
-                #region All Blu-ray
+            #endregion DVD-R DL
+
+            #region All Blu-ray
+
                 case MediaType.BDR:
                 case MediaType.BDRE:
                 case MediaType.BDROM:
@@ -924,8 +1015,10 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DI_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayDiscInformation = cmdBuf;
 
@@ -933,33 +1026,41 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.Pac, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_PAC_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayPac = cmdBuf;
 
                     break;
-                #endregion All Blu-ray
+
+            #endregion All Blu-ray
             }
 
             switch(MediaType)
             {
-                #region BD-ROM only
+            #region BD-ROM only
+
                 case MediaType.BDROM:
                 case MediaType.UHDBD:
                     sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Bd, 0, 0,
                                                   MmcDiscStructureFormat.BdBurstCuttingArea, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_BCA_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayBurstCuttingArea = cmdBuf;
 
                     break;
-                #endregion BD-ROM only
 
-                #region Writable Blu-ray only
+            #endregion BD-ROM only
+
+            #region Writable Blu-ray only
+
                 case MediaType.BDR:
                 case MediaType.BDRE:
                 case MediaType.BDRXL:
@@ -968,8 +1069,10 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.BdDds, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DDS_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayDds = cmdBuf;
 
@@ -977,9 +1080,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.CartridgeStatus, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Cartridge_Status_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayCartridgeStatus = cmdBuf;
 
@@ -987,9 +1092,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.BdSpareAreaInformation, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "READ DISC STRUCTURE: Spare Area Information\n{0}",
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BluraySpareAreaInformation = cmdBuf;
 
@@ -997,9 +1104,11 @@ public sealed class ScsiInfo
                                                   MmcDiscStructureFormat.RawDfl, 0, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Core.READ_DISC_STRUCTURE_Raw_DFL_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayRawDfl = cmdBuf;
 
@@ -1007,8 +1116,10 @@ public sealed class ScsiInfo
                                                     MmcDiscInformationDataTypes.TrackResources, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_001b_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayTrackResources = cmdBuf;
 
@@ -1016,15 +1127,19 @@ public sealed class ScsiInfo
                                                     dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_010b_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                         BlurayPowResources = cmdBuf;
 
                     break;
-                #endregion Writable Blu-ray only
 
-                #region CDs
+            #endregion Writable Blu-ray only
+
+            #region CDs
+
                 case MediaType.CD:
                 case MediaType.CDR:
                 case MediaType.CDROM:
@@ -1035,8 +1150,10 @@ public sealed class ScsiInfo
                     bool tocSense = dev.ReadTocPmaAtip(out cmdBuf, out senseBuf, false, 0, 0, dev.Timeout, out _);
 
                     if(tocSense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_TOC_PMA_ATIP_TOC_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                     {
                         Toc        = cmdBuf;
@@ -1051,8 +1168,10 @@ public sealed class ScsiInfo
                     sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                     if(sense)
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_TOC_PMA_ATIP_ATIP_0,
                                                    Sense.PrettifySense(senseBuf));
+                    }
                     else
                     {
                         Atip        = cmdBuf;
@@ -1072,9 +1191,11 @@ public sealed class ScsiInfo
                         sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.Core.READ_TOC_PMA_ATIP_Session_Info_0,
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else if(cmdBuf.Length > 4)
                         {
                             Session        = cmdBuf;
@@ -1090,9 +1211,11 @@ public sealed class ScsiInfo
                         sense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.Core.READ_TOC_PMA_ATIP_Raw_TOC_0,
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else if(cmdBuf.Length > 4)
                         {
                             RawToc = cmdBuf;
@@ -1103,17 +1226,21 @@ public sealed class ScsiInfo
                         sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_TOC_PMA_ATIP_PMA_0,
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else if(cmdBuf.Length > 4)
                             Pma = cmdBuf;
 
                         sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.Core.READ_TOC_PMA_ATIP_CD_TEXT_0,
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else if(cmdBuf.Length > 4)
                         {
                             CdTextLeadIn        = cmdBuf;
@@ -1144,10 +1271,12 @@ public sealed class ScsiInfo
                     }
 
                     break;
-                #endregion CDs
+
+            #endregion CDs
             }
 
-            #region Nintendo
+        #region Nintendo
+
             if(MediaType == MediaType.Unknown &&
                Blocks    > 0)
             {
@@ -1155,8 +1284,10 @@ public sealed class ScsiInfo
                                               MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_PFI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                 {
                     DvdPfi = cmdBuf;
@@ -1168,12 +1299,14 @@ public sealed class ScsiInfo
 
                         if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
                            nintendoPfi.Value.PartVersion  == 15)
+                        {
                             MediaType = nintendoPfi.Value.DiscSize switch
-                            {
-                                DVDSize.Eighty    => MediaType.GOD,
-                                DVDSize.OneTwenty => MediaType.WOD,
-                                _                 => MediaType
-                            };
+                                        {
+                                            DVDSize.Eighty    => MediaType.GOD,
+                                            DVDSize.OneTwenty => MediaType.WOD,
+                                            _                 => MediaType
+                                        };
+                        }
                     }
                 }
 
@@ -1182,19 +1315,24 @@ public sealed class ScsiInfo
                                               out _);
 
                 if(sense)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_STRUCTURE_DMI_0,
                                                Sense.PrettifySense(senseBuf));
+                }
                 else
                     DvdDmi = cmdBuf;
             }
-            #endregion Nintendo
+
+        #endregion Nintendo
         }
 
         sense = dev.ReadMediaSerialNumber(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
         if(sense)
+        {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_MEDIA_SERIAL_NUMBER_0,
                                        Sense.PrettifySense(senseBuf));
+        }
         else
         {
             if(cmdBuf.Length >= 4)
@@ -1203,7 +1341,8 @@ public sealed class ScsiInfo
 
         switch(MediaType)
         {
-            #region Xbox
+        #region Xbox
+
             case MediaType.XGD:
             case MediaType.XGD2:
             case MediaType.XGD3:
@@ -1219,8 +1358,10 @@ public sealed class ScsiInfo
                         sense = dev.KreonExtractSs(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                         if(sense)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.KREON_EXTRACT_SS_0,
                                                        Sense.PrettifySense(senseBuf));
+                        }
                         else
                             XboxSecuritySector = cmdBuf;
 
@@ -1336,8 +1477,8 @@ public sealed class ScsiInfo
                             totalSize - (PFI.Decode(cmdBuf, MediaType).Value.Layer0EndPSN -
                                          PFI.Decode(cmdBuf, MediaType).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
-                        totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
-                        ulong layerBreak = l0Video + middleZone + (gameSize / 2);
+                        totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
+                        ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
                         XgdInfo = new XgdInfo
                         {
@@ -1352,7 +1493,8 @@ public sealed class ScsiInfo
                 }
 
                 break;
-            #endregion Xbox
+
+        #endregion Xbox
 
             case MediaType.Unknown:
                 MediaType = MediaTypeFromDevice.GetFromScsi((byte)dev.ScsiType, dev.Manufacturer, dev.Model,
@@ -1372,28 +1514,34 @@ public sealed class ScsiInfo
             MediaType = MediaType.GENERIC_HDD;
 
         if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
-           (dev.IsUsb && scsiMediumType is 0x40 or 0x41 or 0x42))
+           dev.IsUsb && scsiMediumType is 0x40 or 0x41 or 0x42)
             return;
 
         sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
                                         dev.Timeout, out _);
 
         if(sense)
+        {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_DISC_INFORMATION_000b_0,
                                        Sense.PrettifySense(senseBuf));
+        }
         else
         {
             DiscInformation        = cmdBuf;
             DecodedDiscInformation = Decoders.SCSI.MMC.DiscInformation.Decode000b(cmdBuf);
 
             if(DecodedDiscInformation.HasValue)
+            {
                 if(MediaType == MediaType.CD)
+                {
                     MediaType = DecodedDiscInformation.Value.DiscType switch
-                    {
-                        0x10 => MediaType.CDI,
-                        0x20 => MediaType.CDROMXA,
-                        _    => MediaType
-                    };
+                                {
+                                    0x10 => MediaType.CDI,
+                                    0x20 => MediaType.CDROMXA,
+                                    _    => MediaType
+                                };
+                }
+            }
         }
 
         MediaType tmpType = MediaType;
@@ -1404,140 +1552,208 @@ public sealed class ScsiInfo
 
     /// <summary>Decoded DVD Pre-Recorded Information</summary>
     public PRI.PreRecordedInformation? DecodedDvdPrePitInformation { get; }
+
     /// <summary>Decoded recordable DVD Physical Format Information</summary>
     public PFI.PhysicalFormatInformation? DecodedDvdrPfi { get; }
+
     /// <summary>Raw media serial number</summary>
     public byte[] MediaSerialNumber { get; }
+
     /// <summary>Raw Xbox security sectors</summary>
     public byte[] XboxSecuritySector { get; }
+
     /// <summary>Decoded Xbox security sectors</summary>
     public SS.SecuritySector? DecodedXboxSecuritySector { get; }
+
     /// <summary>Information about an XGD, XGD2 or XGD3 media</summary>
     public XgdInfo XgdInfo { get; }
+
     /// <summary>MMC drive raw GET CONFIGURATION</summary>
     public byte[] MmcConfiguration { get; }
+
     /// <summary>Raw recognized format layers</summary>
     public byte[] RecognizedFormatLayers { get; }
+
     /// <summary>Raw write protection status</summary>
     public byte[] WriteProtectionStatus { get; }
+
     /// <summary>Raw DVD Physical Format Information</summary>
     public byte[] DvdPfi { get; }
+
     /// <summary>Decoded DVD Physical Format Information</summary>
     public PFI.PhysicalFormatInformation? DecodedPfi { get; }
+
     /// <summary>Raw DVD Disc Manufacturing Information</summary>
     public byte[] DvdDmi { get; }
+
     /// <summary>Raw DVD Copyright Management Information</summary>
     public byte[] DvdCmi { get; }
+
     /// <summary>Raw DVD Burst Cutting Area</summary>
     public byte[] DvdBca { get; }
+
     /// <summary>Raw DVD AACS information</summary>
     public byte[] DvdAacs { get; }
+
     /// <summary>Raw DVD-RAM Disc Definition Structure</summary>
     public byte[] DvdRamDds { get; }
+
     /// <summary>Raw DVD-RAM Cartridge Status</summary>
     public byte[] DvdRamCartridgeStatus { get; }
+
     /// <summary>Raw DVD-RAM Spare Area Information</summary>
     public byte[] DvdRamSpareArea { get; }
+
     /// <summary>Raw DVD-R(W) Last Border-Out RMD</summary>
     public byte[] LastBorderOutRmd { get; }
+
     /// <summary>Raw DVD-R(W) Pre-Recorded Information</summary>
     public byte[] DvdPreRecordedInfo { get; }
+
     /// <summary>Raw DVD-R Media ID</summary>
     public byte[] DvdrMediaIdentifier { get; }
+
     /// <summary>Raw recordable DVD Physical Format Information</summary>
     public byte[] DvdrPhysicalInformation { get; }
+
     /// <summary>Raw DVD+R(W) ADIP</summary>
     public byte[] DvdPlusAdip { get; }
+
     /// <summary>Raw DVD+R(W) Disc Control Blocks</summary>
     public byte[] DvdPlusDcb { get; }
+
     /// <summary>Raw HD DVD Copyright Management Information</summary>
     public byte[] HddvdCopyrightInformation { get; }
+
     /// <summary>Raw HD DVD-R Medium Status</summary>
     public byte[] HddvdrMediumStatus { get; }
+
     /// <summary>Raw HD DVD-R(W) Last Border-Out RMD</summary>
     public byte[] HddvdrLastRmd { get; }
+
     /// <summary>Raw DVD-R(W) Layer Capacity</summary>
     public byte[] DvdrLayerCapacity { get; }
+
     /// <summary>Raw DVD-R DL Middle Zone start</summary>
     public byte[] DvdrDlMiddleZoneStart { get; }
+
     /// <summary>Raw DVD-R DL Jump Interval size</summary>
     public byte[] DvdrDlJumpIntervalSize { get; }
+
     /// <summary>Raw DVD-R DL Manual Layer Jump Start LBA</summary>
     public byte[] DvdrDlManualLayerJumpStartLba { get; }
+
     /// <summary>Raw DVD-R DL Remap Anchor Point</summary>
     public byte[] DvdrDlRemapAnchorPoint { get; }
+
     /// <summary>Raw Blu-ray Disc Information</summary>
     public byte[] BlurayDiscInformation { get; }
+
     /// <summary>Raw Blu-ray PAC</summary>
     public byte[] BlurayPac { get; }
+
     /// <summary>Raw Blu-ray Burst Cutting Area</summary>
     public byte[] BlurayBurstCuttingArea { get; }
+
     /// <summary>Raw Blu-ray Disc Definition Structure</summary>
     public byte[] BlurayDds { get; }
+
     /// <summary>Raw Blu-ray Cartridge Status</summary>
     public byte[] BlurayCartridgeStatus { get; }
+
     /// <summary>Raw Blu-ray Spare Area Information</summary>
     public byte[] BluraySpareAreaInformation { get; }
+
     /// <summary>Raw Blu-ray DFL</summary>
     public byte[] BlurayRawDfl { get; }
+
     /// <summary>Raw Blu-ray Pseudo OverWrite Resources</summary>
     public byte[] BlurayPowResources { get; }
+
     /// <summary>Raw READ TOC response</summary>
     public byte[] Toc { get; }
+
     /// <summary>Raw READ ATIP response</summary>
     public byte[] Atip { get; }
+
     /// <summary>Raw READ DISC INFORMATION response</summary>
     public byte[] DiscInformation { get; }
+
     /// <summary>Raw READ SESSION response</summary>
     public byte[] Session { get; }
+
     /// <summary>Raw READ FULL TOC response</summary>
     public byte[] RawToc { get; }
+
     /// <summary>Raw READ PMA response</summary>
     public byte[] Pma { get; }
+
     /// <summary>Raw Lead-In's CD-TEXT response</summary>
     public byte[] CdTextLeadIn { get; }
+
     /// <summary>Decoded READ TOC response</summary>
     public TOC.CDTOC? DecodedToc { get; }
+
     /// <summary>Decoded READ ATIP response</summary>
     public ATIP.CDATIP DecodedAtip { get; }
+
     /// <summary>Decoded READ SESSION response</summary>
     public Session.CDSessionInfo? DecodedSession { get; }
+
     /// <summary>Decoded READ FULL TOC response</summary>
     public FullTOC.CDFullTOC? FullToc { get; }
+
     /// <summary>Decoded Lead-In CD-TEXT response</summary>
     public CDTextOnLeadIn.CDText? DecodedCdTextLeadIn { get; }
+
     /// <summary>Raw Blu-ray track resources</summary>
     public byte[] BlurayTrackResources { get; }
+
     /// <summary>Decoded Blu-ray Disc Information</summary>
     public DiscInformation.StandardDiscInformation? DecodedDiscInformation { get; }
+
     /// <summary>Decoded Media Catalogue Number</summary>
     public string Mcn { get; }
+
     /// <summary>List of decoded track ISRCs</summary>
     public Dictionary<byte, string> Isrcs { get; }
+
     /// <summary>Set if media is inserted in drive</summary>
     public bool MediaInserted { get; }
+
     /// <summary>Detected media type</summary>
     public MediaType MediaType { get; }
+
     /// <summary>Device information</summary>
     public DeviceInfo DeviceInfo { get; }
+
     /// <summary>Raw READ CAPACITY(10) response</summary>
     public byte[] ReadCapacity { get; }
+
     /// <summary>Number of blocks in media</summary>
     public ulong Blocks { get; }
+
     /// <summary>Logical block size</summary>
     public uint BlockSize { get; }
+
     /// <summary>Raw READ CAPACITY(16) response</summary>
     public byte[] ReadCapacity16 { get; }
+
     /// <summary>Raw SSC Density support</summary>
     public byte[] DensitySupport { get; }
+
     /// <summary>Decoded SSC Density support</summary>
     public DensitySupport.DensitySupportHeader? DensitySupportHeader { get; }
+
     /// <summary>Raw SSC media support</summary>
     public byte[] MediaTypeSupport { get; }
+
     /// <summary>Decoded SSC media support</summary>
     public DensitySupport.MediaTypeSupportHeader? MediaTypeSupportHeader { get; }
+
     /// <summary>Raw data from DVD sector Copyright Management Information</summary>
     public byte[] DvdSectorCmi { get; }
+
     /// <summary>Raw DVD Disc Key</summary>
     public byte[] DvdDiscKey { get; }
 }

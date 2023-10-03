@@ -41,17 +41,17 @@ namespace Aaru.Core.Devices.Scanning;
 
 public sealed partial class MediaScan
 {
-    readonly Device           _dev;
-    readonly string           _devicePath;
-    readonly string           _ibgLogPath;
-    readonly string           _mhddLogPath;
-    readonly bool             _seekTest;
-    readonly bool             _useBufferedReads;
-    bool                      _aborted;
-    static readonly TimeSpan  _oneSecond = 1.Seconds();
-    readonly        Stopwatch _scanStopwatch;
-    readonly        Stopwatch _speedStopwatch;
     const           string    MODULE_NAME = "Media scanning";
+    static readonly TimeSpan  _oneSecond  = 1.Seconds();
+    readonly        Device    _dev;
+    readonly        string    _devicePath;
+    readonly        string    _ibgLogPath;
+    readonly        string    _mhddLogPath;
+    readonly        Stopwatch _scanStopwatch;
+    readonly        bool      _seekTest;
+    readonly        Stopwatch _speedStopwatch;
+    readonly        bool      _useBufferedReads;
+    bool                      _aborted;
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
     /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
@@ -63,7 +63,7 @@ public sealed partial class MediaScan
     ///     commands
     /// </param>
     public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev, bool useBufferedReads,
-                     bool seekTest = true)
+                     bool   seekTest = true)
     {
         _mhddLogPath      = mhddLogPath;
         _ibgLogPath       = ibgLogPath;
@@ -83,13 +83,18 @@ public sealed partial class MediaScan
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return Ata();
+            case DeviceType.ATA:
+                return Ata();
             case DeviceType.MMC:
-            case DeviceType.SecureDigital: return SecureDigital();
-            case DeviceType.NVMe: return Nvme();
+            case DeviceType.SecureDigital:
+                return SecureDigital();
+            case DeviceType.NVMe:
+                return Nvme();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return Scsi();
-            default: throw new NotSupportedException(Localization.Core.Unknown_device_type);
+            case DeviceType.SCSI:
+                return Scsi();
+            default:
+                throw new NotSupportedException(Localization.Core.Unknown_device_type);
         }
     }
 
@@ -98,22 +103,31 @@ public sealed partial class MediaScan
 
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgress;
+
     /// <summary>Event raised when a progress bar is needed</summary>
     public event InitProgressHandler InitProgress;
+
     /// <summary>Event raised to report status updates</summary>
     public event UpdateStatusHandler UpdateStatus;
+
     /// <summary>Event raised to report a fatal error that stops the dumping operation and should call user's attention</summary>
     public event ErrorMessageHandler StoppingErrorMessage;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler UpdateProgress;
+
     /// <summary>Event raised to update the status of an indeterminate progress bar</summary>
     public event PulseProgressHandler PulseProgress;
+
     /// <summary>Updates lists of time taken on scanning from the specified sector</summary>
     public event ScanTimeHandler ScanTime;
+
     /// <summary>Specified a number of blocks could not be read on scan</summary>
     public event ScanUnreadableHandler ScanUnreadable;
+
     /// <summary>Initializes a block map that's going to be filled with a media scan</summary>
     public event InitBlockMapHandler InitBlockMap;
+
     /// <summary>Sends the speed of scanning a specific sector</summary>
     public event ScanSpeedHandler ScanSpeed;
 }

@@ -111,53 +111,73 @@ public sealed class PluginBase
     void AddPlugins(IPluginRegister pluginRegister)
     {
         foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IFilesystem plugin &&
                !Filesystems.ContainsKey(plugin.Name.ToLower()))
                 Filesystems.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IFilter plugin &&
                !Filters.ContainsKey(plugin.Name.ToLower()))
                 Filters.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IFloppyImage plugin &&
                !FloppyImages.ContainsKey(plugin.Name.ToLower()))
                 FloppyImages.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IMediaImage plugin &&
                !MediaImages.ContainsKey(plugin.Name.ToLower()))
                 MediaImages.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IPartition plugin &&
                !Partitions.ContainsKey(plugin.Name.ToLower()))
                 Partitions.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IReadOnlyFilesystem plugin &&
                !ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
                 ReadOnlyFilesystems.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IWritableFloppyImage plugin &&
                !WritableFloppyImages.ContainsKey(plugin.Name.ToLower()))
                 WritableFloppyImages.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IBaseWritableImage plugin &&
                !WritableImages.ContainsKey(plugin.Name.ToLower()))
                 WritableImages.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IArchive plugin &&
                !Archives.ContainsKey(plugin.Name.ToLower()))
                 Archives.Add(plugin.Name.ToLower(), type);
+        }
 
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
+        {
             if(Activator.CreateInstance(type) is IByteAddressableImage plugin &&
                !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
                 ByteAddressableImages.Add(plugin.Name.ToLower(), type);
+        }
     }
 }

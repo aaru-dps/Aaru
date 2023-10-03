@@ -116,7 +116,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
@@ -141,9 +141,9 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00) || (decSense.Value.ASC != 0x20 &&
-                                                                                       decSense.Value.SenseKey !=
-                                                                                       SenseKeys.IllegalRequest)))
+               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00 || decSense.Value.ASC != 0x20 &&
+                decSense.Value.SenseKey !=
+                SenseKeys.IllegalRequest))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Could_not_get_position_Sense_follows +
                                              Environment.NewLine + decSense.Value.Description);
@@ -192,7 +192,7 @@ partial class Dump
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
-                   ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00) ||
+                   (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
                     decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
@@ -250,15 +250,19 @@ partial class Dump
 
         if(!sense ||
            _dev.Error)
+        {
             sense = _dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, 5, out duration);
+        }
 
         Modes.DecodedMode? decMode = null;
 
         if(!sense &&
            !_dev.Error)
+        {
             if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                 decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
+        }
 
         UpdateStatus?.Invoke(Localization.Core.Requesting_MODE_SENSE_6);
 
@@ -266,16 +270,20 @@ partial class Dump
                                 out duration);
 
         if(sense || _dev.Error)
+        {
             sense = _dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
                                     out duration);
+        }
 
         if(sense || _dev.Error)
             sense = _dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
 
         if(!sense &&
            !_dev.Error)
+        {
             if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                 decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
+        }
 
         // TODO: Check partitions page
         if(decMode.HasValue)
@@ -310,25 +318,25 @@ partial class Dump
         if(dskType == MediaType.Unknown)
             dskType = MediaType.UnknownTape;
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0, _dev.ScsiType));
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_medium_type_0, scsiMediumTypeTape));
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_density_type_0, scsiDensityCodeTape));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0,    _dev.ScsiType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_medium_type_0,    scsiMediumTypeTape));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_density_type_0,   scsiDensityCodeTape));
         UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0, dskType));
 
-        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0, _dev.ScsiType);
-        _dumpLog.WriteLine(Localization.Core.SCSI_medium_type_0, scsiMediumTypeTape);
-        _dumpLog.WriteLine(Localization.Core.SCSI_density_type_0, scsiDensityCodeTape);
+        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0,    _dev.ScsiType);
+        _dumpLog.WriteLine(Localization.Core.SCSI_medium_type_0,    scsiMediumTypeTape);
+        _dumpLog.WriteLine(Localization.Core.SCSI_density_type_0,   scsiDensityCodeTape);
         _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, dskType);
 
-        bool  endOfMedia       = false;
+        var   endOfMedia       = false;
         ulong currentBlock     = 0;
         uint  currentFile      = 0;
         byte  currentPartition = 0;
         byte  totalPartitions  = 1; // TODO: Handle partitions.
-        bool  fixedLen         = false;
+        var   fixedLen         = false;
         uint  transferLen      = blockSize;
 
-        firstRead:
+    firstRead:
 
         sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
                            out duration);
@@ -338,6 +346,7 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue)
+            {
                 if(decSense.Value.SenseKey == SenseKeys.IllegalRequest)
                 {
                     sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
@@ -463,6 +472,7 @@ partial class Dump
 
                     return;
                 }
+            }
             else
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Cannot_read_device_dont_know_why_exiting);
@@ -513,8 +523,8 @@ partial class Dump
             return;
         }
 
-        bool canLocateLong = false;
-        bool canLocate     = false;
+        var canLocateLong = false;
+        var canLocate     = false;
 
         UpdateStatus?.Invoke(Localization.Core.Positioning_tape_to_block_1);
         _dumpLog.WriteLine(Localization.Core.Positioning_tape_to_block_1);
@@ -738,7 +748,8 @@ partial class Dump
         }
         else
         {
-            _ = canLocateLong ? _dev.Locate16(out senseBuf, false, 0, 0, _dev.Timeout, out duration)
+            _ = canLocateLong
+                    ? _dev.Locate16(out senseBuf, false, 0, 0, _dev.Timeout, out duration)
                     : _dev.Locate(out senseBuf, false, 0, 0, _dev.Timeout, out duration);
 
             do
@@ -751,7 +762,7 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               ((decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04) ||
+               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x00 && decSense.Value.ASCQ != 0x04 ||
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
@@ -830,8 +841,8 @@ partial class Dump
         if(mode10Data != null)
             outputTape.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
 
-        ulong    currentSpeedSize   = 0;
-        double   imageWriteDuration = 0;
+        ulong  currentSpeedSize   = 0;
+        double imageWriteDuration = 0;
 
         InitProgress?.Invoke();
 
@@ -1026,8 +1037,10 @@ partial class Dump
                 if(decSense is null)
                 {
                     StoppingErrorMessage?.
-                        Invoke(string.Format(Localization.Core.Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump,
-                                             currentBlock));
+                        Invoke(string.Format(
+                                   Localization.Core.
+                                                Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump,
+                                   currentBlock));
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Drive_could_not_read_block_0_Sense_bytes_follow,
                                                      currentBlock));
@@ -1128,14 +1141,15 @@ partial class Dump
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                   Per(imageWriteDuration.Seconds())));
 
-        #region Error handling
+    #region Error handling
+
         if(_resume.BadBlocks.Count > 0 &&
            !_aborted                   &&
            _retryPasses > 0            &&
            (canLocate || canLocateLong))
         {
-            int        pass              = 1;
-            bool       forward           = false;
+            var        pass              = 1;
+            var        forward           = false;
             const bool runningPersistent = false;
 
             Modes.ModePage? currentModePage = null;
@@ -1146,7 +1160,7 @@ partial class Dump
             }
 
             InitProgress?.Invoke();
-            repeatRetry:
+        repeatRetry:
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
             foreach(ulong badBlock in tmpArray)
@@ -1161,22 +1175,30 @@ partial class Dump
                 }
 
                 if(forward)
+                {
                     PulseProgress?.Invoke(runningPersistent
                                               ? string.
-                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                         badBlock, pass)
+                                                  Format(
+                                                      Localization.Core.
+                                                                   Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                      badBlock, pass)
                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
                                                               badBlock, pass));
+                }
                 else
+                {
                     PulseProgress?.Invoke(runningPersistent
                                               ? string.
-                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                         badBlock, pass)
+                                                  Format(
+                                                      Localization.Core.
+                                                                   Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                      badBlock, pass)
                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
                                                               badBlock, pass));
+                }
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Positioning_tape_to_block_0, badBlock));
-                _dumpLog.WriteLine(string.Format(Localization.Core.Positioning_tape_to_block_0, badBlock));
+                _dumpLog.WriteLine(string.Format(Localization.Core.Positioning_tape_to_block_0,   badBlock));
 
                 if(canLocateLong)
                 {
@@ -1297,7 +1319,8 @@ partial class Dump
 
             EndProgress?.Invoke();
         }
-        #endregion Error handling
+
+    #endregion Error handling
 
         _resume.BadBlocks.Sort();
 
@@ -1316,8 +1339,10 @@ partial class Dump
         };
 
         if(!outputTape.SetImageInfo(metadata))
+        {
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputTape.ErrorMessage);
+        }
 
         if(_preSidecar != null)
             outputTape.SetMetadata(_preSidecar);
@@ -1407,11 +1432,15 @@ partial class Dump
                 List<(ulong start, string type)> filesystems = new();
 
                 if(sidecar.BlockMedias[0].FileSystemInformation != null)
+                {
                     filesystems.AddRange(from partition in sidecar.BlockMedias[0].FileSystemInformation
-                                         where partition.FileSystems != null from fileSystem in partition.FileSystems
+                                         where partition.FileSystems != null
+                                         from fileSystem in partition.FileSystems
                                          select (partition.StartSector, fileSystem.Type));
+                }
 
                 if(filesystems.Count > 0)
+                {
                     foreach(var filesystem in filesystems.Select(o => new
                             {
                                 o.start,
@@ -1424,6 +1453,7 @@ partial class Dump
                         _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type,
                                            filesystem.start);
                     }
+                }
 
                 sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(dskType);
 
@@ -1435,6 +1465,7 @@ partial class Dump
                 // TODO: Implement device firmware revision
                 if(!_dev.IsRemovable ||
                    _dev.IsUsb)
+                {
                     if(_dev.Type == DeviceType.ATAPI)
                         sidecar.BlockMedias[0].Interface = "ATAPI";
                     else if(_dev.IsUsb)
@@ -1443,6 +1474,7 @@ partial class Dump
                         sidecar.BlockMedias[0].Interface = "FireWire";
                     else
                         sidecar.BlockMedias[0].Interface = "SCSI";
+                }
 
                 sidecar.BlockMedias[0].LogicalBlocks = blocks;
                 sidecar.BlockMedias[0].Manufacturer  = _dev.Manufacturer;
@@ -1472,24 +1504,29 @@ partial class Dump
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+            Invoke(string.Format(
+                       Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                       _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                       totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                       _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                     Per(totalDuration.Milliseconds()).Humanize()));
 
         if(maxSpeed > 0)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
                                                ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
+        }
 
         if(minSpeed is > 0 and < double.MaxValue)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
                                                ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
+        }
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");

@@ -46,12 +46,12 @@ public partial class Dump
     /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
     void Scsi()
     {
-        int resets = 0;
+        var resets = 0;
 
         if(_dev.IsRemovable)
         {
             InitProgress?.Invoke();
-            deviceGotReset:
+        deviceGotReset:
             bool sense = _dev.ScsiTestUnitReady(out byte[] senseBuf, _dev.Timeout, out _);
 
             if(sense)
@@ -80,7 +80,7 @@ public partial class Dump
                     {
                         case 0x3A:
                         {
-                            int leftRetries = 5;
+                            var leftRetries = 5;
 
                             while(leftRetries > 0)
                             {
@@ -118,7 +118,7 @@ public partial class Dump
                         }
                         case 0x04 when decSense.Value.ASCQ == 0x01:
                         {
-                            int leftRetries = 50;
+                            var leftRetries = 50;
 
                             while(leftRetries > 0)
                             {
@@ -172,7 +172,7 @@ public partial class Dump
                         // These should be trapped by the OS but seems in some cases they're not
                         case 0x28:
                         {
-                            int leftRetries = 10;
+                            var leftRetries = 10;
 
                             while(leftRetries > 0)
                             {
@@ -241,16 +241,20 @@ public partial class Dump
                 if(_outputPlugin is IWritableTapeImage)
                     Ssc();
                 else
+                {
                     StoppingErrorMessage?.Invoke(Localization.Core.
                                                               The_specified_image_format_cannot_represent_streaming_tapes);
+                }
 
                 return;
             case PeripheralDeviceTypes.MultiMediaDevice:
                 if(_outputPlugin is IWritableOpticalImage)
                     Mmc();
                 else
+                {
                     StoppingErrorMessage?.Invoke(Localization.Core.
                                                               The_specified_image_format_cannot_represent_optical_discs);
+                }
 
                 return;
             case PeripheralDeviceTypes.BridgingExpander

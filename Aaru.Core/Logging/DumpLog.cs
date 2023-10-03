@@ -81,10 +81,11 @@ public sealed class DumpLog
         _logSw.WriteLine();
 
         _logSw.WriteLine(Localization.Core.Program_information);
-        _logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
+        _logSw.WriteLine("Aaru {0}",                         assemblyVersion?.InformationalVersion);
         _logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
 
-        _logSw.WriteLine(DetectOS.IsAdmin ? Localization.Core.Running_as_superuser_Yes
+        _logSw.WriteLine(DetectOS.IsAdmin
+                             ? Localization.Core.Running_as_superuser_Yes
                              : Localization.Core.Running_as_superuser_No);
     #if DEBUG
         _logSw.WriteLine(Localization.Core.DEBUG_version);
@@ -93,9 +94,9 @@ public sealed class DumpLog
         {
             string[] args = Environment.GetCommandLineArgs();
 
-            for(int i = 0; i < args.Length; i++)
+            for(var i = 0; i < args.Length; i++)
             {
-                if(args[i].StartsWith("/dev", StringComparison.OrdinalIgnoreCase) ||
+                if(args[i].StartsWith("/dev",    StringComparison.OrdinalIgnoreCase) ||
                    args[i].StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
                     continue;
 
@@ -119,44 +120,45 @@ public sealed class DumpLog
         if(dev is Aaru.Devices.Remote.Device remoteDev)
         {
             _logSw.WriteLine(Localization.Core.Remote_information);
-            _logSw.WriteLine(Localization.Core.Server_0, remoteDev.RemoteApplication);
+            _logSw.WriteLine(Localization.Core.Server_0,  remoteDev.RemoteApplication);
             _logSw.WriteLine(Localization.Core.Version_0, remoteDev.RemoteVersion);
 
             _logSw.WriteLine(Localization.Core.Operating_system_0_1, remoteDev.RemoteOperatingSystem,
                              remoteDev.RemoteOperatingSystemVersion);
 
-            _logSw.WriteLine(Localization.Core.Architecture_0, remoteDev.RemoteArchitecture);
+            _logSw.WriteLine(Localization.Core.Architecture_0,     remoteDev.RemoteArchitecture);
             _logSw.WriteLine(Localization.Core.Protocol_version_0, remoteDev.RemoteProtocolVersion);
 
-            _logSw.WriteLine(DetectOS.IsAdmin ? Localization.Core.Running_as_superuser_Yes
+            _logSw.WriteLine(DetectOS.IsAdmin
+                                 ? Localization.Core.Running_as_superuser_Yes
                                  : Localization.Core.Running_as_superuser_No);
 
             _logSw.WriteLine(Localization.Core.Log_section_separator);
         }
 
         _logSw.WriteLine(Localization.Core.Device_information);
-        _logSw.WriteLine(Localization.Core.Manufacturer_0, dev.Manufacturer);
-        _logSw.WriteLine(Localization.Core.Model_0, dev.Model);
+        _logSw.WriteLine(Localization.Core.Manufacturer_0,      dev.Manufacturer);
+        _logSw.WriteLine(Localization.Core.Model_0,             dev.Model);
         _logSw.WriteLine(Localization.Core.Firmware_revision_0, dev.FirmwareRevision);
 
         if(!@private)
             _logSw.WriteLine(Localization.Core.Serial_number_0, dev.Serial);
 
-        _logSw.WriteLine(Localization.Core.Removable_device_0, dev.IsRemovable);
-        _logSw.WriteLine(Localization.Core.Device_type_0, dev.Type);
+        _logSw.WriteLine(Localization.Core.Removable_device_0,    dev.IsRemovable);
+        _logSw.WriteLine(Localization.Core.Device_type_0,         dev.Type);
         _logSw.WriteLine(Localization.Core.CompactFlash_device_0, dev.IsCompactFlash);
-        _logSw.WriteLine(Localization.Core.PCMCIA_device_0, dev.IsPcmcia);
-        _logSw.WriteLine(Localization.Core.USB_device_0, dev.IsUsb);
+        _logSw.WriteLine(Localization.Core.PCMCIA_device_0,       dev.IsPcmcia);
+        _logSw.WriteLine(Localization.Core.USB_device_0,          dev.IsUsb);
 
         if(dev.IsUsb)
         {
             _logSw.WriteLine(Localization.Core.USB_manufacturer_0, dev.UsbManufacturerString);
-            _logSw.WriteLine(Localization.Core.USB_product_0, dev.UsbProductString);
+            _logSw.WriteLine(Localization.Core.USB_product_0,      dev.UsbProductString);
 
             if(!@private)
                 _logSw.WriteLine(Localization.Core.USB_serial_0, dev.UsbSerialString);
 
-            _logSw.WriteLine(Localization.Core.USB_vendor_ID_0, dev.UsbVendorId);
+            _logSw.WriteLine(Localization.Core.USB_vendor_ID_0,  dev.UsbVendorId);
             _logSw.WriteLine(Localization.Core.USB_product_ID_0, dev.UsbProductId);
         }
 
@@ -165,12 +167,12 @@ public sealed class DumpLog
         if(dev.IsFireWire)
         {
             _logSw.WriteLine(Localization.Core.FireWire_vendor_0, dev.FireWireVendorName);
-            _logSw.WriteLine(Localization.Core.FireWire_model_0, dev.FireWireModelName);
+            _logSw.WriteLine(Localization.Core.FireWire_model_0,  dev.FireWireModelName);
 
             if(!@private)
                 _logSw.WriteLine(Localization.Core.FireWire_GUID_0, dev.FireWireGuid);
 
-            _logSw.WriteLine(Localization.Core.FireWire_vendor_ID_0, dev.FireWireVendor);
+            _logSw.WriteLine(Localization.Core.FireWire_vendor_ID_0,  dev.FireWireVendor);
             _logSw.WriteLine(Localization.Core.FireWire_product_ID_0, dev.FireWireModel);
         }
 
@@ -189,7 +191,7 @@ public sealed class DumpLog
         if(_logSw == null)
             return;
 
-        string text = string.Format(format, args);
+        var text = string.Format(format, args);
         _logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
         _logSw.Flush();
     }

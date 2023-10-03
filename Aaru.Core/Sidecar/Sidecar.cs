@@ -136,8 +136,10 @@ public sealed partial class Sidecar
         {
             case MetadataMediaType.OpticalDisc:
                 if(_image is IOpticalMediaImage opticalImage)
+                {
                     OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
                                 _encoding);
+                }
                 else
                 {
                     AaruConsole.ErrorWriteLine(Localization.Core.
@@ -161,8 +163,10 @@ public sealed partial class Sidecar
                 break;
             case MetadataMediaType.LinearMedia:
                 if(_image is IByteAddressableImage byteAddressableImage)
+                {
                     LinearMedia(byteAddressableImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
                                 _encoding);
+                }
                 else
                 {
                     AaruConsole.ErrorWriteLine(Localization.Core.

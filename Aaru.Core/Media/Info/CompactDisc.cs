@@ -62,9 +62,9 @@ public static class CompactDisc
     /// <param name="supportsPlextorReadCdDa">Set to <c>true</c> if drive supports PLEXTOR READ CD-DA vendor command</param>
     /// <returns><c>true</c> if offset could be found, <c>false</c> otherwise</returns>
     [SuppressMessage("ReSharper", "TooWideLocalVariableScope")]
-    public static void GetOffset(CdOffset cdOffset, Device dbDev, bool debug, Aaru.Devices.Device dev,
+    public static void GetOffset(CdOffset  cdOffset, Device dbDev, bool debug, Aaru.Devices.Device dev,
                                  MediaType dskType, DumpLog dumpLog, Track[] tracks, UpdateStatusHandler updateStatus,
-                                 out int? driveOffset, out int? combinedOffset, out bool supportsPlextorReadCdDa)
+                                 out int?  driveOffset, out int? combinedOffset, out bool supportsPlextorReadCdDa)
     {
         byte[]     cmdBuf;
         bool       sense;
@@ -77,7 +77,7 @@ public static class CompactDisc
         int        diff;
         Track      dataTrack   = default;
         Track      audioTrack  = default;
-        bool       offsetFound = false;
+        var        offsetFound = false;
         const uint sectorSize  = 2352;
         driveOffset             = cdOffset?.Offset * 4;
         combinedOffset          = null;
@@ -92,15 +92,12 @@ public static class CompactDisc
                 if(dataTrack != null)
                 {
                     // Build sync
-                    sectorSync = new byte[]
-                    {
-                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-                    };
+                    sectorSync = new byte[] { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
 
                     tmpBuf = new byte[sectorSync.Length];
 
                     // Ensure to be out of the pregap, or multi-session discs give funny values
-                    uint wantedLba = (uint)(dataTrack.StartSector + 151);
+                    var wantedLba = (uint)(dataTrack.StartSector + 151);
 
                     // Plextor READ CDDA
                     if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
@@ -115,7 +112,7 @@ public static class CompactDisc
                         {
                             supportsPlextorReadCdDa = true;
 
-                            for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                            for(var i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                             {
                                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
@@ -128,17 +125,17 @@ public static class CompactDisc
                                 frame  = cmdBuf[i + 14];
 
                                 // Convert to binary
-                                minute = (minute / 16 * 10) + (minute & 0x0F);
-                                second = (second / 16 * 10) + (second & 0x0F);
-                                frame  = (frame  / 16 * 10) + (frame  & 0x0F);
+                                minute = minute / 16 * 10 + (minute & 0x0F);
+                                second = second / 16 * 10 + (second & 0x0F);
+                                frame  = frame  / 16 * 10 + (frame  & 0x0F);
 
                                 // Calculate the first found LBA
-                                lba = (minute * 60 * 75) + (second * 75) + frame - 150;
+                                lba = minute * 60 * 75 + second * 75 + frame - 150;
 
                                 // Calculate the difference between the found LBA and the requested one
                                 diff = (int)wantedLba - lba;
 
-                                combinedOffset = i + (2352 * diff);
+                                combinedOffset = i + 2352 * diff;
                                 offsetFound    = true;
 
                                 break;
@@ -160,9 +157,9 @@ public static class CompactDisc
                            !dev.Error)
                         {
                             // Clear cache
-                            for(int i = 0; i < 63; i++)
+                            for(var i = 0; i < 63; i++)
                             {
-                                sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + (16 * i)), sectorSize, 16,
+                                sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + 16 * i), sectorSize, 16,
                                                    MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None,
                                                    true, false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
                                                    out _);
@@ -175,7 +172,7 @@ public static class CompactDisc
                                        false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
-                            for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                            for(var i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                             {
                                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
@@ -188,17 +185,17 @@ public static class CompactDisc
                                 frame  = cmdBuf[i + 14];
 
                                 // Convert to binary
-                                minute = (minute / 16 * 10) + (minute & 0x0F);
-                                second = (second / 16 * 10) + (second & 0x0F);
-                                frame  = (frame  / 16 * 10) + (frame  & 0x0F);
+                                minute = minute / 16 * 10 + (minute & 0x0F);
+                                second = second / 16 * 10 + (second & 0x0F);
+                                frame  = frame  / 16 * 10 + (frame  & 0x0F);
 
                                 // Calculate the first found LBA
-                                lba = (minute * 60 * 75) + (second * 75) + frame - 150;
+                                lba = minute * 60 * 75 + second * 75 + frame - 150;
 
                                 // Calculate the difference between the found LBA and the requested one
                                 diff = (int)wantedLba - lba;
 
-                                combinedOffset = i + (2352 * diff);
+                                combinedOffset = i + 2352 * diff;
                                 offsetFound    = true;
 
                                 break;
@@ -213,7 +210,7 @@ public static class CompactDisc
 
             // Try to get another the offset some other way, we need an audio track just after a data track, same session
 
-            for(int i = 1; i < tracks.Length; i++)
+            for(var i = 1; i < tracks.Length; i++)
             {
                 if(tracks[i - 1].Type == TrackType.Audio ||
                    tracks[i].Type     != TrackType.Audio)
@@ -240,16 +237,16 @@ public static class CompactDisc
             dataTrack.EndSector += 150;
 
             // Calculate MSF
-            minute = (int)dataTrack.EndSector                     / 4500;
-            second = ((int)dataTrack.EndSector - (minute * 4500)) / 75;
-            frame  = (int)dataTrack.EndSector - (minute * 4500) - (second * 75);
+            minute = (int)dataTrack.EndSector                   / 4500;
+            second = ((int)dataTrack.EndSector - minute * 4500) / 75;
+            frame  = (int)dataTrack.EndSector - minute * 4500 - second * 75;
 
             dataTrack.EndSector -= 150;
 
             // Convert to BCD
-            minute = ((minute / 10) << 4) + (minute % 10);
-            second = ((second / 10) << 4) + (second % 10);
-            frame  = ((frame  / 10) << 4) + (frame  % 10);
+            minute = (minute / 10 << 4) + minute % 10;
+            second = (second / 10 << 4) + second % 10;
+            frame  = (frame  / 10 << 4) + frame  % 10;
 
             // Scramble M and S
             minute ^= 0x01;
@@ -264,7 +261,7 @@ public static class CompactDisc
 
             tmpBuf = new byte[sectorSync.Length];
 
-            for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+            for(var i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
             {
                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
@@ -287,16 +284,16 @@ public static class CompactDisc
             if(sense || dev.Error)
                 return;
 
-            for(int i = 0; i < dataBuf.Length; i++)
+            for(var i = 0; i < dataBuf.Length; i++)
                 dataBuf[i] ^= Sector.ScrambleTable[i];
 
-            for(int i = 0; i < 2352; i++)
+            for(var i = 0; i < 2352; i++)
             {
-                byte[] dataSide  = new byte[2352 - i];
-                byte[] audioSide = new byte[2352 - i];
+                var dataSide  = new byte[2352 - i];
+                var audioSide = new byte[2352 - i];
 
-                Array.Copy(dataBuf, i, dataSide, 0, dataSide.Length);
-                Array.Copy(cmdBuf, 0, audioSide, 0, audioSide.Length);
+                Array.Copy(dataBuf, i, dataSide,  0, dataSide.Length);
+                Array.Copy(cmdBuf,  0, audioSide, 0, audioSide.Length);
 
                 if(!dataSide.SequenceEqual(audioSide))
                     continue;
@@ -308,7 +305,7 @@ public static class CompactDisc
         }
         else
         {
-            byte[] videoNowColorFrame = new byte[9 * sectorSize];
+            var videoNowColorFrame = new byte[9 * sectorSize];
 
             sense = dev.ReadCd(out cmdBuf, out _, 0, sectorSize, 9, MmcSectorTypes.AllTypes, false, false, true,
                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,

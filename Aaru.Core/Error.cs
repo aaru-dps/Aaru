@@ -49,7 +49,8 @@ public static class Error
             case PlatformID.Win32NT:
             case PlatformID.WinCE:
             case PlatformID.WindowsPhone:
-            case PlatformID.Xbox: return PrintWin32Error(errno);
+            case PlatformID.Xbox:
+                return PrintWin32Error(errno);
             case PlatformID.Unix:
             case PlatformID.MacOSX:
             case PlatformID.iOS:
@@ -74,14 +75,22 @@ public static class Error
             case PlatformID.Ultrix:
             case PlatformID.OpenServer:
             case PlatformID.UnixWare:
-            case PlatformID.zOS: return PrintUnixError(errno);
-            case PlatformID.Wii:          return string.Format(Localization.Core.error_code_0, errno);
-            case PlatformID.WiiU:         return string.Format(Localization.Core.error_code_0, errno);
-            case PlatformID.PlayStation3: return string.Format(Localization.Core.error_code_0, errno);
-            case PlatformID.PlayStation4: return string.Format(Localization.Core.error_code_0, errno);
-            case PlatformID.NonStop:      return string.Format(Localization.Core.error_code_0, errno);
-            case PlatformID.Unknown:      return string.Format(Localization.Core.error_code_0, errno);
-            default:                      return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.zOS:
+                return PrintUnixError(errno);
+            case PlatformID.Wii:
+                return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.WiiU:
+                return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.PlayStation3:
+                return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.PlayStation4:
+                return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.NonStop:
+                return string.Format(Localization.Core.error_code_0, errno);
+            case PlatformID.Unknown:
+                return string.Format(Localization.Core.error_code_0, errno);
+            default:
+                return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 
@@ -98,7 +107,8 @@ public static class Error
                 return Localization.Core.The_specified_device_is_in_use_by_another_process;
             case 30: // EROFS
                 return Localization.Core.Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands;
-            default: return string.Format(Localization.Core.error_code_0, errno);
+            default:
+                return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 
@@ -120,7 +130,8 @@ public static class Error
                 return Localization.Core.The_specified_device_is_in_use_by_another_process;
             case 130: // ERROR_DIRECT_ACCESS_HANDLE
                 return Localization.Core.Tried_to_open_a_file_instead_of_a_device;
-            default: return string.Format(Localization.Core.error_code_0, errno);
+            default:
+                return string.Format(Localization.Core.error_code_0, errno);
         }
     }
 }

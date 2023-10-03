@@ -128,7 +128,7 @@ public sealed class ErrorLog
                 error.Add("BBK");
 
             _logSw.WriteLine(Localization.Core.ATA_command_0_error_status_1_error_2, command, string.Join(' ', status),
-                             string.Join(' ', error));
+                             string.Join(' ',                                                                  error));
 
             _logSw.Flush();
         }
@@ -141,7 +141,7 @@ public sealed class ErrorLog
     /// <param name="osError"><c>true</c> if operating system returned an error status instead of the device</param>
     /// <param name="errno">Operating system error number</param>
     /// <param name="registers">Error registers</param>
-    public void WriteLine(ushort cylinder, byte head, byte sector, bool osError, int errno,
+    public void WriteLine(ushort               cylinder, byte head, byte sector, bool osError, int errno,
                           AtaErrorRegistersChs registers)
     {
         if(osError)
@@ -372,7 +372,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {
@@ -391,9 +391,11 @@ public sealed class ErrorLog
                                  prettySense);
             }
             else
+            {
                 _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4, command,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
+            }
         }
         else
         {
@@ -436,7 +438,7 @@ public sealed class ErrorLog
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
         string        prettySense  = Sense.PrettifySense(senseBuffer);
-        string        hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
+        var           hexSense     = string.Join(' ', senseBuffer.Select(b => $"{b:X2}"));
 
         if(decodedSense.HasValue)
         {
@@ -455,9 +457,11 @@ public sealed class ErrorLog
                                  prettySense);
             }
             else
+            {
                 _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4, block,
                                  decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
                                  hexSense);
+            }
         }
         else
         {
@@ -513,16 +517,22 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
-                             block, errno);
+            _logSw.WriteLine(
+                byteAddressed
+                    ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1
+                    : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
+                block, errno);
 
             _logSw.Flush();
 
             return;
         }
 
-        _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
-                         block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
+        _logSw.WriteLine(
+            byteAddressed
+                ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1
+                : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
+            block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         throw new NotImplementedException();
     }

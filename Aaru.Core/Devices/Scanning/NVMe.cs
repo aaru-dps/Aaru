@@ -38,6 +38,6 @@ public sealed partial class MediaScan
     {
         StoppingErrorMessage?.Invoke(Localization.Core.NVMe_devices_not_yet_supported);
 
-        return default;
+        return default(ScanResults);
     }
 }

@@ -41,11 +41,11 @@ namespace Aaru.Core.Devices;
 /// <summary>Reduces common code used for scanning and dumping</summary>
 sealed partial class Reader
 {
+    const    string   ATA_MODULE_NAME  = "ATA Reader";
+    const    string   SCSI_MODULE_NAME = "SCSI Reader";
     readonly Device   _dev;
     readonly ErrorLog _errorLog;
     readonly uint     _timeout;
-    const    string   ATA_MODULE_NAME  = "ATA Reader";
-    const    string   SCSI_MODULE_NAME = "SCSI Reader";
 
     internal Reader(Device dev, uint timeout, byte[] identification, ErrorLog errorLog, bool raw = false)
     {
@@ -64,7 +64,8 @@ sealed partial class Reader
                     _ataId = ataIdNullable.Value;
 
                 break;
-            case DeviceType.NVMe: throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
+            case DeviceType.NVMe:
+                throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
         }
     }
 
@@ -82,9 +83,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlocks();
+            case DeviceType.ATA:
+                return AtaGetBlocks();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlocks();
+            case DeviceType.SCSI:
+                return ScsiGetBlocks();
             default:
                 ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
@@ -96,9 +99,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaFindReadCommand();
+            case DeviceType.ATA:
+                return AtaFindReadCommand();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiFindReadCommand();
+            case DeviceType.SCSI:
+                return ScsiFindReadCommand();
             default:
                 ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
@@ -110,9 +115,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlockSize();
+            case DeviceType.ATA:
+                return AtaGetBlockSize();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlockSize();
+            case DeviceType.SCSI:
+                return ScsiGetBlockSize();
             default:
                 ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
@@ -124,9 +131,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
+            case DeviceType.ATA:
+                return AtaGetBlocksToRead(startWithBlocks);
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
+            case DeviceType.SCSI:
+                return ScsiGetBlocksToRead(startWithBlocks);
             default:
                 ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
@@ -135,15 +144,15 @@ sealed partial class Reader
     }
 
     internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                            out bool blankCheck) =>
+                            out bool   blankCheck) =>
         ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
 
     internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                             out bool blankCheck) => ReadBlocks(out buffer, block, BlocksToRead, out duration,
+                             out bool   blankCheck) => ReadBlocks(out buffer,       block, BlocksToRead, out duration,
                                                                 out recoveredError, out blankCheck);
 
     internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
-                             out bool blankCheck)
+                             out bool   blankCheck)
     {
         switch(_dev.Type)
         {
@@ -165,7 +174,7 @@ sealed partial class Reader
     }
 
     internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
-                          out bool recoveredError)
+                          out bool   recoveredError)
     {
         switch(_dev.Type)
         {
@@ -184,9 +193,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaSeek(block, out duration);
+            case DeviceType.ATA:
+                return AtaSeek(block, out duration);
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiSeek(block, out duration);
+            case DeviceType.SCSI:
+                return ScsiSeek(block, out duration);
             default:
                 duration = 0d;
 
@@ -198,7 +209,8 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
+            case DeviceType.ATA:
+                return AtaSeekChs(cylinder, head, sector, out duration);
             default:
                 duration = 0;
 

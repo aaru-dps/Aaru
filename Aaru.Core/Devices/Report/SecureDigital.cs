@@ -45,7 +45,7 @@ public sealed partial class DeviceReport
     public MmcSd MmcSdReport()
     {
         var    report = new MmcSd();
-        bool   sense  = true;
+        var    sense  = true;
         byte[] cid    = Array.Empty<byte>();
         byte[] csd    = Array.Empty<byte>();
         byte[] ecsd   = Array.Empty<byte>();
@@ -111,11 +111,11 @@ public sealed partial class DeviceReport
             ctx.AddTask(Localization.Core.Trying_to_get_OCR).IsIndeterminate();
 
             sense = _dev.Type switch
-            {
-                DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
-                DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
-                _                        => sense
-            };
+                    {
+                        DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
+                        DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
+                        _                        => sense
+                    };
         });
 
         if(!sense)

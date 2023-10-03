@@ -147,11 +147,13 @@ public static class Statistics
                         dto.Commands = new List<NameValueStats>();
 
                         foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        {
                             dto.Commands.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.Filesystems.Any(c => !c.Synchronized))
@@ -160,11 +162,13 @@ public static class Statistics
 
                         foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
+                        {
                             dto.Filesystems.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.Filters.Any(c => !c.Synchronized))
@@ -172,11 +176,13 @@ public static class Statistics
                         dto.Filters = new List<NameValueStats>();
 
                         foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        {
                             dto.Filters.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.MediaFormats.Any(c => !c.Synchronized))
@@ -185,11 +191,13 @@ public static class Statistics
 
                         foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
+                        {
                             dto.MediaFormats.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.Partitions.Any(c => !c.Synchronized))
@@ -197,11 +205,13 @@ public static class Statistics
                         dto.Partitions = new List<NameValueStats>();
 
                         foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        {
                             dto.Partitions.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.Versions.Any(c => !c.Synchronized))
@@ -209,11 +219,13 @@ public static class Statistics
                         dto.Versions = new List<NameValueStats>();
 
                         foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        {
                             dto.Versions.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.Medias.Any(c => !c.Synchronized))
@@ -223,20 +235,24 @@ public static class Statistics
                         foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
                         {
                             if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
+                            {
                                 dto.Medias.Add(new MediaStats
                                 {
-                                    real  = true,
-                                    MediaType  = media,
-                                    Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
+                                    real      = true,
+                                    MediaType = media,
+                                    Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
                                 });
+                            }
 
                             if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
+                            {
                                 dto.Medias.Add(new MediaStats
                                 {
-                                    real  = false,
-                                    MediaType  = media,
-                                    Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
+                                    real      = false,
+                                    MediaType = media,
+                                    Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
                                 });
+                            }
                         }
                     }
 
@@ -245,6 +261,7 @@ public static class Statistics
                         dto.Devices = new List<DeviceStats>();
 
                         foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
+                        {
                             dto.Devices.Add(new DeviceStats
                             {
                                 Bus                   = device.Bus,
@@ -253,6 +270,7 @@ public static class Statistics
                                 Model                 = device.Model,
                                 Revision              = device.Revision
                             });
+                        }
                     }
 
                     if(ctx.OperatingSystems.Any(c => !c.Synchronized))
@@ -265,6 +283,7 @@ public static class Statistics
                             foreach(string osVersion in ctx.OperatingSystems.
                                                             Where(c => !c.Synchronized && c.Name == osName).
                                                             Select(c => c.Version).Distinct())
+                            {
                                 dto.OperatingSystems.Add(new OsStats
                                 {
                                     name    = osName,
@@ -272,6 +291,7 @@ public static class Statistics
                                     Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized && c.Name == osName &&
                                                                                c.Version                  == osVersion)
                                 });
+                            }
                         }
                     }
 
@@ -286,6 +306,7 @@ public static class Statistics
                                                                    Where(c => !c.Synchronized &&
                                                                               c.Name == remoteAppName).
                                                                    Select(c => c.Version).Distinct())
+                            {
                                 dto.RemoteApplications.Add(new OsStats
                                 {
                                     name    = remoteAppName,
@@ -294,6 +315,7 @@ public static class Statistics
                                                                                  c.Name    == remoteAppName &&
                                                                                  c.Version == remoteAppVersion)
                                 });
+                            }
                         }
                     }
 
@@ -303,11 +325,13 @@ public static class Statistics
 
                         foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
+                        {
                             dto.RemoteArchitectures.Add(new NameValueStats
                             {
                                 name  = nvs,
                                 Value = ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs)
                             });
+                        }
                     }
 
                     if(ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
@@ -320,13 +344,15 @@ public static class Statistics
                             foreach(string remoteOsVersion in ctx.RemoteOperatingSystems.
                                                                   Where(c => !c.Synchronized && c.Name == remoteOsName).
                                                                   Select(c => c.Version).Distinct())
+                            {
                                 dto.RemoteOperatingSystems.Add(new OsStats
                                 {
                                     name = remoteOsName,
                                     version = remoteOsVersion,
                                     Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized &&
-                                        c.Name == remoteOsName && c.Version == remoteOsVersion)
+                                            c.Name == remoteOsName && c.Version == remoteOsVersion)
                                 });
+                            }
                         }
                     }
 
@@ -366,6 +392,7 @@ public static class Statistics
                         return;
 
                     if(ctx.Commands.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
                             Command existing = ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -379,8 +406,10 @@ public static class Statistics
                             ctx.Commands.Update(existing);
                             ctx.Commands.RemoveRange(ctx.Commands.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.Filesystems.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
                         {
@@ -397,8 +426,10 @@ public static class Statistics
 
                             ctx.Filesystems.RemoveRange(ctx.Filesystems.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.Filters.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
                             Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -412,8 +443,10 @@ public static class Statistics
                             ctx.Filters.Update(existing);
                             ctx.Filters.RemoveRange(ctx.Filters.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
                         {
@@ -430,8 +463,10 @@ public static class Statistics
 
                             ctx.MediaFormats.RemoveRange(ctx.MediaFormats.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.Partitions.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
                             Partition existing =
@@ -446,8 +481,10 @@ public static class Statistics
                             ctx.Partitions.Update(existing);
                             ctx.Partitions.RemoveRange(ctx.Partitions.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.Versions.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
                             Version existing = ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -461,8 +498,10 @@ public static class Statistics
                             ctx.Versions.Update(existing);
                             ctx.Versions.RemoveRange(ctx.Versions.Where(c => !c.Synchronized && c.Name == nvs));
                         }
+                    }
 
                     if(ctx.Medias.Any(c => !c.Synchronized))
+                    {
                         foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
                         {
                             if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
@@ -507,15 +546,19 @@ public static class Statistics
                                                                              !c.Real));
                             }
                         }
+                    }
 
                     if(ctx.SeenDevices.Any(c => !c.Synchronized))
+                    {
                         foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
                         {
                             device.Synchronized = true;
                             ctx.Update(device);
                         }
+                    }
 
                     if(ctx.OperatingSystems.Any(c => !c.Synchronized))
+                    {
                         foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized).Select(c => c.Name).
                                                      Distinct())
                         {
@@ -540,12 +583,14 @@ public static class Statistics
                                 ctx.OperatingSystems.Update(existing);
 
                                 ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c => !c.Synchronized &&
-                                                                     c.Name    == osName                         &&
-                                                                     c.Version == osVersion));
+                                                                         c.Name    == osName                     &&
+                                                                         c.Version == osVersion));
                             }
                         }
+                    }
 
                     if(ctx.RemoteApplications.Any(c => !c.Synchronized))
+                    {
                         foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized).
                                                             Select(c => c.Name).Distinct())
                         {
@@ -573,12 +618,14 @@ public static class Statistics
                                 ctx.RemoteApplications.Update(existing);
 
                                 ctx.RemoteApplications.RemoveRange(ctx.RemoteApplications.Where(c => !c.Synchronized &&
-                                                                       c.Name    == remoteAppName                    &&
-                                                                       c.Version == remoteAppVersion));
+                                                                           c.Name    == remoteAppName                &&
+                                                                           c.Version == remoteAppVersion));
                             }
                         }
+                    }
 
                     if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
+                    {
                         foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).Select(c => c.Name).
                                                   Distinct())
                         {
@@ -596,8 +643,9 @@ public static class Statistics
                             ctx.RemoteArchitectures.Update(existing);
 
                             ctx.RemoteArchitectures.RemoveRange(ctx.RemoteArchitectures.Where(c => !c.Synchronized &&
-                                                                    c.Name == nvs));
+                                                                        c.Name == nvs));
                         }
+                    }
 
                     foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized).
                                                        Select(c => c.Name).Distinct())
@@ -625,9 +673,9 @@ public static class Statistics
                             ctx.RemoteOperatingSystems.Update(existing);
 
                             ctx.RemoteOperatingSystems.RemoveRange(ctx.RemoteOperatingSystems.Where(c =>
-                                                                       !c.Synchronized           &&
-                                                                       c.Name    == remoteOsName &&
-                                                                       c.Version == remoteOsVersion));
+                                                                           !c.Synchronized           &&
+                                                                           c.Name    == remoteOsName &&
+                                                                           c.Version == remoteOsVersion));
                         }
                     }
 

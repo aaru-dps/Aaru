@@ -55,10 +55,12 @@ partial class Dump
 
         // Count how many run end sectors are detected as bad blocks
         for(ulong i = blocks - 1; i > blocks - 1 - _ignoreCdrRunOuts; i--)
+        {
             if(_resume.BadBlocks.Contains(i))
                 runOutSectors.Add(i);
             else
                 break;
+        }
 
         if(runOutSectors.Count == 0)
             return;
@@ -76,20 +78,26 @@ partial class Dump
             if(track is null)
                 continue;
 
-            byte[] sector = new byte[2352];
+            var sector = new byte[2352];
 
             switch(track.Type)
             {
-                case TrackType.Audio: break;
+                case TrackType.Audio:
+                    break;
                 case TrackType.Data:
                     sector = new byte[2048];
 
                     break;
-                case TrackType.CdMode1:         break;
-                case TrackType.CdMode2Formless: break;
-                case TrackType.CdMode2Form1:    break;
-                case TrackType.CdMode2Form2:    break;
-                default:                        continue;
+                case TrackType.CdMode1:
+                    break;
+                case TrackType.CdMode2Formless:
+                    break;
+                case TrackType.CdMode2Form1:
+                    break;
+                case TrackType.CdMode2Form2:
+                    break;
+                default:
+                    continue;
             }
 
             if(track.Type != TrackType.Audio &&

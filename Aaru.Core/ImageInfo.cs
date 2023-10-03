@@ -73,8 +73,10 @@ public static class ImageInfo
         AaruConsole.WriteLine(Localization.Core.Image_information_WithMarkup);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Version))
+        {
             AaruConsole.WriteLine(Localization.Core.Format_0_version_1_WithMarkup, Markup.Escape(imageFormat.Format),
                                   Markup.Escape(imageFormat.Info.Version));
+        }
         else
             AaruConsole.WriteLine(Localization.Core.Format_0_WithMarkup, Markup.Escape(imageFormat.Format));
 
@@ -111,10 +113,12 @@ public static class ImageInfo
         AaruConsole.WriteLine(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1_WithMarkup,
                               imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
 
-        AaruConsole.WriteLine(imageFormat.Info.HasPartitions ? Localization.Core.Has_partitions
+        AaruConsole.WriteLine(imageFormat.Info.HasPartitions
+                                  ? Localization.Core.Has_partitions
                                   : Localization.Core.Doesnt_have_partitions);
 
-        AaruConsole.WriteLine(imageFormat.Info.HasSessions ? Localization.Core.Has_sessions
+        AaruConsole.WriteLine(imageFormat.Info.HasSessions
+                                  ? Localization.Core.Has_sessions
                                   : Localization.Core.Doesnt_have_sessions);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Comments))
@@ -122,55 +126,79 @@ public static class ImageInfo
 
         if(imageFormat.Info.MediaSequence     != 0 &&
            imageFormat.Info.LastMediaSequence != 0)
+        {
             AaruConsole.WriteLine(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
                                   imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_title_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaTitle));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_manufacturer_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaManufacturer));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_model_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaModel));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_serial_number_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaSerialNumber));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_barcode_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaBarcode));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
+        {
             AaruConsole.WriteLine(Localization.Core.Media_part_number_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.MediaPartNumber));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
+        {
             AaruConsole.WriteLine(Localization.Core.Drive_manufacturer_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.DriveManufacturer));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
+        {
             AaruConsole.WriteLine(Localization.Core.Drive_model_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.DriveModel));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
+        {
             AaruConsole.WriteLine(Localization.Core.Drive_serial_number_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.DriveSerialNumber));
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
+        {
             AaruConsole.WriteLine(Localization.Core.Drive_firmware_info_0_WithMarkup,
                                   Markup.Escape(imageFormat.Info.DriveFirmwareRevision));
+        }
 
         if(imageFormat.Info.Cylinders > 0                                      &&
            imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }            &&
            imageFormat.Info.MetadataMediaType != MetadataMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
+        {
             AaruConsole.WriteLine(Localization.Core.Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup,
                                   imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
+        }
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
         {
@@ -259,11 +287,13 @@ public static class ImageInfo
         foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
             foreach(Extent extent in dump.Extents)
+            {
                 table.AddRow(Markup.Escape(dump.Manufacturer ?? ""), Markup.Escape(dump.Model ?? ""),
                              Markup.Escape(dump.Serial ?? ""), Markup.Escape(dump.Software.Name ?? ""),
                              Markup.Escape(dump.Software.Version ?? ""),
                              Markup.Escape(dump.Software.OperatingSystem ?? ""), extent.Start.ToString(),
                              extent.End.ToString());
+            }
         }
 
         AaruConsole.WriteLine();
@@ -396,7 +426,7 @@ public static class ImageInfo
 
                 if(dataLen + 2 != toc.Length)
                 {
-                    byte[] tmp = new byte[toc.Length + 2];
+                    var tmp = new byte[toc.Length + 2];
                     Array.Copy(toc, 0, tmp, 2, toc.Length);
                     tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(toc.Length & 0xFF);
@@ -420,7 +450,7 @@ public static class ImageInfo
 
                 if(dataLen + 2 != pma.Length)
                 {
-                    byte[] tmp = new byte[pma.Length + 2];
+                    var tmp = new byte[pma.Length + 2];
                     Array.Copy(pma, 0, tmp, 2, pma.Length);
                     tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(pma.Length & 0xFF);
@@ -445,7 +475,7 @@ public static class ImageInfo
 
                 if(dataLen + 4 != atip.Length)
                 {
-                    byte[] tmp = new byte[atip.Length + 4];
+                    var tmp = new byte[atip.Length + 4];
                     Array.Copy(atip, 0, tmp, 4, atip.Length);
                     tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
@@ -472,7 +502,7 @@ public static class ImageInfo
 
                 if(dataLen + 4 != cdtext.Length)
                 {
-                    byte[] tmp = new byte[cdtext.Length + 4];
+                    var tmp = new byte[cdtext.Length + 4];
                     Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
                     tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
@@ -587,11 +617,14 @@ public static class ImageInfo
                 Tuple[] tuples = CIS.GetTuples(cis);
 
                 if(tuples != null)
+                {
                     foreach(Tuple tuple in tuples)
+                    {
                         switch(tuple.Code)
                         {
                             case TupleCodes.CISTPL_NULL:
-                            case TupleCodes.CISTPL_END: break;
+                            case TupleCodes.CISTPL_END:
+                                break;
                             case TupleCodes.CISTPL_DEVICEGEO:
                             case TupleCodes.CISTPL_DEVICEGEO_A:
                                 AaruConsole.WriteLine("{0}", CIS.PrettifyDeviceGeometryTuple(tuple));
@@ -651,6 +684,8 @@ public static class ImageInfo
 
                                 break;
                         }
+                    }
+                }
                 else
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Could_not_get_tuples);
             }
@@ -830,9 +865,11 @@ public static class ImageInfo
                 table.AddColumn(Localization.Core.Title_End);
 
                 foreach(Session session in opticalImage.Sessions)
+                {
                     table.AddRow(session.Sequence.ToString(), session.StartTrack.ToString(),
                                  session.EndTrack.ToString(), session.StartSector.ToString(),
                                  session.EndSector.ToString());
+                }
 
                 AnsiConsole.Write(table);
                 AaruConsole.WriteLine();
@@ -863,9 +900,11 @@ public static class ImageInfo
             table.AddColumn(Localization.Core.Title_End);
 
             foreach(Track track in opticalImage.Tracks)
+            {
                 table.AddRow(track.Sequence.ToString(), track.Type.ToString(), track.BytesPerSector.ToString(),
                              track.RawBytesPerSector.ToString(), track.SubchannelType.ToString(),
                              track.Pregap.ToString(), track.StartSector.ToString(), track.EndSector.ToString());
+            }
 
             AnsiConsole.Write(table);
 
@@ -884,8 +923,8 @@ public static class ImageInfo
             table.AddColumn(Localization.Core.Title_Start);
 
             foreach(Track track in opticalImage.Tracks)
-                foreach(KeyValuePair<ushort, int> index in track.Indexes)
-                    table.AddRow(track.Sequence.ToString(), index.Key.ToString(), index.Value.ToString());
+            foreach(KeyValuePair<ushort, int> index in track.Indexes)
+                table.AddRow(track.Sequence.ToString(), index.Key.ToString(), index.Value.ToString());
 
             AnsiConsole.Write(table);
         }

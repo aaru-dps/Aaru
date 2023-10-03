@@ -53,12 +53,12 @@ partial class Dump
     /// <param name="totalDuration">Total time spent in commands</param>
     /// <param name="scsiReader">SCSI reader</param>
     /// <param name="blankExtents">Blank extents</param>
-    void RetrySbcData(Reader scsiReader, DumpHardware currentTry, ExtentsULong extents, ref double totalDuration,
+    void RetrySbcData(Reader       scsiReader, DumpHardware currentTry, ExtentsULong extents, ref double totalDuration,
                       ExtentsULong blankExtents)
     {
-        int             pass              = 1;
-        bool            forward           = true;
-        bool            runningPersistent = false;
+        var             pass              = 1;
+        var             forward           = true;
+        var             runningPersistent = false;
         bool            sense;
         byte[]          buffer;
         bool            recoveredError;
@@ -66,7 +66,7 @@ partial class Dump
         byte[]          md6;
         byte[]          md10;
         bool            blankCheck;
-        bool            newBlank     = false;
+        var             newBlank     = false;
         var             outputFormat = _outputPlugin as IWritableImage;
 
         if(_persistent)
@@ -87,9 +87,11 @@ partial class Dump
                     Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(buffer, _dev.ScsiType);
 
                     if(dcMode10?.Pages != null)
+                    {
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
                                     modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
+                    }
                 }
             }
             else
@@ -97,9 +99,11 @@ partial class Dump
                 Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 if(dcMode6?.Pages != null)
+                {
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
                                 modePage is { Page: 0x01, Subpage: 0x00 }))
                         currentModePage = modePage;
+                }
             }
 
             if(currentModePage == null)
@@ -227,7 +231,7 @@ partial class Dump
         }
 
         InitProgress?.Invoke();
-        repeatRetry:
+    repeatRetry:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
         foreach(ulong badSector in tmpArray)
@@ -242,19 +246,27 @@ partial class Dump
             }
 
             if(forward)
+            {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                     badSector, pass)
+                                              Format(
+                                                  Localization.Core.
+                                                               Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                  badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
                                                           pass));
+            }
             else
+            {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                     badSector, pass)
+                                              Format(
+                                                  Localization.Core.
+                                                               Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                  badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
                                                           pass));
+            }
 
             sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
                                          out blankCheck);
@@ -273,7 +285,7 @@ partial class Dump
                 continue;
             }
 
-            if((!sense && !_dev.Error) || recoveredError)
+            if(!sense && !_dev.Error || recoveredError)
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
@@ -308,10 +320,7 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
-                    currentModePage.Value
-                }
+                Pages  = new[] { currentModePage.Value }
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -333,8 +342,8 @@ partial class Dump
 
     void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
     {
-        int    pass    = 1;
-        bool   forward = true;
+        var    pass    = 1;
+        var    forward = true;
         bool   sense;
         byte[] buffer;
 
@@ -343,7 +352,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        repeatRetry:
+    repeatRetry:
         ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
 
         foreach(ulong missingKey in tmpArray)
@@ -375,25 +384,17 @@ partial class Dump
             if(!titleKey.HasValue)
                 continue;
 
-            outputFormat.WriteSectorTag(new[]
-            {
-                titleKey.Value.CMI
-            }, missingKey, SectorTagType.DvdSectorCmi);
+            outputFormat.WriteSectorTag(new[] { titleKey.Value.CMI }, missingKey, SectorTagType.DvdSectorCmi);
 
             // If the CMI bit is 1, the sector is using copy protection, else it is not
             // If the decoded title key is zeroed, there should be no copy protection
             if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
                titleKey.Value.Key.All(k => k == 0))
             {
-                outputFormat.WriteSectorTag(new byte[]
-                {
-                    0, 0, 0, 0, 0
-                }, missingKey, SectorTagType.DvdSectorTitleKey);
+                outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, missingKey, SectorTagType.DvdSectorTitleKey);
 
-                outputFormat.WriteSectorTag(new byte[]
-                {
-                    0, 0, 0, 0, 0
-                }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+                outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, missingKey,
+                                            SectorTagType.DvdTitleKeyDecrypted);
 
                 _resume.MissingTitleKeys.Remove(missingKey);
 

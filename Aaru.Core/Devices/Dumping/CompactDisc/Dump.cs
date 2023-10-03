@@ -86,21 +86,21 @@ sealed partial class Dump
         MhddLog                  mhddLog; // MHDD log
         double                   minSpeed = double.MaxValue; // Minimum speed
         bool                     newTrim; // Is trim a new one?
-        int                      offsetBytes = 0; // Read offset
-        bool                     read6       = false; // Device supports READ(6)
-        bool                     read10      = false; // Device supports READ(10)
-        bool                     read12      = false; // Device supports READ(12)
-        bool                     read16      = false; // Device supports READ(16)
-        bool                     readcd      = true; // Device supports READ CD
+        var                      offsetBytes = 0; // Read offset
+        var                      read6       = false; // Device supports READ(6)
+        var                      read10      = false; // Device supports READ(10)
+        var                      read12      = false; // Device supports READ(12)
+        var                      read16      = false; // Device supports READ(16)
+        var                      readcd      = true; // Device supports READ CD
         bool                     ret; // Image writing return status
         const uint               sectorSize       = 2352; // Full sector size
-        int                      sectorsForOffset = 0; // Sectors needed to fix offset
-        bool                     sense            = true; // Sense indicator
+        var                      sectorsForOffset = 0; // Sectors needed to fix offset
+        var                      sense            = true; // Sense indicator
         int                      sessions; // Number of sessions in disc
         SubchannelLog            subLog              = null; // Subchannel log
         uint                     subSize             = 0; // Subchannel size in bytes
         TrackSubchannelType      subType             = TrackSubchannelType.None; // Track subchannel type
-        bool                     supportsLongSectors = true; // Supports reading EDC and ECC
+        var                      supportsLongSectors = true; // Supports reading EDC and ECC
         bool                     supportsPqSubchannel; // Supports reading PQ subchannel
         bool                     supportsRwSubchannel; // Supports reading RW subchannel
         byte[]                   tmpBuf; // Temporary buffer
@@ -112,11 +112,11 @@ sealed partial class Dump
         bool                     hiddenTrack; // Disc has a hidden track before track 1
         MmcSubchannel            supportedSubchannel; // Drive's maximum supported subchannel
         MmcSubchannel            desiredSubchannel; // User requested subchannel
-        bool                     bcdSubchannel       = false; // Subchannel positioning is in BCD
+        var                      bcdSubchannel       = false; // Subchannel positioning is in BCD
         Dictionary<byte, string> isrcs               = new();
         string                   mcn                 = null;
         HashSet<int>             subchannelExtents   = new();
-        bool                     cdiReadyReadAsAudio = false;
+        var                      cdiReadyReadAsAudio = false;
         uint                     firstLba;
         var                      outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -133,7 +133,7 @@ sealed partial class Dump
             return;
         }
 
-        tracks = GetCdTracks(_dev, _dumpLog, _force, out lastSector, leadOutStarts, mediaTags, StoppingErrorMessage,
+        tracks = GetCdTracks(_dev,    _dumpLog, _force, out lastSector, leadOutStarts, mediaTags, StoppingErrorMessage,
                              out toc, trackFlags, UpdateStatus);
 
         if(tracks is null)
@@ -219,7 +219,8 @@ sealed partial class Dump
                 desiredSubchannel = MmcSubchannel.None;
 
                 break;
-            default: throw new ArgumentOutOfRangeException();
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
         if(desiredSubchannel == MmcSubchannel.Q16 && supportsPqSubchannel)
@@ -361,7 +362,7 @@ sealed partial class Dump
         // Check if subchannel is BCD
         if(supportedSubchannel != MmcSubchannel.None)
         {
-            sense = _dev.ReadCd(out cmdBuf, out _, (((firstLba / 75) + 1) * 75) + 35, blockSize, 1,
+            sense = _dev.ReadCd(out cmdBuf, out _, (firstLba / 75 + 1) * 75 + 35, blockSize, 1,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                 MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
@@ -454,7 +455,7 @@ sealed partial class Dump
             ErrorMessage?.Invoke(Localization.Core.Output_format_does_not_support_pregaps_continuing);
         }
 
-        for(int t = 1; t < tracks.Length; t++)
+        for(var t = 1; t < tracks.Length; t++)
             tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
         tracks[^1].EndSector = (ulong)lastSector;
@@ -502,6 +503,7 @@ sealed partial class Dump
 
         // Check if output format supports all disc tags we have retrieved so far
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputOptical.SupportedMediaTags.Contains(tag)))
+        {
             if(_force)
             {
                 _dumpLog.WriteLine(Localization.Core.Output_format_does_not_support_0_continuing, tag);
@@ -516,15 +518,16 @@ sealed partial class Dump
 
                 return;
             }
+        }
 
         if(leadOutStarts.Any())
         {
             UpdateStatus?.Invoke(Localization.Core.Solving_lead_outs);
 
             foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
-                foreach(Track trk in tracks.Where(trk => trk.Session   == leadOuts.Key).
-                                            Where(trk => trk.EndSector >= (ulong)leadOuts.Value))
-                    trk.EndSector = (ulong)leadOuts.Value - 1;
+            foreach(Track trk in tracks.Where(trk => trk.Session   == leadOuts.Key).
+                                        Where(trk => trk.EndSector >= (ulong)leadOuts.Value))
+                trk.EndSector = (ulong)leadOuts.Value - 1;
 
             var dataExtents = new ExtentsULong();
 
@@ -533,7 +536,7 @@ sealed partial class Dump
 
             Tuple<ulong, ulong>[] dataExtentsArray = dataExtents.ToArray();
 
-            for(int i = 0; i < dataExtentsArray.Length - 1; i++)
+            for(var i = 0; i < dataExtentsArray.Length - 1; i++)
                 leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
         }
 
@@ -610,7 +613,7 @@ sealed partial class Dump
                 continue;
             }
 
-            int bufOffset = 0;
+            var bufOffset = 0;
 
             while(cmdBuf[0  + bufOffset] != 0x00 ||
                   cmdBuf[1  + bufOffset] != 0xFF ||
@@ -716,6 +719,7 @@ sealed partial class Dump
 
         // Check if something prevents from dumping the first track pregap
         if(_dumpFirstTrackPregap && readcd)
+        {
             if(!outputOptical.SupportedMediaTags.Contains(MediaTagType.CD_FirstTrackPregap))
             {
                 if(_force)
@@ -739,6 +743,7 @@ sealed partial class Dump
 
                 _dumpFirstTrackPregap = false;
             }
+        }
 
         // Try how many blocks are readable at once
         while(true)
@@ -798,7 +803,7 @@ sealed partial class Dump
                                      _dev.LastError));
         }
 
-        bool cdiWithHiddenTrack1 = false;
+        var cdiWithHiddenTrack1 = false;
 
         if(dskType is MediaType.CDIREADY &&
            tracks.Min(t => t.Sequence) == 1)
@@ -811,12 +816,12 @@ sealed partial class Dump
         if(_dumpFirstTrackPregap && readcd)
             ReadCdFirstTrackPregap(blockSize, ref currentSpeed, mediaTags, supportedSubchannel, ref totalDuration);
 
-        _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time, _maximumReadable);
-        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes, blocks, blocks * blockSize);
-        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time, _maximumReadable);
+        _dumpLog.WriteLine(Localization.Core.Reading_0_sectors_at_a_time,              _maximumReadable);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes,          blocks, blocks * blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time,       _maximumReadable);
         _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize);
-        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0, _dev.ScsiType);
-        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, dskType);
+        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0,                       _dev.ScsiType);
+        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0,                    dskType);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, _maximumReadable));
 
@@ -849,6 +854,7 @@ sealed partial class Dump
             mcn = Encoding.ASCII.GetString(mcnBytes);
 
         if(outputOptical.Tracks != null)
+        {
             foreach(Track imgTrack in outputOptical.Tracks)
             {
                 errno = outputOptical.ReadSectorTag(imgTrack.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcBytes);
@@ -868,6 +874,7 @@ sealed partial class Dump
                 foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
                     trk.Indexes[imgIdx.Key] = imgIdx.Value;
             }
+        }
 
         // Send track list to output plugin. This may fail if subchannel is set but unsupported.
         ret = outputOptical.SetTracks(tracks.ToList());
@@ -923,10 +930,7 @@ sealed partial class Dump
             _dumpLog.WriteLine(Localization.Core.Setting_flags_for_track_0, track.Sequence);
             UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_flags_for_track_0, track.Sequence));
 
-            outputOptical.WriteSectorTag(new[]
-            {
-                kvp.Value
-            }, kvp.Key, SectorTagType.CdTrackFlags);
+            outputOptical.WriteSectorTag(new[] { kvp.Value }, kvp.Key, SectorTagType.CdTrackFlags);
         }
 
         // Set MCN
@@ -947,6 +951,7 @@ sealed partial class Dump
 
         // Set ISRCs
         if(supportedSubchannel == MmcSubchannel.None)
+        {
             foreach(Track trk in tracks)
             {
                 sense = _dev.ReadIsrc((byte)trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
@@ -957,8 +962,9 @@ sealed partial class Dump
                 isrcs[(byte)trk.Sequence] = isrc;
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Found_ISRC_for_track_0_1, trk.Sequence, isrc));
-                _dumpLog.WriteLine(string.Format(Localization.Core.Found_ISRC_for_track_0_1, trk.Sequence, isrc));
+                _dumpLog.WriteLine(string.Format(Localization.Core.Found_ISRC_for_track_0_1,   trk.Sequence, isrc));
             }
+        }
 
         if(supportedSubchannel != MmcSubchannel.None &&
            desiredSubchannel   != MmcSubchannel.None)
@@ -971,8 +977,10 @@ sealed partial class Dump
                 subchannelExtents.Add(sub);
 
             if(_resume.NextBlock < blocks)
+            {
                 for(ulong i = _resume.NextBlock; i < blocks; i++)
                     subchannelExtents.Add((int)i);
+            }
         }
 
         if(_resume.NextBlock > 0)
@@ -986,8 +994,10 @@ sealed partial class Dump
 
     #if DEBUG
         foreach(Track trk in tracks)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_starts_at_LBA_1_and_ends_at_LBA_2,
                                                trk.Sequence, trk.StartSector, trk.EndSector));
+        }
     #endif
 
         // Check offset
@@ -1135,8 +1145,10 @@ sealed partial class Dump
                 _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
 
             if(_mediaGraph is not null)
+            {
                 foreach(Tuple<ulong, ulong> e in extents.ToArray())
                     _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+            }
 
             _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
         }
@@ -1149,10 +1161,12 @@ sealed partial class Dump
         // Set speed
         if(_speedMultiplier >= 0)
         {
-            _dumpLog.WriteLine(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+            _dumpLog.WriteLine(_speed == 0xFFFF
+                                   ? Localization.Core.Setting_speed_to_MAX_for_data_reading
                                    : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading, _speed));
 
-            UpdateStatus?.Invoke(_speed == 0xFFFF ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+            UpdateStatus?.Invoke(_speed == 0xFFFF
+                                     ? Localization.Core.Setting_speed_to_MAX_for_data_reading
                                      : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading, _speed));
 
             _speed *= _speedMultiplier;
@@ -1266,10 +1280,12 @@ sealed partial class Dump
             }
 
             if(_skipCdireadyHole)
+            {
                 ReadCdiReady(blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                              leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, subSize, supportedSubchannel,
                              ref totalDuration, tracks, subLog, desiredSubchannel, isrcs, ref mcn, subchannelExtents,
                              blocks, cdiReadyReadAsAudio, offsetBytes, sectorsForOffset, smallestPregapLbaPerTrack);
+            }
         }
 
         ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
@@ -1314,33 +1330,40 @@ sealed partial class Dump
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                   Per(imageWriteDuration.Seconds())));
 
-        TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
-                       read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
+        TrimCdUserData(audioExtents,      blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
+                       read16,            readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
                        ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn, subchannelExtents,
                        smallestPregapLbaPerTrack);
 
         if(dskType is MediaType.CDR or MediaType.CDRW &&
            _resume.BadBlocks.Count > 0                &&
            _ignoreCdrRunOuts       > 0)
+        {
             HandleCdrRunOutSectors(blocks, desiredSubchannel, extents, subchannelExtents, subLog, supportsLongSectors,
                                    trackFlags, tracks);
+        }
 
         RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset, subSize,
                         supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn,
                         subchannelExtents, smallestPregapLbaPerTrack, supportsLongSectors);
 
         foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
+        {
             for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++)
                 subchannelExtents.Remove((int)e);
+        }
 
         if(subchannelExtents.Count > 0 &&
            _retryPasses            > 0 &&
            _retrySubchannel)
+        {
             RetrySubchannel(readcd, subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks,
-                            isrcs, ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
+                            isrcs,  ref mcn, subchannelExtents,   smallestPregapLbaPerTrack);
+        }
 
         // Write media tags to image
         if(!_aborted)
+        {
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
             {
                 if(tag.Value is null)
@@ -1361,6 +1384,7 @@ sealed partial class Dump
 
                 return;
             }
+        }
 
         _resume.BadBlocks.Sort();
 
@@ -1376,8 +1400,10 @@ sealed partial class Dump
         if(_generateSubchannels                                                         &&
            outputOptical.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
            !_aborted)
+        {
             Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
                                                   InitProgress, UpdateProgress, EndProgress, outputOptical);
+        }
 
         // TODO: Disc ID
         var metadata = new CommonTypes.Structs.ImageInfo
@@ -1387,8 +1413,10 @@ sealed partial class Dump
         };
 
         if(!outputOptical.SetImageInfo(metadata))
+        {
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputOptical.ErrorMessage);
+        }
 
         outputOptical.SetDumpHardware(_resume.Tries);
 
@@ -1455,31 +1483,38 @@ sealed partial class Dump
         double totalChkDuration = 0;
 
         if(_metadata)
+        {
             WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration,
                                 discOffset);
+        }
 
         _dumpStopwatch.Stop();
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+            Invoke(string.Format(
+                       Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                       _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                       totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                       _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                     Per(totalDuration.Milliseconds()).Humanize()));
 
         if(maxSpeed > 0)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
                                                ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
+        }
 
         if(minSpeed is > 0 and < double.MaxValue)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
                                                ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
+        }
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
 

@@ -62,20 +62,21 @@ partial class Dump
     void ReadCdFirstTrackPregap(uint blockSize, ref double currentSpeed, Dictionary<MediaTagType, byte[]> mediaTags,
                                 MmcSubchannel supportedSubchannel, ref double totalDuration)
     {
-        bool     sense;                           // Sense indicator
-        byte[]   cmdBuf;                          // Data buffer
-        double   cmdDuration;                     // Command execution time
-        ulong    sectorSpeedStart            = 0; // Used to calculate correct speed
-        bool     gotFirstTrackPregap         = false;
-        int      firstTrackPregapSectorsGood = 0;
-        var      firstTrackPregapMs          = new MemoryStream();
+        bool   sense;                           // Sense indicator
+        byte[] cmdBuf;                          // Data buffer
+        double cmdDuration;                     // Command execution time
+        ulong  sectorSpeedStart            = 0; // Used to calculate correct speed
+        var    gotFirstTrackPregap         = false;
+        var    firstTrackPregapSectorsGood = 0;
+        var    firstTrackPregapMs          = new MemoryStream();
 
         _dumpLog.WriteLine(Localization.Core.Reading_first_track_pregap);
         UpdateStatus?.Invoke(Localization.Core.Reading_first_track_pregap);
         InitProgress?.Invoke();
         _speedStopwatch.Restart();
 
-        for(int firstTrackPregapBlock = -150; firstTrackPregapBlock < 0 && _resume.NextBlock == 0;
+        for(int firstTrackPregapBlock = -150;
+            firstTrackPregapBlock < 0 && _resume.NextBlock == 0;
             firstTrackPregapBlock++)
         {
             if(_aborted)
@@ -153,7 +154,7 @@ partial class Dump
                                          bool supportsPqSubchannel, bool supportsRwSubchannel,
                                          Database.Models.Device dbDev, out bool inexactPositioning, bool dumping)
     {
-        bool                  sense  = true; // Sense indicator
+        var                   sense  = true; // Sense indicator
         byte[]                subBuf = null;
         int                   posQ;
         uint                  retries;
@@ -169,7 +170,8 @@ partial class Dump
         // Check if subchannel is BCD
         for(retries = 0; retries < 10; retries++)
         {
-            sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf, false)
+            sense = supportsRwSubchannel
+                        ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf, false)
                         : GetSectorForPregapQ16(dev, 11, out subBuf, false);
 
             if(sense)
@@ -181,11 +183,11 @@ partial class Dump
         }
 
         AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, bcd switch
-        {
-            true  => Localization.Core.Subchannel_is_BCD,
-            false => Localization.Core.Subchannel_is_not_BCD,
-            _     => Localization.Core.Could_not_detect_drive_subchannel_BCD
-        });
+                                                       {
+                                                           true => Localization.Core.Subchannel_is_BCD,
+                                                           false => Localization.Core.Subchannel_is_not_BCD,
+                                                           _ => Localization.Core.Could_not_detect_drive_subchannel_BCD
+                                                       });
 
         if(bcd is null)
         {
@@ -202,10 +204,10 @@ partial class Dump
         foreach(Track t in tracks)
             pregaps[t.Sequence] = 0;
 
-        for(int t = 0; t < tracks.Length; t++)
+        for(var t = 0; t < tracks.Length; t++)
         {
             Track track        = tracks[t];
-            int   trackRetries = 0;
+            var   trackRetries = 0;
 
             // First track of each session has at least 150 sectors of pregap and is not always readable
             if(tracks.Where(trk => trk.Session == track.Session).MinBy(trk => trk.Sequence).Sequence == track.Sequence)
@@ -239,14 +241,14 @@ partial class Dump
             AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Track_0, track.Sequence);
 
             int   lba           = (int)track.StartSector - 1;
-            bool  pregapFound   = false;
+            var   pregapFound   = false;
             Track previousTrack = tracks.FirstOrDefault(trk => trk.Sequence == track.Sequence - 1);
 
-            bool goneBack                      = false;
-            bool goFront                       = false;
-            bool forward                       = false;
-            bool crcOk                         = false;
-            bool previousPregapIsPreviousTrack = false;
+            var goneBack                      = false;
+            var goFront                       = false;
+            var forward                       = false;
+            var crcOk                         = false;
+            var previousPregapIsPreviousTrack = false;
 
             // Check if pregap is 0
             for(retries = 0; retries < 10 && !pregapFound; retries++)
@@ -294,7 +296,7 @@ partial class Dump
                         subBuf[6] = 0;
 
                         // Fix BCD numbering
-                        for(int i = 1; i < 10; i++)
+                        for(var i = 1; i < 10; i++)
                         {
                             if((subBuf[i] & 0xF0) > 0xA0)
                                 subBuf[i] &= 0x7F;
@@ -309,12 +311,14 @@ partial class Dump
                     crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
                     if(crcOk)
+                    {
                         AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                    Localization.Core.
                                                                 LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                    lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
                                                    subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
                                                    subBuf[10], subBuf[11], crc[0], crc[1]);
+                    }
                     else
                         continue;
                 }
@@ -325,7 +329,7 @@ partial class Dump
                 if((subBuf[0] & 0xF) != 1)
                     continue;
 
-                posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
+                posQ = subBuf[7] * 60 * 75 + subBuf[8] * 75 + subBuf[9] - 150;
 
                 if(subBuf[1] != track.Sequence - 1 ||
                    subBuf[2] == 0                  ||
@@ -348,10 +352,12 @@ partial class Dump
             {
                 // Some drives crash if you try to read just before the previous read, so seek away first
                 if(!forward)
+                {
                     sense = supportsRwSubchannel
                                 ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf,
                                                         track.Type == TrackType.Audio)
                                 : GetSectorForPregapQ16(dev, (uint)lba - 10, out subBuf, track.Type == TrackType.Audio);
+                }
 
                 for(retries = 0; retries < 10; retries++)
                 {
@@ -394,7 +400,7 @@ partial class Dump
                             subBuf[6] = 0;
 
                             // Fix BCD numbering
-                            for(int i = 1; i < 10; i++)
+                            for(var i = 1; i < 10; i++)
                             {
                                 if((subBuf[i] & 0xF0) > 0xA0)
                                     subBuf[i] &= 0x7F;
@@ -435,8 +441,8 @@ partial class Dump
                         {
                             if(pregaps[track.Sequence] == 0)
                             {
-                                if((previousTrack.Type == TrackType.Audio && track.Type != TrackType.Audio) ||
-                                   (previousTrack.Type != TrackType.Audio && track.Type == TrackType.Audio))
+                                if(previousTrack.Type == TrackType.Audio && track.Type != TrackType.Audio ||
+                                   previousTrack.Type != TrackType.Audio && track.Type == TrackType.Audio)
                                 {
                                     dumpLog?.WriteLine(Localization.Core.
                                                                     Could_not_read_subchannel_for_this_track_supposing_hundred_fifty_sectors);
@@ -457,13 +463,17 @@ partial class Dump
                             {
                                 dumpLog?.
                                     WriteLine(string.
-                                                  Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
-                                                         pregaps[track.Sequence]));
+                                                  Format(
+                                                      Localization.Core.
+                                                                   Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                      pregaps[track.Sequence]));
 
                                 updateStatus?.
                                     Invoke(string.
-                                               Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
-                                                      pregaps[track.Sequence]));
+                                               Format(
+                                                   Localization.Core.
+                                                                Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                   pregaps[track.Sequence]));
                             }
 
                             break;
@@ -552,7 +562,7 @@ partial class Dump
                 previousPregapIsPreviousTrack = false;
 
                 // Pregap according to Q position
-                posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
+                posQ = subBuf[7] * 60 * 75 + subBuf[8] * 75 + subBuf[9] - 150;
                 int diff    = posQ                   - lba;
                 int pregapQ = (int)track.StartSector - lba;
 
@@ -614,7 +624,7 @@ partial class Dump
             if(dumping)
             {
                 // Minus five, to ensure dumping will fix if there is a pregap LBA 0
-                int red = 5;
+                var red = 5;
 
                 while(trk.Pregap > 0 &&
                       red        > 0)
@@ -643,7 +653,7 @@ partial class Dump
     /// <param name="audioTrack">Set if it is an audio track</param>
     /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
     static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf,
-                                      bool audioTrack)
+                                      bool   audioTrack)
     {
         byte[] cmdBuf;
         bool   sense;
@@ -656,9 +666,11 @@ partial class Dump
                                out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.AllTypes, false, false, true,
                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
                                    dev.Timeout, out _);
+            }
         }
         else
         {
@@ -667,14 +679,16 @@ partial class Dump
                                dev.Timeout, out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
                                    out _);
+            }
         }
 
         if(!sense)
         {
-            byte[] tmpBuf = new byte[96];
+            var tmpBuf = new byte[96];
             Array.Copy(cmdBuf, 2352, tmpBuf, 0, 96);
             subBuf = DeinterleaveQ(tmpBuf);
         }
@@ -685,9 +699,11 @@ partial class Dump
                                out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
                                    dev.Timeout, out _);
+            }
 
             if(!sense)
                 subBuf = DeinterleaveQ(cmdBuf);
@@ -724,9 +740,11 @@ partial class Dump
                                out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.AllTypes, false, false, true,
                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
                                    dev.Timeout, out _);
+            }
         }
         else
         {
@@ -735,9 +753,11 @@ partial class Dump
                                dev.Timeout, out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
                                    out _);
+            }
         }
 
         if(!sense)
@@ -752,9 +772,11 @@ partial class Dump
                                out _);
 
             if(sense)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
                                    dev.Timeout, out _);
+            }
 
             if(!sense)
                 subBuf = cmdBuf;
@@ -768,10 +790,10 @@ partial class Dump
     /// <returns>De-interleaved Q subchannel</returns>
     static byte[] DeinterleaveQ(byte[] subchannel)
     {
-        int[] q = new int[subchannel.Length / 8];
+        var q = new int[subchannel.Length / 8];
 
         // De-interlace Q subchannel
-        for(int iq = 0; iq < subchannel.Length; iq += 8)
+        for(var iq = 0; iq < subchannel.Length; iq += 8)
         {
             q[iq / 8] =  (subchannel[iq] & 0x40) << 1;
             q[iq / 8] += subchannel[iq + 1] & 0x40;
@@ -783,9 +805,9 @@ partial class Dump
             q[iq / 8] += (subchannel[iq + 7] & 0x40) >> 6;
         }
 
-        byte[] deQ = new byte[q.Length];
+        var deQ = new byte[q.Length];
 
-        for(int iq = 0; iq < q.Length; iq++)
+        for(var iq = 0; iq < q.Length; iq++)
             deQ[iq] = (byte)q[iq];
 
         return deQ;
@@ -795,29 +817,29 @@ partial class Dump
     /// <param name="q">Q subchannel</param>
     static void BinaryToBcdQ(byte[] q)
     {
-        q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
-        q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
-        q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
-        q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
-        q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
-        q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
-        q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
-        q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
-        q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
+        q[1] = (byte)((q[1] / 10 << 4) + q[1] % 10);
+        q[2] = (byte)((q[2] / 10 << 4) + q[2] % 10);
+        q[3] = (byte)((q[3] / 10 << 4) + q[3] % 10);
+        q[4] = (byte)((q[4] / 10 << 4) + q[4] % 10);
+        q[5] = (byte)((q[5] / 10 << 4) + q[5] % 10);
+        q[6] = (byte)((q[6] / 10 << 4) + q[6] % 10);
+        q[7] = (byte)((q[7] / 10 << 4) + q[7] % 10);
+        q[8] = (byte)((q[8] / 10 << 4) + q[8] % 10);
+        q[9] = (byte)((q[9] / 10 << 4) + q[9] % 10);
     }
 
     /// <summary>In place converts Q subchannel from BCD to binary numbering</summary>
     /// <param name="q">Q subchannel</param>
     static void BcdToBinaryQ(byte[] q)
     {
-        q[1] = (byte)((q[1] / 16 * 10) + (q[1] & 0x0F));
-        q[2] = (byte)((q[2] / 16 * 10) + (q[2] & 0x0F));
-        q[3] = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
-        q[4] = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
-        q[5] = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
-        q[6] = (byte)((q[6] / 16 * 10) + (q[6] & 0x0F));
-        q[7] = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
-        q[8] = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
-        q[9] = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
+        q[1] = (byte)(q[1] / 16 * 10 + (q[1] & 0x0F));
+        q[2] = (byte)(q[2] / 16 * 10 + (q[2] & 0x0F));
+        q[3] = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
+        q[4] = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
+        q[5] = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
+        q[6] = (byte)(q[6] / 16 * 10 + (q[6] & 0x0F));
+        q[7] = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
+        q[8] = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+        q[9] = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
     }
 }

@@ -63,16 +63,16 @@ partial class Dump
     /// <param name="newTrim">Set if we need to start a trim</param>
     /// <param name="dvdDecrypt">DVD CSS decryption module</param>
     /// <param name="discKey">The DVD disc key</param>
-    void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
+    void ReadSbcData(in ulong     blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
                      ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
-                     ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                     ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
+                     ref double   totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
+                     ref double   imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
     {
-        ulong    sectorSpeedStart = 0;
-        bool     sense;
-        byte[]   buffer;
-        uint     blocksToRead = maxBlocksToRead;
-        var      outputFormat = _outputPlugin as IWritableImage;
+        ulong  sectorSpeedStart = 0;
+        bool   sense;
+        byte[] buffer;
+        uint   blocksToRead = maxBlocksToRead;
+        var    outputFormat = _outputPlugin as IWritableImage;
 
         InitProgress?.Invoke();
 
@@ -99,8 +99,10 @@ partial class Dump
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)blocks);
+                Invoke(
+                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
+                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                    (long)i, (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
@@ -133,10 +135,10 @@ partial class Dump
                         CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
 
                         if(titleKey.HasValue)
-                            outputFormat.WriteSectorTag(new[]
-                            {
-                                titleKey.Value.CMI
-                            }, i + j, SectorTagType.DvdSectorCmi);
+                        {
+                            outputFormat.WriteSectorTag(new[] { titleKey.Value.CMI }, i + j,
+                                                        SectorTagType.DvdSectorCmi);
+                        }
                         else
                             continue;
 
@@ -144,15 +146,11 @@ partial class Dump
                         if((titleKey.Value.CMI & 0x80) >> 7 == 0)
                         {
                             // The CMI indicates this sector is not encrypted.
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdSectorTitleKey);
+                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
+                                                        SectorTagType.DvdSectorTitleKey);
 
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
+                                                        SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 
@@ -163,15 +161,11 @@ partial class Dump
                         // not encrypted even if the CMI says it is.
                         if(titleKey.Value.Key.All(k => k == 0))
                         {
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdSectorTitleKey);
+                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
+                                                        SectorTagType.DvdSectorTitleKey);
 
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
+                                                        SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 
@@ -200,8 +194,10 @@ partial class Dump
                                                                 out byte[] titleKey);
 
                             if(errno != ErrorNumber.NoError)
+                            {
                                 ErrorMessage?.
                                     Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0, i));
+                            }
                             else
                                 buffer = CSS.DecryptSector(buffer, titleKey, cmi, blocksToRead, blockSize);
                         }

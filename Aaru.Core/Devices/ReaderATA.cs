@@ -73,9 +73,9 @@ sealed partial class Reader
             Blocks    = (ulong)(Cylinders * Heads * Sectors);
         }
 
-        if((_ataId.CurrentCylinders != 0 && _ataId.CurrentHeads != 0 && _ataId.CurrentSectorsPerTrack != 0) ||
-           _ataId.Cylinders       <= 0                                                                      ||
-           _ataId.Heads           <= 0                                                                      ||
+        if(_ataId.CurrentCylinders != 0 && _ataId.CurrentHeads != 0 && _ataId.CurrentSectorsPerTrack != 0 ||
+           _ataId.Cylinders       <= 0                                                                    ||
+           _ataId.Heads           <= 0                                                                    ||
            _ataId.SectorsPerTrack <= 0)
             return;
 
@@ -110,7 +110,7 @@ sealed partial class Reader
             GetDeviceBlocks();
 
         bool                   sense;
-        int                    tries  = 0;
+        var                    tries  = 0;
         uint                   lba    = 0;
         ushort                 cyl    = 0;
         byte                   head   = 0;
@@ -158,10 +158,10 @@ sealed partial class Reader
                _ataReadDmaLba48)
                 break;
 
-            lba    = (uint)rnd.Next(1, (int)Blocks);
+            lba    = (uint)rnd.Next(1,   (int)Blocks);
             cyl    = (ushort)rnd.Next(0, Cylinders);
-            head   = (byte)rnd.Next(0, Heads);
-            sector = (byte)rnd.Next(1, Sectors);
+            head   = (byte)rnd.Next(0,   Heads);
+            sector = (byte)rnd.Next(1,   Sectors);
             tries++;
         }
 
@@ -240,11 +240,13 @@ sealed partial class Reader
            (_ataId.PhysLogSectorSize & 0x4000) == 0x4000)
         {
             if((_ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+            {
                 if(_ataId.LogicalSectorWords <= 255 ||
                    _ataId.LogicalAlignment   == 0xFFFF)
                     LogicalBlockSize = 512;
                 else
                     LogicalBlockSize = _ataId.LogicalSectorWords * 2;
+            }
             else
                 LogicalBlockSize = 512;
 
@@ -276,7 +278,7 @@ sealed partial class Reader
             return false;
         }
 
-        bool error = true;
+        var error = true;
 
         while(IsLba)
         {
@@ -342,7 +344,7 @@ sealed partial class Reader
 
     bool AtaReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError)
     {
-        bool                   error = true;
+        var                    error = true;
         bool                   sense;
         AtaErrorRegistersLba28 errorLba;
         AtaErrorRegistersLba48 errorLba48;
@@ -426,9 +428,9 @@ sealed partial class Reader
     }
 
     bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
-                    out bool recoveredError)
+                    out bool   recoveredError)
     {
-        bool                 error = true;
+        var                  error = true;
         bool                 sense;
         AtaErrorRegistersChs errorChs;
         byte                 status = 0, errorByte = 0;

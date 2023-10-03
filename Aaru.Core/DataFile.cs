@@ -38,7 +38,8 @@ using Aaru.Helpers;
 namespace Aaru.Core;
 
 /// <summary>Abstracts a datafile with a block based interface</summary>
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"), SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class DataFile
 {
     readonly FileStream _dataFs;
@@ -47,6 +48,9 @@ public sealed class DataFile
     /// <param name="outputFile">File</param>
     public DataFile(string outputFile) =>
         _dataFs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
+    /// <summary>Current file position</summary>
+    public long Position => _dataFs.Position;
 
     /// <summary>Closes the file</summary>
     public void Close() => _dataFs?.Close();
@@ -104,9 +108,6 @@ public sealed class DataFile
         _dataFs.Write(data, offset, count);
     }
 
-    /// <summary>Current file position</summary>
-    public long Position => _dataFs.Position;
-
     /// <summary>Writes data to a newly created file</summary>
     /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>
     /// <param name="data">Data to write</param>
@@ -127,12 +128,13 @@ public sealed class DataFile
     /// <param name="whatWriting">What is the data about?</param>
     /// <param name="overwrite">If set to <c>true</c> overwrites the file, does nothing otherwise</param>
     public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null,
-                               bool overwrite = false)
+                               bool   overwrite = false)
     {
         if(string.IsNullOrEmpty(filename))
             return;
 
         if(File.Exists(filename))
+        {
             if(overwrite)
                 File.Delete(filename);
             else
@@ -141,6 +143,7 @@ public sealed class DataFile
 
                 return;
             }
+        }
 
         try
         {

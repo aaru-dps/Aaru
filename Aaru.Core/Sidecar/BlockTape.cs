@@ -90,7 +90,7 @@ public sealed partial class Sidecar
 
         UpdateStatus(Localization.Core.Hashing_files);
 
-        for(int i = 0; i < files.Count; i++)
+        for(var i = 0; i < files.Count; i++)
         {
             if(_aborted)
                 return _sidecar;

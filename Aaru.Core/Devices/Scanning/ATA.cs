@@ -95,13 +95,13 @@ public sealed partial class MediaScan
             byte   heads        = ataReader.Heads;
             byte   sectors      = ataReader.Sectors;
 
-            results.A       = 0; // <3ms
-            results.B       = 0; // >=3ms, <10ms
-            results.C       = 0; // >=10ms, <50ms
-            results.D       = 0; // >=50ms, <150ms
-            results.E       = 0; // >=150ms, <500ms
-            results.F       = 0; // >=500ms
-            results.Errored = 0;
+            results.A              = 0; // <3ms
+            results.B              = 0; // >=3ms, <10ms
+            results.C              = 0; // >=10ms, <50ms
+            results.D              = 0; // >=50ms, <150ms
+            results.E              = 0; // >=150ms, <500ms
+            results.F              = 0; // >=500ms
+            results.Errored        = 0;
             results.ProcessingTime = 0;
             double currentSpeed = 0;
             results.MaxSpeed          = double.MinValue;
@@ -130,7 +130,7 @@ public sealed partial class MediaScan
 
                 _scanStopwatch.Restart();
                 _speedStopwatch.Restart();
-                ulong    sectorSpeedStart = 0;
+                ulong sectorSpeedStart = 0;
                 InitProgress?.Invoke();
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
@@ -150,8 +150,10 @@ public sealed partial class MediaScan
                         results.MinSpeed = currentSpeed;
 
                     UpdateProgress?.
-                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                               (long)i, (long)results.Blocks);
+                        Invoke(
+                            string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
+                                          ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                            (long)i, (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
@@ -227,12 +229,13 @@ public sealed partial class MediaScan
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeekLba && _seekTest)
-                    for(int i = 0; i < seekTimes; i++)
+                {
+                    for(var i = 0; i < seekTimes; i++)
                     {
                         if(_aborted)
                             break;
 
-                        uint seekPos = (uint)rnd.Next((int)results.Blocks);
+                        var seekPos = (uint)rnd.Next((int)results.Blocks);
 
                         PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 
@@ -249,6 +252,7 @@ public sealed partial class MediaScan
                         results.SeekTotal += seekCur;
                         GC.Collect();
                     }
+                }
 
                 EndProgress?.Invoke();
             }
@@ -262,7 +266,7 @@ public sealed partial class MediaScan
                 results.Blocks = (ulong)(cylinders * heads * sectors);
                 _scanStopwatch.Restart();
                 _speedStopwatch.Restart();
-                ulong    sectorSpeedStart = 0;
+                ulong sectorSpeedStart = 0;
                 InitProgress?.Invoke();
 
                 for(ushort cy = 0; cy < cylinders; cy++)
@@ -361,14 +365,15 @@ public sealed partial class MediaScan
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeek)
-                    for(int i = 0; i < seekTimes; i++)
+                {
+                    for(var i = 0; i < seekTimes; i++)
                     {
                         if(_aborted)
                             break;
 
-                        ushort seekCy = (ushort)rnd.Next(cylinders);
-                        byte   seekHd = (byte)rnd.Next(heads);
-                        byte   seekSc = (byte)rnd.Next(sectors);
+                        var seekCy = (ushort)rnd.Next(cylinders);
+                        var seekHd = (byte)rnd.Next(heads);
+                        var seekSc = (byte)rnd.Next(sectors);
 
                         PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_cylinder_0_head_1_sector_2,
                                                             seekCy, seekHd, seekSc));
@@ -386,6 +391,7 @@ public sealed partial class MediaScan
                         results.SeekTotal += seekCur;
                         GC.Collect();
                     }
+                }
 
                 EndProgress?.Invoke();
             }

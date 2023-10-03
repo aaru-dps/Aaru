@@ -59,14 +59,19 @@ public sealed class Entropy
 
     /// <summary>Event raised when a progress bar is needed</summary>
     public event InitProgressHandler InitProgressEvent;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler UpdateProgressEvent;
+
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgressEvent;
+
     /// <summary>Event raised when a progress bar is needed</summary>
     public event InitProgressHandler InitProgress2Event;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler UpdateProgress2Event;
+
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgress2Event;
 
@@ -99,10 +104,12 @@ public sealed class Entropy
                 };
 
                 UpdateProgressEvent?.
-                    Invoke(string.Format(Localization.Core.Entropying_track_0_of_1, currentTrack.Sequence, inputTracks.Max(t => t.Sequence)),
-                           currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
+                    Invoke(
+                        string.Format(Localization.Core.Entropying_track_0_of_1, currentTrack.Sequence,
+                                      inputTracks.Max(t => t.Sequence)),
+                        currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
 
-                ulong[]      entTable              = new ulong[256];
+                var          entTable              = new ulong[256];
                 ulong        trackSize             = 0;
                 List<string> uniqueSectorsPerTrack = new();
 
@@ -116,8 +123,10 @@ public sealed class Entropy
                 for(ulong i = 0; i < trackEntropy.Sectors; i++)
                 {
                     UpdateProgress2Event?.
-                        Invoke(string.Format(Localization.Core.Entropying_sector_0_of_track_1, i + 1, currentTrack.Sequence),
-                               (long)(i + 1), (long)currentTrack.EndSector);
+                        Invoke(
+                            string.Format(Localization.Core.Entropying_sector_0_of_track_1, i + 1,
+                                          currentTrack.Sequence),
+                            (long)(i + 1), (long)currentTrack.EndSector);
 
                     ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
 
@@ -162,8 +171,10 @@ public sealed class Entropy
             if(_debug)
                 AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
             else
+            {
                 AaruConsole.ErrorWriteLine(Localization.Core.
                                                         Unable_to_get_separate_tracks_not_calculating_their_entropy);
+            }
         }
 
         return entropyResults.ToArray();
@@ -182,7 +193,7 @@ public sealed class Entropy
         if(_inputFormat is not IMediaImage mediaImage)
             return entropy;
 
-        ulong[]      entTable      = new ulong[256];
+        var          entTable      = new ulong[256];
         ulong        diskSize      = 0;
         List<string> uniqueSectors = new();
 
@@ -242,8 +253,8 @@ public sealed class Entropy
         if(_inputFormat is not IByteAddressableImage byteAddressableImage)
             return entropy;
 
-        ulong[] entTable = new ulong[256];
-        byte[]  data     = new byte[byteAddressableImage.Info.Sectors];
+        var entTable = new ulong[256];
+        var data     = new byte[byteAddressableImage.Info.Sectors];
 
         entropy.Sectors = _inputFormat.Info.Sectors;
         AaruConsole.WriteLine(Localization.Core._0_bytes, entropy.Sectors);
@@ -261,7 +272,7 @@ public sealed class Entropy
 
         if(bytesRead != data.Length)
         {
-            byte[] tmp = new byte[bytesRead];
+            var tmp = new byte[bytesRead];
             Array.Copy(data, 0, tmp, 0, bytesRead);
             data = tmp;
         }

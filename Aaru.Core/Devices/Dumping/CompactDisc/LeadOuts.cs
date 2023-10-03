@@ -91,7 +91,7 @@ partial class Dump
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        bool       sense         = true; // Sense indicator
+        var        sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -101,6 +101,7 @@ partial class Dump
         InitProgress?.Invoke();
 
         foreach((ulong item1, ulong item2) in leadOutExtents.ToArray())
+        {
             for(ulong i = item1; i <= item2; i++)
             {
                 if(_aborted)
@@ -133,14 +134,20 @@ partial class Dump
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
+                {
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                         _dev.Timeout, out cmdDuration);
+                }
                 else if(read12)
+                {
                     sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
                                         1, false, _dev.Timeout, out cmdDuration);
+                }
                 else if(read10)
+                {
                     sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
                                         1, _dev.Timeout, out cmdDuration);
+                }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
@@ -155,14 +162,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize * _maximumReadable];
-                        byte[] sub  = new byte[subSize    * _maximumReadable];
+                        var data = new byte[sectorSize * _maximumReadable];
+                        var sub  = new byte[subSize    * _maximumReadable];
 
-                        for(int b = 0; b < _maximumReadable; b++)
+                        for(var b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
@@ -222,6 +229,7 @@ partial class Dump
 
                 _resume.NextBlock = i + 1;
             }
+        }
 
         EndProgress?.Invoke();
     }
@@ -265,7 +273,7 @@ partial class Dump
     {
         byte[]     cmdBuf        = null; // Data buffer
         const uint sectorSize    = 2352; // Full sector size
-        bool       sense         = true; // Sense indicator
+        var        sense         = true; // Sense indicator
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
@@ -274,6 +282,7 @@ partial class Dump
         InitProgress?.Invoke();
 
         foreach((ulong item1, ulong item2) in leadOutExtents.ToArray())
+        {
             for(ulong i = item1; i <= item2; i++)
             {
                 if(_aborted)
@@ -306,14 +315,20 @@ partial class Dump
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
+                {
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                         _dev.Timeout, out cmdDuration);
+                }
                 else if(read12)
+                {
                     sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
                                         1, false, _dev.Timeout, out cmdDuration);
+                }
                 else if(read10)
+                {
                     sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
                                         1, _dev.Timeout, out cmdDuration);
+                }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
@@ -328,14 +343,14 @@ partial class Dump
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize * _maximumReadable];
-                        byte[] sub  = new byte[subSize    * _maximumReadable];
+                        var data = new byte[sectorSize * _maximumReadable];
+                        var sub  = new byte[subSize    * _maximumReadable];
 
-                        for(int b = 0; b < _maximumReadable; b++)
+                        for(var b = 0; b < _maximumReadable; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(0 + b * blockSize), data, sectorSize * b, sectorSize);
 
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                         }
 
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
@@ -375,8 +390,10 @@ partial class Dump
                         outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
                         if(desiredSubchannel != MmcSubchannel.None)
+                        {
                             outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
                                                           SectorTagType.CdSectorSubchannel);
+                        }
                     }
                     else
                         outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
@@ -394,6 +411,7 @@ partial class Dump
                 if(!double.IsInfinity(newSpeed))
                     currentSpeed = newSpeed;
             }
+        }
 
         EndProgress?.Invoke();
     }

@@ -39,7 +39,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -122,12 +121,15 @@ public static class Remote
             mctx.Database.EnsureCreated();
 
             mctx.Database.
-                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                 ExecuteSqlRaw(
+                     "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in mctx.Database.GetPendingMigrations())
+            {
                 mctx.Database.
                      ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
                          migration}', '0.0.0')");
+            }
         }
         else
             mctx.Database.Migrate();
@@ -192,7 +194,7 @@ public static class Remote
 
             Stream  data   = response.Content.ReadAsStream();
             var     reader = new StreamReader(data);
-            SyncDto sync   = JsonSerializer.Deserialize<SyncDto>(reader.ReadToEnd())     ?? new SyncDto();
+            SyncDto sync   = JsonSerializer.Deserialize<SyncDto>(reader.ReadToEnd()) ?? new SyncDto();
 
             if(create)
             {
@@ -347,7 +349,7 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, addedVendors);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors,    addedVendors);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_vendors, modifiedVendors);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
@@ -382,7 +384,7 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, addedProducts);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products,    addedProducts);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_products, modifiedProducts);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
@@ -420,7 +422,7 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, addedOffsets);
+                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets,    addedOffsets);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_CompactDisc_read_offsets, modifiedOffsets);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
@@ -464,7 +466,7 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, addedDevices);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices,    addedDevices);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_known_devices, modifiedDevices);
 
                 AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
@@ -535,7 +537,7 @@ public static class Remote
                                 }
                             });
 
-                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers, addedNesHeaders);
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers,    addedNesHeaders);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_known_iNES_NES_2_0_headers, modifiedNesHeaders);
             }
         }

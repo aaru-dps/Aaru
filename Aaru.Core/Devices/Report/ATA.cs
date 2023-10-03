@@ -46,7 +46,7 @@ public sealed partial class DeviceReport
     /// <returns>Media report</returns>
     public TestedMedia ReportAtaMedia()
     {
-        bool                   sense      = true;
+        var                    sense      = true;
         AtaErrorRegistersChs   errorChs   = new();
         AtaErrorRegistersLba28 errorLba   = new();
         AtaErrorRegistersLba48 errorLba48 = new();
@@ -103,8 +103,10 @@ public sealed partial class DeviceReport
                 };
 
                 if(mediaTest.Blocks == 0)
+                {
                     mediaTest.Blocks =
                         (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                }
             }
 
             if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
@@ -121,6 +123,7 @@ public sealed partial class DeviceReport
 
             if(ataId.NominalRotationRate != 0x0000 &&
                ataId.NominalRotationRate != 0xFFFF)
+            {
                 if(ataId.NominalRotationRate == 0x0001)
                     mediaTest.SolidStateDevice = true;
                 else
@@ -128,6 +131,7 @@ public sealed partial class DeviceReport
                     mediaTest.SolidStateDevice    = false;
                     mediaTest.NominalRotationRate = ataId.NominalRotationRate;
                 }
+            }
 
             uint logicalSectorSize;
             uint physicalSectorSize;
@@ -136,16 +140,18 @@ public sealed partial class DeviceReport
                (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                {
                     if(ataId.LogicalSectorWords <= 255 ||
                        ataId.LogicalAlignment   == 0xFFFF)
                         logicalSectorSize = 512;
                     else
                         logicalSectorSize = ataId.LogicalSectorWords * 2;
+                }
                 else
                     logicalSectorSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    physicalSectorSize = (uint)(logicalSectorSize * ((1 << ataId.PhysLogSectorSize) & 0xF));
+                    physicalSectorSize = (uint)(logicalSectorSize * (1 << ataId.PhysLogSectorSize & 0xF));
                 else
                     physicalSectorSize = logicalSectorSize;
             }
@@ -184,7 +190,7 @@ public sealed partial class DeviceReport
                     mediaTest.Manufacturer = ataId.MediaManufacturer;
             }
 
-            ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
+            var checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -445,7 +451,7 @@ public sealed partial class DeviceReport
     /// <summary>Creates a report of an ATA device</summary>
     public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
     {
-        bool                   sense        = true;
+        var                    sense        = true;
         byte[]                 readBuf      = Array.Empty<byte>();
         AtaErrorRegistersChs   errorChs     = new();
         AtaErrorRegistersLba28 errorLba     = new();
@@ -498,6 +504,7 @@ public sealed partial class DeviceReport
 
         if(ataId.NominalRotationRate != 0x0000 &&
            ataId.NominalRotationRate != 0xFFFF)
+        {
             if(ataId.NominalRotationRate == 0x0001)
                 capabilities.SolidStateDevice = true;
             else
@@ -505,6 +512,7 @@ public sealed partial class DeviceReport
                 capabilities.SolidStateDevice    = false;
                 capabilities.NominalRotationRate = ataId.NominalRotationRate;
             }
+        }
 
         uint logicalSectorSize;
         uint physicalSectorSize;
@@ -513,11 +521,13 @@ public sealed partial class DeviceReport
            (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
         {
             if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+            {
                 if(ataId.LogicalSectorWords <= 255 ||
                    ataId.LogicalAlignment   == 0xFFFF)
                     logicalSectorSize = 512;
                 else
                     logicalSectorSize = ataId.LogicalSectorWords * 2;
+            }
             else
                 logicalSectorSize = 512;
 
@@ -819,9 +829,9 @@ public sealed partial class DeviceReport
     /// <returns>IDENTIFY ATA DEVICE response without the private fields</returns>
     public static byte[] ClearIdentify(byte[] buffer)
     {
-        byte[] empty = new byte[512];
+        var empty = new byte[512];
 
-        Array.Copy(empty, 0, buffer, 20, 20);
+        Array.Copy(empty, 0, buffer, 20,  20);
         Array.Copy(empty, 0, buffer, 216, 8);
         Array.Copy(empty, 0, buffer, 224, 8);
         Array.Copy(empty, 0, buffer, 352, 40);

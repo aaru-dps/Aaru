@@ -73,12 +73,12 @@ partial class Dump
     /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
     /// <param name="dvdDecrypt">DVD CSS decryption module</param>
     void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc,
-             DVDDecryption dvdDecrypt = null)
+             DVDDecryption                    dvdDecrypt = null)
     {
         bool               sense;
         byte               scsiMediumType     = 0;
         byte               scsiDensityCode    = 0;
-        bool               containsFloppyPage = false;
+        var                containsFloppyPage = false;
         const ushort       sbcProfile         = 0x0001;
         double             totalDuration      = 0;
         double             currentSpeed       = 0;
@@ -90,6 +90,7 @@ partial class Dump
         var                outputFormat = _outputPlugin as IWritableImage;
 
         if(opticalDisc)
+        {
             switch(dskType)
             {
                 case MediaType.REV35:
@@ -99,6 +100,7 @@ partial class Dump
 
                     break;
             }
+        }
 
         _dumpLog.WriteLine(Localization.Core.Initializing_reader);
         var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw);
@@ -137,16 +139,20 @@ partial class Dump
 
                 if(!sense ||
                    _dev.Error)
+                {
                     sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                              0x00, 5, out _);
+                }
 
                 if(!sense &&
                    !_dev.Error)
+                {
                     if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                     {
                         mediaTags.Add(MediaTagType.SCSI_MODESENSE_10, cmdBuf);
                         decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
                     }
+                }
 
                 _dumpLog.WriteLine(Localization.Core.Requesting_MODE_SENSE_6);
                 UpdateStatus?.Invoke(Localization.Core.Requesting_MODE_SENSE_6);
@@ -155,19 +161,23 @@ partial class Dump
                                         out _);
 
                 if(sense || _dev.Error)
+                {
                     sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
                                             out _);
+                }
 
                 if(sense || _dev.Error)
                     sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                 if(!sense &&
                    !_dev.Error)
+                {
                     if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                     {
                         mediaTags.Add(MediaTagType.SCSI_MODESENSE_6, cmdBuf);
                         decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
                     }
+                }
 
                 if(decMode.HasValue)
                 {
@@ -179,15 +189,17 @@ partial class Dump
                     // TODO: Fix this
                     containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,
                                                                         (current, modePage) =>
-                                                                            current | (modePage.Page == 0x05)) == true;
+                                                                            current | modePage.Page == 0x05) == true;
                 }
             }
         }
 
         if(dskType == MediaType.Unknown)
+        {
             dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
                                                       scsiMediumType, scsiDensityCode, blocks + 1, blockSize,
                                                       _dev.IsUsb, opticalDisc);
+        }
 
         if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0, blocks + 1);
@@ -253,31 +265,32 @@ partial class Dump
         UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes, blocks,
                                            blocks * blockSize));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time, blocksToRead));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time,       blocksToRead));
         UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_bytes_per_physical_block,
                                            scsiReader.LongBlockSize));
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0, _dev.ScsiType));
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_medium_type_0, scsiMediumType));
-        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_density_type_0, scsiDensityCode));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_device_type_0,              _dev.ScsiType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_medium_type_0,              scsiMediumType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_density_type_0,             scsiDensityCode));
         UpdateStatus?.Invoke(string.Format(Localization.Core.SCSI_floppy_mode_page_present_0, containsFloppyPage));
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0, dskType));
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0,           dskType));
 
-        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes, blocks, blocks * blockSize);
-        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time, blocksToRead);
-        _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block, blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes,           blocks, blocks * blockSize);
+        _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time,        blocksToRead);
+        _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block,  blockSize);
         _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_physical_block, scsiReader.LongBlockSize);
-        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0, _dev.ScsiType);
-        _dumpLog.WriteLine(Localization.Core.SCSI_medium_type_0, scsiMediumType);
-        _dumpLog.WriteLine(Localization.Core.SCSI_density_type_0, scsiDensityCode);
-        _dumpLog.WriteLine(Localization.Core.SCSI_floppy_mode_page_present_0, containsFloppyPage);
-        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, dskType);
+        _dumpLog.WriteLine(Localization.Core.SCSI_device_type_0,                        _dev.ScsiType);
+        _dumpLog.WriteLine(Localization.Core.SCSI_medium_type_0,                        scsiMediumType);
+        _dumpLog.WriteLine(Localization.Core.SCSI_density_type_0,                       scsiDensityCode);
+        _dumpLog.WriteLine(Localization.Core.SCSI_floppy_mode_page_present_0,           containsFloppyPage);
+        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0,                     dskType);
 
         uint longBlockSize = scsiReader.LongBlockSize;
 
         if(_dumpRaw)
+        {
             if(blockSize == longBlockSize)
             {
                 ErrorMessage?.Invoke(!scsiReader.CanReadRaw
@@ -307,13 +320,14 @@ partial class Dump
                 physicalBlockSize = longBlockSize;
                 blockSize         = longBlockSize;
             }
+        }
 
         ret = true;
 
         foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !outputFormat.SupportedMediaTags.Contains(tag)))
         {
             ret = false;
-            _dumpLog.WriteLine(string.Format(Localization.Core.Output_format_does_not_support_0, tag));
+            _dumpLog.WriteLine(string.Format(Localization.Core.Output_format_does_not_support_0,   tag));
             ErrorMessage?.Invoke(string.Format(Localization.Core.Output_format_does_not_support_0, tag));
         }
 
@@ -339,8 +353,8 @@ partial class Dump
         var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
                                   _dimensions);
 
-        var  ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
-        bool imageCreated = false;
+        var ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+        var imageCreated = false;
 
         if(!opticalDisc)
         {
@@ -363,7 +377,7 @@ partial class Dump
 
         _dumpStopwatch.Restart();
         double imageWriteDuration      = 0;
-        bool   writeSingleOpticalTrack = true;
+        var    writeSingleOpticalTrack = true;
 
         if(opticalDisc)
         {
@@ -441,7 +455,8 @@ partial class Dump
                         List<Track> tracks = new();
 
                         for(ushort tno = discInformation.Value.FirstTrackNumber;
-                            tno <= discInformation?.LastTrackLastSession; tno++)
+                            tno <= discInformation?.LastTrackLastSession;
+                            tno++)
                         {
                             sense = _dev.ReadTrackInformation(out readBuffer, out _, false,
                                                               TrackInformationType.LogicalTrackNumber, tno,
@@ -486,6 +501,7 @@ partial class Dump
                         }
 
                         if(tracks.Count == 0)
+                        {
                             tracks.Add(new Track
                             {
                                 BytesPerSector    = (int)blockSize,
@@ -496,6 +512,7 @@ partial class Dump
                                 Session           = 1,
                                 Type              = TrackType.Data
                             });
+                        }
                         else
                             tracks = tracks.OrderBy(t => t.Sequence).ToList();
 
@@ -517,9 +534,11 @@ partial class Dump
 
                     #if DEBUG
                         foreach(Track trk in tracks)
+                        {
                             UpdateStatus?.
                                 Invoke(string.Format(Localization.Core.Track_0_starts_at_LBA_1_and_ends_at_LBA_2,
                                                      trk.Sequence, trk.StartSector, trk.EndSector));
+                        }
                     #endif
 
                         if(canStoreNotCdTracks)
@@ -541,6 +560,7 @@ partial class Dump
                             }
                         }
                         else
+                        {
                             opticalPlugin.SetTracks(new List<Track>
                             {
                                 new()
@@ -554,6 +574,7 @@ partial class Dump
                                     Type              = TrackType.Data
                                 }
                             });
+                        }
                     }
                 }
             }
@@ -569,9 +590,10 @@ partial class Dump
         }
         else if(decMode?.Pages != null)
         {
-            bool setGeometry = false;
+            var setGeometry = false;
 
             foreach(Modes.ModePage page in decMode.Value.Pages)
+            {
                 switch(page.Page)
                 {
                     case 0x04 when page.Subpage == 0x00:
@@ -588,9 +610,11 @@ partial class Dump
 
                         UpdateStatus?.
                             Invoke(string.
-                                       Format(Localization.Core.Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track,
-                                              rigidPage.Value.Cylinders, rigidPage.Value.Heads,
-                                              (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))));
+                                       Format(
+                                           Localization.Core.
+                                                        Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track,
+                                           rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                                           (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))));
 
                         outputFormat.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
                                                  (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
@@ -613,9 +637,11 @@ partial class Dump
 
                         UpdateStatus?.
                             Invoke(string.
-                                       Format(Localization.Core.Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track,
-                                              flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
-                                              flexiblePage.Value.SectorsPerTrack));
+                                       Format(
+                                           Localization.Core.
+                                                        Setting_geometry_to_0_cylinders_1_heads_2_sectors_per_track,
+                                           flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                                           flexiblePage.Value.SectorsPerTrack));
 
                         outputFormat.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
                                                  flexiblePage.Value.SectorsPerTrack);
@@ -625,6 +651,7 @@ partial class Dump
                         break;
                     }
                 }
+            }
         }
 
         if(!imageCreated)
@@ -676,10 +703,10 @@ partial class Dump
         if(_createGraph)
         {
             bool discIs80Mm =
-                (mediaTags?.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfiBytes) == true &&
-                 PFI.Decode(pfiBytes, dskType)?.DiscSize                           == DVDSize.Eighty) ||
-                (mediaTags?.TryGetValue(MediaTagType.BD_DI, out byte[] diBytes) == true && DI.
-                     Decode(diBytes)?.Units?.Any(s => s.DiscSize == DI.BluSize.Eighty) == true);
+                mediaTags?.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfiBytes) == true &&
+                PFI.Decode(pfiBytes, dskType)?.DiscSize                           == DVDSize.Eighty ||
+                mediaTags?.TryGetValue(MediaTagType.BD_DI, out byte[] diBytes) == true && DI.
+                    Decode(diBytes)?.Units?.Any(s => s.DiscSize == DI.BluSize.Eighty) == true;
 
             Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType, discIs80Mm);
 
@@ -689,8 +716,10 @@ partial class Dump
                 _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
 
             if(_mediaGraph is not null)
+            {
                 foreach(Tuple<ulong, ulong> e in extents.ToArray())
                     _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+            }
 
             _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
         }
@@ -719,7 +748,7 @@ partial class Dump
             }
             else
             {
-                _dumpLog.WriteLine(string.Format(Localization.Core.Setting_speed_to_0_x, _speed));
+                _dumpLog.WriteLine(string.Format(Localization.Core.Setting_speed_to_0_x,   _speed));
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_speed_to_0_x, _speed));
             }
 
@@ -734,7 +763,7 @@ partial class Dump
         if(_resume?.BlankExtents != null)
             blankExtents = ExtentsConverter.FromMetadata(_resume.BlankExtents);
 
-        bool newTrim = false;
+        var newTrim = false;
 
         if(mediaTags.TryGetValue(MediaTagType.DVD_CMI, out byte[] cmi) &&
            Settings.Settings.Current.EnableDecryption                  &&
@@ -747,15 +776,20 @@ partial class Dump
         }
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
-            ReadOpticalData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+        {
+            ReadOpticalData(blocks,       blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                             ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                            ref newTrim, ref blankExtents);
+                            ref newTrim,  ref blankExtents);
+        }
         else
-            ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+        {
+            ReadSbcData(blocks,       blocksToRead,      blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                         ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                        ref newTrim, ref dvdDecrypt,
+                        ref newTrim,  ref dvdDecrypt,
                         mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted)
-                            ? mediaTags[MediaTagType.DVD_DiscKey_Decrypted] : null);
+                            ? mediaTags[MediaTagType.DVD_DiscKey_Decrypted]
+                            : null);
+        }
 
         _dumpStopwatch.Stop();
         mhddLog.Close();
@@ -785,7 +819,8 @@ partial class Dump
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                   Per(imageWriteDuration.Seconds())));
 
-        #region Trimming
+    #region Trimming
+
         if(_resume.BadBlocks.Count > 0 &&
            !_aborted                   &&
            _trim                       &&
@@ -810,9 +845,11 @@ partial class Dump
 
             _trimStopwatch.Stop();
         }
-        #endregion Trimming
 
-        #region Error handling
+    #endregion Trimming
+
+    #region Error handling
+
         if(_resume.BadBlocks.Count > 0 &&
            !_aborted                   &&
            _retryPasses > 0)
@@ -825,9 +862,11 @@ partial class Dump
            _titleKeys                                 &&
            mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted))
             RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
-        #endregion Error handling
+
+    #endregion Error handling
 
         if(opticalDisc)
+        {
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
             {
                 if(tag.Value is null)
@@ -850,6 +889,7 @@ partial class Dump
 
                 return;
             }
+        }
         else
         {
             if(!_dev.IsRemovable ||
@@ -929,11 +969,14 @@ partial class Dump
 
                     if(!sense ||
                        _dev.Error)
+                    {
                         sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                                  0x00, 5, out _);
+                    }
 
                     if(!sense &&
                        !_dev.Error)
+                    {
                         if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                         {
                             ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
@@ -949,6 +992,7 @@ partial class Dump
                                 return;
                             }
                         }
+                    }
 
                     UpdateStatus?.Invoke(Localization.Core.Requesting_MODE_SENSE_6);
                     _dumpLog.WriteLine(Localization.Core.Requesting_MODE_SENSE_6);
@@ -957,14 +1001,17 @@ partial class Dump
                                             out _);
 
                     if(sense || _dev.Error)
+                    {
                         sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
                                                 5, out _);
+                    }
 
                     if(sense || _dev.Error)
                         sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                     if(!sense &&
                        !_dev.Error)
+                    {
                         if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                         {
                             ret = outputFormat.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
@@ -980,6 +1027,7 @@ partial class Dump
                                 return;
                             }
                         }
+                    }
                 }
             }
         }
@@ -1002,8 +1050,10 @@ partial class Dump
         };
 
         if(!outputFormat.SetImageInfo(metadata))
+        {
             ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
                                  outputFormat.ErrorMessage);
+        }
 
         if(_preSidecar != null)
             outputFormat.SetMetadata(_preSidecar);
@@ -1094,7 +1144,9 @@ partial class Dump
                     {
                         if(_dev.IsUsb &&
                            _dev.UsbDescriptors != null)
+                        {
                             if(outputFormat.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
+                            {
                                 sidecar.BlockMedias[0].Usb = new Usb
                                 {
                                     ProductID = _dev.UsbProductId,
@@ -1106,6 +1158,8 @@ partial class Dump
                                         Checksums = Checksum.GetChecksums(_dev.UsbDescriptors)
                                     }
                                 };
+                            }
+                        }
 
                         byte[] cmdBuf;
 
@@ -1114,7 +1168,9 @@ partial class Dump
                             sense = _dev.AtapiIdentify(out cmdBuf, out _);
 
                             if(!sense)
+                            {
                                 if(outputFormat.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+                                {
                                     sidecar.BlockMedias[0].ATA = new ATA
                                     {
                                         Identify = new CommonTypes.AaruMetadata.Dump
@@ -1124,6 +1180,8 @@ partial class Dump
                                             Checksums = Checksum.GetChecksums(cmdBuf)
                                         }
                                     };
+                                }
+                            }
                         }
 
                         sense = _dev.ScsiInquiry(out cmdBuf, out _);
@@ -1131,6 +1189,7 @@ partial class Dump
                         if(!sense)
                         {
                             if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+                            {
                                 sidecar.BlockMedias[0].SCSI = new SCSI
                                 {
                                     Inquiry = new CommonTypes.AaruMetadata.Dump
@@ -1140,6 +1199,7 @@ partial class Dump
                                         Checksums = Checksum.GetChecksums(cmdBuf)
                                     }
                                 };
+                            }
 
                             // TODO: SCSI Extended Vendor Page descriptors
                             /*
@@ -1183,19 +1243,27 @@ partial class Dump
 
                             if(!sense ||
                                _dev.Error)
+                            {
                                 sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
                                                          ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                            }
 
                             if(!sense &&
                                !_dev.Error)
+                            {
                                 if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
+                                {
                                     if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+                                    {
                                         sidecar.BlockMedias[0].SCSI.ModeSense10 = new CommonTypes.AaruMetadata.Dump
                                         {
                                             Image     = _outputPath,
                                             Size      = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf)
                                         };
+                                    }
+                                }
+                            }
 
                             UpdateStatus?.Invoke(Localization.Core.Requesting_MODE_SENSE_6);
                             _dumpLog.WriteLine(Localization.Core.Requesting_MODE_SENSE_6);
@@ -1204,34 +1272,45 @@ partial class Dump
                                                     0x00, 5, out _);
 
                             if(sense || _dev.Error)
+                            {
                                 sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
                                                         0x3F, 0x00, 5, out _);
+                            }
 
                             if(sense || _dev.Error)
                                 sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                             if(!sense &&
                                !_dev.Error)
+                            {
                                 if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
+                                {
                                     if(outputFormat.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+                                    {
                                         sidecar.BlockMedias[0].SCSI.ModeSense = new CommonTypes.AaruMetadata.Dump
                                         {
                                             Image     = _outputPath,
                                             Size      = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf)
                                         };
+                                    }
+                                }
+                            }
                         }
                     }
 
                     List<(ulong start, string type)> filesystems = new();
 
                     if(sidecar.BlockMedias[0].FileSystemInformation != null)
+                    {
                         filesystems.AddRange(from partition in sidecar.BlockMedias[0].FileSystemInformation
                                              where partition.FileSystems != null
                                              from fileSystem in partition.FileSystems
                                              select (partition.StartSector, fileSystem.Type));
+                    }
 
                     if(filesystems.Count > 0)
+                    {
                         foreach(var filesystem in filesystems.Select(o => new
                                 {
                                     o.start,
@@ -1244,6 +1323,7 @@ partial class Dump
                             _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type,
                                                filesystem.start);
                         }
+                    }
 
                     sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(dskType);
 
@@ -1255,6 +1335,7 @@ partial class Dump
                     // TODO: Implement device firmware revision
                     if(!_dev.IsRemovable ||
                        _dev.IsUsb)
+                    {
                         if(_dev.Type == DeviceType.ATAPI)
                             sidecar.BlockMedias[0].Interface = "ATAPI";
                         else if(_dev.IsUsb)
@@ -1263,6 +1344,7 @@ partial class Dump
                             sidecar.BlockMedias[0].Interface = "FireWire";
                         else
                             sidecar.BlockMedias[0].Interface = "SCSI";
+                    }
 
                     sidecar.BlockMedias[0].LogicalBlocks     = blocks;
                     sidecar.BlockMedias[0].PhysicalBlockSize = physicalBlockSize;
@@ -1295,24 +1377,29 @@ partial class Dump
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+            Invoke(string.Format(
+                       Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                       _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                       totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                       imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                       _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
                                                     Per(totalDuration.Milliseconds())).Humanize());
 
         if(maxSpeed > 0)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
                                                ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
+        }
 
         if(minSpeed is > 0 and < double.MaxValue)
+        {
             UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
                                                ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
+        }
 
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");

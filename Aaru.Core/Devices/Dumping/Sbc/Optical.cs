@@ -37,10 +37,10 @@ partial class Dump
     /// <param name="imageWriteDuration">Total time spent writing to image</param>
     /// <param name="newTrim">Set if we need to start a trim</param>
     /// <param name="blankExtents">Blank extents</param>
-    void ReadOpticalData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
+    void ReadOpticalData(in ulong     blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
                          ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
-                         ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                         ref double imageWriteDuration, ref bool newTrim, ref ExtentsULong blankExtents)
+                         ref double   totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
+                         ref double   imageWriteDuration, ref bool newTrim, ref ExtentsULong blankExtents)
     {
         const uint maxBlocks      = 256;
         var        writtenExtents = new ExtentsULong();
@@ -53,7 +53,7 @@ partial class Dump
         bool       sense;
         byte[]     buffer;
         ulong      sectorSpeedStart = 0;
-        bool       canMediumScan    = true;
+        var        canMediumScan    = true;
         var        outputFormat     = _outputPlugin as IWritableImage;
 
         InitProgress?.Invoke();
@@ -115,8 +115,11 @@ partial class Dump
                     c = (uint)(blocks - b);
 
                 UpdateProgress?.
-                    Invoke(written ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b) : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1, c, b),
-                           b, (long)blocks);
+                    Invoke(
+                        written
+                            ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b)
+                            : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1,   c, b),
+                        b, (long)blocks);
 
                 conditionMet = _dev.MediumScan(out _, written, false, false, false, false, b, c, c, out _, out _,
                                                uint.MaxValue, out _);
@@ -158,8 +161,10 @@ partial class Dump
             writtenExtents.Add(0, blocks - 1);
 
             foreach(Tuple<ulong, ulong> blank in blankExtents.ToArray())
+            {
                 for(ulong b = blank.Item1; b <= blank.Item2; b++)
                     writtenExtents.Remove(b);
+            }
         }
 
         if(writtenExtents.Count == 0)
@@ -209,8 +214,10 @@ partial class Dump
                     minSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                           (long)i, (long)blocks);
+                    Invoke(
+                        string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
+                                      ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                        (long)i, (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;

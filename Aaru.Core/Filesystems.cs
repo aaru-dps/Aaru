@@ -49,7 +49,7 @@ public static class Filesystems
     /// <param name="partition">Partition</param>
     /// <param name="getGuid">Gets plugin GUID</param>
     public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition,
-                                bool getGuid = false)
+                                bool        getGuid = false)
     {
         PluginBase plugins = PluginBase.Singleton;
 

@@ -163,7 +163,9 @@ public sealed partial class Sidecar
                     Tuple[] tuples = CIS.GetTuples(cis);
 
                     if(tuples != null)
+                    {
                         foreach(Tuple tuple in tuples)
+                        {
                             switch(tuple.Code)
                             {
                                 case TupleCodes.CISTPL_MANFID:
@@ -195,6 +197,8 @@ public sealed partial class Sidecar
 
                                     break;
                             }
+                        }
+                    }
 
                     break;
                 case MediaTagType.SCSI_INQUIRY:
@@ -708,6 +712,7 @@ public sealed partial class Sidecar
                 List<FileSystem> lstFs = new();
 
                 foreach(Type pluginType in plugins.Filesystems.Values)
+                {
                     try
                     {
                         if(_aborted)
@@ -739,12 +744,13 @@ public sealed partial class Sidecar
                             Statistics.AddFilesystem(fsMetadata.Type);
                         }
                     }
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
                         //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                     }
+                }
 
                 if(lstFs.Count > 0)
                     fsInfo.FileSystems = lstFs;
@@ -773,6 +779,7 @@ public sealed partial class Sidecar
             List<FileSystem> lstFs = new();
 
             foreach(Type pluginType in plugins.Filesystems.Values)
+            {
                 try
                 {
                     if(_aborted)
@@ -804,12 +811,13 @@ public sealed partial class Sidecar
                         Statistics.AddFilesystem(fsMetadata.Type);
                     }
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
-                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 {
                     //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                 }
+            }
 
             if(lstFs.Count > 0)
                 fsInfo.FileSystems = lstFs;
@@ -836,6 +844,7 @@ public sealed partial class Sidecar
                 ataId = Identify.Decode(buffer);
 
             if(ataId.HasValue)
+            {
                 if(ataId.Value.CurrentCylinders       > 0 &&
                    ataId.Value.CurrentHeads           > 0 &&
                    ataId.Value.CurrentSectorsPerTrack > 0)
@@ -852,6 +861,7 @@ public sealed partial class Sidecar
                     sidecar.BlockMedias[0].Heads           = ataId.Value.Heads;
                     sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
                 }
+            }
         }
 
         sidecar.BlockMedias[0].DumpHardware = image.DumpHardware;
@@ -960,7 +970,8 @@ public sealed partial class Sidecar
 
                 break;
             case CommonTypes.MediaType.SHARP_525_9:
-            case CommonTypes.MediaType.SHARP_35_9: break;
+            case CommonTypes.MediaType.SHARP_35_9:
+                break;
             case CommonTypes.MediaType.ECMA_99_15:
             case CommonTypes.MediaType.ECMA_99_26:
             case CommonTypes.MediaType.ECMA_99_8:
@@ -985,7 +996,8 @@ public sealed partial class Sidecar
                 break;
         }
 
-        #region SuperCardPro
+    #region SuperCardPro
+
         string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".scp");
 
@@ -1008,8 +1020,9 @@ public sealed partial class Sidecar
                 }
                 catch(NotImplementedException) {}
 
-                if((image.Info.Heads == 2 && scpImage.Header.heads == 0) ||
-                   (image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2))
+                if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
+                   image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2)
+                {
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
                         List<BlockTrack> scpBlockTrackTypes = new();
@@ -1045,7 +1058,7 @@ public sealed partial class Sidecar
 
                             if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                             {
-                                byte[] trackContents =
+                                var trackContents =
                                     new byte[scpTrack.Entries.Last().dataOffset + scpTrack.Entries.Last().trackLength -
                                              scpImage.Header.offsets[t] + 1];
 
@@ -1062,23 +1075,31 @@ public sealed partial class Sidecar
                                                                           ThenBy(t => t.Head).ToList();
                     }
                     else
+                    {
                         AaruConsole.
-                            ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                           scpImage.Header.end + 1, image.Info.Cylinders);
+                            ErrorWriteLine(
+                                Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                scpImage.Header.end + 1, image.Info.Cylinders);
+                    }
+                }
                 else
+                {
                     AaruConsole.
                         ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring, 2,
                                        image.Info.Heads);
+                }
             }
         }
-        #endregion
 
-        #region KryoFlux
+    #endregion
+
+    #region KryoFlux
+
         string kfFile = null;
 
         string basename = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath));
 
-        bool kfDir = false;
+        var kfDir = false;
 
         if(_aborted)
             return;
@@ -1116,6 +1137,7 @@ public sealed partial class Sidecar
                 catch(NotImplementedException) {}
 
                 if(kfImage.Info.Heads == image.Info.Heads)
+                {
                     if(kfImage.Info.Cylinders >= image.Info.Cylinders)
                     {
                         List<BlockTrack> kfBlockTrackTypes = new();
@@ -1137,7 +1159,8 @@ public sealed partial class Sidecar
                                     Value = kfDir
                                                 ? Path.
                                                     Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.BasePath)),
-                                                            kvp.Value.Filename) : kvp.Value.Filename,
+                                                            kvp.Value.Filename)
+                                                : kvp.Value.Filename,
                                     Offset = 0
                                 }
                             };
@@ -1153,7 +1176,7 @@ public sealed partial class Sidecar
                             }
 
                             Stream kfStream      = kvp.Value.GetDataForkStream();
-                            byte[] trackContents = new byte[kfStream.Length];
+                            var    trackContents = new byte[kfStream.Length];
                             kfStream.Position = 0;
                             kfStream.EnsureRead(trackContents, 0, trackContents.Length);
                             kfBlockTrackType.Size      = (ulong)trackContents.Length;
@@ -1166,18 +1189,27 @@ public sealed partial class Sidecar
                                                                          ThenBy(t => t.Head).ToList();
                     }
                     else
+                    {
                         AaruConsole.
-                            ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                           kfImage.Info.Cylinders, image.Info.Cylinders);
+                            ErrorWriteLine(
+                                Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                kfImage.Info.Cylinders, image.Info.Cylinders);
+                    }
+                }
                 else
+                {
                     AaruConsole.
-                        ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
-                                       kfImage.Info.Heads, image.Info.Heads);
+                        ErrorWriteLine(
+                            Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                            kfImage.Info.Heads, image.Info.Heads);
+                }
             }
         }
-        #endregion
 
-        #region DiscFerret
+    #endregion
+
+    #region DiscFerret
+
         string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
@@ -1203,6 +1235,7 @@ public sealed partial class Sidecar
         UpdateStatus(Localization.Core.Hashing_DiscFerret_image);
 
         if(image.Info.Heads == dfiImage.Info.Heads)
+        {
             if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
             {
                 List<BlockTrack> dfiBlockTrackTypes = new();
@@ -1239,7 +1272,7 @@ public sealed partial class Sidecar
                        dfiImage.TrackLengths.TryGetValue(t, out long length))
                     {
                         dfiBlockTrackType.Image.Offset = (ulong)offset;
-                        byte[] trackContents = new byte[length];
+                        var trackContents = new byte[length];
                         dfiStream.Position = offset;
                         dfiStream.EnsureRead(trackContents, 0, trackContents.Length);
                         dfiBlockTrackType.Size      = (ulong)trackContents.Length;
@@ -1252,14 +1285,20 @@ public sealed partial class Sidecar
                 sidecar.BlockMedias[0].Track = dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
             }
             else
+            {
                 AaruConsole.
                     ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
                                    dfiImage.Info.Cylinders, image.Info.Cylinders);
+            }
+        }
         else
+        {
             AaruConsole.
                 ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring,
                                dfiImage.Info.Heads, image.Info.Heads);
-        #endregion
+        }
+
+    #endregion
 
         // TODO: Implement support for getting CHS from SCSI mode pages
     }

@@ -45,9 +45,9 @@ public static class Options
     public static Dictionary<string, string> Parse(string options)
     {
         Dictionary<string, string> parsed  = new();
-        bool                       escaped = false;
-        bool                       quoted  = false;
-        bool                       inValue = false;
+        var                        escaped = false;
+        var                        quoted  = false;
+        var                        inValue = false;
         string                     name    = null;
         string                     value;
         var                        sb = new StringBuilder();
@@ -55,7 +55,7 @@ public static class Options
         if(options == null)
             return parsed;
 
-        for(int index = 0; index < options.Length; index++)
+        for(var index = 0; index < options.Length; index++)
         {
             char c = options[index];
 
@@ -100,6 +100,7 @@ public static class Options
                     break;
                 default:
                     if(escaped)
+                    {
                         switch(c)
                         {
                             case 'a':
@@ -177,6 +178,7 @@ public static class Options
 
                                 break;
                         }
+                    }
                     else
                         sb.Append(c);
 

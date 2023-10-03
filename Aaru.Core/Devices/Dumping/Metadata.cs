@@ -115,19 +115,24 @@ partial class Dump
         List<(ulong start, string type)> filesystems = new();
 
         if(sidecar.OpticalDiscs[0].Track != null)
+        {
             filesystems.AddRange(from xmlTrack in sidecar.OpticalDiscs[0].Track
-                                 where xmlTrack.FileSystemInformation                                         != null
-                                 from partition in xmlTrack.FileSystemInformation where partition.FileSystems != null
+                                 where xmlTrack.FileSystemInformation != null
+                                 from partition in xmlTrack.FileSystemInformation
+                                 where partition.FileSystems != null
                                  from fileSystem in partition.FileSystems
                                  select (partition.StartSector, fileSystem.Type));
+        }
 
         if(filesystems.Count > 0)
+        {
             foreach(var filesystem in filesystems.Select(o => new
                     {
                         o.start,
                         o.type
                     }).Distinct())
                 _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
+        }
 
         sidecar.OpticalDiscs[0].Dimensions = Dimensions.FromMediaType(mediaType);
         (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
@@ -141,9 +146,11 @@ partial class Dump
             sidecar.OpticalDiscs[0].Offset = (int)(discOffset / 4);
 
         if(mediaTags != null)
+        {
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.SupportedMediaTags.
                                                                                   Contains(tag.Key)))
                 AddMediaTagToSidecar(_outputPath, tag.Key, tag.Value, ref sidecar);
+        }
 
         UpdateStatus?.Invoke(Localization.Core.Writing_metadata_sidecar);
 

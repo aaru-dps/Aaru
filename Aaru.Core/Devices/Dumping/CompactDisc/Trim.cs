@@ -83,7 +83,7 @@ partial class Dump
                         Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                         Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        bool              sense       = true; // Sense indicator
+        var               sense       = true; // Sense indicator
         byte[]            cmdBuf      = null; // Data buffer
         double            cmdDuration = 0;    // Command execution time
         const uint        sectorSize  = 2352; // Full sector size
@@ -92,12 +92,12 @@ partial class Dump
         var               outputOptical = _outputPlugin as IWritableOpticalImage;
 
         supportedPlextorSubchannel = supportedSubchannel switch
-        {
-            MmcSubchannel.None => PlextorSubchannel.None,
-            MmcSubchannel.Raw  => PlextorSubchannel.Pack,
-            MmcSubchannel.Q16  => PlextorSubchannel.Q16,
-            _                  => PlextorSubchannel.None
-        };
+                                     {
+                                         MmcSubchannel.None => PlextorSubchannel.None,
+                                         MmcSubchannel.Raw  => PlextorSubchannel.Pack,
+                                         MmcSubchannel.Q16  => PlextorSubchannel.Q16,
+                                         _                  => PlextorSubchannel.None
+                                     };
 
         if(_resume.BadBlocks.Count <= 0 ||
            _aborted                     ||
@@ -110,10 +110,10 @@ partial class Dump
         InitProgress?.Invoke();
         _trimStopwatch.Restart();
 
-        trimStart:
+    trimStart:
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
-        for(int b = 0; b < tmpArray.Length; b++)
+        for(var b = 0; b < tmpArray.Length; b++)
         {
             ulong badSector = tmpArray[b];
 
@@ -131,7 +131,7 @@ partial class Dump
             Track track = tracks.OrderBy(t => t.StartSector).LastOrDefault(t => badSector >= t.StartSector);
 
             byte sectorsToTrim   = 1;
-            uint badSectorToRead = (uint)badSector;
+            var  badSectorToRead = (uint)badSector;
 
             if(_fixOffset                       &&
                audioExtents.Contains(badSector) &&
@@ -149,8 +149,10 @@ partial class Dump
             }
 
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
+            {
                 sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                                   supportedPlextorSubchannel, out cmdDuration);
+            }
             else if(readcd)
             {
                 if(audioExtents.Contains(badSector))
@@ -202,17 +204,25 @@ partial class Dump
                 totalDuration += cmdDuration;
             }
             else if(read16)
+            {
                 sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize, 0,
                                     sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+            }
             else if(read12)
+            {
                 sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
                                     0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+            }
             else if(read10)
+            {
                 sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
                                     0, sectorsToTrim, _dev.Timeout, out cmdDuration);
+            }
             else if(read6)
+            {
                 sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim, _dev.Timeout,
                                    out cmdDuration);
+            }
 
             totalDuration += cmdDuration;
 
@@ -239,15 +249,15 @@ partial class Dump
                 uint blocksToRead = sectorsToTrim;
 
                 FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead, subSize,
-                              ref cmdBuf, blockSize, false);
+                              ref cmdBuf,  blockSize,  false);
             }
 
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                byte[] data = new byte[sectorSize];
-                byte[] sub  = new byte[subSize];
-                Array.Copy(cmdBuf, 0, data, 0, sectorSize);
-                Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
+                var data = new byte[sectorSize];
+                var sub  = new byte[subSize];
+                Array.Copy(cmdBuf, 0,          data, 0, sectorSize);
+                Array.Copy(cmdBuf, sectorSize, sub,  0, subSize);
 
                 if(supportsLongSectors)
                     outputOptical.WriteSectorLong(data, badSector);

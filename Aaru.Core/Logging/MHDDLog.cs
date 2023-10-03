@@ -46,8 +46,8 @@ sealed class MhddLog
 {
     const    string       MHDD_VER = "VER:2 ";
     readonly string       _logFile;
-    readonly MemoryStream _mhddFs;
     readonly IMediaGraph  _mediaGraph;
+    readonly MemoryStream _mhddFs;
 
     /// <summary>Initializes the MHDD log</summary>
     /// <param name="outputFile">Log file</param>
@@ -56,7 +56,8 @@ sealed class MhddLog
     /// <param name="blockSize">Bytes per block</param>
     /// <param name="blocksToRead">How many blocks read at once</param>
     /// <param name="private">Disable saving paths or serial numbers in log</param>
-    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private, uint mediaGraphDimensions = 0)
+    internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private,
+                     uint   mediaGraphDimensions = 0)
     {
         if(dev == null ||
            string.IsNullOrEmpty(outputFile))
@@ -99,13 +100,13 @@ sealed class MhddLog
                 break;
         }
 
-        string device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
-        string fw         = $"F/W: {dev.FirmwareRevision}";
-        string sn         = $"S/N: {(@private ? "" : dev.Serial)}";
-        string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-        string sectorSize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
+        var device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
+        var fw         = $"F/W: {dev.FirmwareRevision}";
+        var sn         = $"S/N: {(@private ? "" : dev.Serial)}";
+        var sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}",           blocks);
+        var sectorSize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
 
-        string scanBlockSize = string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+        var scanBlockSize = string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
 
         byte[] deviceBytes        = Encoding.ASCII.GetBytes(device);
         byte[] modeBytes          = Encoding.ASCII.GetBytes(mode);
@@ -116,33 +117,33 @@ sealed class MhddLog
         byte[] scanBlockSizeBytes = Encoding.ASCII.GetBytes(scanBlockSize);
         byte[] verBytes           = Encoding.ASCII.GetBytes(MHDD_VER);
 
-        uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length + snBytes.Length +
-                              sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
-                              verBytes.Length     + (2 * 9)                + // New lines
-                              4);                                            // Pointer
+        var pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length            + snBytes.Length +
+                             sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
+                             verBytes.Length     + 2 * 9                  + // New lines
+                             4);                                            // Pointer
 
-        byte[] newLine = new byte[2];
+        var newLine = new byte[2];
         newLine[0] = 0x0D;
         newLine[1] = 0x0A;
 
         _mhddFs.Write(BitConverter.GetBytes(pointer), 0, 4);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(verBytes, 0, verBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(modeBytes, 0, modeBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(fwBytes, 0, fwBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(snBytes, 0, snBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(sectorSizeBytes, 0, sectorSizeBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
-        _mhddFs.Write(scanBlockSizeBytes, 0, scanBlockSizeBytes.Length);
-        _mhddFs.Write(newLine, 0, 2);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(verBytes,                       0, verBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(modeBytes,                      0, modeBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(deviceBytes,                    0, deviceBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(fwBytes,                        0, fwBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(snBytes,                        0, snBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(sectorsBytes,                   0, sectorsBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(sectorSizeBytes,                0, sectorSizeBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
+        _mhddFs.Write(scanBlockSizeBytes,             0, scanBlockSizeBytes.Length);
+        _mhddFs.Write(newLine,                        0, 2);
     }
 
     /// <summary>Logs a new read</summary>
@@ -156,27 +157,33 @@ sealed class MhddLog
         byte[] sectorBytes   = BitConverter.GetBytes(sector);
         byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
 
-        _mhddFs.Write(sectorBytes, 0, 8);
+        _mhddFs.Write(sectorBytes,   0, 8);
         _mhddFs.Write(durationBytes, 0, 8);
 
         switch(duration)
         {
-            case < 3:              _mediaGraph?.PaintSectors(sector, length, 0x00, 0xFF, 0x00);
+            case < 3:
+                _mediaGraph?.PaintSectors(sector, length, 0x00, 0xFF, 0x00);
 
                 break;
-            case >= 3 and < 10:    _mediaGraph?.PaintSectors(sector, length, 0x80, 0xFF, 0x00);
+            case >= 3 and < 10:
+                _mediaGraph?.PaintSectors(sector, length, 0x80, 0xFF, 0x00);
 
                 break;
-            case >= 10 and < 50:   _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xFF, 0x00);
+            case >= 10 and < 50:
+                _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xFF, 0x00);
 
                 break;
-            case >= 50 and < 150:  _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xAB, 0x00);
+            case >= 50 and < 150:
+                _mediaGraph?.PaintSectors(sector, length, 0xFF, 0xAB, 0x00);
 
                 break;
-            case >= 150 and < 500: _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x56, 0x00);
+            case >= 150 and < 500:
+                _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x56, 0x00);
 
                 break;
-            case >= 500:           _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x00, 0x00);
+            case >= 500:
+                _mediaGraph?.PaintSectors(sector, length, 0xFF, 0x00, 0x00);
 
                 break;
         }

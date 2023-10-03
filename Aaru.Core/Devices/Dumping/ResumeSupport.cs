@@ -88,8 +88,10 @@ static class ResumeSupport
                !force)
             {
                 if(resume.Removable)
+                {
                     throw new InvalidOperationException(Localization.Core.
                                                                      Resume_specifies_removable_but_device_is_non_removable);
+                }
 
                 throw new InvalidOperationException(Localization.Core.
                                                                  Resume_specifies_non_removable_but_device_is_removable);
@@ -98,9 +100,13 @@ static class ResumeSupport
             if(!isTape                        &&
                resume.LastBlock != blocks - 1 &&
                !force)
+            {
                 throw new
-                    InvalidOperationException(string.Format(Localization.Core.Resume_file_different_number_of_blocks_not_continuing,
-                                                            resume.LastBlock + 1, blocks));
+                    InvalidOperationException(string.Format(
+                                                  Localization.Core.
+                                                               Resume_file_different_number_of_blocks_not_continuing,
+                                                  resume.LastBlock + 1, blocks));
+            }
 
             foreach(DumpHardware oldTry in resume.Tries)
             {
@@ -108,28 +114,44 @@ static class ResumeSupport
                    !force)
                 {
                     if(oldTry.Manufacturer != manufacturer)
+                    {
                         throw new
                             InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_manufacturer_not_continuing,
-                                                                 oldTry.Manufacturer, manufacturer));
+                                                          Format(
+                                                              Localization.Core.
+                                                                           Resume_file_different_manufacturer_not_continuing,
+                                                              oldTry.Manufacturer, manufacturer));
+                    }
 
                     if(oldTry.Model != model)
+                    {
                         throw new
                             InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_model_not_continuing,
-                                                                 oldTry.Model, model));
+                                                          Format(
+                                                              Localization.Core.
+                                                                           Resume_file_different_model_not_continuing,
+                                                              oldTry.Model, model));
+                    }
 
                     if(oldTry.Serial != serial)
+                    {
                         throw new
                             InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_serial_number_not_continuing,
-                                                                 oldTry.Serial, serial));
+                                                          Format(
+                                                              Localization.Core.
+                                                                           Resume_file_different_serial_number_not_continuing,
+                                                              oldTry.Serial, serial));
+                    }
 
                     if(oldTry.Firmware != firmware)
+                    {
                         throw new
                             InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_firmware_revision_not_continuing,
-                                                                 oldTry.Firmware, firmware));
+                                                          Format(
+                                                              Localization.Core.
+                                                                           Resume_file_different_firmware_revision_not_continuing,
+                                                              oldTry.Firmware, firmware));
+                    }
                 }
 
                 if(oldTry.Software == null)

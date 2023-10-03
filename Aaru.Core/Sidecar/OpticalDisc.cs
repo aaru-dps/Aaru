@@ -121,10 +121,12 @@ public sealed partial class Sidecar
                     ATIP.CDATIP atip = ATIP.Decode(tag);
 
                     if(atip != null)
+                    {
                         if(atip.DDCD)
                             dskType = atip.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
                         else
                             dskType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
+                    }
 
                     break;
                 case MediaTagType.DVD_DMI:
@@ -154,6 +156,7 @@ public sealed partial class Sidecar
                     PFI.PhysicalFormatInformation? pfi = PFI.Decode(tag, dskType);
 
                     if(pfi.HasValue)
+                    {
                         if(dskType != MediaType.XGD    &&
                            dskType != MediaType.XGD2   &&
                            dskType != MediaType.XGD3   &&
@@ -162,23 +165,23 @@ public sealed partial class Sidecar
                            dskType != MediaType.Nuon)
                         {
                             dskType = pfi.Value.DiskCategory switch
-                            {
-                                DiskCategory.DVDPR    => MediaType.DVDPR,
-                                DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
-                                DiskCategory.DVDPRW   => MediaType.DVDPRW,
-                                DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                                DiskCategory.DVDR     => MediaType.DVDR,
-                                DiskCategory.DVDRAM   => MediaType.DVDRAM,
-                                DiskCategory.DVDROM   => MediaType.DVDROM,
-                                DiskCategory.DVDRW    => MediaType.DVDRW,
-                                DiskCategory.HDDVDR   => MediaType.HDDVDR,
-                                DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
-                                DiskCategory.HDDVDROM => MediaType.HDDVDROM,
-                                DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
-                                DiskCategory.Nintendo => MediaType.GOD,
-                                DiskCategory.UMD      => MediaType.UMD,
-                                _                     => dskType
-                            };
+                                      {
+                                          DiskCategory.DVDPR    => MediaType.DVDPR,
+                                          DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                          DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                          DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                          DiskCategory.DVDR     => MediaType.DVDR,
+                                          DiskCategory.DVDRAM   => MediaType.DVDRAM,
+                                          DiskCategory.DVDROM   => MediaType.DVDROM,
+                                          DiskCategory.DVDRW    => MediaType.DVDRW,
+                                          DiskCategory.HDDVDR   => MediaType.HDDVDR,
+                                          DiskCategory.HDDVDRAM => MediaType.HDDVDRAM,
+                                          DiskCategory.HDDVDROM => MediaType.HDDVDROM,
+                                          DiskCategory.HDDVDRW  => MediaType.HDDVDRW,
+                                          DiskCategory.Nintendo => MediaType.GOD,
+                                          DiskCategory.UMD      => MediaType.UMD,
+                                          _                     => dskType
+                                      };
 
                             if(dskType               == MediaType.DVDR &&
                                pfi.Value.PartVersion >= 6)
@@ -201,6 +204,7 @@ public sealed partial class Sidecar
                                 sidecar.OpticalDiscs[0].Dimensions.Thickness = 4;
                             }
                             else
+                            {
                                 switch(pfi.Value.DiscSize)
                                 {
                                     case DVDSize.Eighty:
@@ -214,7 +218,9 @@ public sealed partial class Sidecar
 
                                         break;
                                 }
+                            }
                         }
+                    }
 
                     break;
             }
@@ -267,22 +273,22 @@ public sealed partial class Sidecar
             var xmlTrk = new CommonTypes.AaruMetadata.Track();
 
             xmlTrk.Type = trk.Type switch
-            {
-                TrackType.Audio           => CommonTypes.AaruMetadata.TrackType.Audio,
-                TrackType.CdMode2Form2    => CommonTypes.AaruMetadata.TrackType.Mode2Form2,
-                TrackType.CdMode2Formless => CommonTypes.AaruMetadata.TrackType.Mode2,
-                TrackType.CdMode2Form1    => CommonTypes.AaruMetadata.TrackType.Mode2Form1,
-                TrackType.CdMode1         => CommonTypes.AaruMetadata.TrackType.Mode1,
-                TrackType.Data => sidecar.OpticalDiscs[0].DiscType switch
-                {
-                    "BD"     => CommonTypes.AaruMetadata.TrackType.Bluray,
-                    "DDCD"   => CommonTypes.AaruMetadata.TrackType.Ddcd,
-                    "DVD"    => CommonTypes.AaruMetadata.TrackType.Dvd,
-                    "HD DVD" => CommonTypes.AaruMetadata.TrackType.HdDvd,
-                    _        => CommonTypes.AaruMetadata.TrackType.Mode1
-                },
-                _ => xmlTrk.Type
-            };
+                          {
+                              TrackType.Audio           => CommonTypes.AaruMetadata.TrackType.Audio,
+                              TrackType.CdMode2Form2    => CommonTypes.AaruMetadata.TrackType.Mode2Form2,
+                              TrackType.CdMode2Formless => CommonTypes.AaruMetadata.TrackType.Mode2,
+                              TrackType.CdMode2Form1    => CommonTypes.AaruMetadata.TrackType.Mode2Form1,
+                              TrackType.CdMode1         => CommonTypes.AaruMetadata.TrackType.Mode1,
+                              TrackType.Data => sidecar.OpticalDiscs[0].DiscType switch
+                                                {
+                                                    "BD"     => CommonTypes.AaruMetadata.TrackType.Bluray,
+                                                    "DDCD"   => CommonTypes.AaruMetadata.TrackType.Ddcd,
+                                                    "DVD"    => CommonTypes.AaruMetadata.TrackType.Dvd,
+                                                    "HD DVD" => CommonTypes.AaruMetadata.TrackType.HdDvd,
+                                                    _        => CommonTypes.AaruMetadata.TrackType.Mode1
+                                                },
+                              _ => xmlTrk.Type
+                          };
 
             xmlTrk.Sequence = new TrackSequence
             {
@@ -507,7 +513,7 @@ public sealed partial class Sidecar
             // For fast debugging, skip checksum
             //skipChecksum:
 
-            List<Partition> trkPartitions =
+            var trkPartitions =
                 partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
 
             xmlTrk.FileSystemInformation = new List<CommonTypes.AaruMetadata.Partition>();
@@ -529,6 +535,7 @@ public sealed partial class Sidecar
                     List<FileSystem> lstFs = new();
 
                     foreach(Type pluginType in plugins.Filesystems.Values)
+                    {
                         try
                         {
                             if(_aborted)
@@ -549,20 +556,21 @@ public sealed partial class Sidecar
                             Statistics.AddFilesystem(fsMetadata.Type);
 
                             dskType = fsMetadata.Type switch
-                            {
-                                "Opera"                        => MediaType.ThreeDO,
-                                "PC Engine filesystem"         => MediaType.SuperCDROM2,
-                                "Nintendo Wii filesystem"      => MediaType.WOD,
-                                "Nintendo Gamecube filesystem" => MediaType.GOD,
-                                _                              => dskType
-                            };
+                                      {
+                                          "Opera"                        => MediaType.ThreeDO,
+                                          "PC Engine filesystem"         => MediaType.SuperCDROM2,
+                                          "Nintendo Wii filesystem"      => MediaType.WOD,
+                                          "Nintendo Gamecube filesystem" => MediaType.GOD,
+                                          _                              => dskType
+                                      };
                         }
-                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
-                            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         {
                             //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                         }
+                    }
 
                     if(lstFs.Count > 0)
                         metadataPartition.FileSystems = lstFs;
@@ -590,6 +598,7 @@ public sealed partial class Sidecar
                 };
 
                 foreach(Type pluginType in plugins.Filesystems.Values)
+                {
                     try
                     {
                         if(_aborted)
@@ -610,20 +619,21 @@ public sealed partial class Sidecar
                         Statistics.AddFilesystem(fsMetadata.Type);
 
                         dskType = fsMetadata.Type switch
-                        {
-                            "Opera"                        => MediaType.ThreeDO,
-                            "PC Engine filesystem"         => MediaType.SuperCDROM2,
-                            "Nintendo Wii filesystem"      => MediaType.WOD,
-                            "Nintendo Gamecube filesystem" => MediaType.GOD,
-                            _                              => dskType
-                        };
+                                  {
+                                      "Opera"                        => MediaType.ThreeDO,
+                                      "PC Engine filesystem"         => MediaType.SuperCDROM2,
+                                      "Nintendo Wii filesystem"      => MediaType.WOD,
+                                      "Nintendo Gamecube filesystem" => MediaType.GOD,
+                                      _                              => dskType
+                                  };
                     }
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
                         //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                     }
+                }
 
                 if(lstFs.Count > 0)
                     metadataPartition.FileSystems = lstFs;
@@ -652,11 +662,13 @@ public sealed partial class Sidecar
             }
 
             if(trk.Indexes?.Count > 0)
+            {
                 xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndex
                 {
                     Index = i.Key,
                     Value = i.Value
                 }).ToList();
+            }
 
             trksLst.Add(xmlTrk);
         }
@@ -688,6 +700,7 @@ public sealed partial class Sidecar
                 !string.IsNullOrEmpty(image.Info.DriveModel)            ||
                 !string.IsNullOrEmpty(image.Info.DriveFirmwareRevision) ||
                 !string.IsNullOrEmpty(image.Info.DriveSerialNumber))
+        {
             sidecar.OpticalDiscs[0].DumpHardware = new List<DumpHardware>
             {
                 new()
@@ -711,5 +724,6 @@ public sealed partial class Sidecar
                     }
                 }
             };
+        }
     }
 }

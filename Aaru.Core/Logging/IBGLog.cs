@@ -46,8 +46,8 @@ sealed class IbgLog
     readonly double        _ibgDivider;
     readonly string        _ibgMediaType;
     readonly StringBuilder _ibgSb;
-    readonly string        _logFile;
     readonly Stopwatch     _ibgStopwatch;
+    readonly string        _logFile;
     ulong                  _ibgIntSector;
     double                 _ibgIntSpeed;
     double                 _ibgMaxSpeed;
@@ -277,7 +277,7 @@ sealed class IbgLog
     /// <param name="currentSpeed">Speed at the end</param>
     /// <param name="averageSpeed">Average speed</param>
     /// <param name="devicePath">Device path</param>
-    internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
+    internal void Close(Device dev,          ulong  blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                         double averageSpeed, string devicePath)
     {
         if(_logFile == null)
@@ -311,10 +311,10 @@ sealed class IbgLog
                                ibgBusType).AppendLine();
 
         ibgHeader.AppendLine("DEVICE_ADDRESS=0:0:0");
-        ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}", dev.Manufacturer, dev.Model).AppendLine();
+        ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}",   dev.Manufacturer, dev.Model).AppendLine();
         ibgHeader.AppendFormat("DEVICE_FIRMWAREVERSION={0}", dev.FirmwareRevision).AppendLine();
-        ibgHeader.AppendFormat("DEVICE_DRIVELETTER={0}", devicePath).AppendLine();
-        ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}", ibgBusType).AppendLine();
+        ibgHeader.AppendFormat("DEVICE_DRIVELETTER={0}",     devicePath).AppendLine();
+        ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}",         ibgBusType).AppendLine();
         ibgHeader.AppendLine();
 
         ibgHeader.AppendFormat("MEDIA_TYPE={0}", _ibgMediaType).AppendLine();
@@ -326,17 +326,17 @@ sealed class IbgLog
         ibgHeader.AppendLine("MEDIA_LAYER_BREAK=0");
         ibgHeader.AppendLine();
         ibgHeader.AppendLine("DATA_IMAGEFILE=/dev/null");
-        ibgHeader.AppendFormat("DATA_SECTORS={0}", blocks).AppendLine();
+        ibgHeader.AppendFormat("DATA_SECTORS={0}",    blocks).AppendLine();
         ibgHeader.AppendFormat("DATA_TYPE=MODE1/{0}", blockSize).AppendLine();
         ibgHeader.AppendLine("DATA_VOLUMEIDENTIFIER=");
         ibgHeader.AppendLine();
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_START={0:0.00}", _ibgStartSpeed).AppendLine();
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / _ibgDivider).AppendLine();
+        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_END={0:0.00}",   currentSpeed / _ibgDivider).AppendLine();
 
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / _ibgDivider).AppendLine();
 
         ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", _ibgMaxSpeed).AppendLine();
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
+        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_TIME_TAKEN={0:0}",   Math.Floor(totalSeconds)).AppendLine();
         ibgHeader.AppendLine("[END_CONFIGURATION]");
         ibgHeader.AppendLine();
         ibgHeader.AppendLine("HRPC=True");

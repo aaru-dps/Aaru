@@ -73,19 +73,19 @@ public class BlockMap : IMediaGraph
             _sectorsPerSquare = (int)((long)maxSectors / squares);
         }
 
-        int removeSquaresAtLastRow = 0;
-        int removeRows             = 0;
+        var removeSquaresAtLastRow = 0;
+        var removeRows             = 0;
 
         // If we have spare squares, remove them
         if(squares > (long)maxSectors)
         {
-            int removeSquares = (int)(squares - (long)maxSectors);
+            var removeSquares = (int)(squares - (long)maxSectors);
             removeRows             = removeSquares / _columns;
             removeSquaresAtLastRow = removeSquares % _columns;
         }
 
-        float w = (_columns * (_squareSize + 1)) + 1;
-        float h = (rows     * (_squareSize + 1)) + 1;
+        float w = _columns * (_squareSize + 1) + 1;
+        float h = rows     * (_squareSize + 1) + 1;
 
         _bitmap = new SKBitmap((int)w, (int)h);
         _canvas = new SKCanvas(_bitmap);
@@ -98,13 +98,13 @@ public class BlockMap : IMediaGraph
         });
 
         // Paint undumped sectors
-        _canvas.DrawRect(0, 0, w, h - (removeRows * (_squareSize + 1)) - _squareSize - 2, new SKPaint
+        _canvas.DrawRect(0, 0, w, h - removeRows * (_squareSize + 1) - _squareSize - 2, new SKPaint
         {
             Style = SKPaintStyle.StrokeAndFill,
             Color = SKColors.Gray
         });
 
-        _canvas.DrawRect(0, h - (removeRows * (_squareSize + 1)) - _squareSize - 2,
+        _canvas.DrawRect(0, h - removeRows * (_squareSize + 1) - _squareSize - 2,
                          (_columns - removeSquaresAtLastRow) * (_squareSize + 1), _squareSize + 2, new SKPaint
                          {
                              Style = SKPaintStyle.StrokeAndFill,
@@ -112,9 +112,9 @@ public class BlockMap : IMediaGraph
                          });
 
         // Draw grid
-        for(float y = 0; y < h - (removeRows * (_squareSize + 1)); y += _squareSize + 1)
+        for(float y = 0; y < h - removeRows * (_squareSize + 1); y += _squareSize + 1)
         {
-            if(y > h - (removeRows * (_squareSize + 1)) - (_squareSize + 2))
+            if(y > h - removeRows * (_squareSize + 1) - (_squareSize + 2))
             {
                 int cw = _columns - removeSquaresAtLastRow;
 
@@ -125,11 +125,13 @@ public class BlockMap : IMediaGraph
                 });
             }
             else
+            {
                 _canvas.DrawLine(0f, y, w, y, new SKPaint
                 {
                     StrokeWidth = 1f,
                     Color       = SKColors.Black
                 });
+            }
         }
 
         for(float x = 0; x < w; x += _squareSize + 1)
@@ -137,19 +139,25 @@ public class BlockMap : IMediaGraph
             float currentColumn = x / (_squareSize + 1);
 
             if(_columns - currentColumn + 1 > removeSquaresAtLastRow)
-                _canvas.DrawLine(x, 0, x, h - (removeRows * (_squareSize + 1)), new SKPaint
+            {
+                _canvas.DrawLine(x, 0, x, h - removeRows * (_squareSize + 1), new SKPaint
                 {
                     StrokeWidth = 1f,
                     Color       = SKColors.Black
                 });
+            }
             else
-                _canvas.DrawLine(x, 0, x, h - (removeRows * (_squareSize + 1)) - _squareSize - 2, new SKPaint
+            {
+                _canvas.DrawLine(x, 0, x, h - removeRows * (_squareSize + 1) - _squareSize - 2, new SKPaint
                 {
                     StrokeWidth = 1f,
                     Color       = SKColors.Black
                 });
+            }
         }
     }
+
+#region IMediaGraph Members
 
     /// <inheritdoc />
     public void PaintSectorGood(ulong sector) => PaintSector(sector, SKColors.Green);
@@ -225,6 +233,8 @@ public class BlockMap : IMediaGraph
         fs.Close();
     }
 
+#endregion
+
     void PaintSector(ulong sector, SKColor color)
     {
         SKRect rect =
@@ -254,7 +264,8 @@ public class BlockMap : IMediaGraph
 
     void PaintSectors(IEnumerable<ulong> sectors, SKColor color)
     {
-        foreach(SKRect rect in sectors.Select(sector => GetSquareRectangle(_sectorsPerSquare == 0 ? (int)sector
+        foreach(SKRect rect in sectors.Select(sector => GetSquareRectangle(_sectorsPerSquare == 0
+                                                                               ? (int)sector
                                                                                : (int)
                                                                                (sector / (ulong)_sectorsPerSquare))))
         {
@@ -271,8 +282,8 @@ public class BlockMap : IMediaGraph
         int row    = square / _columns;
         int column = square % _columns;
 
-        float x  = 1 + (column * (_squareSize + 1));
-        float y  = 1 + (row    * (_squareSize + 1));
+        float x  = 1 + column * (_squareSize + 1);
+        float y  = 1 + row    * (_squareSize + 1);
         float xp = x + _squareSize;
         float yp = y + _squareSize;
 
