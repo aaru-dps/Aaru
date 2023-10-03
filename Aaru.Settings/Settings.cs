@@ -126,6 +126,7 @@ public static class Settings
 
     /// <summary>Local database path</summary>
     public static string LocalDbPath { get; private set; }
+
     /// <summary>Main database path</summary>
     public static string MainDbPath { get; private set; }
 
@@ -136,7 +137,7 @@ public static class Settings
         PlatformID ptId     = DetectOS.GetRealPlatformID();
         string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         LocalDbPath = "local.db";
-        string oldMainDbPath = "master.db";
+        var oldMainDbPath = "master.db";
         MainDbPath = "main.db";
 
         try
@@ -229,7 +230,7 @@ public static class Settings
                         Path.Combine(homePath,
                                      Environment.GetEnvironmentVariable(XDG_DATA_HOME) ?? XDG_DATA_HOME_RESOLVED);
 
-                    string oldDicPath = Path.Combine(homePath, ".claunia.com", "DiscImageChef");
+                    string oldDicPath = Path.Combine(homePath,    ".claunia.com", "DiscImageChef");
                     string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
                     string aaruPath   = Path.Combine(xdgDataPath, "Aaru");
 
@@ -322,6 +323,7 @@ public static class Settings
                             var stats = (NSDictionary)obj;
 
                             if(stats != null)
+                            {
                                 Current.Stats = new StatsSettings
                                 {
                                     ShareStats = stats.TryGetValue("ShareStats", out NSObject obj2) &&
@@ -344,12 +346,14 @@ public static class Settings
                                     VerifyStats = stats.TryGetValue("VerifyStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool()
                                 };
+                            }
                         }
                         else
                             Current.Stats = null;
 
                         Current.GdprCompliance = parsedPreferences.TryGetValue("GdprCompliance", out obj)
-                                                     ? (ulong)((NSNumber)obj).ToLong() : 0;
+                                                     ? (ulong)((NSNumber)obj).ToLong()
+                                                     : 0;
 
                         prefsFs.Close();
                     }
@@ -397,6 +401,7 @@ public static class Settings
                         stats = Convert.ToBoolean(dicKey.GetValue("Statistics"));
 
                         if(stats)
+                        {
                             Current.Stats = new StatsSettings
                             {
                                 ShareStats      = Convert.ToBoolean(dicKey.GetValue("ShareStats")),
@@ -410,6 +415,7 @@ public static class Settings
                                 MediaStats      = Convert.ToBoolean(dicKey.GetValue("MediaStats")),
                                 VerifyStats     = Convert.ToBoolean(dicKey.GetValue("VerifyStats"))
                             };
+                        }
 
                         SaveSettings();
 
@@ -434,6 +440,7 @@ public static class Settings
                     stats = Convert.ToBoolean(key.GetValue("Statistics"));
 
                     if(stats)
+                    {
                         Current.Stats = new StatsSettings
                         {
                             ShareStats      = Convert.ToBoolean(key.GetValue("ShareStats")),
@@ -447,6 +454,7 @@ public static class Settings
                             MediaStats      = Convert.ToBoolean(key.GetValue("MediaStats")),
                             VerifyStats     = Convert.ToBoolean(key.GetValue("VerifyStats"))
                         };
+                    }
                 }
 
                     break;
@@ -484,16 +492,16 @@ public static class Settings
                     if(File.Exists(xmlSettingsPath))
                     {
                         // Should be working due to source generator for json below
-                        #pragma warning disable IL2026
+                    #pragma warning disable IL2026
                         var xs = new XmlSerializer(Current.GetType());
-                        #pragma warning restore IL2026
+                    #pragma warning restore IL2026
 
                         prefsSr = new StreamReader(xmlSettingsPath);
 
                         // Should be working due to source generator for json below
-                        #pragma warning disable IL2026
+                    #pragma warning disable IL2026
                         Current = (DicSettings)xs.Deserialize(prefsSr);
-                        #pragma warning restore IL2026
+                    #pragma warning restore IL2026
 
                         prefsSr.Close();
                         File.Delete(xmlSettingsPath);
@@ -542,54 +550,26 @@ public static class Settings
                 {
                     var root = new NSDictionary
                     {
-                        {
-                            "SaveReportsGlobally", Current.SaveReportsGlobally
-                        },
-                        {
-                            "ShareReports", Current.ShareReports
-                        },
-                        {
-                            "GdprCompliance", Current.GdprCompliance
-                        },
-                        {
-                            "EnableDecryption", Current.EnableDecryption
-                        }
+                        { "SaveReportsGlobally", Current.SaveReportsGlobally },
+                        { "ShareReports", Current.ShareReports },
+                        { "GdprCompliance", Current.GdprCompliance },
+                        { "EnableDecryption", Current.EnableDecryption }
                     };
 
                     if(Current.Stats != null)
                     {
                         var stats = new NSDictionary
                         {
-                            {
-                                "ShareStats", Current.Stats.ShareStats
-                            },
-                            {
-                                "CommandStats", Current.Stats.CommandStats
-                            },
-                            {
-                                "DeviceStats", Current.Stats.DeviceStats
-                            },
-                            {
-                                "FilesystemStats", Current.Stats.FilesystemStats
-                            },
-                            {
-                                "FilterStats", Current.Stats.FilterStats
-                            },
-                            {
-                                "MediaImageStats", Current.Stats.MediaImageStats
-                            },
-                            {
-                                "MediaScanStats", Current.Stats.MediaScanStats
-                            },
-                            {
-                                "PartitionStats", Current.Stats.PartitionStats
-                            },
-                            {
-                                "MediaStats", Current.Stats.MediaStats
-                            },
-                            {
-                                "VerifyStats", Current.Stats.VerifyStats
-                            }
+                            { "ShareStats", Current.Stats.ShareStats },
+                            { "CommandStats", Current.Stats.CommandStats },
+                            { "DeviceStats", Current.Stats.DeviceStats },
+                            { "FilesystemStats", Current.Stats.FilesystemStats },
+                            { "FilterStats", Current.Stats.FilterStats },
+                            { "MediaImageStats", Current.Stats.MediaImageStats },
+                            { "MediaScanStats", Current.Stats.MediaScanStats },
+                            { "PartitionStats", Current.Stats.PartitionStats },
+                            { "MediaStats", Current.Stats.MediaStats },
+                            { "VerifyStats", Current.Stats.VerifyStats }
                         };
 
                         root.Add("Stats", stats);
@@ -624,36 +604,36 @@ public static class Settings
                     if(key != null)
                     {
                         key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
-                        key.SetValue("ShareReports", Current.ShareReports);
-                        key.SetValue("GdprCompliance", Current.GdprCompliance);
-                        key.SetValue("EnableDecryption", Current.EnableDecryption);
+                        key.SetValue("ShareReports",        Current.ShareReports);
+                        key.SetValue("GdprCompliance",      Current.GdprCompliance);
+                        key.SetValue("EnableDecryption",    Current.EnableDecryption);
 
                         if(Current.Stats != null)
                         {
-                            key.SetValue("Statistics", true);
-                            key.SetValue("ShareStats", Current.Stats.ShareStats);
-                            key.SetValue("CommandStats", Current.Stats.CommandStats);
-                            key.SetValue("DeviceStats", Current.Stats.DeviceStats);
+                            key.SetValue("Statistics",      true);
+                            key.SetValue("ShareStats",      Current.Stats.ShareStats);
+                            key.SetValue("CommandStats",    Current.Stats.CommandStats);
+                            key.SetValue("DeviceStats",     Current.Stats.DeviceStats);
                             key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
-                            key.SetValue("FilterStats", Current.Stats.FilterStats);
+                            key.SetValue("FilterStats",     Current.Stats.FilterStats);
                             key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
-                            key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
-                            key.SetValue("PartitionStats", Current.Stats.PartitionStats);
-                            key.SetValue("MediaStats", Current.Stats.MediaStats);
-                            key.SetValue("VerifyStats", Current.Stats.VerifyStats);
+                            key.SetValue("MediaScanStats",  Current.Stats.MediaScanStats);
+                            key.SetValue("PartitionStats",  Current.Stats.PartitionStats);
+                            key.SetValue("MediaStats",      Current.Stats.MediaStats);
+                            key.SetValue("VerifyStats",     Current.Stats.VerifyStats);
                         }
                         else
                         {
                             key.SetValue("Statistics", true);
-                            key.DeleteValue("ShareStats", false);
-                            key.DeleteValue("CommandStats", false);
-                            key.DeleteValue("DeviceStats", false);
+                            key.DeleteValue("ShareStats",      false);
+                            key.DeleteValue("CommandStats",    false);
+                            key.DeleteValue("DeviceStats",     false);
                             key.DeleteValue("FilesystemStats", false);
                             key.DeleteValue("MediaImageStats", false);
-                            key.DeleteValue("MediaScanStats", false);
-                            key.DeleteValue("PartitionStats", false);
-                            key.DeleteValue("MediaStats", false);
-                            key.DeleteValue("VerifyStats", false);
+                            key.DeleteValue("MediaScanStats",  false);
+                            key.DeleteValue("PartitionStats",  false);
+                            key.DeleteValue("MediaStats",      false);
+                            key.DeleteValue("VerifyStats",     false);
                         }
                     }
                 }
@@ -683,12 +663,12 @@ public static class Settings
                     break;
             }
         }
-        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
         {
             // ignored
         }
-        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
     }
 
     /// <summary>Sets default settings as all statistics, share everything</summary>
