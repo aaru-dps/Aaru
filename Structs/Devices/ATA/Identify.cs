@@ -59,6 +59,8 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Identify
 {
+    const string MODULE_NAME = "ATA/ATAPI IDENTIFY decoder";
+
     /// <summary>Capabilities flag bits.</summary>
     [Flags]
     public enum CapabilitiesBit : ushort
@@ -1007,7 +1009,7 @@ public static class Identify
 
         if(IdentifyDeviceResponse.Length != 512)
         {
-            AaruConsole.DebugWriteLine("ATA/ATAPI IDENTIFY decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.IDENTIFY_response_is_different_than_512_bytes_not_decoding);
 
             return null;

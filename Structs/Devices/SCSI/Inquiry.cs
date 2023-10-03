@@ -51,6 +51,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI;
  SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public struct Inquiry
 {
+    const string MODULE_NAME = "SCSI INQUIRY decoder";
     /// <summary>Peripheral qualifier Byte 0, bits 7 to 5</summary>
     public byte PeripheralQualifier;
     /// <summary>Peripheral device type Byte 0, bits 4 to 0</summary>
@@ -260,7 +261,7 @@ public struct Inquiry
         if(SCSIInquiryResponse.Length < 36 &&
            SCSIInquiryResponse.Length != 5)
         {
-            AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes,
                                        SCSIInquiryResponse.Length);
 
@@ -270,7 +271,7 @@ public struct Inquiry
         if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 4 &&
            SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
         {
-            AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
                                            INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field,
                                        SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);

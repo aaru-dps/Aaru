@@ -39,6 +39,8 @@ namespace Aaru.CommonTypes;
 
 public static partial class MediaTypeFromDevice
 {
+    const string MODULE_NAME = "Media detection";
+
     /// <summary>Tries to guess, from SCSI information, the media type of a device and/or its inserted media</summary>
     /// <param name="scsiPeripheralType">The SCSI Peripheral Type as indicated in the INQUIRY response</param>
     /// <param name="vendor">The vendor string of the device</param>
@@ -80,7 +82,7 @@ public static partial class MediaTypeFromDevice
                            model.StartsWith("MDH", StringComparison.Ordinal):
                 if(blockSize == 2048)
                 {
-                    AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_MDDATA,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_MDDATA,
                                                scsiPeripheralType, blocks, blockSize);
 
                     return MediaType.MDData;
@@ -89,33 +91,33 @@ public static partial class MediaTypeFromDevice
                 switch(blocks)
                 {
                     case 57312:
-                        AaruConsole.DebugWriteLine("Media detection",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.SCSI_Media_Type_Description_MD60_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD60;
                     case 70464:
-                        AaruConsole.DebugWriteLine("Media detection",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.SCSI_Media_Type_Description_MD74_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD74;
                     case 76096:
-                        AaruConsole.DebugWriteLine("Media detection",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.SCSI_Media_Type_Description_MD80_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD80;
                 }
 
-                AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_MD60_MDDATA,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_MD60_MDDATA,
                                            scsiPeripheralType, blocks, blockSize);
 
                 return MediaType.MD;
 
             // Host managed zoned block device
             case 0x14:
-                AaruConsole.DebugWriteLine("Media detection", Localization.SCSI_Media_Type_Description_ZBC_Host_Managed,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_ZBC_Host_Managed,
                                            scsiPeripheralType, blocks, blockSize);
 
                 return MediaType.Zone_HDD;

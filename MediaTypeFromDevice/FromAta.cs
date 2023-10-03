@@ -62,7 +62,7 @@ public static partial class MediaTypeFromDevice
            blocks                          != 1961069)
             return MediaType.Unknown;
 
-        AaruConsole.DebugWriteLine("Media detection",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.
                                        Drive_manufacturer_is_SyQuest_media_has_1961069_blocks_of_512_bytes_setting_media_type_to_SparQ);
 
