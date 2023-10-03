@@ -113,20 +113,28 @@ public static class AaruConsole
 {
     /// <summary>Event to receive writings to the standard output console that should be followed by a line termination.</summary>
     public static event WriteLineHandler WriteLineEvent;
+
     /// <summary>Event to receive writings to the error output console that should be followed by a line termination.</summary>
     public static event ErrorWriteLineHandler ErrorWriteLineEvent;
+
     /// <summary>Event to receive writings to the verbose output console that should be followed by a line termination.</summary>
     public static event VerboseWriteLineHandler VerboseWriteLineEvent;
+
     /// <summary>Event to receive line terminations to the debug output console.</summary>
     public static event DebugWriteLineHandler DebugWriteLineEvent;
+
     /// <summary>Event to receive writings to the debug output console that should be followed by a line termination.</summary>
     public static event DebugWithModuleWriteLineHandler DebugWithModuleWriteLineEvent;
+
     /// <summary>Event to receive writings to the standard output console.</summary>
     public static event WriteHandler WriteEvent;
+
     /// <summary>Event to receive writings to the error output console.</summary>
     public static event ErrorWriteHandler ErrorWriteEvent;
+
     /// <summary>Event to receive writings to the verbose output console.</summary>
     public static event VerboseWriteHandler VerboseWriteEvent;
+
     /// <summary>Event to receive writings to the debug output console.</summary>
     public static event DebugWriteHandler DebugWriteEvent;
 
