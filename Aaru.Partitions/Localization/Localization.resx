@@ -532,28 +532,28 @@
     <value>Apple File System</value>
   </data>
   <data name="DragonflyBSD_Label" xml:space="preserve">
-    <value>DragonflyBSD Label</value>
+    <value>DragonFly BSD Label</value>
   </data>
   <data name="DragonflyBSD_Swap" xml:space="preserve">
-    <value>DragonflyBSD Swap</value>
+    <value>DragonFly BSD Swap</value>
   </data>
   <data name="DragonflyBSD_UFS" xml:space="preserve">
-    <value>DragonflyBSD UFS</value>
+    <value>DragonFly BSD UFS</value>
   </data>
   <data name="DragonflyBSD_Vinum" xml:space="preserve">
-    <value>DragonflyBSD Vinum</value>
+    <value>DragonFly BSD Vinum</value>
   </data>
   <data name="DragonflyBSD_CCD" xml:space="preserve">
-    <value>DragonflyBSD CCD</value>
+    <value>DragonFly BSD CCD</value>
   </data>
   <data name="DragonflyBSD_Legacy" xml:space="preserve">
-    <value>DragonflyBSD Legacy</value>
+    <value>DragonFly BSD Legacy</value>
   </data>
   <data name="DragonflyBSD_Hammer" xml:space="preserve">
-    <value>DragonflyBSD Hammer</value>
+    <value>DragonFly BSD Hammer</value>
   </data>
   <data name="DragonflyBSD_Hammer2" xml:space="preserve">
-    <value>DragonflyBSD Hammer2</value>
+    <value>DragonFly BSD Hammer2</value>
   </data>
   <data name="Human68K_Name" xml:space="preserve">
     <value>Human 68k partitions</value>
@@ -895,7 +895,7 @@
     <value>Prologue</value>
   </data>
   <data name="VMWare_VMKCORE" xml:space="preserve">
-    <value>VMWare VMKCORE</value>
+    <value>VMware VMKCORE</value>
   </data>
   <data name="Linux_RAID_FreeDOS" xml:space="preserve">
     <value>Linux RAID, FreeDOS</value>
@@ -904,7 +904,7 @@
     <value>SpeedStor, LANStep, PS/2 IML</value>
   </data>
   <data name="Xenix_bad_block" xml:space="preserve">
-    <value>Xenix bad block</value>
+    <value>XENIX bad block</value>
   </data>
   <data name="MBR_Name" xml:space="preserve">
     <value>Master Boot Record</value>
@@ -1411,6 +1411,6 @@
     <value>XENIX</value>
   </data>
   <data name="Filecore" xml:space="preserve">
-    <value>Filecore</value>
+    <value>FileCore</value>
   </data>
 </root>

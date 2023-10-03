@@ -1167,7 +1167,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD CCD.
+        ///   Looks up a localized string similar to DragonFly BSD CCD.
         /// </summary>
         internal static string DragonflyBSD_CCD {
             get {
@@ -1176,7 +1176,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Hammer.
+        ///   Looks up a localized string similar to DragonFly BSD Hammer.
         /// </summary>
         internal static string DragonflyBSD_Hammer {
             get {
@@ -1185,7 +1185,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Hammer2.
+        ///   Looks up a localized string similar to DragonFly BSD Hammer2.
         /// </summary>
         internal static string DragonflyBSD_Hammer2 {
             get {
@@ -1194,7 +1194,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Label.
+        ///   Looks up a localized string similar to DragonFly BSD Label.
         /// </summary>
         internal static string DragonflyBSD_Label {
             get {
@@ -1203,7 +1203,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Legacy.
+        ///   Looks up a localized string similar to DragonFly BSD Legacy.
         /// </summary>
         internal static string DragonflyBSD_Legacy {
             get {
@@ -1221,7 +1221,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Swap.
+        ///   Looks up a localized string similar to DragonFly BSD Swap.
         /// </summary>
         internal static string DragonflyBSD_Swap {
             get {
@@ -1230,7 +1230,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD UFS.
+        ///   Looks up a localized string similar to DragonFly BSD UFS.
         /// </summary>
         internal static string DragonflyBSD_UFS {
             get {
@@ -1239,7 +1239,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DragonflyBSD Vinum.
+        ///   Looks up a localized string similar to DragonFly BSD Vinum.
         /// </summary>
         internal static string DragonflyBSD_Vinum {
             get {
@@ -1437,7 +1437,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filecore.
+        ///   Looks up a localized string similar to FileCore.
         /// </summary>
         internal static string Filecore {
             get {
@@ -4020,7 +4020,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to VMWare VMKCORE.
+        ///   Looks up a localized string similar to VMware VMKCORE.
         /// </summary>
         internal static string VMWare_VMKCORE {
             get {
@@ -4164,7 +4164,7 @@ namespace Aaru.Partitions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Xenix bad block.
+        ///   Looks up a localized string similar to XENIX bad block.
         /// </summary>
         internal static string Xenix_bad_block {
             get {
