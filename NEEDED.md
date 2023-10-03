@@ -73,67 +73,67 @@ This is a list of software whose physical media has some characteristics that ne
 dumping of such characteristics. Usually those are copy protections.
 
 - CD-i Ready
-    - Accelerator
-    - Alien Gate
-    - Beyond Limits
-    - Escape
-    - Lucky Luke
-    - Louis Armstrong
-    - Dark Fables of Aesop
-    - More Dark Fables of Aesop
-    - Mozart
-    - Opera Imaginaire
-    - Pavarotti
-    - Steel Machine
-    - The Apprentice
-    - Dimo's Quest
-    - The Worlds of...
+  - Accelerator
+  - Alien Gate
+  - Beyond Limits
+  - Escape
+  - Lucky Luke
+  - Louis Armstrong
+  - Dark Fables of Aesop
+  - More Dark Fables of Aesop
+  - Mozart
+  - Opera Imaginaire
+  - Pavarotti
+  - Steel Machine
+  - The Apprentice
+  - Dimo's Quest
+  - The Worlds of...
 - SafeDisc
-    - Beowulf
-    - Black & White 2
-    - Brothers in Arms: Road to Hill 30
-    - Carmageddon II: Carpocalypse Now
-    - Close Combat: Invasion Normandy
-    - Codename: Eagle
+  - Beowulf
+  - Black & White 2
+  - Brothers in Arms: Road to Hill 30
+  - Carmageddon II: Carpocalypse Now
+  - Close Combat: Invasion Normandy
+  - Codename: Eagle
 - SecuROM
-    - Arabian Nights
-    - Arcania: Gothic 4
-    - Boiling Point: Road to Hell
-    - Cars 2
-    - Colin McRae Rally 04
-    - Colin McRae Rally 2.0
-    - Colin McRae Rally 3
-    - Command & Conquer: Red Alert 3 - Uprising
-    - Devil May Cry 4
-    - Die Hard: Nakatomi Plaza
-    - Disney Planes
+  - Arabian Nights
+  - Arcania: Gothic 4
+  - Boiling Point: Road to Hell
+  - Cars 2
+  - Colin McRae Rally 04
+  - Colin McRae Rally 2.0
+  - Colin McRae Rally 3
+  - Command & Conquer: Red Alert 3 - Uprising
+  - Devil May Cry 4
+  - Die Hard: Nakatomi Plaza
+  - Disney Planes
 - StarForce
-    - Black Mirror 3
-    - BloodRayne 2
-    - Chronostorm: Siberian Border
-    - Codename: Outbreak
-    - Dead to Rights
-    - Disciples III: Renaissance
-    - Mount & Blade
-    - Pac-Man World 2
+  - Black Mirror 3
+  - BloodRayne 2
+  - Chronostorm: Siberian Border
+  - Codename: Outbreak
+  - Dead to Rights
+  - Disciples III: Renaissance
+  - Mount & Blade
+  - Pac-Man World 2
 - Tages
-    - Anno 1701
-    - Darkstar One
-    - Faery: Legends of Avalon
-    - Helldorado
-    - Nostradamus: The Last Prophecy
-    - Silverfall
+  - Anno 1701
+  - Darkstar One
+  - Faery: Legends of Avalon
+  - Helldorado
+  - Nostradamus: The Last Prophecy
+  - Silverfall
 - Solidshield
-    - A-Train 8
-    - Anno 2070
-    - Assassin's Creed: Brotherhood
-    - Dead Mountaineer's Hotel
-    - Dead Space 2
-    - Helldorado
-    - I Am Alive
-    - ObsCure II
-    - Shift 2 Unleashed
-    - Warfare
+  - A-Train 8
+  - Anno 2070
+  - Assassin's Creed: Brotherhood
+  - Dead Mountaineer's Hotel
+  - Dead Space 2
+  - Helldorado
+  - I Am Alive
+  - ObsCure II
+  - Shift 2 Unleashed
+  - Warfare
 
 Information and test data
 =========================
