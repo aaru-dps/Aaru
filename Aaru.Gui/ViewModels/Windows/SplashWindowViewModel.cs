@@ -147,12 +147,15 @@ public sealed class SplashWindowViewModel : ViewModelBase
                 ctx.Database.EnsureCreated();
 
                 ctx.Database.
-                    ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                    ExecuteSqlRaw(
+                        "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
+                {
                     ctx.Database.
                         ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
                             migration}', '0.0.0')");
+                }
 
                 ctx.SaveChanges();
             }
@@ -165,9 +168,11 @@ public sealed class SplashWindowViewModel : ViewModelBase
                         a.Revision,
                         a.Bus
                     }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+            {
                 ctx.RemoveRange(ctx.SeenDevices.
                                     Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
                                                d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
+            }
 
             // Remove nulls
             ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&

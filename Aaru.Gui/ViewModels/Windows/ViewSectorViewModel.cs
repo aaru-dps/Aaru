@@ -83,7 +83,8 @@ public sealed class ViewSectorViewModel : ViewModelBase
 
             byte[] sector;
 
-            ErrorNumber errno = LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
+            ErrorNumber errno = LongSectorChecked
+                                    ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
                                     : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
 
             if(errno == ErrorNumber.NoError)

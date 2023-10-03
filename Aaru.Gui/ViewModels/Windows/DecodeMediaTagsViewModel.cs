@@ -77,11 +77,13 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
             ErrorNumber errno = inputFormat.ReadMediaTag(tag, out byte[] data);
 
             if(errno == ErrorNumber.NoError)
+            {
                 TagsList.Add(new MediaTagModel
                 {
                     Tag  = tag,
                     Data = data
                 });
+            }
         }
     }
 
@@ -217,7 +219,8 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
 
                     break;
                 case MediaTagType.Xbox_DMI:
-                    DecodedText = DMI.IsXbox360(value.Data) ? DMI.PrettifyXbox360(value.Data)
+                    DecodedText = DMI.IsXbox360(value.Data)
+                                      ? DMI.PrettifyXbox360(value.Data)
                                       : DMI.PrettifyXbox(value.Data);
 
                     break;

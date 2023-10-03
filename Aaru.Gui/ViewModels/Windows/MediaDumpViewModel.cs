@@ -112,7 +112,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     bool             _useResume;
     bool             _useSidecar;
 
-    public MediaDumpViewModel(string devicePath, DeviceInfo deviceInfo, Window view,
+    public MediaDumpViewModel(string               devicePath, DeviceInfo deviceInfo, Window view,
                               [CanBeNull] ScsiInfo scsiInfo = null)
     {
         _view              = view;
@@ -144,6 +144,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         if(scsiInfo != null)
             mediaType = scsiInfo.MediaType;
         else
+        {
             switch(deviceInfo.Type)
             {
                 case DeviceType.SecureDigital:
@@ -164,6 +165,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
                     break;
             }
+        }
 
         PluginBase plugins = PluginBase.Singleton;
 
@@ -173,10 +175,12 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 continue;
 
             if(plugin.SupportedMediaTypes.Contains(mediaType))
+            {
                 PluginsList.Add(new ImagePluginModel
                 {
                     Plugin = plugin
                 });
+            }
         }
 
         Encodings.AddRange(Encoding.GetEncodings().Select(info => new EncodingModel
@@ -514,11 +518,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
             dlgMetadata.Filters?.Add(new FileDialogFilter
             {
-                Name = UI.Dialog_Aaru_Metadata,
-                Extensions = new List<string>(new[]
-                {
-                    ".json"
-                })
+                Name       = UI.Dialog_Aaru_Metadata,
+                Extensions = new List<string>(new[] { ".json" })
             });
 
             string[] result = dlgMetadata.ShowAsync(_view).Result;
@@ -719,16 +720,16 @@ public sealed class MediaDumpViewModel : ViewModelBase
             else if(File.Exists(_outputPrefix + ".resume.xml"))
             {
                 // Should be covered by virtue of being the same exact class as the JSON above
-                #pragma warning disable IL2026
+            #pragma warning disable IL2026
                 var xs = new XmlSerializer(typeof(Resume));
-                #pragma warning restore IL2026
+            #pragma warning restore IL2026
 
                 var sr = new StreamReader(_outputPrefix + ".resume.xml");
 
                 // Should be covered by virtue of being the same exact class as the JSON above
-                #pragma warning disable IL2026
+            #pragma warning disable IL2026
                 _resume = (Resume)xs.Deserialize(sr);
-                #pragma warning restore IL2026
+            #pragma warning restore IL2026
 
                 sr.Close();
             }
@@ -737,7 +738,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         {
             await MessageBoxManager.
                   GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_resume_file_cannot_use_it, ButtonEnum.Ok,
-                                              Icon.Error).ShowWindowDialogAsync(_view);
+                                        Icon.Error).ShowWindowDialogAsync(_view);
 
             Resume = false;
 
@@ -746,13 +747,13 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(_resume           == null              ||
            _resume.NextBlock <= _resume.LastBlock ||
-           (_resume.BadBlocks.Count != 0 && !_resume.Tape))
+           _resume.BadBlocks.Count != 0 && !_resume.Tape)
             return;
 
         await MessageBoxManager.
               GetMessageBoxStandard(UI.Title_Warning,
-                                          UI.Media_already_dumped_correctly_please_choose_another_destination,
-                                          ButtonEnum.Ok, Icon.Warning).ShowWindowDialogAsync(_view);
+                                    UI.Media_already_dumped_correctly_please_choose_another_destination,
+                                    ButtonEnum.Ok, Icon.Warning).ShowWindowDialogAsync(_view);
 
         Resume = false;
     }
@@ -814,6 +815,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Encoding encoding = null;
 
         if(SelectedEncoding is not null)
+        {
             try
             {
                 encoding = Claunia.Encoding.Encoding.GetEncoding(SelectedEncoding.Name);
@@ -824,6 +826,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
                 return;
             }
+        }
 
         Dictionary<string, string> parsedOptions = new();
 
@@ -901,10 +904,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = false;
-    });
+    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = false; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -917,16 +917,10 @@ public sealed class MediaDumpViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = true;
-    });
+    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = true; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -939,10 +933,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void PulseProgress(string text) => await Dispatcher.UIThread.InvokeAsync(() =>

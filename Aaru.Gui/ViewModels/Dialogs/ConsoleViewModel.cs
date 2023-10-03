@@ -64,13 +64,17 @@ public sealed class ConsoleViewModel : ViewModelBase
 
     [NotNull]
     public string Title => UI.Title_Console;
+
     public ReactiveCommand<Unit, Unit>    ClearCommand { get; }
     public ReactiveCommand<Unit, Task>    SaveCommand  { get; }
     public ObservableCollection<LogEntry> Entries      => ConsoleHandler.Entries;
+
     [NotNull]
     public string DebugText => UI.Enable_debug_console;
+
     [NotNull]
     public string SaveLabel => UI.ButtonLabel_Save;
+
     [NotNull]
     public string ClearLabel => UI.ButtonLabel_Clear;
 
@@ -95,11 +99,8 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         dlgSave.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "log"
-            }),
-            Name = UI.Dialog_Log_files
+            Extensions = new List<string>(new[] { "log" }),
+            Name       = UI.Dialog_Log_files
         });
 
         string result = await dlgSave.ShowAsync(_view);
@@ -132,7 +133,7 @@ public sealed class ConsoleViewModel : ViewModelBase
             logSw.WriteLine();
 
             logSw.WriteLine(Localization.Core.Program_information);
-            logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
+            logSw.WriteLine("Aaru {0}",                         assemblyVersion?.InformationalVersion);
             logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
         #if DEBUG
             logSw.WriteLine(Localization.Core.DEBUG_version);
@@ -143,10 +144,12 @@ public sealed class ConsoleViewModel : ViewModelBase
             logSw.WriteLine(UI.Console_with_ornament);
 
             foreach(LogEntry entry in ConsoleHandler.Entries)
+            {
                 if(entry.Type != UI.LogEntry_Type_Info)
                     logSw.WriteLine("{0}: ({1}) {2}", entry.Timestamp, entry.Type.ToLower(), entry.Message);
                 else
                     logSw.WriteLine("{0}: {1}", entry.Timestamp, entry.Message);
+            }
 
             logSw.Close();
             logFs.Close();
@@ -155,8 +158,10 @@ public sealed class ConsoleViewModel : ViewModelBase
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                           string.
-                                                              Format(UI.Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
-                                                                     exception.Message), ButtonEnum.Ok, Icon.Error).
+                                                              Format(
+                                                                  UI.
+                                                                      Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
+                                                                  exception.Message), ButtonEnum.Ok, Icon.Error).
                                     ShowWindowDialogAsync(_view);
 
             AaruConsole.ErrorWriteLine("Console", exception.Message);

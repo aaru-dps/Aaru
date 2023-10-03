@@ -395,10 +395,11 @@ public sealed class ImageChecksumViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
-        var  opticalMediaImage = _inputFormat as IOpticalMediaImage;
-        bool formatHasTracks   = false;
+        var opticalMediaImage = _inputFormat as IOpticalMediaImage;
+        var formatHasTracks   = false;
 
         if(opticalMediaImage != null)
+        {
             try
             {
                 formatHasTracks = opticalMediaImage.Tracks?.Count > 0;
@@ -407,6 +408,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             {
                 formatHasTracks = false;
             }
+        }
 
         // Setup progress bars
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -470,6 +472,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         ErrorNumber errno;
 
         if(opticalMediaImage?.Tracks != null)
+        {
             try
             {
                 Checksum trackChecksum = null;
@@ -490,6 +493,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                     });
 
                     if(currentTrack.StartSector - previousTrackEnd != 0 && ChecksumMediaChecked)
+                    {
                         for(ulong i = previousTrackEnd + 1; i < currentTrack.StartSector; i++)
                         {
                             ulong sector = i;
@@ -514,6 +518,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                             mediaChecksum?.Update(hiddenSector);
                         }
+                    }
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, UI.Track_0_starts_at_sector_1_and_ends_at_sector_2,
                                                currentTrack.Sequence, currentTrack.StartSector, currentTrack.EndSector);
@@ -612,18 +617,21 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                             return;
 
                         foreach(CommonTypes.AaruMetadata.Checksum chk in trackChecksum.End())
+                        {
                             TrackChecksums.Add(new ChecksumModel
                             {
                                 Track     = currentTrack.Sequence.ToString(),
                                 Algorithm = chk.Type.ToString(),
                                 Hash      = chk.Value
                             });
+                        }
                     });
 
                     previousTrackEnd = currentTrack.EndSector;
                 }
 
                 if(opticalMediaImage.Info.Sectors - previousTrackEnd != 0 && ChecksumMediaChecked)
+                {
                     for(ulong i = previousTrackEnd + 1; i < opticalMediaImage.Info.Sectors; i++)
                     {
                         ulong sector = i;
@@ -648,6 +656,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
 
                         mediaChecksum?.Update(hiddenSector);
                     }
+                }
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -655,11 +664,13 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                         return;
 
                     foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                    {
                         MediaChecksums.Add(new ChecksumModel
                         {
                             Algorithm = chk.Type.ToString(),
                             Hash      = chk.Value
                         });
+                    }
                 });
             }
             catch(Exception ex)
@@ -667,12 +678,10 @@ public sealed class ImageChecksumViewModel : ViewModelBase
                 AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
                 AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
             }
+        }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Progress1Visible = false;
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
             mediaChecksum = new Checksum(enabledChecksums);
 
@@ -755,25 +764,25 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach(CommonTypes.AaruMetadata.Checksum chk in mediaChecksum.End())
+                {
                     MediaChecksums.Add(new ChecksumModel
                     {
                         Algorithm = chk.Type.ToString(),
                         Hash      = chk.Value
                     });
+                }
             });
         }
 
         if(ChecksumTracksChecked)
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                TrackChecksumsVisible = true;
-            });
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => { TrackChecksumsVisible = true; });
+        }
 
         if(ChecksumMediaChecked)
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                MediaChecksumsVisible = true;
-            });
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => { MediaChecksumsVisible = true; });
+        }
 
         Statistics.AddCommand("checksum");
 

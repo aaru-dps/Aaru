@@ -40,6 +40,7 @@ public sealed class MediaTagModel
     public MediaTagType Tag     { get; set; }
     public byte[]       Data    { get; set; }
     public string       Decoded { get; set; }
+
     [NotNull]
     public string Name => Tag.ToString();
 }

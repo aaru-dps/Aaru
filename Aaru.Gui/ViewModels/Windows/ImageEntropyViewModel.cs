@@ -291,6 +291,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
     [JetBrains.Annotations.NotNull]
     public string Title => UI.Title_Calculating_entropy;
+
     public ObservableCollection<TrackEntropyModel> TrackEntropy { get; }
     public ReactiveCommand<Unit, Unit>             StartCommand { get; }
     public ReactiveCommand<Unit, Unit>             CloseCommand { get; }
@@ -331,9 +332,11 @@ public sealed class ImageEntropyViewModel : ViewModelBase
                     AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track, trackEntropy.Entropy);
 
                     if(trackEntropy.UniqueSectors != null)
+                    {
                         AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2, trackEntropy.Track,
                                               trackEntropy.UniqueSectors,
                                               (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
+                    }
                 }
             }
 
@@ -358,7 +361,9 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         ResultsVisible  = true;
 
         if(SeparatedTracksChecked)
+        {
             foreach(EntropyResults trackEntropy in _tracksEntropy)
+            {
                 TrackEntropy.Add(new TrackEntropyModel
                 {
                     Track   = trackEntropy.Track.ToString(),
@@ -366,6 +371,8 @@ public sealed class ImageEntropyViewModel : ViewModelBase
                     UniqueSectors = $"{trackEntropy.UniqueSectors} ({
                         (trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
                 });
+            }
+        }
 
         if(WholeDiscChecked != true)
             return;

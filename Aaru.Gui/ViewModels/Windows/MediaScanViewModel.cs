@@ -110,10 +110,10 @@ public sealed class MediaScanViewModel : ViewModelBase
         CloseVisible = true;
         BlockMapList = new ObservableCollection<(ulong block, double duration)>();
 //        ChartPoints  = new ObservableCollection<DataPoint>();
-        StepsX       = double.NaN;
-        StepsY       = double.NaN;
-        AxesColor    = Colors.Black;
-        LineColor    = Colors.Yellow;
+        StepsX    = double.NaN;
+        StepsY    = double.NaN;
+        AxesColor = Colors.Black;
+        LineColor = Colors.Yellow;
     }
 
     public string SpeedLabel => UI.ButtonLabel_Stop;
@@ -350,7 +350,7 @@ public sealed class MediaScanViewModel : ViewModelBase
             case null:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
-                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            ButtonEnum.Ok,  Icon.Error).ShowWindowDialogAsync(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -370,7 +370,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         {
             await MessageBoxManager.
                   GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
-                                              ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                        ButtonEnum.Ok,  Icon.Error).ShowWindowDialogAsync(_view);
 
             StopVisible     = false;
             StartVisible    = true;
@@ -412,12 +412,12 @@ public sealed class MediaScanViewModel : ViewModelBase
             MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0,
                                      ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()).Humanize());
 
-            A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A);
-            B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B);
-            C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C);
-            D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D);
+            A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms,                        results.A);
+            B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms,    results.B);
+            C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms,   results.C);
+            D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms,  results.D);
             E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E);
-            F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F);
+            F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms,                      results.F);
 
             UnreadableSectors = string.Format(Localization.Core._0_sectors_could_not_be_read,
                                               results.UnreadableSectors.Count);
@@ -456,7 +456,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         */
 
         if(currentSpeed > MaxY)
-            MaxY = currentSpeed + (currentSpeed / 10d);
+            MaxY = currentSpeed + currentSpeed / 10d;
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
@@ -479,12 +479,12 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0021:
                 case 0x0022:
                     MaxX = blocks switch
-                    {
-                        <= 360000 => 360000,
-                        <= 405000 => 405000,
-                        <= 445500 => 445500,
-                        _         => blocks
-                    };
+                           {
+                               <= 360000 => 360000,
+                               <= 405000 => 405000,
+                               <= 445500 => 445500,
+                               _         => blocks
+                           };
 
                     StepsX = MaxX   / 10;
                     StepsY = 150    * 4;
@@ -521,13 +521,13 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0043:
                 case 0x0040: // BD
                     MaxX = blocks switch
-                    {
-                        <= 12219392 => 12219392,
-                        <= 24438784 => 24438784,
-                        <= 48878592 => 48878592,
-                        <= 62500864 => 62500864,
-                        _           => blocks
-                    };
+                           {
+                               <= 12219392 => 12219392,
+                               <= 24438784 => 24438784,
+                               <= 48878592 => 48878592,
+                               <= 62500864 => 62500864,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -541,11 +541,11 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0058:
                 case 0x005A:
                     MaxX = blocks switch
-                    {
-                        <= 7361599  => 7361599,
-                        <= 16305407 => 16305407,
-                        _           => blocks
-                    };
+                           {
+                               <= 7361599  => 7361599,
+                               <= 16305407 => 16305407,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -571,10 +571,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -587,10 +584,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void PulseProgress(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -613,10 +607,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        ProgressText = text;
-    });
+    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() => { ProgressText = text; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void OnScanUnreadable(ulong sector) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -659,11 +650,11 @@ public sealed class MediaScanViewModel : ViewModelBase
                 break;
         }
 
-        A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms, _localResults.A);
-        B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, _localResults.B);
-        C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, _localResults.C);
-        D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, _localResults.D);
+        A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms,                        _localResults.A);
+        B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms,    _localResults.B);
+        C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms,   _localResults.C);
+        D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms,  _localResults.D);
         E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, _localResults.E);
-        F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms, _localResults.F);
+        F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms,                      _localResults.F);
     });
 }

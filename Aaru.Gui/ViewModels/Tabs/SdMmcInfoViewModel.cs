@@ -38,8 +38,8 @@ namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class SdMmcInfoViewModel
 {
-    public SdMmcInfoViewModel(DeviceType deviceType, [CanBeNull] byte[] cid, [CanBeNull] byte[] csd,
-                              [CanBeNull] byte[] ocr, [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
+    public SdMmcInfoViewModel(DeviceType         deviceType, [CanBeNull] byte[] cid,         [CanBeNull] byte[] csd,
+                              [CanBeNull] byte[] ocr,        [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
     {
         switch(deviceType)
         {

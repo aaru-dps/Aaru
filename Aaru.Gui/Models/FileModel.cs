@@ -39,29 +39,42 @@ namespace Aaru.Gui.Models;
 public sealed class FileModel
 {
     public string Name { get; set; }
+
     [NotNull]
     public string Size => $"{Stat.Length}";
+
     [NotNull]
     public string CreationTime => Stat.CreationTime == default(DateTime) ? "" : $"{Stat.CreationTime:G}";
+
     [NotNull]
     public string LastAccessTime => Stat.AccessTime == default(DateTime) ? "" : $"{Stat.AccessTime:G}";
+
     [NotNull]
     public string ChangedTime => Stat.StatusChangeTime == default(DateTime) ? "" : $"{Stat.StatusChangeTime:G}";
+
     [NotNull]
     public string LastBackupTime => Stat.BackupTime == default(DateTime) ? "" : $"{Stat.BackupTime:G}";
+
     [NotNull]
     public string LastWriteTime => Stat.LastWriteTime == default(DateTime) ? "" : $"{Stat.LastWriteTime:G}";
+
     [NotNull]
     public string Attributes => $"{Stat.Attributes}";
+
     [NotNull]
     public string Gid => $"{Stat.GID}";
+
     [NotNull]
     public string Uid => $"{Stat.UID}";
+
     [NotNull]
     public string Inode => $"{Stat.Inode}";
+
     [NotNull]
     public string Links => $"{Stat.Links}";
+
     [NotNull]
     public string Mode => $"{Stat.Mode}";
+
     public FileEntryInfo Stat { get; set; }
 }

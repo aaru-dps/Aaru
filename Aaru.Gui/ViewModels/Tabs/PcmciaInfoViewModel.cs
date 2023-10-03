@@ -47,11 +47,11 @@ namespace Aaru.Gui.ViewModels.Tabs;
 
 public class PcmciaInfoViewModel : ViewModelBase
 {
-    const string MODULE_NAME = "PCMCIA Information ViewModel";
-    readonly      byte[] _cis;
-    readonly      Window _view;
-    string               _pcmciaCisText;
-    PcmciaCisModel       _selectedCis;
+    const    string MODULE_NAME = "PCMCIA Information ViewModel";
+    readonly byte[] _cis;
+    readonly Window _view;
+    string          _pcmciaCisText;
+    PcmciaCisModel  _selectedCis;
 
     internal PcmciaInfoViewModel([CanBeNull] byte[] pcmciaCis, Window view)
     {
@@ -67,6 +67,7 @@ public class PcmciaInfoViewModel : ViewModelBase
         Tuple[] tuples = CIS.GetTuples(_cis);
 
         if(tuples != null)
+        {
             foreach(Tuple tuple in tuples)
             {
                 string tupleCode;
@@ -75,7 +76,8 @@ public class PcmciaInfoViewModel : ViewModelBase
                 switch(tuple.Code)
                 {
                     case TupleCodes.CISTPL_NULL:
-                    case TupleCodes.CISTPL_END: continue;
+                    case TupleCodes.CISTPL_END:
+                        continue;
                     case TupleCodes.CISTPL_DEVICEGEO:
                     case TupleCodes.CISTPL_DEVICEGEO_A:
                         tupleCode        = UI.Device_Geometry_Tuples;
@@ -143,6 +145,7 @@ public class PcmciaInfoViewModel : ViewModelBase
                     Description = tupleDescription
                 });
             }
+        }
         else
             AaruConsole.DebugWriteLine(MODULE_NAME, UI.PCMCIA_CIS_returned_no_tuples);
     }
@@ -179,11 +182,8 @@ public class PcmciaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

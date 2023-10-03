@@ -49,7 +49,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
     readonly Window _view;
 
     public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
-                            Window view)
+                            Window             view)
     {
         SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
         SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
@@ -71,20 +71,20 @@ public sealed class AtaInfoViewModel : ViewModelBase
             if(ataMcptError.HasValue)
             {
                 AtaMcptText = (ataMcptError.Value.DeviceHead & 0x7) switch
-                {
-                    0 => Localization.Core.Device_reports_incorrect_media_card_type,
-                    1 => Localization.Core.Device_contains_SD_card,
-                    2 => Localization.Core.Device_contains_MMC,
-                    3 => Localization.Core.Device_contains_SDIO_card,
-                    4 => Localization.Core.Device_contains_SM_card,
-                    _ => string.Format(Localization.Core.Device_contains_unknown_media_card_type_0,
-                                       ataMcptError.Value.DeviceHead & 0x07)
-                };
+                              {
+                                  0 => Localization.Core.Device_reports_incorrect_media_card_type,
+                                  1 => Localization.Core.Device_contains_SD_card,
+                                  2 => Localization.Core.Device_contains_MMC,
+                                  3 => Localization.Core.Device_contains_SDIO_card,
+                                  4 => Localization.Core.Device_contains_SM_card,
+                                  _ => string.Format(Localization.Core.Device_contains_unknown_media_card_type_0,
+                                                     ataMcptError.Value.DeviceHead & 0x07)
+                              };
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 
-                ushort specificData =
-                    (ushort)((ataMcptError.Value.CylinderHigh * 0x100) + ataMcptError.Value.CylinderLow);
+                var specificData =
+                    (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
 
                 AtaMcptSpecificDataText = string.Format(Localization.Core.Card_specific_data_0, specificData);
             }
@@ -120,11 +120,8 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -148,11 +145,8 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.txt"
-            }),
-            Name = UI.Dialog_Text_files
+            Extensions = new List<string>(new[] { "*.txt" }),
+            Name       = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);

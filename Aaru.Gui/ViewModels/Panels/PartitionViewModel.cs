@@ -38,8 +38,8 @@ public sealed class PartitionViewModel
 {
     public PartitionViewModel(Partition partition)
     {
-        NameText  = string.Format(Localization.Core.Partition_name_0, partition.Name);
-        TypeText  = string.Format(Localization.Core.Partition_type_0, partition.Type);
+        NameText  = string.Format(Localization.Core.Partition_name_0,                partition.Name);
+        TypeText  = string.Format(Localization.Core.Partition_type_0,                partition.Type);
         StartText = string.Format(Localization.Core.Partition_start_sector_0_byte_1, partition.Start, partition.Offset);
 
         LengthText = string.Format(Localization.Core.Partition_length_0_sectors_1_bytes, partition.Length,

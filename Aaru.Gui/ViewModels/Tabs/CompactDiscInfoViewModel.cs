@@ -101,12 +101,16 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
             McnText = mcn;
 
         if(isrcs is { Count: > 0 })
+        {
             foreach(KeyValuePair<byte, string> isrc in isrcs)
+            {
                 IsrcList.Add(new IsrcModel
                 {
                     Track = isrc.Key.ToString(),
                     Isrc  = isrc.Value
                 });
+            }
+        }
 
         MiscellaneousVisible = McnText != null || isrcs?.Count > 0 || pma != null;
         CdPmaVisible         = pma != null;
@@ -155,11 +159,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -179,11 +180,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -203,11 +201,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -227,11 +222,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -251,11 +243,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -275,11 +264,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -299,11 +285,8 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

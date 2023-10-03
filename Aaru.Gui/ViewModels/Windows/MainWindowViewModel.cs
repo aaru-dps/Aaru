@@ -72,22 +72,22 @@ namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    const string           MODULE_NAME = "Main Window ViewModel";
-    readonly      DevicesRootModel _devicesRoot;
-    readonly      Bitmap           _ejectIcon;
-    readonly      Bitmap           _genericFolderIcon;
-    readonly      Bitmap           _genericHddIcon;
-    readonly      Bitmap           _genericOpticalIcon;
-    readonly      Bitmap           _genericTapeIcon;
-    readonly      ImagesRootModel  _imagesRoot;
-    readonly      Bitmap           _removableIcon;
-    readonly      Bitmap           _sdIcon;
-    readonly      Bitmap           _usbIcon;
-    readonly      MainWindow       _view;
-    Views.Dialogs.Console          _console;
-    object                         _contentPanel;
-    bool                           _devicesSupported;
-    object                         _treeViewSelectedItem;
+    const    string           MODULE_NAME = "Main Window ViewModel";
+    readonly DevicesRootModel _devicesRoot;
+    readonly Bitmap           _ejectIcon;
+    readonly Bitmap           _genericFolderIcon;
+    readonly Bitmap           _genericHddIcon;
+    readonly Bitmap           _genericOpticalIcon;
+    readonly Bitmap           _genericTapeIcon;
+    readonly ImagesRootModel  _imagesRoot;
+    readonly Bitmap           _removableIcon;
+    readonly Bitmap           _sdIcon;
+    readonly Bitmap           _usbIcon;
+    readonly MainWindow       _view;
+    Views.Dialogs.Console     _console;
+    object                    _contentPanel;
+    bool                      _devicesSupported;
+    object                    _treeViewSelectedItem;
 
     public MainWindowViewModel(MainWindow view)
     {
@@ -148,15 +148,18 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         _usbIcon =
             new
-                Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+                Bitmap(AssetLoader.Open(
+                           new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new Bitmap(AssetLoader.Open(
+                           new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
             new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
 
-        _ejectIcon = new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
+        _ejectIcon =
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
 
     public string FileLabel                 => UI.Menu_File;
@@ -193,6 +196,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     [NotNull]
     public string Greeting => UI.Welcome_to_Aaru;
+
     public ObservableCollection<RootModel> TreeRoot                    { get; }
     public ReactiveCommand<Unit, Unit>     AboutCommand                { get; }
     public ReactiveCommand<Unit, Unit>     ConsoleCommand              { get; }
@@ -292,23 +296,27 @@ public sealed class MainWindowViewModel : ViewModelBase
                         deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
 
                         if(!dev.IsRemovable)
+                        {
                             deviceModel.Media.Add(new MediaModel
                             {
                                 NonRemovable = true,
                                 Name         = UI.Non_removable_device_commands_not_yet_implemented
                             });
+                        }
                         else
                         {
                             // TODO: Removable non-SCSI?
                             var scsiInfo = new ScsiInfo(dev);
 
                             if(!scsiInfo.MediaInserted)
+                            {
                                 deviceModel.Media.Add(new MediaModel
                                 {
                                     NoMediaInserted = true,
                                     Icon            = _ejectIcon,
                                     Name            = UI.No_media_inserted
                                 });
+                            }
                             else
                             {
                                 var mediaResource =
@@ -317,7 +325,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 deviceModel.Media.Add(new MediaModel
                                 {
                                     DevicePath = deviceModel.Path,
-                                    Icon = AssetLoader.Exists(mediaResource) ? new Bitmap(AssetLoader.Open(mediaResource))
+                                    Icon = AssetLoader.Exists(mediaResource)
+                                               ? new Bitmap(AssetLoader.Open(mediaResource))
                                                : null,
                                     Name      = $"{scsiInfo.MediaType}",
                                     ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
@@ -346,10 +355,12 @@ public sealed class MainWindowViewModel : ViewModelBase
                 case MediaModel mediaModel:
                 {
                     if(mediaModel.ViewModel != null)
+                    {
                         ContentPanel = new MediaInfo
                         {
                             DataContext = mediaModel.ViewModel
                         };
+                    }
 
                     break;
                 }
@@ -533,7 +544,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         if(inputFilter == null)
         {
             MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Cannot_open_specified_file, ButtonEnum.Ok,
-                                                          Icon.Error);
+                                                    Icon.Error);
 
             return;
         }
@@ -543,7 +554,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
                 MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Image_format_not_identified,
-                                                              ButtonEnum.Ok, Icon.Error);
+                                                        ButtonEnum.Ok, Icon.Error);
 
                 return;
             }
@@ -557,8 +568,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                 if(opened != ErrorNumber.NoError)
                 {
                     MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
-                                                                  string.Format(UI.Error_0_opening_image_format,
-                                                                                    opened), ButtonEnum.Ok, Icon.Error);
+                                                            string.Format(UI.Error_0_opening_image_format,
+                                                                          opened), ButtonEnum.Ok, Icon.Error);
 
                     AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                     AaruConsole.ErrorWriteLine(UI.No_error_given);
@@ -587,7 +598,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                 List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
                 Core.Partitions.AddSchemesToStats(partitions);
 
-                bool         checkRaw = false;
+                var          checkRaw = false;
                 List<string> idPlugins;
                 Type         pluginType;
                 PluginBase   plugins = PluginBase.Singleton;
@@ -632,6 +643,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                                 foreach(string pluginName in idPlugins)
+                                {
                                     if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                                     {
                                         if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
@@ -655,13 +667,14 @@ public sealed class MainWindowViewModel : ViewModelBase
                                         var filesystemModel = new FileSystemModel
                                         {
                                             VolumeName = rofs?.Metadata.VolumeName is null
-                                                             ? fsMetadata.VolumeName is null ? $"{fsMetadata.Type}"
+                                                             ? fsMetadata.VolumeName is null
+                                                                   ? $"{fsMetadata.Type}"
                                                                    : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
                                                              : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
                                             Filesystem         = fs,
                                             ReadOnlyFilesystem = rofs,
                                             ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata,
-                                                                                    information)
+                                                information)
                                         };
 
                                         // TODO: Trap expanding item
@@ -680,6 +693,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                         Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
                                         partitionModel.FileSystems.Add(filesystemModel);
                                     }
+                                }
                             }
 
                             schemeModel.Partitions.Add(partitionModel);
@@ -707,6 +721,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                         AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                         foreach(string pluginName in idPlugins)
+                        {
                             if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
                             {
                                 if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
@@ -729,7 +744,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 var filesystemModel = new FileSystemModel
                                 {
                                     VolumeName = rofs?.Metadata.VolumeName is null
-                                                     ? fsMetadata.VolumeName is null ? $"{fsMetadata.Type}"
+                                                     ? fsMetadata.VolumeName is null
+                                                           ? $"{fsMetadata.Type}"
                                                            : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
                                                      : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
                                     Filesystem = fs,
@@ -753,6 +769,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
                                 imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
                             }
+                        }
                     }
                 }
 
@@ -765,7 +782,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             catch(Exception ex)
             {
                 MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Unable_to_open_image_format,
-                                                              ButtonEnum.Ok, Icon.Error);
+                                                        ButtonEnum.Ok, Icon.Error);
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
@@ -775,7 +792,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         catch(Exception ex)
         {
             MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Exception_reading_file, ButtonEnum.Ok,
-                                                          Icon.Error);
+                                                    Icon.Error);
 
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
             AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
@@ -817,9 +834,11 @@ public sealed class MainWindowViewModel : ViewModelBase
                 if(dev != null)
                 {
                     if(dev is Devices.Remote.Device remoteDev)
+                    {
                         Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
                                              remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
                                              remoteDev.RemoteArchitecture);
+                    }
 
                     switch(dev.Type)
                     {
@@ -830,7 +849,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 case PeripheralDeviceTypes.DirectAccess:
                                 case PeripheralDeviceTypes.SCSIZonedBlockDevice:
                                 case PeripheralDeviceTypes.SimplifiedDevice:
-                                    deviceModel.Icon = dev.IsRemovable ? dev.IsUsb ? _usbIcon : _removableIcon
+                                    deviceModel.Icon = dev.IsRemovable
+                                                           ? dev.IsUsb ? _usbIcon : _removableIcon
                                                            : _genericHddIcon;
 
                                     break;

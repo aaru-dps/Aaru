@@ -161,6 +161,7 @@ public sealed class SubdirectoryViewModel
             ButtonResult mboxResult;
 
             if(DetectOS.IsWindows)
+            {
                 if(filename.Contains('<')                ||
                    filename.Contains('>')                ||
                    filename.Contains(':')                ||
@@ -202,7 +203,8 @@ public sealed class SubdirectoryViewModel
                     else
                         chars = new char[filename.Length];
 
-                    for(int ci = 0; ci < chars.Length; ci++)
+                    for(var ci = 0; ci < chars.Length; ci++)
+                    {
                         switch(filename[ci])
                         {
                             case '<':
@@ -253,6 +255,7 @@ public sealed class SubdirectoryViewModel
 
                                 break;
                         }
+                    }
 
                     if(filename.StartsWith("CON", StringComparison.InvariantCultureIgnoreCase) ||
                        filename.StartsWith("PRN", StringComparison.InvariantCultureIgnoreCase) ||
@@ -269,34 +272,44 @@ public sealed class SubdirectoryViewModel
 
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Unsupported_filename,
                                                                                string.
-                                                                                   Format(UI.Filename_0_not_supported_want_to_rename_to_1,
+                                                                                   Format(
+                                                                                       UI.
+                                                                                           Filename_0_not_supported_want_to_rename_to_1,
                                                                                        filename, corrected),
                                                                                ButtonEnum.YesNoCancel, Icon.Warning).
                                                          ShowWindowDialogAsync(_view);
 
                     switch(mboxResult)
                     {
-                        case ButtonResult.Cancel: return;
-                        case ButtonResult.No:     continue;
+                        case ButtonResult.Cancel:
+                            return;
+                        case ButtonResult.No:
+                            continue;
                         default:
                             filename = corrected;
 
                             break;
                     }
                 }
+            }
 
             string outputPath = Path.Combine(folder, filename);
 
             if(File.Exists(outputPath))
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Existing_file,
-                                 string.Format(UI.File_named_0_exists_overwrite_Q, filename),
-                                 ButtonEnum.YesNoCancel, Icon.Warning).ShowWindowDialogAsync(_view);
+                                                                           string.Format(
+                                                                               UI.File_named_0_exists_overwrite_Q,
+                                                                               filename),
+                                                                           ButtonEnum.YesNoCancel, Icon.Warning).
+                                                     ShowWindowDialogAsync(_view);
 
                 switch(mboxResult)
                 {
-                    case ButtonResult.Cancel: return;
-                    case ButtonResult.No:     continue;
+                    case ButtonResult.Cancel:
+                        return;
+                    case ButtonResult.No:
+                        continue;
                     default:
                         try
                         {
@@ -318,7 +331,7 @@ public sealed class SubdirectoryViewModel
 
             try
             {
-                byte[] outBuf = new byte[file.Stat.Length];
+                var outBuf = new byte[file.Stat.Length];
 
                 ErrorNumber error = _model.Plugin.OpenFile(_model.Path + "/" + file.Name, out IFileNode fileNode);
 
@@ -331,8 +344,10 @@ public sealed class SubdirectoryViewModel
                 if(error != ErrorNumber.NoError)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Error_reading_file,
-                                     string.Format(UI.Error_0_reading_file_continue_Q, error), ButtonEnum.YesNo,
-                                     Icon.Error).ShowWindowDialogAsync(_view);
+                                                                               string.Format(
+                                                                                   UI.Error_0_reading_file_continue_Q,
+                                                                                   error), ButtonEnum.YesNo,
+                                                                               Icon.Error).ShowWindowDialogAsync(_view);
 
                     if(mboxResult == ButtonResult.No)
                         return;
@@ -345,7 +360,7 @@ public sealed class SubdirectoryViewModel
                 fs.Write(outBuf, 0, outBuf.Length);
                 fs.Close();
                 var fi = new FileInfo(outputPath);
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 try
                 {
                     if(file.Stat.CreationTimeUtc.HasValue)
@@ -375,7 +390,7 @@ public sealed class SubdirectoryViewModel
                 {
                     // ignored
                 }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             catch(IOException)
             {

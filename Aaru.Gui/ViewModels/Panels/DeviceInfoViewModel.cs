@@ -179,18 +179,22 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         }
 
         if(devInfo.IsPcmcia)
+        {
             PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(devInfo.Cis, _view)
             };
+        }
 
         if(devInfo.AtaIdentify   != null ||
            devInfo.AtapiIdentify != null)
+        {
             AtaInfo = new AtaInfo
             {
                 DataContext =
                     new AtaInfoViewModel(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError, _view)
             };
+        }
 
         if(devInfo.ScsiInquiryData != null)
         {
@@ -208,7 +212,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 if(devInfo.PlextorFeatures.Eeprom != null)
                 {
                     PlextorEepromVisible = true;
-                    PlextorDiscs         = $"{devInfo.PlextorFeatures.Discs}";
+                    PlextorDiscs = $"{devInfo.PlextorFeatures.Discs}";
                     PlextorCdReadTime = devInfo.PlextorFeatures.CdReadTime.Seconds().Humanize(minUnit: TimeUnit.Second);
 
                     PlextorCdWriteTime =
@@ -280,11 +284,13 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
                         PlextorSilentModeCdReadSpeedLimit =
                             devInfo.PlextorFeatures.CdReadSpeedLimit > 0
-                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : UI.unlimited_as_in_speed;
+                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                : UI.unlimited_as_in_speed;
 
                         PlextorSilentModeCdWriteSpeedLimit =
                             devInfo.PlextorFeatures.CdWriteSpeedLimit > 0
-                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : UI.unlimited_as_in_speed;
+                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                : UI.unlimited_as_in_speed;
 
                         if(devInfo.PlextorFeatures.IsDvd)
                         {
@@ -292,7 +298,8 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
                             PlextorSilentModeDvdReadSpeedLimit =
                                 devInfo.PlextorFeatures.DvdReadSpeedLimit > 0
-                                    ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x" : UI.unlimited_as_in_speed;
+                                    ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x"
+                                    : UI.unlimited_as_in_speed;
                         }
                     }
                 }
@@ -349,30 +356,37 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                     Ssc = true;
 
                     if(blockLimits.Value.minBlockLen == blockLimits.Value.maxBlockLen)
+                    {
                         MinBlockSize = string.Format(Localization.Core.Device_block_size_is_fixed_at_0_bytes,
                                                      blockLimits.Value.minBlockLen);
+                    }
                     else
                     {
                         MaxBlockSize = blockLimits.Value.maxBlockLen > 0
                                            ? string.Format(Localization.Core.Device_maximum_block_size_is_0_bytes,
-                                                           blockLimits.Value.maxBlockLen) : Localization.Core.
-                                               Device_does_not_specify_a_maximum_block_size;
+                                                           blockLimits.Value.maxBlockLen)
+                                           : Localization.Core.
+                                                          Device_does_not_specify_a_maximum_block_size;
 
                         MinBlockSize = string.Format(Localization.Core.Device_minimum_block_size_is_0_bytes,
                                                      blockLimits.Value.minBlockLen);
 
                         if(blockLimits.Value.granularity > 0)
+                        {
                             BlockSizeGranularity =
                                 string.Format(Localization.Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes,
                                               blockLimits.Value.granularity,
                                               Math.Pow(2, blockLimits.Value.granularity));
+                        }
                     }
                 }
             }
 
             if(devInfo.DensitySupport != null)
+            {
                 if(devInfo.DensitySupportHeader.HasValue)
                     Densities = DensitySupport.PrettifyDensity(devInfo.DensitySupportHeader);
+            }
 
             if(devInfo.MediumDensitySupport != null)
             {
@@ -1002,11 +1016,8 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

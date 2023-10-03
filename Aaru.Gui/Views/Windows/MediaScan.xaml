@@ -34,7 +34,8 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450"
         x:Class="Aaru.Gui.Views.Windows.MediaScan" Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
     <Design.DataContext>
         <windows:MediaScanViewModel />
@@ -59,7 +60,7 @@
                 <TabItem.Header>
                     <TextBlock Text="Graph" />
                 </TabItem.Header>
-<!--                <controls:BlockMap Width="750" Height="400" Blocks="{Binding Blocks}" ItemsSource="{Binding BlockMapList}" /> -->
+                <!--                <controls:BlockMap Width="750" Height="400" Blocks="{Binding Blocks}" ItemsSource="{Binding BlockMapList}" /> -->
             </TabItem>
             <TabItem>
                 <TabItem.Header>

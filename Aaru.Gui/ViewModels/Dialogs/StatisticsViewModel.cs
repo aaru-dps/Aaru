@@ -118,12 +118,14 @@ public sealed class StatisticsViewModel : ViewModelBase
                 }
 
                 if(count > 0)
+                {
                     ctx.Commands.Add(new Command
                     {
                         Count        = count,
                         Name         = "fs-info",
                         Synchronized = true
                     });
+                }
 
                 ctx.SaveChanges();
             }
@@ -392,6 +394,7 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer).ThenBy(n => n.Manufacturer).
                                          ThenBy(n => n.Revision).ThenBy(n => n.Bus))
+            {
                 Devices.Add(new DeviceStatsModel
                 {
                     Model        = ds.Model,
@@ -399,6 +402,7 @@ public sealed class StatisticsViewModel : ViewModelBase
                     Revision     = ds.Revision,
                     Bus          = ds.Bus
                 });
+            }
         }
 
         if(!ctx.Medias.Any())
@@ -414,12 +418,14 @@ public sealed class StatisticsViewModel : ViewModelBase
             count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
             if(count > 0)
+            {
                 Medias.Add(new MediaStatsModel
                 {
                     Name  = media,
                     Count = count,
                     Type  = UI.Media_found_type_real
                 });
+            }
 
             count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
                         FirstOrDefault();
@@ -674,42 +680,61 @@ public sealed class StatisticsViewModel : ViewModelBase
 
     [NotNull]
     public string CommandsLabel => UI.Title_Commands;
+
     [NotNull]
     public string FilterLabel => UI.Title_Filter;
+
     [NotNull]
     public string PartitionLabel => UI.Title_Partition;
+
     [NotNull]
     public string PartitionsLabel => UI.Title_Partitions;
+
     [NotNull]
     public string FiltersLabel => UI.Title_Filters;
+
     [NotNull]
     public string FormatsLabel => UI.Title_Formats;
+
     [NotNull]
     public string FormatLabel => UI.Title_Format;
+
     [NotNull]
     public string FilesystemsLabel => UI.Title_Filesystems;
+
     [NotNull]
     public string FilesystemLabel => UI.Title_Filesystem;
+
     [NotNull]
     public string TimesFoundLabel => UI.Title_Times_used;
+
     [NotNull]
     public string DevicesLabel => UI.Title_Devices;
+
     [NotNull]
     public string DeviceLabel => UI.Title_Device;
+
     [NotNull]
     public string ManufacturerLabel => UI.Title_Manufacturer;
+
     [NotNull]
     public string RevisionLabel => UI.Title_Revision;
+
     [NotNull]
     public string BusLabel => UI.Title_Bus;
+
     [NotNull]
     public string MediasLabel => UI.Title_Medias;
+
     [NotNull]
     public string MediaLabel => UI.Title_Media;
+
     [NotNull]
     public string TypeLabel => Localization.Core.Title_Type_for_media;
+
     [NotNull]
     public string Title => UI.Encodings;
+
     [NotNull]
     public string CloseLabel => UI.ButtonLabel_Close;
 

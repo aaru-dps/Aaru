@@ -41,8 +41,8 @@ public sealed class FileSystemViewModel
     public FileSystemViewModel([NotNull] FileSystem metadata, string information)
     {
         TypeText         = string.Format(Localization.Core.Filesystem_type_0, metadata.Type);
-        VolumeNameText   = string.Format(Localization.Core.Volume_name_0, metadata.VolumeName);
-        SerialNumberText = string.Format(Localization.Core.Volume_serial_0, metadata.VolumeSerial);
+        VolumeNameText   = string.Format(Localization.Core.Volume_name_0,     metadata.VolumeName);
+        SerialNumberText = string.Format(Localization.Core.Volume_serial_0,   metadata.VolumeSerial);
 
         ApplicationIdentifierText =
             string.Format(Localization.Core.Application_identifier_0, metadata.ApplicationIdentifier);
@@ -57,10 +57,10 @@ public sealed class FileSystemViewModel
 
         PublisherIdentifierText = string.Format(Localization.Core.Publisher_identifier_0, metadata.PublisherIdentifier);
 
-        CreationDateText     = string.Format(Localization.Core.Volume_created_on_0, metadata.CreationDate);
-        EffectiveDateText    = string.Format(Localization.Core.Volume_effective_from_0, metadata.EffectiveDate);
-        ModificationDateText = string.Format(Localization.Core.Volume_last_modified_on_0, metadata.ModificationDate);
-        ExpirationDateText   = string.Format(Localization.Core.Volume_expired_on_0, metadata.ExpirationDate);
+        CreationDateText     = string.Format(Localization.Core.Volume_created_on_0,        metadata.CreationDate);
+        EffectiveDateText    = string.Format(Localization.Core.Volume_effective_from_0,    metadata.EffectiveDate);
+        ModificationDateText = string.Format(Localization.Core.Volume_last_modified_on_0,  metadata.ModificationDate);
+        ExpirationDateText   = string.Format(Localization.Core.Volume_expired_on_0,        metadata.ExpirationDate);
         BackupDateText       = string.Format(Localization.Core.Volume_last_backed_up_on_0, metadata.BackupDate);
 
         ClustersText = string.Format(Localization.Core.Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes,

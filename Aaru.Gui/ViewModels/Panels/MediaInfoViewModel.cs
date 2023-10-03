@@ -93,8 +93,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
         SaveMediumSupportCommand          = ReactiveCommand.Create(ExecuteSaveMediumSupportCommand);
         DumpCommand                       = ReactiveCommand.Create(ExecuteDumpCommand);
         ScanCommand                       = ReactiveCommand.Create(ExecuteScanCommand);
-        _devicePath = devicePath;
-        _scsiInfo   = scsiInfo;
+        _devicePath                       = devicePath;
+        _scsiInfo                         = scsiInfo;
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
 
@@ -104,15 +104,17 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         if(scsiInfo.Blocks    != 0 &&
            scsiInfo.BlockSize != 0)
+        {
             MediaSize = string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
                                       scsiInfo.Blocks, scsiInfo.BlockSize,
                                       ByteSize.FromBytes(scsiInfo.Blocks * scsiInfo.BlockSize).ToString("0.000"));
+        }
 
         if(scsiInfo.MediaSerialNumber != null)
         {
             var sbSerial = new StringBuilder();
 
-            for(int i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
+            for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
                 sbSerial.AppendFormat("{0:X2}", scsiInfo.MediaSerialNumber[i]);
 
             MediaSerial = sbSerial.ToString();
@@ -360,11 +362,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -401,8 +400,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error,
-                                                  Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
-                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
+                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
             case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
@@ -411,7 +410,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
                       GetMessageBoxStandard(UI.Title_Error,
                                             Localization.Core.
                                                          Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware,
-                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
         }
@@ -433,8 +432,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error,
-                                                  Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
-                                                  ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
+                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
 
                 return;
 

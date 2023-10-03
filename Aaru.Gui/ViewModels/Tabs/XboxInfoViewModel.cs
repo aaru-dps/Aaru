@@ -49,7 +49,7 @@ public sealed class XboxInfoViewModel
     readonly byte[] _xboxSecuritySector;
 
     public XboxInfoViewModel([CanBeNull] XgdInfo xgdInfo, [CanBeNull] byte[] dmi, [CanBeNull] byte[] securitySector,
-                             SS.SecuritySector? decodedSecuritySector, Window view)
+                             SS.SecuritySector?  decodedSecuritySector, Window view)
     {
         _xboxSecuritySector = securitySector;
         _view               = view;
@@ -108,11 +108,8 @@ public sealed class XboxInfoViewModel
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

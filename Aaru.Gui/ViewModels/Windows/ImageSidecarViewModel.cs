@@ -79,7 +79,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     bool                 _stopVisible;
 
     public ImageSidecarViewModel(IMediaImage inputFormat, string imageSource, Guid filterId, Encoding encoding,
-                                 Window view)
+                                 Window      view)
     {
         _view        = view;
         _inputFormat = inputFormat;
@@ -275,10 +275,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     }
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = false;
-    });
+    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = false; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -291,16 +288,10 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = true;
-    });
+    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = true; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -313,16 +304,10 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        StatusText = text;
-    });
+    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() => { StatusText = text; });
 
     void ExecuteCloseCommand() => _view.Close();
 
@@ -342,11 +327,8 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
         dlgDestination.Filters?.Add(new FileDialogFilter
         {
-            Name = UI.Dialog_Aaru_Metadata,
-            Extensions = new List<string>(new[]
-            {
-                "*.json"
-            })
+            Name       = UI.Dialog_Aaru_Metadata,
+            Extensions = new List<string>(new[] { "*.json" })
         });
 
         string result = await dlgDestination.ShowAsync(_view);

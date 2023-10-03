@@ -63,8 +63,10 @@ public sealed class LicenseViewModel : ViewModelBase
 
     [NotNull]
     public string Title => UI.Title_Aaru_license;
+
     [NotNull]
     public string CloseLabel => UI.ButtonLabel_Close;
+
     public string                      LicenseText  { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand { get; }
 

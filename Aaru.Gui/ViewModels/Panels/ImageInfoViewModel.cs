@@ -50,7 +50,6 @@ using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Helpers;
 using Aaru.Localization;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -78,9 +77,9 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
     {
-        _imagePath   = imagePath;
-        _filter      = filter;
-        _imageFormat = imageFormat;
+        _imagePath            = imagePath;
+        _filter               = filter;
+        _imageFormat          = imageFormat;
         MediaTagsList         = new ObservableCollection<string>();
         SectorTagsList        = new ObservableCollection<string>();
         Sessions              = new ObservableCollection<Session>();
@@ -113,13 +112,13 @@ public sealed class ImageInfoViewModel : ViewModelBase
                                 ? genericOpticalIcon
                                 : genericFolderIcon;
 
-        ImagePathText       = string.Format(UI.Path_0, imagePath);
-        FilterText          = string.Format(UI.Filter_0, filter.Name);
+        ImagePathText       = string.Format(UI.Path_0,                         imagePath);
+        FilterText          = string.Format(UI.Filter_0,                       filter.Name);
         ImageIdentifiedText = string.Format(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
 
         ImageFormatText = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
                               ? string.Format(UI.Format_0_version_1, imageFormat.Format, imageFormat.Info.Version)
-                              : string.Format(UI.Format_0, imageFormat.Format);
+                              : string.Format(UI.Format_0,           imageFormat.Format);
 
         ImageSizeText = string.Format(Localization.Core.Image_without_headers_is_0_bytes_long,
                                       imageFormat.Info.ImageSize);
@@ -136,10 +135,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
         HasSessionsText   = imageFormat.Info.HasSessions ? UI.Has_sessions : UI.Doesnt_have_sessions;
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
+        {
             ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
                                   ? string.Format(Localization.Core.Was_created_with_0_version_1,
                                                   imageFormat.Info.Application, imageFormat.Info.ApplicationVersion)
                                   : string.Format(Localization.Core.Was_created_with_0, imageFormat.Info.Application);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
             CreatorText = string.Format(Localization.Core.Created_by_0, imageFormat.Info.Creator);
@@ -148,27 +149,35 @@ public sealed class ImageInfoViewModel : ViewModelBase
             CreationTimeText = string.Format(Localization.Core.Created_on_0, imageFormat.Info.CreationTime);
 
         if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
+        {
             LastModificationTimeText =
                 string.Format(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
+        }
 
         if(imageFormat.Info.MediaSequence     != 0 &&
            imageFormat.Info.LastMediaSequence != 0)
+        {
             MediaSequenceText = string.Format(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
                                               imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
             MediaTitleText = string.Format(UI.Media_title_0, imageFormat.Info.MediaTitle);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
+        {
             MediaManufacturerText =
                 string.Format(Localization.Core.Media_manufacturer_0, imageFormat.Info.MediaManufacturer);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
             MediaModelText = string.Format(UI.Media_model_0, imageFormat.Info.MediaModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
+        {
             MediaSerialNumberText =
                 string.Format(Localization.Core.Media_serial_number_0, imageFormat.Info.MediaSerialNumber);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
             MediaBarcodeText = string.Format(UI.Media_barcode_0, imageFormat.Info.MediaBarcode);
@@ -183,8 +192,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
             DriveModelText = string.Format(UI.Drive_model_0, imageFormat.Info.DriveModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
+        {
             DriveSerialNumberText =
                 string.Format(Localization.Core.Drive_serial_number_0, imageFormat.Info.DriveSerialNumber);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
             DriveFirmwareRevisionText = string.Format(UI.Drive_firmware_info_0, imageFormat.Info.DriveFirmwareRevision);
@@ -193,17 +204,23 @@ public sealed class ImageInfoViewModel : ViewModelBase
            imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }            &&
            imageFormat.Info.MetadataMediaType != MetadataMediaType.OpticalDisc &&
            imageFormat is not ITapeImage { IsTape: true })
+        {
             MediaGeometryText = string.Format(UI.Media_geometry_0_cylinders_1_heads_2_sectors_per_track,
                                               imageFormat.Info.Cylinders, imageFormat.Info.Heads,
                                               imageFormat.Info.SectorsPerTrack);
+        }
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
+        {
             foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
                 MediaTagsList.Add(tag.ToString());
+        }
 
         if(imageFormat.Info.ReadableSectorTags is { Count: > 0 })
+        {
             foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 SectorTagsList.Add(tag.ToString());
+        }
 
         PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
         byte[]                scsiInquiryData = null;
@@ -258,10 +275,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
             errno = imageFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out atapiIdentify);
 
         if(errno == ErrorNumber.NoError)
+        {
             AtaInfo = new AtaInfo
             {
                 DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, view)
             };
+        }
 
         byte[]                 toc                  = null;
         TOC.CDTOC?             decodedToc           = null;
@@ -285,7 +304,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != toc.Length)
                 {
-                    byte[] tmp = new byte[toc.Length + 2];
+                    var tmp = new byte[toc.Length + 2];
                     Array.Copy(toc, 0, tmp, 2, toc.Length);
                     tmp[0] = (byte)((toc.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(toc.Length & 0xFF);
@@ -307,7 +326,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != fullToc.Length)
                 {
-                    byte[] tmp = new byte[fullToc.Length + 2];
+                    var tmp = new byte[fullToc.Length + 2];
                     Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
                     tmp[0]  = (byte)((fullToc.Length & 0xFF00) >> 8);
                     tmp[1]  = (byte)(fullToc.Length & 0xFF);
@@ -329,7 +348,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != pma.Length)
                 {
-                    byte[] tmp = new byte[pma.Length + 2];
+                    var tmp = new byte[pma.Length + 2];
                     Array.Copy(pma, 0, tmp, 2, pma.Length);
                     tmp[0] = (byte)((pma.Length & 0xFF00) >> 8);
                     tmp[1] = (byte)(pma.Length & 0xFF);
@@ -348,7 +367,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != atip.Length)
                 {
-                    byte[] tmp = new byte[atip.Length + 4];
+                    var tmp = new byte[atip.Length + 4];
                     Array.Copy(atip, 0, tmp, 4, atip.Length);
                     tmp[0] = (byte)((atip.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((atip.Length & 0xFF0000)   >> 16);
@@ -371,7 +390,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 4 != cdtext.Length)
                 {
-                    byte[] tmp = new byte[cdtext.Length + 4];
+                    var tmp = new byte[cdtext.Length + 4];
                     Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
                     tmp[0] = (byte)((cdtext.Length & 0xFF000000) >> 24);
                     tmp[1] = (byte)((cdtext.Length & 0xFF0000)   >> 16);
@@ -562,10 +581,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
             errno = imageFormat.ReadMediaTag(MediaTagType.PCMCIA_CIS, out pcmciaCis);
 
         if(errno == ErrorNumber.NoError)
+        {
             PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(pcmciaCis, view)
             };
+        }
 
         DeviceType deviceType  = DeviceType.Unknown;
         byte[]     cid         = null;
@@ -632,8 +653,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
             try
             {
                 if(opticalMediaImage.Sessions is { Count: > 0 })
+                {
                     foreach(Session session in opticalMediaImage.Sessions)
                         Sessions.Add(session);
+                }
             }
             catch
             {
@@ -643,8 +666,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
             try
             {
                 if(opticalMediaImage.Tracks is { Count: > 0 })
+                {
                     foreach(Track track in opticalMediaImage.Tracks)
                         Tracks.Add(track);
+                }
             }
             catch
             {
@@ -658,6 +683,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
             foreach(Extent extent in dump.Extents)
+            {
                 DumpHardwareList.Add(new DumpHardwareModel
                 {
                     Manufacturer    = dump.Manufacturer,
@@ -669,6 +695,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
                     Start           = extent.Start,
                     End             = extent.End
                 });
+            }
         }
     }
 
@@ -720,9 +747,11 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>             CreateSidecarCommand      { get; }
     public ReactiveCommand<Unit, Unit>             ViewSectorsCommand        { get; }
     public ReactiveCommand<Unit, Unit>             DecodeMediaTagCommand     { get; }
+
     public bool DriveInformationVisible => DriveManufacturerText != null || DriveModelText            != null ||
                                            DriveSerialNumberText != null || DriveFirmwareRevisionText != null ||
                                            MediaGeometryText     != null;
+
     public bool MediaInformationVisible => MediaSequenceText     != null || MediaTitleText   != null ||
                                            MediaManufacturerText != null || MediaModelText   != null ||
                                            MediaSerialNumberText != null || MediaBarcodeText != null ||

@@ -63,7 +63,8 @@
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" ItemsSource="{Binding ModeSensePages}"
+                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                              ItemsSource="{Binding ModeSensePages}"
                               SelectedItem="{Binding SelectedModeSensePage}" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding PageLabel}" Binding="{Binding Page}" />
@@ -110,7 +111,8 @@
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" ItemsSource="{Binding MmcFeatures}"
+                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                              ItemsSource="{Binding MmcFeatures}"
                               SelectedItem="{Binding SelectedMmcFeature}" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding FeatureLabel}" Binding="{Binding Page}" />

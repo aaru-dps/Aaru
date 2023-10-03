@@ -90,30 +90,43 @@ public sealed class AboutViewModel : ViewModelBase
 
     [NotNull]
     public string AboutLabel => UI.Label_About;
+
     [NotNull]
     public string LibrariesLabel => UI.Label_Libraries;
+
     [NotNull]
     public string AuthorsLabel => UI.Label_Authors;
+
     [NotNull]
     public string Title => UI.Title_About_Aaru;
+
     [NotNull]
     public string SoftwareName => "Aaru";
+
     [NotNull]
     public string SuiteName => "Aaru Data Preservation Suite";
+
     [NotNull]
     public string Copyright => "© 2011-2023 Natalia Portillo";
+
     [NotNull]
     public string Website => "https://aaru.app";
+
     [NotNull]
     public string License => UI.Label_License;
+
     [NotNull]
     public string CloseLabel => UI.ButtonLabel_Close;
+
     [NotNull]
     public string AssembliesLibraryText => UI.Title_Library;
+
     [NotNull]
     public string AssembliesVersionText => UI.Title_Version;
+
     [NotNull]
     public string Authors => UI.Text_Authors;
+
     public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
     public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
     public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }

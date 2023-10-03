@@ -140,7 +140,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBlock Grid.Row="2" Text="{Binding WritableLabel}" FontWeight="Bold" />
-                    <DataGrid Grid.Row="3" ItemsSource="{Binding WritableImages}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid Grid.Row="3" ItemsSource="{Binding WritableImages}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />

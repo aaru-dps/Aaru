@@ -33,7 +33,6 @@
 using System;
 using Aaru.Gui.ViewModels;
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml.Templates;
 using JetBrains.Annotations;
 

@@ -30,11 +30,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using JetBrains.Annotations;
 
 namespace Aaru.Gui.Views.Dialogs;
 

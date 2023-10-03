@@ -63,11 +63,11 @@ public sealed class DvdWritableInfoViewModel
     readonly Window _view;
 
     public DvdWritableInfoViewModel(MediaType mediaType, byte[] dds, byte[] cartridgeStatus, byte[] spareArea,
-                                    byte[] lastBorderOutRmd, byte[] preRecordedInfo, byte[] mediaIdentifier,
-                                    byte[] physicalInformation, byte[] mediumStatus, byte[] hdLastRmd,
-                                    byte[] layerCapacity, byte[] middleZoneStart, byte[] jumpIntervalSize,
-                                    byte[] manualLayerJumpStartLba, byte[] remapAnchorPoint, byte[] adip, byte[] dcb,
-                                    Window view)
+                                    byte[]    lastBorderOutRmd, byte[] preRecordedInfo, byte[] mediaIdentifier,
+                                    byte[]    physicalInformation, byte[] mediumStatus, byte[] hdLastRmd,
+                                    byte[]    layerCapacity, byte[] middleZoneStart, byte[] jumpIntervalSize,
+                                    byte[]    manualLayerJumpStartLba, byte[] remapAnchorPoint, byte[] adip, byte[] dcb,
+                                    Window    view)
     {
         _view                            = view;
         SaveDvdRamDdsCommand             = ReactiveCommand.Create(ExecuteSaveDvdRamDdsCommand);
@@ -260,11 +260,8 @@ public sealed class DvdWritableInfoViewModel
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

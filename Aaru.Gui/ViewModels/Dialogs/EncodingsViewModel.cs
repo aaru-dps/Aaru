@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
@@ -56,7 +55,7 @@ public sealed class EncodingsViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            List<EncodingModel> encodings = Encoding.GetEncodings().Select(info => new EncodingModel
+            var encodings = Encoding.GetEncodings().Select(info => new EncodingModel
             {
                 Name        = info.Name,
                 DisplayName = info.GetEncoding().EncodingName
@@ -75,6 +74,7 @@ public sealed class EncodingsViewModel : ViewModelBase
 
     [NotNull]
     public string Title => UI.Encodings;
+
     [NotNull]
     public string CloseLabel => UI.ButtonLabel_Close;
 

@@ -51,17 +51,17 @@ namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class ScsiInfoViewModel : ViewModelBase
 {
-    const string MODULE_NAME = "SCSI Information ViewModel";
-    readonly      byte[] _configuration;
-    readonly      byte[] _scsiModeSense10;
-    readonly      byte[] _scsiModeSense6;
-    readonly      Window _view;
-    string               _evpdPageText;
-    string               _mmcFeatureText;
-    string               _scsiModeSensePageText;
-    object               _selectedEvpdPage;
-    object               _selectedMmcFeature;
-    object               _selectedModeSensePage;
+    const    string MODULE_NAME = "SCSI Information ViewModel";
+    readonly byte[] _configuration;
+    readonly byte[] _scsiModeSense10;
+    readonly byte[] _scsiModeSense6;
+    readonly Window _view;
+    string          _evpdPageText;
+    string          _mmcFeatureText;
+    string          _scsiModeSensePageText;
+    object          _selectedEvpdPage;
+    object          _selectedMmcFeature;
+    object          _selectedModeSensePage;
 
     public ScsiInfoViewModel(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
                              Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
@@ -97,9 +97,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             });
 
             if(scsiMode.Value.Pages != null)
+            {
                 foreach(Modes.ModePage page in scsiMode.Value.Pages.OrderBy(t => t.Page).ThenBy(t => t.Subpage))
                 {
-                    string pageNumberText = page.Subpage == 0 ? string.Format(UI.MODE_0, page.Page)
+                    string pageNumberText = page.Subpage == 0
+                                                ? string.Format(UI.MODE_0,           page.Page)
                                                 : string.Format(UI.MODE_0_Subpage_1, page.Page, page.Subpage);
 
                     string decodedText;
@@ -119,9 +121,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x01:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_01(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -175,9 +179,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x07:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_07(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -242,9 +248,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x10:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.SequentialAccess
                                                   ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                   : Modes.PrettifyModePage_10(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -293,9 +301,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x1C:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                   : Modes.PrettifyModePage_1C(page.PageResponse);
+                            }
                             else if(page.Subpage == 1)
                                 decodedText = Modes.PrettifyModePage_1C_S01(page.PageResponse);
                             else
@@ -423,12 +433,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         Description = decodedText
                     });
                 }
+            }
         }
 
         if(scsiEvpdPages != null)
+        {
             foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
             {
-                string evpdPageTitle = "";
+                var    evpdPageTitle = "";
                 string evpdDecodedPage;
 
                 switch(page.Key)
@@ -538,14 +550,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                             Trim() == "certance":
                         evpdPageTitle = page.Key switch
-                        {
-                            0xC2 => UI.Head_Assembly_Serial_Number,
-                            0xC3 => UI.Reel_Motor_1_Serial_Number,
-                            0xC4 => UI.Reel_Motor_2_Serial_Number,
-                            0xC5 => UI.Board_Serial_Number,
-                            0xC6 => UI.Base_Mechanical_Serial_Number,
-                            _    => evpdPageTitle
-                        };
+                                        {
+                                            0xC2 => UI.Head_Assembly_Serial_Number,
+                                            0xC3 => UI.Reel_Motor_1_Serial_Number,
+                                            0xC4 => UI.Reel_Motor_2_Serial_Number,
+                                            0xC5 => UI.Board_Serial_Number,
+                                            0xC6 => UI.Base_Mechanical_Serial_Number,
+                                            _    => evpdPageTitle
+                                        };
 
                         evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
 
@@ -554,15 +566,15 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
                                             Trim() == "hp":
                         evpdPageTitle = page.Key switch
-                        {
-                            0xC0 => UI.HP_Drive_Firmware_Revision_Levels_page,
-                            0xC1 => UI.HP_Drive_Hardware_Revision_Levels_page,
-                            0xC2 => UI.HP_Drive_PCA_Revision_Levels_page,
-                            0xC3 => UI.HP_Drive_Mechanism_Revision_Levels_page,
-                            0xC4 => UI.HP_Drive_Head_Assembly_Revision_Levels_page,
-                            0xC5 => UI.HP_Drive_ACI_Revision_Levels_page,
-                            _    => evpdPageTitle
-                        };
+                                        {
+                                            0xC0 => UI.HP_Drive_Firmware_Revision_Levels_page,
+                                            0xC1 => UI.HP_Drive_Hardware_Revision_Levels_page,
+                                            0xC2 => UI.HP_Drive_PCA_Revision_Levels_page,
+                                            0xC3 => UI.HP_Drive_Mechanism_Revision_Levels_page,
+                                            0xC4 => UI.HP_Drive_Head_Assembly_Revision_Levels_page,
+                                            0xC5 => UI.HP_Drive_ACI_Revision_Levels_page,
+                                            _    => evpdPageTitle
+                                        };
 
                         evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
 
@@ -595,6 +607,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     Description = evpdDecodedPage
                 });
             }
+        }
 
         if(_configuration == null)
             return;
@@ -608,73 +621,74 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                                    ftr.CurrentProfile);
 
         if(ftr.Descriptors != null)
+        {
             foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
             {
-                string featureNumber = string.Format(Localization.Core.Feature_0, desc.Code);
+                var featureNumber = string.Format(Localization.Core.Feature_0, desc.Code);
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Feature_0, desc.Code);
 
                 string featureDescription = desc.Code switch
-                {
-                    0x0000 => Features.Prettify_0000(desc.Data),
-                    0x0001 => Features.Prettify_0001(desc.Data),
-                    0x0002 => Features.Prettify_0002(desc.Data),
-                    0x0003 => Features.Prettify_0003(desc.Data),
-                    0x0004 => Features.Prettify_0004(desc.Data),
-                    0x0010 => Features.Prettify_0010(desc.Data),
-                    0x001D => Features.Prettify_001D(desc.Data),
-                    0x001E => Features.Prettify_001E(desc.Data),
-                    0x001F => Features.Prettify_001F(desc.Data),
-                    0x0020 => Features.Prettify_0020(desc.Data),
-                    0x0021 => Features.Prettify_0021(desc.Data),
-                    0x0022 => Features.Prettify_0022(desc.Data),
-                    0x0023 => Features.Prettify_0023(desc.Data),
-                    0x0024 => Features.Prettify_0024(desc.Data),
-                    0x0025 => Features.Prettify_0025(desc.Data),
-                    0x0026 => Features.Prettify_0026(desc.Data),
-                    0x0027 => Features.Prettify_0027(desc.Data),
-                    0x0028 => Features.Prettify_0028(desc.Data),
-                    0x0029 => Features.Prettify_0029(desc.Data),
-                    0x002A => Features.Prettify_002A(desc.Data),
-                    0x002B => Features.Prettify_002B(desc.Data),
-                    0x002C => Features.Prettify_002C(desc.Data),
-                    0x002D => Features.Prettify_002D(desc.Data),
-                    0x002E => Features.Prettify_002E(desc.Data),
-                    0x002F => Features.Prettify_002F(desc.Data),
-                    0x0030 => Features.Prettify_0030(desc.Data),
-                    0x0031 => Features.Prettify_0031(desc.Data),
-                    0x0032 => Features.Prettify_0032(desc.Data),
-                    0x0033 => Features.Prettify_0033(desc.Data),
-                    0x0035 => Features.Prettify_0035(desc.Data),
-                    0x0037 => Features.Prettify_0037(desc.Data),
-                    0x0038 => Features.Prettify_0038(desc.Data),
-                    0x003A => Features.Prettify_003A(desc.Data),
-                    0x003B => Features.Prettify_003B(desc.Data),
-                    0x0040 => Features.Prettify_0040(desc.Data),
-                    0x0041 => Features.Prettify_0041(desc.Data),
-                    0x0042 => Features.Prettify_0042(desc.Data),
-                    0x0050 => Features.Prettify_0050(desc.Data),
-                    0x0051 => Features.Prettify_0051(desc.Data),
-                    0x0080 => Features.Prettify_0080(desc.Data),
-                    0x0100 => Features.Prettify_0100(desc.Data),
-                    0x0101 => Features.Prettify_0101(desc.Data),
-                    0x0102 => Features.Prettify_0102(desc.Data),
-                    0x0103 => Features.Prettify_0103(desc.Data),
-                    0x0104 => Features.Prettify_0104(desc.Data),
-                    0x0105 => Features.Prettify_0105(desc.Data),
-                    0x0106 => Features.Prettify_0106(desc.Data),
-                    0x0107 => Features.Prettify_0107(desc.Data),
-                    0x0108 => Features.Prettify_0108(desc.Data),
-                    0x0109 => Features.Prettify_0109(desc.Data),
-                    0x010A => Features.Prettify_010A(desc.Data),
-                    0x010B => Features.Prettify_010B(desc.Data),
-                    0x010C => Features.Prettify_010C(desc.Data),
-                    0x010D => Features.Prettify_010D(desc.Data),
-                    0x010E => Features.Prettify_010E(desc.Data),
-                    0x0110 => Features.Prettify_0110(desc.Data),
-                    0x0113 => Features.Prettify_0113(desc.Data),
-                    0x0142 => Features.Prettify_0142(desc.Data),
-                    _      => UI.Unknown_feature
-                };
+                                            {
+                                                0x0000 => Features.Prettify_0000(desc.Data),
+                                                0x0001 => Features.Prettify_0001(desc.Data),
+                                                0x0002 => Features.Prettify_0002(desc.Data),
+                                                0x0003 => Features.Prettify_0003(desc.Data),
+                                                0x0004 => Features.Prettify_0004(desc.Data),
+                                                0x0010 => Features.Prettify_0010(desc.Data),
+                                                0x001D => Features.Prettify_001D(desc.Data),
+                                                0x001E => Features.Prettify_001E(desc.Data),
+                                                0x001F => Features.Prettify_001F(desc.Data),
+                                                0x0020 => Features.Prettify_0020(desc.Data),
+                                                0x0021 => Features.Prettify_0021(desc.Data),
+                                                0x0022 => Features.Prettify_0022(desc.Data),
+                                                0x0023 => Features.Prettify_0023(desc.Data),
+                                                0x0024 => Features.Prettify_0024(desc.Data),
+                                                0x0025 => Features.Prettify_0025(desc.Data),
+                                                0x0026 => Features.Prettify_0026(desc.Data),
+                                                0x0027 => Features.Prettify_0027(desc.Data),
+                                                0x0028 => Features.Prettify_0028(desc.Data),
+                                                0x0029 => Features.Prettify_0029(desc.Data),
+                                                0x002A => Features.Prettify_002A(desc.Data),
+                                                0x002B => Features.Prettify_002B(desc.Data),
+                                                0x002C => Features.Prettify_002C(desc.Data),
+                                                0x002D => Features.Prettify_002D(desc.Data),
+                                                0x002E => Features.Prettify_002E(desc.Data),
+                                                0x002F => Features.Prettify_002F(desc.Data),
+                                                0x0030 => Features.Prettify_0030(desc.Data),
+                                                0x0031 => Features.Prettify_0031(desc.Data),
+                                                0x0032 => Features.Prettify_0032(desc.Data),
+                                                0x0033 => Features.Prettify_0033(desc.Data),
+                                                0x0035 => Features.Prettify_0035(desc.Data),
+                                                0x0037 => Features.Prettify_0037(desc.Data),
+                                                0x0038 => Features.Prettify_0038(desc.Data),
+                                                0x003A => Features.Prettify_003A(desc.Data),
+                                                0x003B => Features.Prettify_003B(desc.Data),
+                                                0x0040 => Features.Prettify_0040(desc.Data),
+                                                0x0041 => Features.Prettify_0041(desc.Data),
+                                                0x0042 => Features.Prettify_0042(desc.Data),
+                                                0x0050 => Features.Prettify_0050(desc.Data),
+                                                0x0051 => Features.Prettify_0051(desc.Data),
+                                                0x0080 => Features.Prettify_0080(desc.Data),
+                                                0x0100 => Features.Prettify_0100(desc.Data),
+                                                0x0101 => Features.Prettify_0101(desc.Data),
+                                                0x0102 => Features.Prettify_0102(desc.Data),
+                                                0x0103 => Features.Prettify_0103(desc.Data),
+                                                0x0104 => Features.Prettify_0104(desc.Data),
+                                                0x0105 => Features.Prettify_0105(desc.Data),
+                                                0x0106 => Features.Prettify_0106(desc.Data),
+                                                0x0107 => Features.Prettify_0107(desc.Data),
+                                                0x0108 => Features.Prettify_0108(desc.Data),
+                                                0x0109 => Features.Prettify_0109(desc.Data),
+                                                0x010A => Features.Prettify_010A(desc.Data),
+                                                0x010B => Features.Prettify_010B(desc.Data),
+                                                0x010C => Features.Prettify_010C(desc.Data),
+                                                0x010D => Features.Prettify_010D(desc.Data),
+                                                0x010E => Features.Prettify_010E(desc.Data),
+                                                0x0110 => Features.Prettify_0110(desc.Data),
+                                                0x0113 => Features.Prettify_0113(desc.Data),
+                                                0x0142 => Features.Prettify_0142(desc.Data),
+                                                _      => UI.Unknown_feature
+                                            };
 
                 MmcFeatures.Add(new ScsiPageModel
                 {
@@ -682,9 +696,12 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     Description = featureDescription
                 });
             }
+        }
         else
+        {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
+        }
     }
 
     public byte[]                              InquiryData              { get; }
@@ -782,11 +799,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -806,11 +820,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.txt"
-            }),
-            Name = UI.Dialog_Text_files
+            Extensions = new List<string>(new[] { "*.txt" }),
+            Name       = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);
@@ -830,11 +841,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -854,11 +862,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -881,11 +886,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -905,11 +907,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

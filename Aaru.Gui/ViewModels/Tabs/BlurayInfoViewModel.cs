@@ -56,11 +56,11 @@ public sealed class BlurayInfoViewModel
     readonly byte[] _trackResources;
     readonly Window _view;
 
-    public BlurayInfoViewModel([CanBeNull] byte[] blurayDiscInformation, [CanBeNull] byte[] blurayBurstCuttingArea,
-                               [CanBeNull] byte[] blurayDds, [CanBeNull] byte[] blurayCartridgeStatus,
+    public BlurayInfoViewModel([CanBeNull] byte[] blurayDiscInformation,      [CanBeNull] byte[] blurayBurstCuttingArea,
+                               [CanBeNull] byte[] blurayDds,                  [CanBeNull] byte[] blurayCartridgeStatus,
                                [CanBeNull] byte[] bluraySpareAreaInformation, [CanBeNull] byte[] blurayPowResources,
-                               [CanBeNull] byte[] blurayTrackResources, [CanBeNull] byte[] blurayRawDfl,
-                               [CanBeNull] byte[] blurayPac, Window view)
+                               [CanBeNull] byte[] blurayTrackResources,       [CanBeNull] byte[] blurayRawDfl,
+                               [CanBeNull] byte[] blurayPac,                  Window             view)
     {
         _view                             = view;
         _discInformation                  = blurayDiscInformation;
@@ -179,11 +179,8 @@ public sealed class BlurayInfoViewModel
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
-            Name = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[] { "*.bin" }),
+            Name       = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

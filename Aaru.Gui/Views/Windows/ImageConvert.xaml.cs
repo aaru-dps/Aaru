@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.ComponentModel;
 using Aaru.Gui.ViewModels.Windows;
 using Avalonia;
 using Avalonia.Controls;
