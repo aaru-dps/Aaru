@@ -1,14 +1,14 @@
-name: Feature Request
+name:        Feature Request
 description: For feature requests. Please search for existing issues first. Also see CONTRIBUTING.
-title: "[Feature request] "
-labels: [feature request, needs triage]
-assignees: 
+title:       "[Feature request] "
+labels: [ feature request, needs triage ]
+assignees:
   - claunia
 body:
   - type: dropdown
     attributes:
       description: Type of feture you're requesting
-      label: Type
+      label:       Type
       options:
         - Support for a new media image format...
         - Support for identifying a new filesystem...
@@ -21,19 +21,19 @@ body:
   - type: textarea
     attributes:
       description: Detailed Description
-      label: Description
+      label:       Description
       placeholder: Provide a detailed description of the change or addition you are proposing
     validations:
       required: true
   - type: textarea
     attributes:
       description: Context
-      label: Context
+      label:       Context
       placeholder: Why is this change important to you? How would you use it? How can it benefit other users?
     validations:
       required: true
   - type: textarea
     attributes:
       description: Known documentation
-      label: Documentation
+      label:       Documentation
       placeholder: Attach documentation, links to specifications or existing source code

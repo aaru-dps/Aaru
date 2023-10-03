@@ -1,6 +1,6 @@
 name: "CodeQL"
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   CodeQL-Build:
@@ -12,8 +12,8 @@ jobs:
       security-events: write
 
       # only required for workflows in private repositories
-      actions: read
-      contents: read
+      actions:         read
+      contents:        read
 
     steps:
       - name: Checkout repository
@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            8.0.x
+                          8.0.x
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
