@@ -55,7 +55,7 @@ static partial class Usb
     /// <returns>List of usb devices</returns>
     internal static List<UsbDevice> GetConnectedDevices()
     {
-        List<UsbDevice> devList = new List<UsbDevice>();
+        var devList = new List<UsbDevice>();
 
         foreach(UsbController controller in GetHostControllers())
             ListHub(controller.GetRootHub(), devList);
@@ -69,6 +69,7 @@ static partial class Usb
     static void ListHub(UsbHub hub, ICollection<UsbDevice> devList)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 ListHub(port.GetHub(), devList);
             else
@@ -76,6 +77,7 @@ static partial class Usb
                 if(port.IsDeviceConnected)
                     devList.Add(port.GetDevice());
             }
+        }
     }
 
     /// <summary>Find a device based upon it's DriverKeyName</summary>
@@ -103,6 +105,7 @@ static partial class Usb
     static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
             else
@@ -119,6 +122,7 @@ static partial class Usb
 
                 break;
             }
+        }
     }
 
     /// <summary>Find a device based upon it's Instance ID</summary>
@@ -146,6 +150,7 @@ static partial class Usb
     static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
             else
@@ -162,6 +167,7 @@ static partial class Usb
 
                 break;
             }
+        }
     }
 
     [DllImport("setupapi.dll")]
@@ -205,7 +211,7 @@ static partial class Usb
     static UsbDevice FindDeviceNumber(int devNum, string deviceGuid)
     {
         UsbDevice foundDevice = null;
-        string    instanceId  = "";
+        var       instanceId  = "";
 
         var diskGuid = new Guid(deviceGuid);
 
@@ -216,7 +222,7 @@ static partial class Usb
         if(h != _invalidHandleValue)
         {
             bool success;
-            int  i = 0;
+            var  i = 0;
 
             do
             {
@@ -240,9 +246,10 @@ static partial class Usb
                     }; // trust me :)
 
                     // now we can get some more detailed information
-                    int nRequiredSize = 0;
+                    var nRequiredSize = 0;
 
                     if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
+                    {
                         if(GetDeviceNumber(didd.DevicePath) == devNum)
                         {
                             // current InstanceID is at the "USBSTOR" level, so we
@@ -259,6 +266,7 @@ static partial class Usb
                             //System.Console.WriteLine("InstanceId: {0}", instanceId);
                             //break;
                         }
+                    }
                 }
 
                 i++;
@@ -306,6 +314,8 @@ static partial class Usb
         return ans;
     }
 
+#region Nested type: StorageDeviceNumber
+
     [StructLayout(LayoutKind.Sequential)]
     readonly struct StorageDeviceNumber
     {
@@ -313,4 +323,6 @@ static partial class Usb
         internal readonly int DeviceNumber;
         internal readonly int PartitionNumber;
     }
+
+#endregion
 }

@@ -46,8 +46,8 @@ public partial class Device
     /// <param name="pba">If set to <c>true</c> address contain physical block address.</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                ushort blockBytes, bool pba, uint timeout, out double duration) =>
+    public bool PlasmonReadLong(out byte[] buffer,     out byte[] senseBuffer, bool relAddr, uint       address,
+                                ushort     blockBytes, bool       pba,         uint timeout, out double duration) =>
         HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
 
     /// <summary>Sends the Plasmon READ LONG vendor command</summary>
@@ -66,8 +66,8 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                ushort transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
-                                out double duration) => HpReadLong(out buffer, out senseBuffer, relAddr, address,
+                                ushort     transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
+                                out double duration) => HpReadLong(out buffer,  out senseBuffer, relAddr, address,
                                                                    transferLen, blockBytes, pba, sectorCount, timeout,
                                                                    out duration);
 
@@ -79,11 +79,11 @@ public partial class Device
     /// <param name="pba">If set to <c>true</c> address contain a physical block address.</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, uint address, bool pba,
-                                          uint timeout, out double duration)
+    public bool PlasmonReadSectorLocation(out byte[] buffer,  out byte[] senseBuffer, uint address, bool pba,
+                                          uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.PlasmonReadSectorLocation;
         cdb[2] = (byte)((address & 0xFF000000) >> 24);

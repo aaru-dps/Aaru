@@ -44,7 +44,7 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
+    public bool GetNativeMaxAddressExt(out ulong  lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
                                        out double duration)
     {
         lba = 0;
@@ -56,8 +56,8 @@ public partial class Device
             Feature = 0x0000
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -85,8 +85,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
-                        uint timeout, out double duration)
+    public bool ReadDma(out byte[] buffer,  out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                        uint       timeout, out double                 duration)
     {
         buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
 
@@ -104,8 +104,8 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout,             true,            out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -123,8 +123,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadLog(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
-                        ushort pageNumber, ushort count, uint timeout, out double duration)
+    public bool ReadLog(out byte[] buffer,     out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
+                        ushort     pageNumber, ushort                     count, uint timeout, out double duration)
     {
         buffer = new byte[512 * count];
 
@@ -137,8 +137,8 @@ public partial class Device
             LbaLowCurrent  = logAddress
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout,             true,              out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -156,8 +156,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadLogDma(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
-                           ushort pageNumber, ushort count, uint timeout, out double duration)
+    public bool ReadLogDma(out byte[] buffer,     out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
+                           ushort     pageNumber, ushort                     count, uint timeout, out double duration)
     {
         buffer = new byte[512 * count];
 
@@ -170,8 +170,8 @@ public partial class Device
             LbaLowCurrent  = logAddress
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout,             true,            out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -191,8 +191,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
-                             uint timeout, out double duration)
+    public bool ReadMultiple(out byte[] buffer,  out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                             uint       timeout, out double                 duration)
     {
         buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
 
@@ -210,8 +210,8 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout,             true,              out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -226,7 +226,7 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadNativeMaxAddress(out ulong lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
+    public bool ReadNativeMaxAddress(out ulong  lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
                                      out double duration)
     {
         lba = 0;
@@ -239,8 +239,8 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -268,8 +268,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool Read(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
-                     uint timeout, out double duration)
+    public bool Read(out byte[] buffer,  out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                     uint       timeout, out double                 duration)
     {
         buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
 
@@ -287,8 +287,8 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
+                                   ref buffer, timeout,             true,              out duration, out bool sense);
 
         Error = LastError != 0;
 

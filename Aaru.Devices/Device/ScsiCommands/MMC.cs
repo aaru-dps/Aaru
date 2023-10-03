@@ -68,11 +68,11 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="startingFeatureNumber">Starting Feature number.</param>
     /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt" />.</param>
-    public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
-                                 MmcGetConfigurationRt rt, uint timeout, out double duration)
+    public bool GetConfiguration(out byte[]            buffer, out byte[] senseBuffer, ushort     startingFeatureNumber,
+                                 MmcGetConfigurationRt rt,     uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         buffer = new byte[8];
 
         cdb[0] = (byte)ScsiCommands.GetConfiguration;
@@ -91,7 +91,7 @@ public partial class Device
         if(sense)
             return true;
 
-        ushort confLength = (ushort)((buffer[2] << 8) + buffer[3] + 4);
+        var confLength = (ushort)((buffer[2] << 8) + buffer[3] + 4);
         buffer      = new byte[confLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
@@ -121,12 +121,12 @@ public partial class Device
     /// <param name="format">Which disc structure are we requesting</param>
     /// <param name="agid">AGID used in medium copy protection</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
-                                  uint address, byte layerNumber, MmcDiscStructureFormat format, byte agid,
-                                  uint timeout, out double duration)
+    public bool ReadDiscStructure(out byte[] buffer,  out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
+                                  uint       address, byte       layerNumber, MmcDiscStructureFormat format, byte agid,
+                                  uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
         buffer = new byte[8];
 
         cdb[0]  = (byte)ScsiCommands.ReadDiscStructure;
@@ -149,19 +149,21 @@ public partial class Device
         if(sense)
             return true;
 
-        ushort strctLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        var strctLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
 
         // WORKAROUND: Some drives return incorrect length information. As these structures are fixed length just apply known length.
         if(mediaType == MmcDiscStructureMediaType.Bd)
+        {
             buffer = format switch
-            {
-                MmcDiscStructureFormat.DiscInformation        => new byte[4100],
-                MmcDiscStructureFormat.BdBurstCuttingArea     => new byte[68],
-                MmcDiscStructureFormat.BdDds                  => new byte[strctLength < 100 ? 100 : strctLength],
-                MmcDiscStructureFormat.CartridgeStatus        => new byte[8],
-                MmcDiscStructureFormat.BdSpareAreaInformation => new byte[16],
-                _                                             => new byte[strctLength]
-            };
+                     {
+                         MmcDiscStructureFormat.DiscInformation => new byte[4100],
+                         MmcDiscStructureFormat.BdBurstCuttingArea => new byte[68],
+                         MmcDiscStructureFormat.BdDds => new byte[strctLength < 100 ? 100 : strctLength],
+                         MmcDiscStructureFormat.CartridgeStatus => new byte[8],
+                         MmcDiscStructureFormat.BdSpareAreaInformation => new byte[16],
+                         _ => new byte[strctLength]
+                     };
+        }
         else
             buffer = new byte[strctLength];
 
@@ -271,11 +273,11 @@ public partial class Device
     /// <param name="trackSessionNumber">Track/Session number</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool msf, byte format,
-                               byte trackSessionNumber, uint timeout, out double duration)
+    public bool ReadTocPmaAtip(out byte[] buffer,             out byte[] senseBuffer, bool       msf, byte format,
+                               byte       trackSessionNumber, uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         byte[] tmpBuffer = (format & 0x0F) == 5 ? new byte[32768] : new byte[1536];
 
@@ -294,7 +296,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
+        var strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
         buffer = new byte[strctLength];
 
         if(buffer.Length <= tmpBuffer.Length)
@@ -343,12 +345,12 @@ public partial class Device
     /// <param name="dataType">Which disc information to read</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, MmcDiscInformationDataTypes dataType,
-                                    uint timeout, out double duration)
+    public bool ReadDiscInformation(out byte[] buffer,  out byte[] senseBuffer, MmcDiscInformationDataTypes dataType,
+                                    uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb       = new byte[10];
-        byte[] tmpBuffer = new byte[804];
+        var cdb       = new byte[10];
+        var tmpBuffer = new byte[804];
 
         cdb[0] = (byte)ScsiCommands.ReadDiscInformation;
         cdb[1] = (byte)dataType;
@@ -360,7 +362,7 @@ public partial class Device
 
         Error = LastError != 0;
 
-        uint strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
+        var strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
 
         if(strctLength > tmpBuffer.Length)
             strctLength = (uint)tmpBuffer.Length;
@@ -399,7 +401,7 @@ public partial class Device
                        out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.ReadCd;
         cdb[1] = (byte)((byte)expectedSectorType << 2);
@@ -470,7 +472,7 @@ public partial class Device
                           out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.ReadCdMsf;
         cdb[1] = (byte)((byte)expectedSectorType << 2);
@@ -498,7 +500,7 @@ public partial class Device
 
         cdb[10] = (byte)subchannel;
 
-        uint transferLength = (uint)(((cdb[6] - cdb[3]) * 60 * 75) + ((cdb[7] - cdb[4]) * 75) + (cdb[8] - cdb[5]));
+        var transferLength = (uint)((cdb[6] - cdb[3]) * 60 * 75 + (cdb[7] - cdb[4]) * 75 + (cdb[8] - cdb[5]));
 
         buffer = new byte[blockSize * transferLength];
 
@@ -543,7 +545,7 @@ public partial class Device
                                           out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
@@ -614,7 +616,7 @@ public partial class Device
                               bool changeFormatLayer, bool loadEject, bool start, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.StartStopUnit;
@@ -663,7 +665,7 @@ public partial class Device
     public bool ReadMcn(out string mcn, out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         mcn = null;
 
         cdb[0] = (byte)ScsiCommands.ReadSubChannel;
@@ -704,7 +706,7 @@ public partial class Device
                          out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         isrc = null;
 
         cdb[0] = (byte)ScsiCommands.ReadSubChannel;
@@ -742,11 +744,11 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort readSpeed,
-                           ushort writeSpeed, uint timeout, out double duration)
+    public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort     readSpeed,
+                           ushort     writeSpeed,  uint              timeout,           out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[12];
+        var    cdb    = new byte[12];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.SetCdRomSpeed;
@@ -778,11 +780,11 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="open">Report information of non-closed tracks</param>
     /// <param name="type">Type of information to retrieve</param>
-    public bool ReadTrackInformation(out byte[] buffer, out byte[] senseBuffer, bool open, TrackInformationType type,
-                                     uint address, uint timeout, out double duration)
+    public bool ReadTrackInformation(out byte[] buffer,  out byte[] senseBuffer, bool open, TrackInformationType type,
+                                     uint       address, uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         buffer = new byte[48];
 
         cdb[0] = (byte)ScsiCommands.ReadTrackInformation;

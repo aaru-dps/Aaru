@@ -37,7 +37,8 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Devices.Windows;
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct ScsiPassThroughDirect
 {
     public ushort Length;
@@ -67,7 +68,8 @@ struct ScsiPassThroughDirectAndSenseBuffer
     public byte[] SenseBuf;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct AtaPassThroughDirect
 {
     /// <summary>Length in bytes of this structure</summary>
@@ -108,7 +110,8 @@ struct AtaPassThroughDirect
     public AtaTaskFile CurrentTaskFile;
 }
 
-[StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Explicit)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct AtaTaskFile
 {
     // Fields for commands sent
@@ -150,7 +153,8 @@ struct StoragePropertyQuery
     public byte[] AdditionalParameters;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct StorageDescriptorHeader
 {
     public uint Version;
@@ -191,7 +195,8 @@ struct IdePassThroughDirect
     public byte[] DataBuffer;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct StorageDeviceNumber
 {
     public int deviceType;
@@ -199,7 +204,8 @@ struct StorageDeviceNumber
     public int partitionNumber;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct DeviceInfoData
 {
     public int  cbSize;
@@ -208,7 +214,8 @@ struct DeviceInfoData
     public nint reserved;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct DeviceInterfaceData
 {
     public   int  cbSize;
@@ -217,7 +224,8 @@ struct DeviceInterfaceData
     readonly nint reserved;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct UsbSetupPacket
 {
     public byte  bmRequest;
@@ -227,7 +235,8 @@ struct UsbSetupPacket
     public short wLength;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct UsbDescriptorRequest
 {
     public int ConnectionIndex;
@@ -237,7 +246,8 @@ struct UsbDescriptorRequest
     //public byte[] Data;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SffdiskQueryDeviceProtocolData
 {
     public ushort size;
@@ -245,7 +255,8 @@ struct SffdiskQueryDeviceProtocolData
     public Guid   protocolGuid;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SffdiskDeviceCommandData
 {
     public ushort      size;

@@ -44,10 +44,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Devices;
 
 #region ATA Commands
+
 /// <summary>All known ATA commands</summary>
 public enum AtaCommands : byte
 {
-    #region Commands defined on Western Digital WD1000 Winchester Disk Controller
+#region Commands defined on Western Digital WD1000 Winchester Disk Controller
+
     /// <summary>Formats a track</summary>
     FormatTrack = 0x50,
 
@@ -65,9 +67,11 @@ public enum AtaCommands : byte
 
     /// <summary>Writes sectors</summary>
     WriteOld = 0x30,
-    #endregion Commands defined on Western Digital WD1000 Winchester Disk Controller
 
-    #region Commands defined on ATA rev. 4c
+#endregion Commands defined on Western Digital WD1000 Winchester Disk Controller
+
+#region Commands defined on ATA rev. 4c
+
     /// <summary>Acknowledges media change</summary>
     AckMediaChange = 0xDB,
 
@@ -268,17 +272,21 @@ public enum AtaCommands : byte
 
     /// <summary>Unknown vendor command</summary>
     VendorFf = 0xFF,
-    #endregion Commands defined on ATA rev. 4c
 
-    #region Commands defined on ATA-2 rev. 4c
+#endregion Commands defined on ATA rev. 4c
+
+#region Commands defined on ATA-2 rev. 4c
+
     /// <summary>Alters the device microcode</summary>
     DownloadMicrocode = 0x92,
 
     /// <summary>Ejects the removable medium on the device</summary>
     MediaEject = 0xED,
-    #endregion Commands defined on ATA-2 rev. 4c
 
-    #region Commands defined on ATA-3 rev. 7b
+#endregion Commands defined on ATA-2 rev. 4c
+
+#region Commands defined on ATA-3 rev. 7b
+
     /// <summary>Gets a sector containing drive identification and capabilities</summary>
     IdentifyDriveDma = 0xEE,
 
@@ -302,9 +310,11 @@ public enum AtaCommands : byte
 
     /// <summary>SMART operations</summary>
     Smart = 0xB0,
-    #endregion Commands defined on ATA-3 rev. 7b
 
-    #region Commands defined on CompactFlash Specification
+#endregion Commands defined on ATA-3 rev. 7b
+
+#region Commands defined on CompactFlash Specification
+
     /// <summary>Pre-erases and conditions data sectors</summary>
     EraseSectors = 0xC0,
 
@@ -325,9 +335,11 @@ public enum AtaCommands : byte
 
     /// <summary>Writes sectors without erasing them previously</summary>
     WriteWithoutErase = 0x38,
-    #endregion Commands defined on CompactFlash Specification
 
-    #region Commands defined on ATA/ATAPI-4 rev. 18
+#endregion Commands defined on CompactFlash Specification
+
+#region Commands defined on ATA/ATAPI-4 rev. 18
+
     /// <summary>Resets a device</summary>
     DeviceReset = 0x08,
 
@@ -366,9 +378,11 @@ public enum AtaCommands : byte
 
     /// <summary>Queues a write of sectors</summary>
     WriteDmaQueued = 0xCC,
-    #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
-    #region Commands defined on ATA/ATAPI-6 rev. 3b
+#endregion Commands defined on ATA/ATAPI-4 rev. 18
+
+#region Commands defined on ATA/ATAPI-6 rev. 3b
+
     /// <summary>Determines if the device supports the Media Card Pass Through Command feature set</summary>
     CheckMediaCardType = 0xD1,
 
@@ -419,9 +433,11 @@ public enum AtaCommands : byte
 
     /// <summary>Writes several sectors at once setting interrupts on end of block (48-bit)</summary>
     WriteMultipleExt = 0x39,
-    #endregion Commands defined on ATA/ATAPI-6 rev. 3b
 
-    #region Commands defined on ATA/ATAPI-7 rev. 4b
+#endregion Commands defined on ATA/ATAPI-6 rev. 3b
+
+#region Commands defined on ATA/ATAPI-7 rev. 4b
+
     /// <summary>Configures the operating parameters for a stream</summary>
     ConfigureStream = 0x51,
 
@@ -436,9 +452,11 @@ public enum AtaCommands : byte
 
     /// <summary>Writes data on an allotted time using PIO</summary>
     WriteStreamExt = 0x3B,
-    #endregion Commands defined on ATA/ATAPI-7 rev. 4b
 
-    #region Commands defined on ATA/ATAPI-8 rev. 3f
+#endregion Commands defined on ATA/ATAPI-7 rev. 4b
+
+#region Commands defined on ATA/ATAPI-8 rev. 3f
+
     /// <summary>Sends a Non Volatile Cache subcommand. <see cref="AtaNonVolatileCacheSubCommands" /></summary>
     NonVolatileCacheCommand = 0xB6,
 
@@ -471,9 +489,11 @@ public enum AtaCommands : byte
 
     /// <summary>Writes a sector that will give an uncorrectable error on any read operation</summary>
     WriteUncorrectableExt = 0x45,
-    #endregion Commands defined on ATA/ATAPI-8 rev. 3f
 
-    #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+#endregion Commands defined on ATA/ATAPI-8 rev. 3f
+
+#region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
     /// <summary>Provides information for device optimization In SSDs, this contains trimming</summary>
     DataSetManagement = 0x06,
 
@@ -490,7 +510,8 @@ public enum AtaCommands : byte
     ReadLogDmaExt = 0x47,
 
     /// <summary>Requests SPC-4 style error data</summary>
-    RequestSenseDataExt = 0x0B, SanitizeCommands = 0xB4,
+    RequestSenseDataExt = 0x0B,
+    SanitizeCommands = 0xB4,
 
     /// <summary>Executes a Security Protocol command that does not require a transfer of data</summary>
     TrustedNonData = 0x5B,
@@ -500,26 +521,35 @@ public enum AtaCommands : byte
 
     /// <summary>Writes sectors using NCQ</summary>
     WriteFpDmaQueued = 0x61,
-    #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
-    #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+#endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
+#region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
     /// <summary>Sends <see cref="AtaNcqQueueManagementSubcommands" /></summary>
     NcqQueueManagement = 0x63,
 
     /// <summary>Sets the device date and time</summary>
     SetDateAndTimeExt = 0x77,
-    #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
 
-    #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
+#endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
+#region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
+
     NativeMaxAddress = 0x78
-    #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
+
+#endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 6
 }
+
 #endregion ATA Commands
+
 #region ATA SMART SubCommands
+
 /// <summary>All known ATA SMART sub-commands</summary>
 public enum AtaSmartSubCommands : byte
 {
-    #region Commands defined on ATA-3 rev. 7b
+#region Commands defined on ATA-3 rev. 7b
+
     /// <summary>Disables all SMART capabilities</summary>
     Disable = 0xD9,
 
@@ -540,30 +570,39 @@ public enum AtaSmartSubCommands : byte
 
     /// <summary>Saves any attribute values immediately</summary>
     SaveAttributeValues = 0xD3,
-    #endregion Commands defined on ATA-3 rev. 7b
 
-    #region Commands defined on ATA/ATAPI-4 rev. 18
+#endregion Commands defined on ATA-3 rev. 7b
+
+#region Commands defined on ATA/ATAPI-4 rev. 18
+
     /// <summary>Causes the device to immediately initiate a SMART data collection and saves it to the device</summary>
     ExecuteOfflineImmediate = 0xD4,
 
     /// <summary>Returns the device's SMART attributes values</summary>
     ReadData = ReadAttributeValues,
-    #endregion Commands defined on ATA/ATAPI-4 rev. 18
 
-    #region Commands defined on ATA/ATAPI-5 rev. 3
+#endregion Commands defined on ATA/ATAPI-4 rev. 18
+
+#region Commands defined on ATA/ATAPI-5 rev. 3
+
     /// <summary>Returns the indicated log to the host</summary>
     ReadLog = 0xD5,
 
     /// <summary>Writes data to the indicated log</summary>
     WriteLog = 0xD6
-    #endregion Commands defined on ATA/ATAPI-5 rev. 3
+
+#endregion Commands defined on ATA/ATAPI-5 rev. 3
 }
+
 #endregion ATA SMART SubCommands
+
 #region ATA Device Configuration Overlay SubCommands
+
 /// <summary>All known ATA DEVICE CONFIGURATION sub-commands</summary>
 public enum AtaDeviceConfigurationSubCommands : byte
 {
-    #region Commands defined on ATA/ATAPI-6 rev. 3b
+#region Commands defined on ATA/ATAPI-6 rev. 3b
+
     /// <summary>Disables any change made by <see cref="Set" /></summary>
     Restore = 0xC0,
 
@@ -575,14 +614,19 @@ public enum AtaDeviceConfigurationSubCommands : byte
 
     /// <summary>Modifies the commands, modes and features sets the device will obey to</summary>
     Set = 0xC3
-    #endregion Commands defined on ATA/ATAPI-6 rev. 3b
+
+#endregion Commands defined on ATA/ATAPI-6 rev. 3b
 }
+
 #endregion ATA Device Configuration Overlay SubCommands
+
 #region ATA SET MAX SubCommands
+
 /// <summary>All known ATA SET MAX sub-commands</summary>
 public enum AtaSetMaxSubCommands : byte
 {
-    #region Commands defined on ATA/ATAPI-6 rev. 3b
+#region Commands defined on ATA/ATAPI-6 rev. 3b
+
     /// <summary>Redefines the maximum user-accessible address space</summary>
     Address = 0x00,
 
@@ -600,14 +644,19 @@ public enum AtaSetMaxSubCommands : byte
 
     /// <summary>Disables <see cref="Lock" /></summary>
     UnLock = 0x03,
-    #endregion Commands defined on ATA/ATAPI-6 rev. 3b
+
+#endregion Commands defined on ATA/ATAPI-6 rev. 3b
 }
+
 #endregion ATA SET MAX SubCommands
+
 #region ATA Non Volatile Cache SubCommands
+
 /// <summary>All known ATA NV CACHE sub-commands</summary>
 public enum AtaNonVolatileCacheSubCommands : byte
 {
-    #region Commands defined on ATA/ATAPI-8 rev. 3f
+#region Commands defined on ATA/ATAPI-8 rev. 3f
+
     /// <summary>Adds the specified LBA to the Non Volatile Cache</summary>
     AddLbaToNvCache = 0x10,
 
@@ -631,14 +680,19 @@ public enum AtaNonVolatileCacheSubCommands : byte
     ///     Cache
     /// </summary>
     SetNvCachePowerMode = 0x00
-    #endregion Commands defined on ATA/ATAPI-8 rev. 3f
+
+#endregion Commands defined on ATA/ATAPI-8 rev. 3f
 }
+
 #endregion ATA Non Volatile Cache SubCommands
+
 #region ATA Sanitize SubCommands
+
 /// <summary>All known ATA SANITIZE sub-commands</summary>
 public enum AtaSanitizeSubCommands : ushort
 {
-    #region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+#region Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
     /// <summary>Causes a block erase on all user data</summary>
     BlockEraseExt = 0x0012,
 
@@ -653,36 +707,48 @@ public enum AtaSanitizeSubCommands : ushort
 
     /// <summary>Gets the status of the sanitizing</summary>
     Status = 0x0000,
-    #endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
 
-    #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+#endregion Commands defined on ATA/ATAPI Command Set 2 (ACS-2) rev. 2
+
+#region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
     /// <summary>Disables the <see cref="FreezeLockExt" /> command</summary>
     AntiFreezeLockExt = 0x0040
-    #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
+#endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
 }
+
 #endregion ATA Sanitize SubCommands
+
 #region ATA NCQ Queue Management SubCommands
+
 /// <summary>All known ATA NCQ QUEUE MANAGEMENT sub-commands</summary>
 public enum AtaNcqQueueManagementSubcommands : byte
 {
-    #region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+#region Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
     /// <summary>Aborts pending NCQ commands</summary>
     AbortNcqQueue = 0x00,
 
     /// <summary>Controls how NCQ Streaming commands are processed by the device</summary>
     DeadlineHandling = 0x01,
-    #endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
+
+#endregion Commands defined on ATA/ATAPI Command Set 3 (ACS-3) rev. 5
 }
+
 #endregion ATA NCQ Queue Management SubCommands
 
 /// <summary>
 ///     All known SASI commands Commands 0x00 to 0x1F are 6-byte Commands 0x20 to 0x3F are 10-byte Commands 0x40 to
 ///     0x5F are 8-byte Commands 0xA0 to 0xBF are 12-byte
 /// </summary>
+
 #region SASI Commands
+
 public enum SasiCommands : byte
 {
-    #region SASI Class 0 commands
+#region SASI Class 0 commands
+
     /// <summary>Returns zero status if requested unit is on and ready. SASI rev. 0a</summary>
     TestUnitReady = 0x00,
 
@@ -790,9 +856,11 @@ public enum SasiCommands : byte
 
     /// <summary>Gets information about a device SASI rev. 0c</summary>
     InquiryOld = 0x1F,
-    #endregion SASI Class 0 commands
 
-    #region SASI Class 1 commands
+#endregion SASI Class 0 commands
+
+#region SASI Class 1 commands
+
     /// <summary>SASI rev. 0a Unknown</summary>
     Copy = 0x20,
 
@@ -828,9 +896,11 @@ public enum SasiCommands : byte
 
     /// <summary>Searches data on blocks using minor than or equal comparison ANSI X3T9.3 No. 185 (SASI)</summary>
     SearchDataLow = 0x32,
-    #endregion SASI Class 1 commands
 
-    #region SASI Class 2 commands
+#endregion SASI Class 1 commands
+
+#region SASI Class 2 commands
+
     /// <summary>Unknown SASI rev. 0a</summary>
     Load = 0x40,
 
@@ -893,9 +963,11 @@ public enum SasiCommands : byte
 
     /// <summary>Searches data on blocks using minor than or equal comparison SASI rev. 0c</summary>
     SearchDataLow8 = 0x59,
-    #endregion SASI Class 2 commands
 
-    #region SASI Class 3 commands
+#endregion SASI Class 2 commands
+
+#region SASI Class 3 commands
+
     /// <summary>SASI rev. 0a</summary>
     Skip = 0x60,
 
@@ -916,17 +988,21 @@ public enum SasiCommands : byte
 
     /// <summary>SASI rev. 0a</summary>
     WriteControl = 0x66,
-    #endregion SASI Class 3 commands
 
-    #region SASI Class 5 commands
+#endregion SASI Class 3 commands
+
+#region SASI Class 5 commands
+
     /// <summary>Gets the number of blocks in device. ANSI X3T9.3 No. 185 (SASI)</summary>
     ReadCapacity = 0xA5,
 
     /// <summary>Sets write or read limits from a specified block ANSI X3T9.3 No. 185 (SASI)</summary>
     SetBlockLimits = 0xA9,
-    #endregion SASI Class 5 commands
 
-    #region SASI Class 6 commands
+#endregion SASI Class 5 commands
+
+#region SASI Class 6 commands
+
     /// <summary>SASI rev. 0a</summary>
     DefineFloppyDiskTrackFormat = 0xC0,
 
@@ -941,9 +1017,11 @@ public enum SasiCommands : byte
 
     /// <summary>SASI rev. 0a</summary>
     ReadDriveType = 0xC6,
-    #endregion SASI Class 6 commands
 
-    #region SASI Class 7 commands
+#endregion SASI Class 6 commands
+
+#region SASI Class 7 commands
+
     /// <summary>SASI rev. 0a</summary>
     RamDiagnostic = 0xE0,
 
@@ -964,14 +1042,19 @@ public enum SasiCommands : byte
 
     /// <summary>Found on a vendor document</summary>
     WriteLong = 0xE6
-    #endregion SASI Class 7 commands
+
+#endregion SASI Class 7 commands
 }
+
 #endregion SASI Commands
+
 #region SCSI Commands
+
 /// <summary>All known SCSI and ATAPI commands</summary>
 public enum ScsiCommands : byte
 {
-    #region SCSI Primary Commands (SPC)
+#region SCSI Primary Commands (SPC)
+
     /// <summary>Commands used to obtain information about the access controls that are active SPC-4 rev. 16</summary>
     AccessControlIn = 0x86,
 
@@ -1085,14 +1168,17 @@ public enum ScsiCommands : byte
 
     /// <summary>Writes to the device's buffer SCSI-2 X3T9.2/375R rev. 10l</summary>
     WriteBuffer = 0x3B,
-    #endregion SCSI Primary Commands (SPC)
 
-    #region SCSI Block Commands (SBC)
+#endregion SCSI Primary Commands (SPC)
+
+#region SCSI Block Commands (SBC)
+
     /// <summary>Compares blocks with sent data, and if equal, writes those block to device, atomically SBC-3 rev. 25</summary>
     CompareAndWrite = 0x89,
 
     /// <summary>Formats the medium into addressable logical blocks ECMA-111 (SCSI-1)</summary>
-    FormatUnit = SasiCommands.FormatUnit, FormatWithPreset = 0x38,
+    FormatUnit = SasiCommands.FormatUnit,
+    FormatWithPreset = 0x38,
 
     /// <summary>Locks blocks from eviction of device's cache SCSI-2 X3T9.2/375R rev. 10l</summary>
     LockUnlockCache = 0x36,
@@ -1147,7 +1233,8 @@ public enum ScsiCommands : byte
     Regenerate = 0x82,
 
     /// <summary>Requests the device to set the LUN in a vendor specific state ECMA-111 (SCSI-1)</summary>
-    RezeroUnit = SasiCommands.RezeroUnit, Sanitize = 0x48,
+    RezeroUnit = SasiCommands.RezeroUnit,
+    Sanitize = 0x48,
 
     /// <summary>Searches data on blocks ECMA-111 (SCSI-1)</summary>
     SearchDataEqual = SasiCommands.SearchDataEqual,
@@ -1235,9 +1322,11 @@ public enum ScsiCommands : byte
     ///     rev. 8c
     /// </summary>
     XpWrite = 0x51,
-    #endregion SCSI Block Commands (SBC)
 
-    #region SCSI Streaming Commands (SSC)
+#endregion SCSI Block Commands (SBC)
+
+#region SCSI Streaming Commands (SSC)
+
     /// <summary>Prepares the medium for use by the LUN SSC-1 rev. 22</summary>
     FormatMedium = 0x04,
 
@@ -1288,9 +1377,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Writes the specified number of filemarks or setmarks in the current position ECMA-111 (SCSI-1)</summary>
     WriteFileMarks = 0x10,
-    #endregion SCSI Streaming Commands (SSC)
 
-    #region SCSI Streaming Commands for Printers (SSC)
+#endregion SCSI Streaming Commands (SSC)
+
+#region SCSI Streaming Commands for Printers (SSC)
+
     /// <summary>
     ///     Assures that the data in the buffer has been printed, or, for other devices, written to media ECMA-111
     ///     (SCSI-1)
@@ -1314,17 +1405,21 @@ public enum ScsiCommands : byte
     ///     X3T9.2/375R rev. 10l
     /// </summary>
     SynchronizeBuffer = FlushBuffer,
-    #endregion SCSI Streaming Commands for Printers (SSC)
 
-    #region SCSI Processor Commands
+#endregion SCSI Streaming Commands for Printers (SSC)
+
+#region SCSI Processor Commands
+
     /// <summary>Transfers data from the device ECMA-111 (SCSI-1)</summary>
     Receive = 0x08,
 
     /// <summary>Sends data to the device ECMA-111 (SCSI-1)</summary>
     Send = 0x0A,
-    #endregion SCSI Processor Commands
 
-    #region SCSI Multimedia Commands (MMC)
+#endregion SCSI Processor Commands
+
+#region SCSI Multimedia Commands (MMC)
+
     /// <summary>Erases any part of a CD-RW MMC-1 rev. 9</summary>
     Blank = 0xA1,
 
@@ -1462,9 +1557,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Stops a scan and continues audio playback from current scanning position MMC-1 rev. 9</summary>
     StopPlayScan = 0x4E,
-    #endregion SCSI Multimedia Commands (MMC)
 
-    #region SCSI Scanner Commands
+#endregion SCSI Multimedia Commands (MMC)
+
+#region SCSI Scanner Commands
+
     /// <summary>Gets information about the data buffer SCSI-2 X3T9.2/375R rev. 10l</summary>
     GetDataBufferStatus = 0x34,
 
@@ -1482,9 +1579,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Sends data to the device SCSI-2 X3T9.2/375R rev. 10l</summary>
     Send10 = 0x2A,
-    #endregion SCSI Scanner Commands
 
-    #region SCSI Block Commands for Optical Media (SBC)
+#endregion SCSI Scanner Commands
+
+#region SCSI Block Commands for Optical Media (SBC)
+
     /// <summary>Erases the specified number of blocks</summary>
     Erase10 = 0x2C,
 
@@ -1529,9 +1628,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Writes blocks to the device and then verifies them SCSI-2 X3T9.2/375R rev. 10l</summary>
     WriteAndVerify12 = 0xAE,
-    #endregion SCSI Block Commands for Optical Media (SBC)
 
-    #region SCSI Medium Changer Commands (SMC)
+#endregion SCSI Block Commands for Optical Media (SBC)
+
+#region SCSI Medium Changer Commands (SMC)
+
     /// <summary>
     ///     Provides a means to exchange the medium in the source element with the medium at destination element SCSI-2
     ///     X3T9.2/375R rev. 10l
@@ -1585,9 +1686,11 @@ public enum ScsiCommands : byte
     ///     X3T9.2/375R rev. 10l
     /// </summary>
     SendVolumeTag = 0xB6,
-    #endregion SCSI Medium Changer Commands (SMC)
 
-    #region SCSI Communication Commands
+#endregion SCSI Medium Changer Commands (SMC)
+
+#region SCSI Communication Commands
+
     /// <summary>Gets data from the device SCSI-2 X3T9.2/375R rev. 10l</summary>
     GetMessage = 0x08,
 
@@ -1605,9 +1708,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Sends data to the device SCSI-2 X3T9.2/375R rev. 10l</summary>
     SendMessage12 = 0xAA,
-    #endregion SCSI Communication Commands
 
-    #region SCSI Controller Commands
+#endregion SCSI Communication Commands
+
+#region SCSI Controller Commands
+
     /// <summary>Commands that get information about redundancy groups SCC-2 rev. 4</summary>
     RedundancyGroupIn = 0xBA,
 
@@ -1619,9 +1724,11 @@ public enum ScsiCommands : byte
 
     /// <summary>Commands that set information about volume sets SCC-2 rev. 4</summary>
     VolumeSetOut = 0xBF,
-    #endregion SCSI Controller Commands
 
-    #region Pioneer CD-ROM SCSI-2 Command Set
+#endregion SCSI Controller Commands
+
+#region Pioneer CD-ROM SCSI-2 Command Set
+
     /// <summary>Scans for a block playing a block on each track cross</summary>
     AudioScan = 0xCD,
 
@@ -1644,39 +1751,61 @@ public enum ScsiCommands : byte
     ReadAllSubCode = 0xDF,
 
     /// <summary>Sets the spindle speed to be used while reading/writing data to a CD</summary>
-    SetCdSpeed = 0xDA, WriteCdp = 0xE3,
-    #endregion
+    SetCdSpeed = 0xDA,
+    WriteCdp = 0xE3,
 
-    #region ATA Command Pass-Through
+#endregion
+
+#region ATA Command Pass-Through
+
     /// <summary>Sends a 24-bit ATA command to the device Clashes with <see cref="Blank" /> ATA CPT rev. 8a</summary>
     AtaPassThrough = 0xA1,
 
     /// <summary>Sends a 48-bit ATA command to the device ATA CPT rev. 8a</summary>
     AtaPassThrough16 = 0x85,
-    #endregion ATA Command Pass-Through
 
-    #region 6-byte CDB aliases
-    ModeSelect6 = ModeSelect, ModeSense6 = ModeSense, Read6 = Read,
-    Seek6       = Seek, Write6           = Write,
-    #endregion 6-byte CDB aliases
+#endregion ATA Command Pass-Through
 
-    #region SCSI Zoned Block Commands
+#region 6-byte CDB aliases
+
+    ModeSelect6 = ModeSelect,
+    ModeSense6  = ModeSense,
+    Read6       = Read,
+    Seek6       = Seek,
+    Write6      = Write,
+
+#endregion 6-byte CDB aliases
+
+#region SCSI Zoned Block Commands
+
     /// <summary>ZBC commands with host->device information</summary>
     ZbcOut = 0x94,
 
     /// <summary>ZBC commands with device->host information</summary>
     ZbcIn = 0x95,
-    #endregion
 
-    #region SCSI Commands with unknown meaning, mostly vendor specific
-    SetCdSpeedUnk              = 0xB8, WriteCdMsf    = 0xA2, WriteCd          = 0xAA,
-    ReadDefectTag              = 0xB7, PlayCd        = 0xBC, SpareIn          = 0xBC,
-    SpareOut                   = 0xBD, WriteStream16 = 0x9A, WriteAtomic      = 0x9C,
-    ServiceActionBidirectional = 0x9D, WriteLong2    = 0xEA, UnknownCdCommand = 0xD4,
+#endregion
+
+#region SCSI Commands with unknown meaning, mostly vendor specific
+
+    SetCdSpeedUnk              = 0xB8,
+    WriteCdMsf                 = 0xA2,
+    WriteCd                    = 0xAA,
+    ReadDefectTag              = 0xB7,
+    PlayCd                     = 0xBC,
+    SpareIn                    = 0xBC,
+    SpareOut                   = 0xBD,
+    WriteStream16              = 0x9A,
+    WriteAtomic                = 0x9C,
+    ServiceActionBidirectional = 0x9D,
+    WriteLong2                 = 0xEA,
+    UnknownCdCommand           = 0xD4,
     UnknownCdCommand2          = 0xD5,
-    #endregion SCSI Commands with unknown meaning, mostly vendor specific
 
-    #region SEGA Packet Interface (all are 12-byte CDB)
+#endregion SCSI Commands with unknown meaning, mostly vendor specific
+
+#region SEGA Packet Interface (all are 12-byte CDB)
+
     /// <summary>Verifies that the device can be accessed Sega SPI ver. 1.30</summary>
     SegaTestUnit = TestUnitReady,
 
@@ -1724,12 +1853,14 @@ public enum ScsiCommands : byte
 
     /// <summary>Reads disc subcode Sega SPI ver. 1.30</summary>
     SegaGetSubcode = 0x40,
-    #endregion SEGA Packet Interface (all are 12-byte CDB)
+
+#endregion SEGA Packet Interface (all are 12-byte CDB)
 
     /// <summary>Variable sized Command Description Block SPC-4 rev. 16</summary>
     VariableSizedCdb = 0x7F,
 
-    #region Plextor vendor commands
+#region Plextor vendor commands
+
     /// <summary>Sends extended commands (like SpeedRead) to Plextor drives</summary>
     PlextorExtend = 0xE9,
 
@@ -1744,19 +1875,25 @@ public enum ScsiCommands : byte
 
     /// <summary>Reads drive statistics from Plextor drives EEPROM</summary>
     PlextorReadEeprom = 0xF1,
-    #endregion Plextor vendor commands
 
-    #region HL-DT-ST vendor commands
+#endregion Plextor vendor commands
+
+#region HL-DT-ST vendor commands
+
     /// <summary>Sends debugging commands to HL-DT-ST DVD drives</summary>
     HlDtStVendor = 0xE7,
-    #endregion HL-DT-ST vendor commands
 
-    #region NEC vendor commands
+#endregion HL-DT-ST vendor commands
+
+#region NEC vendor commands
+
     /// <summary>Reads CD-DA data</summary>
     NecReadCdDa = 0xD4,
-    #endregion NEC vendor commands
 
-    #region Adaptec vendor commands
+#endregion NEC vendor commands
+
+#region Adaptec vendor commands
+
     /// <summary>Translates a SCSI LBA to a drive's CHS</summary>
     AdaptecTranslate = 0x0F,
 
@@ -1771,54 +1908,68 @@ public enum ScsiCommands : byte
 
     /// <summary>Reads controller's RAM</summary>
     AdaptecReadBuffer = 0x14,
-    #endregion Adaptec vendor commands
 
-    #region Archive Corp. vendor commands
+#endregion Adaptec vendor commands
+
+#region Archive Corp. vendor commands
+
     /// <summary>Gets current position's block address</summary>
     ArchiveRequestBlockAddress = 0x02,
 
     /// <summary>Seeks to specified block address</summary>
     ArchiveSeekBlock = 0x0C,
-    #endregion Archive Corp. vendor commands
 
-    #region Certance vendor commands
+#endregion Archive Corp. vendor commands
+
+#region Certance vendor commands
+
     /// <summary>Parks the load arm in preparation for transport</summary>
     CertanceParkUnpark = 0x06,
-    #endregion Certance vendor commands
 
-    #region Fujitsu vendor commands
+#endregion Certance vendor commands
+
+#region Fujitsu vendor commands
+
     /// <summary>Used to check the controller's data and control path</summary>
     FujitsuLoopWriteToRead = 0xC1,
 
     /// <summary>Used to display a message on the operator panel</summary>
     FujitsuDisplay = 0xCF,
-    #endregion Fujitsu vendor commands
 
-    #region M-Systems vendor commands
+#endregion Fujitsu vendor commands
+
+#region M-Systems vendor commands
+
     /// <summary>Securely erases all flash blocks, including defective, spared and unused</summary>
     MSystemsSecurityErase = 0xFF,
 
     /// <summary>Securely erases all flash blocks, including defective, spared and unused</summary>
     MSystemsSecurityEraseOld = 0xDF,
-    #endregion M-Systems vendor commands
 
-    #region Plasmon vendor commands
+#endregion M-Systems vendor commands
+
+#region Plasmon vendor commands
+
     /// <summary>Retrieves sector address</summary>
     PlasmonReadSectorLocation = 0xE6,
 
     /// <summary>Makes a Compliant WORM block completely unreadable</summary>
     PlasmonShred = 0xEE,
-    #endregion Plasmon vendor commands
 
-    #region Kreon vendor commands
+#endregion Plasmon vendor commands
+
+#region Kreon vendor commands
+
     /// <summary>Most Kreon commands start with this</summary>
     KreonCommand = 0xFF,
 
     /// <summary>Kreon extract Security Sectors command start with this</summary>
     KreonSsCommand = 0xAD,
-    #endregion Kreon vendor commands
 
-    #region MiniDisc vendor commands
+#endregion Kreon vendor commands
+
+#region MiniDisc vendor commands
+
     /// <summary>Gets some list of pointers only present on MD-DATA discs</summary>
     MiniDiscReadDTOC = 0xD1,
     /// <summary>Writes some list of pointers only present on MD-DATA discs</summary>
@@ -1833,12 +1984,16 @@ public enum ScsiCommands : byte
     MiniDiscReadPosition = 0xD7,
     /// <summary>Gets some values that are identical amongst audio discs and data discs, different between them</summary>
     MiniDiscGetType = 0xD8,
-    #endregion
 
-    #region MediaTek vendor commands
+#endregion
+
+#region MediaTek vendor commands
+
     MediaTekVendorCommand = 0xF1
-    #endregion
+
+#endregion
 }
+
 #endregion SCSI Commands
 
 /// <summary>SCSI command transfer direction</summary>
@@ -1861,6 +2016,7 @@ public enum ScsiDirection
 }
 
 #region SCSI's ATA Command Pass-Through
+
 public enum AtaProtocol : byte
 {
     /// <summary>Requests a device hard reset (pin 1)</summary>
@@ -1918,6 +2074,7 @@ public enum AtaTransferRegister : byte
     /// <summary>The STPSIU contains the data length</summary>
     Sptsiu = 3
 }
+
 #endregion SCSI's ATA Command Pass-Through
 
 /// <summary>ZBC sub-commands, mask 0x1F</summary>
@@ -1990,7 +2147,8 @@ public enum MmcGetConfigurationRt : byte
     Current = 0x01,
 
     /// <summary>Drive shall return only the Feature Header with the chosen Feature Descriptor</summary>
-    Single = 0x02, Reserved = 0x03
+    Single = 0x02,
+    Reserved = 0x03
 }
 
 public enum MmcDiscStructureMediaType : byte
@@ -2422,13 +2580,16 @@ public enum SscSpaceCodes : byte
     SequentialFilemark = 2,
 
     /// <summary>End-of-data</summary>
-    EndOfData = 3, Obsolete1 = 4, Obsolete2 = 5
+    EndOfData = 3,
+    Obsolete1 = 4,
+    Obsolete2 = 5
 }
 
 /// <summary>MMC / SecureDigital commands</summary>
 public enum MmcCommands : byte
 {
-    #region Class 1 MMC Commands (Basic and read-stream)
+#region Class 1 MMC Commands (Basic and read-stream)
+
     /// <summary>Resets device to idle (BC)</summary>
     GoIdle = 0,
 
@@ -2491,10 +2652,14 @@ public enum MmcCommands : byte
     GoInactiveState = 15,
 
     /// <summary>The host sends the bus testing data pattern to a device (ADTC, R1)</summary>
-    BusTestWrite = 19, SpiReadOcr = 58, SpicrcOnOff = 59,
-    #endregion Class 1 MMC Commands (Basic and read-stream)
+    BusTestWrite = 19,
+    SpiReadOcr  = 58,
+    SpicrcOnOff = 59,
 
-    #region Class 2 MMC Commands (Block-oriented read)
+#endregion Class 1 MMC Commands (Basic and read-stream)
+
+#region Class 2 MMC Commands (Block-oriented read)
+
     /// <summary>Sets the block length in bytes (AC, R1)</summary>
     SetBlocklen = 16,
 
@@ -2506,15 +2671,19 @@ public enum MmcCommands : byte
 
     /// <summary>128 blocks of tuning pattern is sent for HS200 optimal sampling point detection (ADTC, R1)</summary>
     SendTuningBlockHs200 = 21,
-    #endregion Class 2 MMC Commands (Block-oriented read)
 
-    #region Class 3 MMC Commands (Stream write)
+#endregion Class 2 MMC Commands (Block-oriented read)
+
+#region Class 3 MMC Commands (Stream write)
+
     /// <summary>Writes data stream from host until a <see cref="StopTransmission" /> follows (ADTC, R1)</summary>
     [Obsolete]
     WriteDatUntilStop = 20,
-    #endregion Class 3 MMC Commands (Stream write)
 
-    #region Class 4 MMC Commands (Block-oriented write)
+#endregion Class 3 MMC Commands (Stream write)
+
+#region Class 4 MMC Commands (Block-oriented write)
+
     /// <summary>
     ///     Defines the number of blocks which are going to be transferred in the immediately succeeding multiple block
     ///     command (AC, R1)
@@ -2535,9 +2704,11 @@ public enum MmcCommands : byte
 
     /// <summary>Sets the real time clock according to information in block (ADTC, R1)</summary>
     SetTime = 49,
-    #endregion Class 4 MMC Commands (Block-oriented write)
 
-    #region Class 5 MMC Commands (Erase)
+#endregion Class 4 MMC Commands (Block-oriented write)
+
+#region Class 5 MMC Commands (Erase)
+
     /// <summary>Sets the address of the first erase group (AC, R1)</summary>
     EraseGroupStart = 35,
 
@@ -2546,9 +2717,11 @@ public enum MmcCommands : byte
 
     /// <summary>Erases previously selected write blocks (AC, R1b)</summary>
     Erase = 38,
-    #endregion Class 5 MMC Commands (Erase)
 
-    #region Class 6 MMC Commands (Block-oriented write protection)
+#endregion Class 5 MMC Commands (Erase)
+
+#region Class 6 MMC Commands (Block-oriented write protection)
+
     /// <summary>Sets the write protection bit (AC, R1b)</summary>
     SetWriteProtect = 28,
 
@@ -2560,22 +2733,28 @@ public enum MmcCommands : byte
 
     /// <summary>Sends the type of write protection that is set for the different write protection groups (ADTC, R1)</summary>
     SentWriteProtectType = 31,
-    #endregion Class 6 MMC Commands (Block-oriented write protection)
 
-    #region Class 7 MMC Commands (Lock)
+#endregion Class 6 MMC Commands (Block-oriented write protection)
+
+#region Class 7 MMC Commands (Lock)
+
     /// <summary>Used to set/reset the password or lock/unlock the card (ADTC, R1b)</summary>
     LockUnlock = 42,
-    #endregion Class 7 MMC Commands (Lock)
 
-    #region Class 8 MMC Commands (Application-specific)
+#endregion Class 7 MMC Commands (Lock)
+
+#region Class 8 MMC Commands (Application-specific)
+
     /// <summary>Indicates the card that the next command is an application specific command (AC, R1)</summary>
     ApplicationCommand = 55,
 
     /// <summary>Transfers a data block to/from the card for general purpose / application specific commands (ADTC, R1b)</summary>
     GenericCommand = 56,
-    #endregion Class 8 MMC Commands (Application-specific)
 
-    #region Class 9 MMC Commands (I/O mode)
+#endregion Class 8 MMC Commands (Application-specific)
+
+#region Class 9 MMC Commands (I/O mode)
+
     /// <summary>
     ///     Used to write and read 8 bit data field, used to access application dependent registers not defined in MMC
     ///     standard (AC, R4)
@@ -2584,17 +2763,21 @@ public enum MmcCommands : byte
 
     /// <summary>Sets the system into interrupt mode (BCR, R5)</summary>
     GoIrqState = 40,
-    #endregion Class 9 MMC Commands (I/O mode)
 
-    #region Class 10 MMC Commands (Security Protocols)
+#endregion Class 9 MMC Commands (I/O mode)
+
+#region Class 10 MMC Commands (Security Protocols)
+
     /// <summary>Reads data blocks (ADTC, R1)</summary>
     ProtocolRead = 53,
 
     /// <summary>Writes data blocks (ADTC, R1)</summary>
     ProtocolWrite = 54,
-    #endregion Class 10 MMC Commands (Security Protocols)
 
-    #region Class 11 MMC Commands (Command Queue)
+#endregion Class 10 MMC Commands (Security Protocols)
+
+#region Class 11 MMC Commands (Command Queue)
+
     /// <summary>Defines data direction, priority, task ID and block count of queued task (AC, R1)</summary>
     QueuedTaskParameters = 44,
 
@@ -2609,25 +2792,31 @@ public enum MmcCommands : byte
 
     /// <summary>Manages queues and tasks (AC, R1b)</summary>
     CmdQTaskManagement = 48,
-    #endregion Class 11 MMC Commands (Command Queue)
 
-    #region Class 1 SecureDigital Commands (Basic)
+#endregion Class 11 MMC Commands (Command Queue)
+
+#region Class 1 SecureDigital Commands (Basic)
+
     /// <summary>Sends SD interface condition (BCR, R7)</summary>
     SendInterfaceCondition = 8,
 
     /// <summary>Switch to 1.8V bus signaling level (AC, R1)</summary>
     VoltageSwitch = 11,
-    #endregion Class 1 SecureDigital Commands (Basic)
 
-    #region Class 2 SecureDigital Commands (Block-oriented read)
+#endregion Class 1 SecureDigital Commands (Basic)
+
+#region Class 2 SecureDigital Commands (Block-oriented read)
+
     /// <summary>64 bytes of tuning pattern is sent for SDR50 and SDR104 optimal sampling point detection (ADTC, R1)</summary>
     SendTuningBlock = 19,
 
     /// <summary>Speed class control command (AC, R1b)</summary>
     SpeedClassControl = 20,
-    #endregion Class 2 SecureDigital Commands (Block-oriented read)
 
-    #region Class 11 SecureDigital Commands (Function Extension)
+#endregion Class 2 SecureDigital Commands (Block-oriented read)
+
+#region Class 11 SecureDigital Commands (Function Extension)
+
     /// <summary>Single block read type (ADTC, R1)</summary>
     ReadExtraSingle = 48,
 
@@ -2639,7 +2828,8 @@ public enum MmcCommands : byte
 
     /// <summary>Multiple block write type (ADTC, R1)</summary>
     WriteExtraMulti = 59,
-    #endregion Class 11 SecureDigital Commands (Function Extension)
+
+#endregion Class 11 SecureDigital Commands (Function Extension)
 }
 
 /// <summary>SecureDigital application-specific commands</summary>
@@ -2667,23 +2857,40 @@ public enum SecureDigitalCommands : byte
     SendScr = 51
 }
 
-[Flags, SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
+[Flags]
+[SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
 public enum MmcFlags : uint
 {
-    ResponsePresent = 1 << 0, Response136 = 1 << 1, ResponseCrc = 1 << 2,
-    ResponseBusy    = 1 << 3, ResponseOpcode = 1 << 4, CommandMask = 3 << 5,
-    CommandAc       = 0 << 5, CommandAdtc = 1 << 5, CommandBc = 2 << 5,
-    CommandBcr      = 3 << 5, ResponseSpiS1 = 1 << 7, ResponseSpiS2 = 1 << 8,
-    ResponseSpiB4   = 1 << 9, ResponseSpiBusy = 1 << 10, ResponseNone = 0,
+    ResponsePresent = 1 << 0,
+    Response136     = 1 << 1,
+    ResponseCrc     = 1 << 2,
+    ResponseBusy    = 1 << 3,
+    ResponseOpcode  = 1 << 4,
+    CommandMask     = 3 << 5,
+    CommandAc       = 0 << 5,
+    CommandAdtc     = 1 << 5,
+    CommandBc       = 2 << 5,
+    CommandBcr      = 3 << 5,
+    ResponseSpiS1   = 1 << 7,
+    ResponseSpiS2   = 1 << 8,
+    ResponseSpiB4   = 1 << 9,
+    ResponseSpiBusy = 1 << 10,
+    ResponseNone    = 0,
     ResponseR1      = ResponsePresent | ResponseCrc | ResponseOpcode,
     ResponseR1B     = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
-    ResponseR2      = ResponsePresent | Response136 | ResponseCrc, ResponseR3 = ResponsePresent,
-    ResponseR4      = ResponsePresent, ResponseR5 = ResponsePresent | ResponseCrc | ResponseOpcode,
+    ResponseR2      = ResponsePresent | Response136 | ResponseCrc,
+    ResponseR3      = ResponsePresent,
+    ResponseR4      = ResponsePresent,
+    ResponseR5      = ResponsePresent | ResponseCrc | ResponseOpcode,
     ResponseR6      = ResponsePresent | ResponseCrc | ResponseOpcode,
-    ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode, ResponseSpiR1 = ResponseSpiS1,
-    ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy, ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
-    ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4, ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
-    ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2, ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
+    ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode,
+    ResponseSpiR1   = ResponseSpiS1,
+    ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy,
+    ResponseSpiR2   = ResponseSpiS1 | ResponseSpiS2,
+    ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4,
+    ResponseSpiR4   = ResponseSpiS1 | ResponseSpiB4,
+    ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2,
+    ResponseSpiR7   = ResponseSpiS1 | ResponseSpiB4
 }
 
 [Flags]
@@ -2864,33 +3071,46 @@ public enum AtaFeatures : byte
     DisableReleaseInterrupt = 0xDD,
 
     /// <summary>Disable SERVICE interrupt</summary>
-    DisableServiceInterrupt = 0xDE, VendorSpecific = 0xE0
+    DisableServiceInterrupt = 0xDE,
+    VendorSpecific = 0xE0
 }
 
 public enum KreonLockStates : byte
 {
-    Locked = 0, Xtreme = 1, Wxripper = 2
+    Locked   = 0,
+    Xtreme   = 1,
+    Wxripper = 2
 }
 
 public enum RotationalControl : byte
 {
-    ClvAndImpureCav = 0, PureCav = 1
+    ClvAndImpureCav = 0,
+    PureCav         = 1
 }
 
 public enum TrackInformationType : byte
 {
-    LogicalBlockAddress = 0, LogicalTrackNumber = 1, SessionNumber = 2
+    LogicalBlockAddress = 0,
+    LogicalTrackNumber  = 1,
+    SessionNumber       = 2
 }
 
 public enum CssReportKeyFormat : byte
 {
-    AgidForCssCppm = 0x00, ChallengeKey   = 0x01, Key1     = 0x02,
-    TitleKey       = 0x04, Asf            = 0x05, RpcState = 0x08,
-    AgidForCprm    = 0x11, InvalidateAgid = 0x3f
+    AgidForCssCppm = 0x00,
+    ChallengeKey   = 0x01,
+    Key1           = 0x02,
+    TitleKey       = 0x04,
+    Asf            = 0x05,
+    RpcState       = 0x08,
+    AgidForCprm    = 0x11,
+    InvalidateAgid = 0x3f
 }
 
 public enum CssSendKeyFormat : byte
 {
-    ChallengeKey   = 0x01, Key2 = 0x03, RpcStructure = 0x06,
+    ChallengeKey   = 0x01,
+    Key2           = 0x03,
+    RpcStructure   = 0x06,
     InvalidateAgid = 0x3f
 }

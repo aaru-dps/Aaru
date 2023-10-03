@@ -38,18 +38,24 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
-    private protected ushort _usbVendor;
-    private protected ushort _usbProduct;
-    private protected ulong  _firewireGuid;
-    private protected uint   _firewireModel;
-    private protected uint   _firewireVendor;
+    const             string ATA_MODULE_NAME  = "ATA Device";
+    const             string SCSI_MODULE_NAME = "SCSI Device";
+    const             string SD_MODULE_NAME   = "SecureDigital Device";
+    const             string MMC_MODULE_NAME  = "MultiMediaCard Device";
+    private protected byte[] _cachedCid;
 
     // MMC and SecureDigital, values that need to be get with card idle, something that may
     // not be possible to do but usually is already done by the SDHCI driver.
     private protected byte[] _cachedCsd;
-    private protected byte[] _cachedCid;
-    private protected byte[] _cachedScr;
     private protected byte[] _cachedOcr;
+    private protected byte[] _cachedScr;
+
+    private protected string _devicePath;
+    private protected ulong  _firewireGuid;
+    private protected uint   _firewireModel;
+    private protected uint   _firewireVendor;
+    private protected ushort _usbProduct;
+    private protected ushort _usbVendor;
 
     /// <summary>Gets the Platform ID for this device</summary>
     /// <value>The Platform ID</value>
@@ -157,11 +163,4 @@ public partial class Device
 
     /// <summary>Contains the PCMCIA CIS if applicable</summary>
     public byte[] Cis { get; private protected set; }
-
-    private protected string _devicePath;
-
-    const string ATA_MODULE_NAME  = "ATA Device";
-    const string SCSI_MODULE_NAME = "SCSI Device";
-    const string SD_MODULE_NAME   = "SecureDigital Device";
-    const string MMC_MODULE_NAME  = "MultiMediaCard Device";
 }

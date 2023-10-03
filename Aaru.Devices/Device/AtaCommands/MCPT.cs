@@ -44,7 +44,7 @@ public partial class Device
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                           out double duration) =>
+                                           out double               duration) =>
         CheckMediaCardType(1, out statusRegisters, timeout, out duration);
 
     /// <summary>Disables media card pass through</summary>
@@ -53,7 +53,7 @@ public partial class Device
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                            out double duration) =>
+                                            out double               duration) =>
         CheckMediaCardType(0, out statusRegisters, timeout, out duration);
 
     /// <summary>Checks media card pass through</summary>
@@ -62,7 +62,7 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds</param>
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
+    public bool CheckMediaCardType(byte       feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                    out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
@@ -73,8 +73,8 @@ public partial class Device
             Feature = feature
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 

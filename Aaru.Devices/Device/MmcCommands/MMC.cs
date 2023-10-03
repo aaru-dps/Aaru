@@ -37,6 +37,8 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
+    protected static bool ReadMultipleBlockCannotSetBlockCount;
+
     /// <summary>Reads the CSD register from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>
     /// <param name="response">Response</param>
@@ -152,10 +154,10 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
-                     bool byteAddressed, uint timeout, out double duration)
+    public bool Read(out byte[] buffer,        out uint[] response, uint lba, uint blockSize, ushort transferLength,
+                     bool       byteAddressed, uint       timeout,  out double duration)
     {
-        bool sense = true;
+        var sense = true;
         buffer   = null;
         response = null;
         duration = -1;
@@ -164,12 +166,16 @@ public partial class Device
             return ReadSingleBlock(out buffer, out response, lba, blockSize, byteAddressed, timeout, out duration);
 
         if(!ReadMultipleBlockCannotSetBlockCount)
+        {
             sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed, timeout,
                                       out duration);
+        }
 
         if(ReadMultipleBlockCannotSetBlockCount)
+        {
             return ReadMultipleUsingSingle(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
-                                           timeout, out duration);
+                                           timeout,    out duration);
+        }
 
         return sense;
     }
@@ -183,8 +189,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadSingleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize, bool byteAddressed,
-                                uint timeout, out double duration)
+    public bool ReadSingleBlock(out byte[] buffer,  out uint[] response, uint lba, uint blockSize, bool byteAddressed,
+                                uint       timeout, out double duration)
     {
         uint address;
         buffer   = new byte[blockSize];
@@ -206,8 +212,6 @@ public partial class Device
         return sense;
     }
 
-    protected static bool ReadMultipleBlockCannotSetBlockCount;
-
     /// <summary>Reads multiple blocks from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>
     /// <param name="response">Response</param>
@@ -218,8 +222,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadMultipleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                                  ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+    public bool ReadMultipleBlock(out byte[] buffer,         out uint[] response, uint lba, uint blockSize,
+                                  ushort     transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
         uint address;
@@ -238,7 +242,8 @@ public partial class Device
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(MMC_MODULE_NAME,
-                                   transferLength > 1 ? Localization.READ_MULTIPLE_BLOCK_took_0_ms
+                                   transferLength > 1
+                                       ? Localization.READ_MULTIPLE_BLOCK_took_0_ms
                                        : Localization.READ_SINGLE_BLOCK_took_0_ms, duration);
 
         return sense;
@@ -258,9 +263,9 @@ public partial class Device
                                         ushort transferLength, bool byteAddressed, uint timeout, out double duration)
     {
         buffer = new byte[transferLength * blockSize];
-        byte[] blockBuffer = new byte[blockSize];
+        var blockBuffer = new byte[blockSize];
         duration = 0;
-        bool sense = true;
+        var sense = true;
         response = null;
 
         for(uint i = 0; i < transferLength; i++)
@@ -323,11 +328,11 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadWithBlockCount(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                                   ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+    public bool ReadWithBlockCount(out byte[] buffer,         out uint[] response, uint lba, uint blockSize,
+                                   ushort     transferLength, bool byteAddressed, uint timeout, out double duration)
     {
-        uint               address  = byteAddressed ? lba * blockSize : lba;
-        MmcSingleCommand[] commands = new MmcSingleCommand[3];
+        uint address  = byteAddressed ? lba * blockSize : lba;
+        var  commands = new MmcSingleCommand[3];
 
         // SET_BLOCK_COUNT
         commands[0] = new MmcSingleCommand

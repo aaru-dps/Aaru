@@ -48,16 +48,16 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
-                               string secondHalf, uint timeout, out double duration)
+    public bool FujitsuDisplay(out byte[] senseBuffer, bool flash,   FujitsuDisplayModes mode, string firstHalf,
+                               string     secondHalf,  uint timeout, out double          duration)
     {
         byte[] tmp;
-        byte[] firstHalfBytes  = new byte[8];
-        byte[] secondHalfBytes = new byte[8];
-        byte[] buffer          = new byte[17];
-        bool   displayLen      = false;
-        bool   halfMsg         = false;
-        byte[] cdb             = new byte[10];
+        var    firstHalfBytes  = new byte[8];
+        var    secondHalfBytes = new byte[8];
+        var    buffer          = new byte[17];
+        var    displayLen      = false;
+        var    halfMsg         = false;
+        var    cdb             = new byte[10];
 
         if(!string.IsNullOrWhiteSpace(firstHalf))
         {
@@ -72,12 +72,14 @@ public partial class Device
         }
 
         if(mode != FujitsuDisplayModes.Half)
+        {
             if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 displayLen = true;
             else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                     ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 halfMsg = true;
+        }
 
         buffer[0] = (byte)((byte)mode << 5);
 
@@ -92,7 +94,7 @@ public partial class Device
 
         buffer[0] += 0x01; // Always ASCII
 
-        Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
+        Array.Copy(firstHalfBytes,  0, buffer, 1, 8);
         Array.Copy(secondHalfBytes, 0, buffer, 9, 8);
 
         cdb[0] = (byte)ScsiCommands.FujitsuDisplay;

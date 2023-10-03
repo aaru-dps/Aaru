@@ -47,7 +47,7 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort blockBytes,
-                           bool pba, uint timeout, out double duration) =>
+                           bool       pba,    uint       timeout,     out double duration) =>
         HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
 
     /// <summary>Sends the HP READ LONG vendor command</summary>
@@ -66,10 +66,10 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort transferLen,
-                           ushort blockBytes, bool pba, bool sectorCount, uint timeout, out double duration)
+                           ushort     blockBytes, bool pba, bool sectorCount, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 

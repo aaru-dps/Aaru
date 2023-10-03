@@ -41,7 +41,7 @@ namespace Aaru.Devices.Remote;
 public partial class Device
 {
     /// <inheritdoc />
-    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+    public override int SendScsiCommand(byte[]        cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
@@ -91,9 +91,9 @@ public partial class Device
     }
 
     /// <inheritdoc />
-    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                       uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
+    public override int SendMmcCommand(MmcCommands command,  bool       write,     bool isApplication, MmcFlags flags,
+                                       uint        argument, uint       blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         // We need a timeout
         if(timeout == 0)
@@ -160,7 +160,7 @@ public partial class Device
 
     /// <inheritdoc />
     public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                                uint timeout = 15)
+                                                uint               timeout = 15)
     {
         // We need a timeout
         if(timeout == 0)
@@ -169,7 +169,7 @@ public partial class Device
         if(_remote.ServerProtocolVersion >= 2)
             return _remote.SendMultipleMmcCommands(commands, out duration, out sense, timeout);
 
-        int error = 0;
+        var error = 0;
         duration = 0;
         sense    = false;
 

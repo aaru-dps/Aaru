@@ -48,7 +48,7 @@ public partial class Device
                             out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.NecReadCdDa;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

@@ -44,7 +44,7 @@ namespace Aaru.Devices.Windows;
 partial class Device
 {
     /// <inheritdoc />
-    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+    public override int SendScsiCommand(byte[]        cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
@@ -59,11 +59,11 @@ partial class Device
             return -1;
 
         ScsiIoctlDirection dir = direction switch
-        {
-            ScsiDirection.In  => ScsiIoctlDirection.In,
-            ScsiDirection.Out => ScsiIoctlDirection.Out,
-            _                 => ScsiIoctlDirection.Unspecified
-        };
+                                 {
+                                     ScsiDirection.In  => ScsiIoctlDirection.In,
+                                     ScsiDirection.Out => ScsiIoctlDirection.Out,
+                                     _                 => ScsiIoctlDirection.Unspecified
+                                 };
 
         var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
         {
@@ -85,7 +85,7 @@ partial class Device
         Array.Copy(cdb, sptdSb.sptd.Cdb, cdb.Length);
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
@@ -181,7 +181,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -282,7 +282,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -392,7 +392,7 @@ partial class Device
         aptd.AtaFlags |= AtaFlags.DrdyRequired;
 
         uint k     = 0;
-        int  error = 0;
+        var  error = 0;
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
@@ -448,9 +448,9 @@ partial class Device
     }
 
     /// <inheritdoc />
-    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                       uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
+    public override int SendMmcCommand(MmcCommands command,  bool       write,     bool isApplication, MmcFlags flags,
+                                       uint        argument, uint       blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         var cmdStopwatch = new Stopwatch();
 
@@ -517,9 +517,10 @@ partial class Device
         commandDescriptor.cmdClass          = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
         commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
 
-        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc) ? command == MmcCommands.ReadMultipleBlock
-                                                                                   ? SdTransferType.MultiBlock
-                                                                                   : SdTransferType.SingleBlock
+        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
+                                             ? command == MmcCommands.ReadMultipleBlock
+                                                   ? SdTransferType.MultiBlock
+                                                   : SdTransferType.SingleBlock
                                              : SdTransferType.CmdOnly;
 
         commandDescriptor.responseType = 0;
@@ -551,7 +552,7 @@ partial class Device
         if(flags.HasFlag(MmcFlags.ResponseR6))
             commandDescriptor.responseType = SdResponseType.R6;
 
-        byte[] commandB =
+        var commandB =
             new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
         Array.Copy(buffer, 0, commandB, commandData.size + commandData.protocolArgumentSize, buffer.Length);
@@ -562,7 +563,7 @@ partial class Device
         Marshal.Copy(hBuf, commandB, 0, commandB.Length);
         Marshal.FreeHGlobal(hBuf);
 
-        int error = 0;
+        var error = 0;
         cmdStopwatch.Restart();
 
         sense = !Extern.DeviceIoControl(_fileHandle, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
@@ -584,13 +585,13 @@ partial class Device
 
     /// <inheritdoc />
     public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                                uint timeout = 15)
+                                                uint               timeout = 15)
     {
         // We need a timeout
         if(timeout == 0)
             timeout = Timeout > 0 ? Timeout : 15;
 
-        int error = 0;
+        var error = 0;
         duration = 0;
         sense    = false;
 
@@ -598,9 +599,11 @@ partial class Device
            commands[0].command == MmcCommands.SetBlocklen       &&
            commands[1].command == MmcCommands.ReadMultipleBlock &&
            commands[2].command == MmcCommands.StopTransmission)
+        {
             return SendMmcCommand(commands[1].command, commands[1].write, commands[1].isApplication, commands[1].flags,
                                   commands[1].argument, commands[1].blockSize, commands[1].blocks,
                                   ref commands[1].buffer, out commands[1].response, out duration, out sense, timeout);
+        }
 
         foreach(MmcSingleCommand command in commands)
         {

@@ -58,11 +58,11 @@ public partial class Device
     /// <param name="lba">Starting block.</param>
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="transferLength">How many blocks to read.</param>
-    public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
-                      uint timeout, out double duration)
+    public bool Read6(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
+                      uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
 
         cdb[0] = (byte)ScsiCommands.Read6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -108,7 +108,7 @@ public partial class Device
                        out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.Read10;
         cdb[1] = (byte)((rdprotect & 0x07) << 5);
@@ -172,7 +172,7 @@ public partial class Device
                        uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.Read12;
         cdb[1] = (byte)((rdprotect & 0x07) << 5);
@@ -240,7 +240,7 @@ public partial class Device
                        out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb      = new byte[16];
+        var    cdb      = new byte[16];
         byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0] = (byte)ScsiCommands.Read16;
@@ -297,11 +297,11 @@ public partial class Device
     ///     How many bytes to read. If the number is not exactly the drive's size, the command will
     ///     fail and incidate a delta of the size in SENSE.
     /// </param>
-    public bool ReadLong10(out byte[] buffer, out byte[] senseBuffer, bool correct, bool relAddr, uint lba,
-                           ushort transferBytes, uint timeout, out double duration)
+    public bool ReadLong10(out byte[] buffer,        out byte[] senseBuffer, bool       correct, bool relAddr, uint lba,
+                           ushort     transferBytes, uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 
@@ -342,11 +342,11 @@ public partial class Device
     ///     How many bytes to read. If the number is not exactly the drive's size, the command will
     ///     fail and incidate a delta of the size in SENSE.
     /// </param>
-    public bool ReadLong16(out byte[] buffer, out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
-                           uint timeout, out double duration)
+    public bool ReadLong16(out byte[] buffer,  out byte[] senseBuffer, bool correct, ulong lba, uint transferBytes,
+                           uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb      = new byte[16];
+        var    cdb      = new byte[16];
         byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0]  = (byte)ScsiCommands.ServiceActionIn;
@@ -385,7 +385,7 @@ public partial class Device
     public bool Seek6(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Seek6;
@@ -411,7 +411,7 @@ public partial class Device
     public bool Seek10(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[10];
+        var    cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Seek10;

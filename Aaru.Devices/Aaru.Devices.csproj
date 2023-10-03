@@ -42,7 +42,7 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="8.0.0-rc.1.23419.4" />
+    <PackageReference Include="System.Management" Version="8.0.0-rc.1.23419.4"/>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>
   <ItemGroup>

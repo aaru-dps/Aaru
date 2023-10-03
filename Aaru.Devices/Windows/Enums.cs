@@ -234,7 +234,8 @@ enum ScsiIoctlDirection : byte
 
 enum WindowsIoctl : uint
 {
-    IoctlAtaPassThrough = 0x4D02C, IoctlAtaPassThroughDirect = 0x4D030,
+    IoctlAtaPassThrough       = 0x4D02C,
+    IoctlAtaPassThroughDirect = 0x4D030,
 
     /// <summary>ScsiPassThrough</summary>
     IoctlScsiPassThrough = 0x4D004,
@@ -243,9 +244,12 @@ enum WindowsIoctl : uint
     IoctlScsiPassThroughDirect = 0x4D014,
 
     /// <summary>ScsiGetAddress</summary>
-    IoctlScsiGetAddress = 0x41018, IoctlStorageQueryProperty = 0x2D1400, IoctlIdePassThrough             = 0x4D028,
-    IoctlStorageGetDeviceNumber                              = 0x2D1080, IoctlSffdiskQueryDeviceProtocol = 0x71E80,
-    IoctlSffdiskDeviceCommand                                = 0x79E84
+    IoctlScsiGetAddress = 0x41018,
+    IoctlStorageQueryProperty       = 0x2D1400,
+    IoctlIdePassThrough             = 0x4D028,
+    IoctlStorageGetDeviceNumber     = 0x2D1080,
+    IoctlSffdiskQueryDeviceProtocol = 0x71E80,
+    IoctlSffdiskDeviceCommand       = 0x79E84
 }
 
 [Flags]
@@ -272,29 +276,55 @@ enum AtaFlags : ushort
 
 enum StoragePropertyId
 {
-    Device           = 0, Adapter      = 1, Id              = 2,
-    UniqueId         = 3, WriteCache   = 4, Miniport        = 5,
-    AccessAlignment  = 6, SeekPenalty  = 7, Trim            = 8,
-    WriteAggregation = 9, Telemetry    = 10, LbProvisioning = 11,
-    Power            = 12, Copyoffload = 13, Resiliency     = 14
+    Device           = 0,
+    Adapter          = 1,
+    Id               = 2,
+    UniqueId         = 3,
+    WriteCache       = 4,
+    Miniport         = 5,
+    AccessAlignment  = 6,
+    SeekPenalty      = 7,
+    Trim             = 8,
+    WriteAggregation = 9,
+    Telemetry        = 10,
+    LbProvisioning   = 11,
+    Power            = 12,
+    Copyoffload      = 13,
+    Resiliency       = 14
 }
 
 enum StorageQueryType
 {
-    Standard = 0, Exists = 1, Mask = 2,
+    Standard = 0,
+    Exists   = 1,
+    Mask     = 2,
     Max      = 3
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 enum StorageBusType
 {
-    Unknown           = 0, SCSI             = 1, ATAPI        = 2,
-    ATA               = 3, FireWire         = 4, SSA          = 5,
-    Fibre             = 6, USB              = 7, RAID         = 8,
-    iSCSI             = 9, SAS              = 0xA, SATA       = 0xB,
-    SecureDigital     = 0xC, MultiMediaCard = 0xD, Virtual    = 0xE,
-    FileBackedVirtual = 0xF, Spaces         = 16, SCM         = 18,
-    UFS               = 19, Max             = 20, MaxReserved = 127,
+    Unknown           = 0,
+    SCSI              = 1,
+    ATAPI             = 2,
+    ATA               = 3,
+    FireWire          = 4,
+    SSA               = 5,
+    Fibre             = 6,
+    USB               = 7,
+    RAID              = 8,
+    iSCSI             = 9,
+    SAS               = 0xA,
+    SATA              = 0xB,
+    SecureDigital     = 0xC,
+    MultiMediaCard    = 0xD,
+    Virtual           = 0xE,
+    FileBackedVirtual = 0xF,
+    Spaces            = 16,
+    SCM               = 18,
+    UFS               = 19,
+    Max               = 20,
+    MaxReserved       = 127,
     NVMe              = 0x11
 }
 
@@ -319,32 +349,46 @@ enum DeviceGetClassFlags : uint
 
 enum SdCommandClass : uint
 {
-    Standard, AppCmd
+    Standard,
+    AppCmd
 }
 
 enum SdTransferDirection : uint
 {
-    Unspecified, Read, Write
+    Unspecified,
+    Read,
+    Write
 }
 
 enum SdTransferType : uint
 {
-    Unspecified, CmdOnly, SingleBlock,
-    MultiBlock, MultiBlockNoCmd12
+    Unspecified,
+    CmdOnly,
+    SingleBlock,
+    MultiBlock,
+    MultiBlockNoCmd12
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 enum SdResponseType : uint
 {
-    Unspecified, None, R1,
-    R1b, R2, R3,
-    R4, R5, R5b,
+    Unspecified,
+    None,
+    R1,
+    R1b,
+    R2,
+    R3,
+    R4,
+    R5,
+    R5b,
     R6
 }
 
 enum SffdiskDcmd : uint
 {
-    GetVersion, LockChannel, UnlockChannel,
+    GetVersion,
+    LockChannel,
+    UnlockChannel,
     DeviceCommand
 }
 
@@ -359,5 +403,7 @@ static class Consts
 
 enum MoveMethod : uint
 {
-    Begin = 0, Current = 1, End = 2
+    Begin   = 0,
+    Current = 1,
+    End     = 2
 }

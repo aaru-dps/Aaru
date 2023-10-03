@@ -55,8 +55,8 @@ public partial class Device
             LbaMid  = 0x4F
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -71,7 +71,7 @@ public partial class Device
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                             out double duration)
+                                             out double                 duration)
     {
         byte[] buffer = Array.Empty<byte>();
 
@@ -84,8 +84,8 @@ public partial class Device
             SectorCount = 0xF1
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -100,7 +100,7 @@ public partial class Device
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 statusRegisters, uint timeout,
-                                              out double duration)
+                                              out double                 duration)
     {
         byte[] buffer = Array.Empty<byte>();
 
@@ -112,8 +112,8 @@ public partial class Device
             LbaMid  = 0x4F
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -139,8 +139,8 @@ public partial class Device
             LbaMid  = 0x4F
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -156,7 +156,7 @@ public partial class Device
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 statusRegisters, byte subcommand, uint timeout,
-                                             out double duration)
+                                             out double                 duration)
     {
         byte[] buffer = Array.Empty<byte>();
 
@@ -169,8 +169,8 @@ public partial class Device
             LbaLow  = subcommand
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -198,8 +198,8 @@ public partial class Device
             LbaMid  = 0x4F
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,             out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -215,8 +215,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
-                             uint timeout, out double duration)
+    public bool SmartReadLog(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, byte logAddress,
+                             uint       timeout, out double                 duration)
     {
         buffer = new byte[512];
 
@@ -229,8 +229,8 @@ public partial class Device
             LbaLow  = logAddress
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,             out duration, out bool sense);
 
         Error = LastError != 0;
 
@@ -256,8 +256,8 @@ public partial class Device
             LbaMid  = 0x4F
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
+                                   ref buffer, timeout,             false,               out duration, out bool sense);
 
         Error = LastError != 0;
 

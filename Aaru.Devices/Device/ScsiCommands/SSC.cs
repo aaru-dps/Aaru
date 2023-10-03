@@ -67,10 +67,10 @@ public partial class Device
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
     public bool LoadUnload(out byte[] senseBuffer, bool immediate, bool load, bool retense, bool endOfTape, bool hold,
-                           uint timeout, out double duration)
+                           uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.LoadUnload;
@@ -147,10 +147,10 @@ public partial class Device
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
     public bool Locate(out byte[] senseBuffer, bool immediate, bool blockType, bool changePartition, byte partition,
-                       uint objectId, uint timeout, out double duration)
+                       uint       objectId,    uint timeout,   out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[10];
+        var    cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Locate;
@@ -216,7 +216,7 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool Locate16(out byte[] senseBuffer, bool immediate, byte partition, ulong lba, uint timeout,
                          out double duration) => Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId,
-                                                          false, partition, lba, timeout, out duration);
+                                                          false,           partition, lba,   timeout, out duration);
 
     /// <summary>Positions the medium to the specified object identifier</summary>
     /// <param name="senseBuffer">Sense buffer.</param>
@@ -228,11 +228,11 @@ public partial class Device
     /// <param name="identifier">Destination identifier.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Locate16(out byte[] senseBuffer, bool immediate, bool changePartition, SscLogicalIdTypes destType,
-                         bool bam, byte partition, ulong identifier, uint timeout, out double duration)
+    public bool Locate16(out byte[] senseBuffer, bool immediate, bool  changePartition, SscLogicalIdTypes destType,
+                         bool       bam,         byte partition, ulong identifier, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb     = new byte[16];
+        var    cdb     = new byte[16];
         byte[] buffer  = Array.Empty<byte>();
         byte[] idBytes = BitConverter.GetBytes(identifier);
 
@@ -310,11 +310,11 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read6(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen, uint transferLen,
-                      uint blockSize, uint timeout, out double duration)
+    public bool Read6(out byte[] buffer,    out byte[] senseBuffer, bool       sili, bool fixedLen, uint transferLen,
+                      uint       blockSize, uint       timeout,     out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.Read6;
@@ -348,8 +348,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId, uint blocks,
-                       uint blockSize, uint timeout, out double duration) =>
+    public bool Read16(out byte[] buffer,    out byte[] senseBuffer, bool       sili, ulong objectId, uint blocks,
+                       uint       blockSize, uint       timeout,     out double duration) =>
         Read16(out buffer, out senseBuffer, sili, false, 0, objectId, blocks, blockSize, timeout, out duration);
 
     /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition</summary>
@@ -362,8 +362,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition, ulong objectId,
-                       uint blocks, uint blockSize, uint timeout, out double duration) =>
+    public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili,    byte       partition, ulong objectId,
+                       uint       blocks, uint       blockSize,   uint timeout, out double duration) =>
         Read16(out buffer, out senseBuffer, sili, false, partition, objectId, blocks, blockSize, timeout, out duration);
 
     /// <summary>Reads a number of fixed-length blocks starting at specified object</summary>
@@ -374,9 +374,9 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read16(out byte[] buffer, out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
-                       uint timeout, out double duration) => Read16(out buffer, out senseBuffer, false, true, 0,
-                                                                    objectId, blocks, blockSize, timeout, out duration);
+    public bool Read16(out byte[] buffer,  out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
+                       uint       timeout, out double duration) => Read16(out buffer, out senseBuffer, false, true, 0,
+                                                                          objectId, blocks, blockSize, timeout, out duration);
 
     /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition</summary>
     /// <param name="buffer">Buffer.</param>
@@ -387,8 +387,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId, uint blocks,
-                       uint blockSize, uint timeout, out double duration) =>
+    public bool Read16(out byte[] buffer,    out byte[] senseBuffer, byte       partition, ulong objectId, uint blocks,
+                       uint       blockSize, uint       timeout,     out double duration) =>
         Read16(out buffer, out senseBuffer, false, true, partition, objectId, blocks, blockSize, timeout, out duration);
 
     /// <summary>Reads a number of bytes or objects starting at specified object from the specified partition</summary>
@@ -408,11 +408,11 @@ public partial class Device
     /// <param name="objectSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen, byte partition,
-                       ulong objectId, uint transferLen, uint objectSize, uint timeout, out double duration)
+    public bool Read16(out byte[] buffer,   out byte[] senseBuffer, bool sili,       bool fixedLen, byte partition,
+                       ulong      objectId, uint       transferLen, uint objectSize, uint timeout,  out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
         byte[] idBytes = BitConverter.GetBytes(objectId);
 
@@ -455,7 +455,7 @@ public partial class Device
     public bool ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         buffer = new byte[6];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadBlockLimits;
@@ -494,8 +494,8 @@ public partial class Device
     /// <param name="totalPosition">Requests current logical position.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, bool vendorType, bool longForm,
-                             bool totalPosition, uint timeout, out double duration)
+    public bool ReadPosition(out byte[] buffer,        out byte[] senseBuffer, bool       vendorType, bool longForm,
+                             bool       totalPosition, uint       timeout,     out double duration)
     {
         byte responseForm = 0;
 
@@ -543,7 +543,7 @@ public partial class Device
                 break;
         }
 
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadPosition;
@@ -573,8 +573,8 @@ public partial class Device
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
     public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, uint blocks, uint blockSize, uint timeout,
-                             out double duration) => ReadReverse6(out buffer, out senseBuffer, false, false, true,
-                                                                  blocks, blockSize, timeout, out duration);
+                             out double duration) => ReadReverse6(out buffer, out senseBuffer, false,   false, true,
+                                                                  blocks,     blockSize,       timeout, out duration);
 
     /// <summary>Reads the specified number of bytes or of blocks from the medium, backwards</summary>
     /// <param name="buffer">Buffer.</param>
@@ -584,8 +584,8 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
-                             uint timeout, out double duration) =>
+    public bool ReadReverse6(out byte[] buffer,  out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
+                             uint       timeout, out double duration) =>
         ReadReverse6(out buffer, out senseBuffer, false, sili, false, transferLen, blockSize, timeout, out duration);
 
     /// <summary>Reads the specified number of bytes or of blocks from the medium, backwards</summary>
@@ -604,11 +604,11 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
-                             uint transferLen, uint blockSize, uint timeout, out double duration)
+    public bool ReadReverse6(out byte[] buffer,      out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
+                             uint       transferLen, uint       blockSize,   uint timeout,   out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReadReverse;
@@ -645,8 +645,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId, uint blocks,
-                              uint blockSize, uint timeout, out double duration) =>
+    public bool ReadReverse16(out byte[] buffer,    out byte[] senseBuffer, bool sili, ulong objectId, uint blocks,
+                              uint       blockSize, uint       timeout,     out double duration) =>
         ReadReverse16(out buffer, out senseBuffer, false, sili, false, 0, objectId, blocks, blockSize, timeout,
                       out duration);
 
@@ -660,8 +660,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition, ulong objectId,
-                              uint blocks, uint blockSize, uint timeout, out double duration) =>
+    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili,    byte partition, ulong objectId,
+                              uint       blocks, uint       blockSize,   uint timeout, out double duration) =>
         ReadReverse16(out buffer, out senseBuffer, false, sili, false, partition, objectId, blocks, blockSize, timeout,
                       out duration);
 
@@ -673,8 +673,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
-                              uint timeout, out double duration) =>
+    public bool ReadReverse16(out byte[] buffer,  out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
+                              uint       timeout, out double duration) =>
         ReadReverse16(out buffer, out senseBuffer, false, false, true, 0, objectId, blocks, blockSize, timeout,
                       out duration);
 
@@ -687,8 +687,8 @@ public partial class Device
     /// <param name="blockSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId, uint blocks,
-                              uint blockSize, uint timeout, out double duration) =>
+    public bool ReadReverse16(out byte[] buffer,    out byte[] senseBuffer, byte partition, ulong objectId, uint blocks,
+                              uint       blockSize, uint       timeout,     out double duration) =>
         ReadReverse16(out buffer, out senseBuffer, false, false, true, partition, objectId, blocks, blockSize, timeout,
                       out duration);
 
@@ -710,12 +710,12 @@ public partial class Device
     /// <param name="objectSize">Object size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
-                              byte partition, ulong objectId, uint transferLen, uint objectSize, uint timeout,
+    public bool ReadReverse16(out byte[] buffer,    out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
+                              byte       partition, ulong objectId, uint transferLen, uint objectSize, uint timeout,
                               out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
         byte[] idBytes = BitConverter.GetBytes(objectId);
 
@@ -760,8 +760,8 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, uint blocks, uint blockSize,
-                                    uint timeout, out double duration) =>
+    public bool RecoverBufferedData(out byte[] buffer,  out byte[] senseBuffer, uint blocks, uint blockSize,
+                                    uint       timeout, out double duration) =>
         RecoverBufferedData(out buffer, out senseBuffer, false, true, blocks, blockSize, timeout, out duration);
 
     /// <summary>Reads the specified number of bytes or of blocks from the device's buffer</summary>
@@ -772,8 +772,8 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen,
-                                    uint blockSize, uint timeout, out double duration) =>
+    public bool RecoverBufferedData(out byte[] buffer,    out byte[] senseBuffer, bool       sili, uint transferLen,
+                                    uint       blockSize, uint       timeout,     out double duration) =>
         RecoverBufferedData(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout, out duration);
 
     /// <summary>Reads the specified number of bytes or of blocks from the device's buffer</summary>
@@ -791,11 +791,11 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen,
-                                    uint transferLen, uint blockSize, uint timeout, out double duration)
+    public bool RecoverBufferedData(out byte[] buffer,      out byte[] senseBuffer, bool sili,    bool       fixedLen,
+                                    uint       transferLen, uint       blockSize,   uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.RecoverBufferedData;
@@ -845,11 +845,11 @@ public partial class Device
     /// <param name="currentMedia">If set to <c>true</c> descriptors should apply to currently inserted media.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, bool mediumType, bool currentMedia,
-                                     uint timeout, out double duration)
+    public bool ReportDensitySupport(out byte[] buffer,  out byte[] senseBuffer, bool mediumType, bool currentMedia,
+                                     uint       timeout, out double duration)
     {
         buffer = new byte[256];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ReportDensitySupport;
@@ -871,7 +871,7 @@ public partial class Device
         if(sense)
             return true;
 
-        ushort availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        var availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
         buffer      = new byte[availableLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
@@ -902,7 +902,7 @@ public partial class Device
     public bool Rewind(out byte[] senseBuffer, bool immediate, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.Rewind;
@@ -929,7 +929,7 @@ public partial class Device
     public bool TrackSelect(out byte[] senseBuffer, byte track, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
 
         cdb[0] = (byte)ScsiCommands.TrackSelect;
@@ -955,7 +955,7 @@ public partial class Device
     public bool Space(out byte[] senseBuffer, SscSpaceCodes code, int count, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         byte[] buffer = Array.Empty<byte>();
         byte[] countB = BitConverter.GetBytes(count);
 

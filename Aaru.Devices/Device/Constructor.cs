@@ -44,10 +44,13 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 namespace Aaru.Devices;
 
 /// <summary>Implements a device or media containing drive</summary>
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global"),
- SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public partial class Device
 {
+    protected Device() {}
+
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="devicePath">Device path</param>
     /// <param name="errno">Sets the error if a device cannot be opened</param>
@@ -128,7 +131,7 @@ public partial class Device
             dev.Error     = false;
         }
 
-        if((dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI && !(dev.IsUsb || dev.IsFireWire)) ||
+        if(dev.Type != DeviceType.SCSI && dev.Type != DeviceType.ATAPI && !(dev.IsUsb || dev.IsFireWire) ||
            dev.Manufacturer == "ATA")
         {
             bool ataSense = dev.AtaIdentify(out byte[] ataBuf, out _);
@@ -156,9 +159,11 @@ public partial class Device
                     dev.ScsiType = PeripheralDeviceTypes.DirectAccess;
 
                     if((ushort)ataid.Value.GeneralConfiguration != 0x848A)
+                    {
                         dev.IsRemovable |=
                             (ataid.Value.GeneralConfiguration & Identify.GeneralConfigurationBit.Removable) ==
                             Identify.GeneralConfigurationBit.Removable;
+                    }
                     else
                         dev.IsCompactFlash = true;
                 }
@@ -184,8 +189,10 @@ public partial class Device
             if(string.IsNullOrEmpty(dev.Serial))
                 dev.Serial = dev.UsbSerialString;
             else
+            {
                 foreach(char c in dev.Serial.Where(c => !char.IsControl(c)))
                     dev.Serial = $"{dev.Serial}{c:X2}";
+            }
         }
 
         if(dev.IsFireWire)
@@ -199,8 +206,10 @@ public partial class Device
             if(string.IsNullOrEmpty(dev.Serial))
                 dev.Serial = $"{dev._firewireGuid:X16}";
             else
+            {
                 foreach(char c in dev.Serial.Where(c => !char.IsControl(c)))
                     dev.Serial = $"{dev.Serial}{c:X2}";
+            }
         }
 
         // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without
@@ -229,6 +238,4 @@ public partial class Device
 
         return dev;
     }
-
-    protected Device() {}
 }

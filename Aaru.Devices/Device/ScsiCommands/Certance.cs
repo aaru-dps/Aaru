@@ -61,7 +61,7 @@ public partial class Device
     public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;

@@ -36,7 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Devices.Linux;
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SgIoHdrT
 {
     /// <summary>Always 'S' for SG v3</summary>
@@ -64,7 +65,8 @@ struct SgIoHdrT
     public SgInfo             info;            /* [o] */
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct MmcIocCmd
 {
     /// <summary>Implies direction of data. true = write, false = read</summary>

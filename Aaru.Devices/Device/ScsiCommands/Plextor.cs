@@ -51,7 +51,7 @@ public partial class Device
                                 uint transferLength, PlextorSubchannel subchannel, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.ReadCdDa;
         cdb[2]  = (byte)((lba & 0xFF000000) >> 24);
@@ -87,11 +87,11 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="lba">Start block address.</param>
     /// <param name="transferLength">How many blocks to read.</param>
-    public bool PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                  uint timeout, out double duration)
+    public bool PlextorReadRawDvd(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint transferLength,
+                                  uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
+        var cdb = new byte[10];
         buffer = new byte[2064 * transferLength];
 
         cdb[0] = (byte)ScsiCommands.ReadBuffer;
@@ -123,7 +123,7 @@ public partial class Device
     {
         buffer      = new byte[256];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 1;
@@ -148,7 +148,7 @@ public partial class Device
     {
         buffer      = new byte[512];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 2;
@@ -171,12 +171,12 @@ public partial class Device
     /// <param name="blockSize">How many bytes are in the EEPROM block</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, byte block, ushort blockSize,
-                                       uint timeout, out double duration)
+    public bool PlextorReadEepromBlock(out byte[] buffer,  out byte[] senseBuffer, byte block, ushort blockSize,
+                                       uint       timeout, out double duration)
     {
         buffer      = new byte[blockSize];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[1] = 1;
@@ -203,11 +203,11 @@ public partial class Device
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
     public bool PlextorGetSpeeds(out byte[] senseBuffer, out ushort selected, out ushort max, out ushort last,
-                                 uint timeout, out double duration)
+                                 uint       timeout,     out double duration)
     {
-        byte[] buf = new byte[10];
+        var buf = new byte[10];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         selected = 0;
         max      = 0;
@@ -243,9 +243,9 @@ public partial class Device
     public bool PlextorGetPoweRec(out byte[] senseBuffer, out bool enabled, out ushort speed, uint timeout,
                                   out double duration)
     {
-        byte[] buf = new byte[8];
+        var buf = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         enabled = false;
         speed   = 0;
@@ -280,7 +280,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -308,7 +308,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -337,7 +337,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -369,7 +369,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[2]  = (byte)PlextorSubCommands.SecuRec;
@@ -395,7 +395,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;
@@ -422,7 +422,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorExtend;
         cdb[1] = (byte)PlextorSubCommands.GetMode;
@@ -452,7 +452,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0] = (byte)ScsiCommands.PlextorExtend;
         cdb[1] = (byte)PlextorSubCommands.GetMode;
@@ -484,7 +484,7 @@ public partial class Device
     {
         buffer      = new byte[8];
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[12];
+        var cdb = new byte[12];
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
         cdb[1]  = (byte)PlextorSubCommands.GetMode;

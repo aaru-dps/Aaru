@@ -47,7 +47,7 @@ public partial class Device
                                                out double duration)
     {
         buffer = new byte[3];
-        byte[] cdb = new byte[6];
+        var cdb = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ArchiveRequestBlockAddress;
@@ -85,7 +85,7 @@ public partial class Device
                                      out double duration)
     {
         byte[] buffer = Array.Empty<byte>();
-        byte[] cdb    = new byte[6];
+        var    cdb    = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.ArchiveSeekBlock;

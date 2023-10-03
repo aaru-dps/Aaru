@@ -98,10 +98,10 @@ partial class Device : Devices.Device
         };
 
         IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-        byte[] descriptorB   = new byte[1000];
+        var    descriptorB   = new byte[1000];
 
         uint returned = 0;
-        int  error    = 0;
+        var  error    = 0;
 
         bool hasError = !Extern.DeviceIoControlStorageQuery(dev._fileHandle, WindowsIoctl.IoctlStorageQueryProperty,
                                                             ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
@@ -196,7 +196,7 @@ partial class Device : Devices.Device
 
         if(IsSdhci(dev._fileHandle))
         {
-            byte[] sdBuffer = new byte[16];
+            var sdBuffer = new byte[16];
 
             dev.LastError = dev.SendMmcCommand(MmcCommands.SendCsd, false, false,
                                                MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,
@@ -235,9 +235,12 @@ partial class Device : Devices.Device
             sdBuffer = new byte[4];
 
             dev.LastError =
-                dev.SendMmcCommand(dev._cachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
-                                   false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
-                                   4, 1, ref sdBuffer, out _, out _, out sense);
+                dev.SendMmcCommand(
+                    dev._cachedScr != null
+                        ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition
+                        : MmcCommands.SendOpCond,
+                    false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
+                    4, 1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
@@ -246,7 +249,8 @@ partial class Device : Devices.Device
             }
         }
 
-        #region SecureDigital / MultiMediaCard
+    #region SecureDigital / MultiMediaCard
+
         if(dev._cachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
@@ -279,9 +283,11 @@ partial class Device : Devices.Device
 
             return dev;
         }
-        #endregion SecureDigital / MultiMediaCard
 
-        #region USB
+    #endregion SecureDigital / MultiMediaCard
+
+    #region USB
+
         Usb.UsbDevice usbDevice = null;
 
         // I have to search for USB disks, floppies and CD-ROMs as separate device types
@@ -308,17 +314,22 @@ partial class Device : Devices.Device
             dev.UsbSerialString =
                 usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
         }
-        #endregion USB
 
-        #region FireWire
+    #endregion USB
+
+    #region FireWire
+
         // TODO: Implement
 
         dev.IsFireWire = false;
-        #endregion FireWire
 
-        #region PCMCIA
+    #endregion FireWire
+
+    #region PCMCIA
+
         // TODO: Implement
-        #endregion PCMCIA
+
+    #endregion PCMCIA
 
         return dev;
     }

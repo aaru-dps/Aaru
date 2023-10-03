@@ -89,7 +89,7 @@ public partial class Device
     /// <param name="aaruRemote">Remote URI</param>
     /// <returns>List of devices</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication, out string serverVersion,
+    public static DeviceInfo[] ListDevices(out bool   isRemote, out string serverApplication, out string serverVersion,
                                            out string serverOperatingSystem, out string serverOperatingSystemVersion,
                                            out string serverArchitecture, string aaruRemote = null)
     {

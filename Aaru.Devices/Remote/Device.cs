@@ -42,7 +42,10 @@ namespace Aaru.Devices.Remote;
 /// <inheritdoc />
 public sealed partial class Device : Devices.Device
 {
+    bool?  _isRemoteAdmin;
     Remote _remote;
+
+    Device() {}
 
     /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
     public bool IsAdmin
@@ -57,21 +60,24 @@ public sealed partial class Device : Devices.Device
 
     /// <summary>Current device is remote</summary>
     public bool IsRemote => _remote != null;
+
     /// <summary>Remote application</summary>
     public string RemoteApplication => _remote?.ServerApplication;
+
     /// <summary>Remote application server</summary>
     public string RemoteVersion => _remote?.ServerVersion;
+
     /// <summary>Remote operating system name</summary>
     public string RemoteOperatingSystem => _remote?.ServerOperatingSystem;
+
     /// <summary>Remote operating system version</summary>
     public string RemoteOperatingSystemVersion => _remote?.ServerOperatingSystemVersion;
+
     /// <summary>Remote architecture</summary>
     public string RemoteArchitecture => _remote?.ServerArchitecture;
+
     /// <summary>Remote protocol version</summary>
     public int RemoteProtocolVersion => _remote?.ServerProtocolVersion ?? 0;
-    bool? _isRemoteAdmin;
-
-    Device() {}
 
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="aaruUri">AaruRemote URI</param>
@@ -156,7 +162,8 @@ public sealed partial class Device : Devices.Device
                 break;
         }
 
-        #region SecureDigital / MultiMediaCard
+    #region SecureDigital / MultiMediaCard
+
         if(dev._cachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
@@ -189,9 +196,11 @@ public sealed partial class Device : Devices.Device
 
             return dev;
         }
-        #endregion SecureDigital / MultiMediaCard
 
-        #region USB
+    #endregion SecureDigital / MultiMediaCard
+
+    #region USB
+
         if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors, out ushort remoteUsbVendor,
                                   out ushort remoteUsbProduct, out string remoteUsbManufacturer,
                                   out string remoteUsbProductString, out string remoteUsbSerial))
@@ -204,9 +213,11 @@ public sealed partial class Device : Devices.Device
             dev.UsbProductString      = remoteUsbProductString;
             dev.UsbSerialString       = remoteUsbSerial;
         }
-        #endregion USB
 
-        #region FireWire
+    #endregion USB
+
+    #region FireWire
+
         if(dev._remote.GetFireWireData(out dev._firewireVendor, out dev._firewireModel, out dev._firewireGuid,
                                        out string remoteFireWireVendorName, out string remoteFireWireModelName))
         {
@@ -214,14 +225,18 @@ public sealed partial class Device : Devices.Device
             dev.FireWireVendorName = remoteFireWireVendorName;
             dev.FireWireModelName  = remoteFireWireModelName;
         }
-        #endregion FireWire
-        #region PCMCIA
+
+    #endregion FireWire
+
+    #region PCMCIA
+
         if(!dev._remote.GetPcmciaData(out byte[] cisBuf))
             return dev;
 
         dev.IsPcmcia = true;
         dev.Cis      = cisBuf;
-        #endregion PCMCIA
+
+    #endregion PCMCIA
 
         return dev;
     }

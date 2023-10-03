@@ -115,6 +115,7 @@ partial class Device : Devices.Device
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sg", StringComparison.Ordinal))
+        {
             if(!dev.ScsiInquiry(out byte[] _, out _))
                 dev.Type = DeviceType.SCSI;
 
@@ -155,8 +156,10 @@ partial class Device : Devices.Device
                         dev._cachedOcr = null;
                 }
             }
+        }
 
-        #region SecureDigital / MultiMediaCard
+    #region SecureDigital / MultiMediaCard
+
         if(dev._cachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
@@ -189,9 +192,11 @@ partial class Device : Devices.Device
 
             return dev;
         }
-        #endregion SecureDigital / MultiMediaCard
 
-        #region USB
+    #endregion SecureDigital / MultiMediaCard
+
+    #region USB
+
         string resolvedLink;
 
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
@@ -219,8 +224,8 @@ partial class Device : Devices.Device
 
                         var usbFs = new FileStream(resolvedLink + "/descriptors", FileMode.Open, FileAccess.Read);
 
-                        byte[] usbBuf   = new byte[65536];
-                        int    usbCount = usbFs.EnsureRead(usbBuf, 0, 65536);
+                        var usbBuf   = new byte[65536];
+                        int usbCount = usbFs.EnsureRead(usbBuf, 0, 65536);
                         dev.UsbDescriptors = new byte[usbCount];
                         Array.Copy(usbBuf, 0, dev.UsbDescriptors, 0, usbCount);
                         usbFs.Close();
@@ -269,9 +274,11 @@ partial class Device : Devices.Device
                 }
             }
         }
-        #endregion USB
 
-        #region FireWire
+    #endregion USB
+
+    #region FireWire
+
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
@@ -284,6 +291,7 @@ partial class Device : Devices.Device
                 resolvedLink = "/sys" + resolvedLink[2..];
 
                 if(!string.IsNullOrEmpty(resolvedLink))
+                {
                     while(resolvedLink?.Contains("firewire") == true)
                     {
                         resolvedLink = Path.GetDirectoryName(resolvedLink);
@@ -335,11 +343,14 @@ partial class Device : Devices.Device
 
                         break;
                     }
+                }
             }
         }
-        #endregion FireWire
 
-        #region PCMCIA
+    #endregion FireWire
+
+    #region PCMCIA
+
         if(!devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) &&
            !devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) &&
            !devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
@@ -377,8 +388,8 @@ partial class Device : Devices.Device
 
             var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);
 
-            byte[] cisBuf   = new byte[65536];
-            int    cisCount = cisFs.EnsureRead(cisBuf, 0, 65536);
+            var cisBuf   = new byte[65536];
+            int cisCount = cisFs.EnsureRead(cisBuf, 0, 65536);
             dev.Cis = new byte[cisCount];
             Array.Copy(cisBuf, 0, dev.Cis, 0, cisCount);
             cisFs.Close();
@@ -387,7 +398,8 @@ partial class Device : Devices.Device
 
             break;
         }
-        #endregion PCMCIA
+
+    #endregion PCMCIA
 
         return dev;
     }

@@ -59,11 +59,11 @@ public partial class Device
     /// <param name="requested">Number of contiguous blocks to find</param>
     /// <param name="foundLba">First LBA found</param>
     public bool MediumScan(out byte[] senseBuffer, bool written, bool advancedScan, bool reverse, bool partial,
-                           bool relAddr, uint lba, uint requested, uint scanLength, out uint foundLba,
-                           out uint foundBlocks, uint timeout, out double duration)
+                           bool       relAddr,     uint lba,     uint requested, uint scanLength, out uint foundLba,
+                           out uint   foundBlocks, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb    = new byte[10];
+        var    cdb    = new byte[10];
         byte[] buffer = Array.Empty<byte>();
         foundLba    = 0;
         foundBlocks = 0;
@@ -120,13 +120,15 @@ public partial class Device
 
         switch(decodedSense?.SenseKey)
         {
-            case SenseKeys.NoSense: return false;
+            case SenseKeys.NoSense:
+                return false;
             case SenseKeys.Equal when decodedSense.Value.Fixed?.InformationValid == true:
                 foundBlocks = decodedSense.Value.Fixed.Value.CommandSpecific;
                 foundLba    = decodedSense.Value.Fixed.Value.Information;
 
                 return false;
-            default: return sense;
+            default:
+                return sense;
         }
     }
 }

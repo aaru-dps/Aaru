@@ -47,7 +47,7 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
                              out double duration) => SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false,
-                                                                  false, timeout, out duration);
+                                                                  false,      timeout,         out duration);
 
     /// <summary>Sends the SyQuest READ LONG (6) command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
@@ -73,11 +73,11 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="transferLength">How many blocks to read.</param>
     public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
-                             bool inhibitDma, bool readLong, uint timeout, out double duration)
+                             bool       inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[6];
-        bool   sense;
+        var  cdb = new byte[6];
+        bool sense;
 
         cdb[0] = (byte)ScsiCommands.Read6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -103,11 +103,15 @@ public partial class Device
             buffer = Array.Empty<byte>();
 
         if(!inhibitDma)
+        {
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
+        }
         else
+        {
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);
+        }
 
         Error = LastError != 0;
 
@@ -151,8 +155,8 @@ public partial class Device
                               ushort transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        byte[] cdb = new byte[10];
-        bool   sense;
+        var  cdb = new byte[10];
+        bool sense;
 
         cdb[0] = (byte)ScsiCommands.Read10;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);
@@ -180,11 +184,15 @@ public partial class Device
             buffer = Array.Empty<byte>();
 
         if(!inhibitDma)
+        {
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
+        }
         else
+        {
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out sense);
+        }
 
         Error = LastError != 0;
 

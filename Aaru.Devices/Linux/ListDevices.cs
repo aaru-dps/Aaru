@@ -48,8 +48,8 @@ static class ListDevices
     {
         string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
 
-        DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];
-        bool         hasUdev;
+        var  devices = new DeviceInfo[sysdevs.Length];
+        bool hasUdev;
 
         IntPtr udev = IntPtr.Zero;
 
@@ -63,7 +63,7 @@ static class ListDevices
             hasUdev = false;
         }
 
-        for(int i = 0; i < sysdevs.Length; i++)
+        for(var i = 0; i < sysdevs.Length; i++)
         {
             devices[i] = new DeviceInfo
             {
@@ -118,6 +118,7 @@ static class ListDevices
 
             if(string.IsNullOrEmpty(devices[i].Vendor) ||
                devices[i].Vendor == "ATA")
+            {
                 if(devices[i].Model != null)
                 {
                     string[] pieces = devices[i].Model.Split(' ');
@@ -128,6 +129,7 @@ static class ListDevices
                         devices[i].Model  = devices[i].Model[(pieces[0].Length + 1)..];
                     }
                 }
+            }
 
             // TODO: Get better device type from sysfs paths
             if(string.IsNullOrEmpty(devices[i].Bus))
