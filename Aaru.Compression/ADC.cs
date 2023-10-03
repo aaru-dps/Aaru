@@ -49,6 +49,7 @@ public static class ADC
     const int PLAIN      = 1;
     const int TWO_BYTE   = 2;
     const int THREE_BYTE = 3;
+
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
@@ -64,21 +65,21 @@ public static class ADC
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkSize(byte byt) => GetChunkType(byt) switch
-    {
-        PLAIN      => (byt & 0x7F)        + 1,
-        TWO_BYTE   => ((byt & 0x3F) >> 2) + 3,
-        THREE_BYTE => (byt & 0x3F)        + 4,
-        _          => -1
-    };
+                                         {
+                                             PLAIN      => (byt & 0x7F)        + 1,
+                                             TWO_BYTE   => ((byt & 0x3F) >> 2) + 3,
+                                             THREE_BYTE => (byt & 0x3F)        + 4,
+                                             _          => -1
+                                         };
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetOffset(ReadOnlySpan<byte> chunk) => GetChunkType(chunk[0]) switch
-    {
-        PLAIN      => 0,
-        TWO_BYTE   => ((chunk[0] & 0x03) << 8) + chunk[1],
-        THREE_BYTE => (chunk[1]          << 8) + chunk[2],
-        _          => -1
-    };
+                                                      {
+                                                          PLAIN      => 0,
+                                                          TWO_BYTE   => ((chunk[0] & 0x03) << 8) + chunk[1],
+                                                          THREE_BYTE => (chunk[1]          << 8) + chunk[2],
+                                                          _          => -1
+                                                      };
 
     /// <summary>Decompresses a byte buffer that's compressed with ADC</summary>
     /// <param name="source">Compressed buffer</param>
@@ -90,8 +91,8 @@ public static class ADC
         if(Native.IsSupported)
             return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
 
-        int        inputPosition = 0;
-        int        outPosition   = 0;
+        var        inputPosition = 0;
+        var        outPosition   = 0;
         Span<byte> temp          = stackalloc byte[3];
 
         while(inputPosition < source.Length)
@@ -130,18 +131,20 @@ public static class ADC
                     {
                         byte lastByte = destination[outPosition - 1];
 
-                        for(int i = 0; i < chunkSize; i++)
+                        for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = lastByte;
                             outPosition++;
                         }
                     }
                     else
-                        for(int i = 0; i < chunkSize; i++)
+                    {
+                        for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = destination[outPosition - offset - 1];
                             outPosition++;
                         }
+                    }
 
                     break;
                 case THREE_BYTE:
@@ -158,24 +161,26 @@ public static class ADC
                     {
                         byte lastByte = destination[outPosition - 1];
 
-                        for(int i = 0; i < chunkSize; i++)
+                        for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = lastByte;
                             outPosition++;
                         }
                     }
                     else
-                        for(int i = 0; i < chunkSize; i++)
+                    {
+                        for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = destination[outPosition - offset - 1];
                             outPosition++;
                         }
+                    }
 
                     break;
             }
         }
 
-        finished:
+    finished:
 
         return outPosition;
     }

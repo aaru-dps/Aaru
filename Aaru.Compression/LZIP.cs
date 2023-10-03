@@ -41,8 +41,8 @@ public class LZIP
     static extern int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
-                                              int dictionarySize, int matchLenLimit);
+    static extern int AARU_lzip_encode_buffer(byte[] dstBuffer,      int dstSize, byte[] srcBuffer, int srcSize,
+                                              int    dictionarySize, int matchLenLimit);
 
     /// <summary>Decodes a buffer compressed with LZIP</summary>
     /// <param name="source">Encoded buffer</param>
@@ -58,6 +58,8 @@ public class LZIP
     /// <param name="matchLengthLimit">Match length limit</param>
     /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit) =>
-        Native.IsSupported ? AARU_lzip_encode_buffer(destination, destination.Length, source, source.Length,
-                                                     dictionarySize, matchLengthLimit) : 0;
+        Native.IsSupported
+            ? AARU_lzip_encode_buffer(destination,    destination.Length, source, source.Length,
+                                      dictionarySize, matchLengthLimit)
+            : 0;
 }

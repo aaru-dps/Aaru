@@ -42,16 +42,16 @@ public class FLAC
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                        nuint srcSize);
+                                                        nuint  srcSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                        nuint srcSize, uint blocksize, int doMidSideStereo,
-                                                        int looseMidSideStereo, string apodization, uint maxLpcOrder,
-                                                        uint qlpCoeffPrecision, int doQlpCoeffPrecSearch,
-                                                        int doExhaustiveModelSearch, uint minResidualPartitionOrder,
-                                                        uint maxResidualPartitionOrder, string applicationID,
-                                                        uint applicationIDLen);
+                                                        nuint  srcSize, uint blocksize, int doMidSideStereo,
+                                                        int    looseMidSideStereo, string apodization, uint maxLpcOrder,
+                                                        uint   qlpCoeffPrecision, int doQlpCoeffPrecSearch,
+                                                        int    doExhaustiveModelSearch, uint minResidualPartitionOrder,
+                                                        uint   maxResidualPartitionOrder, string applicationID,
+                                                        uint   applicationIDLen);
 
     /// <summary>Decodes a buffer compressed with FLAC</summary>
     /// <param name="source">Encoded buffer</param>
@@ -60,8 +60,10 @@ public class FLAC
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
         if(Native.IsSupported)
+        {
             return (int)AARU_flac_decode_redbook_buffer(destination, (nuint)destination.Length, source,
                                                         (nuint)source.Length);
+        }
 
         var flacMs      = new MemoryStream(source);
         var flakeReader = new AudioDecoder(new DecoderSettings(), "", flacMs);
@@ -95,6 +97,7 @@ public class FLAC
                                    uint minResidualPartitionOrder, uint maxResidualPartitionOrder, string applicationID)
     {
         if(Native.IsSupported)
+        {
             return (int)AARU_flac_encode_redbook_buffer(destination, (nuint)destination.Length, source,
                                                         (nuint)source.Length, blockSize, doMidSideStereo ? 1 : 0,
                                                         looseMidSideStereo ? 1 : 0, apodization, maxLpcOrder,
@@ -102,6 +105,7 @@ public class FLAC
                                                         doExhaustiveModelSearch ? 1 : 0, minResidualPartitionOrder,
                                                         maxResidualPartitionOrder, applicationID,
                                                         (uint)applicationID.Length);
+        }
 
         var flakeWriterSettings = new EncoderSettings
         {
@@ -138,7 +142,7 @@ public class FLAC
         flakeWriter.Write(audioBuffer);
         flakeWriter.Close();
 
-        int len = (int)flacMs.Length;
+        var len = (int)flacMs.Length;
         flacMs.ReallyClose();
 
         return len;

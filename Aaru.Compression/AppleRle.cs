@@ -39,6 +39,7 @@ namespace Aaru.Compression;
 public static class AppleRle
 {
     const uint DART_CHUNK = 20960;
+
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
@@ -54,10 +55,10 @@ public static class AppleRle
         if(Native.IsSupported)
             return AARU_apple_rle_decode_buffer(destination, destination.Length, source, source.Length);
 
-        int  count         = 0;
-        bool nextA         = true; // true if A, false if B
+        var  count         = 0;
+        var  nextA         = true; // true if A, false if B
         byte repeatedByteA = 0, repeatedByteB = 0;
-        bool repeatMode    = false; // true if we're repeating, false if we're just copying
+        var  repeatMode    = false; // true if we're repeating, false if we're just copying
         int  inPosition    = 0, outPosition = 0;
 
         while(inPosition  <= source.Length &&
@@ -97,9 +98,9 @@ public static class AppleRle
 
             while(true)
             {
-                byte  b1 = source[inPosition++];
-                byte  b2 = source[inPosition++];
-                short s  = (short)((b1 << 8) | b2);
+                byte b1 = source[inPosition++];
+                byte b2 = source[inPosition++];
+                var  s  = (short)(b1 << 8 | b2);
 
                 if(s == 0          ||
                    s >= DART_CHUNK ||
@@ -111,7 +112,7 @@ public static class AppleRle
                     repeatMode    = true;
                     repeatedByteA = source[inPosition++];
                     repeatedByteB = source[inPosition++];
-                    count         = (-s * 2) - 1;
+                    count         = -s * 2 - 1;
                     nextA         = false;
 
                     destination[outPosition++] = repeatedByteA;
@@ -120,7 +121,7 @@ public static class AppleRle
                 }
 
                 repeatMode = false;
-                count      = (s * 2) - 1;
+                count      = s * 2 - 1;
 
                 destination[outPosition++] = source[inPosition++];
 

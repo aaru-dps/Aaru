@@ -41,12 +41,12 @@ public class LZMA
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_lzma_decode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, ref nuint srcSize,
-                                              byte[] props, nuint propsSize);
+                                              byte[] props,     nuint     propsSize);
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, nuint srcSize,
                                               byte[] outProps, ref nuint outPropsSize, int level, uint dictSize, int lc,
-                                              int lp, int pb, int fb, int numThreads);
+                                              int    lp, int pb, int fb, int numThreads);
 
     /// <summary>Decodes a buffer compressed with LZMA</summary>
     /// <param name="source">Encoded buffer</param>
@@ -57,8 +57,8 @@ public class LZMA
     {
         if(Native.IsSupported)
         {
-            nuint srcSize = (nuint)source.Length;
-            nuint dstSize = (nuint)destination.Length;
+            var srcSize = (nuint)source.Length;
+            var dstSize = (nuint)destination.Length;
 
             AARU_lzma_decode_buffer(destination, ref dstSize, source, ref srcSize, properties,
                                     (nuint)properties.Length);
@@ -85,17 +85,17 @@ public class LZMA
     /// <param name="fb">Forward bits</param>
     /// <returns>How many bytes have been written to the destination buffer</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, out byte[] properties, int level, uint dictSize,
-                                   int lc, int lp, int pb, int fb)
+                                   int    lc,     int    lp,          int        pb,         int fb)
     {
         if(Native.IsSupported)
         {
             properties = new byte[5];
-            nuint dstSize   = (nuint)destination.Length;
-            nuint propsSize = (nuint)properties.Length;
-            nuint srcSize   = (nuint)source.Length;
+            var dstSize   = (nuint)destination.Length;
+            var propsSize = (nuint)properties.Length;
+            var srcSize   = (nuint)source.Length;
 
             AARU_lzma_encode_buffer(destination, ref dstSize, source, srcSize, properties, ref propsSize, level,
-                                    dictSize, lc, lp, pb, fb, 0);
+                                    dictSize,    lc,          lp,     pb,      fb,         0);
 
             return (int)dstSize;
         }

@@ -42,7 +42,7 @@ public class ZSTD
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern nuint AARU_zstd_encode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer, nuint srcSize,
-                                                int compressionLevel);
+                                                int    compressionLevel);
 
     /// <summary>Decodes a buffer compressed with ZSTD</summary>
     /// <param name="source">Encoded buffer</param>
@@ -50,7 +50,8 @@ public class ZSTD
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination) =>
         (int)(Native.IsSupported
-                  ? AARU_zstd_decode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length) : 0);
+                  ? AARU_zstd_decode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length)
+                  : 0);
 
     /// <summary>Compresses a buffer using ZSTD</summary>
     /// <param name="source">Data to compress</param>
@@ -60,5 +61,6 @@ public class ZSTD
     public static int EncodeBuffer(byte[] source, byte[] destination, int compressionLevel) =>
         (int)(Native.IsSupported
                   ? AARU_zstd_encode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length,
-                                            compressionLevel) : 0);
+                                            compressionLevel)
+                  : 0);
 }

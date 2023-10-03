@@ -43,7 +43,7 @@ public class BZip2
 
     [DllImport("libAaru.Compression.Native", SetLastError = true)]
     static extern int AARU_bzip2_encode_buffer(byte[] dstBuffer, ref uint dstSize, byte[] srcBuffer, uint srcSize,
-                                               int blockSize100K);
+                                               int    blockSize100K);
 
     /// <summary>Decodes a buffer compressed with BZIP2</summary>
     /// <param name="source">Encoded buffer</param>
@@ -51,7 +51,7 @@ public class BZip2
     /// <returns>The number of decoded bytes</returns>
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        uint destinationSize = (uint)destination.Length;
+        var destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {
@@ -73,7 +73,7 @@ public class BZip2
     /// <returns></returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int blockSize100K)
     {
-        uint destinationSize = (uint)destination.Length;
+        var destinationSize = (uint)destination.Length;
 
         if(Native.IsSupported)
         {
