@@ -82,14 +82,14 @@ static class Nec
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_DA_command);
-            AaruConsole.WriteLine(Localization.LBA_0, address);
+            AaruConsole.WriteLine(Localization.LBA_0,                   address);
             AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -137,17 +137,18 @@ static class Nec
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.NecReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, length, dev.Timeout,
                                      out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_DA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -227,8 +228,10 @@ static class Nec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

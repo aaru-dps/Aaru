@@ -144,26 +144,26 @@ static class Ssc
 
     static void LoadUnload(string devPath, Device dev)
     {
-        bool   load      = true;
-        bool   immediate = false;
-        bool   retense   = false;
-        bool   eot       = false;
-        bool   hold      = false;
+        var    load      = true;
+        var    immediate = false;
+        var    retense   = false;
+        var    eot       = false;
+        var    hold      = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_LOAD_UNLOAD_command);
-            AaruConsole.WriteLine(Localization.Load_0, load);
-            AaruConsole.WriteLine(Localization.Immediate_0, immediate);
-            AaruConsole.WriteLine(Localization.Retense_0, retense);
+            AaruConsole.WriteLine(Localization.Load_0,        load);
+            AaruConsole.WriteLine(Localization.Immediate_0,   immediate);
+            AaruConsole.WriteLine(Localization.Retense_0,     retense);
             AaruConsole.WriteLine(Localization.End_of_tape_0, eot);
-            AaruConsole.WriteLine(Localization.Hold_0, hold);
+            AaruConsole.WriteLine(Localization.Hold_0,        hold);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -246,21 +246,22 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.LoadUnload(out byte[] senseBuffer, immediate, load, retense, eot, hold, dev.Timeout,
                                     out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_LOAD_UNLOAD_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -309,8 +310,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -322,25 +325,25 @@ static class Ssc
 
     static void Locate10(string devPath, Device dev)
     {
-        bool   blockType       = true;
-        bool   immediate       = false;
-        bool   changePartition = false;
+        var    blockType       = true;
+        var    immediate       = false;
+        var    changePartition = false;
         byte   partition       = 0;
         uint   objectId        = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_LOCATE_10_command);
-            AaruConsole.WriteLine(Localization.Locate_block_0, blockType);
-            AaruConsole.WriteLine(Localization.Immediate_0, immediate);
-            AaruConsole.WriteLine(Localization.Change_partition_0, changePartition);
-            AaruConsole.WriteLine(Localization.Partition_0, partition);
+            AaruConsole.WriteLine(Localization.Locate_block_0,                              blockType);
+            AaruConsole.WriteLine(Localization.Immediate_0,                                 immediate);
+            AaruConsole.WriteLine(Localization.Change_partition_0,                          changePartition);
+            AaruConsole.WriteLine(Localization.Partition_0,                                 partition);
             AaruConsole.WriteLine(blockType ? Localization.Block_0 : Localization.Object_0, objectId);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -424,21 +427,22 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Locate(out byte[] senseBuffer, immediate, blockType, changePartition, partition, objectId,
                                 dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_LOCATE_10_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -487,8 +491,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -501,27 +507,27 @@ static class Ssc
     static void Locate16(string devPath, Device dev)
     {
         SscLogicalIdTypes destType        = SscLogicalIdTypes.FileId;
-        bool              immediate       = false;
-        bool              changePartition = false;
-        bool              bam             = false;
+        var               immediate       = false;
+        var               changePartition = false;
+        var               bam             = false;
         byte              partition       = 0;
         ulong             objectId        = 1;
         string            strDev;
         int               item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_LOCATE_16_command);
-            AaruConsole.WriteLine(Localization.Object_type_0, destType);
-            AaruConsole.WriteLine(Localization.Immediate_0, immediate);
+            AaruConsole.WriteLine(Localization.Object_type_0,         destType);
+            AaruConsole.WriteLine(Localization.Immediate_0,           immediate);
             AaruConsole.WriteLine(Localization.Explicit_identifier_0, bam);
-            AaruConsole.WriteLine(Localization.Change_partition_0, changePartition);
-            AaruConsole.WriteLine(Localization.Partition_0, partition);
-            AaruConsole.WriteLine(Localization.Object_identifier_0, objectId);
+            AaruConsole.WriteLine(Localization.Change_partition_0,    changePartition);
+            AaruConsole.WriteLine(Localization.Partition_0,           partition);
+            AaruConsole.WriteLine(Localization.Object_identifier_0,   objectId);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -622,21 +628,22 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Locate16(out byte[] senseBuffer, immediate, changePartition, destType, bam, partition,
                                   objectId, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_LOCATE_16_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -685,8 +692,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -698,14 +707,14 @@ static class Ssc
 
     static void Read6(string devPath, Device dev)
     {
-        bool   sili      = false;
-        bool   fixedLen  = true;
+        var    sili      = false;
+        var    fixedLen  = true;
         uint   blockSize = 512;
         uint   length    = 1;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -754,7 +763,8 @@ static class Ssc
                         continue;
                     }
 
-                    AaruConsole.Write(fixedLen ? Localization.How_many_blocks_to_read_Q
+                    AaruConsole.Write(fixedLen
+                                          ? Localization.How_many_blocks_to_read_Q
                                           : Localization.How_many_bytes_to_read_Q);
 
                     strDev = System.Console.ReadLine();
@@ -771,8 +781,11 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                            WriteLine(
+                                fixedLen
+                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -803,17 +816,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Read6(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, length, blockSize,
                                dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_6_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -893,8 +907,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -906,8 +922,8 @@ static class Ssc
 
     static void Read16(string devPath, Device dev)
     {
-        bool   sili       = false;
-        bool   fixedLen   = true;
+        var    sili       = false;
+        var    fixedLen   = true;
         uint   objectSize = 512;
         uint   length     = 1;
         byte   partition  = 0;
@@ -915,7 +931,7 @@ static class Ssc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -928,7 +944,7 @@ static class Ssc
             if(fixedLen)
                 AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
 
-            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0, sili);
+            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Read_object_0_from_partition_1, objectId, partition);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -965,7 +981,8 @@ static class Ssc
                         continue;
                     }
 
-                    AaruConsole.Write(fixedLen ? Localization.How_many_objects_to_read_Q
+                    AaruConsole.Write(fixedLen
+                                          ? Localization.How_many_objects_to_read_Q
                                           : Localization.How_many_bytes_to_read_Q);
 
                     strDev = System.Console.ReadLine();
@@ -982,8 +999,11 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                            WriteLine(
+                                fixedLen
+                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1038,17 +1058,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Read16(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, partition, objectId, length,
                                 objectSize, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_16_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1128,8 +1149,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1141,12 +1164,12 @@ static class Ssc
 
     static void ReadBlockLimits(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_BLOCK_LIMITS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1240,7 +1263,8 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
+            case 5:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1256,7 +1280,7 @@ static class Ssc
         string           strDev;
         int              item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1306,20 +1330,21 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadPosition(out _, out byte[] senseBuffer, responseForm, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_POSITION_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -1368,8 +1393,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1381,15 +1408,15 @@ static class Ssc
 
     static void ReadReverse6(string devPath, Device dev)
     {
-        bool   byteOrder = false;
-        bool   sili      = false;
-        bool   fixedLen  = true;
+        var    byteOrder = false;
+        var    sili      = false;
+        var    fixedLen  = true;
         uint   blockSize = 512;
         uint   length    = 1;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1402,7 +1429,7 @@ static class Ssc
             if(fixedLen)
                 AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
 
-            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0, sili);
+            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Drive_should_unreverse_bytes_0, byteOrder);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -1439,7 +1466,8 @@ static class Ssc
                         continue;
                     }
 
-                    AaruConsole.Write(fixedLen ? Localization.How_many_blocks_to_read_Q
+                    AaruConsole.Write(fixedLen
+                                          ? Localization.How_many_blocks_to_read_Q
                                           : Localization.How_many_bytes_to_read_Q);
 
                     strDev = System.Console.ReadLine();
@@ -1456,8 +1484,11 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                            WriteLine(
+                                fixedLen
+                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1500,17 +1531,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadReverse6(out byte[] buffer, out byte[] senseBuffer, byteOrder, sili, fixedLen, length,
                                       blockSize, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_REVERSE_6_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1590,8 +1622,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1603,9 +1637,9 @@ static class Ssc
 
     static void ReadReverse16(string devPath, Device dev)
     {
-        bool   byteOrder  = false;
-        bool   sili       = false;
-        bool   fixedLen   = true;
+        var    byteOrder  = false;
+        var    sili       = false;
+        var    fixedLen   = true;
         uint   objectSize = 512;
         uint   length     = 1;
         byte   partition  = 0;
@@ -1613,7 +1647,7 @@ static class Ssc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1626,7 +1660,7 @@ static class Ssc
             if(fixedLen)
                 AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
 
-            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0, sili);
+            AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Read_object_0_from_partition_1, objectId, partition);
             AaruConsole.WriteLine(Localization.Drive_should_unreverse_bytes_0, byteOrder);
             AaruConsole.WriteLine();
@@ -1664,7 +1698,8 @@ static class Ssc
                         continue;
                     }
 
-                    AaruConsole.Write(fixedLen ? Localization.How_many_objects_to_read_Q
+                    AaruConsole.Write(fixedLen
+                                          ? Localization.How_many_objects_to_read_Q
                                           : Localization.How_many_bytes_to_read_Q);
 
                     strDev = System.Console.ReadLine();
@@ -1681,8 +1716,11 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                            WriteLine(
+                                fixedLen
+                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1749,17 +1787,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byteOrder, sili, fixedLen, partition,
                                        objectId, length, objectSize, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_REVERSE_16_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1839,8 +1878,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1852,14 +1893,14 @@ static class Ssc
 
     static void RecoverBufferedData(string devPath, Device dev)
     {
-        bool   sili      = false;
-        bool   fixedLen  = true;
+        var    sili      = false;
+        var    fixedLen  = true;
         uint   blockSize = 512;
         uint   length    = 1;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1908,7 +1949,8 @@ static class Ssc
                         continue;
                     }
 
-                    AaruConsole.Write(fixedLen ? Localization.How_many_blocks_to_read_Q
+                    AaruConsole.Write(fixedLen
+                                          ? Localization.How_many_blocks_to_read_Q
                                           : Localization.How_many_bytes_to_read_Q);
 
                     strDev = System.Console.ReadLine();
@@ -1925,8 +1967,11 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                            WriteLine(
+                                fixedLen
+                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1957,17 +2002,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, length,
                                              blockSize, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_RECOVER_BUFFERED_DATA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -2047,8 +2093,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2060,19 +2108,19 @@ static class Ssc
 
     static void ReportDensitySupport(string devPath, Device dev)
     {
-        bool   medium  = false;
-        bool   current = false;
+        var    medium  = false;
+        var    current = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_REPORT_DENSITY_SUPPORT_command);
-            AaruConsole.WriteLine(Localization.Report_about_medium_types_0, medium);
+            AaruConsole.WriteLine(Localization.Report_about_medium_types_0,   medium);
             AaruConsole.WriteLine(Localization.Report_about_current_medium_0, current);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -2120,17 +2168,18 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, medium, current, dev.Timeout,
                                               out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_REPORT_DENSITY_SUPPORT_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -2192,7 +2241,8 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.REPORT_DENSITY_SUPPORT_decoded_buffer);
 
                 AaruConsole.Write("{0}",
-                                  medium ? DensitySupport.PrettifyMediumType(buffer)
+                                  medium
+                                      ? DensitySupport.PrettifyMediumType(buffer)
                                       : DensitySupport.PrettifyDensity(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
@@ -2226,8 +2276,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2239,11 +2291,11 @@ static class Ssc
 
     static void Rewind(string devPath, Device dev)
     {
-        bool   immediate = false;
+        var    immediate = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -2285,19 +2337,20 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.Rewind(out byte[] senseBuffer, immediate, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_REWIND_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -2346,8 +2399,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2364,7 +2419,7 @@ static class Ssc
         string        strDev;
         int           item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -2372,7 +2427,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_SPACE_command);
             AaruConsole.WriteLine(Localization.What_to_space_0, what);
-            AaruConsole.WriteLine(Localization.How_many_0, count);
+            AaruConsole.WriteLine(Localization.How_many_0,      count);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -2425,19 +2480,20 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.Space(out byte[] senseBuffer, what, count, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SPACE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -2486,8 +2542,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2503,7 +2561,7 @@ static class Ssc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -2545,19 +2603,20 @@ static class Ssc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.TrackSelect(out byte[] senseBuffer, track, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_TRACK_SELECT_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -2606,8 +2665,10 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

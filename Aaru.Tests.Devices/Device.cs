@@ -42,19 +42,19 @@ static partial class MainClass
 
         while(true)
         {
-            AaruConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformId);
-            AaruConsole.WriteLine("dev.Timeout = {0}", dev.Timeout);
-            AaruConsole.WriteLine("dev.Error = {0}", dev.Error);
-            AaruConsole.WriteLine("dev.LastError = {0}", dev.LastError);
-            AaruConsole.WriteLine("dev.Type = {0}", dev.Type);
-            AaruConsole.WriteLine("dev.Manufacturer = \"{0}\"", dev.Manufacturer);
-            AaruConsole.WriteLine("dev.Model = \"{0}\"", dev.Model);
-            AaruConsole.WriteLine("dev.Revision = \"{0}\"", dev.FirmwareRevision);
-            AaruConsole.WriteLine("dev.Serial = \"{0}\"", dev.Serial);
-            AaruConsole.WriteLine("dev.SCSIType = {0}", dev.ScsiType);
-            AaruConsole.WriteLine("dev.IsRemovable = {0}", dev.IsRemovable);
-            AaruConsole.WriteLine("dev.IsUSB = {0}", dev.IsUsb);
-            AaruConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
+            AaruConsole.WriteLine("dev.PlatformID = {0}",        dev.PlatformId);
+            AaruConsole.WriteLine("dev.Timeout = {0}",           dev.Timeout);
+            AaruConsole.WriteLine("dev.Error = {0}",             dev.Error);
+            AaruConsole.WriteLine("dev.LastError = {0}",         dev.LastError);
+            AaruConsole.WriteLine("dev.Type = {0}",              dev.Type);
+            AaruConsole.WriteLine("dev.Manufacturer = \"{0}\"",  dev.Manufacturer);
+            AaruConsole.WriteLine("dev.Model = \"{0}\"",         dev.Model);
+            AaruConsole.WriteLine("dev.Revision = \"{0}\"",      dev.FirmwareRevision);
+            AaruConsole.WriteLine("dev.Serial = \"{0}\"",        dev.Serial);
+            AaruConsole.WriteLine("dev.SCSIType = {0}",          dev.ScsiType);
+            AaruConsole.WriteLine("dev.IsRemovable = {0}",       dev.IsRemovable);
+            AaruConsole.WriteLine("dev.IsUSB = {0}",             dev.IsUsb);
+            AaruConsole.WriteLine("dev.USBVendorID = 0x{0:X4}",  dev.UsbVendorId);
             AaruConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
 
             AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}",
@@ -76,7 +76,7 @@ static partial class MainClass
             AaruConsole.WriteLine(Localization.Press_any_key_to_continue, devPath);
             System.Console.ReadKey();
 
-            menu:
+        menu:
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Options);

@@ -12,11 +12,11 @@ static partial class ScsiMmc
 {
     static void CheckGdromReadability(string devPath, Device dev)
     {
-        bool   tocIsNotBcd = false;
+        var    tocIsNotBcd = false;
         bool   sense;
         byte[] senseBuffer;
 
-        start:
+    start:
         System.Console.Clear();
 
         AaruConsole.WriteLine(Localization.Ejecting_disc);
@@ -30,7 +30,7 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine(Localization.Sending_READ_FULL_TOC_to_the_device);
 
-        int retries = 0;
+        var retries = 0;
 
         do
         {
@@ -110,12 +110,12 @@ static partial class ScsiMmc
         }
         else
         {
-            min   += ((leadOutTrack.PMIN   >> 4) * 10) + (leadOutTrack.PMIN   & 0x0F);
-            sec   =  ((leadOutTrack.PSEC   >> 4) * 10) + (leadOutTrack.PSEC   & 0x0F);
-            frame =  ((leadOutTrack.PFRAME >> 4) * 10) + (leadOutTrack.PFRAME & 0x0F);
+            min   += (leadOutTrack.PMIN   >> 4) * 10 + (leadOutTrack.PMIN   & 0x0F);
+            sec   =  (leadOutTrack.PSEC   >> 4) * 10 + (leadOutTrack.PSEC   & 0x0F);
+            frame =  (leadOutTrack.PFRAME >> 4) * 10 + (leadOutTrack.PFRAME & 0x0F);
         }
 
-        int sectors = (min * 60 * 75) + (sec * 75) + frame - 150;
+        int sectors = min * 60 * 75 + sec * 75 + frame - 150;
 
         AaruConsole.WriteLine(Localization.Trap_disc_shows_0_sectors, sectors);
 
@@ -275,11 +275,12 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine(lba44990Result ? Localization.FAIL : Localization.Success);
 
-        menu:
+    menu:
         System.Console.Clear();
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(lba450000Result ? Localization.Device_cannot_read_HD_area
+        AaruConsole.WriteLine(lba450000Result
+                                  ? Localization.Device_cannot_read_HD_area
                                   : Localization.Device_can_read_HD_area);
 
         AaruConsole.WriteLine(Localization.LBA_zero_sense_is_0_buffer_is_1_sense_buffer_is_2, lba0Result,
@@ -689,7 +690,8 @@ static partial class ScsiMmc
                 System.Console.ReadKey();
 
                 goto menu;
-            case 25: goto start;
+            case 25:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

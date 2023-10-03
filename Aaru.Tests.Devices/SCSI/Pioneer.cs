@@ -95,17 +95,17 @@ static class Pioneer
         string            strDev;
         int               item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_DA_command);
-            AaruConsole.WriteLine(Localization.LBA_0, address);
+            AaruConsole.WriteLine(Localization.LBA_0,                   address);
             AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
-            AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,       subchan);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector,     blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -171,25 +171,26 @@ static class Pioneer
                     }
 
                     blockSize = subchan switch
-                    {
-                        PioneerSubchannel.Q16  => 2368,
-                        PioneerSubchannel.All  => 2448,
-                        PioneerSubchannel.Only => 96,
-                        _                      => 2352
-                    };
+                                {
+                                    PioneerSubchannel.Q16  => 2368,
+                                    PioneerSubchannel.All  => 2448,
+                                    PioneerSubchannel.Only => 96,
+                                    _                      => 2352
+                                };
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, subchan,
                                          dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_DA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -269,8 +270,10 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -293,16 +296,16 @@ static class Pioneer
         string            strDev;
         int               item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_DA_MSF_command);
-            AaruConsole.WriteLine(Localization.Start_0_1_2, startMinute, startSecond, startFrame);
-            AaruConsole.WriteLine(Localization.End_0_1_2, endMinute, endSecond, endFrame);
-            AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
+            AaruConsole.WriteLine(Localization.Start_0_1_2,         startMinute, startSecond, startFrame);
+            AaruConsole.WriteLine(Localization.End_0_1_2,           endMinute,   endSecond,   endFrame);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,   subchan);
             AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -417,27 +420,28 @@ static class Pioneer
                     }
 
                     blockSize = subchan switch
-                    {
-                        PioneerSubchannel.Q16  => 2368,
-                        PioneerSubchannel.All  => 2448,
-                        PioneerSubchannel.Only => 96,
-                        _                      => 2352
-                    };
+                                {
+                                    PioneerSubchannel.Q16  => 2368,
+                                    PioneerSubchannel.All  => 2448,
+                                    PioneerSubchannel.Only => 96,
+                                    _                      => 2352
+                                };
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
-        uint startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-        uint endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+    start:
+        var startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+        var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
         System.Console.Clear();
 
         bool sense = dev.PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize,
                                             subchan, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_DA_MSF_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -517,8 +521,10 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -532,22 +538,22 @@ static class Pioneer
     {
         uint   address     = 0;
         uint   length      = 1;
-        bool   errorFlags  = false;
-        bool   wholeSector = false;
+        var    errorFlags  = false;
+        var    wholeSector = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_XA_command);
-            AaruConsole.WriteLine(Localization.LBA_0, address);
+            AaruConsole.WriteLine(Localization.LBA_0,                   address);
             AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
-            AaruConsole.WriteLine(Localization.Include_error_flags_0, errorFlags);
-            AaruConsole.WriteLine(Localization.Whole_sector_0, wholeSector);
+            AaruConsole.WriteLine(Localization.Include_error_flags_0,   errorFlags);
+            AaruConsole.WriteLine(Localization.Whole_sector_0,          wholeSector);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -618,17 +624,18 @@ static class Pioneer
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, address, length, errorFlags,
                                          wholeSector, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_XA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -708,8 +715,10 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

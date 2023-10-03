@@ -2,6 +2,6 @@
                         xmlns:s="clr-namespace:System;assembly=mscorlib"
                         xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xml:space="preserve">
 	<s:Boolean
-        x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=localization/@EntryIndexedValue">True</s:Boolean>
-    <s:Boolean
-        x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=scsi_005Fmmc/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=localization/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=scsi_005Fmmc/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

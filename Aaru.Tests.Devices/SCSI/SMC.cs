@@ -83,25 +83,25 @@ static class Smc
         byte                volume         = 0;
         byte                partition      = 0;
         ushort              firstAttribute = 0;
-        bool                cache          = false;
+        var                 cache          = false;
         ScsiAttributeAction action         = ScsiAttributeAction.Values;
         string              strDev;
         int                 item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_ATTRIBUTE_command);
-            AaruConsole.WriteLine(Localization.Action_0, action);
-            AaruConsole.WriteLine(Localization.Element_0, element);
-            AaruConsole.WriteLine(Localization.Element_type_0, elementType);
-            AaruConsole.WriteLine(Localization.Volume_0, volume);
-            AaruConsole.WriteLine(Localization.Partition_0, partition);
+            AaruConsole.WriteLine(Localization.Action_0,          action);
+            AaruConsole.WriteLine(Localization.Element_0,         element);
+            AaruConsole.WriteLine(Localization.Element_type_0,    elementType);
+            AaruConsole.WriteLine(Localization.Volume_0,          volume);
+            AaruConsole.WriteLine(Localization.Partition_0,       partition);
             AaruConsole.WriteLine(Localization.First_attribute_0, firstAttribute);
-            AaruConsole.WriteLine(Localization.Use_cache_0, cache);
+            AaruConsole.WriteLine(Localization.Use_cache_0,       cache);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -215,17 +215,18 @@ static class Smc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadAttribute(out byte[] buffer, out byte[] senseBuffer, action, element, elementType, volume,
                                        partition, firstAttribute, cache, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_ATTRIBUTE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -305,8 +306,10 @@ static class Smc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

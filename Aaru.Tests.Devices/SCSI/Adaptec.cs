@@ -92,11 +92,11 @@ static class Adaptec
 
     static void ReadResetUsageCounter(string devPath, Device dev)
     {
-        bool   drive1 = false;
+        var    drive1 = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -138,17 +138,18 @@ static class Adaptec
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, drive1, dev.Timeout,
                                                  out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_RESET_USAGE_COUNTER_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -228,8 +229,10 @@ static class Adaptec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -241,12 +244,12 @@ static class Adaptec
 
     static void ReadDataBuffer(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.AdaptecReadBuffer(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_DATA_BUFFER_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -325,7 +328,8 @@ static class Adaptec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -337,19 +341,19 @@ static class Adaptec
 
     static void SetErrorThreshold(string devPath, Device dev)
     {
-        bool   drive1    = false;
+        var    drive1    = false;
         byte   threshold = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_SET_ERROR_THRESHOLD_command);
-            AaruConsole.WriteLine(Localization.Drive_one_0, drive1);
+            AaruConsole.WriteLine(Localization.Drive_one_0,       drive1);
             AaruConsole.WriteLine(Localization.Error_threshold_0, threshold);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -397,21 +401,22 @@ static class Adaptec
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense =
             dev.AdaptecSetErrorThreshold(threshold, out byte[] senseBuffer, drive1, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SET_ERROR_THRESHOLD_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -460,8 +465,10 @@ static class Adaptec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -473,12 +480,12 @@ static class Adaptec
 
     static void Translate(string devPath, Device dev)
     {
-        bool   drive1 = false;
+        var    drive1 = false;
         uint   lba    = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -486,7 +493,7 @@ static class Adaptec
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_TRANSLATE_command);
             AaruConsole.WriteLine(Localization.Drive_one_0, drive1);
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,       lba);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -533,17 +540,18 @@ static class Adaptec
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, drive1, lba, dev.Timeout,
                                           out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_TRANSLATE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -623,8 +631,10 @@ static class Adaptec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

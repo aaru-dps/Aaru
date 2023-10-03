@@ -80,7 +80,7 @@ static class Mcpt
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -122,21 +122,22 @@ static class Mcpt
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersChs errorRegisters, dev.Timeout,
                                             out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_CHECK_MEDIA_CARD_TYPE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.CHECK_MEDIA_CARD_TYPE_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -163,8 +164,10 @@ static class Mcpt
                 AaruConsole.WriteLine(Localization.Returning_to_Media_Card_Pass_Through_commands_menu);
 
                 return;
-            case 1: goto start;
-            case 2: goto parameters;
+            case 1:
+                goto start;
+            case 2:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

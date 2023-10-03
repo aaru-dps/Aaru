@@ -97,7 +97,7 @@ static class Kreon
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -139,17 +139,18 @@ static class Kreon
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration,
                                         requestNumber);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_EXTRACT_SS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -229,8 +230,10 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -242,17 +245,17 @@ static class Kreon
 
     static void GetFeatureList(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, dev.Timeout,
                                              out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_GET_FEATURE_LIST_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -301,7 +304,8 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
+            case 2:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -317,7 +321,7 @@ static class Kreon
         string          strDev;
         int             item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -364,19 +368,20 @@ static class Kreon
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.KreonSetLockState(out byte[] senseBuffer, state, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SET_LOCK_STATE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.SET_LOCK_STATE_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
@@ -403,8 +408,10 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Returning_to_Kreon_vendor_commands_menu);
 
                 return;
-            case 1: goto start;
-            case 2: goto parameters;
+            case 1:
+                goto start;
+            case 2:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -416,15 +423,15 @@ static class Kreon
 
     static void Unlock(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.KreonDeprecatedUnlock(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_UNLOCK_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -472,7 +479,8 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
+            case 2:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

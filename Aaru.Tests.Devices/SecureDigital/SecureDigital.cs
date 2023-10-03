@@ -114,22 +114,23 @@ static class SecureDigital
         uint   address   = 0;
         uint   blockSize = 512;
         ushort count     = 1;
-        bool   byteAddr  = false;
+        var    byteAddr  = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(multiple ? Localization.Parameters_for_READ_MULTIPLE_BLOCK_command
+            AaruConsole.WriteLine(multiple
+                                      ? Localization.Parameters_for_READ_MULTIPLE_BLOCK_command
                                       : Localization.Parameters_for_READ_SINGLE_BLOCK_command);
 
             AaruConsole.WriteLine(byteAddr ? Localization.Read_from_byte_0 : Localization.Read_from_block_0, address);
-            AaruConsole.WriteLine(Localization.Expected_block_size_0_bytes, blockSize);
+            AaruConsole.WriteLine(Localization.Expected_block_size_0_bytes,                                  blockSize);
 
             if(multiple)
                 AaruConsole.WriteLine(Localization.Will_read_0_blocks, count);
@@ -207,20 +208,22 @@ static class SecureDigital
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : (ushort)1,
                               byteAddr, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(multiple ? Localization.Sending_READ_MULTIPLE_BLOCK_to_the_device
+        AaruConsole.WriteLine(multiple
+                                  ? Localization.Sending_READ_MULTIPLE_BLOCK_to_the_device
                                   : Localization.Sending_READ_SINGLE_BLOCK_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -258,7 +261,8 @@ static class SecureDigital
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(multiple ? Localization.READ_MULTIPLE_BLOCK_buffer
+                AaruConsole.WriteLine(multiple
+                                          ? Localization.READ_MULTIPLE_BLOCK_buffer
                                           : Localization.READ_SINGLE_BLOCK_buffer);
 
                 if(buffer != null)
@@ -274,7 +278,8 @@ static class SecureDigital
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(multiple ? Localization.READ_MULTIPLE_BLOCK_response
+                AaruConsole.WriteLine(multiple
+                                          ? Localization.READ_MULTIPLE_BLOCK_response
                                           : Localization.READ_SINGLE_BLOCK_response);
 
                 if(response != null)
@@ -291,8 +296,10 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -304,11 +311,11 @@ static class SecureDigital
 
     static void SendOpCond(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ReadSdocr(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SD_SEND_OP_COND_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -389,7 +396,8 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -401,11 +409,11 @@ static class SecureDigital
 
     static void Status(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ReadSdStatus(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SD_STATUS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -471,7 +479,8 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
+            case 3:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -483,11 +492,11 @@ static class SecureDigital
 
     static void SendCid(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ReadCid(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SEND_CID_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -568,7 +577,8 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -580,11 +590,11 @@ static class SecureDigital
 
     static void SendCsd(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ReadCsd(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SEND_CSD_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -665,7 +675,8 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -677,11 +688,11 @@ static class SecureDigital
 
     static void SendScr(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ReadScr(out byte[] buffer, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SEND_SCR_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -762,7 +773,8 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -778,7 +790,7 @@ static class SecureDigital
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -820,19 +832,20 @@ static class SecureDigital
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.SetBlockLength(blockSize, out uint[] response, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SET_BLOCKLEN_to_the_device);
-        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms,       duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0,              sense);
         AaruConsole.WriteLine(Localization.Response_has_0_elements, response?.Length.ToString() ?? Localization._null);
         AaruConsole.WriteLine(Localization.SET_BLOCKLEN_response);
 
@@ -868,8 +881,10 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Returning_to_SecureDigital_commands_menu);
 
                 return;
-            case 1: goto start;
-            case 2: goto parameters;
+            case 1:
+                goto start;
+            case 2:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

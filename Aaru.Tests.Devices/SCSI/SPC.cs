@@ -123,11 +123,11 @@ static class Spc
 
     static void Inquiry(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_INQUIRY_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -221,7 +221,8 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
+            case 5:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -237,7 +238,7 @@ static class Spc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -279,16 +280,17 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, page, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_INQUIRY_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -368,8 +370,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -381,24 +385,24 @@ static class Spc
 
     static void ModeSense6(string devPath, Device dev)
     {
-        bool                     dbd         = false;
+        var                      dbd         = false;
         ScsiModeSensePageControl pageControl = ScsiModeSensePageControl.Current;
         byte                     page        = 0x3F;
         byte                     subpage     = 0xFF;
         string                   strDev;
         int                      item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_MODE_SENSE_6_command);
-            AaruConsole.WriteLine(Localization.DBD_0, dbd);
+            AaruConsole.WriteLine(Localization.DBD_0,          dbd);
             AaruConsole.WriteLine(Localization.Page_control_0, pageControl);
-            AaruConsole.WriteLine(Localization.Page_0, page);
-            AaruConsole.WriteLine(Localization.Subpage_0, subpage);
+            AaruConsole.WriteLine(Localization.Page_0,         page);
+            AaruConsole.WriteLine(Localization.Subpage_0,      subpage);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -475,17 +479,18 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ModeSense6(out byte[] buffer, out byte[] senseBuffer, dbd, pageControl, page, subpage,
                                     dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_MODE_SENSE_6_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -580,8 +585,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -593,26 +600,26 @@ static class Spc
 
     static void ModeSense10(string devPath, Device dev)
     {
-        bool                     llba        = false;
-        bool                     dbd         = false;
+        var                      llba        = false;
+        var                      dbd         = false;
         ScsiModeSensePageControl pageControl = ScsiModeSensePageControl.Current;
         byte                     page        = 0x3F;
         byte                     subpage     = 0xFF;
         string                   strDev;
         int                      item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_MODE_SENSE_10_command);
-            AaruConsole.WriteLine(Localization.LLBA_0, llba);
-            AaruConsole.WriteLine(Localization.DBD_0, dbd);
+            AaruConsole.WriteLine(Localization.LLBA_0,         llba);
+            AaruConsole.WriteLine(Localization.DBD_0,          dbd);
             AaruConsole.WriteLine(Localization.Page_control_0, pageControl);
-            AaruConsole.WriteLine(Localization.Page_0, page);
-            AaruConsole.WriteLine(Localization.Subpage_0, subpage);
+            AaruConsole.WriteLine(Localization.Page_0,         page);
+            AaruConsole.WriteLine(Localization.Subpage_0,      subpage);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -701,17 +708,18 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ModeSense10(out byte[] buffer, out byte[] senseBuffer, llba, dbd, pageControl, page, subpage,
                                      dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_MODE_SENSE_10_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -806,8 +814,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -823,7 +833,7 @@ static class Spc
         string               strDev;
         int                  item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -871,20 +881,21 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SpcPreventAllowMediumRemoval(out byte[] senseBuffer, mode, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_PREVENT_ALLOW_MEDIUM_REMOVAL_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.PREVENT_ALLOW_MEDIUM_REMOVAL_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
@@ -911,8 +922,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Returning_to_SCSI_Primary_Commands_menu);
 
                 return;
-            case 1: goto start;
-            case 2: goto parameters;
+            case 1:
+                goto start;
+            case 2:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -924,13 +937,13 @@ static class Spc
 
     static void ReadCapacity10(string devPath, Device dev)
     {
-        bool   relative = false;
-        bool   partial  = false;
+        var    relative = false;
+        var    partial  = false;
         uint   address  = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -939,7 +952,7 @@ static class Spc
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CAPACITY_10_command);
             AaruConsole.WriteLine(Localization.Relative_address_0, relative);
             AaruConsole.WriteLine(Localization.Partial_capacity_0, partial);
-            AaruConsole.WriteLine(Localization.Address_0, address);
+            AaruConsole.WriteLine(Localization.Address_0,          address);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -998,17 +1011,18 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, relative, address, partial,
                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CAPACITY_10_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1088,8 +1102,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1101,12 +1117,12 @@ static class Spc
 
     static void ReadCapacity16(string devPath, Device dev)
     {
-        bool   partial = false;
+        var    partial = false;
         ulong  address = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1114,7 +1130,7 @@ static class Spc
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CAPACITY_16_command);
             AaruConsole.WriteLine(Localization.Partial_capacity_0, partial);
-            AaruConsole.WriteLine(Localization.Address_0, address);
+            AaruConsole.WriteLine(Localization.Address_0,          address);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -1161,17 +1177,18 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, address, partial, dev.Timeout,
                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CAPACITY_16_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1251,8 +1268,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1264,13 +1283,13 @@ static class Spc
 
     static void ReadMediaSerialNumber(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
                                                out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_MEDIA_SERIAL_NUMBER_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1349,7 +1368,8 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1361,11 +1381,11 @@ static class Spc
 
     static void RequestSense(string devPath, Device dev)
     {
-        bool   descriptor = false;
+        var    descriptor = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1407,19 +1427,20 @@ static class Spc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.RequestSense(descriptor, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_REQUEST_SENSE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -1468,8 +1489,10 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1481,15 +1504,15 @@ static class Spc
 
     static void TestUnitReady(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.ScsiTestUnitReady(out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_TEST_UNIT_READY_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -1537,7 +1560,8 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
+            case 2:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

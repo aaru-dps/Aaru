@@ -86,7 +86,7 @@ static class ArchiveCorp
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -132,17 +132,18 @@ static class ArchiveCorp
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, lba, dev.Timeout,
                                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.ArchiveCorp_RequestBlockAddress_Sending_REQUEST_BLOCK_ADDRESS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -223,8 +224,10 @@ static class ArchiveCorp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -236,12 +239,12 @@ static class ArchiveCorp
 
     static void SeekBlock(string devPath, Device dev)
     {
-        bool   immediate = false;
+        var    immediate = false;
         uint   lba       = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -249,7 +252,7 @@ static class ArchiveCorp
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_SEEK_BLOCK_command);
             AaruConsole.WriteLine(Localization.Immediate_0, immediate);
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,       lba);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -297,20 +300,21 @@ static class ArchiveCorp
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ArchiveCorpSeekBlock(out byte[] senseBuffer, immediate, lba, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SEEK_BLOCK_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -360,8 +364,10 @@ static class ArchiveCorp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

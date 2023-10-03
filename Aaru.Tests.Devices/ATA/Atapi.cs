@@ -77,12 +77,12 @@ static class Atapi
 
     static void Identify(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.AtapiIdentify(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_IDENTIFY_PACKET_DEVICE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -154,7 +154,8 @@ static class Atapi
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

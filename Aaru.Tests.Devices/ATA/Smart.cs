@@ -112,18 +112,18 @@ static class Smart
 
     static void DisableAttributeAutosave(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense =
             dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                               out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_DISABLE_ATTRIBUTE_AUTOSAVE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.DISABLE_ATTRIBUTE_AUTOSAVE_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -149,7 +149,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
+            case 1:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -161,15 +162,15 @@ static class Smart
 
     static void DisableOperations(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.SmartDisable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_DISABLE_OPERATIONS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.DISABLE_OPERATIONS_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -195,7 +196,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
+            case 1:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -207,18 +209,18 @@ static class Smart
 
     static void EnableAttributeAutosave(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense =
             dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                              out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_ENABLE_ATTRIBUTE_AUTOSAVE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.ENABLE_ATTRIBUTE_AUTOSAVE_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -244,7 +246,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
+            case 1:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -256,15 +259,15 @@ static class Smart
 
     static void EnableOperations(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.SmartEnable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_ENABLE_OPERATIONS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.ENABLE_OPERATIONS_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -290,7 +293,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
+            case 1:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -306,7 +310,7 @@ static class Smart
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -348,21 +352,22 @@ static class Smart
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 errorRegisters, subcommand,
                                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_EXECUTE_OFF_LINE_IMMEDIATE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.EXECUTE_OFF_LINE_IMMEDIATE_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -389,8 +394,10 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
-            case 2: goto parameters;
+            case 1:
+                goto start;
+            case 2:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -402,13 +409,13 @@ static class Smart
 
     static void ReadData(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                        out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_DATA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -465,7 +472,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -481,7 +489,7 @@ static class Smart
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -523,17 +531,18 @@ static class Smart
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, address,
                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_LOG_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -591,8 +600,10 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -604,16 +615,16 @@ static class Smart
 
     static void ReturnStatus(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_RETURN_STATUS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine(Localization.RETURN_STATUS_status_registers);
         AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
         AaruConsole.WriteLine();
@@ -639,7 +650,8 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Returning_to_SMART_commands_menu);
 
                 return;
-            case 1: goto start;
+            case 1:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

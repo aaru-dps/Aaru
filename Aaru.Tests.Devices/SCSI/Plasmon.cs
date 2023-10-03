@@ -82,16 +82,16 @@ static class Plasmon
 
     static void ReadLong(string devPath, Device dev)
     {
-        bool   relative    = false;
+        var    relative    = false;
         uint   address     = 0;
         ushort length      = 1;
         ushort bps         = 512;
-        bool   physical    = false;
-        bool   sectorCount = true;
+        var    physical    = false;
+        var    sectorCount = true;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -159,7 +159,8 @@ static class Plasmon
                         continue;
                     }
 
-                    AaruConsole.Write(physical ? Localization.Physical_Block_Address_Q
+                    AaruConsole.Write(physical
+                                          ? Localization.Physical_Block_Address_Q
                                           : Localization.Logical_Block_Address_Q);
 
                     strDev = System.Console.ReadLine();
@@ -185,7 +186,8 @@ static class Plasmon
                         continue;
                     }
 
-                    AaruConsole.Write(sectorCount ? Localization.How_many_sectors_to_transfer_Q
+                    AaruConsole.Write(sectorCount
+                                          ? Localization.How_many_sectors_to_transfer_Q
                                           : Localization.How_many_bytes_to_transfer_Q);
 
                     strDev = System.Console.ReadLine();
@@ -213,17 +215,18 @@ static class Plasmon
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps,
                                          physical, sectorCount, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_LONG_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -303,8 +306,10 @@ static class Plasmon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -317,11 +322,11 @@ static class Plasmon
     static void ReadSectorLocation(string devPath, Device dev)
     {
         uint   address  = 0;
-        bool   physical = false;
+        var    physical = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -368,7 +373,8 @@ static class Plasmon
                         continue;
                     }
 
-                    AaruConsole.Write(physical ? Localization.Physical_Block_Address_Q
+                    AaruConsole.Write(physical
+                                          ? Localization.Physical_Block_Address_Q
                                           : Localization.Logical_Block_Address_Q);
 
                     strDev = System.Console.ReadLine();
@@ -381,17 +387,18 @@ static class Plasmon
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.PlasmonReadSectorLocation(out byte[] buffer, out byte[] senseBuffer, address, physical,
                                                    dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_SECTOR_LOCATION_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -471,8 +478,10 @@ static class Plasmon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

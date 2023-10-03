@@ -78,14 +78,14 @@ static class Fujitsu
 
     static void Display(string devPath, Device dev)
     {
-        bool                flash      = false;
+        var                 flash      = false;
         FujitsuDisplayModes mode       = FujitsuDisplayModes.Ready;
-        string              firstHalf  = "AARUTEST";
-        string              secondHalf = "TESTAARU";
+        var                 firstHalf  = "AARUTEST";
+        var                 secondHalf = "TESTAARU";
         string              strDev;
         int                 item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -152,21 +152,22 @@ static class Fujitsu
                     secondHalf = System.Console.ReadLine();
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.FujitsuDisplay(out byte[] senseBuffer, flash, mode, firstHalf, secondHalf, dev.Timeout,
                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_DISPLAY_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -215,8 +216,10 @@ static class Fujitsu
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

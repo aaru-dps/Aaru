@@ -127,13 +127,13 @@ static class Ata28
 
     static void ReadBuffer(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadBuffer(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                     out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_BUFFER_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -190,7 +190,8 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
+            case 3:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -202,13 +203,13 @@ static class Ata28
 
     static void ReadBufferDma(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadBufferDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                        out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_BUFFER_DMA_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -265,7 +266,8 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
+            case 3:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -282,17 +284,18 @@ static class Ata28
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(retries ? Localization.Parameters_for_READ_DMA_WITH_RETRIES_command
+            AaruConsole.WriteLine(retries
+                                      ? Localization.Parameters_for_READ_DMA_WITH_RETRIES_command
                                       : Localization.Parameters_for_READ_DMA_command);
 
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,   lba);
             AaruConsole.WriteLine(Localization.Count_0, count);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -349,20 +352,22 @@ static class Ata28
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
                                  dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(retries ? Localization.Sending_READ_DMA_WITH_RETRIES_to_the_device
+        AaruConsole.WriteLine(retries
+                                  ? Localization.Sending_READ_DMA_WITH_RETRIES_to_the_device
                                   : Localization.Sending_READ_DMA_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -399,7 +404,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_DMA_WITH_RETRIES_response
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_DMA_WITH_RETRIES_response
                                           : Localization.READ_DMA_response);
 
                 if(buffer != null)
@@ -415,7 +421,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_DMA_WITH_RETRIES_status_registers
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_DMA_WITH_RETRIES_status_registers
                                           : Localization.READ_DMA_status_registers);
 
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
@@ -425,8 +432,10 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -443,17 +452,18 @@ static class Ata28
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(retries ? Localization.Parameters_for_READ_LONG_WITH_RETRIES_command
+            AaruConsole.WriteLine(retries
+                                      ? Localization.Parameters_for_READ_LONG_WITH_RETRIES_command
                                       : Localization.Parameters_for_READ_LONG_command);
 
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,        lba);
             AaruConsole.WriteLine(Localization.Block_size_0, blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -510,20 +520,22 @@ static class Ata28
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, blockSize,
                                   dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(retries ? Localization.Sending_READ_LONG_WITH_RETRIES_to_the_device
+        AaruConsole.WriteLine(retries
+                                  ? Localization.Sending_READ_LONG_WITH_RETRIES_to_the_device
                                   : Localization.Sending_READ_LONG_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -560,7 +572,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_LONG_WITH_RETRIES_response
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_LONG_WITH_RETRIES_response
                                           : Localization.READ_LONG_response);
 
                 if(buffer != null)
@@ -576,7 +589,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_LONG_WITH_RETRIES_status_registers
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_LONG_WITH_RETRIES_status_registers
                                           : Localization.READ_LONG_status_registers);
 
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
@@ -586,8 +600,10 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -604,14 +620,14 @@ static class Ata28
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_MULTIPLE_command);
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,   lba);
             AaruConsole.WriteLine(Localization.Count_0, count);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -668,17 +684,18 @@ static class Ata28
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, count,
                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_MULTIPLE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -736,8 +753,10 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -749,18 +768,18 @@ static class Ata28
 
     static void ReadNativeMaxAddress(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                               out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_NATIVE_MAX_ADDRESS_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
-        AaruConsole.WriteLine(Localization.Max_LBA_is_0, lba);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
+        AaruConsole.WriteLine(Localization.Max_LBA_is_0,      lba);
         AaruConsole.WriteLine();
         AaruConsole.WriteLine(Localization.Choose_what_to_do);
         AaruConsole.WriteLine(Localization._1_Decode_error_registers);
@@ -796,7 +815,8 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
+            case 2:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -813,17 +833,18 @@ static class Ata28
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(retries ? Localization.Parameters_for_READ_SECTORS_WITH_RETRIES_command
+            AaruConsole.WriteLine(retries
+                                      ? Localization.Parameters_for_READ_SECTORS_WITH_RETRIES_command
                                       : Localization.Parameters_for_READ_SECTORS_command);
 
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
+            AaruConsole.WriteLine(Localization.LBA_0,   lba);
             AaruConsole.WriteLine(Localization.Count_0, count);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -880,20 +901,22 @@ static class Ata28
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
                               dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(retries ? Localization.Sending_READ_SECTORS_WITH_RETRIES_to_the_device
+        AaruConsole.WriteLine(retries
+                                  ? Localization.Sending_READ_SECTORS_WITH_RETRIES_to_the_device
                                   : Localization.Sending_READ_SECTORS_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -930,7 +953,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_SECTORS_WITH_RETRIES_response
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_SECTORS_WITH_RETRIES_response
                                           : Localization.READ_SECTORS_response);
 
                 if(buffer != null)
@@ -946,7 +970,8 @@ static class Ata28
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(retries ? Localization.READ_SECTORS_WITH_RETRIES_status_registers
+                AaruConsole.WriteLine(retries
+                                          ? Localization.READ_SECTORS_WITH_RETRIES_status_registers
                                           : Localization.READ_SECTORS_status_registers);
 
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
@@ -956,8 +981,10 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -973,7 +1000,7 @@ static class Ata28
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1026,19 +1053,20 @@ static class Ata28
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
         bool sense = dev.Seek(out AtaErrorRegistersLba28 errorRegisters, lba, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_SEEK_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
         AaruConsole.WriteLine();
         AaruConsole.WriteLine(Localization.Choose_what_to_do);
         AaruConsole.WriteLine(Localization._1_Decode_error_registers);
@@ -1075,8 +1103,10 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

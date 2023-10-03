@@ -100,24 +100,25 @@ static class SyQuest
         uint   lba       = 0;
         uint   blockSize = 512;
         byte   count     = 1;
-        bool   noDma     = false;
+        var    noDma     = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(readlong ? Localization.Parameters_for_READ_LONG_6_command
+            AaruConsole.WriteLine(readlong
+                                      ? Localization.Parameters_for_READ_LONG_6_command
                                       : Localization.Parameters_for_READ_6_command);
 
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
-            AaruConsole.WriteLine(Localization._0_blocks_to_read, count == 0 ? 256 : count);
+            AaruConsole.WriteLine(Localization.LBA_0,                       lba);
+            AaruConsole.WriteLine(Localization._0_blocks_to_read,           count == 0 ? 256 : count);
             AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
-            AaruConsole.WriteLine(Localization.Inhibit_DMA_0, noDma);
+            AaruConsole.WriteLine(Localization.Inhibit_DMA_0,               noDma);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -194,20 +195,22 @@ static class SyQuest
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma, readlong,
                                       dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(readlong ? Localization.Sending_READ_LONG_6_to_the_device
+        AaruConsole.WriteLine(readlong
+                                  ? Localization.Sending_READ_LONG_6_to_the_device
                                   : Localization.Sending_READ_6_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -280,7 +283,8 @@ static class SyQuest
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(readlong ? Localization.READ_LONG_6_decoded_sense
+                AaruConsole.WriteLine(readlong
+                                          ? Localization.READ_LONG_6_decoded_sense
                                           : Localization.READ_6_decoded_sense);
 
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -290,8 +294,10 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -306,24 +312,25 @@ static class SyQuest
         uint   lba       = 0;
         uint   blockSize = 512;
         byte   count     = 1;
-        bool   noDma     = false;
+        var    noDma     = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(readlong ? Localization.Parameters_for_READ_LONG_10_command
+            AaruConsole.WriteLine(readlong
+                                      ? Localization.Parameters_for_READ_LONG_10_command
                                       : Localization.Parameters_for_READ_10_command);
 
-            AaruConsole.WriteLine(Localization.LBA_0, lba);
-            AaruConsole.WriteLine(Localization._0_blocks_to_read, count == 0 ? 256 : count);
+            AaruConsole.WriteLine(Localization.LBA_0,                       lba);
+            AaruConsole.WriteLine(Localization._0_blocks_to_read,           count == 0 ? 256 : count);
             AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
-            AaruConsole.WriteLine(Localization.Inhibit_DMA_0, noDma);
+            AaruConsole.WriteLine(Localization.Inhibit_DMA_0,               noDma);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -394,20 +401,22 @@ static class SyQuest
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma,
                                        readlong, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-        AaruConsole.WriteLine(readlong ? Localization.Sending_READ_LONG_10_to_the_device
+        AaruConsole.WriteLine(readlong
+                                  ? Localization.Sending_READ_LONG_10_to_the_device
                                   : Localization.Sending_READ_10_to_the_device);
 
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -480,7 +489,8 @@ static class SyQuest
                 System.Console.Clear();
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-                AaruConsole.WriteLine(readlong ? Localization.READ_LONG_10_decoded_sense
+                AaruConsole.WriteLine(readlong
+                                          ? Localization.READ_LONG_10_decoded_sense
                                           : Localization.READ_10_decoded_sense);
 
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
@@ -490,8 +500,10 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -503,13 +515,13 @@ static class SyQuest
 
     static void ReadResetUsageCounter(string devPath, Device dev)
     {
-        start:
+    start:
         System.Console.Clear();
 
         bool sense =
             dev.SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_RESET_USAGE_COUNTER_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -588,7 +600,8 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
+            case 4:
+                goto start;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

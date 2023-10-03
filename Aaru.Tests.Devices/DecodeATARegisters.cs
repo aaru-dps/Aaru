@@ -36,7 +36,7 @@ static partial class MainClass
 {
     static string DecodeAtaStatus(byte status)
     {
-        string ret = "";
+        var ret = "";
 
         if((status & 0x80) == 0x80)
             ret += "BSY ";
@@ -67,7 +67,7 @@ static partial class MainClass
 
     static string DecodeAtaError(byte status)
     {
-        string ret = "";
+        var ret = "";
 
         if((status & 0x80) == 0x80)
             ret += "BBK ";
@@ -99,14 +99,14 @@ static partial class MainClass
     public static string DecodeAtaRegisters(AtaErrorRegistersChs registers)
     {
         var sb = new StringBuilder();
-        sb.AppendFormat(Localization.Status_0, DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0, DecodeAtaStatus(registers.Error)).AppendLine();
-        sb.AppendFormat(Localization.Device_0, (registers.DeviceHead >> 4) & 0x01).AppendLine();
-        sb.AppendFormat(Localization.Cylinder_0, registers.CylinderHigh << (8 + registers.CylinderLow)).AppendLine();
-        sb.AppendFormat(Localization.Head_0, registers.DeviceHead & 0xF).AppendLine();
-        sb.AppendFormat(Localization.Sector_0, registers.Sector).AppendLine();
-        sb.AppendFormat(Localization.Count_0, registers.SectorCount).AppendLine();
-        sb.AppendFormat(Localization.LBA_Q_0, Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat(Localization.Status_0,    DecodeAtaStatus(registers.Status)).AppendLine();
+        sb.AppendFormat(Localization.Error_0,     DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Device_0,    registers.DeviceHead >> 4 & 0x01).AppendLine();
+        sb.AppendFormat(Localization.Cylinder_0,  registers.CylinderHigh << 8 + registers.CylinderLow).AppendLine();
+        sb.AppendFormat(Localization.Head_0,      registers.DeviceHead & 0xF).AppendLine();
+        sb.AppendFormat(Localization.Sector_0,    registers.Sector).AppendLine();
+        sb.AppendFormat(Localization.Count_0,     registers.SectorCount).AppendLine();
+        sb.AppendFormat(Localization.LBA_Q_0,     Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
         sb.AppendFormat(Localization.Bit_7_set_0, Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
         sb.AppendFormat(Localization.Bit_5_set_0, Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
@@ -117,15 +117,15 @@ static partial class MainClass
     {
         var sb = new StringBuilder();
         sb.AppendFormat(Localization.Status_0, DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0, DecodeAtaStatus(registers.Error)).AppendLine();
-        sb.AppendFormat(Localization.Device_0, (registers.DeviceHead >> 4) & 0x01).AppendLine();
+        sb.AppendFormat(Localization.Error_0,  DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Device_0, registers.DeviceHead >> 4 & 0x01).AppendLine();
 
         sb.AppendFormat(Localization.LBA_0,
                         ((registers.DeviceHead & 0xF) << 24) + (registers.LbaHigh << 16) + (registers.LbaMid << 8) +
                         registers.LbaLow);
 
-        sb.AppendFormat(Localization.Count_0, registers.SectorCount).AppendLine();
-        sb.AppendFormat(Localization.LBA_Q_0, Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat(Localization.Count_0,     registers.SectorCount).AppendLine();
+        sb.AppendFormat(Localization.LBA_Q_0,     Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
         sb.AppendFormat(Localization.Bit_7_set_0, Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
         sb.AppendFormat(Localization.Bit_5_set_0, Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
@@ -136,8 +136,8 @@ static partial class MainClass
     {
         var sb = new StringBuilder();
         sb.AppendFormat(Localization.Status_0, DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0, DecodeAtaStatus(registers.Error)).AppendLine();
-        sb.AppendFormat(Localization.Device_0, (registers.DeviceHead >> 4) & 0x01).AppendLine();
+        sb.AppendFormat(Localization.Error_0,  DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Device_0, registers.DeviceHead >> 4 & 0x01).AppendLine();
 
         ulong lba = registers.LbaHighPrevious * 0x10000000000UL;
         lba += registers.LbaMidPrevious * 0x100000000UL;
@@ -148,8 +148,8 @@ static partial class MainClass
 
         sb.AppendFormat(Localization.LBA_0, lba);
 
-        sb.AppendFormat(Localization.Count_0, registers.SectorCount).AppendLine();
-        sb.AppendFormat(Localization.LBA_Q_0, Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
+        sb.AppendFormat(Localization.Count_0,     registers.SectorCount).AppendLine();
+        sb.AppendFormat(Localization.LBA_Q_0,     Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
         sb.AppendFormat(Localization.Bit_7_set_0, Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
         sb.AppendFormat(Localization.Bit_5_set_0, Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 

@@ -120,14 +120,14 @@ static class Mmc
         string                strDev;
         int                   item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_GET_CONFIGURATION_command);
-            AaruConsole.WriteLine(Localization.RT_0, rt);
+            AaruConsole.WriteLine(Localization.RT_0,             rt);
             AaruConsole.WriteLine(Localization.Feature_number_0, startingFeatureNumber);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -181,17 +181,18 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.GetConfiguration(out byte[] buffer, out byte[] senseBuffer, startingFeatureNumber, rt,
                                           dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_GET_CONFIGURATION_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -255,10 +256,11 @@ static class Mmc
                 if(buffer != null)
                 {
                     Features.SeparatedFeatures ftr = Features.Separate(buffer);
-                    AaruConsole.WriteLine(Localization.GET_CONFIGURATION_length_is_0_bytes, ftr.DataLength);
+                    AaruConsole.WriteLine(Localization.GET_CONFIGURATION_length_is_0_bytes,       ftr.DataLength);
                     AaruConsole.WriteLine(Localization.GET_CONFIGURATION_current_profile_is_0_X4, ftr.CurrentProfile);
 
                     if(ftr.Descriptors != null)
+                    {
                         foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                         {
                             AaruConsole.WriteLine(Localization.Feature_0_X4, desc.Code);
@@ -562,6 +564,7 @@ static class Mmc
                                     break;
                             }
                         }
+                    }
                 }
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
@@ -598,8 +601,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -611,19 +616,19 @@ static class Mmc
 
     static void PreventAllowMediumRemoval(string devPath, Device dev)
     {
-        bool   prevent    = false;
-        bool   persistent = false;
+        var    prevent    = false;
+        var    persistent = false;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_PREVENT_ALLOW_MEDIUM_REMOVAL_command);
-            AaruConsole.WriteLine(Localization.Prevent_removal_0, prevent);
+            AaruConsole.WriteLine(Localization.Prevent_removal_0,  prevent);
             AaruConsole.WriteLine(Localization.Persistent_value_0, persistent);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -671,21 +676,22 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.PreventAllowMediumRemoval(out byte[] senseBuffer, persistent, prevent, dev.Timeout,
                                                    out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_PREVENT_ALLOW_MEDIUM_REMOVAL_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -734,8 +740,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -750,37 +758,37 @@ static class Mmc
         uint           address    = 0;
         uint           length     = 1;
         MmcSectorTypes sectorType = MmcSectorTypes.AllTypes;
-        bool           dap        = false;
-        bool           relative   = false;
-        bool           sync       = false;
+        var            dap        = false;
+        var            relative   = false;
+        var            sync       = false;
         MmcHeaderCodes header     = MmcHeaderCodes.None;
-        bool           user       = true;
-        bool           edc        = false;
+        var            user       = true;
+        var            edc        = false;
         MmcErrorField  c2         = MmcErrorField.None;
         MmcSubchannel  subchan    = MmcSubchannel.None;
         uint           blockSize  = 2352;
         string         strDev;
         int            item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_command);
-            AaruConsole.WriteLine(Localization.Address_relative_to_current_position_0, relative);
+            AaruConsole.WriteLine(Localization.Address_relative_to_current_position_0,    relative);
             AaruConsole.WriteLine(relative ? Localization.Address_0 : Localization.LBA_0, address);
-            AaruConsole.WriteLine(Localization.Will_transfer_0_sectors, length);
-            AaruConsole.WriteLine(Localization.Sector_type_0, sectorType);
-            AaruConsole.WriteLine(Localization.Process_audio_0, dap);
-            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0, sync);
-            AaruConsole.WriteLine(Localization.Header_mode_0, header);
-            AaruConsole.WriteLine(Localization.Retrieve_user_data_0, user);
-            AaruConsole.WriteLine(Localization.Retrieve_EDC_ECC_data_0, edc);
-            AaruConsole.WriteLine(Localization.C2_mode_0, c2);
-            AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
+            AaruConsole.WriteLine(Localization.Will_transfer_0_sectors,                   length);
+            AaruConsole.WriteLine(Localization.Sector_type_0,                             sectorType);
+            AaruConsole.WriteLine(Localization.Process_audio_0,                           dap);
+            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0,                     sync);
+            AaruConsole.WriteLine(Localization.Header_mode_0,                             header);
+            AaruConsole.WriteLine(Localization.Retrieve_user_data_0,                      user);
+            AaruConsole.WriteLine(Localization.Retrieve_EDC_ECC_data_0,                   edc);
+            AaruConsole.WriteLine(Localization.C2_mode_0,                                 c2);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,                         subchan);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector,                       blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -969,17 +977,18 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, sectorType, dap,
                                 relative, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1059,8 +1068,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1079,35 +1090,35 @@ static class Mmc
         const byte     endSecond   = 0;
         byte           endMinute   = 0;
         MmcSectorTypes sectorType  = MmcSectorTypes.AllTypes;
-        bool           dap         = false;
-        bool           sync        = false;
+        var            dap         = false;
+        var            sync        = false;
         MmcHeaderCodes header      = MmcHeaderCodes.None;
-        bool           user        = true;
-        bool           edc         = false;
+        var            user        = true;
+        var            edc         = false;
         MmcErrorField  c2          = MmcErrorField.None;
         MmcSubchannel  subchan     = MmcSubchannel.None;
         uint           blockSize   = 2352;
         string         strDev;
         int            item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_MSF_command);
-            AaruConsole.WriteLine(Localization.Start_0_1_2, startMinute, startSecond, startFrame);
-            AaruConsole.WriteLine(Localization.End_0_1_2, endMinute, endSecond, endFrame);
-            AaruConsole.WriteLine(Localization.Sector_type_0, sectorType);
-            AaruConsole.WriteLine(Localization.Process_audio_0, dap);
-            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0, sync);
-            AaruConsole.WriteLine(Localization.Header_mode_0, header);
-            AaruConsole.WriteLine(Localization.Retrieve_user_data_0, user);
+            AaruConsole.WriteLine(Localization.Start_0_1_2,             startMinute, startSecond, startFrame);
+            AaruConsole.WriteLine(Localization.End_0_1_2,               endMinute,   endSecond,   endFrame);
+            AaruConsole.WriteLine(Localization.Sector_type_0,           sectorType);
+            AaruConsole.WriteLine(Localization.Process_audio_0,         dap);
+            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0,   sync);
+            AaruConsole.WriteLine(Localization.Header_mode_0,           header);
+            AaruConsole.WriteLine(Localization.Retrieve_user_data_0,    user);
             AaruConsole.WriteLine(Localization.Retrieve_EDC_ECC_data_0, edc);
-            AaruConsole.WriteLine(Localization.C2_mode_0, c2);
-            AaruConsole.WriteLine(Localization.Subchannel_mode_0, subchan);
-            AaruConsole.WriteLine(Localization._0_bytes_per_sector, blockSize);
+            AaruConsole.WriteLine(Localization.C2_mode_0,               c2);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,       subchan);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector,     blockSize);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -1332,19 +1343,20 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
-        uint startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-        uint endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+    start:
+        var startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
+        var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
         System.Console.Clear();
 
         bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize, sectorType,
                                    dap, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_CD_MSF_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1424,8 +1436,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1441,7 +1455,7 @@ static class Mmc
         string                      strDev;
         int                         item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1490,17 +1504,18 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, info, dev.Timeout,
                                              out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_DISC_INFORMATION_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1592,8 +1607,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1613,7 +1630,7 @@ static class Mmc
         string                    strDev;
         int                       item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1621,10 +1638,10 @@ static class Mmc
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_DISC_STRUCTURE_command);
             AaruConsole.WriteLine(Localization.Media_type_0, mediaType);
-            AaruConsole.WriteLine(Localization.Format_0, format);
-            AaruConsole.WriteLine(Localization.Address_0, address);
-            AaruConsole.WriteLine(Localization.Layer_0, layer);
-            AaruConsole.WriteLine(Localization.AGID_0, agid);
+            AaruConsole.WriteLine(Localization.Format_0,     format);
+            AaruConsole.WriteLine(Localization.Address_0,    address);
+            AaruConsole.WriteLine(Localization.Layer_0,      layer);
+            AaruConsole.WriteLine(Localization.AGID_0,       agid);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -1776,17 +1793,18 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, mediaType, address, layer, format,
                                            agid, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_DISC_STRUCTURE_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -1879,8 +1897,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1892,13 +1912,13 @@ static class Mmc
 
     static void ReadTocPmaAtip(string devPath, Device dev)
     {
-        bool   msf     = false;
+        var    msf     = false;
         byte   format  = 0;
         byte   session = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -1906,8 +1926,8 @@ static class Mmc
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_TOC_PMA_ATIP_command);
             AaruConsole.WriteLine(Localization.Return_MSF_values_0, msf);
-            AaruConsole.WriteLine(Localization.Format_byte_0, format);
-            AaruConsole.WriteLine(Localization.Session_0, session);
+            AaruConsole.WriteLine(Localization.Format_byte_0,       format);
+            AaruConsole.WriteLine(Localization.Session_0,           session);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -1966,17 +1986,18 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, msf, format, session, dev.Timeout,
                                         out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_READ_TOC_PMA_ATIP_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
@@ -2038,6 +2059,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_decoded_buffer);
 
                 if(buffer != null)
+                {
                     switch(format)
                     {
                         case 0:
@@ -2071,6 +2093,7 @@ static class Mmc
 
                             break;
                     }
+                }
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2106,8 +2129,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2119,28 +2144,28 @@ static class Mmc
 
     static void StartStopUnit(string devPath, Device dev)
     {
-        bool   immediate         = false;
-        bool   changeFormatLayer = false;
-        bool   loadEject         = false;
-        bool   start             = false;
+        var    immediate         = false;
+        var    changeFormatLayer = false;
+        var    loadEject         = false;
+        var    start             = false;
         byte   formatLayer       = 0;
         byte   powerConditions   = 0;
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_START_STOP_UNIT_command);
-            AaruConsole.WriteLine(Localization.Immediate_0, immediate);
+            AaruConsole.WriteLine(Localization.Immediate_0,           immediate);
             AaruConsole.WriteLine(Localization.Change_format_layer_0, changeFormatLayer);
-            AaruConsole.WriteLine(Localization.Eject_0, loadEject);
-            AaruConsole.WriteLine(Localization.Start_0, start);
-            AaruConsole.WriteLine(Localization.Format_layer_0, formatLayer);
-            AaruConsole.WriteLine(Localization.Power_conditions_0, powerConditions);
+            AaruConsole.WriteLine(Localization.Eject_0,               loadEject);
+            AaruConsole.WriteLine(Localization.Start_0,               start);
+            AaruConsole.WriteLine(Localization.Format_layer_0,        formatLayer);
+            AaruConsole.WriteLine(Localization.Power_conditions_0,    powerConditions);
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
             AaruConsole.WriteLine(Localization._1_Change_parameters);
@@ -2235,21 +2260,22 @@ static class Mmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         bool sense = dev.StartStopUnit(out byte[] senseBuffer, immediate, formatLayer, powerConditions,
                                        changeFormatLayer, loadEject, start, dev.Timeout, out double duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Sending_START_STOP_UNIT_to_the_device);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
-        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
 
         AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
                               senseBuffer?.Length.ToString() ?? Localization._null);
@@ -2298,8 +2324,10 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();

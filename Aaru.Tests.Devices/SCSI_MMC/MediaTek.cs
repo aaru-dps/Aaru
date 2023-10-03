@@ -13,7 +13,7 @@ static partial class ScsiMmc
         string strDev;
         int    item;
 
-        parameters:
+    parameters:
 
         while(true)
         {
@@ -55,11 +55,12 @@ static partial class ScsiMmc
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
-        start:
+    start:
         System.Console.Clear();
 
         AaruConsole.WriteLine(Localization.Sending_READ_CD_to_the_device);
@@ -74,7 +75,7 @@ static partial class ScsiMmc
         AaruConsole.WriteLine(Localization.Sending_MediaTek_READ_DRAM_to_the_device);
         sense = dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, dev.Timeout, out duration);
 
-        menu:
+    menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
         AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
         AaruConsole.WriteLine(Localization.Sense_is_0, sense);
@@ -154,8 +155,10 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
                 AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
                 System.Console.ReadKey();
