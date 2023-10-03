@@ -55,10 +55,13 @@ public class UsbVendor
     /// <summary>Database ID</summary>
     [Key]
     public ushort Id { get; set; }
+
     /// <summary>Vendor name</summary>
     public string Vendor { get; set; }
+
     /// <summary>Date when model has been added to the database</summary>
     public DateTime AddedWhen { get; set; }
+
     /// <summary>Date when model was last modified</summary>
     public DateTime ModifiedWhen { get; set; }
 

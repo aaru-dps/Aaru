@@ -56,16 +56,22 @@ public class UsbProduct
     /// <summary>Database ID</summary>
     [Key]
     public int Id { get; set; }
+
     /// <summary>Product ID</summary>
     public ushort ProductId { get; set; }
+
     /// <summary>Product name</summary>
     public string Product { get; set; }
+
     /// <summary>Date when model has been added to the database</summary>
     public DateTime AddedWhen { get; set; }
+
     /// <summary>Date when model was last modified</summary>
     public DateTime ModifiedWhen { get; set; }
+
     /// <summary>USB vendor ID</summary>
     public ushort VendorId { get; set; }
+
     /// <summary>Database link to USB vendor</summary>
     public virtual UsbVendor Vendor { get; set; }
 }

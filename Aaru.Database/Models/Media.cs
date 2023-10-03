@@ -38,10 +38,13 @@ public class Media : BaseModel
 {
     /// <summary>Media type name</summary>
     public string Type { get; set; }
+
     /// <summary>Found physically, or in image</summary>
     public bool Real { get; set; }
+
     /// <summary>Has already been synchronized with Aaru's server</summary>
     public bool Synchronized { get; set; }
+
     /// <summary>Count of times found</summary>
     public ulong Count { get; set; }
 }

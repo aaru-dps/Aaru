@@ -70,6 +70,7 @@ public class Report : DeviceReport
 
     /// <summary>Date when the device report was created</summary>
     public DateTime Created { get; set; }
+
     /// <summary>If this model has already been upload</summary>
     public bool Uploaded { get; set; }
 }

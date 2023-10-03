@@ -46,38 +46,55 @@ public sealed class AaruContext : DbContext
 
     /// <summary>List of known devices</summary>
     public DbSet<Device> Devices { get; set; }
+
     /// <summary>List of local device reports</summary>
     public DbSet<Report> Reports { get; set; }
+
     /// <summary>Command usage statistics</summary>
     public DbSet<Command> Commands { get; set; }
+
     /// <summary>Statistics for found filesystems</summary>
     public DbSet<Filesystem> Filesystems { get; set; }
+
     /// <summary>Statistics for used filters</summary>
     public DbSet<Filter> Filters { get; set; }
+
     /// <summary>Statistics for media image formats</summary>
     public DbSet<MediaFormat> MediaFormats { get; set; }
+
     /// <summary>Statistics for partitioning schemes</summary>
     public DbSet<Partition> Partitions { get; set; }
+
     /// <summary>Statistics for media types</summary>
     public DbSet<Media> Medias { get; set; }
+
     /// <summary>Statistics for devices seen using commands</summary>
     public DbSet<DeviceStat> SeenDevices { get; set; }
+
     /// <summary>Statistics for operating systems</summary>
     public DbSet<OperatingSystem> OperatingSystems { get; set; }
+
     /// <summary>Statistics for used Aaru versions</summary>
     public DbSet<Version> Versions { get; set; }
+
     /// <summary>List of known USB vendors</summary>
     public DbSet<UsbVendor> UsbVendors { get; set; }
+
     /// <summary>List of known USB products</summary>
     public DbSet<UsbProduct> UsbProducts { get; set; }
+
     /// <summary>List of CD reading offsets</summary>
     public DbSet<CdOffset> CdOffsets { get; set; }
+
     /// <summary>Statistics of remote applications</summary>
     public DbSet<RemoteApplication> RemoteApplications { get; set; }
+
     /// <summary>Statistics of remote architectures</summary>
     public DbSet<RemoteArchitecture> RemoteArchitectures { get; set; }
+
     /// <summary>Statistics of remote operating systems</summary>
     public DbSet<RemoteOperatingSystem> RemoteOperatingSystems { get; set; }
+
     /// <summary>Known iNES/NES 2.0 headers</summary>
     public DbSet<NesHeaderInfo> NesHeaders { get; set; }
 

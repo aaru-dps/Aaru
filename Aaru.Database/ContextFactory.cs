@@ -38,9 +38,13 @@ namespace Aaru.Database;
 /// <summary>Database context factory, for design time</summary>
 public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
 {
+#region IDesignTimeDbContextFactory<AaruContext> Members
+
     /// <inheritdoc />
     /// <summary>Creates a database context</summary>
     /// <param name="args">Ignored parameters</param>
     /// <returns>A database context</returns>
     public AaruContext CreateDbContext(string[] args) => AaruContext.Create("aaru.db");
+
+#endregion
 }
