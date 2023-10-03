@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,7 +49,7 @@ public sealed partial class SaveDskF
         if(stream.Length < 41)
             return false;
 
-        byte[] hdr = new byte[40];
+        var hdr = new byte[40];
         stream.EnsureRead(hdr, 0, 40);
 
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
@@ -56,4 +58,6 @@ public sealed partial class SaveDskF
                _header is { fatCopies: <= 2, padding: 0 } && _header.commentOffset < stream.Length &&
                _header.dataOffset < stream.Length;
     }
+
+#endregion
 }

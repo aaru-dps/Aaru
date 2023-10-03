@@ -41,24 +41,35 @@ namespace Aaru.DiscImages;
 
 public sealed partial class T98
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public string Name => Localization.T98_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "T98 disk image";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -66,16 +77,19 @@ public sealed partial class T98
         MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
         MediaType.PCCardTypeIV
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".t98"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".t98" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

@@ -39,6 +39,23 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class HdCopy
 {
+#region Nested type: BlockHeader
+
+    /// <summary>The header for a RLE-compressed block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct BlockHeader
+    {
+        /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
+        public readonly ushort length;
+
+        /// <summary>The byte value used as RLE escape sequence</summary>
+        public readonly byte escape;
+    }
+
+#endregion
+
+#region Nested type: FileHeader
+
     /// <summary>The global header of a HDCP image file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct FileHeader
@@ -57,14 +74,5 @@ public sealed partial class HdCopy
         public byte[] trackMap;
     }
 
-    /// <summary>The header for a RLE-compressed block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct BlockHeader
-    {
-        /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
-        public readonly ushort length;
-
-        /// <summary>The byte value used as RLE escape sequence</summary>
-        public readonly byte escape;
-    }
+#endregion
 }

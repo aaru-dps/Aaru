@@ -40,18 +40,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.DiskDupe_Name;
+
     /// <inheritdoc />
     public Guid Id => new("5439B4A2-5F38-33A7-B8DC-3910D296B3DD");
+
     /// <inheritdoc />
     public string Author => Authors.MichaelDruing;
+
     /// <inheritdoc />
     public string Format => "DDI disk image";
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

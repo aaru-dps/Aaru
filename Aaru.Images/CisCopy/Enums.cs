@@ -36,21 +36,41 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    enum DiskType : byte
-    {
-        MD1DD8 = 1, MD1DD = 2, MD2DD8 = 3,
-        MD2DD  = 4, MF2DD = 5, MD2HD  = 6,
-        MF2HD  = 7
-    }
+#region Nested type: Compression
 
     enum Compression : byte
     {
-        None = 0, Normal = 1, High = 2
+        None   = 0,
+        Normal = 1,
+        High   = 2
     }
+
+#endregion
+
+#region Nested type: DiskType
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    enum DiskType : byte
+    {
+        MD1DD8 = 1,
+        MD1DD  = 2,
+        MD2DD8 = 3,
+        MD2DD  = 4,
+        MF2DD  = 5,
+        MD2HD  = 6,
+        MF2HD  = 7
+    }
+
+#endregion
+
+#region Nested type: TrackType
 
     enum TrackType : byte
     {
-        Copied = 0x4C, Omitted = 0xFA, OmittedAlternate = 0xFE
+        Copied           = 0x4C,
+        Omitted          = 0xFA,
+        OmittedAlternate = 0xFE
     }
+
+#endregion
 }

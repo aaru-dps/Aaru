@@ -37,6 +37,21 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Vdi
 {
+#region Nested type: VdiImageFlags
+
+    enum VdiImageFlags : uint
+    {
+        /// <summary>
+        ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set for
+        ///     opened existing images.
+        /// </summary>
+        ZeroExpand = 0x100
+    }
+
+#endregion
+
+#region Nested type: VdiImageType
+
     enum VdiImageType : uint
     {
         /// <summary> Normal dynamically growing base image file.</summary>
@@ -54,12 +69,5 @@ public sealed partial class Vdi
         Last = Differential
     }
 
-    enum VdiImageFlags : uint
-    {
-        /// <summary>
-        ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set for
-        ///     opened existing images.
-        /// </summary>
-        ZeroExpand = 0x100
-    }
+#endregion
 }

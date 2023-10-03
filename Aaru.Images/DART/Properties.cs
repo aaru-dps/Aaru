@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.Dart_Name;
+
     /// <inheritdoc />
     public Guid Id => new("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Apple Disk Archival/Retrieval Tool";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

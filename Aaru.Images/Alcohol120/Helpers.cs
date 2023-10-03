@@ -44,14 +44,20 @@ public sealed partial class Alcohol120
             case TrackMode.Mode1:
             case TrackMode.Mode1Alt:
             case TrackMode.Mode2F1:
-            case TrackMode.Mode2F1Alt: return 2048;
+            case TrackMode.Mode2F1Alt:
+                return 2048;
             case TrackMode.Mode2F2:
-            case TrackMode.Mode2F2Alt: return 2324;
-            case TrackMode.Mode2: return 2336;
+            case TrackMode.Mode2F2Alt:
+                return 2324;
+            case TrackMode.Mode2:
+                return 2336;
             case TrackMode.Audio:
-            case TrackMode.AudioAlt: return 2352;
-            case TrackMode.DVD: return 2048;
-            default:            return 0;
+            case TrackMode.AudioAlt:
+                return 2352;
+            case TrackMode.DVD:
+                return 2048;
+            default:
+                return 0;
         }
     }
 
@@ -60,27 +66,33 @@ public sealed partial class Alcohol120
         switch(trackType)
         {
             case TrackMode.Mode1:
-            case TrackMode.Mode1Alt: return TrackType.CdMode1;
+            case TrackMode.Mode1Alt:
+                return TrackType.CdMode1;
             case TrackMode.Mode2F1:
-            case TrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
+            case TrackMode.Mode2F1Alt:
+                return TrackType.CdMode2Form1;
             case TrackMode.Mode2F2:
-            case TrackMode.Mode2F2Alt: return TrackType.CdMode2Form2;
-            case TrackMode.Mode2: return TrackType.CdMode2Formless;
+            case TrackMode.Mode2F2Alt:
+                return TrackType.CdMode2Form2;
+            case TrackMode.Mode2:
+                return TrackType.CdMode2Formless;
             case TrackMode.Audio:
-            case TrackMode.AudioAlt: return TrackType.Audio;
-            default: return TrackType.Data;
+            case TrackMode.AudioAlt:
+                return TrackType.Audio;
+            default:
+                return TrackType.Data;
         }
     }
 
     static MediaType MediumTypeToMediaType(MediumType discType) => discType switch
-    {
-        MediumType.CD   => MediaType.CD,
-        MediumType.CDR  => MediaType.CDR,
-        MediumType.CDRW => MediaType.CDRW,
-        MediumType.DVD  => MediaType.DVDROM,
-        MediumType.DVDR => MediaType.DVDR,
-        _               => MediaType.Unknown
-    };
+                                                                   {
+                                                                       MediumType.CD   => MediaType.CD,
+                                                                       MediumType.CDR  => MediaType.CDR,
+                                                                       MediumType.CDRW => MediaType.CDRW,
+                                                                       MediumType.DVD  => MediaType.DVDROM,
+                                                                       MediumType.DVDR => MediaType.DVDR,
+                                                                       _               => MediaType.Unknown
+                                                                   };
 
     static MediumType MediaTypeToMediumType(MediaType type)
     {
@@ -119,30 +131,35 @@ public sealed partial class Alcohol120
             case MediaType.VideoNow:
             case MediaType.VideoNowColor:
             case MediaType.VideoNowXp:
-            case MediaType.CVD: return MediumType.CD;
-            case MediaType.CDR: return MediumType.CDR;
+            case MediaType.CVD:
+                return MediumType.CD;
+            case MediaType.CDR:
+                return MediumType.CDR;
             case MediaType.CDRW:
-            case MediaType.CDMRW: return MediumType.CDRW;
+            case MediaType.CDMRW:
+                return MediumType.CDRW;
             case MediaType.DVDR:
             case MediaType.DVDRW:
             case MediaType.DVDPR:
             case MediaType.DVDRDL:
             case MediaType.DVDRWDL:
             case MediaType.DVDPRDL:
-            case MediaType.DVDPRWDL: return MediumType.DVDR;
-            default: return MediumType.DVD;
+            case MediaType.DVDPRWDL:
+                return MediumType.DVDR;
+            default:
+                return MediumType.DVD;
         }
     }
 
     static TrackMode TrackTypeToTrackMode(TrackType type) => type switch
-    {
-        TrackType.Audio           => TrackMode.Audio,
-        TrackType.CdMode1         => TrackMode.Mode1,
-        TrackType.CdMode2Formless => TrackMode.Mode2,
-        TrackType.CdMode2Form1    => TrackMode.Mode2F1,
-        TrackType.CdMode2Form2    => TrackMode.Mode2F2,
-        _                         => TrackMode.DVD
-    };
+                                                             {
+                                                                 TrackType.Audio           => TrackMode.Audio,
+                                                                 TrackType.CdMode1         => TrackMode.Mode1,
+                                                                 TrackType.CdMode2Formless => TrackMode.Mode2,
+                                                                 TrackType.CdMode2Form1    => TrackMode.Mode2F1,
+                                                                 TrackType.CdMode2Form2    => TrackMode.Mode2F2,
+                                                                 _                         => TrackMode.DVD
+                                                             };
 
     static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
         ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));

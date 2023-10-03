@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading partimage disk images</summary>
 public sealed partial class Partimage : IMediaImage, IVerifiableImage
 {
+    const string              MODULE_NAME = "Partimage plugin";
     byte[]                    _bitmap;
     MainHeader                _cMainHeader;
     Header                    _cVolumeHeader;
@@ -77,6 +78,4 @@ public sealed partial class Partimage : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Partimage plugin";
 }

@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -48,4 +50,6 @@ public sealed partial class Anex86
         public          int heads;
         public          int cylinders;
     }
+
+#endregion
 }

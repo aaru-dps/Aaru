@@ -43,6 +43,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
+#region IMediaImage Members
+
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
@@ -87,8 +89,8 @@ public sealed partial class DiskDupe
     public ErrorNumber ReadSector(ulong sectorAddress, out byte[] buffer)
     {
         buffer = null;
-        int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
-        int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
+        var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+        var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
@@ -104,7 +106,7 @@ public sealed partial class DiskDupe
         {
             Stream strm = _ddiImageFilter.GetDataForkStream();
 
-            strm.Seek(_trackOffsets[trackNum] + (sectorOffset * _imageInfo.SectorSize), SeekOrigin.Begin);
+            strm.Seek(_trackOffsets[trackNum] + sectorOffset * _imageInfo.SectorSize, SeekOrigin.Begin);
 
             strm.EnsureRead(buffer, 0, (int)_imageInfo.SectorSize);
         }
@@ -138,4 +140,6 @@ public sealed partial class DiskDupe
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -37,6 +37,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -76,4 +78,6 @@ public sealed partial class DiskDupe
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

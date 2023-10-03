@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qed
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,10 +49,12 @@ public sealed partial class Qed
         if(stream.Length < 512)
             return false;
 
-        byte[] qHdrB = new byte[68];
+        var qHdrB = new byte[68];
         stream.EnsureRead(qHdrB, 0, 68);
         _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
         return _qHdr.magic == QED_MAGIC;
     }
+
+#endregion
 }

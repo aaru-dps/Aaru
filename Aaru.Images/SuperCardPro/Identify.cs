@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
+#region IFluxImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -49,11 +51,13 @@ public sealed partial class SuperCardPro
         if(stream.Length < Marshal.SizeOf<ScpHeader>())
             return false;
 
-        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         stream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
         return _scpSignature.SequenceEqual(Header.signature);
     }
+
+#endregion
 }

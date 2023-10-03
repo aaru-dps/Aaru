@@ -45,25 +45,25 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading A2R flux images</summary>
 public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWritableFluxImage
 {
-    ImageInfo                  _imageInfo;
-    Stream                     _a2rStream;
-    IFilter                    _a2rFilter;
-    FileStream                 _writingStream;
-    A2rHeader                  Header;
-    Dictionary<string, string> Meta;
-    InfoChunkV2                _infoChunkV2;
-    InfoChunkV3                _infoChunkV3;
-    List<StreamCapture>        _a2rCaptures;
-    uint                       _currentResolution;
+    const string        MODULE_NAME = "A2R plugin";
+    List<StreamCapture> _a2rCaptures;
+    IFilter             _a2rFilter;
+    Stream              _a2rStream;
 
     // Offset from the start of the current RWCP to the next capture
     uint _currentCaptureOffset = 16;
+    uint _currentResolution;
 
     // 53 = A2R header, INFO header, INFO data
-    long _currentRwcpStart = 53;
+    long                       _currentRwcpStart = 53;
+    ImageInfo                  _imageInfo;
+    InfoChunkV2                _infoChunkV2;
+    InfoChunkV3                _infoChunkV3;
+    FileStream                 _writingStream;
+    A2rHeader                  Header;
+    Dictionary<string, string> Meta;
 
-    public A2R()
-    {
+    public A2R() =>
         _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
@@ -87,7 +87,4 @@ public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWrit
             DriveSerialNumber     = null,
             DriveFirmwareRevision = null
         };
-    }
-
-    const string MODULE_NAME = "A2R plugin";
 }

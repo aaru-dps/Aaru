@@ -42,26 +42,28 @@ public sealed partial class TeleDisk
 {
     (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
     {
-        ushort cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
-        byte   head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
-        byte   sector   = (byte)((lba % _imageInfo.SectorsPerTrack) + 1);
+        var cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
+        var head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
+        var sector   = (byte)(lba % _imageInfo.SectorsPerTrack + 1);
 
         return (cylinder, head, sector);
     }
 
     static ushort TeleDiskCrc(ushort crc, byte[] buffer)
     {
-        int counter = 0;
+        var counter = 0;
 
         while(counter < buffer.Length)
         {
             crc ^= (ushort)((buffer[counter] & 0xFF) << 8);
 
-            for(int i = 0; i < 8; i++)
+            for(var i = 0; i < 8; i++)
+            {
                 if((crc & 0x8000) > 0)
-                    crc = (ushort)((crc << 1) ^ TELE_DISK_CRC_POLY);
+                    crc = (ushort)(crc << 1 ^ TELE_DISK_CRC_POLY);
                 else
                     crc = (ushort)(crc << 1);
+            }
 
             counter++;
         }
@@ -69,7 +71,7 @@ public sealed partial class TeleDisk
         return crc;
     }
 
-    static ErrorNumber DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData,
+    static ErrorNumber DecodeTeleDiskData(byte       sectorSize, byte encodingType, byte[] encodedData,
                                           out byte[] decodedData)
     {
         decodedData = null;
@@ -118,16 +120,16 @@ public sealed partial class TeleDisk
                 break;
             case DATA_BLOCK_PATTERN:
             {
-                int ins  = 0;
-                int outs = 0;
+                var ins  = 0;
+                var outs = 0;
 
                 while(ins < encodedData.Length)
                 {
-                    byte[] repeatValue = new byte[2];
+                    var repeatValue = new byte[2];
 
-                    ushort repeatNumber = BitConverter.ToUInt16(encodedData, ins);
+                    var repeatNumber = BitConverter.ToUInt16(encodedData, ins);
                     Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
-                    byte[] decodedPiece = new byte[repeatNumber * 2];
+                    var decodedPiece = new byte[repeatNumber * 2];
                     ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
                     Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
                     ins  += 4;
@@ -152,8 +154,8 @@ public sealed partial class TeleDisk
             }
             case DATA_BLOCK_RLE:
             {
-                int ins  = 0;
-                int outs = 0;
+                var ins  = 0;
+                var outs = 0;
 
                 while(ins < encodedData.Length)
                 {
@@ -171,10 +173,10 @@ public sealed partial class TeleDisk
                     else
                     {
                         length = (byte)(encoding * 2);
-                        byte   run  = encodedData[ins + 1];
-                        byte[] part = new byte[length];
+                        byte run  = encodedData[ins + 1];
+                        var  part = new byte[length];
                         Array.Copy(encodedData, ins + 2, part, 0, length);
-                        byte[] piece = new byte[length * run];
+                        var piece = new byte[length * run];
                         ArrayHelpers.ArrayFill(piece, part);
                         Array.Copy(piece, 0, decodedData, outs, piece.Length);
                         ins  += 2 + length;
@@ -213,7 +215,8 @@ public sealed partial class TeleDisk
             {
                 switch(_totalDiskSize)
                 {
-                    case 143360: return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_I : MediaType.Unknown;
+                    case 143360:
+                        return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_I : MediaType.Unknown;
                     case 163840:
                     {
                         // Acorn disk uses 256 bytes/sector
@@ -228,7 +231,8 @@ public sealed partial class TeleDisk
 
                         // DOS disks use 512 bytes/sector
                     }
-                    case 315392: return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_II : MediaType.Unknown;
+                    case 315392:
+                        return _imageInfo.SectorSize == 256 ? MediaType.MetaFloppy_Mod_II : MediaType.Unknown;
                     case 327680:
                     {
                         // Acorn disk uses 256 bytes/sector
@@ -236,23 +240,40 @@ public sealed partial class TeleDisk
 
                         // DOS disks use 512 bytes/sector
                     }
-                    case 368640:  return MediaType.DOS_525_DS_DD_9;
-                    case 1228800: return MediaType.DOS_525_HD;
-                    case 102400:  return MediaType.ACORN_525_SS_SD_40;
-                    case 204800:  return MediaType.ACORN_525_SS_SD_80;
-                    case 655360:  return MediaType.ACORN_525_DS_DD;
-                    case 92160:   return MediaType.ATARI_525_SD;
-                    case 133120:  return MediaType.ATARI_525_ED;
-                    case 1310720: return MediaType.NEC_525_HD;
-                    case 1261568: return MediaType.SHARP_525;
-                    case 839680:  return MediaType.FDFORMAT_525_DD;
-                    case 1304320: return MediaType.ECMA_99_8;
-                    case 1223424: return MediaType.ECMA_99_15;
-                    case 1061632: return MediaType.ECMA_99_26;
-                    case 80384:   return MediaType.ECMA_66;
-                    case 325632:  return MediaType.ECMA_70;
-                    case 653312:  return MediaType.ECMA_78;
-                    case 737280:  return MediaType.ECMA_78_2;
+                    case 368640:
+                        return MediaType.DOS_525_DS_DD_9;
+                    case 1228800:
+                        return MediaType.DOS_525_HD;
+                    case 102400:
+                        return MediaType.ACORN_525_SS_SD_40;
+                    case 204800:
+                        return MediaType.ACORN_525_SS_SD_80;
+                    case 655360:
+                        return MediaType.ACORN_525_DS_DD;
+                    case 92160:
+                        return MediaType.ATARI_525_SD;
+                    case 133120:
+                        return MediaType.ATARI_525_ED;
+                    case 1310720:
+                        return MediaType.NEC_525_HD;
+                    case 1261568:
+                        return MediaType.SHARP_525;
+                    case 839680:
+                        return MediaType.FDFORMAT_525_DD;
+                    case 1304320:
+                        return MediaType.ECMA_99_8;
+                    case 1223424:
+                        return MediaType.ECMA_99_15;
+                    case 1061632:
+                        return MediaType.ECMA_99_26;
+                    case 80384:
+                        return MediaType.ECMA_66;
+                    case 325632:
+                        return MediaType.ECMA_70;
+                    case 653312:
+                        return MediaType.ECMA_78;
+                    case 737280:
+                        return MediaType.ECMA_78_2;
                     default:
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 5,25\" disk with {0} bytes",
@@ -268,24 +289,39 @@ public sealed partial class TeleDisk
             {
                 switch(_totalDiskSize)
                 {
-                    case 322560:  return MediaType.Apricot_35;
-                    case 327680:  return MediaType.DOS_35_SS_DD_8;
-                    case 368640:  return MediaType.DOS_35_SS_DD_9;
-                    case 655360:  return MediaType.DOS_35_DS_DD_8;
-                    case 737280:  return MediaType.DOS_35_DS_DD_9;
-                    case 1474560: return MediaType.DOS_35_HD;
-                    case 2949120: return MediaType.DOS_35_ED;
-                    case 1720320: return MediaType.DMF;
-                    case 1763328: return MediaType.DMF_82;
+                    case 322560:
+                        return MediaType.Apricot_35;
+                    case 327680:
+                        return MediaType.DOS_35_SS_DD_8;
+                    case 368640:
+                        return MediaType.DOS_35_SS_DD_9;
+                    case 655360:
+                        return MediaType.DOS_35_DS_DD_8;
+                    case 737280:
+                        return MediaType.DOS_35_DS_DD_9;
+                    case 1474560:
+                        return MediaType.DOS_35_HD;
+                    case 2949120:
+                        return MediaType.DOS_35_ED;
+                    case 1720320:
+                        return MediaType.DMF;
+                    case 1763328:
+                        return MediaType.DMF_82;
                     case 1884160: // Irreal size, seen as BIOS with TSR, 23 sectors/track
                     case 1860608: // Real data size, sum of all sectors
                         return MediaType.XDF_35;
-                    case 819200:  return MediaType.CBM_35_DD;
-                    case 901120:  return MediaType.CBM_AMIGA_35_DD;
-                    case 1802240: return MediaType.CBM_AMIGA_35_HD;
-                    case 1310720: return MediaType.NEC_35_HD_8;
-                    case 1228800: return MediaType.NEC_35_HD_15;
-                    case 1261568: return MediaType.SHARP_35;
+                    case 819200:
+                        return MediaType.CBM_35_DD;
+                    case 901120:
+                        return MediaType.CBM_AMIGA_35_DD;
+                    case 1802240:
+                        return MediaType.CBM_AMIGA_35_HD;
+                    case 1310720:
+                        return MediaType.NEC_35_HD_8;
+                    case 1228800:
+                        return MediaType.NEC_35_HD_15;
+                    case 1261568:
+                        return MediaType.SHARP_35;
                     default:
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 3,5\" disk with {0} bytes",
@@ -299,15 +335,24 @@ public sealed partial class TeleDisk
             {
                 switch(_totalDiskSize)
                 {
-                    case 81664:   return MediaType.IBM23FD;
-                    case 242944:  return MediaType.IBM33FD_128;
-                    case 287488:  return MediaType.IBM33FD_256;
-                    case 306432:  return MediaType.IBM33FD_512;
-                    case 499200:  return MediaType.IBM43FD_128;
-                    case 574976:  return MediaType.IBM43FD_256;
-                    case 995072:  return MediaType.IBM53FD_256;
-                    case 1146624: return MediaType.IBM53FD_512;
-                    case 1222400: return MediaType.IBM53FD_1024;
+                    case 81664:
+                        return MediaType.IBM23FD;
+                    case 242944:
+                        return MediaType.IBM33FD_128;
+                    case 287488:
+                        return MediaType.IBM33FD_256;
+                    case 306432:
+                        return MediaType.IBM33FD_512;
+                    case 499200:
+                        return MediaType.IBM43FD_128;
+                    case 574976:
+                        return MediaType.IBM43FD_256;
+                    case 995072:
+                        return MediaType.IBM53FD_256;
+                    case 1146624:
+                        return MediaType.IBM53FD_512;
+                    case 1222400:
+                        return MediaType.IBM53FD_1024;
                     case 256256:
                         // Same size, with same disk geometry, for DEC RX01, NEC and ECMA, return ECMA
                         return MediaType.ECMA_54;
@@ -318,10 +363,14 @@ public sealed partial class TeleDisk
 
                         // ECMA disks use 128 bytes/sector
                     }
-                    case 1261568: return MediaType.NEC_8_DD;
-                    case 1255168: return MediaType.ECMA_69_8;
-                    case 1177344: return MediaType.ECMA_69_15;
-                    case 1021696: return MediaType.ECMA_69_26;
+                    case 1261568:
+                        return MediaType.NEC_8_DD;
+                    case 1255168:
+                        return MediaType.ECMA_69_8;
+                    case 1177344:
+                        return MediaType.ECMA_69_15;
+                    case 1021696:
+                        return MediaType.ECMA_69_26;
                     default:
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 8\" disk with {0} bytes",

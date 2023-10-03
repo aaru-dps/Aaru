@@ -47,6 +47,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -56,21 +58,21 @@ public sealed partial class Qcow
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] qHdrB = new byte[48];
+        var qHdrB = new byte[48];
         stream.EnsureRead(qHdrB, 0, 48);
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.magic = 0x{0:X8}", _qHdr.magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.version = {0}", _qHdr.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.magic = 0x{0:X8}",          _qHdr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.version = {0}",             _qHdr.version);
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.backing_file_offset = {0}", _qHdr.backing_file_offset);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.backing_file_size = {0}", _qHdr.backing_file_size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.mtime = {0}", _qHdr.mtime);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.size = {0}", _qHdr.size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.cluster_bits = {0}", _qHdr.cluster_bits);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2_bits = {0}", _qHdr.l2_bits);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.padding = {0}", _qHdr.padding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.crypt_method = {0}", _qHdr.crypt_method);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1_table_offset = {0}", _qHdr.l1_table_offset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.backing_file_size = {0}",   _qHdr.backing_file_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.mtime = {0}",               _qHdr.mtime);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.size = {0}",                _qHdr.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.cluster_bits = {0}",        _qHdr.cluster_bits);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2_bits = {0}",             _qHdr.l2_bits);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.padding = {0}",             _qHdr.padding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.crypt_method = {0}",        _qHdr.crypt_method);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1_table_offset = {0}",     _qHdr.l1_table_offset);
 
         if(_qHdr.size <= 1)
         {
@@ -122,17 +124,17 @@ public sealed partial class Qcow
         }
 
         _clusterSize    = 1 << _qHdr.cluster_bits;
-        _clusterSectors = 1 << (_qHdr.cluster_bits - 9);
-        _l1Size         = (uint)((_qHdr.size + (ulong)(1 << shift) - 1) >> shift);
+        _clusterSectors = 1 << _qHdr.cluster_bits - 9;
+        _l1Size         = (uint)(_qHdr.size + (ulong)(1 << shift) - 1 >> shift);
         _l2Size         = 1 << _qHdr.l2_bits;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.clusterSize = {0}", _clusterSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.clusterSize = {0}",    _clusterSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.clusterSectors = {0}", _clusterSectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Size = {0}", _l1Size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2Size = {0}", _l2Size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.sectors = {0}", _imageInfo.Sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Size = {0}",         _l1Size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2Size = {0}",         _l2Size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.sectors = {0}",        _imageInfo.Sectors);
 
-        byte[] l1TableB = new byte[_l1Size * 8];
+        var l1TableB = new byte[_l1Size * 8];
         stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
         stream.EnsureRead(l1TableB, 0, (int)_l1Size * 8);
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
@@ -142,10 +144,10 @@ public sealed partial class Qcow
             _l1Table[i] = Swapping.Swap(_l1Table[i]);
 
         _l1Mask = 0;
-        int c = 0;
+        var c = 0;
         _l1Shift = _qHdr.l2_bits + _qHdr.cluster_bits;
 
-        for(int i = 0; i < 64; i++)
+        for(var i = 0; i < 64; i++)
         {
             _l1Mask <<= 1;
 
@@ -158,19 +160,19 @@ public sealed partial class Qcow
 
         _l2Mask = 0;
 
-        for(int i = 0; i < _qHdr.l2_bits; i++)
+        for(var i = 0; i < _qHdr.l2_bits; i++)
             _l2Mask = (_l2Mask << 1) + 1;
 
         _l2Mask <<= _qHdr.cluster_bits;
 
         _sectorMask = 0;
 
-        for(int i = 0; i < _qHdr.cluster_bits; i++)
+        for(var i = 0; i < _qHdr.cluster_bits; i++)
             _sectorMask = (_sectorMask << 1) + 1;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Mask = {0:X}", _l1Mask);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Shift = {0}", _l1Shift);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2Mask = {0:X}", _l2Mask);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Mask = {0:X}",     _l1Mask);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Shift = {0}",      _l1Shift);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l2Mask = {0:X}",     _l2Mask);
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.sectorMask = {0:X}", _sectorMask);
 
         _maxL2TableCache = MAX_CACHE_SIZE / (_l2Size * 8);
@@ -184,7 +186,8 @@ public sealed partial class Qcow
 
         _imageInfo.CreationTime = imageFilter.CreationTime;
 
-        _imageInfo.LastModificationTime = _qHdr.mtime > 0 ? DateHandlers.UnixUnsignedToDateTime(_qHdr.mtime)
+        _imageInfo.LastModificationTime = _qHdr.mtime > 0
+                                              ? DateHandlers.UnixUnsignedToDateTime(_qHdr.mtime)
                                               : imageFilter.LastWriteTime;
 
         _imageInfo.MediaTitle        = Path.GetFileNameWithoutExtension(imageFilter.Filename);
@@ -237,7 +240,7 @@ public sealed partial class Qcow
         if(!_l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
         {
             _imageStream.Seek((long)_l1Table[l1Off], SeekOrigin.Begin);
-            byte[] l2TableB = new byte[_l2Size * 8];
+            var l2TableB = new byte[_l2Size * 8];
             _imageStream.EnsureRead(l2TableB, 0, _l2Size * 8);
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_L2_table_0, l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
@@ -268,9 +271,9 @@ public sealed partial class Qcow
                     ulong offMask = ~compSizeMask ^ QCOW_COMPRESSED;
 
                     ulong realOff  = offset & offMask;
-                    ulong compSize = (offset & compSizeMask) >> (63 - _qHdr.cluster_bits);
+                    ulong compSize = (offset & compSizeMask) >> 63 - _qHdr.cluster_bits;
 
-                    byte[] zCluster = new byte[compSize];
+                    var zCluster = new byte[compSize];
                     _imageStream.Seek((long)realOff, SeekOrigin.Begin);
                     _imageStream.EnsureRead(zCluster, 0, (int)compSize);
 
@@ -332,4 +335,6 @@ public sealed partial class Qcow
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

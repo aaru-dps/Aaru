@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading CopyQM disk images</summary>
 public sealed partial class CopyQm : IMediaImage, IVerifiableImage
 {
+    const string MODULE_NAME = "CopyQM plugin";
     uint         _calculatedDataCrc;
     byte[]       _decodedDisk;
     MemoryStream _decodedImage;
@@ -72,6 +73,4 @@ public sealed partial class CopyQm : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CopyQM plugin";
 }

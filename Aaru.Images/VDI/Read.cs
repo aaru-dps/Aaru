@@ -46,6 +46,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -55,38 +57,38 @@ public sealed partial class Vdi
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.creator = {0}", _vHdr.creator);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.magic = {0}", _vHdr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.magic = {0}",   _vHdr.magic);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.version = {0}.{1}", _vHdr.majorVersion,
                                    _vHdr.minorVersion);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.headerSize = {0}", _vHdr.headerSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageType = {0}", _vHdr.imageType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageFlags = {0}", _vHdr.imageFlags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.description = {0}", _vHdr.comments);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetBlocks = {0}", _vHdr.offsetBlocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetData = {0}", _vHdr.offsetData);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.cylinders = {0}", _vHdr.cylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.heads = {0}", _vHdr.heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.spt = {0}", _vHdr.spt);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.sectorSize = {0}", _vHdr.sectorSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.size = {0}", _vHdr.size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockSize = {0}", _vHdr.blockSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockExtraData = {0}", _vHdr.blockExtraData);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blocks = {0}", _vHdr.blocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.allocatedBlocks = {0}", _vHdr.allocatedBlocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.uuid = {0}", _vHdr.uuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.snapshotUuid = {0}", _vHdr.snapshotUuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.linkUuid = {0}", _vHdr.linkUuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.parentUuid = {0}", _vHdr.parentUuid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalCylinders = {0}", _vHdr.logicalCylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalHeads = {0}", _vHdr.logicalHeads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSpt = {0}", _vHdr.logicalSpt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.headerSize = {0}",        _vHdr.headerSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageType = {0}",         _vHdr.imageType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageFlags = {0}",        _vHdr.imageFlags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.description = {0}",       _vHdr.comments);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetBlocks = {0}",      _vHdr.offsetBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetData = {0}",        _vHdr.offsetData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.cylinders = {0}",         _vHdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.heads = {0}",             _vHdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.spt = {0}",               _vHdr.spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.sectorSize = {0}",        _vHdr.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.size = {0}",              _vHdr.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockSize = {0}",         _vHdr.blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockExtraData = {0}",    _vHdr.blockExtraData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blocks = {0}",            _vHdr.blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.allocatedBlocks = {0}",   _vHdr.allocatedBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.uuid = {0}",              _vHdr.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.snapshotUuid = {0}",      _vHdr.snapshotUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.linkUuid = {0}",          _vHdr.linkUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.parentUuid = {0}",        _vHdr.parentUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalCylinders = {0}",  _vHdr.logicalCylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalHeads = {0}",      _vHdr.logicalHeads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSpt = {0}",        _vHdr.logicalSpt);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
 
         if(_vHdr.imageType != VdiImageType.Normal)
@@ -101,7 +103,7 @@ public sealed partial class Vdi
         blockMapStopwatch.Start();
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Image_Block_Map);
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
-        byte[] ibmB = new byte[_vHdr.blocks * 4];
+        var ibmB = new byte[_vHdr.blocks * 4];
         stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         blockMapStopwatch.Stop();
@@ -221,9 +223,9 @@ public sealed partial class Vdi
             return ErrorNumber.NoError;
         }
 
-        ulong imageOff = _vHdr.offsetData + ((ulong)ibmOff * _vHdr.blockSize);
+        ulong imageOff = _vHdr.offsetData + (ulong)ibmOff * _vHdr.blockSize;
 
-        byte[] cluster = new byte[_vHdr.blockSize];
+        var cluster = new byte[_vHdr.blockSize];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
         _imageStream.EnsureRead(cluster, 0, (int)_vHdr.blockSize);
         buffer = new byte[_vHdr.sectorSize];
@@ -264,4 +266,6 @@ public sealed partial class Vdi
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

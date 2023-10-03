@@ -36,12 +36,14 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Blu
 {
+#region IVerifiableSectorsImage Members
+
     // TODO: Check tag checksums
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress) => null;
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
         failingLbas = new List<ulong>();
@@ -52,4 +54,6 @@ public sealed partial class Blu
 
         return null;
     }
+
+#endregion
 }

@@ -41,27 +41,35 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Apple2Mg_Name;
+
     /// <inheritdoc />
     public Guid Id => new("CBAF8824-BA5F-415F-953A-19A03519B2D1");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Apple 2IMG";
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -70,16 +78,19 @@ public sealed partial class Apple2Mg
         MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
         MediaType.PCCardTypeIV
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".2mg"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".2mg" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

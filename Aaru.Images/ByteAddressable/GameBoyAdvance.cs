@@ -20,18 +20,27 @@ public class GameBoyAdvance : IByteAddressableImage
     Stream    _dataStream;
     ImageInfo _imageInfo;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => "Nintendo Game Boy Advance cartridge dump";
+
     /// <inheritdoc />
     public Guid Id => new("0040DDEB-3902-4402-9028-62915C5AA81F");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.GameBoyAdvance_Name;
 
@@ -48,9 +57,9 @@ public class GameBoyAdvance : IByteAddressableImage
             return false;
 
         stream.Position = 4;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x21A29A6951AEFF24;
     }
@@ -68,9 +77,9 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 4;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x21A29A6951AEFF24)
             return ErrorNumber.InvalidArgument;
@@ -97,12 +106,12 @@ public class GameBoyAdvance : IByteAddressableImage
 
         sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
 
-        sb.AppendFormat(Localization.Device_type_0, header.DeviceType).AppendLine();
-        sb.AppendFormat(Localization.Console_type_0, header.UnitCode).AppendLine();
+        sb.AppendFormat(Localization.Device_type_0,      header.DeviceType).AppendLine();
+        sb.AppendFormat(Localization.Console_type_0,     header.UnitCode).AppendLine();
         sb.AppendFormat(Localization.Product_code_AGB_0, StringHandlers.CToString(header.Code)).AppendLine();
-        sb.AppendFormat(Localization.Maker_code_0, StringHandlers.CToString(header.Maker)).AppendLine();
-        sb.AppendFormat(Localization.Revision_0, header.Revision).AppendLine();
-        sb.AppendFormat(Localization.Header_checksum_0, header.ComplementCheck).AppendLine();
+        sb.AppendFormat(Localization.Maker_code_0,       StringHandlers.CToString(header.Maker)).AppendLine();
+        sb.AppendFormat(Localization.Revision_0,         header.Revision).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_0,  header.ComplementCheck).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -112,29 +121,29 @@ public class GameBoyAdvance : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".gba"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".gba" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[]
-    {
-        MediaType.GameBoyAdvanceGamePak
-    };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.GameBoyAdvanceGamePak };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
@@ -342,11 +351,12 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom     = false;
-        bool foundSaveRam = false;
+        var foundRom     = false;
+        var foundSaveRam = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -357,8 +367,10 @@ public class GameBoyAdvance : IByteAddressableImage
                     foundSaveRam = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -401,7 +413,7 @@ public class GameBoyAdvance : IByteAddressableImage
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -454,8 +466,13 @@ public class GameBoyAdvance : IByteAddressableImage
         return ErrorNumber.NoError;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local"),
-     SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+#endregion
+
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct Header
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -478,4 +495,6 @@ public class GameBoyAdvance : IByteAddressableImage
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public byte[] Reserved2;
     }
+
+#endregion
 }

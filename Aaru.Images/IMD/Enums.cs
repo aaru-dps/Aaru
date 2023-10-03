@@ -36,6 +36,25 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Imd
 {
+#region Nested type: SectorType
+
+    enum SectorType : byte
+    {
+        Unavailable            = 0,
+        Normal                 = 1,
+        Compressed             = 2,
+        Deleted                = 3,
+        CompressedDeleted      = 4,
+        Error                  = 5,
+        CompressedError        = 6,
+        DeletedError           = 7,
+        CompressedDeletedError = 8
+    }
+
+#endregion
+
+#region Nested type: TransferRate
+
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     enum TransferRate : byte
     {
@@ -53,10 +72,5 @@ public sealed partial class Imd
         TwoHundredMfm = 5
     }
 
-    enum SectorType : byte
-    {
-        Unavailable     = 0, Normal            = 1, Compressed             = 2,
-        Deleted         = 3, CompressedDeleted = 4, Error                  = 5,
-        CompressedError = 6, DeletedError      = 7, CompressedDeletedError = 8
-    }
+#endregion
 }

@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
 {
+    const string MODULE_NAME = "KryoFlux plugin";
     // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
     public SortedDictionary<byte, IFilter> tracks;
 
@@ -69,6 +70,4 @@ public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "KryoFlux plugin";
 }

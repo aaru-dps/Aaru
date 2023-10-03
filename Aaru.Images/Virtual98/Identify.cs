@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -53,7 +55,7 @@ public sealed partial class Virtual98
         if(stream.Length < Marshal.SizeOf<Virtual98Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
@@ -67,14 +69,16 @@ public sealed partial class Virtual98
         AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.comment = \"{0}\"",
                                    StringHandlers.CToString(_v98Hdr.comment, shiftjis));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.padding = {0}", _v98Hdr.padding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.mbsize = {0}", _v98Hdr.mbsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.padding = {0}",    _v98Hdr.padding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.mbsize = {0}",     _v98Hdr.mbsize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.sectorsize = {0}", _v98Hdr.sectorsize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.sectors = {0}", _v98Hdr.sectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.surfaces = {0}", _v98Hdr.surfaces);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.cylinders = {0}", _v98Hdr.cylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.totals = {0}", _v98Hdr.totals);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.sectors = {0}",    _v98Hdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.surfaces = {0}",   _v98Hdr.surfaces);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.cylinders = {0}",  _v98Hdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.totals = {0}",     _v98Hdr.totals);
 
         return true;
     }
+
+#endregion
 }

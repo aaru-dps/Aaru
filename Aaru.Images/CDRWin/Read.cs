@@ -52,6 +52,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -64,8 +66,8 @@ public sealed partial class CdrWin
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _cueStream = new StreamReader(imageFilter.GetDataForkStream());
-            int  lineNumber     = 0;
-            bool inTrack        = false;
+            var  lineNumber     = 0;
+            var  inTrack        = false;
             byte currentSession = 1;
 
             // Initialize all RegExs
@@ -128,7 +130,7 @@ public sealed partial class CdrWin
             var  currentFile             = new CdrWinTrackFile();
             long currentFileOffsetSector = 0;
 
-            int trackCount = 0;
+            var trackCount = 0;
 
             Dictionary<byte, int> leadouts = new();
 
@@ -142,7 +144,7 @@ public sealed partial class CdrWin
                 if(!matchTrack.Success)
                     continue;
 
-                uint trackSeq = uint.Parse(matchTrack.Groups[1].Value);
+                var trackSeq = uint.Parse(matchTrack.Groups[1].Value);
 
                 if(trackCount + 1 != trackSeq)
                 {
@@ -162,18 +164,18 @@ public sealed partial class CdrWin
                 return ErrorNumber.InvalidArgument;
             }
 
-            CdrWinTrack[] cueTracks = new CdrWinTrack[trackCount];
+            var cueTracks = new CdrWinTrack[trackCount];
 
             lineNumber = 0;
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _cueStream = new StreamReader(imageFilter.GetDataForkStream());
 
-            var  filtersList           = new FiltersList();
-            bool inTruripDiscHash      = false;
-            bool inTruripTrackHash     = false;
-            bool firstTrackInSession   = false;
-            int  currentEmptyPregap    = 0;
-            int  cumulativeEmptyPregap = 0;
+            var filtersList           = new FiltersList();
+            var inTruripDiscHash      = false;
+            var inTruripTrackHash     = false;
+            var firstTrackInSession   = false;
+            var currentEmptyPregap    = 0;
+            var cumulativeEmptyPregap = 0;
 
             const ulong gdRomSession2Offset = 45000;
 
@@ -238,7 +240,8 @@ public sealed partial class CdrWin
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CRC32_for_1_2_at_line_0,
                                                    lineNumber,
-                                                   matchTruripTrackCrc32.Groups[1].Value == "Trk" ? Localization.track
+                                                   matchTruripTrackCrc32.Groups[1].Value == "Trk"
+                                                       ? Localization.track
                                                        : Localization.gap, matchTruripTrackCrc32.Groups[2].Value);
 
                         continue;
@@ -248,7 +251,8 @@ public sealed partial class CdrWin
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_MD5_for_1_2_at_line_0,
                                                    lineNumber,
-                                                   matchTruripTrackMd5.Groups[1].Value == "Trk" ? Localization.track
+                                                   matchTruripTrackMd5.Groups[1].Value == "Trk"
+                                                       ? Localization.track
                                                        : Localization.gap, matchTruripTrackMd5.Groups[2].Value);
 
                         continue;
@@ -258,7 +262,8 @@ public sealed partial class CdrWin
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_SHA1_for_1_2_at_line_0,
                                                    lineNumber,
-                                                   matchTruripTrackSha1.Groups[1].Value == "Trk" ? Localization.track
+                                                   matchTruripTrackSha1.Groups[1].Value == "Trk"
+                                                       ? Localization.track
                                                        : Localization.gap, matchTruripTrackSha1.Groups[2].Value);
 
                         continue;
@@ -271,7 +276,8 @@ public sealed partial class CdrWin
                                                        Found_unknown_hash_for_1_2_at_line_0_Please_report_this_disc_image,
                                                    lineNumber,
                                                    matchTruripTrackUnknownHash.Groups[1].Value == "Trk"
-                                                       ? Localization.track : Localization.gap,
+                                                       ? Localization.track
+                                                       : Localization.gap,
                                                    matchTruripTrackUnknownHash.Groups[2].Value);
 
                         continue;
@@ -284,7 +290,7 @@ public sealed partial class CdrWin
                 if(matchDumpExtent.Success                                                      &&
                    !inTrack                                                                     &&
                    ulong.TryParse(matchDumpExtent.Groups["start"].Value, out ulong extentStart) &&
-                   ulong.TryParse(matchDumpExtent.Groups["end"].Value, out ulong extentEnd))
+                   ulong.TryParse(matchDumpExtent.Groups["end"].Value,   out ulong extentEnd))
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_REM_METADATA_DUMP_EXTENT_at_line_0,
                                                lineNumber);
@@ -304,6 +310,7 @@ public sealed partial class CdrWin
                                                             Groups["os"].Value);
 
                     if(existingDump is null)
+                    {
                         DumpHardware.Add(new DumpHardware
                         {
                             Extents = new List<Extent>
@@ -325,7 +332,9 @@ public sealed partial class CdrWin
                                 OperatingSystem = matchDumpExtent.Groups["os"].Value
                             }
                         });
+                    }
                     else
+                    {
                         existingDump.Extents = new List<Extent>(existingDump.Extents)
                         {
                             new()
@@ -334,6 +343,7 @@ public sealed partial class CdrWin
                                 End   = extentEnd
                             }
                         }.OrderBy(e => e.Start).ToList();
+                    }
                 }
                 else if(matchDicMediaType.Success &&
                         !inTrack)
@@ -428,8 +438,10 @@ public sealed partial class CdrWin
                     if(_discImage.Comment == "")
                         _discImage.Comment = matchComment.Groups[1].Value; // First comment
                     else
+                    {
                         _discImage.Comment +=
                             Environment.NewLine + matchComment.Groups[1].Value; // Append new comments as new lines
+                    }
                 }
                 else
                 {
@@ -487,8 +499,10 @@ public sealed partial class CdrWin
                         {
                             AaruConsole.
                                 ErrorWriteLine(string.
-                                                   Format(Localization.Found_CD_Text_file_field_in_incorrect_place_at_line_0,
-                                                          lineNumber));
+                                                   Format(
+                                                       Localization.
+                                                           Found_CD_Text_file_field_in_incorrect_place_at_line_0,
+                                                       lineNumber));
 
                             return ErrorNumber.InvalidArgument;
                         }
@@ -551,8 +565,9 @@ public sealed partial class CdrWin
 
                         // Check if file exists
                         if(currentFile.DataFilter == null)
+                        {
                             if(datafile[0] == '/' ||
-                               (datafile[0] == '/' && datafile[1] == '.')) // UNIX absolute path
+                               datafile[0] == '/' && datafile[1] == '.') // UNIX absolute path
                             {
                                 var   unixPath      = new Regex("^(.+)/([^/]+)$");
                                 Match unixPathMatch = unixPath.Match(datafile);
@@ -585,13 +600,14 @@ public sealed partial class CdrWin
                                     return ErrorNumber.NoSuchFile;
                                 }
                             }
-                            else if((datafile[1] == ':'  && datafile[2] == '\\') ||
-                                    (datafile[0] == '\\' && datafile[1] == '\\') ||
-                                    (datafile[0] == '.'  && datafile[1] == '\\')) // Windows absolute path
+                            else if(datafile[1] == ':'  && datafile[2] == '\\' ||
+                                    datafile[0] == '\\' && datafile[1] == '\\' ||
+                                    datafile[0] == '.'  && datafile[1] == '\\') // Windows absolute path
                             {
                                 var winPath =
                                     new
-                                        Regex("^(?:[a-zA-Z]\\:(\\\\|\\/)|file\\:\\/\\/|\\\\\\\\|\\.(\\/|\\\\))([^\\\\\\/\\:\\*\\?\\<\\>\\\"\\|]+(\\\\|\\/){0,1})+$");
+                                        Regex(
+                                            "^(?:[a-zA-Z]\\:(\\\\|\\/)|file\\:\\/\\/|\\\\\\\\|\\.(\\/|\\\\))([^\\\\\\/\\:\\*\\?\\<\\>\\\"\\|]+(\\\\|\\/){0,1})+$");
 
                                 Match winPathMatch = winPath.Match(datafile);
 
@@ -636,6 +652,7 @@ public sealed partial class CdrWin
                                     return ErrorNumber.NoSuchFile;
                                 }
                             }
+                        }
 
                         // File does exist, process it
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.File_0_found,
@@ -643,7 +660,8 @@ public sealed partial class CdrWin
 
                         switch(currentFile.FileType)
                         {
-                            case CDRWIN_DISK_TYPE_LITTLE_ENDIAN: break;
+                            case CDRWIN_DISK_TYPE_LITTLE_ENDIAN:
+                                break;
                             case CDRWIN_DISK_TYPE_BIG_ENDIAN:
                             case CDRWIN_DISK_TYPE_AIFF:
                             case CDRWIN_DISK_TYPE_RIFF:
@@ -702,8 +720,8 @@ public sealed partial class CdrWin
                             return ErrorNumber.InvalidArgument;
                         }
 
-                        ushort index  = ushort.Parse(matchIndex.Groups[1].Value);
-                        int    offset = CdrWinMsfToLba(matchIndex.Groups[2].Value) + cumulativeEmptyPregap;
+                        var index  = ushort.Parse(matchIndex.Groups[1].Value);
+                        int offset = CdrWinMsfToLba(matchIndex.Groups[2].Value) + cumulativeEmptyPregap;
 
                         if(index                      != 0 &&
                            index                      != 1 &&
@@ -717,7 +735,8 @@ public sealed partial class CdrWin
                         }
 
                         if(index == 0 ||
-                           (index == 1 && !currentTrack.Indexes.ContainsKey(0)))
+                           index == 1 && !currentTrack.Indexes.ContainsKey(0))
+                        {
                             if((int)(currentTrack.Sequence - 2) >= 0 &&
                                offset                           > 1)
                             {
@@ -738,8 +757,9 @@ public sealed partial class CdrWin
                                                            "cueTracks[currentTrack.sequence-2].bps = {0}",
                                                            cueTracks[currentTrack.Sequence - 2].Bps);
                             }
+                        }
 
-                        if((index == 0 || (index == 1 && !currentTrack.Indexes.ContainsKey(0))) &&
+                        if((index == 0 || index == 1 && !currentTrack.Indexes.ContainsKey(0)) &&
                            currentTrack.Sequence == 1)
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sets_currentFile_offset_to_0,
@@ -872,8 +892,10 @@ public sealed partial class CdrWin
                         {
                             AaruConsole.
                                 ErrorWriteLine(string.
-                                                   Format(Localization.Found_TRACK_field_before_a_file_is_defined_at_line_0,
-                                                          lineNumber));
+                                                   Format(
+                                                       Localization.
+                                                           Found_TRACK_field_before_a_file_is_defined_at_line_0,
+                                                       lineNumber));
 
                             return ErrorNumber.InvalidArgument;
                         }
@@ -975,18 +997,19 @@ public sealed partial class CdrWin
                                                The_data_files_are_missing_a_pregap_or_hidden_track_contents_will_do_best_effort_to_make_the_rest_of_the_image_readable);
             }
 
-            Session[] sessions = new Session[currentSession];
+            var sessions = new Session[currentSession];
 
-            for(int s = 1; s <= sessions.Length; s++)
+            for(var s = 1; s <= sessions.Length; s++)
             {
-                bool firstTrackRead = false;
+                var firstTrackRead = false;
                 sessions[s - 1].Sequence = (ushort)s;
 
                 ulong sessionSectors   = 0;
-                int   lastSessionTrack = 0;
-                int   firstSessionTrk  = 0;
+                var   lastSessionTrack = 0;
+                var   firstSessionTrk  = 0;
 
-                for(int i = 0; i < cueTracks.Length; i++)
+                for(var i = 0; i < cueTracks.Length; i++)
+                {
                     if(cueTracks[i].Session == s)
                     {
                         if(!firstTrackRead)
@@ -1000,12 +1023,15 @@ public sealed partial class CdrWin
                         if(i > lastSessionTrack)
                             lastSessionTrack = i;
                     }
+                }
 
                 if(s > 1)
+                {
                     if(_discImage.IsRedumpGigadisc)
                         sessions[s - 1].StartSector = gdRomSession2Offset;
                     else
                         sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
+                }
                 else
                     sessions[s - 1].StartSector = 0;
 
@@ -1046,7 +1072,7 @@ public sealed partial class CdrWin
                     sessions[s - 1].StartSector = (ulong)sessionStart;
             }
 
-            for(int t = 1; t <= cueTracks.Length; t++)
+            for(var t = 1; t <= cueTracks.Length; t++)
             {
                 if(cueTracks[t - 1].Indexes.TryGetValue(0, out int idx0) &&
                    cueTracks[t - 1].Indexes.TryGetValue(1, out int idx1))
@@ -1061,17 +1087,17 @@ public sealed partial class CdrWin
             {
                 Stream track1Stream = _discImage.Tracks[0].TrackFile.DataFilter.GetDataForkStream();
 
-                bool foundSync = true;
+                var foundSync = true;
 
                 var rnd = new Random();
 
                 // We check 32 random positions, to prevent coincidence of data
-                for(int i = 0; i < 32; i++)
+                for(var i = 0; i < 32; i++)
                 {
                     int next = rnd.Next(cueTracks[^1].Indexes[1]);
 
                     track1Stream.Position = next * 2352;
-                    byte[] data = new byte[16];
+                    var data = new byte[16];
                     track1Stream.EnsureRead(data, 0, 16);
 
                     // If the position is not MODEx/2352, it can't be a correct Cuesheet.
@@ -1117,15 +1143,15 @@ public sealed partial class CdrWin
 
             if(_discImage.MediaType is MediaType.Unknown or MediaType.CD)
             {
-                bool data       = false;
-                bool cdg        = false;
-                bool cdi        = false;
-                bool mode2      = false;
-                bool firstAudio = false;
-                bool firstData  = false;
-                bool audio      = false;
+                var data       = false;
+                var cdg        = false;
+                var cdi        = false;
+                var mode2      = false;
+                var firstAudio = false;
+                var firstData  = false;
+                var audio      = false;
 
-                for(int i = 0; i < _discImage.Tracks.Count; i++)
+                for(var i = 0; i < _discImage.Tracks.Count; i++)
                 {
                     // First track is audio
                     firstAudio |= i == 0 && _discImage.Tracks[i].TrackType == CDRWIN_TRACK_TYPE_AUDIO;
@@ -1172,7 +1198,7 @@ public sealed partial class CdrWin
                         sessions.Length > 1 &&
                         mode2)
                     _discImage.MediaType = MediaType.CDPLUS;
-                else if((firstData && audio) || mode2)
+                else if(firstData && audio || mode2)
                     _discImage.MediaType = MediaType.CDROMXA;
                 else if(!audio)
                     _discImage.MediaType = MediaType.CDROM;
@@ -1217,16 +1243,20 @@ public sealed partial class CdrWin
             if(_discImage.CdTextFile == null)
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.CD_TEXT_binary_file_not_set);
             else
+            {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.CD_TEXT_binary_file_0,
                                            _discImage.CdTextFile);
+            }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_information);
 
             if(_discImage.OriginalMediaType == null)
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.ISOBuster_disc_type_not_set);
             else
+            {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.ISOBuster_disc_type_0,
                                            _discImage.OriginalMediaType);
+            }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Guessed_disk_type_0, _discImage.MediaType);
 
@@ -1260,8 +1290,8 @@ public sealed partial class CdrWin
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_0_information, t.Sequence);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization._0_bytes_per_sector, t.Bps);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Pregap_0_sectors, t.Pregap);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Data_0_sectors, t.Sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Pregap_0_sectors,    t.Pregap);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Data_0_sectors,      t.Sectors);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Postgap_0_sectors, t.Postgap);
 
@@ -1285,8 +1315,10 @@ public sealed partial class CdrWin
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Indexes);
 
                 foreach(KeyValuePair<ushort, int> kvp in t.Indexes)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t\t" + Localization.Index_0_starts_at_sector_1,
                                                kvp.Key, kvp.Value);
+                }
 
                 if(t.Isrc == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.ISRC_is_not_set);
@@ -1327,9 +1359,9 @@ public sealed partial class CdrWin
             foreach(CdrWinTrack track in _discImage.Tracks)
                 _imageInfo.ImageSize += track.Bps * track.Sectors;
 
-            int    currentSector          = 0;
-            int    currentFileStartSector = 0;
-            string currentFilePath        = "";
+            var currentSector          = 0;
+            var currentFileStartSector = 0;
+            var currentFilePath        = "";
             firstTrackInSession = true;
 
             foreach(CdrWinTrack track in _discImage.Tracks)
@@ -1361,7 +1393,7 @@ public sealed partial class CdrWin
                 currentSector += (int)track.Sectors;
             }
 
-            for(int s = 0; s < sessions.Length; s++)
+            for(var s = 0; s < sessions.Length; s++)
             {
                 if(!_discImage.Tracks[(int)sessions[s].StartTrack - 1].Indexes.
                                TryGetValue(0, out int sessionTrackStart))
@@ -1376,7 +1408,7 @@ public sealed partial class CdrWin
                 sessions[s].EndSector += _discImage.Tracks[(int)sessions[s].EndTrack - 1].Sectors - 1;
             }
 
-            for(int s = 1; s <= sessions.Length; s++)
+            for(var s = 1; s <= sessions.Length; s++)
                 _discImage.Sessions.Add(sessions[s - 1]);
 
             _imageInfo.Sectors = _discImage.Sessions.MaxBy(s => s.EndSector).EndSector + 1;
@@ -1386,7 +1418,7 @@ public sealed partial class CdrWin
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Disc_contains_0_sessions,
                                        _discImage.Sessions.Count);
 
-            for(int i = 0; i < _discImage.Sessions.Count; i++)
+            for(var i = 0; i < _discImage.Sessions.Count; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Session_0_information, i + 1);
 
@@ -1411,7 +1443,7 @@ public sealed partial class CdrWin
 
             _offsetMap = new Dictionary<uint, ulong>();
 
-            for(int i = 0; i < _discImage.Tracks.Count; i++)
+            for(var i = 0; i < _discImage.Tracks.Count; i++)
             {
                 if(_discImage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
@@ -1445,13 +1477,17 @@ public sealed partial class CdrWin
 
                 if(_discImage.IsRedumpGigadisc &&
                    _discImage.Tracks[i].Sequence == 3)
+                {
                     _offsetMap.Add(_discImage.Tracks[i].Sequence,
                                    gdRomSession2Offset - (ulong)_discImage.Tracks[i].Pregap);
+                }
                 else if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
                     _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
                 else if(_discImage.Tracks[i].Sequence > 1)
+                {
                     _offsetMap.Add(_discImage.Tracks[i].Sequence,
                                    (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap));
+                }
                 else
                     _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)_discImage.Tracks[i].Indexes[1]);
 
@@ -1463,7 +1499,7 @@ public sealed partial class CdrWin
 
             foreach(Partition partition in Partitions)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, partition.Sequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0,    partition.Sequence);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_name_0, partition.Name);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0,
@@ -1529,6 +1565,7 @@ public sealed partial class CdrWin
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
             foreach(CdrWinTrack track in _discImage.Tracks)
+            {
                 switch(track.TrackType)
                 {
                     case CDRWIN_TRACK_TYPE_AUDIO:
@@ -1602,6 +1639,7 @@ public sealed partial class CdrWin
                         break;
                     }
                 }
+            }
 
             _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
@@ -1612,10 +1650,10 @@ public sealed partial class CdrWin
 
             _sectorBuilder = new SectorBuilder();
 
-            int mediaTypeAsInt = (int)_discImage.MediaType;
+            var mediaTypeAsInt = (int)_discImage.MediaType;
 
             _isCd = mediaTypeAsInt is >= 10 and <= 39 or 112 or 113 or >= 150 and <= 152 or 154 or 155
-                        or >= 171 and <= 179 or >= 740 and <= 749;
+                                   or >= 171 and <= 179 or >= 740 and <= 749;
 
             if(currentSession > 1           &&
                leadouts.Count == 0          &&
@@ -1651,7 +1689,8 @@ public sealed partial class CdrWin
                 track.Indexes.Remove(0);
                 track.Pregap = 0;
 
-                for(int s = 0; s < sessions.Length; s++)
+                for(var s = 0; s < sessions.Length; s++)
+                {
                     if(sessions[s].Sequence > 1 &&
                        track.Sequence       == sessions[s].StartTrack)
                     {
@@ -1659,6 +1698,7 @@ public sealed partial class CdrWin
                         track.Sectors           -= 150;
                         sessions[s].StartSector =  (ulong)track.Indexes[1];
                     }
+                }
             }
 
             _discImage.Sessions = sessions.ToList();
@@ -1668,7 +1708,7 @@ public sealed partial class CdrWin
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.Filename);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -1695,7 +1735,8 @@ public sealed partial class CdrWin
                 // TODO: Check binary text file exists, open it, read it, send it to caller.
                 return _discImage.CdTextFile != null ? ErrorNumber.NotImplemented : ErrorNumber.NoData;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
     }
 
@@ -1719,10 +1760,12 @@ public sealed partial class CdrWin
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrwinTrack in _discImage.Tracks
                                                  where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1736,10 +1779,12 @@ public sealed partial class CdrWin
         if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             return ReadSectorsTag(sectorAddress, length, 0, tag, out buffer);
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrwinTrack in _discImage.Tracks
                                                  where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                 select kvp)
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1760,7 +1805,7 @@ public sealed partial class CdrWin
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch(aaruTrack.TrackType)
         {
@@ -1825,7 +1870,8 @@ public sealed partial class CdrWin
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -1894,9 +1940,9 @@ public sealed partial class CdrWin
 
             buffer = br.ReadBytes((int)(sectorSize * length));
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1908,19 +1954,21 @@ public sealed partial class CdrWin
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
@@ -1949,7 +1997,8 @@ public sealed partial class CdrWin
             case SectorTagType.CdSectorHeader:
             case SectorTagType.CdSectorSubchannel:
             case SectorTagType.CdSectorSubHeader:
-            case SectorTagType.CdSectorSync: break;
+            case SectorTagType.CdSectorSync:
+                break;
             case SectorTagType.CdTrackFlags:
             {
                 CdFlags flags = 0;
@@ -1967,10 +2016,7 @@ public sealed partial class CdrWin
                 if(aaruTrack.Flag4Ch)
                     flags |= CdFlags.FourChannel;
 
-                buffer = new[]
-                {
-                    (byte)flags
-                };
+                buffer = new[] { (byte)flags };
 
                 return ErrorNumber.NoError;
             }
@@ -1981,8 +2027,10 @@ public sealed partial class CdrWin
                 buffer = Encoding.UTF8.GetBytes(aaruTrack.Isrc);
 
                 return ErrorNumber.NoError;
-            case SectorTagType.CdTrackText: return ErrorNumber.NotImplemented;
-            default:                        return ErrorNumber.NotSupported;
+            case SectorTagType.CdTrackText:
+                return ErrorNumber.NotImplemented;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         switch(aaruTrack.TrackType)
@@ -2039,7 +2087,8 @@ public sealed partial class CdrWin
 
                 break;
             }
-            case CDRWIN_TRACK_TYPE_AUDIO: return ErrorNumber.NoData;
+            case CDRWIN_TRACK_TYPE_AUDIO:
+                return ErrorNumber.NoData;
             case CDRWIN_TRACK_TYPE_MODE1_RAW:
             {
                 switch(tag)
@@ -2108,7 +2157,8 @@ public sealed partial class CdrWin
                 break;
             }
             case CDRWIN_TRACK_TYPE_MODE2_RAW: // Requires reading sector
-            case CDRWIN_TRACK_TYPE_CDI_RAW: return ErrorNumber.NotImplemented;
+            case CDRWIN_TRACK_TYPE_CDI_RAW:
+                return ErrorNumber.NotImplemented;
             case CDRWIN_TRACK_TYPE_CDG:
             {
                 if(tag != SectorTagType.CdSectorSubchannel)
@@ -2120,7 +2170,8 @@ public sealed partial class CdrWin
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -2161,13 +2212,15 @@ public sealed partial class CdrWin
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         return ErrorNumber.NoError;
     }
@@ -2185,10 +2238,12 @@ public sealed partial class CdrWin
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrwinTrack in _discImage.Tracks
                                                  where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -2261,7 +2316,8 @@ public sealed partial class CdrWin
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -2326,7 +2382,8 @@ public sealed partial class CdrWin
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -2334,13 +2391,14 @@ public sealed partial class CdrWin
 
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         switch(aaruTrack.TrackType)
         {
             case CDRWIN_TRACK_TYPE_MODE1:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -2356,8 +2414,8 @@ public sealed partial class CdrWin
             }
             case CDRWIN_TRACK_TYPE_MODE2_FORM1:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -2375,8 +2433,8 @@ public sealed partial class CdrWin
             }
             case CDRWIN_TRACK_TYPE_MODE2_FORM2:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -2395,16 +2453,16 @@ public sealed partial class CdrWin
             case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
             case CDRWIN_TRACK_TYPE_CDI:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
                     _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
                                                      (long)(sectorAddress + i));
 
-                    Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
-                    Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    Array.Copy(buffer,     i * 2336, fullSector, 16,       2336);
+                    Array.Copy(fullSector, 0,        fullBuffer, i * 2352, 2352);
                 }
 
                 buffer = fullBuffer;
@@ -2423,4 +2481,6 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session) =>
         Tracks.Where(t => t.Session == session).OrderBy(t => t.Sequence).ToList();
+
+#endregion
 }

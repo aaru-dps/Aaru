@@ -40,6 +40,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class T98
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -49,19 +51,23 @@ public sealed partial class T98
         if(stream.Length % 256 != 0)
             return false;
 
-        byte[] hdrB = new byte[256];
+        var hdrB = new byte[256];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
-        for(int i = 4; i < 256; i++)
+        for(var i = 4; i < 256; i++)
+        {
             if(hdrB[i] != 0)
                 return false;
+        }
 
-        int cylinders = BitConverter.ToInt32(hdrB, 0);
+        var cylinders = BitConverter.ToInt32(hdrB, 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.cylinders_equal_0, cylinders);
 
         // This format is expanding, so length can be smaller
         // Just grow it, I won't risk false positives...
-        return stream.Length == (cylinders * 8 * 33 * 256) + 256;
+        return stream.Length == cylinders * 8 * 33 * 256 + 256;
     }
+
+#endregion
 }

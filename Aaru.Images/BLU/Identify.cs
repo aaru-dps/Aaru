@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Blu
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,7 +50,7 @@ public sealed partial class Blu
         if(stream.Length < 0x200)
             return false;
 
-        byte[] header = new byte[0x17];
+        var header = new byte[0x17];
         stream.EnsureRead(header, 0, 0x17);
 
         var tmpHdr = new BluHeader
@@ -61,10 +63,14 @@ public sealed partial class Blu
         tmpHdr.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
         tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-        for(int i = 0; i < 0xD; i++)
+        for(var i = 0; i < 0xD; i++)
+        {
             if(tmpHdr.DeviceName[i] < 0x20)
                 return false;
+        }
 
         return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
     }
+
+#endregion
 }

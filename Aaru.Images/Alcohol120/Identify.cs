@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,10 +50,12 @@ public sealed partial class Alcohol120
         if(stream.Length < 88)
             return false;
 
-        byte[] hdr = new byte[88];
+        var hdr = new byte[88];
         stream.EnsureRead(hdr, 0, 88);
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
         return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= MAXIMUM_SUPPORTED_VERSION;
     }
+
+#endregion
 }

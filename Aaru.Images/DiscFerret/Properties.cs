@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiscFerret
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.DiscFerret_Name;
+
     /// <inheritdoc />
     public Guid Id => new("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Format => "DiscFerret";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

@@ -39,19 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Partimage_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Partimage";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class TeleDisk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
@@ -51,4 +53,6 @@ public sealed partial class TeleDisk
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

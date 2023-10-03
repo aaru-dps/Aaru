@@ -34,6 +34,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
+#region Nested type: Header
+
     // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
     struct Header
     {
@@ -56,4 +58,6 @@ public sealed partial class DiskCopy42
         /// <summary>0x53, reserved, always 0x00</summary>
         public byte Reserved;
     }
+
+#endregion
 }

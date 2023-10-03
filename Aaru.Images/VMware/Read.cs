@@ -47,6 +47,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -54,12 +56,12 @@ public sealed partial class VMware
 
         _vmEHdr = new ExtentHeader();
         _vmCHdr = new CowHeader();
-        bool embedded = false;
+        var embedded = false;
 
         if(stream.Length > Marshal.SizeOf<ExtentHeader>())
         {
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+            var vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
             stream.EnsureRead(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
         }
@@ -67,14 +69,14 @@ public sealed partial class VMware
         if(stream.Length > Marshal.SizeOf<CowHeader>())
         {
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+            var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
             stream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
             _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
         }
 
-        var  ddfStream = new MemoryStream();
-        bool vmEHdrSet = false;
-        bool cowD      = false;
+        var ddfStream = new MemoryStream();
+        var vmEHdrSet = false;
+        var cowD      = false;
 
         if(_vmEHdr.magic == VMWARE_EXTENT_MAGIC)
         {
@@ -89,7 +91,7 @@ public sealed partial class VMware
                 return ErrorNumber.InvalidArgument;
             }
 
-            byte[] ddfEmbed = new byte[_vmEHdr.descriptorSize * SECTOR_SIZE];
+            var ddfEmbed = new byte[_vmEHdr.descriptorSize * SECTOR_SIZE];
 
             stream.Seek((long)(_vmEHdr.descriptorOffset * SECTOR_SIZE), SeekOrigin.Begin);
             stream.EnsureRead(ddfEmbed, 0, ddfEmbed.Length);
@@ -104,7 +106,7 @@ public sealed partial class VMware
         }
         else
         {
-            byte[] ddfMagic = new byte[0x15];
+            var ddfMagic = new byte[0x15];
             stream.Seek(0, SeekOrigin.Begin);
             stream.EnsureRead(ddfMagic, 0, 0x15);
 
@@ -116,7 +118,7 @@ public sealed partial class VMware
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] ddfExternal = new byte[imageFilter.DataForkLength];
+            var ddfExternal = new byte[imageFilter.DataForkLength];
             stream.EnsureRead(ddfExternal, 0, ddfExternal.Length);
             ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
         }
@@ -128,7 +130,7 @@ public sealed partial class VMware
 
         if(cowD)
         {
-            int    cowCount = 1;
+            var    cowCount = 1;
             string basePath = Path.GetFileNameWithoutExtension(imageFilter.BasePath);
 
             while(true)
@@ -149,7 +151,7 @@ public sealed partial class VMware
                 if(stream.Length > Marshal.SizeOf<CowHeader>())
                 {
                     extentStream.Seek(0, SeekOrigin.Begin);
-                    byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+                    var vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
                     extentStream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
                     CowHeader extHdrCow = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
@@ -238,13 +240,15 @@ public sealed partial class VMware
                     };
 
                     if(!embedded)
+                    {
                         newExtent.Filter =
                             new FiltersList().GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.BasePath),
                                                                      matchExtent.Groups["filename"].Value));
+                    }
                     else
                         newExtent.Filter = imageFilter;
 
-                    uint.TryParse(matchExtent.Groups["offset"].Value, out newExtent.Offset);
+                    uint.TryParse(matchExtent.Groups["offset"].Value,  out newExtent.Offset);
                     uint.TryParse(matchExtent.Groups["sectors"].Value, out newExtent.Sectors);
                     newExtent.Type = matchExtent.Groups["type"].Value;
 
@@ -345,7 +349,7 @@ public sealed partial class VMware
                 return ErrorNumber.InvalidArgument;
             }
 
-            byte[] extentHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+            var extentHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
             extentStream.EnsureRead(extentHdrB, 0, Marshal.SizeOf<ExtentHeader>());
             ExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(extentHdrB);
 
@@ -359,8 +363,9 @@ public sealed partial class VMware
             if(extentHdr.capacity < extent.Sectors)
             {
                 AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Extent_contains_incorrect_number_of_sectors_0_1_were_expected,
-                                                 extentHdr.capacity, extent.Sectors));
+                    ErrorWriteLine(string.Format(
+                                       Localization.Extent_contains_incorrect_number_of_sectors_0_1_were_expected,
+                                       extentHdr.capacity, extent.Sectors));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -404,18 +409,18 @@ public sealed partial class VMware
         {
             case true when !cowD:
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.version = {0}", _vmEHdr.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.capacity = {0}", _vmEHdr.capacity);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.magic = 0x{0:X8}",       _vmEHdr.magic);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.version = {0}",          _vmEHdr.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.flags = 0x{0:X8}",       _vmEHdr.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.capacity = {0}",         _vmEHdr.capacity);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.grainSize = {0}",        _vmEHdr.grainSize);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.overhead = {0}", _vmEHdr.overhead);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.descriptorSize = {0}",   _vmEHdr.descriptorSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.GTEsPerGT = {0}",        _vmEHdr.GTEsPerGT);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.rgdOffset = {0}",        _vmEHdr.rgdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.gdOffset = {0}",         _vmEHdr.gdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.overhead = {0}",         _vmEHdr.overhead);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.uncleanShutdown = {0}",  _vmEHdr.uncleanShutdown);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.singleEndLineChar = 0x{0:X2}",
                                            _vmEHdr.singleEndLineChar);
@@ -443,18 +448,18 @@ public sealed partial class VMware
                 break;
             }
             case true when cowD:
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.version = {0}", _vmCHdr.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.sectors = {0}", _vmCHdr.sectors);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.magic = 0x{0:X8}",   _vmCHdr.magic);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.version = {0}",      _vmCHdr.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.flags = 0x{0:X8}",   _vmCHdr.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.sectors = {0}",      _vmCHdr.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.grainSize = {0}",    _vmCHdr.grainSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.gdOffset = {0}",     _vmCHdr.gdOffset);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.heads = {0}", _vmCHdr.heads);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.spt = {0}", _vmCHdr.spt);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.generation = {0}", _vmCHdr.generation);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.freeSector = {0}",   _vmCHdr.freeSector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.cylinders = {0}",    _vmCHdr.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.heads = {0}",        _vmCHdr.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.spt = {0}",          _vmCHdr.spt);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.generation = {0}",   _vmCHdr.generation);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.name = {0}",
                                            StringHandlers.CToString(_vmCHdr.name));
@@ -495,7 +500,7 @@ public sealed partial class VMware
             gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_grain_directory);
-            byte[] gdBytes = new byte[gdEntries * 4];
+            var gdBytes = new byte[gdEntries * 4];
             gdStream.EnsureRead(gdBytes, 0, gdBytes.Length);
             Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
@@ -505,7 +510,7 @@ public sealed partial class VMware
 
             foreach(uint gtOff in gd)
             {
-                byte[] gtBytes = new byte[gtEsPerGt * 4];
+                var gtBytes = new byte[gtEsPerGt * 4];
                 gdStream.Seek(gtOff * SECTOR_SIZE, SeekOrigin.Begin);
                 gdStream.EnsureRead(gtBytes, 0, gtBytes.Length);
 
@@ -594,7 +599,7 @@ public sealed partial class VMware
             return ErrorNumber.NoError;
 
         var   currentExtent     = new Extent();
-        bool  extentFound       = false;
+        var   extentFound       = false;
         ulong extentStartSector = 0;
 
         foreach(KeyValuePair<ulong, Extent> kvp in _extents.Where(kvp => sectorAddress >= kvp.Key))
@@ -645,7 +650,8 @@ public sealed partial class VMware
 
         switch(grainOff)
         {
-            case 0 when _hasParent: return _parentImage.ReadSector(sectorAddress, out buffer);
+            case 0 when _hasParent:
+                return _parentImage.ReadSector(sectorAddress, out buffer);
             case 0 or 1:
             {
                 buffer = new byte[SECTOR_SIZE];
@@ -710,4 +716,6 @@ public sealed partial class VMware
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

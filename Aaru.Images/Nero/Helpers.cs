@@ -40,36 +40,55 @@ public sealed partial class Nero
     {
         switch(type)
         {
-            case NeroMediaTypes.NeroMtypDdcd: return CommonTypes.MediaType.DDCD;
+            case NeroMediaTypes.NeroMtypDdcd:
+                return CommonTypes.MediaType.DDCD;
             case NeroMediaTypes.NeroMtypDvdM:
-            case NeroMediaTypes.NeroMtypDvdMR: return CommonTypes.MediaType.DVDR;
+            case NeroMediaTypes.NeroMtypDvdMR:
+                return CommonTypes.MediaType.DVDR;
             case NeroMediaTypes.NeroMtypDvdP:
-            case NeroMediaTypes.NeroMtypDvdPR: return CommonTypes.MediaType.DVDPR;
-            case NeroMediaTypes.NeroMtypDvdRam: return CommonTypes.MediaType.DVDRAM;
+            case NeroMediaTypes.NeroMtypDvdPR:
+                return CommonTypes.MediaType.DVDPR;
+            case NeroMediaTypes.NeroMtypDvdRam:
+                return CommonTypes.MediaType.DVDRAM;
             case NeroMediaTypes.NeroMtypMl:
             case NeroMediaTypes.NeroMtypMrw:
-            case NeroMediaTypes.NeroMtypCdrw: return CommonTypes.MediaType.CDRW;
-            case NeroMediaTypes.NeroMtypCdr: return CommonTypes.MediaType.CDR;
+            case NeroMediaTypes.NeroMtypCdrw:
+                return CommonTypes.MediaType.CDRW;
+            case NeroMediaTypes.NeroMtypCdr:
+                return CommonTypes.MediaType.CDR;
             case NeroMediaTypes.NeroMtypDvdRom:
             case NeroMediaTypes.NeroMtypDvdAny:
             case NeroMediaTypes.NeroMtypDvdAnyR9:
-            case NeroMediaTypes.NeroMtypDvdAnyOld: return CommonTypes.MediaType.DVDROM;
-            case NeroMediaTypes.NeroMtypCdrom:  return CommonTypes.MediaType.CDROM;
-            case NeroMediaTypes.NeroMtypDvdMRw: return CommonTypes.MediaType.DVDRW;
-            case NeroMediaTypes.NeroMtypDvdPRw: return CommonTypes.MediaType.DVDPRW;
-            case NeroMediaTypes.NeroMtypDvdPR9: return CommonTypes.MediaType.DVDPRDL;
-            case NeroMediaTypes.NeroMtypDvdMR9: return CommonTypes.MediaType.DVDRDL;
+            case NeroMediaTypes.NeroMtypDvdAnyOld:
+                return CommonTypes.MediaType.DVDROM;
+            case NeroMediaTypes.NeroMtypCdrom:
+                return CommonTypes.MediaType.CDROM;
+            case NeroMediaTypes.NeroMtypDvdMRw:
+                return CommonTypes.MediaType.DVDRW;
+            case NeroMediaTypes.NeroMtypDvdPRw:
+                return CommonTypes.MediaType.DVDPRW;
+            case NeroMediaTypes.NeroMtypDvdPR9:
+                return CommonTypes.MediaType.DVDPRDL;
+            case NeroMediaTypes.NeroMtypDvdMR9:
+                return CommonTypes.MediaType.DVDRDL;
             case NeroMediaTypes.NeroMtypBd:
             case NeroMediaTypes.NeroMtypBdAny:
-            case NeroMediaTypes.NeroMtypBdRom: return CommonTypes.MediaType.BDROM;
-            case NeroMediaTypes.NeroMtypBdR:  return CommonTypes.MediaType.BDR;
-            case NeroMediaTypes.NeroMtypBdRe: return CommonTypes.MediaType.BDRE;
+            case NeroMediaTypes.NeroMtypBdRom:
+                return CommonTypes.MediaType.BDROM;
+            case NeroMediaTypes.NeroMtypBdR:
+                return CommonTypes.MediaType.BDR;
+            case NeroMediaTypes.NeroMtypBdRe:
+                return CommonTypes.MediaType.BDRE;
             case NeroMediaTypes.NeroMtypHdDvd:
             case NeroMediaTypes.NeroMtypHdDvdAny:
-            case NeroMediaTypes.NeroMtypHdDvdRom: return CommonTypes.MediaType.HDDVDROM;
-            case NeroMediaTypes.NeroMtypHdDvdR:  return CommonTypes.MediaType.HDDVDR;
-            case NeroMediaTypes.NeroMtypHdDvdRw: return CommonTypes.MediaType.HDDVDRW;
-            default:                             return CommonTypes.MediaType.CD;
+            case NeroMediaTypes.NeroMtypHdDvdRom:
+                return CommonTypes.MediaType.HDDVDROM;
+            case NeroMediaTypes.NeroMtypHdDvdR:
+                return CommonTypes.MediaType.HDDVDR;
+            case NeroMediaTypes.NeroMtypHdDvdRw:
+                return CommonTypes.MediaType.HDDVDRW;
+            default:
+                return CommonTypes.MediaType.CD;
         }
     }
 
@@ -79,15 +98,21 @@ public sealed partial class Nero
         {
             case DaoMode.Data:
             case DaoMode.DataRaw:
-            case DaoMode.DataRawSub: return TrackType.CdMode1;
-            case DaoMode.DataM2F1: return TrackType.CdMode2Form1;
-            case DaoMode.DataM2F2: return TrackType.CdMode2Form2;
+            case DaoMode.DataRawSub:
+                return TrackType.CdMode1;
+            case DaoMode.DataM2F1:
+                return TrackType.CdMode2Form1;
+            case DaoMode.DataM2F2:
+                return TrackType.CdMode2Form2;
             case DaoMode.DataM2RawSub:
-            case DaoMode.DataM2Raw: return TrackType.CdMode2Formless;
+            case DaoMode.DataM2Raw:
+                return TrackType.CdMode2Formless;
             case DaoMode.Audio:
             case DaoMode.AudioAlt:
-            case DaoMode.AudioSub: return TrackType.Audio;
-            default: return TrackType.Data;
+            case DaoMode.AudioSub:
+                return TrackType.Audio;
+            default:
+                return TrackType.Data;
         }
     }
 
@@ -96,16 +121,21 @@ public sealed partial class Nero
         switch(mode)
         {
             case DaoMode.Data:
-            case DaoMode.DataM2F1: return 2048;
-            case DaoMode.DataM2F2: return 2336;
+            case DaoMode.DataM2F1:
+                return 2048;
+            case DaoMode.DataM2F2:
+                return 2336;
             case DaoMode.DataRaw:
             case DaoMode.DataM2Raw:
             case DaoMode.AudioAlt:
-            case DaoMode.Audio: return 2352;
+            case DaoMode.Audio:
+                return 2352;
             case DaoMode.DataM2RawSub:
             case DaoMode.DataRawSub:
-            case DaoMode.AudioSub: return 2448;
-            default: return 2352;
+            case DaoMode.AudioSub:
+                return 2448;
+            default:
+                return 2352;
         }
     }
 }

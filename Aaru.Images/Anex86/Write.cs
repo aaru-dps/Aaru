@@ -44,9 +44,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize == 0)
         {
@@ -133,7 +135,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -165,7 +167,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(4096 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -200,8 +202,8 @@ public sealed partial class Anex86
         }
 
         if(_imageInfo.MediaType is MediaType.Unknown or MediaType.GENERIC_HDD or MediaType.FlashDrive
-               or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
-               or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
+                                or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
+                                or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
            _header.cylinders == 0)
         {
             _header.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
@@ -226,7 +228,7 @@ public sealed partial class Anex86
             }
         }
 
-        byte[] hdr = new byte[Marshal.SizeOf<Header>()];
+        var hdr = new byte[Marshal.SizeOf<Header>()];
         MemoryMarshal.Write(hdr, in _header);
 
         _writingStream.Seek(0, SeekOrigin.Begin);
@@ -296,4 +298,6 @@ public sealed partial class Anex86
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

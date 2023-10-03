@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite4
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,9 +50,11 @@ public sealed partial class BlindWrite4
         if(stream.Length < 19)
             return false;
 
-        byte[] signature = new byte[19];
+        var signature = new byte[19];
         stream.EnsureRead(signature, 0, 19);
 
         return _bw4Signature.SequenceEqual(signature);
     }
+
+#endregion
 }

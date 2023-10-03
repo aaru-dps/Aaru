@@ -45,7 +45,7 @@ public sealed partial class DiskCopy42
         {
             dc42Chk += (uint)(buffer[i] << 8);
             dc42Chk += buffer[i + 1];
-            dc42Chk =  (dc42Chk >> 1) | (dc42Chk << 31);
+            dc42Chk =  dc42Chk >> 1 | dc42Chk << 31;
         }
 
         return dc42Chk;

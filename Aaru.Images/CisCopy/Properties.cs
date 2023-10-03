@@ -41,22 +41,32 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public string Name => Localization.CisCopy_Name;
+
     /// <inheritdoc />
     public Guid Id => new("EDF20CC7-6012-49E2-9E92-663A53E42130");
+
     /// <inheritdoc />
     public string Format => "CisCopy";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -67,16 +77,19 @@ public sealed partial class CisCopy
         MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
         MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".dcf"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".dcf" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
+#region IWritableOpticalImage Members
+
     // Due to .cue format, this method must parse whole file, ignoring errors (those will be returned by OpenImage()).
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -50,14 +52,14 @@ public sealed partial class CdrWin
         try
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-            byte[] testArray = new byte[512];
+            var testArray = new byte[512];
             imageFilter.GetDataForkStream().EnsureRead(testArray, 0, 512);
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
 
             // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
-            bool twoConsecutiveNulls = false;
+            var twoConsecutiveNulls = false;
 
-            for(int i = 0; i < 512; i++)
+            for(var i = 0; i < 512; i++)
             {
                 if(i >= imageFilter.GetDataForkStream().Length)
                     break;
@@ -106,10 +108,12 @@ public sealed partial class CdrWin
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, _cdrwinFilter);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex.Message);
-            AaruConsole.ErrorWriteLine(Localization.Stack_trace_0, ex.StackTrace);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex.Message);
+            AaruConsole.ErrorWriteLine(Localization.Stack_trace_0,                             ex.StackTrace);
 
             return false;
         }
     }
+
+#endregion
 }

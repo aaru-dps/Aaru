@@ -42,11 +42,12 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing XGD emulator disk images</summary>
 public sealed partial class Apple2Mg : IWritableImage
 {
-    IFilter    _a2MgImageFilter;
-    byte[]     _decodedImage;
-    Header     _imageHeader;
-    ImageInfo  _imageInfo;
-    FileStream _writingStream;
+    const string MODULE_NAME = "2MG plugin";
+    IFilter      _a2MgImageFilter;
+    byte[]       _decodedImage;
+    Header       _imageHeader;
+    ImageInfo    _imageInfo;
+    FileStream   _writingStream;
 
     public Apple2Mg() => _imageInfo = new ImageInfo
     {
@@ -71,6 +72,4 @@ public sealed partial class Apple2Mg : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "2MG plugin";
 }

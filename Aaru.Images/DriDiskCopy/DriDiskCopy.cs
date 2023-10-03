@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing DR-DOS' DISKCOPY disk images</summary>
 public sealed partial class DriDiskCopy : IWritableImage
 {
+    const string MODULE_NAME = "DRI DiskCopy plugin";
     /// <summary>Disk image file</summary>
     IFilter _driImageFilter;
 
@@ -71,6 +72,4 @@ public sealed partial class DriDiskCopy : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "DRI DiskCopy plugin";
 }

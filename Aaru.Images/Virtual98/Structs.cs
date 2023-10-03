@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
+#region Nested type: Virtual98Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Virtual98Header
     {
@@ -53,4 +55,6 @@ public sealed partial class Virtual98
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)]
         public byte[] padding2;
     }
+
+#endregion
 }

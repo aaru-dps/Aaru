@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading partclone disk images</summary>
 public sealed partial class PartClone : IMediaImage, IVerifiableImage
 {
+    const string MODULE_NAME = "PartClone plugin";
     // The used block "bitmap" uses one byte per block
     // TODO: Convert on-image bytemap to on-memory bitmap
     byte[]                    _byteMap;
@@ -76,6 +77,4 @@ public sealed partial class PartClone : IMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "PartClone plugin";
 }

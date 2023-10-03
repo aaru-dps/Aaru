@@ -45,7 +45,7 @@ public sealed partial class Qed
 
     static int Ctz32(uint val)
     {
-        int cnt = 0;
+        var cnt = 0;
 
         if((val & 0xFFFF) == 0)
         {

@@ -47,6 +47,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Gdi
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -57,8 +59,8 @@ public sealed partial class Gdi
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _gdiStream = new StreamReader(imageFilter.GetDataForkStream());
-            int  lineNumber  = 0;
-            bool highDensity = false;
+            var lineNumber  = 0;
+            var highDensity = false;
 
             // Initialize all RegExs
             var regexTrack = new Regex(REGEX_TRACK);
@@ -125,6 +127,7 @@ public sealed partial class Gdi
                 currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
 
                 if(currentTrack.StartSector - currentStart > 0)
+                {
                     if(currentTrack.StartSector == 45000)
                     {
                         highDensity = true;
@@ -137,6 +140,7 @@ public sealed partial class Gdi
                         currentTrack.Pregap      =  currentTrack.StartSector - currentStart;
                         currentTrack.StartSector -= currentTrack.StartSector - currentStart;
                     }
+                }
 
                 if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
                 {
@@ -157,9 +161,10 @@ public sealed partial class Gdi
                 _discImage.Tracks.Add(currentTrack);
             }
 
-            Session[] sessions = new Session[2];
+            var sessions = new Session[2];
 
-            for(int s = 0; s < sessions.Length; s++)
+            for(var s = 0; s < sessions.Length; s++)
+            {
                 if(s == 0)
                 {
                     sessions[s].Sequence = 1;
@@ -202,6 +207,7 @@ public sealed partial class Gdi
                             sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                     }
                 }
+            }
 
             _discImage.Sessions.Add(sessions[0]);
             _discImage.Sessions.Add(sessions[1]);
@@ -216,7 +222,7 @@ public sealed partial class Gdi
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Disc_contains_0_sessions,
                                        _discImage.Sessions.Count);
 
-            for(int i = 0; i < _discImage.Sessions.Count; i++)
+            for(var i = 0; i < _discImage.Sessions.Count; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Session_0_information, i + 1);
 
@@ -238,7 +244,7 @@ public sealed partial class Gdi
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Disc_contains_0_tracks,
                                        _discImage.Tracks.Count);
 
-            for(int i = 0; i < _discImage.Tracks.Count; i++)
+            for(var i = 0; i < _discImage.Tracks.Count; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_0_information,
                                            _discImage.Tracks[i].Sequence);
@@ -273,7 +279,7 @@ public sealed partial class Gdi
             Partitions = new List<Partition>();
             ulong byteOffset = 0;
 
-            for(int i = 0; i < _discImage.Tracks.Count; i++)
+            for(var i = 0; i < _discImage.Tracks.Count; i++)
             {
                 if(_discImage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
@@ -341,7 +347,7 @@ public sealed partial class Gdi
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -367,9 +373,12 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         _offsetMap.TryGetValue(0, out ulong transitionStart);
@@ -386,9 +395,12 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
         _offsetMap.TryGetValue(0, out ulong transitionStart);
@@ -464,7 +476,8 @@ public sealed partial class Gdi
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -485,8 +498,8 @@ public sealed partial class Gdi
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
-                                             (aaruTrack.Pregap * aaruTrack.Bps));
+        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
+                                             aaruTrack.Pregap * aaruTrack.Bps);
 
         if(pos < 0)
             pos = 0;
@@ -508,7 +521,7 @@ public sealed partial class Gdi
             }
             default:
             {
-                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
 
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
@@ -527,7 +540,7 @@ public sealed partial class Gdi
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
@@ -543,10 +556,7 @@ public sealed partial class Gdi
             if(tag != SectorTagType.CdTrackFlags)
                 return ErrorNumber.NotSupported;
 
-            buffer = new byte[]
-            {
-                0x00
-            };
+            buffer = new byte[] { 0x00 };
 
             return ErrorNumber.NoError;
         }
@@ -580,7 +590,8 @@ public sealed partial class Gdi
             case SectorTagType.CdSectorEccQ:
             case SectorTagType.CdSectorEdc:
             case SectorTagType.CdSectorHeader:
-            case SectorTagType.CdSectorSync: break;
+            case SectorTagType.CdSectorSync:
+                break;
             case SectorTagType.CdTrackFlags:
             {
                 buffer = new byte[1];
@@ -589,12 +600,14 @@ public sealed partial class Gdi
 
                 return ErrorNumber.NoError;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         switch(aaruTrack.TrackType)
         {
-            case TrackType.Audio: return ErrorNumber.NoData;
+            case TrackType.Audio:
+                return ErrorNumber.NoData;
             case TrackType.CdMode1:
             {
                 // TODO: Build
@@ -655,7 +668,8 @@ public sealed partial class Gdi
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -676,8 +690,8 @@ public sealed partial class Gdi
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
-                                             (aaruTrack.Pregap * aaruTrack.Bps));
+        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
+                                             aaruTrack.Pregap * aaruTrack.Bps);
 
         if(pos < 0)
             pos = 0;
@@ -699,7 +713,7 @@ public sealed partial class Gdi
             }
             default:
             {
-                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
 
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
@@ -730,9 +744,12 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -802,7 +819,8 @@ public sealed partial class Gdi
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -823,8 +841,8 @@ public sealed partial class Gdi
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
-                                             (aaruTrack.Pregap * aaruTrack.Bps));
+        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
+                                             aaruTrack.Pregap * aaruTrack.Bps);
 
         if(pos < 0)
             pos = 0;
@@ -846,7 +864,7 @@ public sealed partial class Gdi
             }
             default:
             {
-                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
 
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
@@ -865,8 +883,8 @@ public sealed partial class Gdi
         {
             case TrackType.CdMode1 when aaruTrack.Bps == 2048:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -905,10 +923,12 @@ public sealed partial class Gdi
                 expectedDensity = true;
 
                 break;
-            default: return null;
+            default:
+                return null;
         }
 
         foreach(GdiTrack gdiTrack in _discImage.Tracks)
+        {
             if(gdiTrack.HighDensity == expectedDensity)
             {
                 var track = new Track
@@ -932,7 +952,10 @@ public sealed partial class Gdi
 
                 tracks.Add(track);
             }
+        }
 
         return tracks;
     }
+
+#endregion
 }

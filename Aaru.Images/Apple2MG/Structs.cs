@@ -37,7 +37,10 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
-    [SuppressMessage("ReSharper", "NotAccessedField.Local"), StructLayout(LayoutKind.Sequential, Pack = 1)]
+#region Nested type: Header
+
+    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
         /// <summary>Offset 0x00, magic</summary>
@@ -75,4 +78,6 @@ public sealed partial class Apple2Mg
         /// <summary>Offset 0x3C, reserved, should be zero</summary>
         public readonly uint Reserved4;
     }
+
+#endregion
 }

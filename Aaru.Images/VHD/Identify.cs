@@ -38,13 +38,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream imageStream = imageFilter.GetDataForkStream();
 
-        byte[] headerCookieBytes = new byte[8];
-        byte[] footerCookieBytes = new byte[8];
+        var headerCookieBytes = new byte[8];
+        var footerCookieBytes = new byte[8];
 
         if(imageStream.Length % 2 == 0)
             imageStream.Seek(-512, SeekOrigin.End);
@@ -55,9 +57,11 @@ public sealed partial class Vhd
         imageStream.Seek(0, SeekOrigin.Begin);
         imageStream.EnsureRead(headerCookieBytes, 0, 8);
 
-        ulong headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
-        ulong footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
+        var headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
+        var footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 
         return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
     }
+
+#endregion
 }

@@ -39,14 +39,18 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiscFerret
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        byte[] magicB = new byte[4];
+        var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
         stream.EnsureRead(magicB, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicB, 0);
+        var magic = BitConverter.ToUInt32(magicB, 0);
 
         return magic is DFI_MAGIC or DFI_MAGIC2;
     }
+
+#endregion
 }

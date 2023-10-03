@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -53,7 +55,7 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -80,7 +82,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return false;
 
-        int counter = 0;
+        var counter = 0;
 
         foreach(int t in hdr.track_table)
         {
@@ -96,4 +98,6 @@ public sealed partial class D88
 
         return counter > 0;
     }
+
+#endregion
 }

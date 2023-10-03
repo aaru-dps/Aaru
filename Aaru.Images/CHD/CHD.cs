@@ -47,9 +47,9 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
 {
+    const string MODULE_NAME = "CHD plugin";
     /// <summary>"MComprHD"</summary>
     readonly byte[] _chdTag = "MComprHD"u8.ToArray();
-    SectorBuilder             _sectorBuilder;
     uint                      _bytesPerHunk;
     byte[]                    _cis;
     byte[]                    _expectedChecksum;
@@ -72,6 +72,7 @@ public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
     int                       _maxSectorCache;
     Dictionary<ulong, uint>   _offsetmap;
     List<Partition>           _partitions;
+    SectorBuilder             _sectorBuilder;
     Dictionary<ulong, byte[]> _sectorCache;
     uint                      _sectorsPerHunk;
     bool                      _swapAudio;
@@ -99,6 +100,4 @@ public sealed partial class Chd : IOpticalMediaImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CHD plugin";
 }

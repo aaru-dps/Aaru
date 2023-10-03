@@ -38,55 +38,84 @@ namespace Aaru.DiscImages;
 public sealed partial class BlindWrite5
 {
     static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType) => trackType switch
-    {
-        TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
-        TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
-        TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
-        TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
-        TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
-        _                 => CommonTypes.Enums.TrackType.Data
-    };
+        {
+            TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
+            TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
+            TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
+            TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
+            TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
+            _                 => CommonTypes.Enums.TrackType.Data
+        };
 
     static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
     {
         switch(profile)
         {
-            case ProfileNumber.BDRE:  return MediaType.BDRE;
-            case ProfileNumber.BDROM: return MediaType.BDROM;
+            case ProfileNumber.BDRE:
+                return MediaType.BDRE;
+            case ProfileNumber.BDROM:
+                return MediaType.BDROM;
             case ProfileNumber.BDRRdm:
-            case ProfileNumber.BDRSeq: return MediaType.BDR;
+            case ProfileNumber.BDRSeq:
+                return MediaType.BDR;
             case ProfileNumber.CDR:
-            case ProfileNumber.HDBURNR: return MediaType.CDR;
+            case ProfileNumber.HDBURNR:
+                return MediaType.CDR;
             case ProfileNumber.CDROM:
-            case ProfileNumber.HDBURNROM: return MediaType.CDROM;
+            case ProfileNumber.HDBURNROM:
+                return MediaType.CDROM;
             case ProfileNumber.CDRW:
-            case ProfileNumber.HDBURNRW: return MediaType.CDRW;
-            case ProfileNumber.DDCDR:       return MediaType.DDCDR;
-            case ProfileNumber.DDCDROM:     return MediaType.DDCD;
-            case ProfileNumber.DDCDRW:      return MediaType.DDCDRW;
-            case ProfileNumber.DVDDownload: return MediaType.DVDDownload;
-            case ProfileNumber.DVDRAM:      return MediaType.DVDRAM;
+            case ProfileNumber.HDBURNRW:
+                return MediaType.CDRW;
+            case ProfileNumber.DDCDR:
+                return MediaType.DDCDR;
+            case ProfileNumber.DDCDROM:
+                return MediaType.DDCD;
+            case ProfileNumber.DDCDRW:
+                return MediaType.DDCDRW;
+            case ProfileNumber.DVDDownload:
+                return MediaType.DVDDownload;
+            case ProfileNumber.DVDRAM:
+                return MediaType.DVDRAM;
             case ProfileNumber.DVDRDLJump:
-            case ProfileNumber.DVDRDLSeq: return MediaType.DVDRDL;
-            case ProfileNumber.DVDRDLPlus:  return MediaType.DVDPRDL;
-            case ProfileNumber.DVDROM:      return MediaType.DVDROM;
-            case ProfileNumber.DVDRPlus:    return MediaType.DVDPR;
-            case ProfileNumber.DVDRSeq:     return MediaType.DVDR;
-            case ProfileNumber.DVDRWDL:     return MediaType.DVDRWDL;
-            case ProfileNumber.DVDRWDLPlus: return MediaType.DVDPRWDL;
-            case ProfileNumber.DVDRWPlus:   return MediaType.DVDPRW;
+            case ProfileNumber.DVDRDLSeq:
+                return MediaType.DVDRDL;
+            case ProfileNumber.DVDRDLPlus:
+                return MediaType.DVDPRDL;
+            case ProfileNumber.DVDROM:
+                return MediaType.DVDROM;
+            case ProfileNumber.DVDRPlus:
+                return MediaType.DVDPR;
+            case ProfileNumber.DVDRSeq:
+                return MediaType.DVDR;
+            case ProfileNumber.DVDRWDL:
+                return MediaType.DVDRWDL;
+            case ProfileNumber.DVDRWDLPlus:
+                return MediaType.DVDPRWDL;
+            case ProfileNumber.DVDRWPlus:
+                return MediaType.DVDPRW;
             case ProfileNumber.DVDRWRes:
-            case ProfileNumber.DVDRWSeq: return MediaType.DVDRW;
-            case ProfileNumber.HDDVDR:    return MediaType.HDDVDR;
-            case ProfileNumber.HDDVDRAM:  return MediaType.HDDVDRAM;
-            case ProfileNumber.HDDVDRDL:  return MediaType.HDDVDRDL;
-            case ProfileNumber.HDDVDROM:  return MediaType.HDDVDROM;
-            case ProfileNumber.HDDVDRW:   return MediaType.HDDVDRW;
-            case ProfileNumber.HDDVDRWDL: return MediaType.HDDVDRWDL;
+            case ProfileNumber.DVDRWSeq:
+                return MediaType.DVDRW;
+            case ProfileNumber.HDDVDR:
+                return MediaType.HDDVDR;
+            case ProfileNumber.HDDVDRAM:
+                return MediaType.HDDVDRAM;
+            case ProfileNumber.HDDVDRDL:
+                return MediaType.HDDVDRDL;
+            case ProfileNumber.HDDVDROM:
+                return MediaType.HDDVDROM;
+            case ProfileNumber.HDDVDRW:
+                return MediaType.HDDVDRW;
+            case ProfileNumber.HDDVDRWDL:
+                return MediaType.HDDVDRWDL;
             case ProfileNumber.ASMO:
-            case ProfileNumber.MOErasable: return MediaType.UnknownMO;
-            case ProfileNumber.NonRemovable: return MediaType.GENERIC_HDD;
-            default:                         return MediaType.CD;
+            case ProfileNumber.MOErasable:
+                return MediaType.UnknownMO;
+            case ProfileNumber.NonRemovable:
+                return MediaType.GENERIC_HDD;
+            default:
+                return MediaType.CD;
         }
     }
 }

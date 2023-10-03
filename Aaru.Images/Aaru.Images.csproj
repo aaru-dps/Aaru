@@ -35,8 +35,8 @@
     <NoWarn>CS1591;CS1574</NoWarn>
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <InternalsVisibleTo Include="Aaru.Tests" />
-    <InternalsVisibleTo Include="Aaru.Tests.Devices" />
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
   </ItemGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
@@ -44,25 +44,25 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Claunia.Encoding" Version="1.9.2" />
-    <PackageReference Include="Claunia.RsrcFork" Version="1.2.0" />
-    <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="plist-cil" Version="2.2.0" />
-    <PackageReference Include="SharpCompress" Version="0.34.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
+    <PackageReference Include="Claunia.RsrcFork" Version="1.2.0"/>
+    <PackageReference Include="DotNetZip" Version="1.16.0"/>
+    <PackageReference Include="plist-cil" Version="2.2.0"/>
+    <PackageReference Include="SharpCompress" Version="0.34.0"/>
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
-    <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj" />
-    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
-    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
-    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
-    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj" />
-    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj"/>
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -74,6 +74,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.Generators\Aaru.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Aaru.Generators\Aaru.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
   </ItemGroup>
 </Project>

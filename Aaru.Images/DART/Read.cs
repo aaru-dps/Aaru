@@ -47,6 +47,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -56,7 +58,7 @@ public sealed partial class Dart
             return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
+        var headerB = new byte[Marshal.SizeOf<Header>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
@@ -64,7 +66,7 @@ public sealed partial class Dart
         if(header.srcCmp > COMPRESS_NONE)
             return ErrorNumber.NotSupported;
 
-        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+        int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
@@ -103,18 +105,19 @@ public sealed partial class Dart
                 expectedMaxSize += 64;
 
                 break;
-            default: return ErrorNumber.InvalidArgument;
+            default:
+                return ErrorNumber.InvalidArgument;
         }
 
         if(stream.Length > expectedMaxSize)
             return ErrorNumber.InvalidArgument;
 
-        short[] bLength =
+        var bLength =
             new short[header.srcType is DISK_MAC_HD or DISK_DOS_HD ? BLOCK_ARRAY_LEN_HIGH : BLOCK_ARRAY_LEN_LOW];
 
-        for(int i = 0; i < bLength.Length; i++)
+        for(var i = 0; i < bLength.Length; i++)
         {
-            byte[] tmpShort = new byte[2];
+            var tmpShort = new byte[2];
             stream.EnsureRead(tmpShort, 0, 2);
             bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
         }
@@ -123,9 +126,10 @@ public sealed partial class Dart
         var tagMs  = new MemoryStream();
 
         foreach(short l in bLength)
+        {
             if(l != 0)
             {
-                byte[] buffer = new byte[BUFFER_SIZE];
+                var buffer = new byte[BUFFER_SIZE];
 
                 if(l == -1)
                 {
@@ -159,6 +163,7 @@ public sealed partial class Dart
                     }
                 }
             }
+        }
 
         _dataCache = dataMs.ToArray();
 
@@ -188,19 +193,19 @@ public sealed partial class Dart
                         string release = null;
                         string pre     = null;
 
-                        string major = $"{version.MajorVersion}";
-                        string minor = $".{version.MinorVersion / 10}";
+                        var major = $"{version.MajorVersion}";
+                        var minor = $".{version.MinorVersion / 10}";
 
                         if(version.MinorVersion % 10 > 0)
                             release = $".{version.MinorVersion % 10}";
 
                         string dev = version.DevStage switch
-                        {
-                            Version.DevelopmentStage.Alpha    => "a",
-                            Version.DevelopmentStage.Beta     => "b",
-                            Version.DevelopmentStage.PreAlpha => "d",
-                            _                                 => null
-                        };
+                                     {
+                                         Version.DevelopmentStage.Alpha    => "a",
+                                         Version.DevelopmentStage.Beta     => "b",
+                                         Version.DevelopmentStage.PreAlpha => "d",
+                                         _                                 => null
+                                     };
 
                         if(dev                       == null &&
                            version.PreReleaseVersion > 0)
@@ -233,7 +238,7 @@ public sealed partial class Dart
                             _imageInfo.Application        = "DART";
                             _imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
                             _dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                            _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
+                            _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value,  16);
                         }
                     }
                 }
@@ -389,9 +394,11 @@ public sealed partial class Dart
                        _imageInfo.SectorSize);
 
             Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                       (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
         }
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

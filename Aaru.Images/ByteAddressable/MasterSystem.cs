@@ -22,18 +22,27 @@ public class MasterSystem : IByteAddressableImage
     ImageInfo _imageInfo;
     bool      _opened;
     int       _romSize;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => _gameGear ? "Sega Game Gear cartridge dump" : "Sega Master System cartridge dump";
+
     /// <inheritdoc />
     public Guid Id => new("B0C02927-890D-41D0-8E95-C5D9A2A74131");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.MasterSystem_Name;
 
@@ -50,9 +59,9 @@ public class MasterSystem : IByteAddressableImage
             return false;
 
         stream.Position = 0x7ff0;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic == 0x4147455320524D54)
             return true;
@@ -85,12 +94,12 @@ public class MasterSystem : IByteAddressableImage
         if(stream.Length % 8192 != 0)
             return ErrorNumber.InvalidArgument;
 
-        int headerPosition = 0;
+        var headerPosition = 0;
 
         stream.Position = 0x7ff0;
-        byte[] magicBytes = new byte[8];
+        var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
-        ulong magic = BitConverter.ToUInt64(magicBytes, 0);
+        var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         if(magic != 0x0B000DCC6666EDCE)
             headerPosition = 0x7ff0;
@@ -135,9 +144,9 @@ public class MasterSystem : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        int productCode = (header.ProductCode[0] & 0xF) + ((header.ProductCode[0] & 0xF0) * 10) +
-                          ((header.ProductCode[1] & 0xF) * 100) + ((header.ProductCode[1] & 0xF0) * 1000) +
-                          (((header.VersionAndProduct & 0xF0) >> 4) * 10000);
+        int productCode = (header.ProductCode[0] & 0xF) + (header.ProductCode[0] & 0xF0) * 10 +
+                          (header.ProductCode[1] & 0xF) * 100 + (header.ProductCode[1] & 0xF0) * 1000 +
+                          ((header.VersionAndProduct & 0xF0) >> 4) * 10000;
 
         sb.AppendFormat(Localization.Product_code_0, productCode).AppendLine();
 
@@ -187,24 +196,24 @@ public class MasterSystem : IByteAddressableImage
         int sizeCode = header.SizeAndRegion & 0xF;
 
         _romSize = sizeCode switch
-        {
-            0   => 262144,
-            1   => 524288,
-            2   => 1048576,
-            0xA => 8192,
-            0xB => 16384,
-            0xC => 32768,
-            0xD => 49152,
-            0xE => 65536,
-            0xF => 131072,
-            _   => 0
-        };
+                   {
+                       0   => 262144,
+                       1   => 524288,
+                       2   => 1048576,
+                       0xA => 8192,
+                       0xB => 16384,
+                       0xC => 32768,
+                       0xD => 49152,
+                       0xE => 65536,
+                       0xF => 131072,
+                       _   => 0
+                   };
 
-        sb.AppendFormat(Localization.Region_0, region).AppendLine();
+        sb.AppendFormat(Localization.Region_0,         region).AppendLine();
         sb.AppendFormat(Localization.Cartridge_type_0, cartType).AppendLine();
         sb.AppendFormat(Localization.ROM_size_0_bytes, _romSize).AppendLine();
-        sb.AppendFormat(Localization.Revision_0, header.VersionAndProduct & 0xF).AppendLine();
-        sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Revision_0,       header.VersionAndProduct & 0xF).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X4,    header.Checksum).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -214,29 +223,32 @@ public class MasterSystem : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".sms", ".gg"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".sms", ".gg" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         MediaType.MasterSystemCartridge, MediaType.GameGearCartridge
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
@@ -444,18 +456,21 @@ public class MasterSystem : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom = false;
+        var foundRom = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
                     foundRom = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -498,7 +513,7 @@ public class MasterSystem : IByteAddressableImage
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -551,8 +566,13 @@ public class MasterSystem : IByteAddressableImage
         return ErrorNumber.NoError;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+#endregion
+
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     struct Header
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -564,4 +584,6 @@ public class MasterSystem : IByteAddressableImage
         public byte VersionAndProduct;
         public byte SizeAndRegion;
     }
+
+#endregion
 }

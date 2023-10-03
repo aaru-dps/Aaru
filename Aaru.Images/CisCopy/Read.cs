@@ -42,6 +42,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -72,7 +74,7 @@ public sealed partial class CisCopy
                 return ErrorNumber.InvalidArgument;
         }
 
-        byte[] trackBytes = new byte[tracks];
+        var trackBytes = new byte[tracks];
         stream.EnsureRead(trackBytes, 0, tracks);
 
         var cmpr = (Compression)stream.ReadByte();
@@ -84,7 +86,7 @@ public sealed partial class CisCopy
             return ErrorNumber.NotImplemented;
         }
 
-        int trackSize = 0;
+        var trackSize = 0;
 
         switch(type)
         {
@@ -109,16 +111,16 @@ public sealed partial class CisCopy
                 break;
         }
 
-        int headStep = 1;
+        var headStep = 1;
 
         if(type is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
         var decodedImage = new MemoryStream();
 
-        for(int i = 0; i < tracks; i += headStep)
+        for(var i = 0; i < tracks; i += headStep)
         {
-            byte[] track = new byte[trackSize];
+            var track = new byte[trackSize];
 
             if((TrackType)trackBytes[i] == TrackType.Copied)
                 stream.EnsureRead(track, 0, trackSize);
@@ -225,4 +227,6 @@ public sealed partial class CisCopy
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

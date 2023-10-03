@@ -41,25 +41,32 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Anex86_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Anex86 disk image";
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -76,21 +83,24 @@ public sealed partial class Anex86
         MediaType.ACORN_35_DS_DD, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.ACORN_35_DS_HD,
         MediaType.DOS_525_HD, MediaType.ACORN_525_DS_DD, MediaType.DOS_35_HD, MediaType.XDF_525, MediaType.DMF,
         MediaType.XDF_35, MediaType.DOS_35_ED, MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_525_HD,
-        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive,
-        MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII,
-        MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
-    };
-    /// <inheritdoc />
-    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-        Array.Empty<(string name, Type type, string description, object @default)>();
-    /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".fdi", ".hdi"
+        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD,
+        MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI,
+        MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I,
+        MediaType.MetaFloppy_Mod_II
     };
 
     /// <inheritdoc />
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
+        Array.Empty<(string name, Type type, string description, object @default)>();
+
+    /// <inheritdoc />
+    public IEnumerable<string> KnownExtensions => new[] { ".fdi", ".hdi" };
+
+    /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

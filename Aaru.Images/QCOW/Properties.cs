@@ -41,25 +41,35 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Qcow_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "QEMU Copy-On-Write";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -67,16 +77,19 @@ public sealed partial class Qcow
         MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
         MediaType.PCCardTypeIV
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".qcow", ".qc"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".qcow", ".qc" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

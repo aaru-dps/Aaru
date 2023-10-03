@@ -36,9 +36,13 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region Nested type: RsIdeFlags
+
     [Flags]
     enum RsIdeFlags : byte
     {
         HalfSectors = 1
     }
+
+#endregion
 }

@@ -37,30 +37,7 @@ namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ExtentHeader
-    {
-        public readonly uint  magic;
-        public readonly uint  version;
-        public readonly uint  flags;
-        public readonly ulong capacity;
-        public readonly ulong grainSize;
-        public readonly ulong descriptorOffset;
-        public readonly ulong descriptorSize;
-        public readonly uint  GTEsPerGT;
-        public readonly ulong rgdOffset;
-        public readonly ulong gdOffset;
-        public readonly ulong overhead;
-        [MarshalAs(UnmanagedType.U1)]
-        public readonly bool uncleanShutdown;
-        public readonly byte   singleEndLineChar;
-        public readonly byte   nonEndLineChar;
-        public readonly byte   doubleEndLineChar1;
-        public readonly byte   doubleEndLineChar2;
-        public readonly ushort compression;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)]
-        public readonly byte[] padding;
-    }
+#region Nested type: CowHeader
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct CowHeader
@@ -95,6 +72,10 @@ public sealed partial class VMware
         public readonly byte[] padding;
     }
 
+#endregion
+
+#region Nested type: Extent
+
     struct Extent
     {
         public string  Access;
@@ -104,4 +85,35 @@ public sealed partial class VMware
         public string  Filename;
         public uint    Offset;
     }
+
+#endregion
+
+#region Nested type: ExtentHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct ExtentHeader
+    {
+        public readonly uint  magic;
+        public readonly uint  version;
+        public readonly uint  flags;
+        public readonly ulong capacity;
+        public readonly ulong grainSize;
+        public readonly ulong descriptorOffset;
+        public readonly ulong descriptorSize;
+        public readonly uint  GTEsPerGT;
+        public readonly ulong rgdOffset;
+        public readonly ulong gdOffset;
+        public readonly ulong overhead;
+        [MarshalAs(UnmanagedType.U1)]
+        public readonly bool uncleanShutdown;
+        public readonly byte   singleEndLineChar;
+        public readonly byte   nonEndLineChar;
+        public readonly byte   doubleEndLineChar1;
+        public readonly byte   doubleEndLineChar2;
+        public readonly ushort compression;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)]
+        public readonly byte[] padding;
+    }
+
+#endregion
 }

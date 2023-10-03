@@ -45,9 +45,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(options != null)
         {
@@ -106,10 +108,10 @@ public sealed partial class CdrWin
             Tracks    = new List<CdrWinTrack>()
         };
 
-        int mediaTypeAsInt = (int)_discImage.MediaType;
+        var mediaTypeAsInt = (int)_discImage.MediaType;
 
         _isCd = mediaTypeAsInt is >= 10 and <= 39 or 112 or 113 or >= 150 and <= 152 or 154 or 155 or >= 171 and <= 179
-                    or >= 740 and <= 749;
+                               or >= 740 and <= 749;
 
         if(_isCd)
         {
@@ -199,7 +201,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -258,7 +260,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -303,7 +305,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -355,7 +357,7 @@ public sealed partial class CdrWin
         }
 
         trackStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
@@ -383,15 +385,18 @@ public sealed partial class CdrWin
 
         if(_writingTracks  != null &&
            _writingStreams != null)
+        {
             foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
                 oldTrack.Close();
+        }
 
         _writingTracks = new List<Track>();
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {
-            track.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                             : _writingBaseName                    + ".bin";
+            track.File = _separateTracksWriting
+                             ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                             : _writingBaseName + ".bin";
 
             track.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
             _writingTracks.Add(track);
@@ -400,10 +405,14 @@ public sealed partial class CdrWin
         _writingStreams = new Dictionary<uint, FileStream>();
 
         if(_separateTracksWriting)
+        {
             foreach(Track track in _writingTracks)
+            {
                 _writingStreams.Add(track.Sequence,
                                     new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                    FileShare.None));
+            }
+        }
         else
         {
             var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
@@ -427,25 +436,24 @@ public sealed partial class CdrWin
         }
 
         if(_separateTracksWriting)
+        {
             foreach(FileStream writingStream in _writingStreams.Values)
             {
                 writingStream.Flush();
                 writingStream.Close();
             }
+        }
         else
         {
             _writingStreams.First().Value.Flush();
             _writingStreams.First().Value.Close();
         }
 
-        int currentSession = 0;
+        var currentSession = 0;
 
         if(!string.IsNullOrWhiteSpace(_discImage.Comment))
         {
-            string[] commentLines = _discImage.Comment.Split(new[]
-            {
-                '\n'
-            }, StringSplitOptions.RemoveEmptyEntries);
+            string[] commentLines = _discImage.Comment.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach(string line in commentLines)
                 _descriptorStream.WriteLine("REM {0}", line);
@@ -464,7 +472,9 @@ public sealed partial class CdrWin
         }
 
         if(DumpHardware != null)
-            foreach(var dumpData in from dump in DumpHardware from extent in dump.Extents.OrderBy(e => e.Start)
+        {
+            foreach(var dumpData in from dump in DumpHardware
+                                    from extent in dump.Extents.OrderBy(e => e.Start)
                                     select new
                                     {
                                         dump.Manufacturer,
@@ -477,9 +487,12 @@ public sealed partial class CdrWin
                                         extent.Start,
                                         extent.End
                                     })
+            {
                 _descriptorStream.WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {
                     dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {
                         dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
+            }
+        }
 
         if(!string.IsNullOrEmpty(_discImage.CdTextFile))
             _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));
@@ -526,6 +539,7 @@ public sealed partial class CdrWin
             if(_isCd)
             {
                 if(_trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte))
+                {
                     if(flagsByte != 0 &&
                        flagsByte != (byte)CdFlags.DataTrack)
                     {
@@ -536,6 +550,7 @@ public sealed partial class CdrWin
                                                     flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
                                                     flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                     }
+                }
 
                 if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
                    !string.IsNullOrWhiteSpace(isrc))
@@ -545,8 +560,10 @@ public sealed partial class CdrWin
             if(track.Pregap > 0 && _isCd)
             {
                 if(track.Sequence > _writingTracks.Where(t => t.Session == track.Session).Min(t => t.Sequence))
+                {
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
                                                 msf.frame);
+                }
 
                 if(track.Sequence > 1)
                     msf = LbaToMsf(track.StartSector + track.Pregap);
@@ -555,10 +572,13 @@ public sealed partial class CdrWin
                                             msf.frame);
             }
             else
+            {
                 _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                             msf.frame);
+            }
 
             if(_isCd)
+            {
                 foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
                 {
                     msf = LbaToMsf((ulong)index.Value);
@@ -566,6 +586,7 @@ public sealed partial class CdrWin
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
                                                 msf.second, msf.frame);
                 }
+            }
 
             ushort lastSession = _writingTracks.Max(t => t.Session);
 
@@ -673,4 +694,6 @@ public sealed partial class CdrWin
 
         return true;
     }
+
+#endregion
 }

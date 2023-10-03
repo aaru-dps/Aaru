@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -50,15 +52,17 @@ public sealed partial class Cpcdsk
         if(stream.Length < 512)
             return false;
 
-        byte[] headerB = new byte[256];
+        var headerB = new byte[256];
         stream.EnsureRead(headerB, 0, 256);
 
         int pos;
 
         for(pos = 0; pos < 254; pos++)
+        {
             if(headerB[pos]     == 0x0D &&
                headerB[pos + 1] == 0x0A)
                 break;
+        }
 
         if(pos >= 254)
             return false;
@@ -68,7 +72,9 @@ public sealed partial class Cpcdsk
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_equals_0_quoted, magic);
 
         return string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
-               string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   == 0 ||
-               string.Compare(DU54_ID, magic, StringComparison.InvariantCultureIgnoreCase)   == 0;
+               string.Compare(EDSK_ID,   magic, StringComparison.InvariantCultureIgnoreCase) == 0 ||
+               string.Compare(DU54_ID,   magic, StringComparison.InvariantCultureIgnoreCase) == 0;
     }
+
+#endregion
 }

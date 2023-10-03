@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,7 +49,7 @@ public sealed partial class KryoFlux
         if(stream.Length < Marshal.SizeOf<OobBlock>())
             return false;
 
-        byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        var hdr = new byte[Marshal.SizeOf<OobBlock>()];
         stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
@@ -62,4 +64,6 @@ public sealed partial class KryoFlux
         return header is { blockId  : BlockIds.Oob, blockType: OobTypes.KFInfo } && footer.blockId == BlockIds.Oob &&
                footer is { blockType: OobTypes.EOF, length   : 0x0D0D };
     }
+
+#endregion
 }

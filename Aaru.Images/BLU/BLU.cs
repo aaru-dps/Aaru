@@ -42,11 +42,12 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Basic Lisa Utility disk images</summary>
 public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
 {
-    IFilter    _bluImageFilter;
-    int        _bptag;
-    BluHeader  _imageHeader;
-    ImageInfo  _imageInfo;
-    FileStream _writingStream;
+    const string MODULE_NAME = "BLU plugin";
+    IFilter      _bluImageFilter;
+    int          _bptag;
+    BluHeader    _imageHeader;
+    ImageInfo    _imageInfo;
+    FileStream   _writingStream;
 
     public Blu() => _imageInfo = new ImageInfo
     {
@@ -72,6 +73,8 @@ public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
         DriveFirmwareRevision = null
     };
 
+#region Nested type: BluHeader
+
     struct BluHeader
     {
         public byte[] DeviceName;
@@ -80,5 +83,5 @@ public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
         public ushort BytesPerBlock;
     }
 
-    const string MODULE_NAME = "BLU plugin";
+#endregion
 }

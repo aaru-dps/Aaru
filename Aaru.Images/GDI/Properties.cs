@@ -43,14 +43,20 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Gdi
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.Gdi_Name;
+
     /// <inheritdoc />
     public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Dreamcast GDI image";
 
@@ -94,8 +100,12 @@ public sealed partial class Gdi
 
     /// <inheritdoc />
     public List<Session> Sessions => _discImage.Sessions;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

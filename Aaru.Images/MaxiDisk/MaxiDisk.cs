@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing MaxiDisk disk images</summary>
 public sealed partial class MaxiDisk : IWritableImage
 {
+    const string MODULE_NAME = "MAXI Disk plugin";
     /// <summary>Disk image file</summary>
     IFilter _hdkImageFilter;
     ImageInfo  _imageInfo;
@@ -68,6 +69,4 @@ public sealed partial class MaxiDisk : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "MAXI Disk plugin";
 }

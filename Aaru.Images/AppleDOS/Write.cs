@@ -42,9 +42,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 256)
         {
@@ -61,8 +63,8 @@ public sealed partial class AppleDos
             return false;
         }
 
-        if((mediaType == MediaType.Apple32SS && sectors != 455) ||
-           (mediaType == MediaType.Apple33SS && sectors != 560))
+        if(mediaType == MediaType.Apple32SS && sectors != 455 ||
+           mediaType == MediaType.Apple33SS && sectors != 560)
         {
             ErrorMessage = Localization.Incorrect_number_of_sectors_for_media;
 
@@ -189,10 +191,12 @@ public sealed partial class AppleDos
                                     ? _interleave
                                     : _deinterleave;
 
-            for(int t = 0; t < 35; t++)
-                for(int s = 0; s < 16; s++)
-                    Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
-                               256);
+            for(var t = 0; t < 35; t++)
+            for(var s = 0; s < 16; s++)
+            {
+                Array.Copy(_deinterleaved, t * 16 * 256 + offsets[s] * 256, tmp, t * 16 * 256 + s * 256,
+                           256);
+            }
         }
 
         _writingStream.Seek(0, SeekOrigin.Begin);
@@ -234,4 +238,6 @@ public sealed partial class AppleDos
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

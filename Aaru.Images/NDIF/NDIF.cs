@@ -46,6 +46,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Apple New Disk Image Format disk images</summary>
 public sealed partial class Ndif : IMediaImage
 {
+    const string                  MODULE_NAME = "NDIF plugin";
     uint                          _bufferSize;
     Dictionary<ulong, byte[]>     _chunkCache;
     Dictionary<ulong, BlockChunk> _chunks;
@@ -78,6 +79,4 @@ public sealed partial class Ndif : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "NDIF plugin";
 }

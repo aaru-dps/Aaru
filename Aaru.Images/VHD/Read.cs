@@ -46,11 +46,13 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream imageStream = imageFilter.GetDataForkStream();
-        byte[] header      = new byte[512];
+        var    header      = new byte[512];
         byte[] footer;
 
         imageStream.Seek(0, SeekOrigin.Begin);
@@ -69,10 +71,10 @@ public sealed partial class Vhd
             imageStream.EnsureRead(footer, 0, 511);
         }
 
-        uint  headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
-        uint  footerChecksum = BigEndianBitConverter.ToUInt32(footer, 0x40);
-        ulong headerCookie   = BigEndianBitConverter.ToUInt64(header, 0);
-        ulong footerCookie   = BigEndianBitConverter.ToUInt64(footer, 0);
+        var headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
+        var footerChecksum = BigEndianBitConverter.ToUInt32(footer, 0x40);
+        var headerCookie   = BigEndianBitConverter.ToUInt64(header, 0);
+        var footerCookie   = BigEndianBitConverter.ToUInt64(footer, 0);
 
         header[0x40] = 0;
         header[0x41] = 0;
@@ -143,10 +145,10 @@ public sealed partial class Vhd
         var sha1Ctx = new Sha1Context();
         sha1Ctx.Update(_thisFooter.Reserved);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.cookie = 0x{0:X8}", _thisFooter.Cookie);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.cookie = 0x{0:X8}",   _thisFooter.Cookie);
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.features = 0x{0:X8}", _thisFooter.Features);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.version = 0x{0:X8}", _thisFooter.Version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.offset = {0}", _thisFooter.Offset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.version = 0x{0:X8}",  _thisFooter.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.offset = {0}",        _thisFooter.Offset);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.timestamp = 0x{0:X8} ({1})", _thisFooter.Timestamp,
                                    _thisDateTime);
@@ -154,7 +156,7 @@ public sealed partial class Vhd
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
                                    _thisFooter.CreatorApplication,
                                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.
-                                                                         CreatorApplication)));
+                                                                CreatorApplication)));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorVersion = 0x{0:X8}", _thisFooter.CreatorVersion);
 
@@ -163,16 +165,16 @@ public sealed partial class Vhd
                                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs)));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.originalSize = {0}", _thisFooter.OriginalSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.currentSize = {0}", _thisFooter.CurrentSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.currentSize = {0}",  _thisFooter.CurrentSize);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
                                    _thisFooter.DiskGeometry, (_thisFooter.DiskGeometry & 0xFFFF0000) >> 16,
                                    (_thisFooter.DiskGeometry & 0xFF00) >> 8, _thisFooter.DiskGeometry & 0xFF);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.diskType = 0x{0:X8}", _thisFooter.DiskType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.checksum = 0x{0:X8}", _thisFooter.Checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.uniqueId = {0}", _thisFooter.UniqueId);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.savedState = 0x{0:X2}", _thisFooter.SavedState);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.diskType = 0x{0:X8}",     _thisFooter.DiskType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.checksum = 0x{0:X8}",     _thisFooter.Checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.uniqueId = {0}",          _thisFooter.UniqueId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.savedState = 0x{0:X2}",   _thisFooter.SavedState);
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
         if(_thisFooter.Version == VERSION1)
@@ -232,10 +234,11 @@ public sealed partial class Vhd
                 _imageInfo.Application = "Microsoft Virtual Server";
 
                 _imageInfo.ApplicationVersion = _thisFooter.CreatorVersion switch
-                {
-                    VERSION_VIRTUAL_SERVER2004 => "2004",
-                    _ => string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion)
-                };
+                                                {
+                                                    VERSION_VIRTUAL_SERVER2004 => "2004",
+                                                    _ => string.Format(Localization.Unknown_version_0_X8,
+                                                                       _thisFooter.CreatorVersion)
+                                                };
 
                 break;
             }
@@ -328,8 +331,8 @@ public sealed partial class Vhd
             {
                 _imageInfo.Application = string.Format(Localization.Unknown_application_0,
                                                        Encoding.ASCII.GetString(BigEndianBitConverter.
-                                                                                    GetBytes(_thisFooter.
-                                                                                        CreatorHostOs)));
+                                                           GetBytes(_thisFooter.
+                                                                        CreatorHostOs)));
 
                 _imageInfo.ApplicationVersion =
                     string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
@@ -354,10 +357,10 @@ public sealed partial class Vhd
         if(_thisFooter.DiskType is TYPE_DYNAMIC or TYPE_DIFFERENCING)
         {
             imageStream.Seek((long)_thisFooter.Offset, SeekOrigin.Begin);
-            byte[] dynamicBytes = new byte[1024];
+            var dynamicBytes = new byte[1024];
             imageStream.EnsureRead(dynamicBytes, 0, 1024);
 
-            uint dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
+            var dynamicChecksum = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x24);
 
             dynamicBytes[0x24] = 0;
             dynamicBytes[0x25] = 0;
@@ -384,7 +387,7 @@ public sealed partial class Vhd
                 Reserved2      = new byte[256]
             };
 
-            for(int i = 0; i < 8; i++)
+            for(var i = 0; i < 8; i++)
                 _thisDynamic.LocatorEntries[i] = new ParentLocatorEntry();
 
             _thisDynamic.Cookie          = BigEndianBitConverter.ToUInt64(dynamicBytes, 0x00);
@@ -399,22 +402,22 @@ public sealed partial class Vhd
             _thisDynamic.Reserved        = BigEndianBitConverter.ToUInt32(dynamicBytes, 0x3C);
             _thisDynamic.ParentName      = Encoding.BigEndianUnicode.GetString(dynamicBytes, 0x40, 512);
 
-            for(int i = 0; i < 8; i++)
+            for(var i = 0; i < 8; i++)
             {
                 _thisDynamic.LocatorEntries[i].PlatformCode =
-                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x00 + (24 * i));
+                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x00 + 24 * i);
 
                 _thisDynamic.LocatorEntries[i].PlatformDataSpace =
-                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x04 + (24 * i));
+                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x04 + 24 * i);
 
                 _thisDynamic.LocatorEntries[i].PlatformDataLength =
-                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x08 + (24 * i));
+                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x08 + 24 * i);
 
                 _thisDynamic.LocatorEntries[i].Reserved =
-                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x0C + (24 * i));
+                    BigEndianBitConverter.ToUInt32(dynamicBytes, 0x240 + 0x0C + 24 * i);
 
                 _thisDynamic.LocatorEntries[i].PlatformDataOffset =
-                    BigEndianBitConverter.ToUInt64(dynamicBytes, 0x240 + 0x10 + (24 * i));
+                    BigEndianBitConverter.ToUInt64(dynamicBytes, 0x240 + 0x10 + 24 * i);
             }
 
             Array.Copy(dynamicBytes, 0x300, _thisDynamic.Reserved2, 0, 256);
@@ -426,7 +429,7 @@ public sealed partial class Vhd
             sha1Ctx.Update(_thisDynamic.Reserved2);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.cookie = 0x{0:X8}", _thisDynamic.Cookie);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.dataOffset = {0}", _thisDynamic.DataOffset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.dataOffset = {0}",  _thisDynamic.DataOffset);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.tableOffset = {0}", _thisDynamic.TableOffset);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.headerVersion = 0x{0:X8}",
@@ -435,22 +438,22 @@ public sealed partial class Vhd
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.maxTableEntries = {0}",
                                        _thisDynamic.MaxTableEntries);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.blockSize = {0}", _thisDynamic.BlockSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.blockSize = {0}",     _thisDynamic.BlockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.checksum = 0x{0:X8}", _thisDynamic.Checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentID = {0}", _thisDynamic.ParentId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentID = {0}",      _thisDynamic.ParentId);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentTimestamp = 0x{0:X8} ({1})",
                                        _thisDynamic.ParentTimestamp, _parentDateTime);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.reserved = 0x{0:X8}", _thisDynamic.Reserved);
 
-            for(int i = 0; i < 8; i++)
+            for(var i = 0; i < 8; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
                                            _thisDynamic.LocatorEntries[i].PlatformCode,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisDynamic.
-                                                                                 LocatorEntries[i].PlatformCode)));
+                                                                        LocatorEntries[i].PlatformCode)));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
                                            i,
@@ -466,7 +469,7 @@ public sealed partial class Vhd
                                            i, _thisDynamic.LocatorEntries[i].PlatformDataOffset);
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentName = \"{0}\"", _thisDynamic.ParentName);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentName = \"{0}\"",     _thisDynamic.ParentName);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
             if(_thisDynamic.HeaderVersion != VERSION1)
@@ -482,7 +485,7 @@ public sealed partial class Vhd
 
             _blockAllocationTable = new uint[_thisDynamic.MaxTableEntries];
 
-            byte[] bat = new byte[_thisDynamic.MaxTableEntries * 4];
+            var bat = new byte[_thisDynamic.MaxTableEntries * 4];
             imageStream.Seek((long)_thisDynamic.TableOffset, SeekOrigin.Begin);
             imageStream.EnsureRead(bat, 0, bat.Length);
 
@@ -490,7 +493,7 @@ public sealed partial class Vhd
 
             _blockAllocationTable = MemoryMarshal.Cast<byte, uint>(span)[..(int)_thisDynamic.MaxTableEntries].ToArray();
 
-            for(int i = 0; i < _blockAllocationTable.Length; i++)
+            for(var i = 0; i < _blockAllocationTable.Length; i++)
                 _blockAllocationTable[i] = Swapping.Swap(_blockAllocationTable[i]);
 
             batStopwatch.Stop();
@@ -524,7 +527,8 @@ public sealed partial class Vhd
             {
                 _locatorEntriesData = new byte[8][];
 
-                for(int i = 0; i < 8; i++)
+                for(var i = 0; i < 8; i++)
+                {
                     if(_thisDynamic.LocatorEntries[i].PlatformCode != 0x00000000)
                     {
                         _locatorEntriesData[i] = new byte[_thisDynamic.LocatorEntries[i].PlatformDataLength];
@@ -560,9 +564,10 @@ public sealed partial class Vhd
                                 break;
                         }
                     }
+                }
 
-                int    currentLocator = 0;
-                bool   locatorFound   = false;
+                var    currentLocator = 0;
+                var    locatorFound   = false;
                 string parentPath     = null;
 
                 while(!locatorFound &&
@@ -702,10 +707,10 @@ public sealed partial class Vhd
             case TYPE_DIFFERENCING:
             {
                 // Block number for BAT searching
-                uint blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
+                var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
 
                 // Sector number inside of block
-                uint sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
+                var sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
 
                 if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
                 {
@@ -714,20 +719,20 @@ public sealed partial class Vhd
                     return ErrorNumber.NoError;
                 }
 
-                byte[] bitmap = new byte[_bitmapSize * 512];
+                var bitmap = new byte[_bitmapSize * 512];
 
                 // Offset of block in file
                 long blockOffset = _blockAllocationTable[blockNumber] * 512L;
 
-                int bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
-                int bitmapBit  = (int)(sectorInBlock % 8);
+                var bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
+                var bitmapBit  = (int)(sectorInBlock % 8);
 
                 Stream thisStream = _thisFilter.GetDataForkStream();
 
                 thisStream.Seek(blockOffset, SeekOrigin.Begin);
                 thisStream.EnsureRead(bitmap, 0, (int)_bitmapSize * 512);
 
-                byte mask  = (byte)(1 << (7 - bitmapBit));
+                var  mask  = (byte)(1 << 7 - bitmapBit);
                 bool dirty = (bitmap[bitmapByte] & mask) == mask;
 
                 /*
@@ -766,7 +771,8 @@ public sealed partial class Vhd
                 // Read sector from parent image
             }
 
-            default: return ReadSectors(sectorAddress, 1, out buffer);
+            default:
+                return ReadSectors(sectorAddress, 1, out buffer);
         }
     }
 
@@ -795,13 +801,13 @@ public sealed partial class Vhd
             case TYPE_DYNAMIC:
             {
                 // Block number for BAT searching
-                uint blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
+                var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
 
                 // Sector number inside of block
-                uint sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
+                var sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
 
                 // How many sectors before reaching end of block
-                uint remainingInBlock = (_thisDynamic.BlockSize / 512) - sectorInBlock;
+                uint remainingInBlock = _thisDynamic.BlockSize / 512 - sectorInBlock;
 
                 // Data that needs to be read from another block
                 byte[] suffix = null;
@@ -827,7 +833,7 @@ public sealed partial class Vhd
                 uint sectorOffset = _blockAllocationTable[blockNumber] + _bitmapSize + sectorInBlock;
 
                 // Data that can be read in this block
-                byte[] prefix = new byte[sectorsToReadHere * 512];
+                var prefix = new byte[sectorsToReadHere * 512];
 
                 // 0xFFFFFFFF means unallocated
                 if(_blockAllocationTable[blockNumber] != 0xFFFFFFFF)
@@ -850,7 +856,7 @@ public sealed partial class Vhd
                 }
 
                 buffer = new byte[512 * length];
-                Array.Copy(prefix, 0, buffer, 0, prefix.Length);
+                Array.Copy(prefix, 0, buffer, 0,             prefix.Length);
                 Array.Copy(suffix, 0, buffer, prefix.Length, suffix.Length);
 
                 return ErrorNumber.NoError;
@@ -889,4 +895,6 @@ public sealed partial class Vhd
                 return ErrorNumber.InvalidArgument;
         }
     }
+
+#endregion
 }

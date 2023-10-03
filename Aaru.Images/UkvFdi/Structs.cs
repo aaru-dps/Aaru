@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -48,4 +50,6 @@ public sealed partial class UkvFdi
         public readonly ushort    dataOff;
         public readonly ushort    addInfoLen;
     }
+
+#endregion
 }

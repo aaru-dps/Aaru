@@ -40,6 +40,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Imd
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -49,7 +51,7 @@ public sealed partial class Imd
         if(stream.Length < 4)
             return false;
 
-        byte[] hdr = new byte[stream.Length < 256 ? stream.Length : 256];
+        var hdr = new byte[stream.Length < 256 ? stream.Length : 256];
         stream.EnsureRead(hdr, 0, hdr.Length);
 
         string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
@@ -65,4 +67,6 @@ public sealed partial class Imd
 
         return imd.Success || sam.Success || z88dk.Success;
     }
+
+#endregion
 }

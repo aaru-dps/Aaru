@@ -38,10 +38,14 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public List<TapeFile> Files { get; private set; }
+
     /// <inheritdoc />
     public List<TapePartition> TapePartitions { get; private set; }
+
     /// <inheritdoc />
     public bool IsTape { get; private set; }
 
@@ -81,4 +85,6 @@ public sealed partial class AaruFormat
 
         return IsTape = true;
     }
+
+#endregion
 }

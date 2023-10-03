@@ -45,6 +45,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -57,7 +59,7 @@ public sealed partial class D88
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -83,7 +85,7 @@ public sealed partial class D88
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
             return ErrorNumber.InvalidArgument;
 
-        int trkCounter = 0;
+        var trkCounter = 0;
 
         foreach(int t in hdr.track_table)
         {
@@ -106,22 +108,22 @@ public sealed partial class D88
 
         SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.c = {0}", sechdr.c);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.h = {0}", sechdr.h);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.r = {0}", sechdr.r);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.n = {0}", sechdr.n);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.spt = {0}", sechdr.spt);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.density = {0}", sechdr.density);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.c = {0}",            sechdr.c);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.h = {0}",            sechdr.h);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.r = {0}",            sechdr.r);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.n = {0}",            sechdr.n);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.spt = {0}",          sechdr.spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.density = {0}",      sechdr.density);
         AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.deleted_mark = {0}", sechdr.deleted_mark);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.status = {0}", sechdr.status);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.status = {0}",       sechdr.status);
         AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.size_of_data = {0}", sechdr.size_of_data);
 
         short             spt      = sechdr.spt;
         IBMSectorSizeCode bps      = sechdr.n;
-        bool              allEqual = true;
+        var               allEqual = true;
         _sectorsData = new List<byte[]>();
 
-        for(int i = 0; i < trkCounter; i++)
+        for(var i = 0; i < trkCounter; i++)
         {
             stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
             stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -173,59 +175,63 @@ public sealed partial class D88
         _imageInfo.MediaType = MediaType.Unknown;
 
         if(allEqual)
+        {
             if(trkCounter == 154 &&
                spt        == 26  &&
                bps        == IBMSectorSizeCode.EighthKilo)
                 _imageInfo.MediaType = MediaType.NEC_8_SD;
             else if(bps == IBMSectorSizeCode.QuarterKilo)
+            {
                 _imageInfo.MediaType = trkCounter switch
-                {
-                    35 when spt  == 16 => MediaType.MetaFloppy_Mod_I,
-                    77 when spt  == 16 => MediaType.MetaFloppy_Mod_II,
-                    80 when spt  == 16 => MediaType.NEC_525_SS,
-                    154 when spt == 26 => MediaType.NEC_8_DD,
-                    160 when spt == 16 => MediaType.NEC_525_DS,
-                    _                  => _imageInfo.MediaType
-                };
+                                       {
+                                           35 when spt  == 16 => MediaType.MetaFloppy_Mod_I,
+                                           77 when spt  == 16 => MediaType.MetaFloppy_Mod_II,
+                                           80 when spt  == 16 => MediaType.NEC_525_SS,
+                                           154 when spt == 26 => MediaType.NEC_8_DD,
+                                           160 when spt == 16 => MediaType.NEC_525_DS,
+                                           _                  => _imageInfo.MediaType
+                                       };
+            }
             else if(trkCounter == 154 &&
                     spt        == 8   &&
                     bps        == IBMSectorSizeCode.Kilo)
                 _imageInfo.MediaType = MediaType.NEC_525_HD;
             else if(bps == IBMSectorSizeCode.HalfKilo)
+            {
                 switch(hdr.track_table.Length)
                 {
                     case 40:
                     {
                         _imageInfo.MediaType = spt switch
-                        {
-                            8 => MediaType.DOS_525_SS_DD_8,
-                            9 => MediaType.DOS_525_SS_DD_9,
-                            _ => _imageInfo.MediaType
-                        };
+                                               {
+                                                   8 => MediaType.DOS_525_SS_DD_8,
+                                                   9 => MediaType.DOS_525_SS_DD_9,
+                                                   _ => _imageInfo.MediaType
+                                               };
                     }
 
                         break;
                     case 80:
                     {
                         _imageInfo.MediaType = spt switch
-                        {
-                            8 => MediaType.DOS_525_DS_DD_8,
-                            9 => MediaType.DOS_525_DS_DD_9,
-                            _ => _imageInfo.MediaType
-                        };
+                                               {
+                                                   8 => MediaType.DOS_525_DS_DD_8,
+                                                   9 => MediaType.DOS_525_DS_DD_9,
+                                                   _ => _imageInfo.MediaType
+                                               };
                     }
 
                         break;
                     case 160:
                     {
                         _imageInfo.MediaType = spt switch
-                        {
-                            15 => MediaType.NEC_35_HD_15,
-                            9  => MediaType.DOS_35_DS_DD_9,
-                            18 => MediaType.DOS_35_HD,
-                            36 => MediaType.DOS_35_ED,
-                            _  => _imageInfo.MediaType
-                        };
+                                               {
+                                                   15 => MediaType.NEC_35_HD_15,
+                                                   9  => MediaType.DOS_35_DS_DD_9,
+                                                   18 => MediaType.DOS_35_HD,
+                                                   36 => MediaType.DOS_35_ED,
+                                                   _  => _imageInfo.MediaType
+                                               };
                     }
 
                         break;
@@ -235,6 +241,8 @@ public sealed partial class D88
 
                         break;
                 }
+            }
+        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.MediaType_0, _imageInfo.MediaType);
 
@@ -361,11 +369,13 @@ public sealed partial class D88
 
         var ms = new MemoryStream();
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
             ms.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
         buffer = ms.ToArray();
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

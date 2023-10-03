@@ -39,14 +39,18 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] magic = new byte[8];
+        var magic = new byte[8];
         stream.EnsureRead(magic, 0, 8);
 
         return _chdTag.SequenceEqual(magic);
     }
+
+#endregion
 }

@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
+#region IFluxImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -56,7 +58,7 @@ public sealed partial class SuperCardPro
         if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+        var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         _scpStream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
@@ -67,14 +69,14 @@ public sealed partial class SuperCardPro
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
                                    Header.version & 0xF);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.type = {0}", Header.type);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.revolutions = {0}", Header.revolutions);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.start = {0}", Header.start);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.end = {0}", Header.end);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.type = {0}",            Header.type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.revolutions = {0}",     Header.revolutions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.start = {0}",           Header.start);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.end = {0}",             Header.end);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.bitCellEncoding = {0}", Header.bitCellEncoding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}", Header.heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.resolution = {0}", Header.resolution);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}", Header.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}",           Header.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.resolution = {0}",      Header.resolution);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}",   Header.checksum);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.StartsAtIndex = {0}",
                                    Header.flags == ScpFlags.StartsAtIndex);
@@ -142,7 +144,7 @@ public sealed partial class SuperCardPro
 
             for(byte r = 0; r < Header.revolutions; r++)
             {
-                byte[] rev = new byte[Marshal.SizeOf<TrackEntry>()];
+                var rev = new byte[Marshal.SizeOf<TrackEntry>()];
                 _scpStream.EnsureRead(rev, 0, Marshal.SizeOf<TrackEntry>());
 
                 trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
@@ -160,129 +162,137 @@ public sealed partial class SuperCardPro
         {
             case ScpDiskType.Commodore64:
                 _imageInfo.MediaType = MediaType.CBM_1540;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads     = 1;
 
                 break;
             case ScpDiskType.CommodoreAmiga:
                 _imageInfo.MediaType = MediaType.CBM_AMIGA_35_DD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.CommodoreAmigaHD:
                 _imageInfo.MediaType = MediaType.CBM_AMIGA_35_HD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.AtariFMSS:
                 _imageInfo.MediaType = MediaType.ATARI_525_SD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads     = 1;
 
                 break;
             case ScpDiskType.AtariFMDS:
                 _imageInfo.MediaType = MediaType.Unknown;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads     = 2;
 
                 break;
-            case ScpDiskType.AtariFMEx: break;
+            case ScpDiskType.AtariFMEx:
+                break;
             case ScpDiskType.AtariSTSS:
                 _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 1;
 
                 break;
             case ScpDiskType.AtariSTDS:
                 _imageInfo.MediaType = MediaType.ATARI_35_DS_DD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.AppleII:
                 _imageInfo.MediaType = MediaType.Apple32DS;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads     = 2;
 
                 break;
-            case ScpDiskType.AppleIIPro: break;
+            case ScpDiskType.AppleIIPro:
+                break;
             case ScpDiskType.Apple400K:
                 _imageInfo.MediaType       = MediaType.AppleSonySS;
-                _imageInfo.Cylinders       = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders       = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads           = 1;
                 _imageInfo.SectorsPerTrack = 10;
 
                 break;
             case ScpDiskType.Apple800K:
                 _imageInfo.MediaType       = MediaType.AppleSonyDS;
-                _imageInfo.Cylinders       = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders       = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads           = 2;
                 _imageInfo.SectorsPerTrack = 10;
 
                 break;
             case ScpDiskType.Apple144:
                 _imageInfo.MediaType       = MediaType.DOS_525_HD;
-                _imageInfo.Cylinders       = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders       = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads           = 2;
                 _imageInfo.SectorsPerTrack = 18;
 
                 break;
             case ScpDiskType.PC360K:
                 _imageInfo.MediaType       = MediaType.DOS_525_DS_DD_9;
-                _imageInfo.Cylinders       = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders       = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads           = 2;
                 _imageInfo.SectorsPerTrack = 9;
 
                 break;
             case ScpDiskType.PC720K:
                 _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.PC12M:
                 _imageInfo.MediaType = MediaType.DOS_525_HD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.PC144M:
                 _imageInfo.MediaType       = MediaType.DOS_35_HD;
-                _imageInfo.Cylinders       = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders       = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads           = 2;
                 _imageInfo.SectorsPerTrack = 18;
 
                 break;
-            case ScpDiskType.TandySSDD:  return ErrorNumber.NotImplemented;
-            case ScpDiskType.TandyDSSD:  return ErrorNumber.NotImplemented;
-            case ScpDiskType.TandyDSDD:  return ErrorNumber.NotImplemented;
-            case ScpDiskType.Ti994A:     return ErrorNumber.NotImplemented;
-            case ScpDiskType.RolandD20:  return ErrorNumber.NotImplemented;
-            case ScpDiskType.AmstradCPC: return ErrorNumber.NotImplemented;
+            case ScpDiskType.TandySSDD:
+                return ErrorNumber.NotImplemented;
+            case ScpDiskType.TandyDSSD:
+                return ErrorNumber.NotImplemented;
+            case ScpDiskType.TandyDSDD:
+                return ErrorNumber.NotImplemented;
+            case ScpDiskType.Ti994A:
+                return ErrorNumber.NotImplemented;
+            case ScpDiskType.RolandD20:
+                return ErrorNumber.NotImplemented;
+            case ScpDiskType.AmstradCPC:
+                return ErrorNumber.NotImplemented;
             case ScpDiskType.Generic360K:
                 _imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 40);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 40);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.Generic12M:
                 _imageInfo.MediaType = MediaType.DOS_525_HD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
 
             case ScpDiskType.Generic720K:
                 _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
             case ScpDiskType.Generic144M:
                 _imageInfo.MediaType = MediaType.DOS_35_HD;
-                _imageInfo.Cylinders = (uint)int.Max(((Header.end + 1) / 2), 80);
+                _imageInfo.Cylinders = (uint)int.Max((Header.end + 1) / 2, 80);
                 _imageInfo.Heads     = 2;
 
                 break;
@@ -315,9 +325,9 @@ public sealed partial class SuperCardPro
 
             while(_scpStream.Position >= position)
             {
-                byte[] footerSig = new byte[4];
+                var footerSig = new byte[4];
                 _scpStream.EnsureRead(footerSig, 0, 4);
-                uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
+                var footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                 if(footerMagic == FOOTER_SIGNATURE)
                 {
@@ -326,7 +336,7 @@ public sealed partial class SuperCardPro
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_footer_at_0,
                                                _scpStream.Position);
 
-                    byte[] ftr = new byte[Marshal.SizeOf<Footer>()];
+                    var ftr = new byte[Marshal.SizeOf<Footer>()];
                     _scpStream.EnsureRead(ftr, 0, Marshal.SizeOf<Footer>());
 
                     Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);
@@ -435,6 +445,141 @@ public sealed partial class SuperCardPro
         return ErrorNumber.NoError;
     }
 
+    public ErrorNumber SubTrackLength(uint head, ushort track, out byte length)
+    {
+        length = 1;
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber CapturesLength(uint head, ushort track, byte subTrack, out uint length)
+    {
+        length = 1;
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadFluxIndexResolution(uint      head, ushort track, byte subTrack, uint captureIndex,
+                                               out ulong resolution)
+    {
+        resolution = (ulong)((Header.resolution + 1) * DEFAULT_RESOLUTION);
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadFluxDataResolution(uint      head, ushort track, byte subTrack, uint captureIndex,
+                                              out ulong resolution)
+    {
+        resolution = (ulong)((Header.resolution + 1) * DEFAULT_RESOLUTION);
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadFluxResolution(uint      head,            ushort    track, byte subTrack, uint captureIndex,
+                                          out ulong indexResolution, out ulong dataResolution)
+    {
+        indexResolution = dataResolution = 0;
+
+        ErrorNumber indexError = ReadFluxIndexResolution(head, track, subTrack, captureIndex, out indexResolution);
+
+        if(indexError != ErrorNumber.NoError)
+            return indexError;
+
+        ErrorNumber dataError = ReadFluxDataResolution(head, track, subTrack, captureIndex, out dataResolution);
+
+        return dataError;
+    }
+
+    public ErrorNumber ReadFluxIndexCapture(uint       head, ushort track, byte subTrack, uint captureIndex,
+                                            out byte[] buffer)
+    {
+        buffer = null;
+
+        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
+            return ErrorNumber.NotImplemented;
+
+        if(captureIndex > 0)
+            return ErrorNumber.OutOfRange;
+
+        List<byte> tmpBuffer = new();
+
+        if(Header.flags.HasFlag(ScpFlags.StartsAtIndex))
+            tmpBuffer.Add(0);
+
+        TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
+
+        for(var i = 0; i < Header.revolutions; i++)
+            tmpBuffer.AddRange(UInt32ToFluxRepresentation(scpTrack.Entries[i].indexTime));
+
+        buffer = tmpBuffer.ToArray();
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadFluxDataCapture(uint head, ushort track, byte subTrack, uint captureIndex, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
+            return ErrorNumber.NotImplemented;
+
+        if(HeadTrackSubToScpTrack(head, track, subTrack) > Header.end)
+            return ErrorNumber.OutOfRange;
+
+        if(captureIndex > 0)
+            return ErrorNumber.OutOfRange;
+
+        if(Header.bitCellEncoding != 0 &&
+           Header.bitCellEncoding != 16)
+            return ErrorNumber.NotImplemented;
+
+        TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
+
+        Stream stream = _scpFilter.GetDataForkStream();
+        var    br     = new BinaryReader(stream);
+
+        List<byte> tmpBuffer = new();
+
+        for(var i = 0; i < Header.revolutions; i++)
+        {
+            br.BaseStream.Seek(scpTrack.Entries[i].dataOffset, SeekOrigin.Begin);
+
+            // TODO: Check for 0x0000
+            for(ulong j = 0; j < scpTrack.Entries[i].trackLength; j++)
+                tmpBuffer.AddRange(UInt16ToFluxRepresentation(BigEndianBitConverter.ToUInt16(br.ReadBytes(2), 0)));
+        }
+
+        buffer = tmpBuffer.ToArray();
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber ReadFluxCapture(uint       head,            ushort    track, byte subTrack, uint captureIndex,
+                                       out ulong  indexResolution, out ulong dataResolution, out byte[] indexBuffer,
+                                       out byte[] dataBuffer)
+    {
+        dataBuffer = indexBuffer = null;
+
+        ErrorNumber error =
+            ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution, out dataResolution);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        error = ReadFluxDataCapture(head, track, subTrack, captureIndex, out dataBuffer);
+
+        if(error != ErrorNumber.NoError)
+            return error;
+
+        ErrorNumber indexCapture = ReadFluxIndexCapture(head, track, subTrack, captureIndex, out indexBuffer);
+
+        return indexCapture;
+    }
+
+#endregion
+
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -478,134 +623,5 @@ public sealed partial class SuperCardPro
         return ErrorNumber.NotSupported;
     }
 
-    public ErrorNumber SubTrackLength(uint head, ushort track, out byte length)
-    {
-        length = 1;
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber CapturesLength(uint head, ushort track, byte subTrack, out uint length)
-    {
-        length = 1;
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber ReadFluxIndexResolution(uint head, ushort track, byte subTrack, uint captureIndex,
-                                               out ulong resolution)
-    {
-        resolution = (ulong)((Header.resolution + 1) * DEFAULT_RESOLUTION);
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber ReadFluxDataResolution(uint head, ushort track, byte subTrack, uint captureIndex,
-                                              out ulong resolution)
-    {
-        resolution = (ulong)((Header.resolution + 1) * DEFAULT_RESOLUTION);
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber ReadFluxResolution(uint head, ushort track, byte subTrack, uint captureIndex,
-                                          out ulong indexResolution, out ulong dataResolution)
-    {
-        indexResolution = dataResolution = 0;
-
-        ErrorNumber indexError = ReadFluxIndexResolution(head, track, subTrack, captureIndex, out indexResolution);
-
-        if(indexError != ErrorNumber.NoError)
-            return indexError;
-
-        ErrorNumber dataError = ReadFluxDataResolution(head, track, subTrack, captureIndex, out dataResolution);
-
-        return dataError;
-    }
-
-    public ErrorNumber ReadFluxIndexCapture(uint head, ushort track, byte subTrack, uint captureIndex,
-                                            out byte[] buffer)
-    {
-        buffer = null;
-
-        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
-            return ErrorNumber.NotImplemented;
-
-        if(captureIndex > 0)
-            return ErrorNumber.OutOfRange;
-
-        List<byte> tmpBuffer = new();
-
-        if(Header.flags.HasFlag(ScpFlags.StartsAtIndex))
-            tmpBuffer.Add(0);
-
-        TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
-
-        for(int i = 0; i < Header.revolutions; i++)
-            tmpBuffer.AddRange(UInt32ToFluxRepresentation(scpTrack.Entries[i].indexTime));
-
-        buffer = tmpBuffer.ToArray();
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber ReadFluxDataCapture(uint head, ushort track, byte subTrack, uint captureIndex, out byte[] buffer)
-    {
-        buffer = null;
-
-        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
-            return ErrorNumber.NotImplemented;
-
-        if(HeadTrackSubToScpTrack(head, track, subTrack) > Header.end)
-            return ErrorNumber.OutOfRange;
-
-        if(captureIndex > 0)
-            return ErrorNumber.OutOfRange;
-
-        if(Header.bitCellEncoding != 0 &&
-           Header.bitCellEncoding != 16)
-            return ErrorNumber.NotImplemented;
-
-        TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
-
-        Stream stream = _scpFilter.GetDataForkStream();
-        var    br     = new BinaryReader(stream);
-
-        List<byte> tmpBuffer = new();
-
-        for(int i = 0; i < Header.revolutions; i++)
-        {
-            br.BaseStream.Seek(scpTrack.Entries[i].dataOffset, SeekOrigin.Begin);
-
-            // TODO: Check for 0x0000
-            for(ulong j = 0; j < scpTrack.Entries[i].trackLength; j++)
-                tmpBuffer.AddRange(UInt16ToFluxRepresentation(BigEndianBitConverter.ToUInt16(br.ReadBytes(2), 0)));
-        }
-
-        buffer = tmpBuffer.ToArray();
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber ReadFluxCapture(uint head, ushort track, byte subTrack, uint captureIndex,
-                                       out ulong indexResolution, out ulong dataResolution, out byte[] indexBuffer,
-                                       out byte[] dataBuffer)
-    {
-        dataBuffer = indexBuffer = null;
-
-        ErrorNumber error =
-            ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution, out dataResolution);
-
-        if(error != ErrorNumber.NoError)
-            return error;
-
-        error = ReadFluxDataCapture(head, track, subTrack, captureIndex, out dataBuffer);
-
-        if(error != ErrorNumber.NoError)
-            return error;
-
-        ErrorNumber indexCapture = ReadFluxIndexCapture(head, track, subTrack, captureIndex, out indexBuffer);
-
-        return indexCapture;
-    }
+#endregion
 }

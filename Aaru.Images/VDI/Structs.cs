@@ -37,6 +37,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
+#region Nested type: Header
+
     /// <summary>VDI disk image header, little-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -74,4 +76,6 @@ public sealed partial class Vdi
         public          uint  logicalSpt;
         public readonly uint  logicalSectorSize;
     }
+
+#endregion
 }

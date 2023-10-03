@@ -45,6 +45,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -54,7 +56,7 @@ public sealed partial class PartClone
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
@@ -65,16 +67,16 @@ public sealed partial class PartClone
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.version = {0}", StringHandlers.CToString(_pHdr.version));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.blockSize = {0}", _pHdr.blockSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.deviceSize = {0}", _pHdr.deviceSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.blockSize = {0}",   _pHdr.blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.deviceSize = {0}",  _pHdr.deviceSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.totalBlocks = {0}", _pHdr.totalBlocks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.usedBlocks = {0}", _pHdr.usedBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.usedBlocks = {0}",  _pHdr.usedBlocks);
 
         _byteMap = new byte[_pHdr.totalBlocks];
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_bytemap_0_bytes, _byteMap.Length);
         stream.EnsureRead(_byteMap, 0, _byteMap.Length);
 
-        byte[] bitmagic = new byte[8];
+        var bitmagic = new byte[8];
         stream.EnsureRead(bitmagic, 0, 8);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
@@ -104,6 +106,7 @@ public sealed partial class PartClone
 
             // Flux
             if(next != current)
+            {
                 if(next)
                 {
                     extentStart = i;
@@ -114,6 +117,7 @@ public sealed partial class PartClone
                     _extents.Add(extentStart, i);
                     _extentsOff.TryGetValue(extentStart, out _);
                 }
+            }
 
             if(next && current)
                 blockOff++;
@@ -186,15 +190,17 @@ public sealed partial class PartClone
 
         var ms = new MemoryStream();
 
-        bool allEmpty = true;
+        var allEmpty = true;
 
         for(uint i = 0; i < length; i++)
+        {
             if(_byteMap[sectorAddress + i] != 0)
             {
                 allEmpty = false;
 
                 break;
             }
+        }
 
         if(allEmpty)
         {
@@ -217,4 +223,6 @@ public sealed partial class PartClone
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

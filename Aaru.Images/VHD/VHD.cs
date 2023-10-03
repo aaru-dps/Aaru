@@ -47,6 +47,7 @@ namespace Aaru.DiscImages;
 /// </summary>
 public sealed partial class Vhd : IWritableImage
 {
+    const string      MODULE_NAME = "Virtual PC plugin";
     uint              _bitmapSize;
     uint[]            _blockAllocationTable;
     ImageInfo         _imageInfo;
@@ -82,6 +83,4 @@ public sealed partial class Vhd : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Virtual PC plugin";
 }

@@ -41,13 +41,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] buffer  = new byte[0x58];
-        byte[] pString = new byte[64];
+        var buffer  = new byte[0x58];
+        var pString = new byte[64];
         stream.EnsureRead(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42
@@ -68,15 +70,15 @@ public sealed partial class DiskCopy42
         tmpHeader.Valid        = buffer[0x52];
         tmpHeader.Reserved     = buffer[0x53];
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskName = \"{0}\"", tmpHeader.DiskName);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.dataSize = {0} bytes", tmpHeader.DataSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagSize = {0} bytes", tmpHeader.TagSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskName = \"{0}\"",      tmpHeader.DiskName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.dataSize = {0} bytes",    tmpHeader.DataSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagSize = {0} bytes",     tmpHeader.TagSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.dataChecksum = 0x{0:X8}", tmpHeader.DataChecksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagChecksum = 0x{0:X8}", tmpHeader.TagChecksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.format = 0x{0:X2}", tmpHeader.Format);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.fmtByte = 0x{0:X2}", tmpHeader.FmtByte);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.valid = {0}", tmpHeader.Valid);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.reserved = {0}", tmpHeader.Reserved);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagChecksum = 0x{0:X8}",  tmpHeader.TagChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.format = 0x{0:X2}",       tmpHeader.Format);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.fmtByte = 0x{0:X2}",      tmpHeader.FmtByte);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.valid = {0}",             tmpHeader.Valid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.reserved = {0}",          tmpHeader.Reserved);
 
         if(tmpHeader.Valid    != 1 ||
            tmpHeader.Reserved != 0)
@@ -132,4 +134,6 @@ public sealed partial class DiskCopy42
 
         return false;
     }
+
+#endregion
 }

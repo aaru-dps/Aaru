@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,16 +49,16 @@ public sealed partial class MaxiDisk
         if(stream.Length < 8)
             return false;
 
-        byte[] buffer = new byte[8];
+        var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown = {0}", tmpHeader.unknown);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskType = {0}", tmpHeader.diskType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.heads = {0}", tmpHeader.heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.cylinders = {0}", tmpHeader.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown = {0}",        tmpHeader.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskType = {0}",       tmpHeader.diskType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.heads = {0}",          tmpHeader.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.cylinders = {0}",      tmpHeader.cylinders);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
@@ -81,9 +83,11 @@ public sealed partial class MaxiDisk
         if(tmpHeader.bytesPerSector > 7)
             return false;
 
-        int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                                (128 << tmpHeader.bytesPerSector)) + 8;
+        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                               (128 << tmpHeader.bytesPerSector) + 8;
 
         return expectedFileSize == stream.Length;
     }
+
+#endregion
 }

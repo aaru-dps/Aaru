@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
+#region Nested type: OobBlock
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct OobBlock
     {
@@ -43,4 +45,6 @@ public sealed partial class KryoFlux
         public readonly OobTypes blockType;
         public readonly ushort   length;
     }
+
+#endregion
 }

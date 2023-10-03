@@ -40,11 +40,13 @@ namespace Aaru.DiscImages;
 
 public sealed partial class TeleDisk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         _header = new Header();
-        byte[] headerBytes = new byte[12];
+        var    headerBytes = new byte[12];
         Stream stream      = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
@@ -66,20 +68,20 @@ public sealed partial class TeleDisk
         _header.Sides         = headerBytes[9];
         _header.Crc           = BitConverter.ToUInt16(headerBytes, 10);
 
-        byte[] headerBytesForCrc = new byte[10];
+        var headerBytesForCrc = new byte[10];
         Array.Copy(headerBytes, headerBytesForCrc, 10);
         ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = 0x{0:X4}", _header.Signature);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sequence = 0x{0:X2}", _header.Sequence);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskSet = 0x{0:X2}", _header.DiskSet);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = 0x{0:X2}", _header.Version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataRate = 0x{0:X2}", _header.DataRate);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.driveType = 0x{0:X2}", _header.DriveType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.stepping = 0x{0:X2}", _header.Stepping);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = 0x{0:X4}",     _header.Signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sequence = 0x{0:X2}",      _header.Sequence);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskSet = 0x{0:X2}",       _header.DiskSet);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = 0x{0:X2}",       _header.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataRate = 0x{0:X2}",      _header.DataRate);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.driveType = 0x{0:X2}",     _header.DriveType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.stepping = 0x{0:X2}",      _header.Stepping);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}", _header.Sides);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}", _header.Crc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}",         _header.Sides);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}",           _header.Crc);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4,
                                    calculatedHeaderCrc);
@@ -100,6 +102,8 @@ public sealed partial class TeleDisk
             return false;
 
         return _header.DriveType is DRIVE_TYPE_35_DD or DRIVE_TYPE_35_ED or DRIVE_TYPE_35_HD or DRIVE_TYPE_525_DD
-                   or DRIVE_TYPE_525_HD or DRIVE_TYPE_525_HD_DD_DISK or DRIVE_TYPE_8_INCH;
+                                 or DRIVE_TYPE_525_HD or DRIVE_TYPE_525_HD_DD_DISK or DRIVE_TYPE_8_INCH;
     }
+
+#endregion
 }

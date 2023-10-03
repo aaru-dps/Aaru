@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
+#region Nested type: Header
+
     /// <summary>Parallels disk image header, little-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -67,4 +69,6 @@ public sealed partial class Parallels
         /// <summary>Offset in sectors to format extension</summary>
         public readonly ulong ext_off;
     }
+
+#endregion
 }

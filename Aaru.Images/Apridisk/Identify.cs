@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,9 +50,11 @@ public sealed partial class Apridisk
         if(stream.Length < _signature.Length)
             return false;
 
-        byte[] sigB = new byte[_signature.Length];
+        var sigB = new byte[_signature.Length];
         stream.EnsureRead(sigB, 0, _signature.Length);
 
         return sigB.SequenceEqual(_signature);
     }
+
+#endregion
 }

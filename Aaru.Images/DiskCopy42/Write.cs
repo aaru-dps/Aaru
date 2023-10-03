@@ -43,13 +43,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         header = new Header();
-        bool tags   = false;
-        bool macosx = false;
+        var tags   = false;
+        var macosx = false;
 
         if(options != null &&
            options.TryGetValue("macosx", out string tmpOption))
@@ -246,7 +248,7 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -278,7 +280,7 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -317,9 +319,9 @@ public sealed partial class DiskCopy42
             return false;
         }
 
-        writingStream.Seek((long)(dataOffset + (sectorAddress * 512)), SeekOrigin.Begin);
+        writingStream.Seek((long)(dataOffset + sectorAddress * 512), SeekOrigin.Begin);
         writingStream.Write(data, 0, 512);
-        writingStream.Seek((long)(tagOffset + (sectorAddress * 12)), SeekOrigin.Begin);
+        writingStream.Seek((long)(tagOffset + sectorAddress * 12), SeekOrigin.Begin);
         writingStream.Write(data, 512, 12);
 
         ErrorMessage = "";
@@ -360,12 +362,12 @@ public sealed partial class DiskCopy42
 
         for(uint i = 0; i < length; i++)
         {
-            writingStream.Seek((long)(dataOffset + ((sectorAddress + i) * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, (int)((i                          * 524) + 0), 512);
+            writingStream.Seek((long)(dataOffset + (sectorAddress + i) * 512), SeekOrigin.Begin);
+            writingStream.Write(data, (int)(i                          * 524 + 0), 512);
 
-            writingStream.Seek((long)(tagOffset + ((sectorAddress + i) * 12)), SeekOrigin.Begin);
+            writingStream.Seek((long)(tagOffset + (sectorAddress + i) * 12), SeekOrigin.Begin);
 
-            writingStream.Write(data, (int)((i * 524) + 512), 12);
+            writingStream.Write(data, (int)(i * 524 + 512), 12);
         }
 
         ErrorMessage = "";
@@ -388,7 +390,7 @@ public sealed partial class DiskCopy42
             header.TagSize = 0;
 
         writingStream.Seek(0x54, SeekOrigin.Begin);
-        byte[] data = new byte[header.DataSize];
+        var data = new byte[header.DataSize];
         writingStream.EnsureRead(data, 0, (int)header.DataSize);
         header.DataChecksum = CheckSum(data);
         writingStream.Seek(0x54 + header.DataSize, SeekOrigin.Begin);
@@ -406,10 +408,10 @@ public sealed partial class DiskCopy42
         writingStream.Write(macRoman.GetBytes(header.DiskName), 0, header.DiskName.Length);
 
         writingStream.Seek(64, SeekOrigin.Begin);
-        writingStream.Write(BigEndianBitConverter.GetBytes(header.DataSize), 0, 4);
-        writingStream.Write(BigEndianBitConverter.GetBytes(header.TagSize), 0, 4);
+        writingStream.Write(BigEndianBitConverter.GetBytes(header.DataSize),     0, 4);
+        writingStream.Write(BigEndianBitConverter.GetBytes(header.TagSize),      0, 4);
         writingStream.Write(BigEndianBitConverter.GetBytes(header.DataChecksum), 0, 4);
-        writingStream.Write(BigEndianBitConverter.GetBytes(header.TagChecksum), 0, 4);
+        writingStream.Write(BigEndianBitConverter.GetBytes(header.TagChecksum),  0, 4);
         writingStream.WriteByte(header.Format);
         writingStream.WriteByte(header.FmtByte);
         writingStream.WriteByte(1);
@@ -456,4 +458,6 @@ public sealed partial class DiskCopy42
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

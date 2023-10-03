@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -53,4 +55,6 @@ public sealed partial class AaruFormat
 
         return _header.identifier is DIC_MAGIC or AARU_MAGIC && _header.imageMajorVersion <= AARUFMT_VERSION;
     }
+
+#endregion
 }

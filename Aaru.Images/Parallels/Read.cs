@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -53,31 +55,31 @@ public sealed partial class Parallels
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.version = {0}", _pHdr.version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.heads = {0}", _pHdr.heads);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.cylinders = {0}", _pHdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.magic = {0}",        StringHandlers.CToString(_pHdr.magic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.version = {0}",      _pHdr.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.heads = {0}",        _pHdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.cylinders = {0}",    _pHdr.cylinders);
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.cluster_size = {0}", _pHdr.cluster_size);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.bat_entries = {0}", _pHdr.bat_entries);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.sectors = {0}", _pHdr.sectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.in_use = 0x{0:X8}", _pHdr.in_use);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.data_off = {0}", _pHdr.data_off);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.flags = {0}", _pHdr.flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.ext_off = {0}", _pHdr.ext_off);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.bat_entries = {0}",  _pHdr.bat_entries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.sectors = {0}",      _pHdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.in_use = 0x{0:X8}",  _pHdr.in_use);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.data_off = {0}",     _pHdr.data_off);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.flags = {0}",        _pHdr.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.ext_off = {0}",      _pHdr.ext_off);
 
         _extended = _extMagic.SequenceEqual(_pHdr.magic);
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.extended = {0}", _extended);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_BAT);
         _bat = new uint[_pHdr.bat_entries];
-        byte[] batB = new byte[_pHdr.bat_entries * 4];
+        var batB = new byte[_pHdr.bat_entries * 4];
         stream.EnsureRead(batB, 0, batB.Length);
 
-        for(int i = 0; i < _bat.Length; i++)
+        for(var i = 0; i < _bat.Length; i++)
             _bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
         _clusterBytes = _pHdr.cluster_size * 512;
@@ -85,7 +87,7 @@ public sealed partial class Parallels
         if(_pHdr.data_off > 0)
             _dataOffset = _pHdr.data_off * 512;
         else
-            _dataOffset = ((stream.Position / _clusterBytes) + (stream.Position % _clusterBytes)) * _clusterBytes;
+            _dataOffset = (stream.Position / _clusterBytes + stream.Position % _clusterBytes) * _clusterBytes;
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -143,7 +145,7 @@ public sealed partial class Parallels
         else
             imageOff = batOff * 512UL;
 
-        byte[] cluster = new byte[_clusterBytes];
+        var cluster = new byte[_clusterBytes];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
         _imageStream.EnsureRead(cluster, 0, (int)_clusterBytes);
         buffer = new byte[512];
@@ -184,4 +186,6 @@ public sealed partial class Parallels
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

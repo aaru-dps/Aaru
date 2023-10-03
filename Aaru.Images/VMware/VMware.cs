@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading VMware disk images</summary>
 public sealed partial class VMware : IWritableImage
 {
+    const string              MODULE_NAME = "VMware plugin";
     string                    _adapterType;
     uint                      _cid;
     StreamWriter              _descriptorStream;
@@ -88,6 +89,4 @@ public sealed partial class VMware : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "VMware plugin";
 }

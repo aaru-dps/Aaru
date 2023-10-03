@@ -45,9 +45,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Virtual98
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -126,7 +128,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -158,7 +160,7 @@ public sealed partial class Virtual98
             return false;
         }
 
-        _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0xDC + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -236,8 +238,8 @@ public sealed partial class Virtual98
         if(commentsBytes != null)
             Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0, commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
+        var  hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -314,4 +316,6 @@ public sealed partial class Virtual98
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

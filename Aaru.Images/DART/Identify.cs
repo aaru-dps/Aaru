@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,7 +49,7 @@ public sealed partial class Dart
             return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] headerB = new byte[Marshal.SizeOf<Header>()];
+        var headerB = new byte[Marshal.SizeOf<Header>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
@@ -55,7 +57,7 @@ public sealed partial class Dart
         if(header.srcCmp > COMPRESS_NONE)
             return false;
 
-        int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
+        int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
@@ -94,9 +96,12 @@ public sealed partial class Dart
                 expectedMaxSize += 64;
 
                 break;
-            default: return false;
+            default:
+                return false;
         }
 
         return stream.Length <= expectedMaxSize;
     }
+
+#endregion
 }

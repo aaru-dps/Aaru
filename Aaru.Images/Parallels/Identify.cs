@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,10 +50,12 @@ public sealed partial class Parallels
         if(stream.Length < 512)
             return false;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         return _magic.SequenceEqual(_pHdr.magic) || _extMagic.SequenceEqual(_pHdr.magic);
     }
+
+#endregion
 }

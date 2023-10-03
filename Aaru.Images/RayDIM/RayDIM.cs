@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Ray Arachellian's DIM disk images</summary>
 public sealed partial class RayDim : IWritableImage
 {
+    const string MODULE_NAME = "Ray Arachelian's Disk IMage plugin";
     MemoryStream _disk;
     ImageInfo    _imageInfo;
     FileStream   _writingStream;
@@ -67,6 +68,4 @@ public sealed partial class RayDim : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Ray Arachelian's Disk IMage plugin";
 }

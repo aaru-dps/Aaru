@@ -83,7 +83,8 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing AaruFormat media images</summary>
 public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
 {
-    bool _alreadyWrittenZero;
+    const string MODULE_NAME = "Aaru Format plugin";
+    bool         _alreadyWrittenZero;
     /// <summary>Cache of uncompressed blocks.</summary>
     Dictionary<ulong, byte[]> _blockCache;
     /// <summary>Cache of block headers.</summary>
@@ -129,10 +130,10 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
     long _outMemoryDdtPosition;
     bool   _rewinded;
     byte[] _sectorCprMai;
-    byte[] _sectorIed;
-    byte[] _sectorId;
-    byte[] _sectorEdc;
     byte[] _sectorDecryptedTitleKey;
+    byte[] _sectorEdc;
+    byte[] _sectorId;
+    byte[] _sectorIed;
     /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
     byte[] _sectorPrefix;
     uint[]       _sectorPrefixDdt;
@@ -187,6 +188,4 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Aaru Format plugin";
 }

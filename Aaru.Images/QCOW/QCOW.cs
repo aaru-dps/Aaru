@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing QEMU's Copy On Write disk images</summary>
 public sealed partial class Qcow : IWritableImage
 {
+    const string               MODULE_NAME = "QCOW plugin";
     Dictionary<ulong, byte[]>  _clusterCache;
     int                        _clusterSectors;
     int                        _clusterSize;
@@ -84,6 +85,4 @@ public sealed partial class Qcow : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "QCOW plugin";
 }

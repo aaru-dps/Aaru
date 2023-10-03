@@ -41,17 +41,53 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
-    struct CdrWinTrackFile
+#region Nested type: CdrWinDisc
+
+    struct CdrWinDisc
     {
-        /// <summary>Track #</summary>
-        public uint Sequence;
-        /// <summary>Filter of file containing track</summary>
-        public IFilter DataFilter;
-        /// <summary>Offset of track start in file</summary>
-        public ulong Offset;
-        /// <summary>Type of file</summary>
-        public string FileType;
+        /// <summary>Disk title (from CD-Text)</summary>
+        public string Title;
+        /// <summary>Disk genre (from CD-Text)</summary>
+        public string Genre;
+        /// <summary>Disk arranger (from CD-Text)</summary>
+        public string Arranger;
+        /// <summary>Disk composer (from CD-Text)</summary>
+        public string Composer;
+        /// <summary>Disk performer (from CD-Text)</summary>
+        public string Performer;
+        /// <summary>Disk song writer (from CD-Text)</summary>
+        public string Songwriter;
+        /// <summary>Media catalog number</summary>
+        public string Mcn;
+        /// <summary>Disk type</summary>
+        public MediaType MediaType;
+        /// <summary>Disk type string</summary>
+        public string OriginalMediaType;
+        /// <summary>Disk CDDB ID</summary>
+        public string DiscId;
+        /// <summary>Disk UPC/EAN</summary>
+        public string Barcode;
+        /// <summary>Sessions</summary>
+        public List<Session> Sessions;
+        /// <summary>Tracks</summary>
+        public List<CdrWinTrack> Tracks;
+        /// <summary>Disk comment</summary>
+        public string Comment;
+        /// <summary>File containing CD-Text</summary>
+        public string CdTextFile;
+        /// <summary>Has trurip extensions</summary>
+        public bool IsTrurip;
+        /// <summary>Disc image hashes</summary>
+        public Dictionary<string, string> DiscHashes;
+        /// <summary>Aaru media type</summary>
+        public string AaruMediaType;
+        /// <summary>Is a GDROM from Redump.org</summary>
+        public bool IsRedumpGigadisc;
     }
+
+#endregion
+
+#region Nested type: CdrWinTrack
 
     sealed class CdrWinTrack
     {
@@ -97,45 +133,21 @@ public sealed partial class CdrWin
         public string TrackType;
     }
 
-    struct CdrWinDisc
+#endregion
+
+#region Nested type: CdrWinTrackFile
+
+    struct CdrWinTrackFile
     {
-        /// <summary>Disk title (from CD-Text)</summary>
-        public string Title;
-        /// <summary>Disk genre (from CD-Text)</summary>
-        public string Genre;
-        /// <summary>Disk arranger (from CD-Text)</summary>
-        public string Arranger;
-        /// <summary>Disk composer (from CD-Text)</summary>
-        public string Composer;
-        /// <summary>Disk performer (from CD-Text)</summary>
-        public string Performer;
-        /// <summary>Disk song writer (from CD-Text)</summary>
-        public string Songwriter;
-        /// <summary>Media catalog number</summary>
-        public string Mcn;
-        /// <summary>Disk type</summary>
-        public MediaType MediaType;
-        /// <summary>Disk type string</summary>
-        public string OriginalMediaType;
-        /// <summary>Disk CDDB ID</summary>
-        public string DiscId;
-        /// <summary>Disk UPC/EAN</summary>
-        public string Barcode;
-        /// <summary>Sessions</summary>
-        public List<Session> Sessions;
-        /// <summary>Tracks</summary>
-        public List<CdrWinTrack> Tracks;
-        /// <summary>Disk comment</summary>
-        public string Comment;
-        /// <summary>File containing CD-Text</summary>
-        public string CdTextFile;
-        /// <summary>Has trurip extensions</summary>
-        public bool IsTrurip;
-        /// <summary>Disc image hashes</summary>
-        public Dictionary<string, string> DiscHashes;
-        /// <summary>Aaru media type</summary>
-        public string AaruMediaType;
-        /// <summary>Is a GDROM from Redump.org</summary>
-        public bool IsRedumpGigadisc;
+        /// <summary>Track #</summary>
+        public uint Sequence;
+        /// <summary>Filter of file containing track</summary>
+        public IFilter DataFilter;
+        /// <summary>Offset of track start in file</summary>
+        public ulong Offset;
+        /// <summary>Type of file</summary>
+        public string FileType;
     }
+
+#endregion
 }

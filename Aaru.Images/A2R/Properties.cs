@@ -41,44 +41,61 @@ namespace Aaru.DiscImages;
 
 public sealed partial class A2R
 {
+    bool IsWritingRwcps { get; set; }
+
+#region IFluxImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.A2R_Name;
+
     /// <inheritdoc />
     public Guid Id => new("7497c26a-fe44-4b50-a2e6-de50a9f3c13f");
+
     /// <inheritdoc />
     public string Author => Authors.RebeccaWallander;
+
     /// <inheritdoc />
     public string Format => "A2R";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
+
+#region IWritableImage Members
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".a2r"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".a2r" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         // TODO: A2R supports a lot more formats, please add more whence tested.
         MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD,
-        MediaType.Apple32SS,
-        MediaType.Unknown
+        MediaType.Apple32SS, MediaType.Unknown
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
-    
-    bool IsWritingRwcps { get; set; }
+
+#endregion
 }

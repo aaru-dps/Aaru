@@ -76,6 +76,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading HD-Copy disk images</summary>
 public sealed partial class HdCopy : IMediaImage
 {
+    const string MODULE_NAME = "HDCP plugin";
     /// <summary>Every track that has been read is cached here</summary>
     readonly Dictionary<int, byte[]> _trackCache = new();
 
@@ -111,6 +112,4 @@ public sealed partial class HdCopy : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "HDCP plugin";
 }

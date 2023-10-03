@@ -68,18 +68,19 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading DiskDupe disk images</summary>
 public sealed partial class DiskDupe : IMediaImage
 {
+    const string MODULE_NAME = "DiskDupe plugin";
+
+    /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
+    IFilter _ddiImageFilter;
     /// <summary>The DDI file header after the image has been opened</summary>
     FileHeader _fileHeader;
+    ImageInfo _imageInfo;
 
     /// <summary>The track map for the image after it has been opened</summary>
     TrackInfo[] _trackMap;
 
     /// <summary>The track offsets in the image after the file has been opened</summary>
     long[] _trackOffsets;
-
-    /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
-    IFilter _ddiImageFilter;
-    ImageInfo _imageInfo;
 
     public DiskDupe() => _imageInfo = new ImageInfo
     {
@@ -104,6 +105,4 @@ public sealed partial class DiskDupe : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "DiskDupe plugin";
 }

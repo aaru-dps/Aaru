@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CopyQm
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -105,4 +107,6 @@ public sealed partial class CopyQm
         /// <summary>0x84 Header checksum</summary>
         public readonly byte headerChecksum;
     }
+
+#endregion
 }

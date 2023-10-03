@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,13 +50,15 @@ public sealed partial class BlindWrite5
         if(stream.Length < 276)
             return false;
 
-        byte[] signature = new byte[16];
+        var signature = new byte[16];
         stream.EnsureRead(signature, 0, 16);
 
-        byte[] footer = new byte[16];
+        var footer = new byte[16];
         stream.Seek(-16, SeekOrigin.End);
         stream.EnsureRead(footer, 0, 16);
 
         return _bw5Signature.SequenceEqual(signature) && _bw5Footer.SequenceEqual(footer);
     }
+
+#endregion
 }

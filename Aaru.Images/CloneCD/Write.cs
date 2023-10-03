@@ -48,9 +48,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CloneCd
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
@@ -178,7 +180,7 @@ public sealed partial class CloneCd
         }
 
         _dataStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
@@ -220,7 +222,7 @@ public sealed partial class CloneCd
         }
 
         _dataStream.
-            Seek((long)(track.FileOffset + ((sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector)),
+            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
                  SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
@@ -305,9 +307,9 @@ public sealed partial class CloneCd
         // Easy, just decode the real toc
         if(_fullToc != null)
         {
-            byte[] tmp = new byte[_fullToc.Length + 2];
+            var tmp = new byte[_fullToc.Length + 2];
             Array.Copy(BigEndianBitConverter.GetBytes((ushort)_fullToc.Length), 0, tmp, 0, 2);
-            Array.Copy(_fullToc, 0, tmp, 2, _fullToc.Length);
+            Array.Copy(_fullToc,                                                0, tmp, 2, _fullToc.Length);
             nullableToc = FullTOC.Decode(tmp);
         }
 
@@ -318,14 +320,14 @@ public sealed partial class CloneCd
         _descriptorStream.WriteLine("Version=2");
         _descriptorStream.WriteLine("[Disc]");
         _descriptorStream.WriteLine("TocEntries={0}", toc.TrackDescriptors.Length);
-        _descriptorStream.WriteLine("Sessions={0}", toc.LastCompleteSession);
+        _descriptorStream.WriteLine("Sessions={0}",   toc.LastCompleteSession);
         _descriptorStream.WriteLine("DataTracksScrambled=0");
         _descriptorStream.WriteLine("CDTextLength=0");
 
         if(!string.IsNullOrEmpty(_catalog))
             _descriptorStream.WriteLine("CATALOG={0}", _catalog);
 
-        for(int i = 1; i <= toc.LastCompleteSession; i++)
+        for(var i = 1; i <= toc.LastCompleteSession; i++)
         {
             _descriptorStream.WriteLine("[Session {0}]", i);
 
@@ -361,7 +363,7 @@ public sealed partial class CloneCd
             _descriptorStream.WriteLine("PreGapSubC=0");
         }
 
-        for(int i = 0; i < toc.TrackDescriptors.Length; i++)
+        for(var i = 0; i < toc.TrackDescriptors.Length; i++)
         {
             long alba = MsfToLba((toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
                                   toc.TrackDescriptors[i].Frame));
@@ -375,25 +377,25 @@ public sealed partial class CloneCd
             if(plba > 405000)
                 plba = (plba - 405000 + 300) * -1;
 
-            _descriptorStream.WriteLine("[Entry {0}]", i);
-            _descriptorStream.WriteLine("Session={0}", toc.TrackDescriptors[i].SessionNumber);
-            _descriptorStream.WriteLine("Point=0x{0:x2}", toc.TrackDescriptors[i].POINT);
-            _descriptorStream.WriteLine("ADR=0x{0:x2}", toc.TrackDescriptors[i].ADR);
+            _descriptorStream.WriteLine("[Entry {0}]",      i);
+            _descriptorStream.WriteLine("Session={0}",      toc.TrackDescriptors[i].SessionNumber);
+            _descriptorStream.WriteLine("Point=0x{0:x2}",   toc.TrackDescriptors[i].POINT);
+            _descriptorStream.WriteLine("ADR=0x{0:x2}",     toc.TrackDescriptors[i].ADR);
             _descriptorStream.WriteLine("Control=0x{0:x2}", toc.TrackDescriptors[i].CONTROL);
-            _descriptorStream.WriteLine("TrackNo={0}", toc.TrackDescriptors[i].TNO);
-            _descriptorStream.WriteLine("AMin={0}", toc.TrackDescriptors[i].Min);
-            _descriptorStream.WriteLine("ASec={0}", toc.TrackDescriptors[i].Sec);
-            _descriptorStream.WriteLine("AFrame={0}", toc.TrackDescriptors[i].Frame);
-            _descriptorStream.WriteLine("ALBA={0}", alba);
+            _descriptorStream.WriteLine("TrackNo={0}",      toc.TrackDescriptors[i].TNO);
+            _descriptorStream.WriteLine("AMin={0}",         toc.TrackDescriptors[i].Min);
+            _descriptorStream.WriteLine("ASec={0}",         toc.TrackDescriptors[i].Sec);
+            _descriptorStream.WriteLine("AFrame={0}",       toc.TrackDescriptors[i].Frame);
+            _descriptorStream.WriteLine("ALBA={0}",         alba);
 
             _descriptorStream.WriteLine("Zero={0}",
                                         ((toc.TrackDescriptors[i].HOUR & 0x0F) << 4) +
                                         (toc.TrackDescriptors[i].PHOUR & 0x0F));
 
-            _descriptorStream.WriteLine("PMin={0}", toc.TrackDescriptors[i].PMIN);
-            _descriptorStream.WriteLine("PSec={0}", toc.TrackDescriptors[i].PSEC);
+            _descriptorStream.WriteLine("PMin={0}",   toc.TrackDescriptors[i].PMIN);
+            _descriptorStream.WriteLine("PSec={0}",   toc.TrackDescriptors[i].PSEC);
             _descriptorStream.WriteLine("PFrame={0}", toc.TrackDescriptors[i].PFRAME);
-            _descriptorStream.WriteLine("PLBA={0}", plba);
+            _descriptorStream.WriteLine("PLBA={0}",   plba);
         }
 
         _descriptorStream.Flush();
@@ -469,6 +471,7 @@ public sealed partial class CloneCd
                 }
 
                 if(_subStream == null)
+                {
                     try
                     {
                         _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
@@ -481,8 +484,9 @@ public sealed partial class CloneCd
 
                         return false;
                     }
+                }
 
-                _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
+                _subStream.Seek((long)(track.SubchannelOffset + (sectorAddress - track.StartSector) * 96),
                                 SeekOrigin.Begin);
 
                 _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
@@ -518,7 +522,8 @@ public sealed partial class CloneCd
         switch(tag)
         {
             case SectorTagType.CdTrackFlags:
-            case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
+            case SectorTagType.CdTrackIsrc:
+                return WriteSectorTag(data, sectorAddress, tag);
             case SectorTagType.CdSectorSubchannel:
             {
                 if(track.SubchannelType == 0)
@@ -538,6 +543,7 @@ public sealed partial class CloneCd
                 }
 
                 if(_subStream == null)
+                {
                     try
                     {
                         _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
@@ -550,8 +556,9 @@ public sealed partial class CloneCd
 
                         return false;
                     }
+                }
 
-                _subStream.Seek((long)(track.SubchannelOffset + ((sectorAddress - track.StartSector) * 96)),
+                _subStream.Seek((long)(track.SubchannelOffset + (sectorAddress - track.StartSector) * 96),
                                 SeekOrigin.Begin);
 
                 _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
@@ -570,4 +577,6 @@ public sealed partial class CloneCd
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

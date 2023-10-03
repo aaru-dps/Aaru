@@ -35,18 +35,27 @@ public class Nes : IByteAddressableImage
     int           _promLen;
     byte          _submapper;
     bool          _trainer;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => _nes20 ? "NES 2.0" : "iNES";
+
     /// <inheritdoc />
     public Guid Id => new("D597A3F4-2B1C-441C-8487-0BCABC509302");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.Nes_Name;
 
@@ -63,9 +72,9 @@ public class Nes : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 8);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         return magic == 0x1A53454E;
     }
@@ -83,9 +92,9 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
-        byte[] header = new byte[16];
+        var header = new byte[16];
         stream.EnsureRead(header, 0, 8);
-        uint magic = BitConverter.ToUInt32(header, 0);
+        var magic = BitConverter.ToUInt32(header, 0);
 
         if(magic != 0x1A53454E)
             return ErrorNumber.InvalidArgument;
@@ -105,7 +114,7 @@ public class Nes : IByteAddressableImage
             NametableMirroring = (header[6] & 0x1) != 0,
             BatteryPresent     = (header[6] & 0x2) != 0,
             FourScreenMode     = (header[6] & 0x8) != 0,
-            Mapper             = (ushort)((header[6] >> 4) | (header[7] & 0xF0))
+            Mapper             = (ushort)(header[6] >> 4 | header[7] & 0xF0)
         };
 
         if((header[7] & 0x1) != 0)
@@ -181,7 +190,7 @@ public class Nes : IByteAddressableImage
         sb.AppendFormat(Localization.PRG_ROM_size_0_bytes, _prgLen).AppendLine();
         sb.AppendFormat(Localization.CHR_ROM_size_0_bytes, _chrLen).AppendLine();
         sb.AppendFormat(Localization.Trainer_size_0_bytes, trainerLen).AppendLine();
-        sb.AppendFormat(Localization.Mapper_0, _nesHeaderInfo.Mapper).AppendLine();
+        sb.AppendFormat(Localization.Mapper_0,             _nesHeaderInfo.Mapper).AppendLine();
 
         if(_nesHeaderInfo.BatteryPresent)
             sb.AppendLine(Localization.Has_battery_backed_RAM);
@@ -203,11 +212,12 @@ public class Nes : IByteAddressableImage
             case NesConsoleType.Playchoice:
                 sb.AppendLine(Localization.PlayChoice_10_game);
                 sb.AppendFormat(Localization.INST_ROM_size_0_bytes, _instRomLen & 0xF).AppendLine();
-                sb.AppendFormat(Localization.PROM_size_0_bytes, _promLen).AppendLine();
+                sb.AppendFormat(Localization.PROM_size_0_bytes,     _promLen).AppendLine();
 
                 break;
 
-            case NesConsoleType.Nes: break;
+            case NesConsoleType.Nes:
+                break;
             case NesConsoleType.Extended:
                 switch(_nesHeaderInfo.ExtendedConsoleType)
                 {
@@ -216,11 +226,12 @@ public class Nes : IByteAddressableImage
 
                         break;
 
-                    case NesExtendedConsoleType.Normal: break;
+                    case NesExtendedConsoleType.Normal:
+                        break;
                     case NesExtendedConsoleType.Playchoice:
                         sb.AppendLine(Localization.PlayChoice_10_game);
                         sb.AppendFormat(Localization.INST_ROM_size_0_bytes, _instRomLen & 0xF).AppendLine();
-                        sb.AppendFormat(Localization.PROM_size_0_bytes, _promLen).AppendLine();
+                        sb.AppendFormat(Localization.PROM_size_0_bytes,     _promLen).AppendLine();
 
                         break;
                     case NesExtendedConsoleType.VT01_Monochrome:
@@ -262,29 +273,29 @@ public class Nes : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".nes"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".nes" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[]
-    {
-        MediaType.NESGamePak, MediaType.FamicomGamePak
-    };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.NESGamePak, MediaType.FamicomGamePak };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
@@ -303,7 +314,7 @@ public class Nes : IByteAddressableImage
             return false;
         }
 
-        byte[] header = new byte[16];
+        var header = new byte[16];
 
         if(_nesHeaderInfo is null)
         {
@@ -323,8 +334,8 @@ public class Nes : IByteAddressableImage
         header[1] = 0x45;
         header[2] = 0x53;
         header[3] = 0x1A;
-        header[4] = (byte)((_prgLen / 16384) & 0xFF);
-        header[5] = (byte)((_chrLen / 8192)  & 0xFF);
+        header[4] = (byte)(_prgLen / 16384 & 0xFF);
+        header[5] = (byte)(_chrLen / 8192  & 0xFF);
         header[6] = (byte)((_nesHeaderInfo.Mapper & 0xF) << 4);
 
         if(_nesHeaderInfo.FourScreenMode)
@@ -339,23 +350,24 @@ public class Nes : IByteAddressableImage
         if(_nesHeaderInfo.NametableMirroring)
             header[6] |= 0x1;
 
-        header[7] =  (byte)((_mapper & 0xF0) | 0x8);
+        header[7] =  (byte)(_mapper & 0xF0 | 0x8);
         header[7] |= (byte)_nesHeaderInfo.ConsoleType;
 
-        header[8] =  (byte)((_nesHeaderInfo.Submapper << 4) | ((_nesHeaderInfo.Mapper & 0xF00) >> 4));
-        header[9] =  (byte)((_prgLen / 16384) >> 8);
-        header[9] |= (byte)(((_chrLen / 8192) >> 4) & 0xF);
+        header[8] =  (byte)(_nesHeaderInfo.Submapper << 4 | (_nesHeaderInfo.Mapper & 0xF00) >> 4);
+        header[9] =  (byte)(_prgLen / 16384 >> 8);
+        header[9] |= (byte)(_chrLen / 8192 >> 4 & 0xF);
 
         // TODO: PRG-RAM, PRG-NVRAM, CHR-RAM and CHR-NVRAM sizes
 
         header[12] = (byte)_nesHeaderInfo.TimingMode;
 
         header[13] = _nesHeaderInfo.ConsoleType switch
-        {
-            NesConsoleType.Vs => (byte)(((int)_nesHeaderInfo.VsHardwareType << 4) | (int)_nesHeaderInfo.VsPpuType),
-            NesConsoleType.Extended => (byte)_nesHeaderInfo.ExtendedConsoleType,
-            _ => header[13]
-        };
+                     {
+                         NesConsoleType.Vs => (byte)((int)_nesHeaderInfo.VsHardwareType << 4 |
+                                                     (int)_nesHeaderInfo.VsPpuType),
+                         NesConsoleType.Extended => (byte)_nesHeaderInfo.ExtendedConsoleType,
+                         _                       => header[13]
+                     };
 
         header[14] = 0;
 
@@ -470,6 +482,7 @@ public class Nes : IByteAddressableImage
         };
 
         if(_chrLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.CharacterROM,
@@ -478,14 +491,18 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_chrLen
                 }
             });
+        }
 
         if(_trainer)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.Trainer
             });
+        }
 
         if(_instRomLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.ROM,
@@ -494,8 +511,10 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_instRomLen
                 }
             });
+        }
 
         if(_promLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.ROM,
@@ -504,8 +523,10 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_promLen
                 }
             });
+        }
 
         if(_prgRamLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.WorkRAM,
@@ -514,8 +535,10 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_prgRamLen
                 }
             });
+        }
 
         if(_chrRamLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.CharacterRAM,
@@ -524,8 +547,10 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_chrRamLen
                 }
             });
+        }
 
         if(_prgNvramLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.SaveRAM,
@@ -534,8 +559,10 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_prgNvramLen
                 }
             });
+        }
 
         if(_chrNvramLen > 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type = LinearMemoryType.CharacterRAM,
@@ -544,6 +571,7 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_chrNvramLen
                 }
             });
+        }
 
         ushort mapper    = _nesHeaderInfo?.Mapper    ?? _mapper;
         byte   submapper = _nesHeaderInfo?.Submapper ?? _submapper;
@@ -555,11 +583,13 @@ public class Nes : IByteAddressableImage
         });
 
         if(submapper != 0)
+        {
             devices.Add(new LinearMemoryDevice
             {
                 Type        = LinearMemoryType.Mapper,
                 Description = $"NES Submapper {submapper}"
             });
+        }
 
         mappings = new LinearMemoryMap
         {
@@ -663,22 +693,23 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom       = false;
-        bool foundChrRom    = false;
-        bool foundInstRom   = false;
-        bool foundProm      = false;
-        bool foundRam       = false;
-        bool foundChrRam    = false;
-        bool foundNvram     = false;
-        bool foundChrNvram  = false;
-        bool foundMapper    = false;
-        bool foundSubMapper = false;
+        var foundRom       = false;
+        var foundChrRom    = false;
+        var foundInstRom   = false;
+        var foundProm      = false;
+        var foundRam       = false;
+        var foundChrRam    = false;
+        var foundNvram     = false;
+        var foundChrNvram  = false;
+        var foundMapper    = false;
+        var foundSubMapper = false;
 
         Regex regex;
         Match match;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -730,6 +761,7 @@ public class Nes : IByteAddressableImage
                     match = regex.Match(map.Description);
 
                     if(match.Success)
+                    {
                         if(ushort.TryParse(match.Groups["mapper"].Value, out ushort mapper))
                         {
                             if(_nesHeaderInfo is null)
@@ -739,6 +771,7 @@ public class Nes : IByteAddressableImage
 
                             foundMapper = true;
                         }
+                    }
 
                     break;
                 case LinearMemoryType.Mapper when !foundSubMapper:
@@ -746,6 +779,7 @@ public class Nes : IByteAddressableImage
                     match = regex.Match(map.Description);
 
                     if(match.Success)
+                    {
                         if(byte.TryParse(match.Groups["mapper"].Value, out byte mapper))
                         {
                             if(_nesHeaderInfo is null)
@@ -755,10 +789,13 @@ public class Nes : IByteAddressableImage
 
                             foundSubMapper = true;
                         }
+                    }
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         return foundRom && foundMapper ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
     }
@@ -800,7 +837,7 @@ public class Nes : IByteAddressableImage
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -852,4 +889,6 @@ public class Nes : IByteAddressableImage
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

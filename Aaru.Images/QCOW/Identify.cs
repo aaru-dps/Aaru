@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,10 +49,12 @@ public sealed partial class Qcow
         if(stream.Length < 512)
             return false;
 
-        byte[] qHdrB = new byte[48];
+        var qHdrB = new byte[48];
         stream.EnsureRead(qHdrB, 0, 48);
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         return _qHdr is { magic: QCOW_MAGIC, version: QCOW_VERSION };
     }
+
+#endregion
 }

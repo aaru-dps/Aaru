@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -53,7 +55,7 @@ public sealed partial class AppleNib
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] buffer = new byte[stream.Length];
+        var buffer = new byte[stream.Length];
         stream.EnsureRead(buffer, 0, buffer.Length);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Decoding_whole_image);
@@ -62,10 +64,10 @@ public sealed partial class AppleNib
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
-        int  spt            = 0;
-        bool allTracksEqual = true;
+        var spt            = 0;
+        var allTracksEqual = true;
 
-        for(int i = 1; i < tracks.Count; i++)
+        for(var i = 1; i < tracks.Count; i++)
             allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
         if(allTracksEqual)
@@ -76,11 +78,12 @@ public sealed partial class AppleNib
 
         // Detect ProDOS skewed disks
         if(skewed)
+        {
             foreach(bool isDos in from sector in tracks[17].sectors
-                                  where sector.addressField.sector.SequenceEqual(new byte[]
-                                  {
-                                      170, 170
-                                  }) select Apple2.DecodeSector(sector) into sector0 where sector0 != null
+                                  where sector.addressField.sector.SequenceEqual(new byte[] { 170, 170 })
+                                  select Apple2.DecodeSector(sector)
+                                  into sector0
+                                  where sector0 != null
                                   select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
                                          sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
                                          sector0[0x37] == 1)
@@ -89,16 +92,20 @@ public sealed partial class AppleNib
                     skewing = _dosSkewing;
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           skewing.SequenceEqual(_dosSkewing) ? Localization.Using_DOS_skewing
+                                           skewing.SequenceEqual(_dosSkewing)
+                                               ? Localization.Using_DOS_skewing
                                                : Localization.Using_ProDOS_skewing);
             }
+        }
 
-        for(int i = 0; i < tracks.Count; i++)
+        for(var i = 0; i < tracks.Count; i++)
+        {
             foreach(Apple2.RawSector sector in tracks[i].sectors)
+            {
                 if(skewed && spt != 0)
                 {
-                    ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                              (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                    var sectorNo = (ulong)(((sector.addressField.sector[0] & 0x55) << 1 |
+                                            sector.addressField.sector[1] & 0x55) & 0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,
@@ -112,6 +119,8 @@ public sealed partial class AppleNib
                     rawSectors.Add(_imageInfo.Sectors, sector);
                     _imageInfo.Sectors++;
                 }
+            }
+        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_sectors, _imageInfo.Sectors);
 
@@ -137,11 +146,11 @@ public sealed partial class AppleNib
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
         _imageInfo.MediaType = _imageInfo.Sectors switch
-        {
-            455 => MediaType.Apple32SS,
-            560 => MediaType.Apple33SS,
-            _   => MediaType.Unknown
-        };
+                               {
+                                   455 => MediaType.Apple32SS,
+                                   560 => MediaType.Apple33SS,
+                                   _   => MediaType.Unknown
+                               };
 
         _imageInfo.SectorSize        = 256;
         _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
@@ -288,4 +297,6 @@ public sealed partial class AppleNib
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

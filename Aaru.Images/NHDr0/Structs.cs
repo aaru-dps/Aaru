@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -54,4 +56,6 @@ public sealed partial class Nhdr0
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
         public byte[] reserved3;
     }
+
+#endregion
 }

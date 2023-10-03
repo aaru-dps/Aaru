@@ -36,6 +36,21 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Alcohol120
 {
+#region Nested type: Footer
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Footer
+    {
+        public          uint filenameOffset;
+        public          uint widechar;
+        public readonly uint unknown1;
+        public readonly uint unknown2;
+    }
+
+#endregion
+
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -60,6 +75,10 @@ public sealed partial class Alcohol120
         public readonly uint dpmOffset;
     }
 
+#endregion
+
+#region Nested type: Session
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Session
     {
@@ -73,6 +92,10 @@ public sealed partial class Alcohol120
         public readonly uint   unknown;
         public          uint   trackOffset;
     }
+
+#endregion
+
+#region Nested type: Track
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Track
@@ -101,6 +124,10 @@ public sealed partial class Alcohol120
         public byte[] unknown2;
     }
 
+#endregion
+
+#region Nested type: TrackExtra
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct TrackExtra
     {
@@ -108,12 +135,5 @@ public sealed partial class Alcohol120
         public uint sectors;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Footer
-    {
-        public          uint filenameOffset;
-        public          uint widechar;
-        public readonly uint unknown1;
-        public readonly uint unknown2;
-    }
+#endregion
 }

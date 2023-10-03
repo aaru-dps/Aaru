@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Anex86
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -50,7 +52,7 @@ public sealed partial class Anex86
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
@@ -98,10 +100,12 @@ public sealed partial class Anex86
 
         Stream stream = _anexImageFilter.GetDataForkStream();
 
-        stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_header.hdrSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

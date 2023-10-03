@@ -43,7 +43,8 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Apridisk disk images</summary>
 public sealed partial class Apridisk : IWritableImage
 {
-    ImageInfo _imageInfo;
+    const string MODULE_NAME = "Apridisk plugin";
+    ImageInfo    _imageInfo;
 
     // Cylinder by head, sector data matrix
     byte[][][][] _sectorsData;
@@ -72,6 +73,4 @@ public sealed partial class Apridisk : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Apridisk plugin";
 }

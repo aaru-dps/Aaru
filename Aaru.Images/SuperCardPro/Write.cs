@@ -44,8 +44,95 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
+#region IWritableFluxImage Members
+
+    public ErrorNumber WriteFluxCapture(ulong  indexResolution, ulong dataResolution, byte[] indexBuffer,
+                                        byte[] dataBuffer, uint head, ushort track, byte subTrack, uint captureIndex)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
+
+            return ErrorNumber.WriteError;
+        }
+
+        if(subTrack != 0)
+            return ErrorNumber.NotSupported;
+
+        Header.start = byte.Min((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.start);
+        Header.end   = byte.Max((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.end);
+
+        ulong scpResolution = dataResolution / DEFAULT_RESOLUTION - 1;
+
+        if(!IsResolutionSet)
+        {
+            Header.resolution = (byte)scpResolution;
+            IsResolutionSet   = true;
+        }
+
+        // SCP can only have one resolution for all tracks
+        if(Header.resolution != scpResolution)
+            return ErrorNumber.NotSupported;
+
+        long scpTrack = HeadTrackSubToScpTrack(head, track, subTrack);
+
+        _writingStream.Seek(0x10 + 4 * scpTrack, SeekOrigin.Begin);
+        _writingStream.Write(BitConverter.GetBytes(_trackOffset), 0, 4);
+
+        _writingStream.Seek(_trackOffset, SeekOrigin.Begin);
+        _writingStream.Write(_trkSignature, 0, 3);
+        _writingStream.WriteByte((byte)scpTrack);
+
+        List<uint> scpIndices = FluxRepresentationsToUInt32List(indexBuffer);
+
+        if(scpIndices[0] == 0)
+        {
+            // Stream starts at index
+            Header.flags |= ScpFlags.StartsAtIndex;
+            scpIndices.RemoveAt(0);
+        }
+
+        if(!IsRevolutionsSet)
+        {
+            Header.revolutions = (byte)scpIndices.Count;
+            IsRevolutionsSet   = true;
+        }
+
+        // SCP can only have the same number of revolutions for all tracks
+        if(Header.revolutions != scpIndices.Count)
+            return ErrorNumber.NotSupported;
+
+        List<byte> scpData = FluxRepresentationsToUInt16List(dataBuffer, scpIndices, out uint[] trackLengths);
+
+        var offset = (uint)(4 + 12 * Header.revolutions);
+
+        for(var i = 0; i < Header.revolutions; i++)
+        {
+            _writingStream.Write(BitConverter.GetBytes(scpIndices[i]),   0, 4);
+            _writingStream.Write(BitConverter.GetBytes(trackLengths[i]), 0, 4);
+            _writingStream.Write(BitConverter.GetBytes(offset),          0, 4);
+
+            offset += trackLengths[i] * 2;
+        }
+
+        _writingStream.Write(scpData.ToArray(), 0, scpData.Count);
+        _trackOffset = (uint)_writingStream.Position;
+
+        return ErrorNumber.NoError;
+    }
+
+    public ErrorNumber WriteFluxIndexCapture(ulong resolution, byte[] index, uint head, ushort track, byte subTrack,
+                                             uint  captureIndex) => ErrorNumber.NotImplemented;
+
+    public ErrorNumber WriteFluxDataCapture(ulong resolution, byte[] data, uint head, ushort track, byte subTrack,
+                                            uint  captureIndex) => ErrorNumber.NotImplemented;
+
+#endregion
+
+#region IWritableImage Members
+
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         try
         {
@@ -66,11 +153,11 @@ public sealed partial class SuperCardPro
         Header.signature = _scpSignature;
 
         Header.type = mediaType switch
-        {
-            MediaType.DOS_525_DS_DD_9 => ScpDiskType.PC360K,
-            MediaType.Unknown         => ScpDiskType.Generic720K,
-            _                         => Header.type
-        };
+                      {
+                          MediaType.DOS_525_DS_DD_9 => ScpDiskType.PC360K,
+                          MediaType.Unknown         => ScpDiskType.Generic720K,
+                          _                         => Header.type
+                      };
 
         return true;
     }
@@ -98,7 +185,7 @@ public sealed partial class SuperCardPro
         _writingStream.WriteByte(Header.resolution);
 
         _writingStream.Seek(0, SeekOrigin.End);
-        string date = DateTime.Now.ToString("G");
+        var date = DateTime.Now.ToString("G");
         _writingStream.Write(Encoding.ASCII.GetBytes(date), 0, date.Length);
 
         Header.checksum = CalculateChecksum(_writingStream);
@@ -156,8 +243,6 @@ public sealed partial class SuperCardPro
         return false;
     }
 
-    public bool SetTracks(List<Track> tracks) => false;
-
     public bool SetImageInfo(ImageInfo imageInfo)
     {
         string[] version = imageInfo.ApplicationVersion.Split('.');
@@ -171,84 +256,7 @@ public sealed partial class SuperCardPro
         return true;
     }
 
-    public ErrorNumber WriteFluxCapture(ulong indexResolution, ulong dataResolution, byte[] indexBuffer,
-                                        byte[] dataBuffer, uint head, ushort track, byte subTrack, uint captureIndex)
-    {
-        if(!IsWriting)
-        {
-            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
+#endregion
 
-            return ErrorNumber.WriteError;
-        }
-
-        if(subTrack != 0)
-            return ErrorNumber.NotSupported;
-
-        Header.start = byte.Min((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.start);
-        Header.end   = byte.Max((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.end);
-
-        ulong scpResolution = (dataResolution / DEFAULT_RESOLUTION) - 1;
-
-        if(!IsResolutionSet)
-        {
-            Header.resolution = (byte)scpResolution;
-            IsResolutionSet   = true;
-        }
-
-        // SCP can only have one resolution for all tracks
-        if(Header.resolution != scpResolution)
-            return ErrorNumber.NotSupported;
-
-        long scpTrack = HeadTrackSubToScpTrack(head, track, subTrack);
-
-        _writingStream.Seek(0x10 + (4 * scpTrack), SeekOrigin.Begin);
-        _writingStream.Write(BitConverter.GetBytes(_trackOffset), 0, 4);
-
-        _writingStream.Seek(_trackOffset, SeekOrigin.Begin);
-        _writingStream.Write(_trkSignature, 0, 3);
-        _writingStream.WriteByte((byte)scpTrack);
-
-        List<uint> scpIndices = FluxRepresentationsToUInt32List(indexBuffer);
-
-        if(scpIndices[0] == 0)
-        {
-            // Stream starts at index
-            Header.flags |= ScpFlags.StartsAtIndex;
-            scpIndices.RemoveAt(0);
-        }
-
-        if(!IsRevolutionsSet)
-        {
-            Header.revolutions = (byte)scpIndices.Count;
-            IsRevolutionsSet   = true;
-        }
-
-        // SCP can only have the same number of revolutions for all tracks
-        if(Header.revolutions != scpIndices.Count)
-            return ErrorNumber.NotSupported;
-
-        List<byte> scpData = FluxRepresentationsToUInt16List(dataBuffer, scpIndices, out uint[] trackLengths);
-
-        uint offset = (uint)(4 + (12 * Header.revolutions));
-
-        for(int i = 0; i < Header.revolutions; i++)
-        {
-            _writingStream.Write(BitConverter.GetBytes(scpIndices[i]), 0, 4);
-            _writingStream.Write(BitConverter.GetBytes(trackLengths[i]), 0, 4);
-            _writingStream.Write(BitConverter.GetBytes(offset), 0, 4);
-
-            offset += trackLengths[i] * 2;
-        }
-
-        _writingStream.Write(scpData.ToArray(), 0, scpData.Count);
-        _trackOffset = (uint)_writingStream.Position;
-
-        return ErrorNumber.NoError;
-    }
-
-    public ErrorNumber WriteFluxIndexCapture(ulong resolution, byte[] index, uint head, ushort track, byte subTrack,
-                                             uint captureIndex) => ErrorNumber.NotImplemented;
-
-    public ErrorNumber WriteFluxDataCapture(ulong resolution, byte[] data, uint head, ushort track, byte subTrack,
-                                            uint captureIndex) => ErrorNumber.NotImplemented;
+    public bool SetTracks(List<Track> tracks) => false;
 }

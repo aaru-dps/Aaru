@@ -44,9 +44,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize == 0)
         {
@@ -217,8 +219,8 @@ public sealed partial class DriDiskCopy
             return false;
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Footer>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Footer>());
+        var  hdr    = new byte[Marshal.SizeOf<Footer>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Footer>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_footer, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -262,4 +264,6 @@ public sealed partial class DriDiskCopy
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

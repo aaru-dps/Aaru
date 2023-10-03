@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -53,7 +55,7 @@ public sealed partial class Nhdr0
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -71,10 +73,12 @@ public sealed partial class Nhdr0
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.dwHeadSize = {0}", _nhdhdr.dwHeadSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.dwCylinder = {0}", _nhdhdr.dwCylinder);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wHead = {0}", _nhdhdr.wHead);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wSect = {0}", _nhdhdr.wSect);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wSectLen = {0}", _nhdhdr.wSectLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wHead = {0}",      _nhdhdr.wHead);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wSect = {0}",      _nhdhdr.wSect);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.wSectLen = {0}",   _nhdhdr.wSectLen);
 
         return true;
     }
+
+#endregion
 }

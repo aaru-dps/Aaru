@@ -45,19 +45,25 @@ namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreDataTracks |
                                                            OpticalImageCapabilities.CanStoreCookedData;
+
     /// <inheritdoc />
     public string Name => Localization.ZZZRawImage_Name;
 
     // Non-random UUID to recognize this specific plugin
     /// <inheritdoc />
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Raw disk image (sector by sector copy)";
 
@@ -165,8 +171,10 @@ public sealed partial class ZZZRawImage
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
                                                                               OrderBy(t => t.tag).Select(t => t.tag).
@@ -183,6 +191,7 @@ public sealed partial class ZZZRawImage
             List<MediaType> types = new();
 
             foreach(MediaType type in Enum.GetValues(typeof(MediaType)))
+            {
                 switch(type)
                 {
                     // TODO: Implement support for writing formats with different track 0 bytes per sector
@@ -201,12 +210,14 @@ public sealed partial class ZZZRawImage
                     case MediaType.ECMA_69_15:
                     case MediaType.ECMA_69_26:
                     case MediaType.ECMA_70:
-                    case MediaType.ECMA_78: continue;
+                    case MediaType.ECMA_78:
+                        continue;
                     default:
                         types.Add(type);
 
                         break;
                 }
+            }
 
             return types;
         }
@@ -215,14 +226,19 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
-        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn", ".8kn",
-        ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
+        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn",
+        ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
     };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

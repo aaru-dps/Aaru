@@ -41,24 +41,37 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiscJuggler
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.DiscJuggler_Name;
+
     /// <inheritdoc />
     public Guid Id => new("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Format => "DiscJuggler";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
+
     /// <inheritdoc />
     public List<Track> Tracks { get; private set; }
+
     /// <inheritdoc />
     public List<Session> Sessions { get; private set; }
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

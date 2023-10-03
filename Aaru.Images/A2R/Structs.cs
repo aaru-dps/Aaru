@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class A2R
 {
+#region Nested type: A2rHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct A2rHeader
     {
@@ -47,6 +49,10 @@ public sealed partial class A2R
         public byte[] lineTest; // Should always be 0x0A 0x0D 0x0A
     }
 
+#endregion
+
+#region Nested type: ChunkHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ChunkHeader
     {
@@ -54,6 +60,10 @@ public sealed partial class A2R
         public byte[] chunkId;
         public uint chunkSize;
     }
+
+#endregion
+
+#region Nested type: InfoChunkV2
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct InfoChunkV2
@@ -66,6 +76,10 @@ public sealed partial class A2R
         public byte        writeProtected;
         public byte        synchronized;
     }
+
+#endregion
+
+#region Nested type: InfoChunkV3
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct InfoChunkV3
@@ -80,6 +94,10 @@ public sealed partial class A2R
         public byte         hardSectorCount;
     }
 
+#endregion
+
+#region Nested type: RwcpChunkHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RwcpChunkHeader
     {
@@ -89,6 +107,24 @@ public sealed partial class A2R
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
         public byte[] reserved;
     }
+
+#endregion
+
+#region Nested type: SlvdChunkHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SlvdChunkHeader
+    {
+        public ChunkHeader header;
+        public byte        version;
+        public uint        resolution;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public byte[] reserved;
+    }
+
+#endregion
+
+#region Nested type: StreamCapture
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct StreamCapture
@@ -106,15 +142,9 @@ public sealed partial class A2R
         public byte   subTrack;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct SlvdChunkHeader
-    {
-        public ChunkHeader header;
-        public byte        version;
-        public uint        resolution;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public byte[] reserved;
-    }
+#endregion
+
+#region Nested type: TrackHeader
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TrackHeader
@@ -129,4 +159,6 @@ public sealed partial class A2R
         public uint[] indexSignals;
         public uint   fluxDataSize;
     }
+
+#endregion
 }

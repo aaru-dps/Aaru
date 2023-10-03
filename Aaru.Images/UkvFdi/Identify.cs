@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,10 +50,12 @@ public sealed partial class UkvFdi
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
         return hdr.magic.SequenceEqual(_signature);
     }
+
+#endregion
 }

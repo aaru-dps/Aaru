@@ -46,9 +46,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -103,15 +105,15 @@ public sealed partial class Qcow2
         };
 
         _clusterSize    = 1 << (int)_qHdr.cluster_bits;
-        _clusterSectors = 1 << ((int)_qHdr.cluster_bits - 9);
-        _l2Bits         = (int)(_qHdr.cluster_bits      - 3);
+        _clusterSectors = 1 << (int)_qHdr.cluster_bits - 9;
+        _l2Bits         = (int)(_qHdr.cluster_bits - 3);
         _l2Size         = 1 << _l2Bits;
 
         _l1Mask = 0;
-        int c = 0;
+        var c = 0;
         _l1Shift = (int)(_l2Bits + _qHdr.cluster_bits);
 
-        for(int i = 0; i < 64; i++)
+        for(var i = 0; i < 64; i++)
         {
             _l1Mask <<= 1;
 
@@ -124,17 +126,17 @@ public sealed partial class Qcow2
 
         _l2Mask = 0;
 
-        for(int i = 0; i < _l2Bits; i++)
+        for(var i = 0; i < _l2Bits; i++)
             _l2Mask = (_l2Mask << 1) + 1;
 
         _l2Mask <<= (int)_qHdr.cluster_bits;
 
         _sectorMask = 0;
 
-        for(int i = 0; i < _qHdr.cluster_bits; i++)
+        for(var i = 0; i < _qHdr.cluster_bits; i++)
             _sectorMask = (_sectorMask << 1) + 1;
 
-        _qHdr.l1_size = (uint)(((long)_qHdr.size + (1 << _l1Shift) - 1) >> _l1Shift);
+        _qHdr.l1_size = (uint)((long)_qHdr.size + (1 << _l1Shift) - 1 >> _l1Shift);
 
         if(_qHdr.l1_size == 0)
             _qHdr.l1_size = 1;
@@ -163,7 +165,7 @@ public sealed partial class Qcow2
         if(l1TableClusters == 0)
             l1TableClusters = 1;
 
-        byte[] empty = new byte[_qHdr.l1_table_offset + (l1TableClusters * (ulong)_clusterSize)];
+        var empty = new byte[_qHdr.l1_table_offset + l1TableClusters * (ulong)_clusterSize];
         _writingStream.Write(empty, 0, empty.Length);
 
         IsWriting    = true;
@@ -224,7 +226,7 @@ public sealed partial class Qcow2
         {
             _writingStream.Seek(0, SeekOrigin.End);
             _l1Table[l1Off] = (ulong)_writingStream.Position;
-            byte[] l2TableB = new byte[_l2Size * 8];
+            var l2TableB = new byte[_l2Size * 8];
             _writingStream.Seek(0, SeekOrigin.End);
             _writingStream.Write(l2TableB, 0, l2TableB.Length);
         }
@@ -233,18 +235,18 @@ public sealed partial class Qcow2
 
         ulong l2Off = (byteAddress & _l2Mask) >> (int)_qHdr.cluster_bits;
 
-        _writingStream.Seek((long)(_l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(_l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
 
-        byte[] entry = new byte[8];
+        var entry = new byte[8];
         _writingStream.EnsureRead(entry, 0, 8);
-        ulong offset = BigEndianBitConverter.ToUInt64(entry, 0);
+        var offset = BigEndianBitConverter.ToUInt64(entry, 0);
 
         if(offset == 0)
         {
             offset = (ulong)_writingStream.Length;
-            byte[] cluster = new byte[_clusterSize];
+            var cluster = new byte[_clusterSize];
             entry = BigEndianBitConverter.GetBytes(offset);
-            _writingStream.Seek((long)(_l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
+            _writingStream.Seek((long)(_l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
             _writingStream.Write(entry, 0, 8);
             _writingStream.Seek(0, SeekOrigin.End);
             _writingStream.Write(cluster, 0, cluster.Length);
@@ -263,17 +265,14 @@ public sealed partial class Qcow2
         {
             refBlockOffset                     = (ulong)_writingStream.Length;
             _refCountTable[refCountTableIndex] = refBlockOffset;
-            byte[] cluster = new byte[_clusterSize];
+            var cluster = new byte[_clusterSize];
             _writingStream.Seek(0, SeekOrigin.End);
             _writingStream.Write(cluster, 0, cluster.Length);
         }
 
         _writingStream.Seek((long)(refBlockOffset + refCountBlockIndex), SeekOrigin.Begin);
 
-        _writingStream.Write(new byte[]
-        {
-            0, 1
-        }, 0, 2);
+        _writingStream.Write(new byte[] { 0, 1 }, 0, 2);
 
         ErrorMessage = "";
 
@@ -311,7 +310,7 @@ public sealed partial class Qcow2
 
         for(uint i = 0; i < length; i++)
         {
-            byte[] tmp = new byte[_imageInfo.SectorSize];
+            var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
             if(!WriteSector(tmp, sectorAddress + i))
@@ -350,27 +349,27 @@ public sealed partial class Qcow2
         }
 
         _writingStream.Seek(0, SeekOrigin.Begin);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.magic), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.version), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_offset), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_size), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.cluster_bits), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.size), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.crypt_method), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_size), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_table_offset), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_table_offset), 0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.magic),                   0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.version),                 0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_offset),     0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_size),       0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.cluster_bits),            0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.size),                    0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.crypt_method),            0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_size),                 0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_table_offset),         0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_table_offset),   0, 8);
         _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_table_clusters), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.nb_snapshots), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.snapshots_offset), 0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.nb_snapshots),            0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.snapshots_offset),        0, 8);
 
         if(_qHdr.version == QCOW_VERSION3)
         {
-            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.features), 0, 8);
-            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.compat_features), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.features),           0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.compat_features),    0, 8);
             _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.autoclear_features), 0, 8);
-            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_order), 0, 4);
-            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.header_length), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_order),     0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.header_length),      0, 4);
         }
 
         _writingStream.Seek((long)_qHdr.refcount_table_offset, SeekOrigin.Begin);
@@ -422,4 +421,6 @@ public sealed partial class Qcow2
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

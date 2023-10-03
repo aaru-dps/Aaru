@@ -39,15 +39,19 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] magic = new byte[7];
+        var magic = new byte[7];
         stream.EnsureRead(magic, 0, magic.Length);
 
         return magic.SequenceEqual(_signature);
     }
+
+#endregion
 }

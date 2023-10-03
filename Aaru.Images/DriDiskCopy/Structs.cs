@@ -36,17 +36,7 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Footer
-    {
-        /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)]
-        public byte[] signature;
-        /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
-        public Bpb bpb;
-        /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
-        public Bpb bpbcopy;
-    }
+#region Nested type: Bpb
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Bpb
@@ -95,4 +85,22 @@ public sealed partial class DriDiskCopy
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 144)]
         public byte[] unknown5;
     }
+
+#endregion
+
+#region Nested type: Footer
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct Footer
+    {
+        /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)]
+        public byte[] signature;
+        /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
+        public Bpb bpb;
+        /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
+        public Bpb bpbcopy;
+    }
+
+#endregion
 }

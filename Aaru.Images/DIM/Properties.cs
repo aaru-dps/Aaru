@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.Dim_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "DIM disk image";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

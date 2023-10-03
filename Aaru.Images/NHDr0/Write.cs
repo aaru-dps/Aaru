@@ -45,9 +45,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 0)
         {
@@ -119,7 +121,7 @@ public sealed partial class Nhdr0
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -153,7 +155,7 @@ public sealed partial class Nhdr0
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -234,8 +236,8 @@ public sealed partial class Nhdr0
                        commentBytes.Length >= 0x100 ? 0x100 : commentBytes.Length);
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        var  hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -310,4 +312,6 @@ public sealed partial class Nhdr0
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

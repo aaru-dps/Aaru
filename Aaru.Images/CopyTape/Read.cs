@@ -45,6 +45,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CopyTape
 {
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -60,12 +62,12 @@ public sealed partial class CopyTape
         _imageStream          = imageFilter.GetDataForkStream();
         _imageStream.Position = 0;
 
-        byte[] header           = new byte[9];
-        byte[] blockHeader      = new byte[16];
-        ulong  currentBlock     = 0;
-        uint   currentFile      = 0;
-        ulong  currentFileStart = 0;
-        bool   inFile           = false;
+        var   header           = new byte[9];
+        var   blockHeader      = new byte[16];
+        ulong currentBlock     = 0;
+        uint  currentFile      = 0;
+        ulong currentFileStart = 0;
+        var   inFile           = false;
 
         Files = new List<TapeFile>();
 
@@ -199,8 +201,8 @@ public sealed partial class CopyTape
 
         _imageStream.Position = _blockPositionCache[sectorAddress];
 
-        byte[] blockHeader = new byte[16];
-        var    blockRx     = new Regex(BLOCK_REGEX);
+        var blockHeader = new byte[16];
+        var blockRx     = new Regex(BLOCK_REGEX);
 
         _imageStream.EnsureRead(blockHeader, 0, 16);
         string mark    = Encoding.ASCII.GetString(blockHeader);
@@ -249,4 +251,6 @@ public sealed partial class CopyTape
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

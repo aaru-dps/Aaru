@@ -41,25 +41,32 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Apridisk_Name;
+
     /// <inheritdoc />
     public Guid Id => new("43408CF3-6DB3-449F-A779-2B0E497C5B14");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "ACT Apricot disk image";
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -69,24 +76,27 @@ public sealed partial class Apridisk
     {
         MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.Apricot_35, MediaType.ATARI_35_DS_DD,
         MediaType.ATARI_35_DS_DD_11, MediaType.ATARI_35_SS_DD, MediaType.ATARI_35_SS_DD_11, MediaType.DMF,
-        MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED, MediaType.DOS_35_HD,
-        MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
-        MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9, MediaType.FDFORMAT_35_DD,
-        MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50,
-        MediaType.XDF_35, MediaType.XDF_525, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
+        MediaType.DMF_82, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_ED,
+        MediaType.DOS_35_HD, MediaType.DOS_35_SS_DD_8, MediaType.DOS_35_SS_DD_9, MediaType.DOS_525_DS_DD_8,
+        MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
+        MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD,
+        MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
         ("compress", typeof(bool), Localization.Enable_Apridisk_compression, (object)false)
     };
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".dsk"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".dsk" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

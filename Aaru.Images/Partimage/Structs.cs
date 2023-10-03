@@ -39,6 +39,81 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Partimage
 {
+#region Nested type: CCheck
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CCheck
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        readonly byte[] cMagic;      // must be 'C','H','K'
+        public readonly uint  dwCRC; // CRC of the CHECK_FREQUENCY blocks
+        public readonly ulong qwPos; // number of the last block written
+    }
+
+#endregion
+
+#region Nested type: CLocalHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CLocalHeader // size must be 16384 (adjust the reserved data)
+    {
+        public readonly ulong qwBlockSize;
+        public readonly ulong qwUsedBlocks;
+        public readonly ulong qwBlocksCount;
+        public readonly ulong qwBitmapSize; // bytes in the bitmap
+        public readonly ulong qwBadBlocksCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+        public readonly byte[] szLabel;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16280)]
+        public readonly byte[] cReserved; // Adjust to fit with total header size
+
+        public readonly uint crc;
+    }
+
+#endregion
+
+#region Nested type: CMainTail
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CMainTail // size must be 16384 (adjust the reserved data)
+    {
+        public readonly ulong qwCRC;
+        public readonly uint  dwVolumeNumber;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16372)]
+        public readonly byte[] cReserved; // Adjust to fit with total header size
+    }
+
+#endregion
+
+#region Nested type: CMbr
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CMbr // must be 1024
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)]
+        public readonly byte[] cData;
+        public readonly uint dwDataCRC;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
+        public readonly byte[] szDevice; // ex: "hda"
+
+        // disk identificators
+        readonly ulong qwBlocksCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)]
+        public readonly byte[] szDescModel;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)]
+        public readonly byte[] cReserved; // for future use
+
+        //public byte[] szDescGeometry[MAX_DESC_GEOMETRY];
+        //public byte[] szDescIdentify[MAX_DESC_IDENTIFY];
+    }
+
+#endregion
+
+#region Nested type: Header
+
     /// <summary>Partimage disk image header, little-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -58,21 +133,9 @@ public sealed partial class Partimage
         public readonly byte[] reserved;
     }
 
-    struct PortableTm
-    {
-        public uint Second;
-        public uint Minute;
-        public uint Hour;
-        public uint DayOfMonth;
-        public uint Month;
-        public uint Year;
-        public uint DayOfWeek;
-        public uint DayOfYear;
-        public uint IsDst;
+#endregion
 
-        public uint GmtOff;
-        public uint Timezone;
-    }
+#region Nested type: MainHeader
 
     /// <summary>Partimage CMainHeader</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -135,60 +198,25 @@ public sealed partial class Partimage
         public readonly uint crc;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CMbr // must be 1024
+#endregion
+
+#region Nested type: PortableTm
+
+    struct PortableTm
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MBR_SIZE_WHOLE)]
-        public readonly byte[] cData;
-        public readonly uint dwDataCRC;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DEVICENAMELEN)]
-        public readonly byte[] szDevice; // ex: "hda"
+        public uint Second;
+        public uint Minute;
+        public uint Hour;
+        public uint DayOfMonth;
+        public uint Month;
+        public uint Year;
+        public uint DayOfWeek;
+        public uint DayOfYear;
+        public uint IsDst;
 
-        // disk identificators
-        readonly ulong qwBlocksCount;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_DESC_MODEL)]
-        public readonly byte[] szDescModel;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 884)]
-        public readonly byte[] cReserved; // for future use
-
-        //public byte[] szDescGeometry[MAX_DESC_GEOMETRY];
-        //public byte[] szDescIdentify[MAX_DESC_IDENTIFY];
+        public uint GmtOff;
+        public uint Timezone;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CCheck
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        readonly byte[] cMagic;      // must be 'C','H','K'
-        public readonly uint  dwCRC; // CRC of the CHECK_FREQUENCY blocks
-        public readonly ulong qwPos; // number of the last block written
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CLocalHeader // size must be 16384 (adjust the reserved data)
-    {
-        public readonly ulong qwBlockSize;
-        public readonly ulong qwUsedBlocks;
-        public readonly ulong qwBlocksCount;
-        public readonly ulong qwBitmapSize; // bytes in the bitmap
-        public readonly ulong qwBadBlocksCount;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public readonly byte[] szLabel;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16280)]
-        public readonly byte[] cReserved; // Adjust to fit with total header size
-
-        public readonly uint crc;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CMainTail // size must be 16384 (adjust the reserved data)
-    {
-        public readonly ulong qwCRC;
-        public readonly uint  dwVolumeNumber;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16372)]
-        public readonly byte[] cReserved; // Adjust to fit with total header size
-    }
+#endregion
 }

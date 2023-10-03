@@ -44,6 +44,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing VirtualBox disk images</summary>
 public sealed partial class Vdi : IWritableImage
 {
+    const string              MODULE_NAME = "VirtualBox plugin";
     ulong                     _currentWritingPosition;
     uint[]                    _ibm;
     ImageInfo                 _imageInfo;
@@ -75,6 +76,4 @@ public sealed partial class Vdi : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "VirtualBox plugin";
 }

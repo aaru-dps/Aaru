@@ -36,6 +36,77 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region Nested type: BlockType
+
+    /// <summary>List of known blocks types</summary>
+    enum BlockType : uint
+    {
+        /// <summary>Block containing data</summary>
+        DataBlock = 0x4B4C4244,
+        /// <summary>Block containing a deduplication table</summary>
+        DeDuplicationTable = 0x2A544444,
+        /// <summary>Block containing the index</summary>
+        Index = 0x58444E49,
+        /// <summary>Block containing the index</summary>
+        Index2 = 0x32584449,
+        /// <summary>Block containing logical geometry</summary>
+        GeometryBlock = 0x4D4F4547,
+        /// <summary>Block containing metadata</summary>
+        MetadataBlock = 0x4154454D,
+        /// <summary>Block containing optical disc tracks</summary>
+        TracksBlock = 0x534B5254,
+        /// <summary>Block containing CICM XML metadata</summary>
+        CicmBlock = 0x4D434943,
+        /// <summary>Block containing contents checksums</summary>
+        ChecksumBlock = 0x4D534B43,
+        /// <summary>TODO: Block containing data position measurements</summary>
+        DataPositionMeasurementBlock = 0x2A4D5044,
+        /// <summary>TODO: Block containing a snapshot index</summary>
+        SnapshotBlock = 0x50414E53,
+        /// <summary>TODO: Block containing how to locate the parent image</summary>
+        ParentBlock = 0x544E5250,
+        /// <summary>Block containing an array of hardware used to create the image</summary>
+        DumpHardwareBlock = 0x2A504D44,
+        /// <summary>Block containing list of files for a tape image</summary>
+        TapeFileBlock = 0x454C4654,
+        /// <summary>Block containing list of partitions for a tape image</summary>
+        TapePartitionBlock = 0x54425054,
+        /// <summary>Block containing list of indexes for Compact Disc tracks</summary>
+        CompactDiscIndexesBlock = 0x58494443,
+        /// <summary>Block containing JSON version of Aaru Metadata</summary>
+        AaruMetadataJsonBlock = 0x444D534A
+    }
+
+#endregion
+
+#region Nested type: CdFixFlags
+
+    enum CdFixFlags : uint
+    {
+        NotDumped       = 0x10000000,
+        Correct         = 0x20000000,
+        Mode2Form1Ok    = 0x30000000,
+        Mode2Form2Ok    = 0x40000000,
+        Mode2Form2NoCrc = 0x50000000
+    }
+
+#endregion
+
+#region Nested type: ChecksumAlgorithm
+
+    enum ChecksumAlgorithm : byte
+    {
+        Invalid = 0,
+        Md5     = 1,
+        Sha1    = 2,
+        Sha256  = 3,
+        SpamSum = 4
+    }
+
+#endregion
+
+#region Nested type: CompressionType
+
     /// <summary>List of known compression types</summary>
     enum CompressionType : ushort
     {
@@ -48,6 +119,10 @@ public sealed partial class AaruFormat
         /// <summary>LZMA in Claunia Subchannel Transform processed data</summary>
         LzmaClauniaSubchannelTransform = 3
     }
+
+#endregion
+
+#region Nested type: DataType
 
     /// <summary>List of known data types</summary>
     enum DataType : ushort
@@ -226,54 +301,5 @@ public sealed partial class AaruFormat
         DvdSectorEdc = 85
     }
 
-    /// <summary>List of known blocks types</summary>
-    enum BlockType : uint
-    {
-        /// <summary>Block containing data</summary>
-        DataBlock = 0x4B4C4244,
-        /// <summary>Block containing a deduplication table</summary>
-        DeDuplicationTable = 0x2A544444,
-        /// <summary>Block containing the index</summary>
-        Index = 0x58444E49,
-        /// <summary>Block containing the index</summary>
-        Index2 = 0x32584449,
-        /// <summary>Block containing logical geometry</summary>
-        GeometryBlock = 0x4D4F4547,
-        /// <summary>Block containing metadata</summary>
-        MetadataBlock = 0x4154454D,
-        /// <summary>Block containing optical disc tracks</summary>
-        TracksBlock = 0x534B5254,
-        /// <summary>Block containing CICM XML metadata</summary>
-        CicmBlock = 0x4D434943,
-        /// <summary>Block containing contents checksums</summary>
-        ChecksumBlock = 0x4D534B43,
-        /// <summary>TODO: Block containing data position measurements</summary>
-        DataPositionMeasurementBlock = 0x2A4D5044,
-        /// <summary>TODO: Block containing a snapshot index</summary>
-        SnapshotBlock = 0x50414E53,
-        /// <summary>TODO: Block containing how to locate the parent image</summary>
-        ParentBlock = 0x544E5250,
-        /// <summary>Block containing an array of hardware used to create the image</summary>
-        DumpHardwareBlock = 0x2A504D44,
-        /// <summary>Block containing list of files for a tape image</summary>
-        TapeFileBlock = 0x454C4654,
-        /// <summary>Block containing list of partitions for a tape image</summary>
-        TapePartitionBlock = 0x54425054,
-        /// <summary>Block containing list of indexes for Compact Disc tracks</summary>
-        CompactDiscIndexesBlock = 0x58494443,
-        /// <summary>Block containing JSON version of Aaru Metadata</summary>
-        AaruMetadataJsonBlock = 0x444D534A
-    }
-
-    enum ChecksumAlgorithm : byte
-    {
-        Invalid = 0, Md5     = 1, Sha1 = 2,
-        Sha256  = 3, SpamSum = 4
-    }
-
-    enum CdFixFlags : uint
-    {
-        NotDumped    = 0x10000000, Correct         = 0x20000000, Mode2Form1Ok = 0x30000000,
-        Mode2Form2Ok = 0x40000000, Mode2Form2NoCrc = 0x50000000
-    }
+#endregion
 }

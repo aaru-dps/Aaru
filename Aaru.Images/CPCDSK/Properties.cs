@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.Cpcdsk_Name;
+
     /// <inheritdoc />
     public Guid Id => new("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
+
     /// <inheritdoc />
     public string Format => _extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

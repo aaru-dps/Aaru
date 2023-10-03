@@ -37,6 +37,51 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
+#region Nested type: BlockChunk
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BlockChunk
+    {
+        public          uint  type;
+        public readonly uint  comment;
+        public          ulong sector;
+        public          ulong sectors;
+        public          ulong offset;
+        public          ulong length;
+    }
+
+#endregion
+
+#region Nested type: BlockHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BlockHeader
+    {
+        public          uint  signature;
+        public          uint  version;
+        public readonly ulong sectorStart;
+        public          ulong sectorCount;
+        public readonly ulong dataOffset;
+        public readonly uint  buffers;
+        public readonly uint  descriptor;
+        public readonly uint  reserved1;
+        public readonly uint  reserved2;
+        public readonly uint  reserved3;
+        public readonly uint  reserved4;
+        public readonly uint  reserved5;
+        public readonly uint  reserved6;
+        public          uint  checksumType;
+        public          uint  checksumLen;
+        public          uint  checksum;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
+        public readonly byte[] reservedChk;
+        public uint chunks;
+    }
+
+#endregion
+
+#region Nested type: Footer
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Footer
     {
@@ -72,38 +117,5 @@ public sealed partial class Udif
         public readonly byte[] reserved4;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BlockHeader
-    {
-        public          uint  signature;
-        public          uint  version;
-        public readonly ulong sectorStart;
-        public          ulong sectorCount;
-        public readonly ulong dataOffset;
-        public readonly uint  buffers;
-        public readonly uint  descriptor;
-        public readonly uint  reserved1;
-        public readonly uint  reserved2;
-        public readonly uint  reserved3;
-        public readonly uint  reserved4;
-        public readonly uint  reserved5;
-        public readonly uint  reserved6;
-        public          uint  checksumType;
-        public          uint  checksumLen;
-        public          uint  checksum;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 124)]
-        public readonly byte[] reservedChk;
-        public uint chunks;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BlockChunk
-    {
-        public          uint  type;
-        public readonly uint  comment;
-        public          ulong sector;
-        public          ulong sectors;
-        public          ulong offset;
-        public          ulong length;
-    }
+#endregion
 }

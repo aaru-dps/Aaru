@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,9 +50,11 @@ public sealed partial class AppleNib
         if(stream.Length < 512)
             return false;
 
-        byte[] test = new byte[512];
+        var test = new byte[512];
         stream.EnsureRead(test, 0, 512);
 
         return Apple2.IsApple2GCR(test);
     }
+
+#endregion
 }

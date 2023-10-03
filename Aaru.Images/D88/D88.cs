@@ -44,6 +44,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Quasi88 disk images</summary>
 public sealed partial class D88 : IMediaImage
 {
+    const string MODULE_NAME = "D88 plugin";
     ImageInfo    _imageInfo;
     List<byte[]> _sectorsData;
 
@@ -70,6 +71,4 @@ public sealed partial class D88 : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "D88 plugin";
 }

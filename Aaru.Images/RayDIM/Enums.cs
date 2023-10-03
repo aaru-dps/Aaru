@@ -37,10 +37,17 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class RayDim
 {
+#region Nested type: RayDiskTypes
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum RayDiskTypes : byte
     {
-        Md2dd = 1, Md2hd = 2, Mf2dd = 3,
-        Mf2hd = 4, Mf2ed = 5
+        Md2dd = 1,
+        Md2hd = 2,
+        Mf2dd = 3,
+        Mf2hd = 4,
+        Mf2ed = 5
     }
+
+#endregion
 }

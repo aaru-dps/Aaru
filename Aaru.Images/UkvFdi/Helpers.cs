@@ -36,9 +36,9 @@ public sealed partial class UkvFdi
 {
     (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
     {
-        ushort cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
-        byte   head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
-        byte   sector   = (byte)((lba % _imageInfo.SectorsPerTrack) + 1);
+        var cylinder = (ushort)(lba                            / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
+        var head     = (byte)(lba / _imageInfo.SectorsPerTrack % _imageInfo.Heads);
+        var sector   = (byte)(lba % _imageInfo.SectorsPerTrack + 1);
 
         return (cylinder, head, sector);
     }

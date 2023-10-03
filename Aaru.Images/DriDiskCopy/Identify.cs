@@ -40,6 +40,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,7 +50,7 @@ public sealed partial class DriDiskCopy
         if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
             return false;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
+        var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -57,7 +59,7 @@ public sealed partial class DriDiskCopy
         string sig = StringHandlers.CToString(tmpFooter.signature);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.signature = \"{0}\"", sig);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.five = {0}",      tmpFooter.bpb.five);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb._driveCode = {0}", tmpFooter.bpb._driveCode);
 
@@ -66,18 +68,18 @@ public sealed partial class DriDiskCopy
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.cylinders = {0}", tmpFooter.bpb.cylinders);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.unknown2 = {0}", tmpFooter.bpb.unknown2);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.bps = {0}", tmpFooter.bpb.bps);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.spc = {0}", tmpFooter.bpb.spc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.bps = {0}",      tmpFooter.bpb.bps);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.spc = {0}",      tmpFooter.bpb.spc);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.rsectors = {0}", tmpFooter.bpb.rsectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.fats_no = {0}", tmpFooter.bpb.fats_no);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sectors = {0}", tmpFooter.bpb.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.fats_no = {0}",  tmpFooter.bpb.fats_no);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sectors = {0}",  tmpFooter.bpb.sectors);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.media_descriptor = {0}",
                                    tmpFooter.bpb.media_descriptor);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.spfat = {0}", tmpFooter.bpb.spfat);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sptrack = {0}", tmpFooter.bpb.sptrack);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.heads = {0}", tmpFooter.bpb.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.spfat = {0}",    tmpFooter.bpb.spfat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sptrack = {0}",  tmpFooter.bpb.sptrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.heads = {0}",    tmpFooter.bpb.heads);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.hsectors = {0}", tmpFooter.bpb.hsectors);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.drive_no = {0}", tmpFooter.bpb.drive_no);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.unknown3 = {0}", tmpFooter.bpb.unknown3);
@@ -99,6 +101,8 @@ public sealed partial class DriDiskCopy
         if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
             return false;
 
-        return (tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf<Footer>() == stream.Length;
+        return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf<Footer>() == stream.Length;
     }
+
+#endregion
 }

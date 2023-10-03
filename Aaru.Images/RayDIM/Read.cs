@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -49,7 +51,7 @@ public sealed partial class RayDim
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Header>()];
+        var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -71,10 +73,10 @@ public sealed partial class RayDim
         _imageInfo.Sectors         = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
         _imageInfo.SectorSize      = 512;
 
-        byte[] sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
+        var sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
         _disk = new MemoryStream();
 
-        for(int i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
+        for(var i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
         {
             stream.EnsureRead(sectors, 0, sectors.Length);
             stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);
@@ -127,4 +129,6 @@ public sealed partial class RayDim
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

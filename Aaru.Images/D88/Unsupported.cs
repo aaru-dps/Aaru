@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class D88
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -75,4 +77,6 @@ public sealed partial class D88
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

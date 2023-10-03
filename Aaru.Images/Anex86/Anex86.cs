@@ -42,10 +42,11 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Anex-86 disk images</summary>
 public sealed partial class Anex86 : IWritableImage
 {
-    IFilter    _anexImageFilter;
-    Header     _header;
-    ImageInfo  _imageInfo;
-    FileStream _writingStream;
+    const string MODULE_NAME = "Anex86 plugin";
+    IFilter      _anexImageFilter;
+    Header       _header;
+    ImageInfo    _imageInfo;
+    FileStream   _writingStream;
 
     public Anex86() => _imageInfo = new ImageInfo
     {
@@ -70,6 +71,4 @@ public sealed partial class Anex86 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Anex86 plugin";
 }

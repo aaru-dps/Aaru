@@ -1,2945 +1,2947 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <root>
-  <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
-              xmlns="">
-    <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
-  </xsd:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>1.3</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    </value>
-  </resheader>
-  <data name="Took_0_ms_to_deinterleave_subchannel" xml:space="preserve">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Took_0_ms_to_deinterleave_subchannel" xml:space="preserve">
     <value>Took {0}ms to deinterleave subchannel.</value>
   </data>
-  <data name="Took_0_ms_to_sequentialize_subchannel" xml:space="preserve">
+    <data name="Took_0_ms_to_sequentialize_subchannel" xml:space="preserve">
     <value>Took {0}ms to sequentialize subchannel.</value>
   </data>
-  <data name="Took_0_ms_to_transform_subchannel" xml:space="preserve">
+    <data name="Took_0_ms_to_transform_subchannel" xml:space="preserve">
     <value>Took {0}ms to transform subchannel.</value>
   </data>
-  <data name="Took_0_ms_to_desequentialize_subchannel" xml:space="preserve">
+    <data name="Took_0_ms_to_desequentialize_subchannel" xml:space="preserve">
     <value>Took {0}ms to de-sequentialize subchannel.</value>
   </data>
-  <data name="Took_0_ms_to_interleave_subchannel" xml:space="preserve">
+    <data name="Took_0_ms_to_interleave_subchannel" xml:space="preserve">
     <value>Took {0}ms to interleave subchannel.</value>
   </data>
-  <data name="Took_0_ms_to_untransform_subchannel" xml:space="preserve">
+    <data name="Took_0_ms_to_untransform_subchannel" xml:space="preserve">
     <value>Took {0}ms to untransform subchannel.</value>
   </data>
-  <data name="AaruFormat_Name" xml:space="preserve">
+    <data name="AaruFormat_Name" xml:space="preserve">
     <value>Aaru Format</value>
   </data>
-  <data name="How_many_sectors_to_store_per_block_will_be_rounded_to_next_power_of_two" xml:space="preserve">
+    <data name="How_many_sectors_to_store_per_block_will_be_rounded_to_next_power_of_two" xml:space="preserve">
     <value>How many sectors to store per block (will be rounded to next power of two)</value>
   </data>
-  <data name="Size_in_bytes_of_the_LZMA_dictionary" xml:space="preserve">
+    <data name="Size_in_bytes_of_the_LZMA_dictionary" xml:space="preserve">
     <value>Size, in bytes, of the LZMA dictionary</value>
   </data>
-  <data name="Maximum_size_in_mebibytes_for_in_memory_DDT_If_image_needs_a_bigger_one_it_will_be_on_disk"
-        xml:space="preserve">
+    <data name="Maximum_size_in_mebibytes_for_in_memory_DDT_If_image_needs_a_bigger_one_it_will_be_on_disk"
+          xml:space="preserve">
     <value>Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk</value>
   </data>
-  <data name="Calculate_and_store_MD5_of_image_user_data" xml:space="preserve">
+    <data name="Calculate_and_store_MD5_of_image_user_data" xml:space="preserve">
     <value>Calculate and store MD5 of image's user data</value>
   </data>
-  <data name="Calculate_and_store_SHA1_of_image_user_data" xml:space="preserve">
+    <data name="Calculate_and_store_SHA1_of_image_user_data" xml:space="preserve">
     <value>Calculate and store SHA1 of image's user data</value>
   </data>
-  <data name="Calculate_and_store_SHA256_of_image_user_data" xml:space="preserve">
+    <data name="Calculate_and_store_SHA256_of_image_user_data" xml:space="preserve">
     <value>Calculate and store SHA256 of image's user data</value>
   </data>
-  <data name="Calculate_and_store_SpamSum_of_image_user_data" xml:space="preserve">
+    <data name="Calculate_and_store_SpamSum_of_image_user_data" xml:space="preserve">
     <value>Calculate and store SpamSum of image's user data</value>
   </data>
-  <data name="Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default"
-        xml:space="preserve">
+    <data name="Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default"
+          xml:space="preserve">
     <value>Store only unique sectors. This consumes more memory and is slower, but it's enabled by default</value>
   </data>
-  <data name="Compress_user_data_blocks_Other_blocks_will_always_be_compressed" xml:space="preserve">
+    <data name="Compress_user_data_blocks_Other_blocks_will_always_be_compressed" xml:space="preserve">
     <value>Compress user data blocks. Other blocks will always be compressed</value>
   </data>
-  <data name="Memory_snapshot_0_bytes" xml:space="preserve">
+    <data name="Memory_snapshot_0_bytes" xml:space="preserve">
     <value>Memory snapshot: {0} bytes</value>
   </data>
-  <data name="Image_version_0_not_recognized" xml:space="preserve">
+    <data name="Image_version_0_not_recognized" xml:space="preserve">
     <value>Image version {0} not recognized.</value>
   </data>
-  <data name="Index_not_found" xml:space="preserve">
+    <data name="Index_not_found" xml:space="preserve">
     <value>Index not found!</value>
   </data>
-  <data name="Index_at_0_contains_1_entries" xml:space="preserve">
+    <data name="Index_at_0_contains_1_entries" xml:space="preserve">
     <value>Index at {0} contains {1} entries</value>
   </data>
-  <data name="Block_type_0_with_data_type_1_is_indexed_to_be_at_2" xml:space="preserve">
+    <data name="Block_type_0_with_data_type_1_is_indexed_to_be_at_2" xml:space="preserve">
     <value>Block type {0} with data type {1} is indexed to be at {2}</value>
   </data>
-  <data name="Incorrect_identifier_for_data_block_at_position_0" xml:space="preserve">
+    <data name="Incorrect_identifier_for_data_block_at_position_0" xml:space="preserve">
     <value>Incorrect identifier for data block at position {0}</value>
   </data>
-  <data name="Expected_block_with_data_type_0_at_position_1_but_found_data_type_2" xml:space="preserve">
+    <data name="Expected_block_with_data_type_0_at_position_1_but_found_data_type_2" xml:space="preserve">
     <value>Expected block with data type {0} at position {1} but found data type {2}</value>
   </data>
-  <data name="Found_data_block_type_0_at_position_1" xml:space="preserve">
+    <data name="Found_data_block_type_0_at_position_1" xml:space="preserve">
     <value>Found data block type {0} at position {1}</value>
   </data>
-  <data name="Invalid_compression_type_0_for_block_with_data_type_1_continuing" xml:space="preserve">
+    <data name="Invalid_compression_type_0_for_block_with_data_type_1_continuing" xml:space="preserve">
     <value>Invalid compression type {0} for block with data type {1}, continuing...</value>
   </data>
-  <data name="Error_decompressing_block_should_be_0_bytes_but_got_1_bytes" xml:space="preserve">
+    <data name="Error_decompressing_block_should_be_0_bytes_but_got_1_bytes" xml:space="preserve">
     <value>Error decompressing block, should be {0} bytes but got {1} bytes.</value>
   </data>
-  <data name="Took_0_seconds_to_decompress_block" xml:space="preserve">
+    <data name="Took_0_seconds_to_decompress_block" xml:space="preserve">
     <value>Took {0} seconds to decompress block</value>
   </data>
-  <data name="Found_unknown_compression_type_0_continuing" xml:space="preserve">
+    <data name="Found_unknown_compression_type_0_continuing" xml:space="preserve">
     <value>Found unknown compression type {0}, continuing...</value>
   </data>
-  <data name="Incorrect_CRC_found_0_X16_found_expected_1_X16_continuing" xml:space="preserve">
+    <data name="Incorrect_CRC_found_0_X16_found_expected_1_X16_continuing" xml:space="preserve">
     <value>Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...</value>
   </data>
-  <data name="Media_tag_type_0_duplicated_removing_previous_entry" xml:space="preserve">
+    <data name="Media_tag_type_0_duplicated_removing_previous_entry" xml:space="preserve">
     <value>Media tag type {0} duplicated, removing previous entry...</value>
   </data>
-  <data name="Decompressing_DDT" xml:space="preserve">
+    <data name="Decompressing_DDT" xml:space="preserve">
     <value>Decompressing DDT...</value>
   </data>
-  <data name="Error_decompressing_DDT_should_be_0_bytes_but_got_1_bytes" xml:space="preserve">
+    <data name="Error_decompressing_DDT_should_be_0_bytes_but_got_1_bytes" xml:space="preserve">
     <value>Error decompressing DDT, should be {0} bytes but got {1} bytes.</value>
   </data>
-  <data name="Took_0_seconds_to_decompress_DDT" xml:space="preserve">
+    <data name="Took_0_seconds_to_decompress_DDT" xml:space="preserve">
     <value>Took {0} seconds to decompress DDT</value>
   </data>
-  <data name="Found_unsupported_compression_algorithm_0" xml:space="preserve">
+    <data name="Found_unsupported_compression_algorithm_0" xml:space="preserve">
     <value>Found unsupported compression algorithm {0}</value>
   </data>
-  <data name="Geometry_set_to_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
+    <data name="Geometry_set_to_0_cylinders_1_heads_2_sectors_per_track" xml:space="preserve">
     <value>Geometry set to {0} cylinders {1} heads {2} sectors per track</value>
   </data>
-  <data name="Found_metadata_block_at_position_0" xml:space="preserve">
+    <data name="Found_metadata_block_at_position_0" xml:space="preserve">
     <value>Found metadata block at position {0}</value>
   </data>
-  <data name="Setting_media_sequence_as_0_of_1" xml:space="preserve">
+    <data name="Setting_media_sequence_as_0_of_1" xml:space="preserve">
     <value>Setting media sequence as {0} of {1}</value>
   </data>
-  <data name="Setting_creator_0" xml:space="preserve">
+    <data name="Setting_creator_0" xml:space="preserve">
     <value>Setting creator: {0}</value>
   </data>
-  <data name="Setting_comments_0" xml:space="preserve">
+    <data name="Setting_comments_0" xml:space="preserve">
     <value>Setting comments: {0}</value>
   </data>
-  <data name="Setting_media_title_0" xml:space="preserve">
+    <data name="Setting_media_title_0" xml:space="preserve">
     <value>Setting media title: {0}</value>
   </data>
-  <data name="Setting_media_manufacturer_0" xml:space="preserve">
+    <data name="Setting_media_manufacturer_0" xml:space="preserve">
     <value>Setting media manufacturer: {0}</value>
   </data>
-  <data name="Setting_media_model_0" xml:space="preserve">
+    <data name="Setting_media_model_0" xml:space="preserve">
     <value>Setting media model: {0}</value>
   </data>
-  <data name="Setting_media_serial_number_0" xml:space="preserve">
+    <data name="Setting_media_serial_number_0" xml:space="preserve">
     <value>Setting media serial number: {0}</value>
   </data>
-  <data name="Setting_media_barcode_0" xml:space="preserve">
+    <data name="Setting_media_barcode_0" xml:space="preserve">
     <value>Setting media barcode: {0}</value>
   </data>
-  <data name="Setting_media_part_number_0" xml:space="preserve">
+    <data name="Setting_media_part_number_0" xml:space="preserve">
     <value>Setting media part number: {0}</value>
   </data>
-  <data name="Setting_drive_manufacturer_0" xml:space="preserve">
+    <data name="Setting_drive_manufacturer_0" xml:space="preserve">
     <value>Setting drive manufacturer: {0}</value>
   </data>
-  <data name="Setting_drive_model_0" xml:space="preserve">
+    <data name="Setting_drive_model_0" xml:space="preserve">
     <value>Setting drive model: {0}</value>
   </data>
-  <data name="Setting_drive_serial_number_0" xml:space="preserve">
+    <data name="Setting_drive_serial_number_0" xml:space="preserve">
     <value>Setting drive serial number: {0}</value>
   </data>
-  <data name="Setting_drive_firmware_revision_0" xml:space="preserve">
+    <data name="Setting_drive_firmware_revision_0" xml:space="preserve">
     <value>Setting drive firmware revision: {0}</value>
   </data>
-  <data name="Incorrect_identifier_for_tracks_block_at_position_0" xml:space="preserve">
+    <data name="Incorrect_identifier_for_tracks_block_at_position_0" xml:space="preserve">
     <value>Incorrect identifier for tracks block at position {0}</value>
   </data>
-  <data name="Found_0_tracks_at_position_1" xml:space="preserve">
+    <data name="Found_0_tracks_at_position_1" xml:space="preserve">
     <value>Found {0} tracks at position {1}</value>
   </data>
-  <data name="Found_CICM_XML_metadata_block_at_position_0" xml:space="preserve">
+    <data name="Found_CICM_XML_metadata_block_at_position_0" xml:space="preserve">
     <value>Found CICM XML metadata block at position {0}</value>
   </data>
-  <data name="Exception_0_processing_CICM_XML_metadata_block" xml:space="preserve">
+    <data name="Exception_0_processing_CICM_XML_metadata_block" xml:space="preserve">
     <value>Exception {0} processing CICM XML metadata block</value>
   </data>
-  <data name="Found_dump_hardware_block_at_position_0" xml:space="preserve">
+    <data name="Found_dump_hardware_block_at_position_0" xml:space="preserve">
     <value>Found dump hardware block at position {0}</value>
   </data>
-  <data name="Found_tape_partition_block_at_position_0" xml:space="preserve">
+    <data name="Found_tape_partition_block_at_position_0" xml:space="preserve">
     <value>Found tape partition block at position {0}</value>
   </data>
-  <data name="Found_tape_file_block_at_position_0" xml:space="preserve">
+    <data name="Found_tape_file_block_at_position_0" xml:space="preserve">
     <value>Found tape file block at position {0}</value>
   </data>
-  <data name="Incorrect_identifier_for_compact_disc_indexes_block_at_position_0" xml:space="preserve">
+    <data name="Incorrect_identifier_for_compact_disc_indexes_block_at_position_0" xml:space="preserve">
     <value>Incorrect identifier for compact disc indexes block at position {0}</value>
   </data>
-  <data name="Found_0_compact_disc_indexes_at_position_1" xml:space="preserve">
+    <data name="Found_0_compact_disc_indexes_at_position_1" xml:space="preserve">
     <value>Found {0} compact disc indexes at position {1}</value>
   </data>
-  <data name="Could_not_find_user_data_deduplication_table" xml:space="preserve">
+    <data name="Could_not_find_user_data_deduplication_table" xml:space="preserve">
     <value>Could not find user data deduplication table.</value>
   </data>
-  <data name="Image_created_on_0" xml:space="preserve">
+    <data name="Image_created_on_0" xml:space="preserve">
     <value>Image created on {0}</value>
   </data>
-  <data name="Image_last_written_on_0" xml:space="preserve">
+    <data name="Image_last_written_on_0" xml:space="preserve">
     <value>Image last written on {0}</value>
   </data>
-  <data name="This_image_has_a_corrupted_track_list_convert_will_fix_it" xml:space="preserve">
+    <data name="This_image_has_a_corrupted_track_list_convert_will_fix_it" xml:space="preserve">
     <value>This image has a corrupted track list, convert will fix it.</value>
   </data>
-  <data
-    name="This_image_has_a_corrupted_track_list_a_best_effort_has_been_tried_but_may_require_manual_editing_or_redump"
-    xml:space="preserve">
+    <data
+        name="This_image_has_a_corrupted_track_list_a_best_effort_has_been_tried_but_may_require_manual_editing_or_redump"
+        xml:space="preserve">
     <value>This image has a corrupted track list, a best effort has been tried but may require manual editing or redump.</value>
   </data>
-  <data name="Optical_disc_track" xml:space="preserve">
+    <data name="Optical_disc_track" xml:space="preserve">
     <value>Optical disc track</value>
   </data>
-  <data name="Checking_index_integrity_at_0" xml:space="preserve">
+    <data name="Checking_index_integrity_at_0" xml:space="preserve">
     <value>Checking index integrity at {0}</value>
   </data>
-  <data name="Incorrect_index_identifier" xml:space="preserve">
+    <data name="Incorrect_index_identifier" xml:space="preserve">
     <value>Incorrect index identifier</value>
   </data>
-  <data name="Expected_index_CRC_0_X16_but_got_1_X16" xml:space="preserve">
+    <data name="Expected_index_CRC_0_X16_but_got_1_X16" xml:space="preserve">
     <value>Expected index CRC {0:X16} but got {1:X16}</value>
   </data>
-  <data name="Verifying_data_block_type_0_at_position_1" xml:space="preserve">
+    <data name="Verifying_data_block_type_0_at_position_1" xml:space="preserve">
     <value>Verifying data block type {0} at position {1}</value>
   </data>
-  <data name="Expected_block_CRC_0_X16_but_got_1_X16" xml:space="preserve">
+    <data name="Expected_block_CRC_0_X16_but_got_1_X16" xml:space="preserve">
     <value>Expected block CRC {0:X16} but got {1:X16}</value>
   </data>
-  <data name="Verifying_deduplication_table_type_0_at_position_1" xml:space="preserve">
+    <data name="Verifying_deduplication_table_type_0_at_position_1" xml:space="preserve">
     <value>Verifying deduplication table type {0} at position {1}</value>
   </data>
-  <data name="Expected_DDT_CRC_0_but_got_1" xml:space="preserve">
+    <data name="Expected_DDT_CRC_0_but_got_1" xml:space="preserve">
     <value>Expected DDT CRC {0:X16} but got {1:X16}</value>
   </data>
-  <data name="Track_block_at_0_contains_1_entries" xml:space="preserve">
+    <data name="Track_block_at_0_contains_1_entries" xml:space="preserve">
     <value>Track block at {0} contains {1} entries</value>
   </data>
-  <data name="Ignored_field_type_0" xml:space="preserve">
+    <data name="Ignored_field_type_0" xml:space="preserve">
     <value>Ignored field type {0}</value>
   </data>
-  <data name="Invalid_value_for_sectors_per_block_option" xml:space="preserve">
+    <data name="Invalid_value_for_sectors_per_block_option" xml:space="preserve">
     <value>Invalid value for sectors_per_block option</value>
   </data>
-  <data name="Invalid_value_for_dictionary_option" xml:space="preserve">
+    <data name="Invalid_value_for_dictionary_option" xml:space="preserve">
     <value>Invalid value for dictionary option</value>
   </data>
-  <data name="Invalid_value_for_max_ddt_size_option" xml:space="preserve">
+    <data name="Invalid_value_for_max_ddt_size_option" xml:space="preserve">
     <value>Invalid value for max_ddt_size option</value>
   </data>
-  <data name="Invalid_value_for_md5_option" xml:space="preserve">
+    <data name="Invalid_value_for_md5_option" xml:space="preserve">
     <value>Invalid value for md5 option</value>
   </data>
-  <data name="Invalid_value_for_sha1_option" xml:space="preserve">
+    <data name="Invalid_value_for_sha1_option" xml:space="preserve">
     <value>Invalid value for sha1 option</value>
   </data>
-  <data name="Invalid_value_for_sha256_option" xml:space="preserve">
+    <data name="Invalid_value_for_sha256_option" xml:space="preserve">
     <value>Invalid value for sha256 option</value>
   </data>
-  <data name="Invalid_value_for_spamsum_option" xml:space="preserve">
+    <data name="Invalid_value_for_spamsum_option" xml:space="preserve">
     <value>Invalid value for spamsum option</value>
   </data>
-  <data name="Invalid_value_for_deduplicate_option" xml:space="preserve">
+    <data name="Invalid_value_for_deduplicate_option" xml:space="preserve">
     <value>Invalid value for deduplicate option</value>
   </data>
-  <data name="Invalid_value_for_compress_option" xml:space="preserve">
+    <data name="Invalid_value_for_compress_option" xml:space="preserve">
     <value>Invalid value for compress option</value>
   </data>
-  <data name="Unsupported_media_format_0" xml:space="preserve">
+    <data name="Unsupported_media_format_0" xml:space="preserve">
     <value>Unsupported media format {0}</value>
   </data>
-  <data name="Got_a_shift_of_0_for_1_sectors_per_block" xml:space="preserve">
+    <data name="Got_a_shift_of_0_for_1_sectors_per_block" xml:space="preserve">
     <value>Got a shift of {0} for {1} sectors per block</value>
   </data>
-  <data name="Could_not_create_new_image_file_exception_0" xml:space="preserve">
+    <data name="Could_not_create_new_image_file_exception_0" xml:space="preserve">
     <value>Could not create new image file, exception {0}</value>
   </data>
-  <data name="Cannot_append_to_a_non_Aaru_Format_image" xml:space="preserve">
+    <data name="Cannot_append_to_a_non_Aaru_Format_image" xml:space="preserve">
     <value>Cannot append to a non Aaru Format image</value>
   </data>
-  <data name="Cannot_append_to_an_unknown_image_version_0" xml:space="preserve">
+    <data name="Cannot_append_to_an_unknown_image_version_0" xml:space="preserve">
     <value>Cannot append to an unknown image version {0}</value>
   </data>
-  <data name="Cannot_write_a_media_with_type_0_to_an_image_with_type_1" xml:space="preserve">
+    <data name="Cannot_write_a_media_with_type_0_to_an_image_with_type_1" xml:space="preserve">
     <value>Cannot write a media with type {0} to an image with type {1}</value>
   </data>
-  <data name="Index_not_found_in_existing_image_cannot_continue" xml:space="preserve">
+    <data name="Index_not_found_in_existing_image_cannot_continue" xml:space="preserve">
     <value>Index not found in existing image, cannot continue</value>
   </data>
-  <data name="Trying_to_write_a_media_with_0_sectors_to_an_image_with_1_sectors_not_continuing" xml:space="preserve">
+    <data name="Trying_to_write_a_media_with_0_sectors_to_an_image_with_1_sectors_not_continuing" xml:space="preserve">
     <value>Trying to write a media with {0} sectors to an image with {1} sectors, not continuing...</value>
   </data>
-  <data name="In_memory_DDT_0" xml:space="preserve">
+    <data name="In_memory_DDT_0" xml:space="preserve">
     <value>In memory DDT?: {0}</value>
   </data>
-  <data name="Tried_to_write_on_a_non_writable_image" xml:space="preserve">
+    <data name="Tried_to_write_on_a_non_writable_image" xml:space="preserve">
     <value>Tried to write on a non-writable image</value>
   </data>
-  <data name="Tried_to_write_past_image_size" xml:space="preserve">
+    <data name="Tried_to_write_past_image_size" xml:space="preserve">
     <value>Tried to write past image size</value>
   </data>
-  <data name="Track_not_found" xml:space="preserve">
+    <data name="Track_not_found" xml:space="preserve">
     <value>Track not found</value>
   </data>
-  <data name="Incorrect_data_size" xml:space="preserve">
+    <data name="Incorrect_data_size" xml:space="preserve">
     <value>Incorrect data size</value>
   </data>
-  <data name="Unknown_long_sector_type_cannot_write" xml:space="preserve">
+    <data name="Unknown_long_sector_type_cannot_write" xml:space="preserve">
     <value>Unknown long sector type, cannot write.</value>
   </data>
-  <data name="Unsupported_feature" xml:space="preserve">
+    <data name="Unsupported_feature" xml:space="preserve">
     <value>Unsupported feature</value>
   </data>
-  <data name="Image_is_not_opened_for_writing" xml:space="preserve">
+    <data name="Image_is_not_opened_for_writing" xml:space="preserve">
     <value>Image is not opened for writing</value>
   </data>
-  <data name="Of_0_sectors_written_1_are_unique_2" xml:space="preserve">
+    <data name="Of_0_sectors_written_1_are_unique_2" xml:space="preserve">
     <value>Of {0} sectors written, {1} are unique ({2:P})</value>
   </data>
-  <data name="Tag_type_0_is_null_skipping" xml:space="preserve">
+    <data name="Tag_type_0_is_null_skipping" xml:space="preserve">
     <value>Tag type {0} is null, skipping...</value>
   </data>
-  <data name="Writing_tag_type_0_to_position_1" xml:space="preserve">
+    <data name="Writing_tag_type_0_to_position_1" xml:space="preserve">
     <value>Writing tag type {0} to position {1}</value>
   </data>
-  <data name="Writing_geometry_block_to_position_0" xml:space="preserve">
+    <data name="Writing_geometry_block_to_position_0" xml:space="preserve">
     <value>Writing geometry block to position {0}</value>
   </data>
-  <data name="Writing_dump_hardware_block_to_position_0" xml:space="preserve">
+    <data name="Writing_dump_hardware_block_to_position_0" xml:space="preserve">
     <value>Writing dump hardware block to position {0}</value>
   </data>
-  <data name="Writing_CICM_XML_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CICM_XML_block_to_position_0" xml:space="preserve">
     <value>Writing CICM XML block to position {0}</value>
   </data>
-  <data name="Writing_checksum_block_to_position_0" xml:space="preserve">
+    <data name="Writing_checksum_block_to_position_0" xml:space="preserve">
     <value>Writing checksum block to position {0}</value>
   </data>
-  <data name="Writing_tape_partitions_to_position_0" xml:space="preserve">
+    <data name="Writing_tape_partitions_to_position_0" xml:space="preserve">
     <value>Writing tape partitions to position {0}</value>
   </data>
-  <data name="Writing_tape_files_to_position_0" xml:space="preserve">
+    <data name="Writing_tape_files_to_position_0" xml:space="preserve">
     <value>Writing tape files to position {0}</value>
   </data>
-  <data name="Writing_user_data_DDT_to_position_0" xml:space="preserve">
+    <data name="Writing_user_data_DDT_to_position_0" xml:space="preserve">
     <value>Writing user data DDT to position {0}</value>
   </data>
-  <data name="Writing_CD_sector_prefix_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_sector_prefix_block_to_position_0" xml:space="preserve">
     <value>Writing CD sector prefix block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_prefix" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_prefix" xml:space="preserve">
     <value>Took {0} seconds to compress prefix</value>
   </data>
-  <data name="Writing_CD_sector_suffix_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_sector_suffix_block_to_position_0" xml:space="preserve">
     <value>Writing CD sector suffix block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_suffix" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_suffix" xml:space="preserve">
     <value>Took {0} seconds to compress suffix</value>
   </data>
-  <data name="_0_1_prefixes_are_correct_2_3_prefixes_have_not_been_dumped_4_5_prefixes_have_been_written_to_image"
-        xml:space="preserve">
+    <data name="_0_1_prefixes_are_correct_2_3_prefixes_have_not_been_dumped_4_5_prefixes_have_been_written_to_image"
+          xml:space="preserve">
     <value>{0} ({1:P}%) prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image</value>
   </data>
-  <data name="_0_1_suffixes_are_correct_2_3_suffixes_have_not_been_dumped_4_5_suffixes_have_been_written_to_image"
-        xml:space="preserve">
+    <data name="_0_1_suffixes_are_correct_2_3_suffixes_have_not_been_dumped_4_5_suffixes_have_been_written_to_image"
+          xml:space="preserve">
     <value>{0} ({1:P}%) suffixes are correct, {2} ({3:P}%) suffixes have not been dumped, {4} ({5:P}%) suffixes have been written to image</value>
   </data>
-  <data name="_0_1_MODE_2_Form_1_are_correct_2_3_MODE_2_Form_2_are_correct_4_5_MODE_2_Form_2_have_empty_CRC"
-        xml:space="preserve">
+    <data name="_0_1_MODE_2_Form_1_are_correct_2_3_MODE_2_Form_2_are_correct_4_5_MODE_2_Form_2_have_empty_CRC"
+          xml:space="preserve">
     <value>{0} ({1:P}%) MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC</value>
   </data>
-  <data name="Writing_CompactDisc_sector_prefix_DDT_to_position_0" xml:space="preserve">
+    <data name="Writing_CompactDisc_sector_prefix_DDT_to_position_0" xml:space="preserve">
     <value>Writing CompactDisc sector prefix DDT to position {0}</value>
   </data>
-  <data name="Writing_CompactDisc_sector_suffix_DDT_to_position_0" xml:space="preserve">
+    <data name="Writing_CompactDisc_sector_suffix_DDT_to_position_0" xml:space="preserve">
     <value>Writing CompactDisc sector suffix DDT to position {0}</value>
   </data>
-  <data name="Writing_CD_sector_corrected_prefix_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_sector_corrected_prefix_block_to_position_0" xml:space="preserve">
     <value>Writing CD sector corrected prefix block to position {0}</value>
   </data>
-  <data name="Writing_CD_sector_corrected_suffix_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_sector_corrected_suffix_block_to_position_0" xml:space="preserve">
     <value>Writing CD sector corrected suffix block to position {0}</value>
   </data>
-  <data name="Writing_CD_MODE2_subheaders_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_MODE2_subheaders_block_to_position_0" xml:space="preserve">
     <value>Writing CD MODE2 subheaders block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_MODE2_subheaders" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_MODE2_subheaders" xml:space="preserve">
     <value>Took {0} seconds to compress MODE2 subheaders</value>
   </data>
-  <data name="Writing_CD_subchannel_block_to_position_0" xml:space="preserve">
+    <data name="Writing_CD_subchannel_block_to_position_0" xml:space="preserve">
     <value>Writing CD subchannel block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_subchannel" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_subchannel" xml:space="preserve">
     <value>Took {0} seconds to compress subchannel</value>
   </data>
-  <data name="Writing_DVD_CPR_MAI_block_to_position_0" xml:space="preserve">
+    <data name="Writing_DVD_CPR_MAI_block_to_position_0" xml:space="preserve">
     <value>Writing DVD CPR_MAI block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_CPR_MAI" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_CPR_MAI" xml:space="preserve">
     <value>Took {0} seconds to compress CPR_MAI</value>
   </data>
-  <data name="Writing_DVD_ID_block_to_position_0" xml:space="preserve">
+    <data name="Writing_DVD_ID_block_to_position_0" xml:space="preserve">
     <value>Writing DVD ID block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_ID" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_ID" xml:space="preserve">
     <value>Took {0} seconds to compress ID</value>
   </data>
-  <data name="Writing_DVD_IED_block_to_position_0" xml:space="preserve">
+    <data name="Writing_DVD_IED_block_to_position_0" xml:space="preserve">
     <value>Writing DVD IED block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_IED" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_IED" xml:space="preserve">
     <value>Took {0} seconds to compress IED</value>
   </data>
-  <data name="Writing_DVD_EDC_block_to_position_0" xml:space="preserve">
+    <data name="Writing_DVD_EDC_block_to_position_0" xml:space="preserve">
     <value>Writing DVD EDC block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_EDC" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_EDC" xml:space="preserve">
     <value>Took {0} seconds to compress EDC</value>
   </data>
-  <data name="Writing_decrypted_DVD_title_key_block_to_position_0" xml:space="preserve">
+    <data name="Writing_decrypted_DVD_title_key_block_to_position_0" xml:space="preserve">
     <value>Writing decrypted DVD title key block to position {0}</value>
   </data>
-  <data name="Took_0_seconds_to_compress_decrypted_DVD_title_keys" xml:space="preserve">
+    <data name="Took_0_seconds_to_compress_decrypted_DVD_title_keys" xml:space="preserve">
     <value>Took {0} seconds to compress decrypted DVD title keys</value>
   </data>
-  <data name="Writing_tracks_to_position_0" xml:space="preserve">
+    <data name="Writing_tracks_to_position_0" xml:space="preserve">
     <value>Writing tracks to position {0}</value>
   </data>
-  <data name="Writing_compact_disc_indexes_to_position_0" xml:space="preserve">
+    <data name="Writing_compact_disc_indexes_to_position_0" xml:space="preserve">
     <value>Writing compact disc indexes to position {0}</value>
   </data>
-  <data name="Writing_apple_sector_tag_block_to_position_0" xml:space="preserve">
+    <data name="Writing_apple_sector_tag_block_to_position_0" xml:space="preserve">
     <value>Writing Apple sector tag block to position {0}</value>
   </data>
-  <data name="Writing_metadata_to_position_0" xml:space="preserve">
+    <data name="Writing_metadata_to_position_0" xml:space="preserve">
     <value>Writing metadata to position {0}</value>
   </data>
-  <data name="Writing_index_to_position_0" xml:space="preserve">
+    <data name="Writing_index_to_position_0" xml:space="preserve">
     <value>Writing index to position {0}</value>
   </data>
-  <data name="Writing_header" xml:space="preserve">
+    <data name="Writing_header" xml:space="preserve">
     <value>Writing header</value>
   </data>
-  <data name="Tried_to_set_geometry_on_a_media_that_doesnt_support_it" xml:space="preserve">
+    <data name="Tried_to_set_geometry_on_a_media_that_doesnt_support_it" xml:space="preserve">
     <value>Tried to set geometry on a media that doesn't support it</value>
   </data>
-  <data name="Incorrect_tag_for_disk_type" xml:space="preserve">
+    <data name="Incorrect_tag_for_disk_type" xml:space="preserve">
     <value>Incorrect tag for disk type</value>
   </data>
-  <data name="Cant_find_track_0" xml:space="preserve">
+    <data name="Cant_find_track_0" xml:space="preserve">
     <value>Can't find track {0}</value>
   </data>
-  <data name="Incorrect_data_size_for_track_flags" xml:space="preserve">
+    <data name="Incorrect_data_size_for_track_flags" xml:space="preserve">
     <value>Incorrect data size for track flags</value>
   </data>
-  <data name="Incorrect_data_size_for_subchannel" xml:space="preserve">
+    <data name="Incorrect_data_size_for_subchannel" xml:space="preserve">
     <value>Incorrect data size for subchannel</value>
   </data>
-  <data name="Incorrect_data_size_for_CMI" xml:space="preserve">
+    <data name="Incorrect_data_size_for_CMI" xml:space="preserve">
     <value>Incorrect data size for CMI</value>
   </data>
-  <data name="Incorrect_data_size_for_title_key" xml:space="preserve">
+    <data name="Incorrect_data_size_for_title_key" xml:space="preserve">
     <value>Incorrect data size for title key</value>
   </data>
-  <data name="Incorrect_data_size_for_dvd_id_information" xml:space="preserve">
+    <data name="Incorrect_data_size_for_dvd_id_information" xml:space="preserve">
     <value>Incorrect data size for DVD ID information</value>
   </data>
-  <data name="Incorrect_data_size_for_dvd_id_number" xml:space="preserve">
+    <data name="Incorrect_data_size_for_dvd_id_number" xml:space="preserve">
     <value>Incorrect data size for DVD ID number</value>
   </data>
-  <data name="Incorrect_data_size_for_ied" xml:space="preserve">
+    <data name="Incorrect_data_size_for_ied" xml:space="preserve">
     <value>Incorrect data size for IED</value>
   </data>
-  <data name="Incorrect_data_size_for_edc" xml:space="preserve">
+    <data name="Incorrect_data_size_for_edc" xml:space="preserve">
     <value>Incorrect data size for EDC</value>
   </data>
-  <data name="Incorrect_data_size_for_decrypted_title_key" xml:space="preserve">
+    <data name="Incorrect_data_size_for_decrypted_title_key" xml:space="preserve">
     <value>Incorrect data size for decrypted title key</value>
   </data>
-  <data name="Dont_know_how_to_write_sector_tag_type_0" xml:space="preserve">
+    <data name="Dont_know_how_to_write_sector_tag_type_0" xml:space="preserve">
     <value>Don't know how to write sector tag type {0}</value>
   </data>
-  <data name="Tried_to_write_more_data_than_possible" xml:space="preserve">
+    <data name="Tried_to_write_more_data_than_possible" xml:space="preserve">
     <value>Tried to write more data than possible</value>
   </data>
-  <data name="Alcohol120_Name" xml:space="preserve">
+    <data name="Alcohol120_Name" xml:space="preserve">
     <value>Alcohol 120% Media Descriptor Structure</value>
   </data>
-  <data
-    name="The_disc_this_image_represents_contained_a_hidden_track_in_the_first_pregap_that_this_image_format_cannot_store_This_dump_is_therefore_incorrect"
-    xml:space="preserve">
+    <data
+        name="The_disc_this_image_represents_contained_a_hidden_track_in_the_first_pregap_that_this_image_format_cannot_store_This_dump_is_therefore_incorrect"
+        xml:space="preserve">
     <value>The disc this image represents contained a hidden track in the first pregap, that this image format cannot store. This dump is therefore, incorrect.</value>
   </data>
-  <data name="Track_0" xml:space="preserve">
+    <data name="Track_0" xml:space="preserve">
     <value>Track {0}.</value>
   </data>
-  <data name="printing_partition_map" xml:space="preserve">
+    <data name="printing_partition_map" xml:space="preserve">
     <value>printing partition map</value>
   </data>
-  <data name="Partition_sequence_0" xml:space="preserve">
+    <data name="Partition_sequence_0" xml:space="preserve">
     <value>Partition sequence: {0}</value>
   </data>
-  <data name="Partition_name_0" xml:space="preserve">
+    <data name="Partition_name_0" xml:space="preserve">
     <value>Partition name: {0}</value>
   </data>
-  <data name="Partition_description_0" xml:space="preserve">
+    <data name="Partition_description_0" xml:space="preserve">
     <value>Partition description: {0}</value>
   </data>
-  <data name="Partition_type_0" xml:space="preserve">
+    <data name="Partition_type_0" xml:space="preserve">
     <value>Partition type: {0}</value>
   </data>
-  <data name="Partition_starting_sector_0" xml:space="preserve">
+    <data name="Partition_starting_sector_0" xml:space="preserve">
     <value>Partition starting sector: {0}</value>
   </data>
-  <data name="Partition_sectors_0" xml:space="preserve">
+    <data name="Partition_sectors_0" xml:space="preserve">
     <value>Partition sectors: {0}</value>
   </data>
-  <data name="Partition_starting_offset_0" xml:space="preserve">
+    <data name="Partition_starting_offset_0" xml:space="preserve">
     <value>Partition starting offset: {0}</value>
   </data>
-  <data name="Partition_size_in_bytes_0" xml:space="preserve">
+    <data name="Partition_size_in_bytes_0" xml:space="preserve">
     <value>Partition size in bytes: {0}</value>
   </data>
-  <data name="Data_filename_0" xml:space="preserve">
+    <data name="Data_filename_0" xml:space="preserve">
     <value>Data filename: {0}</value>
   </data>
-  <data name="Cannot_open_data_file" xml:space="preserve">
+    <data name="Cannot_open_data_file" xml:space="preserve">
     <value>Cannot open data file</value>
   </data>
-  <data name="Rebuilding_TOC" xml:space="preserve">
+    <data name="Rebuilding_TOC" xml:space="preserve">
     <value>Rebuilding TOC</value>
   </data>
-  <data name="Alcohol_120_image_describes_a_disc_of_type_0" xml:space="preserve">
+    <data name="Alcohol_120_image_describes_a_disc_of_type_0" xml:space="preserve">
     <value>Alcohol 120% image describes a disc of type {0}</value>
   </data>
-  <data name="Incorrect_Alcohol_120_image_created_by_an_old_version_of_Aaru_Convert_image_to_correct_it"
-        xml:space="preserve">
+    <data name="Incorrect_Alcohol_120_image_created_by_an_old_version_of_Aaru_Convert_image_to_correct_it"
+          xml:space="preserve">
     <value>Incorrect Alcohol 120% image created by an old version of Aaru. Convert image to correct it.</value>
   </data>
-  <data name="Unsupported_media_tag_0_for_medium_type_1" xml:space="preserve">
+    <data name="Unsupported_media_tag_0_for_medium_type_1" xml:space="preserve">
     <value>Unsupported media tag {0} for medium type {1}</value>
   </data>
-  <data name="Cannot_write_non_long_sectors_to_CD_images" xml:space="preserve">
+    <data name="Cannot_write_non_long_sectors_to_CD_images" xml:space="preserve">
     <value>Cannot write non-long sectors to CD images.</value>
   </data>
-  <data name="Cant_find_track_containing_0" xml:space="preserve">
+    <data name="Cant_find_track_containing_0" xml:space="preserve">
     <value>Can't find track containing {0}</value>
   </data>
-  <data name="Invalid_write_mode_for_this_sector" xml:space="preserve">
+    <data name="Invalid_write_mode_for_this_sector" xml:space="preserve">
     <value>Invalid write mode for this sector</value>
   </data>
-  <data name="Cant_cross_tracks" xml:space="preserve">
+    <data name="Cant_cross_tracks" xml:space="preserve">
     <value>Can't cross tracks</value>
   </data>
-  <data name="Invalid_subchannel_mode_for_this_sector" xml:space="preserve">
+    <data name="Invalid_subchannel_mode_for_this_sector" xml:space="preserve">
     <value>Invalid subchannel mode for this sector</value>
   </data>
-  <data name="Unsupported_subchannel_type_0" xml:space="preserve">
+    <data name="Unsupported_subchannel_type_0" xml:space="preserve">
     <value>Unsupported subchannel type {0}</value>
   </data>
-  <data name="Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel" xml:space="preserve">
+    <data name="Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel" xml:space="preserve">
     <value>Trying to write subchannel to track {0}, that does not have subchannel</value>
   </data>
-  <data name="Unsupported_tag_type_0" xml:space="preserve">
+    <data name="Unsupported_tag_type_0" xml:space="preserve">
     <value>Unsupported tag type {0}</value>
   </data>
-  <data name="Anex86_Name" xml:space="preserve">
+    <data name="Anex86_Name" xml:space="preserve">
     <value>Anex86 Disk Image</value>
   </data>
-  <data name="MediaType_0" xml:space="preserve">
+    <data name="MediaType_0" xml:space="preserve">
     <value>MediaType: {0}</value>
   </data>
-  <data name="Unsupported_sector_size" xml:space="preserve">
+    <data name="Unsupported_sector_size" xml:space="preserve">
     <value>Unsupported sector size</value>
   </data>
-  <data name="Too_many_sectors" xml:space="preserve">
+    <data name="Too_many_sectors" xml:space="preserve">
     <value>Too many sectors</value>
   </data>
-  <data name="Writing_media_tags_is_not_supported" xml:space="preserve">
+    <data name="Writing_media_tags_is_not_supported" xml:space="preserve">
     <value>Writing media tags is not supported.</value>
   </data>
-  <data name="Writing_sectors_with_tags_is_not_supported" xml:space="preserve">
+    <data name="Writing_sectors_with_tags_is_not_supported" xml:space="preserve">
     <value>Writing sectors with tags is not supported.</value>
   </data>
-  <data name="Too_many_cylinders" xml:space="preserve">
+    <data name="Too_many_cylinders" xml:space="preserve">
     <value>Too many cylinders.</value>
   </data>
-  <data name="Too_many_heads" xml:space="preserve">
+    <data name="Too_many_heads" xml:space="preserve">
     <value>Too many heads.</value>
   </data>
-  <data name="Too_many_sectors_per_track" xml:space="preserve">
+    <data name="Too_many_sectors_per_track" xml:space="preserve">
     <value>Too many sectors per track.</value>
   </data>
-  <data name="Apple2Mg_Name" xml:space="preserve">
+    <data name="Apple2Mg_Name" xml:space="preserve">
     <value>Apple 2IMG</value>
   </data>
-  <data name="Detected_incorrect_endian_on_data_size_field_correcting" xml:space="preserve">
+    <data name="Detected_incorrect_endian_on_data_size_field_correcting" xml:space="preserve">
     <value>Detected incorrect endian on data size field, correcting.</value>
   </data>
-  <data name="Unknown_creator_code_0" xml:space="preserve">
+    <data name="Unknown_creator_code_0" xml:space="preserve">
     <value>Unknown creator code "{0}"</value>
   </data>
-  <data name="_2MG_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="_2MG_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>2MG image contains a disk of type {0}</value>
   </data>
-  <data name="_2MG_comments_0" xml:space="preserve">
+    <data name="_2MG_comments_0" xml:space="preserve">
     <value>2MG comments: {0}</value>
   </data>
-  <data name="AppleDos_Name" xml:space="preserve">
+    <data name="AppleDos_Name" xml:space="preserve">
     <value>Apple ][ Interleaved Disk Image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_media" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_media" xml:space="preserve">
     <value>Incorrect number of sectors for media</value>
   </data>
-  <data name="AppleNib_Name" xml:space="preserve">
+    <data name="AppleNib_Name" xml:space="preserve">
     <value>Apple NIB</value>
   </data>
-  <data name="Decoding_whole_image" xml:space="preserve">
+    <data name="Decoding_whole_image" xml:space="preserve">
     <value>Decoding whole image</value>
   </data>
-  <data name="Got_0_tracks" xml:space="preserve">
+    <data name="Got_0_tracks" xml:space="preserve">
     <value>Got {0} tracks</value>
   </data>
-  <data name="Using_DOS_skewing" xml:space="preserve">
+    <data name="Using_DOS_skewing" xml:space="preserve">
     <value>Using DOS skewing</value>
   </data>
-  <data name="Using_ProDOS_skewing" xml:space="preserve">
+    <data name="Using_ProDOS_skewing" xml:space="preserve">
     <value>Using ProDOS skewing</value>
   </data>
-  <data name="Hardware_sector_0_of_track_1_goes_to_logical_sector_2" xml:space="preserve">
+    <data name="Hardware_sector_0_of_track_1_goes_to_logical_sector_2" xml:space="preserve">
     <value>Hardware sector {0} of track {1} goes to logical sector {2}</value>
   </data>
-  <data name="Got_0_sectors" xml:space="preserve">
+    <data name="Got_0_sectors" xml:space="preserve">
     <value>Got {0} sectors</value>
   </data>
-  <data name="Cooking_sectors" xml:space="preserve">
+    <data name="Cooking_sectors" xml:space="preserve">
     <value>Cooking sectors</value>
   </data>
-  <data name="Apridisk_Name" xml:space="preserve">
+    <data name="Apridisk_Name" xml:space="preserve">
     <value>ACT Apricot Disk Image</value>
   </data>
-  <data name="Enable_Apridisk_compression" xml:space="preserve">
+    <data name="Enable_Apridisk_compression" xml:space="preserve">
     <value>Enable Apridisk compression.</value>
   </data>
-  <data name="Found_deleted_record_at_0" xml:space="preserve">
+    <data name="Found_deleted_record_at_0" xml:space="preserve">
     <value>Found deleted record at {0}</value>
   </data>
-  <data name="Found_comment_record_at_0" xml:space="preserve">
+    <data name="Found_comment_record_at_0" xml:space="preserve">
     <value>Found comment record at {0}</value>
   </data>
-  <data name="Comment_0" xml:space="preserve">
+    <data name="Comment_0" xml:space="preserve">
     <value>Comment: "{0}"</value>
   </data>
-  <data name="Found_creator_record_at_0" xml:space="preserve">
+    <data name="Found_creator_record_at_0" xml:space="preserve">
     <value>Found creator record at {0}</value>
   </data>
-  <data name="Creator_0" xml:space="preserve">
+    <data name="Creator_0" xml:space="preserve">
     <value>Creator: "{0}"</value>
   </data>
-  <data name="Found_compressed_sector_record_at_0_for_cylinder_1_head_2_sector_3" xml:space="preserve">
+    <data name="Found_compressed_sector_record_at_0_for_cylinder_1_head_2_sector_3" xml:space="preserve">
     <value>Found compressed sector record at {0} for cylinder {1} head {2} sector {3}</value>
   </data>
-  <data name="Found_uncompressed_sector_record_at_0_for_cylinder_1_head_2_sector_3" xml:space="preserve">
+    <data name="Found_uncompressed_sector_record_at_0_for_cylinder_1_head_2_sector_3" xml:space="preserve">
     <value>Found uncompressed sector record at {0} for cylinder {1} head {2} sector {3}</value>
   </data>
-  <data name="Found_0_cylinders_and_1_heads_with_a_maximum_sector_number_of_2" xml:space="preserve">
+    <data name="Found_0_cylinders_and_1_heads_with_a_maximum_sector_number_of_2" xml:space="preserve">
     <value>Found {0} cylinders and {1} heads with a maximum sector number of {2}</value>
   </data>
-  <data name="Found_a_minimum_of_0_bytes_per_sector" xml:space="preserve">
+    <data name="Found_a_minimum_of_0_bytes_per_sector" xml:space="preserve">
     <value>Found a minimum of {0} bytes per sector</value>
   </data>
-  <data name="Found_a_minimum_of_0_sectors_per_track" xml:space="preserve">
+    <data name="Found_a_minimum_of_0_sectors_per_track" xml:space="preserve">
     <value>Found a minimum of {0} sectors per track</value>
   </data>
-  <data name="Sector_address_not_found" xml:space="preserve">
+    <data name="Sector_address_not_found" xml:space="preserve">
     <value>Sector address not found</value>
   </data>
-  <data name="BlindWrite4_Name" xml:space="preserve">
+    <data name="BlindWrite4_Name" xml:space="preserve">
     <value>BlindWrite 4</value>
   </data>
-  <data name="Data_file_0_not_found" xml:space="preserve">
+    <data name="Data_file_0_not_found" xml:space="preserve">
     <value>Data file {0} not found</value>
   </data>
-  <data name="Unable_to_find_data_file" xml:space="preserve">
+    <data name="Unable_to_find_data_file" xml:space="preserve">
     <value>Unable to find data file</value>
   </data>
-  <data name="BlindWrite_image_describes_a_disc_of_type_0" xml:space="preserve">
+    <data name="BlindWrite_image_describes_a_disc_of_type_0" xml:space="preserve">
     <value>BlindWrite image describes a disc of type {0}</value>
   </data>
-  <data name="BlindWrite_comments_0" xml:space="preserve">
+    <data name="BlindWrite_comments_0" xml:space="preserve">
     <value>BlindWrite comments: {0}</value>
   </data>
-  <data name="BlindWrite5_Name" xml:space="preserve">
+    <data name="BlindWrite5_Name" xml:space="preserve">
     <value>BlindWrite 5</value>
   </data>
-  <data name="mode_page_2A_0" xml:space="preserve">
+    <data name="mode_page_2A_0" xml:space="preserve">
     <value>mode page 2A: {0}</value>
   </data>
-  <data name="PMA_0" xml:space="preserve">
+    <data name="PMA_0" xml:space="preserve">
     <value>PMA: {0}</value>
   </data>
-  <data name="PFI_0" xml:space="preserve">
+    <data name="PFI_0" xml:space="preserve">
     <value>PFI: {0}</value>
   </data>
-  <data name="Disc_information_0" xml:space="preserve">
+    <data name="Disc_information_0" xml:space="preserve">
     <value>Disc information: {0}</value>
   </data>
-  <data name="Data_path_0" xml:space="preserve">
+    <data name="Data_path_0" xml:space="preserve">
     <value>Data path: {0}</value>
   </data>
-  <data name="Correctly_arrived_end_of_image" xml:space="preserve">
+    <data name="Correctly_arrived_end_of_image" xml:space="preserve">
     <value>Correctly arrived end of image</value>
   </data>
-  <data name="BlindWrite5_image_ends_after_expected_position_Probably_new_version_with_different_data_Errors_may_occur"
-        xml:space="preserve">
+    <data name="BlindWrite5_image_ends_after_expected_position_Probably_new_version_with_different_data_Errors_may_occur"
+          xml:space="preserve">
     <value>BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.</value>
   </data>
-  <data name="Cannot_find_data_file_0" xml:space="preserve">
+    <data name="Cannot_find_data_file_0" xml:space="preserve">
     <value>Cannot find data file {0}</value>
   </data>
-  <data name="BlindWrite5_found_unknown_subchannel_size_0" xml:space="preserve">
+    <data name="BlindWrite5_found_unknown_subchannel_size_0" xml:space="preserve">
     <value>BlindWrite5 found unknown subchannel size: {0}</value>
   </data>
-  <data name="Building_maps" xml:space="preserve">
+    <data name="Building_maps" xml:space="preserve">
     <value>Building maps</value>
   </data>
-  <data name="Could_not_find_image_for_track_0" xml:space="preserve">
+    <data name="Could_not_find_image_for_track_0" xml:space="preserve">
     <value>Could not find image for track {0}</value>
   </data>
-  <data name="Partition_ending_sector_0" xml:space="preserve">
+    <data name="Partition_ending_sector_0" xml:space="preserve">
     <value>Partition ending sector: {0}</value>
   </data>
-  <data name="printing_track_map" xml:space="preserve">
+    <data name="printing_track_map" xml:space="preserve">
     <value>printing track map</value>
   </data>
-  <data name="Track_description_0" xml:space="preserve">
+    <data name="Track_description_0" xml:space="preserve">
     <value>Track description: {0}</value>
   </data>
-  <data name="Track_type_0" xml:space="preserve">
+    <data name="Track_type_0" xml:space="preserve">
     <value>Track type: {0}</value>
   </data>
-  <data name="Track_starting_sector_0" xml:space="preserve">
+    <data name="Track_starting_sector_0" xml:space="preserve">
     <value>Track starting sector: {0}</value>
   </data>
-  <data name="Track_ending_sector_0" xml:space="preserve">
+    <data name="Track_ending_sector_0" xml:space="preserve">
     <value>Track ending sector: {0}</value>
   </data>
-  <data name="TOC_len_0" xml:space="preserve">
+    <data name="TOC_len_0" xml:space="preserve">
     <value>TOC len {0}</value>
   </data>
-  <data name="Blu_Name" xml:space="preserve">
+    <data name="Blu_Name" xml:space="preserve">
     <value>Basic Lisa Utility</value>
   </data>
-  <data name="BLU_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="BLU_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>BLU image contains a disk of type {0}</value>
   </data>
-  <data name="AtariLynx_Name" xml:space="preserve">
+    <data name="AtariLynx_Name" xml:space="preserve">
     <value>Atari Lynx</value>
   </data>
-  <data name="Name_0" xml:space="preserve">
+    <data name="Name_0" xml:space="preserve">
     <value>Name: {0}</value>
   </data>
-  <data name="Manufacturer_0" xml:space="preserve">
+    <data name="Manufacturer_0" xml:space="preserve">
     <value>Manufacturer: {0}</value>
   </data>
-  <data name="Bank_zero_size_0_pages_1_bytes" xml:space="preserve">
+    <data name="Bank_zero_size_0_pages_1_bytes" xml:space="preserve">
     <value>Bank 0 size: {0} pages ({1} bytes)</value>
   </data>
-  <data name="Bank_one_size_0_pages_1_bytes" xml:space="preserve">
+    <data name="Bank_one_size_0_pages_1_bytes" xml:space="preserve">
     <value>Bank 1 size: {0} pages ({1} bytes)</value>
   </data>
-  <data name="Rotation_0" xml:space="preserve">
+    <data name="Rotation_0" xml:space="preserve">
     <value>Rotation: {0}</value>
   </data>
-  <data name="No_image_has_been_opened" xml:space="preserve">
+    <data name="No_image_has_been_opened" xml:space="preserve">
     <value>No image has been opened.</value>
   </data>
-  <data name="Cannot_create_an_opened_image" xml:space="preserve">
+    <data name="Cannot_create_an_opened_image" xml:space="preserve">
     <value>Cannot create an opened image</value>
   </data>
-  <data name="The_requested_position_is_out_of_range" xml:space="preserve">
+    <data name="The_requested_position_is_out_of_range" xml:space="preserve">
     <value>The requested position is out of range.</value>
   </data>
-  <data name="Buffer_must_not_be_null" xml:space="preserve">
+    <data name="Buffer_must_not_be_null" xml:space="preserve">
     <value>Buffer must not be null.</value>
   </data>
-  <data name="GameBoy_Name" xml:space="preserve">
+    <data name="GameBoy_Name" xml:space="preserve">
     <value>Nintendo Game Boy</value>
   </data>
-  <data name="Requires_Game_Boy_Color" xml:space="preserve">
+    <data name="Requires_Game_Boy_Color" xml:space="preserve">
     <value>Requires Game Boy Color</value>
   </data>
-  <data name="Contains_features_for_Game_Boy_Color" xml:space="preserve">
+    <data name="Contains_features_for_Game_Boy_Color" xml:space="preserve">
     <value>Contains features for Game Boy Color</value>
   </data>
-  <data name="Contains_features_for_Super_Game_Boy" xml:space="preserve">
+    <data name="Contains_features_for_Super_Game_Boy" xml:space="preserve">
     <value>Contains features for Super Game Boy</value>
   </data>
-  <data name="Region_0" xml:space="preserve">
+    <data name="Region_0" xml:space="preserve">
     <value>Region: {0}</value>
   </data>
-  <data name="Japan" xml:space="preserve">
+    <data name="Japan" xml:space="preserve">
     <value>Japan</value>
   </data>
-  <data name="World" xml:space="preserve">
+    <data name="World" xml:space="preserve">
     <value>World</value>
   </data>
-  <data name="Cartridge_type_0" xml:space="preserve">
+    <data name="Cartridge_type_0" xml:space="preserve">
     <value>Cartridge type: {0}</value>
   </data>
-  <data name="ROM_size_0_bytes" xml:space="preserve">
+    <data name="ROM_size_0_bytes" xml:space="preserve">
     <value>ROM size: {0} bytes</value>
   </data>
-  <data name="Save_RAM_size_0_bytes" xml:space="preserve">
+    <data name="Save_RAM_size_0_bytes" xml:space="preserve">
     <value>Save RAM size: {0} bytes</value>
   </data>
-  <data name="Licensee_0" xml:space="preserve">
+    <data name="Licensee_0" xml:space="preserve">
     <value>Licensee: {0}</value>
   </data>
-  <data name="Revision_0" xml:space="preserve">
+    <data name="Revision_0" xml:space="preserve">
     <value>Revision: {0}</value>
   </data>
-  <data name="Header_checksum_0" xml:space="preserve">
+    <data name="Header_checksum_0" xml:space="preserve">
     <value>Header checksum: 0x{0:X2}</value>
   </data>
-  <data name="Checksum_0_X4" xml:space="preserve">
+    <data name="Checksum_0_X4" xml:space="preserve">
     <value>Checksum: 0x{0:X4}</value>
   </data>
-  <data name="none_licensee" xml:space="preserve">
+    <data name="none_licensee" xml:space="preserve">
     <value>none</value>
   </data>
-  <data name="Unknown_licensee" xml:space="preserve">
+    <data name="Unknown_licensee" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="GBC_see_above" xml:space="preserve">
+    <data name="GBC_see_above" xml:space="preserve">
     <value>'''GBC - see above'''</value>
   </data>
-  <data name="ROM_only" xml:space="preserve">
+    <data name="ROM_only" xml:space="preserve">
     <value>ROM only</value>
   </data>
-  <data name="ROM_and_MBC1" xml:space="preserve">
+    <data name="ROM_and_MBC1" xml:space="preserve">
     <value>ROM and MBC1</value>
   </data>
-  <data name="ROM_MBC1_and_RAM" xml:space="preserve">
+    <data name="ROM_MBC1_and_RAM" xml:space="preserve">
     <value>ROM, MBC1 and RAM</value>
   </data>
-  <data name="ROM_MBC1_RAM_and_battery" xml:space="preserve">
+    <data name="ROM_MBC1_RAM_and_battery" xml:space="preserve">
     <value>ROM, MBC1, RAM and battery</value>
   </data>
-  <data name="ROM_and_MBC2" xml:space="preserve">
+    <data name="ROM_and_MBC2" xml:space="preserve">
     <value>ROM and MBC2</value>
   </data>
-  <data name="ROM_MBC2_and_battery" xml:space="preserve">
+    <data name="ROM_MBC2_and_battery" xml:space="preserve">
     <value>ROM, MBC2 and battery</value>
   </data>
-  <data name="ROM_and_RAM" xml:space="preserve">
+    <data name="ROM_and_RAM" xml:space="preserve">
     <value>ROM and RAM</value>
   </data>
-  <data name="ROM_RAM_and_battery" xml:space="preserve">
+    <data name="ROM_RAM_and_battery" xml:space="preserve">
     <value>ROM, RAM and battery</value>
   </data>
-  <data name="ROM_and_MMM01" xml:space="preserve">
+    <data name="ROM_and_MMM01" xml:space="preserve">
     <value>ROM and MMM01</value>
   </data>
-  <data name="ROM_MMM01_and_RAM" xml:space="preserve">
+    <data name="ROM_MMM01_and_RAM" xml:space="preserve">
     <value>ROM, MMM01 and RAM</value>
   </data>
-  <data name="ROM_MMM01_RAM_and_battery" xml:space="preserve">
+    <data name="ROM_MMM01_RAM_and_battery" xml:space="preserve">
     <value>ROM, MMM01, RAM and battery</value>
   </data>
-  <data name="ROM_MBC3_timer_and_battery" xml:space="preserve">
+    <data name="ROM_MBC3_timer_and_battery" xml:space="preserve">
     <value>ROM, MBC3, timer and battery</value>
   </data>
-  <data name="ROM_MBC3_RAM_timer_and_battery" xml:space="preserve">
+    <data name="ROM_MBC3_RAM_timer_and_battery" xml:space="preserve">
     <value>ROM, MBC3, RAM, timer and battery</value>
   </data>
-  <data name="ROM_and_MBC3" xml:space="preserve">
+    <data name="ROM_and_MBC3" xml:space="preserve">
     <value>ROM and MBC3</value>
   </data>
-  <data name="ROM_MBC3_and_RAM" xml:space="preserve">
+    <data name="ROM_MBC3_and_RAM" xml:space="preserve">
     <value>ROM, MBC3 and RAM</value>
   </data>
-  <data name="ROM_MBC3_RAM_and_battery" xml:space="preserve">
+    <data name="ROM_MBC3_RAM_and_battery" xml:space="preserve">
     <value>ROM, MBC3, RAM and battery</value>
   </data>
-  <data name="ROM_and_MBC5" xml:space="preserve">
+    <data name="ROM_and_MBC5" xml:space="preserve">
     <value>ROM and MBC5</value>
   </data>
-  <data name="ROM_MBC5_and_RAM" xml:space="preserve">
+    <data name="ROM_MBC5_and_RAM" xml:space="preserve">
     <value>ROM, MBC5 and RAM</value>
   </data>
-  <data name="ROM_MBC5_RAM_and_battery" xml:space="preserve">
+    <data name="ROM_MBC5_RAM_and_battery" xml:space="preserve">
     <value>ROM, MBC5, RAM and battery</value>
   </data>
-  <data name="ROM_MBC5_and_vibration_motor" xml:space="preserve">
+    <data name="ROM_MBC5_and_vibration_motor" xml:space="preserve">
     <value>ROM, MBC5 and vibration motor</value>
   </data>
-  <data name="ROM_MBC5_RAM_and_vibration_motor" xml:space="preserve">
+    <data name="ROM_MBC5_RAM_and_vibration_motor" xml:space="preserve">
     <value>ROM, MBC5, RAM and vibration motor</value>
   </data>
-  <data name="ROM_MBC5_RAM_battery_and_vibration_motor" xml:space="preserve">
+    <data name="ROM_MBC5_RAM_battery_and_vibration_motor" xml:space="preserve">
     <value>ROM, MBC5, RAM, battery and vibration motor</value>
   </data>
-  <data name="ROM_and_MBC6" xml:space="preserve">
+    <data name="ROM_and_MBC6" xml:space="preserve">
     <value>ROM and MBC6</value>
   </data>
-  <data name="ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor" xml:space="preserve">
+    <data name="ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor" xml:space="preserve">
     <value>ROM, MBC7, RAM, battery, light sensor and vibration motor</value>
   </data>
-  <data name="Pocket_Camera" xml:space="preserve">
+    <data name="Pocket_Camera" xml:space="preserve">
     <value>Pocket Camera</value>
   </data>
-  <data name="ROM_and_TAMA5" xml:space="preserve">
+    <data name="ROM_and_TAMA5" xml:space="preserve">
     <value>ROM and TAMA5</value>
   </data>
-  <data name="ROM_and_HuC_3" xml:space="preserve">
+    <data name="ROM_and_HuC_3" xml:space="preserve">
     <value>ROM and HuC-3</value>
   </data>
-  <data name="ROM_and_HuC_1" xml:space="preserve">
+    <data name="ROM_and_HuC_1" xml:space="preserve">
     <value>ROM and HuC-1</value>
   </data>
-  <data name="Unknown_cartridge_type" xml:space="preserve">
+    <data name="Unknown_cartridge_type" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="GameBoyAdvance_Name" xml:space="preserve">
+    <data name="GameBoyAdvance_Name" xml:space="preserve">
     <value>Nintendo Game Boy Advance</value>
   </data>
-  <data name="Device_type_0" xml:space="preserve">
+    <data name="Device_type_0" xml:space="preserve">
     <value>Device type: {0}</value>
   </data>
-  <data name="Console_type_0" xml:space="preserve">
+    <data name="Console_type_0" xml:space="preserve">
     <value>Console type: {0}</value>
   </data>
-  <data name="Product_code_AGB_0" xml:space="preserve">
+    <data name="Product_code_AGB_0" xml:space="preserve">
     <value>Product code: AGB-{0}</value>
   </data>
-  <data name="Maker_code_0" xml:space="preserve">
+    <data name="Maker_code_0" xml:space="preserve">
     <value>Maker code: {0}</value>
   </data>
-  <data name="MasterSystem_Name" xml:space="preserve">
+    <data name="MasterSystem_Name" xml:space="preserve">
     <value>Sega Game Gear / Master System</value>
   </data>
-  <data name="Product_code_0" xml:space="preserve">
+    <data name="Product_code_0" xml:space="preserve">
     <value>Product code: {0}</value>
   </data>
-  <data name="Master_System" xml:space="preserve">
+    <data name="Master_System" xml:space="preserve">
     <value>Master System</value>
   </data>
-  <data name="Export" xml:space="preserve">
+    <data name="Export" xml:space="preserve">
     <value>Export</value>
   </data>
-  <data name="Game_Gear" xml:space="preserve">
+    <data name="Game_Gear" xml:space="preserve">
     <value>Game Gear</value>
   </data>
-  <data name="International" xml:space="preserve">
+    <data name="International" xml:space="preserve">
     <value>International</value>
   </data>
-  <data name="Unknown_region" xml:space="preserve">
+    <data name="Unknown_region" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="Nes_Name" xml:space="preserve">
+    <data name="Nes_Name" xml:space="preserve">
     <value>iNES</value>
   </data>
-  <data name="PRG_ROM_size_0_bytes" xml:space="preserve">
+    <data name="PRG_ROM_size_0_bytes" xml:space="preserve">
     <value>PRG ROM size: {0} bytes</value>
   </data>
-  <data name="CHR_ROM_size_0_bytes" xml:space="preserve">
+    <data name="CHR_ROM_size_0_bytes" xml:space="preserve">
     <value>CHR ROM size: {0} bytes</value>
   </data>
-  <data name="Trainer_size_0_bytes" xml:space="preserve">
+    <data name="Trainer_size_0_bytes" xml:space="preserve">
     <value>Trainer size: {0} bytes</value>
   </data>
-  <data name="Mapper_0" xml:space="preserve">
+    <data name="Mapper_0" xml:space="preserve">
     <value>Mapper: {0}</value>
   </data>
-  <data name="Has_battery_backed_RAM" xml:space="preserve">
+    <data name="Has_battery_backed_RAM" xml:space="preserve">
     <value>Has battery backed RAM</value>
   </data>
-  <data name="Uses_four_screen_VRAM" xml:space="preserve">
+    <data name="Uses_four_screen_VRAM" xml:space="preserve">
     <value>Uses four-screen VRAM</value>
   </data>
-  <data name="Uses_vertical_mirroring" xml:space="preserve">
+    <data name="Uses_vertical_mirroring" xml:space="preserve">
     <value>Uses vertical mirroring</value>
   </data>
-  <data name="Uses_horizontal_mirroring" xml:space="preserve">
+    <data name="Uses_horizontal_mirroring" xml:space="preserve">
     <value>Uses horizontal mirroring</value>
   </data>
-  <data name="VS_Unisystem_game" xml:space="preserve">
+    <data name="VS_Unisystem_game" xml:space="preserve">
     <value>VS Unisystem game</value>
   </data>
-  <data name="PlayChoice_10_game" xml:space="preserve">
+    <data name="PlayChoice_10_game" xml:space="preserve">
     <value>PlayChoice-10 game</value>
   </data>
-  <data name="INST_ROM_size_0_bytes" xml:space="preserve">
+    <data name="INST_ROM_size_0_bytes" xml:space="preserve">
     <value>INST-ROM size: {0} bytes</value>
   </data>
-  <data name="PROM_size_0_bytes" xml:space="preserve">
+    <data name="PROM_size_0_bytes" xml:space="preserve">
     <value>PROM size: 0x{0} bytes</value>
   </data>
-  <data name="VR_Technology_VT01" xml:space="preserve">
+    <data name="VR_Technology_VT01" xml:space="preserve">
     <value>V.R. Technology VT01</value>
   </data>
-  <data name="VR_Technology_VT02" xml:space="preserve">
+    <data name="VR_Technology_VT02" xml:space="preserve">
     <value>V.R. Technology VT02</value>
   </data>
-  <data name="VR_Technology_VT03" xml:space="preserve">
+    <data name="VR_Technology_VT03" xml:space="preserve">
     <value>V.R. Technology VT03</value>
   </data>
-  <data name="VR_Technology_VT09" xml:space="preserve">
+    <data name="VR_Technology_VT09" xml:space="preserve">
     <value>V.R. Technology VT09</value>
   </data>
-  <data name="VR_Technology_VT32" xml:space="preserve">
+    <data name="VR_Technology_VT32" xml:space="preserve">
     <value>V.R. Technology VT32</value>
   </data>
-  <data name="VR_Technology_VT369" xml:space="preserve">
+    <data name="VR_Technology_VT369" xml:space="preserve">
     <value>V.R. Technology VT369</value>
   </data>
-  <data name="Nintendo64_Name" xml:space="preserve">
+    <data name="Nintendo64_Name" xml:space="preserve">
     <value>Nintendo 64</value>
   </data>
-  <data name="Cartridge_ID_0" xml:space="preserve">
+    <data name="Cartridge_ID_0" xml:space="preserve">
     <value>Cartridge ID: {0}</value>
   </data>
-  <data name="Version_0_1" xml:space="preserve">
+    <data name="Version_0_1" xml:space="preserve">
     <value>Version: {0}.{1}</value>
   </data>
-  <data name="CRC1_0" xml:space="preserve">
+    <data name="CRC1_0" xml:space="preserve">
     <value>CRC1: 0x{0:X8}</value>
   </data>
-  <data name="CRC2_0" xml:space="preserve">
+    <data name="CRC2_0" xml:space="preserve">
     <value>CRC2: 0x{0:X8}</value>
   </data>
-  <data name="Beta" xml:space="preserve">
+    <data name="Beta" xml:space="preserve">
     <value>Beta</value>
   </data>
-  <data name="Asia_NTSC" xml:space="preserve">
+    <data name="Asia_NTSC" xml:space="preserve">
     <value>Asia (NTSC)</value>
   </data>
-  <data name="Brazil" xml:space="preserve">
+    <data name="Brazil" xml:space="preserve">
     <value>Brazil</value>
   </data>
-  <data name="China" xml:space="preserve">
+    <data name="China" xml:space="preserve">
     <value>China</value>
   </data>
-  <data name="Germany" xml:space="preserve">
+    <data name="Germany" xml:space="preserve">
     <value>Germany</value>
   </data>
-  <data name="North_America" xml:space="preserve">
+    <data name="North_America" xml:space="preserve">
     <value>North America</value>
   </data>
-  <data name="France" xml:space="preserve">
+    <data name="France" xml:space="preserve">
     <value>France</value>
   </data>
-  <data name="Gateway_64_NTSC" xml:space="preserve">
+    <data name="Gateway_64_NTSC" xml:space="preserve">
     <value>Gateway 64 (NTSC)</value>
   </data>
-  <data name="Netherlands" xml:space="preserve">
+    <data name="Netherlands" xml:space="preserve">
     <value>Netherlands</value>
   </data>
-  <data name="Italy" xml:space="preserve">
+    <data name="Italy" xml:space="preserve">
     <value>Italy</value>
   </data>
-  <data name="Korea" xml:space="preserve">
+    <data name="Korea" xml:space="preserve">
     <value>Korea</value>
   </data>
-  <data name="Gateway_64_PAL" xml:space="preserve">
+    <data name="Gateway_64_PAL" xml:space="preserve">
     <value>Gateway 64 (PAL)</value>
   </data>
-  <data name="Canada" xml:space="preserve">
+    <data name="Canada" xml:space="preserve">
     <value>Canada</value>
   </data>
-  <data name="Europe" xml:space="preserve">
+    <data name="Europe" xml:space="preserve">
     <value>Europe</value>
   </data>
-  <data name="Spain" xml:space="preserve">
+    <data name="Spain" xml:space="preserve">
     <value>Spain</value>
   </data>
-  <data name="Australia" xml:space="preserve">
+    <data name="Australia" xml:space="preserve">
     <value>Australia</value>
   </data>
-  <data name="Scandinavia" xml:space="preserve">
+    <data name="Scandinavia" xml:space="preserve">
     <value>Scandinavia</value>
   </data>
-  <data name="Unknown_country" xml:space="preserve">
+    <data name="Unknown_country" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="SegaMegaDrive_Name" xml:space="preserve">
+    <data name="SegaMegaDrive_Name" xml:space="preserve">
     <value>Sega Mega Drive / 32X / Pico</value>
   </data>
-  <data name="System_type_0" xml:space="preserve">
+    <data name="System_type_0" xml:space="preserve">
     <value>System type: {0}</value>
   </data>
-  <data name="Copyright_string_0" xml:space="preserve">
+    <data name="Copyright_string_0" xml:space="preserve">
     <value>Copyright string: {0}</value>
   </data>
-  <data name="Domestic_title_0" xml:space="preserve">
+    <data name="Domestic_title_0" xml:space="preserve">
     <value>Domestic title: {0}</value>
   </data>
-  <data name="Overseas_title_0" xml:space="preserve">
+    <data name="Overseas_title_0" xml:space="preserve">
     <value>Overseas title: {0}</value>
   </data>
-  <data name="Serial_number_0" xml:space="preserve">
+    <data name="Serial_number_0" xml:space="preserve">
     <value>Serial number: {0}</value>
   </data>
-  <data name="Devices_supported_0" xml:space="preserve">
+    <data name="Devices_supported_0" xml:space="preserve">
     <value>Devices supported: {0}</value>
   </data>
-  <data name="ROM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
+    <data name="ROM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
     <value>ROM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)</value>
   </data>
-  <data name="RAM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
+    <data name="RAM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
     <value>RAM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)</value>
   </data>
-  <data name="Extra_RAM_present" xml:space="preserve">
+    <data name="Extra_RAM_present" xml:space="preserve">
     <value>Extra RAM present.</value>
   </data>
-  <data name="Extra_RAM_uses_16_bit_access" xml:space="preserve">
+    <data name="Extra_RAM_uses_16_bit_access" xml:space="preserve">
     <value>Extra RAM uses 16-bit access.</value>
   </data>
-  <data name="Extra_RAM_uses_8_bit_access_even_addresses" xml:space="preserve">
+    <data name="Extra_RAM_uses_8_bit_access_even_addresses" xml:space="preserve">
     <value>Extra RAM uses 8-bit access (even addresses).</value>
   </data>
-  <data name="Extra_RAM_uses_8_bit_access_odd_addresses" xml:space="preserve">
+    <data name="Extra_RAM_uses_8_bit_access_odd_addresses" xml:space="preserve">
     <value>Extra RAM uses 8-bit access (odd addresses).</value>
   </data>
-  <data name="Extra_RAM_uses_16_bit_access_and_persists_when_powered_off" xml:space="preserve">
+    <data name="Extra_RAM_uses_16_bit_access_and_persists_when_powered_off" xml:space="preserve">
     <value>Extra RAM uses 16-bit access and persists when powered off.</value>
   </data>
-  <data name="Extra_RAM_uses_8_bit_access_even_addresses_and_persists_when_powered_off" xml:space="preserve">
+    <data name="Extra_RAM_uses_8_bit_access_even_addresses_and_persists_when_powered_off" xml:space="preserve">
     <value>Extra RAM uses 8-bit access (even addresses) and persists when powered off.</value>
   </data>
-  <data name="Extra_RAM_uses_8_bit_access_odd_addresses_and_persists_when_powered_off" xml:space="preserve">
+    <data name="Extra_RAM_uses_8_bit_access_odd_addresses_and_persists_when_powered_off" xml:space="preserve">
     <value>Extra RAM uses 8-bit access (odd addresses) and persists when powered off.</value>
   </data>
-  <data name="Extra_RAM_is_of_unknown_type_0" xml:space="preserve">
+    <data name="Extra_RAM_is_of_unknown_type_0" xml:space="preserve">
     <value>Extra RAM is of unknown type 0x{0:X2}</value>
   </data>
-  <data name="Extra_RAM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
+    <data name="Extra_RAM_starts_at_0_and_ends_at_1_2_bytes" xml:space="preserve">
     <value>Extra RAM starts at 0x{0:X8} and ends at 0x{1:X8} ({2} bytes)</value>
   </data>
-  <data name="Extra_RAM_not_present" xml:space="preserve">
+    <data name="Extra_RAM_not_present" xml:space="preserve">
     <value>Extra RAM not present.</value>
   </data>
-  <data name="Modem_support_0" xml:space="preserve">
+    <data name="Modem_support_0" xml:space="preserve">
     <value>Modem support: {0}</value>
   </data>
-  <data name="Region_support_0" xml:space="preserve">
+    <data name="Region_support_0" xml:space="preserve">
     <value>Region support: {0}</value>
   </data>
-  <data name="SuperNintendo_Name" xml:space="preserve">
+    <data name="SuperNintendo_Name" xml:space="preserve">
     <value>Super Nintendo</value>
   </data>
-  <data name="Game_code_0" xml:space="preserve">
+    <data name="Game_code_0" xml:space="preserve">
     <value>Game code: {0}</value>
   </data>
-  <data name="Special_revision_0" xml:space="preserve">
+    <data name="Special_revision_0" xml:space="preserve">
     <value>Special revision: {0}</value>
   </data>
-  <data name="Header_checksum_0_X4" xml:space="preserve">
+    <data name="Header_checksum_0_X4" xml:space="preserve">
     <value>Header checksum: 0x{0:X4}</value>
   </data>
-  <data name="Header_checksum_complement_0" xml:space="preserve">
+    <data name="Header_checksum_complement_0" xml:space="preserve">
     <value>Header checksum complement: 0x{0:X4}</value>
   </data>
-  <data name="RAM_size_0_bytes" xml:space="preserve">
+    <data name="RAM_size_0_bytes" xml:space="preserve">
     <value>RAM size: {0} bytes</value>
   </data>
-  <data name="Flash_size_0_bytes" xml:space="preserve">
+    <data name="Flash_size_0_bytes" xml:space="preserve">
     <value>Flash size: {0} bytes</value>
   </data>
-  <data name="Expansion_RAM_size_0_bytes" xml:space="preserve">
+    <data name="Expansion_RAM_size_0_bytes" xml:space="preserve">
     <value>Expansion RAM size: {0} bytes</value>
   </data>
-  <data name="ROM_speed_0" xml:space="preserve">
+    <data name="ROM_speed_0" xml:space="preserve">
     <value>ROM speed: {0}</value>
   </data>
-  <data name="Bank_size_0_bytes" xml:space="preserve">
+    <data name="Bank_size_0_bytes" xml:space="preserve">
     <value>Bank size: {0} bytes</value>
   </data>
-  <data name="Cartridge_chip_set_0" xml:space="preserve">
+    <data name="Cartridge_chip_set_0" xml:space="preserve">
     <value>Cartridge chip set: {0}</value>
   </data>
-  <data name="Coprocessor_0" xml:space="preserve">
+    <data name="Coprocessor_0" xml:space="preserve">
     <value>Coprocessor: {0}</value>
   </data>
-  <data name="None_coprocessor" xml:space="preserve">
+    <data name="None_coprocessor" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="Unknown_coprocessor" xml:space="preserve">
+    <data name="Unknown_coprocessor" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="Other_coprocessor" xml:space="preserve">
+    <data name="Other_coprocessor" xml:space="preserve">
     <value>Other</value>
   </data>
-  <data name="ROM" xml:space="preserve">
+    <data name="ROM" xml:space="preserve">
     <value>ROM</value>
   </data>
-  <data name="ROM_and_coprocessor" xml:space="preserve">
+    <data name="ROM_and_coprocessor" xml:space="preserve">
     <value>ROM and coprocessor</value>
   </data>
-  <data name="ROM_RAM_and_coprocessor" xml:space="preserve">
+    <data name="ROM_RAM_and_coprocessor" xml:space="preserve">
     <value>ROM, RAM and coprocessor</value>
   </data>
-  <data name="ROM_RAM_battery_and_coprocessor" xml:space="preserve">
+    <data name="ROM_RAM_battery_and_coprocessor" xml:space="preserve">
     <value>ROM, RAM, battery and coprocessor</value>
   </data>
-  <data name="ROM_battery_and_coprocessor" xml:space="preserve">
+    <data name="ROM_battery_and_coprocessor" xml:space="preserve">
     <value>ROM, battery and coprocessor</value>
   </data>
-  <data name="ROM_RAM_battery_coprocessor_and_RTC" xml:space="preserve">
+    <data name="ROM_RAM_battery_coprocessor_and_RTC" xml:space="preserve">
     <value>ROM, RAM, battery, coprocessor and RTC</value>
   </data>
-  <data name="Unknown_chipset" xml:space="preserve">
+    <data name="Unknown_chipset" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="USA_and_Canada" xml:space="preserve">
+    <data name="USA_and_Canada" xml:space="preserve">
     <value>USA and Canada</value>
   </data>
-  <data name="Europe_Oceania_Asia" xml:space="preserve">
+    <data name="Europe_Oceania_Asia" xml:space="preserve">
     <value>Europe, Oceania, Asia</value>
   </data>
-  <data name="Sweden_Scandinavia" xml:space="preserve">
+    <data name="Sweden_Scandinavia" xml:space="preserve">
     <value>Sweden/Scandinavia</value>
   </data>
-  <data name="Finland" xml:space="preserve">
+    <data name="Finland" xml:space="preserve">
     <value>Finland</value>
   </data>
-  <data name="Denmark" xml:space="preserve">
+    <data name="Denmark" xml:space="preserve">
     <value>Denmark</value>
   </data>
-  <data name="Germany_Austria_Switzerland" xml:space="preserve">
+    <data name="Germany_Austria_Switzerland" xml:space="preserve">
     <value>Germany, Austria, Switzerland</value>
   </data>
-  <data name="China_Hong_Kong" xml:space="preserve">
+    <data name="China_Hong_Kong" xml:space="preserve">
     <value>China, Hong Kong</value>
   </data>
-  <data name="Indonesia" xml:space="preserve">
+    <data name="Indonesia" xml:space="preserve">
     <value>Indonesia</value>
   </data>
-  <data name="South_Korea" xml:space="preserve">
+    <data name="South_Korea" xml:space="preserve">
     <value>South Korea</value>
   </data>
-  <data name="Unknown_manufacturer" xml:space="preserve">
+    <data name="Unknown_manufacturer" xml:space="preserve">
     <value>Unknown</value>
   </data>
-  <data name="Cdrdao_Name" xml:space="preserve">
+    <data name="Cdrdao_Name" xml:space="preserve">
     <value>CDRDAO tocfile</value>
   </data>
-  <data name="Exception_trying_to_identify_image_file_0" xml:space="preserve">
+    <data name="Exception_trying_to_identify_image_file_0" xml:space="preserve">
     <value>Exception trying to identify image file {0}</value>
   </data>
-  <data name="Exception_0" xml:space="preserve">
+    <data name="Exception_0" xml:space="preserve">
     <value>Exception: {0}</value>
   </data>
-  <data name="Stack_trace_0" xml:space="preserve">
+    <data name="Stack_trace_0" xml:space="preserve">
     <value>Stack trace: {0}</value>
   </data>
-  <data name="Not_a_CDRDAO_TOC_or_TOC_type_not_in_line_0" xml:space="preserve">
+    <data name="Not_a_CDRDAO_TOC_or_TOC_type_not_in_line_0" xml:space="preserve">
     <value>Not a CDRDAO TOC or TOC type not in line {0}.</value>
   </data>
-  <data name="Found_comment_1_at_line_0" xml:space="preserve">
+    <data name="Found_comment_1_at_line_0" xml:space="preserve">
     <value>Found comment "{1}" at line {0}</value>
   </data>
-  <data name="Found_1_at_line_0" xml:space="preserve">
+    <data name="Found_1_at_line_0" xml:space="preserve">
     <value>Found {1} at line {0}</value>
   </data>
-  <data name="Found_CATALOG_1_at_line_0" xml:space="preserve">
+    <data name="Found_CATALOG_1_at_line_0" xml:space="preserve">
     <value>Found CATALOG "{1}" at line {0}</value>
   </data>
-  <data name="Found_TRACK_type_1_with_no_subchannel_at_line_0" xml:space="preserve">
+    <data name="Found_TRACK_type_1_with_no_subchannel_at_line_0" xml:space="preserve">
     <value>Found TRACK type "{1}" with no subchannel at line {0}</value>
   </data>
-  <data name="Found_TRACK_type_1_subchannel_2_at_line_0" xml:space="preserve">
+    <data name="Found_TRACK_type_1_subchannel_2_at_line_0" xml:space="preserve">
     <value>Found TRACK type "{1}" subchannel {2} at line {0}</value>
   </data>
-  <data name="Track_mode_0_is_unsupported" xml:space="preserve">
+    <data name="Track_mode_0_is_unsupported" xml:space="preserve">
     <value>Track mode {0} is unsupported</value>
   </data>
-  <data name="Track_subchannel_mode_0_is_unsupported" xml:space="preserve">
+    <data name="Track_subchannel_mode_0_is_unsupported" xml:space="preserve">
     <value>Track subchannel mode {0} is unsupported</value>
   </data>
-  <data name="Found_1_COPY_at_line_0" xml:space="preserve">
+    <data name="Found_1_COPY_at_line_0" xml:space="preserve">
     <value>Found {1} COPY at line {0}</value>
   </data>
-  <data name="Found_1_PRE_EMPHASIS_at_line_0" xml:space="preserve">
+    <data name="Found_1_PRE_EMPHASIS_at_line_0" xml:space="preserve">
     <value>Found {1} PRE_EMPHASIS at line {0}</value>
   </data>
-  <data name="Found_1_CHANNEL_AUDIO_at_line_0" xml:space="preserve">
+    <data name="Found_1_CHANNEL_AUDIO_at_line_0" xml:space="preserve">
     <value>Found {1}_CHANNEL_AUDIO at line {0}</value>
   </data>
-  <data name="Found_ISRC_1_at_line_0" xml:space="preserve">
+    <data name="Found_ISRC_1_at_line_0" xml:space="preserve">
     <value>Found ISRC "{1}" at line {0}</value>
   </data>
-  <data name="Found_INDEX_1_at_line_0" xml:space="preserve">
+    <data name="Found_INDEX_1_at_line_0" xml:space="preserve">
     <value>Found INDEX "{1}" at line {0}</value>
   </data>
-  <data name="Found_START_1_at_line_0" xml:space="preserve">
+    <data name="Found_START_1_at_line_0" xml:space="preserve">
     <value>Found START "{1}" at line {0}</value>
   </data>
-  <data name="Found_PREGAP_1_at_line_0" xml:space="preserve">
+    <data name="Found_PREGAP_1_at_line_0" xml:space="preserve">
     <value>Found PREGAP "{1}" at line {0}</value>
   </data>
-  <data name="Found_ZERO_1_at_line_0" xml:space="preserve">
+    <data name="Found_ZERO_1_at_line_0" xml:space="preserve">
     <value>Found ZERO "{1}" at line {0}</value>
   </data>
-  <data name="Found_SILENCE_1_at_line_0" xml:space="preserve">
+    <data name="Found_SILENCE_1_at_line_0" xml:space="preserve">
     <value>Found SILENCE "{1}" at line {0}</value>
   </data>
-  <data name="Found_AUDIOFILE_1_at_line_0" xml:space="preserve">
+    <data name="Found_AUDIOFILE_1_at_line_0" xml:space="preserve">
     <value>Found AUDIOFILE "{1}" at line {0}</value>
   </data>
-  <data name="Found_DATAFILE_1_at_line_0" xml:space="preserve">
+    <data name="Found_DATAFILE_1_at_line_0" xml:space="preserve">
     <value>Found DATAFILE "{1}" at line {0}</value>
   </data>
-  <data name="Found_TITLE_1_at_line_0" xml:space="preserve">
+    <data name="Found_TITLE_1_at_line_0" xml:space="preserve">
     <value>Found TITLE "{1}" at line {0}</value>
   </data>
-  <data name="Found_PERFORMER_1_at_line_0" xml:space="preserve">
+    <data name="Found_PERFORMER_1_at_line_0" xml:space="preserve">
     <value>Found PERFORMER "{1}" at line {0}</value>
   </data>
-  <data name="Found_SONGWRITER_1_at_line_0" xml:space="preserve">
+    <data name="Found_SONGWRITER_1_at_line_0" xml:space="preserve">
     <value>Found SONGWRITER "{1}" at line {0}</value>
   </data>
-  <data name="Found_COMPOSER_1_at_line_0" xml:space="preserve">
+    <data name="Found_COMPOSER_1_at_line_0" xml:space="preserve">
     <value>Found COMPOSER "{1}" at line {0}</value>
   </data>
-  <data name="Found_ARRANGER_1_at_line_0" xml:space="preserve">
+    <data name="Found_ARRANGER_1_at_line_0" xml:space="preserve">
     <value>Found ARRANGER "{1}" at line {0}</value>
   </data>
-  <data name="Found_MESSAGE_1_at_line_0" xml:space="preserve">
+    <data name="Found_MESSAGE_1_at_line_0" xml:space="preserve">
     <value>Found MESSAGE "{1}" at line {0}</value>
   </data>
-  <data name="Found_DISC_ID_1_at_line_0" xml:space="preserve">
+    <data name="Found_DISC_ID_1_at_line_0" xml:space="preserve">
     <value>Found DISC_ID "{1}" at line {0}</value>
   </data>
-  <data name="Found_UPC_EAN_1_at_line_0" xml:space="preserve">
+    <data name="Found_UPC_EAN_1_at_line_0" xml:space="preserve">
     <value>Found UPC_EAN "{1}" at line {0}</value>
   </data>
-  <data name="Disc_image_parsing_results" xml:space="preserve">
+    <data name="Disc_image_parsing_results" xml:space="preserve">
     <value>Disc image parsing results</value>
   </data>
-  <data name="Disc_CD_TEXT" xml:space="preserve">
+    <data name="Disc_CD_TEXT" xml:space="preserve">
     <value>Disc CD-TEXT:</value>
   </data>
-  <data name="Arranger_is_not_set" xml:space="preserve">
+    <data name="Arranger_is_not_set" xml:space="preserve">
     <value>Arranger is not set.</value>
   </data>
-  <data name="Arranger_0" xml:space="preserve">
+    <data name="Arranger_0" xml:space="preserve">
     <value>Arranger: {0}</value>
   </data>
-  <data name="Composer_is_not_set" xml:space="preserve">
+    <data name="Composer_is_not_set" xml:space="preserve">
     <value>Composer is not set.</value>
   </data>
-  <data name="Composer_0" xml:space="preserve">
+    <data name="Composer_0" xml:space="preserve">
     <value>Composer: {0}</value>
   </data>
-  <data name="Performer_is_not_set" xml:space="preserve">
+    <data name="Performer_is_not_set" xml:space="preserve">
     <value>Performer is not set.</value>
   </data>
-  <data name="Performer_0" xml:space="preserve">
+    <data name="Performer_0" xml:space="preserve">
     <value>Performer: {0}</value>
   </data>
-  <data name="Songwriter_is_not_set" xml:space="preserve">
+    <data name="Songwriter_is_not_set" xml:space="preserve">
     <value>Songwriter is not set.</value>
   </data>
-  <data name="Songwriter_0" xml:space="preserve">
+    <data name="Songwriter_0" xml:space="preserve">
     <value>Songwriter: {0}</value>
   </data>
-  <data name="Title_is_not_set" xml:space="preserve">
+    <data name="Title_is_not_set" xml:space="preserve">
     <value>Title is not set.</value>
   </data>
-  <data name="Title_0" xml:space="preserve">
+    <data name="Title_0" xml:space="preserve">
     <value>Title: {0}</value>
   </data>
-  <data name="Disc_information" xml:space="preserve">
+    <data name="Disc_information" xml:space="preserve">
     <value>Disc information:</value>
   </data>
-  <data name="Guessed_disk_type_0" xml:space="preserve">
+    <data name="Guessed_disk_type_0" xml:space="preserve">
     <value>Guessed disk type: {0}</value>
   </data>
-  <data name="Barcode_not_set" xml:space="preserve">
+    <data name="Barcode_not_set" xml:space="preserve">
     <value>Barcode not set.</value>
   </data>
-  <data name="Barcode_0" xml:space="preserve">
+    <data name="Barcode_0" xml:space="preserve">
     <value>Barcode: {0}</value>
   </data>
-  <data name="Disc_ID_not_set" xml:space="preserve">
+    <data name="Disc_ID_not_set" xml:space="preserve">
     <value>Disc ID not set.</value>
   </data>
-  <data name="Disc_ID_0" xml:space="preserve">
+    <data name="Disc_ID_0" xml:space="preserve">
     <value>Disc ID: {0}</value>
   </data>
-  <data name="MCN_not_set" xml:space="preserve">
+    <data name="MCN_not_set" xml:space="preserve">
     <value>MCN not set.</value>
   </data>
-  <data name="MCN_0" xml:space="preserve">
+    <data name="MCN_0" xml:space="preserve">
     <value>MCN: {0}</value>
   </data>
-  <data name="Comment_not_set" xml:space="preserve">
+    <data name="Comment_not_set" xml:space="preserve">
     <value>Comment not set.</value>
   </data>
-  <data name="Track_information" xml:space="preserve">
+    <data name="Track_information" xml:space="preserve">
     <value>Track information:</value>
   </data>
-  <data name="Disc_contains_0_tracks" xml:space="preserve">
+    <data name="Disc_contains_0_tracks" xml:space="preserve">
     <value>Disc contains {0} tracks</value>
   </data>
-  <data name="Track_0_information" xml:space="preserve">
+    <data name="Track_0_information" xml:space="preserve">
     <value>Track {0} information:</value>
   </data>
-  <data name="_0_bytes_per_sector" xml:space="preserve">
+    <data name="_0_bytes_per_sector" xml:space="preserve">
     <value>{0} bytes per sector</value>
   </data>
-  <data name="Pregap_0_sectors" xml:space="preserve">
+    <data name="Pregap_0_sectors" xml:space="preserve">
     <value>Pregap: {0} sectors</value>
   </data>
-  <data name="Data_0_sectors_starting_at_sector_1" xml:space="preserve">
+    <data name="Data_0_sectors_starting_at_sector_1" xml:space="preserve">
     <value>Data: {0} sectors starting at sector {1}</value>
   </data>
-  <data name="Postgap_0_sectors" xml:space="preserve">
+    <data name="Postgap_0_sectors" xml:space="preserve">
     <value>Postgap: {0} sectors</value>
   </data>
-  <data name="Track_is_flagged_as_quadraphonic" xml:space="preserve">
+    <data name="Track_is_flagged_as_quadraphonic" xml:space="preserve">
     <value>Track is flagged as quadraphonic</value>
   </data>
-  <data name="Track_allows_digital_copy" xml:space="preserve">
+    <data name="Track_allows_digital_copy" xml:space="preserve">
     <value>Track allows digital copy</value>
   </data>
-  <data name="Track_has_pre_emphasis_applied" xml:space="preserve">
+    <data name="Track_has_pre_emphasis_applied" xml:space="preserve">
     <value>Track has pre-emphasis applied</value>
   </data>
-  <data name="Track_resides_in_file_0_type_defined_as_1_starting_at_byte_2" xml:space="preserve">
+    <data name="Track_resides_in_file_0_type_defined_as_1_starting_at_byte_2" xml:space="preserve">
     <value>Track resides in file {0}, type defined as {1}, starting at byte {2}</value>
   </data>
-  <data name="Indexes" xml:space="preserve">
+    <data name="Indexes" xml:space="preserve">
     <value>Indexes:</value>
   </data>
-  <data name="Index_0_starts_at_sector_1" xml:space="preserve">
+    <data name="Index_0_starts_at_sector_1" xml:space="preserve">
     <value>Index {0} starts at sector {1}</value>
   </data>
-  <data name="ISRC_is_not_set" xml:space="preserve">
+    <data name="ISRC_is_not_set" xml:space="preserve">
     <value>ISRC is not set.</value>
   </data>
-  <data name="ISRC_0" xml:space="preserve">
+    <data name="ISRC_0" xml:space="preserve">
     <value>ISRC: {0}</value>
   </data>
-  <data name="Building_offset_map" xml:space="preserve">
+    <data name="Building_offset_map" xml:space="preserve">
     <value>Building offset map</value>
   </data>
-  <data name="Unordered_tracks" xml:space="preserve">
+    <data name="Unordered_tracks" xml:space="preserve">
     <value>Unordered tracks</value>
   </data>
-  <data name="CDRDAO_image_describes_a_disc_of_type_0" xml:space="preserve">
+    <data name="CDRDAO_image_describes_a_disc_of_type_0" xml:space="preserve">
     <value>CDRDAO image describes a disc of type {0}</value>
   </data>
-  <data name="CDRDAO_comments_0" xml:space="preserve">
+    <data name="CDRDAO_comments_0" xml:space="preserve">
     <value>CDRDAO comments: {0}</value>
   </data>
-  <data name="Invalid_value_for_split_option" xml:space="preserve">
+    <data name="Invalid_value_for_split_option" xml:space="preserve">
     <value>Invalid value for split option</value>
   </data>
-  <data name="Separate_tracks_not_yet_implemented" xml:space="preserve">
+    <data name="Separate_tracks_not_yet_implemented" xml:space="preserve">
     <value>Separate tracks not yet implemented</value>
   </data>
-  <data name="Cant_find_file_containing_0" xml:space="preserve">
+    <data name="Cant_find_file_containing_0" xml:space="preserve">
     <value>Can't find file containing {0}</value>
   </data>
-  <data name="Invalid_tracks_sent" xml:space="preserve">
+    <data name="Invalid_tracks_sent" xml:space="preserve">
     <value>Invalid tracks sent</value>
   </data>
-  <data name="Unsupported_subchannel_type_0_for_track_1" xml:space="preserve">
+    <data name="Unsupported_subchannel_type_0_for_track_1" xml:space="preserve">
     <value>Unsupported subchannel type {0} for track {1}</value>
   </data>
-  <data name="CdrWin_Name" xml:space="preserve">
+    <data name="CdrWin_Name" xml:space="preserve">
     <value>CDRWin cuesheet</value>
   </data>
-  <data name="Write_each_track_to_a_separate_file" xml:space="preserve">
+    <data name="Write_each_track_to_a_separate_file" xml:space="preserve">
     <value>Write each track to a separate file.</value>
   </data>
-  <data name="Found_TRACK_0_out_of_order_in_line_1" xml:space="preserve">
+    <data name="Found_TRACK_0_out_of_order_in_line_1" xml:space="preserve">
     <value>Found TRACK {0} out of order in line {1}</value>
   </data>
-  <data name="No_tracks_found" xml:space="preserve">
+    <data name="No_tracks_found" xml:space="preserve">
     <value>No tracks found</value>
   </data>
-  <data name="Found_REM_CRC32_at_line_0" xml:space="preserve">
+    <data name="Found_REM_CRC32_at_line_0" xml:space="preserve">
     <value>Found REM CRC32 at line {0}</value>
   </data>
-  <data name="Found_REM_MD5_at_line_0" xml:space="preserve">
+    <data name="Found_REM_MD5_at_line_0" xml:space="preserve">
     <value>Found REM MD5 at line {0}</value>
   </data>
-  <data name="Found_REM_SHA1_at_line_0" xml:space="preserve">
+    <data name="Found_REM_SHA1_at_line_0" xml:space="preserve">
     <value>Found REM SHA1 at line {0}</value>
   </data>
-  <data name="Found_CRC32_for_1_2_at_line_0" xml:space="preserve">
+    <data name="Found_CRC32_for_1_2_at_line_0" xml:space="preserve">
     <value>Found CRC32 for {1} {2} at line {0}</value>
   </data>
-  <data name="track" xml:space="preserve">
+    <data name="track" xml:space="preserve">
     <value>track</value>
   </data>
-  <data name="Found_MD5_for_1_2_at_line_0" xml:space="preserve">
+    <data name="Found_MD5_for_1_2_at_line_0" xml:space="preserve">
     <value>Found MD5 for {1} {2} at line {0}</value>
   </data>
-  <data name="gap" xml:space="preserve">
+    <data name="gap" xml:space="preserve">
     <value>gap</value>
   </data>
-  <data name="Found_SHA1_for_1_2_at_line_0" xml:space="preserve">
+    <data name="Found_SHA1_for_1_2_at_line_0" xml:space="preserve">
     <value>Found SHA1 for {1} {2} at line {0}</value>
   </data>
-  <data name="Found_unknown_hash_for_1_2_at_line_0_Please_report_this_disc_image" xml:space="preserve">
+    <data name="Found_unknown_hash_for_1_2_at_line_0_Please_report_this_disc_image" xml:space="preserve">
     <value>Found unknown hash for {1} {2} at line {0}. Please report this disc image.</value>
   </data>
-  <data name="Found_REM_METADATA_DUMP_EXTENT_at_line_0" xml:space="preserve">
+    <data name="Found_REM_METADATA_DUMP_EXTENT_at_line_0" xml:space="preserve">
     <value>Found REM METADATA DUMP EXTENT at line {0}</value>
   </data>
-  <data name="Found_REM_METADATA_DIC_MEDIA_TYPE_at_line_0" xml:space="preserve">
+    <data name="Found_REM_METADATA_DIC_MEDIA_TYPE_at_line_0" xml:space="preserve">
     <value>Found REM METADATA DIC MEDIA-TYPE at line {0}</value>
   </data>
-  <data name="Found_REM_METADATA_AARU_MEDIA_TYPE_at_line_0" xml:space="preserve">
+    <data name="Found_REM_METADATA_AARU_MEDIA_TYPE_at_line_0" xml:space="preserve">
     <value>Found REM METADATA AARU MEDIA-TYPE at line {0}</value>
   </data>
-  <data name="Found_REM_ORIGINAL_MEDIA_TYPE_at_line_0" xml:space="preserve">
+    <data name="Found_REM_ORIGINAL_MEDIA_TYPE_at_line_0" xml:space="preserve">
     <value>Found REM ORIGINAL MEDIA TYPE at line {0}</value>
   </data>
-  <data name="Found_REM_SESSION_at_line_0" xml:space="preserve">
+    <data name="Found_REM_SESSION_at_line_0" xml:space="preserve">
     <value>Found REM SESSION at line {0}</value>
   </data>
-  <data name="Found_REM_SINGLE_DENSITY_AREA_at_line_0" xml:space="preserve">
+    <data name="Found_REM_SINGLE_DENSITY_AREA_at_line_0" xml:space="preserve">
     <value>Found REM SINGLE-DENSITY AREA at line {0}</value>
   </data>
-  <data name="Found_REM_HIGH_DENSITY_AREA_at_line_0" xml:space="preserve">
+    <data name="Found_REM_HIGH_DENSITY_AREA_at_line_0" xml:space="preserve">
     <value>Found REM HIGH-DENSITY AREA at line {0}</value>
   </data>
-  <data name="Found_REM_MSF_at_line_0" xml:space="preserve">
+    <data name="Found_REM_MSF_at_line_0" xml:space="preserve">
     <value>Found REM MSF at line {0}</value>
   </data>
-  <data name="Found_REM_LEAD_OUT_at_line_0" xml:space="preserve">
+    <data name="Found_REM_LEAD_OUT_at_line_0" xml:space="preserve">
     <value>Found REM LEAD-OUT at line {0}</value>
   </data>
-  <data name="Found_REM_Ripping_Tool_at_line_0" xml:space="preserve">
+    <data name="Found_REM_Ripping_Tool_at_line_0" xml:space="preserve">
     <value>Found REM Ripping Tool at line {0}</value>
   </data>
-  <data name="Found_REM_Ripping_Tool_Version_at_line_0" xml:space="preserve">
+    <data name="Found_REM_Ripping_Tool_Version_at_line_0" xml:space="preserve">
     <value>Found REM Ripping Tool Version at line {0}</value>
   </data>
-  <data name="Found_REM_DISC_HASHES_at_line_0" xml:space="preserve">
+    <data name="Found_REM_DISC_HASHES_at_line_0" xml:space="preserve">
     <value>Found REM DISC HASHES at line {0}</value>
   </data>
-  <data name="Found_REM_Gap_Append_Method_1_2_HASHES_at_line_0" xml:space="preserve">
+    <data name="Found_REM_Gap_Append_Method_1_2_HASHES_at_line_0" xml:space="preserve">
     <value>Found REM Gap Append Method: {1} [{2}] HASHES at line {0}</value>
   </data>
-  <data name="Found_REM_at_line_0" xml:space="preserve">
+    <data name="Found_REM_at_line_0" xml:space="preserve">
     <value>Found REM at line {0}</value>
   </data>
-  <data name="Found_ARRANGER_at_line_0" xml:space="preserve">
+    <data name="Found_ARRANGER_at_line_0" xml:space="preserve">
     <value>Found ARRANGER at line {0}</value>
   </data>
-  <data name="Found_UPC_EAN_at_line_0" xml:space="preserve">
+    <data name="Found_UPC_EAN_at_line_0" xml:space="preserve">
     <value>Found UPC_EAN at line {0}</value>
   </data>
-  <data name="Found_barcode_field_in_incorrect_place_at_line_0" xml:space="preserve">
+    <data name="Found_barcode_field_in_incorrect_place_at_line_0" xml:space="preserve">
     <value>Found barcode field in incorrect place at line {0}</value>
   </data>
-  <data name="Found_CDTEXTFILE_at_line_0" xml:space="preserve">
+    <data name="Found_CDTEXTFILE_at_line_0" xml:space="preserve">
     <value>Found CDTEXTFILE at line {0}</value>
   </data>
-  <data name="Found_CD_Text_file_field_in_incorrect_place_at_line_0" xml:space="preserve">
+    <data name="Found_CD_Text_file_field_in_incorrect_place_at_line_0" xml:space="preserve">
     <value>Found CD-Text file field in incorrect place at line {0}</value>
   </data>
-  <data name="Found_COMPOSER_at_line_0" xml:space="preserve">
+    <data name="Found_COMPOSER_at_line_0" xml:space="preserve">
     <value>Found COMPOSER at line {0}</value>
   </data>
-  <data name="Found_DISC_ID_at_line_0" xml:space="preserve">
+    <data name="Found_DISC_ID_at_line_0" xml:space="preserve">
     <value>Found DISC_ID at line {0}</value>
   </data>
-  <data name="Found_CDDB_ID_field_in_incorrect_place_at_line_0" xml:space="preserve">
+    <data name="Found_CDDB_ID_field_in_incorrect_place_at_line_0" xml:space="preserve">
     <value>Found CDDB ID field in incorrect place at line {0}</value>
   </data>
-  <data name="Found_FILE_at_line_0" xml:space="preserve">
+    <data name="Found_FILE_at_line_0" xml:space="preserve">
     <value>Found FILE at line {0}</value>
   </data>
-  <data name="File_0_not_found" xml:space="preserve">
+    <data name="File_0_not_found" xml:space="preserve">
     <value>File "{0}" not found.</value>
   </data>
-  <data name="File_0_found" xml:space="preserve">
+    <data name="File_0_found" xml:space="preserve">
     <value>File "{0}" found</value>
   </data>
-  <data name="Unsupported_file_type_0" xml:space="preserve">
+    <data name="Unsupported_file_type_0" xml:space="preserve">
     <value>Unsupported file type {0}</value>
   </data>
-  <data name="Unknown_file_type_0" xml:space="preserve">
+    <data name="Unknown_file_type_0" xml:space="preserve">
     <value>Unknown file type {0}</value>
   </data>
-  <data name="Found_FLAGS_at_line_0" xml:space="preserve">
+    <data name="Found_FLAGS_at_line_0" xml:space="preserve">
     <value>Found FLAGS at line {0}</value>
   </data>
-  <data name="Found_FLAGS_field_in_incorrect_place_at_line_0" xml:space="preserve">
+    <data name="Found_FLAGS_field_in_incorrect_place_at_line_0" xml:space="preserve">
     <value>Found FLAGS field in incorrect place at line {0}</value>
   </data>
-  <data name="Found_GENRE_at_line_0" xml:space="preserve">
+    <data name="Found_GENRE_at_line_0" xml:space="preserve">
     <value>Found GENRE at line {0}</value>
   </data>
-  <data name="Found_INDEX_at_line_0" xml:space="preserve">
+    <data name="Found_INDEX_at_line_0" xml:space="preserve">
     <value>Found INDEX at line {0}</value>
   </data>
-  <data name="Found_INDEX_before_a_track_0" xml:space="preserve">
+    <data name="Found_INDEX_before_a_track_0" xml:space="preserve">
     <value>Found INDEX before a track at line {0}</value>
   </data>
-  <data name="Found_INDEX_0_before_INDEX_00_or_INDEX_01" xml:space="preserve">
+    <data name="Found_INDEX_0_before_INDEX_00_or_INDEX_01" xml:space="preserve">
     <value>Found INDEX {0} before INDEX 00 or INDEX 01</value>
   </data>
-  <data name="Sets_currentFile_offset_to_0" xml:space="preserve">
+    <data name="Sets_currentFile_offset_to_0" xml:space="preserve">
     <value>Sets currentFile.offset to {0}</value>
   </data>
-  <data name="Found_ISRC_at_line_0" xml:space="preserve">
+    <data name="Found_ISRC_at_line_0" xml:space="preserve">
     <value>Found ISRC at line {0}</value>
   </data>
-  <data name="Found_ISRC_before_a_track_0" xml:space="preserve">
+    <data name="Found_ISRC_before_a_track_0" xml:space="preserve">
     <value>Found ISRC before a track at line {0}</value>
   </data>
-  <data name="Found_CATALOG_at_line_0" xml:space="preserve">
+    <data name="Found_CATALOG_at_line_0" xml:space="preserve">
     <value>Found CATALOG at line {0}</value>
   </data>
-  <data name="Found_CATALOG_field_in_incorrect_place_at_line_0" xml:space="preserve">
+    <data name="Found_CATALOG_field_in_incorrect_place_at_line_0" xml:space="preserve">
     <value>Found CATALOG field in incorrect place at line {0}</value>
   </data>
-  <data name="Found_PERFORMER_at_line_0" xml:space="preserve">
+    <data name="Found_PERFORMER_at_line_0" xml:space="preserve">
     <value>Found PERFORMER at line {0}</value>
   </data>
-  <data name="Found_POSTGAP_at_line_0" xml:space="preserve">
+    <data name="Found_POSTGAP_at_line_0" xml:space="preserve">
     <value>Found POSTGAP at line {0}</value>
   </data>
-  <data name="Found_POSTGAP_field_before_a_track_at_line_0" xml:space="preserve">
+    <data name="Found_POSTGAP_field_before_a_track_at_line_0" xml:space="preserve">
     <value>Found POSTGAP field before a track at line {0}</value>
   </data>
-  <data name="Found_PREGAP_at_line_0" xml:space="preserve">
+    <data name="Found_PREGAP_at_line_0" xml:space="preserve">
     <value>Found PREGAP at line {0}</value>
   </data>
-  <data name="Found_SONGWRITER_at_line_0" xml:space="preserve">
+    <data name="Found_SONGWRITER_at_line_0" xml:space="preserve">
     <value>Found SONGWRITER at line {0}</value>
   </data>
-  <data name="Found_PREGAP_field_before_a_track_at_line_0" xml:space="preserve">
+    <data name="Found_PREGAP_field_before_a_track_at_line_0" xml:space="preserve">
     <value>Found PREGAP field before a track at line {0}</value>
   </data>
-  <data name="Found_TITLE_at_line_0" xml:space="preserve">
+    <data name="Found_TITLE_at_line_0" xml:space="preserve">
     <value>Found TITLE at line {0}</value>
   </data>
-  <data name="Found_TRACK_at_line_0" xml:space="preserve">
+    <data name="Found_TRACK_at_line_0" xml:space="preserve">
     <value>Found TRACK at line {0}</value>
   </data>
-  <data name="Found_TRACK_field_before_a_file_is_defined_at_line_0" xml:space="preserve">
+    <data name="Found_TRACK_field_before_a_file_is_defined_at_line_0" xml:space="preserve">
     <value>Found TRACK field before a file is defined at line {0}</value>
   </data>
-  <data name="Setting_currentTrack_sequence_to_0" xml:space="preserve">
+    <data name="Setting_currentTrack_sequence_to_0" xml:space="preserve">
     <value>Setting currentTrack.sequence to {0}</value>
   </data>
-  <data name="This_image_from_PowerISO_is_damaged_beyond_possible_recovery_Will_not_open" xml:space="preserve">
+    <data name="This_image_from_PowerISO_is_damaged_beyond_possible_recovery_Will_not_open" xml:space="preserve">
     <value>This image from PowerISO is damaged beyond possible recovery. Will not open.</value>
   </data>
-  <data name="Found_unknown_field_defined_at_line_0_1" xml:space="preserve">
+    <data name="Found_unknown_field_defined_at_line_0_1" xml:space="preserve">
     <value>Found unknown field defined at line {0}: "{1}"</value>
   </data>
-  <data name="The_data_files_are_not_correct_according_to_the_cuesheet_file_cannot_continue_with_this_file"
-        xml:space="preserve">
+    <data name="The_data_files_are_not_correct_according_to_the_cuesheet_file_cannot_continue_with_this_file"
+          xml:space="preserve">
     <value>The data files are not correct according to the cuesheet file, cannot continue with this file.</value>
   </data>
-  <data
-    name="The_data_files_are_missing_a_pregap_or_hidden_track_contents_will_do_best_effort_to_make_the_rest_of_the_image_readable"
-    xml:space="preserve">
+    <data
+        name="The_data_files_are_missing_a_pregap_or_hidden_track_contents_will_do_best_effort_to_make_the_rest_of_the_image_readable"
+        xml:space="preserve">
     <value>The data files are missing a pregap or hidden track contents, will do best effort to make the rest of the image readable.</value>
   </data>
-  <data
-    name="This_image_is_most_probably_corrupted_beyond_repair_It_is_highly_recommended_to_dump_it_with_another_software"
-    xml:space="preserve">
+    <data
+        name="This_image_is_most_probably_corrupted_beyond_repair_It_is_highly_recommended_to_dump_it_with_another_software"
+        xml:space="preserve">
     <value>This image is most probably corrupted beyond repair. It is highly recommended to dump it with another software.</value>
   </data>
-  <data name="Genre_is_not_set" xml:space="preserve">
+    <data name="Genre_is_not_set" xml:space="preserve">
     <value>Genre is not set.</value>
   </data>
-  <data name="Genre_0" xml:space="preserve">
+    <data name="Genre_0" xml:space="preserve">
     <value>Genre: {0}</value>
   </data>
-  <data name="CD_TEXT_binary_file_not_set" xml:space="preserve">
+    <data name="CD_TEXT_binary_file_not_set" xml:space="preserve">
     <value>CD-TEXT binary file not set.</value>
   </data>
-  <data name="CD_TEXT_binary_file_0" xml:space="preserve">
+    <data name="CD_TEXT_binary_file_0" xml:space="preserve">
     <value>CD-TEXT binary file: {0}</value>
   </data>
-  <data name="ISOBuster_disc_type_not_set" xml:space="preserve">
+    <data name="ISOBuster_disc_type_not_set" xml:space="preserve">
     <value>ISOBuster disc type not set.</value>
   </data>
-  <data name="ISOBuster_disc_type_0" xml:space="preserve">
+    <data name="ISOBuster_disc_type_0" xml:space="preserve">
     <value>ISOBuster disc type: {0}</value>
   </data>
-  <data name="Data_0_sectors" xml:space="preserve">
+    <data name="Data_0_sectors" xml:space="preserve">
     <value>Data: {0} sectors</value>
   </data>
-  <data name="Track_has_SCMS" xml:space="preserve">
+    <data name="Track_has_SCMS" xml:space="preserve">
     <value>Track has SCMS</value>
   </data>
-  <data name="Session_information" xml:space="preserve">
+    <data name="Session_information" xml:space="preserve">
     <value>Session information:</value>
   </data>
-  <data name="Disc_contains_0_sessions" xml:space="preserve">
+    <data name="Disc_contains_0_sessions" xml:space="preserve">
     <value>Disc contains {0} sessions</value>
   </data>
-  <data name="Session_0_information" xml:space="preserve">
+    <data name="Session_0_information" xml:space="preserve">
     <value>Session {0} information:</value>
   </data>
-  <data name="Starting_track_0" xml:space="preserve">
+    <data name="Starting_track_0" xml:space="preserve">
     <value>Starting track: {0}</value>
   </data>
-  <data name="Starting_sector_0" xml:space="preserve">
+    <data name="Starting_sector_0" xml:space="preserve">
     <value>Starting sector: {0}</value>
   </data>
-  <data name="Ending_track_0" xml:space="preserve">
+    <data name="Ending_track_0" xml:space="preserve">
     <value>Ending track: {0}</value>
   </data>
-  <data name="Ending_sector_0" xml:space="preserve">
+    <data name="Ending_sector_0" xml:space="preserve">
     <value>Ending sector: {0}</value>
   </data>
-  <data name="Track_0_lacks_index_01" xml:space="preserve">
+    <data name="Track_0_lacks_index_01" xml:space="preserve">
     <value>Track {0} lacks index 01</value>
   </data>
-  <data name="CDRWIN_image_describes_a_disc_of_type_0" xml:space="preserve">
+    <data name="CDRWIN_image_describes_a_disc_of_type_0" xml:space="preserve">
     <value>CDRWIN image describes a disc of type {0}</value>
   </data>
-  <data name="CDRWIN_comments_0" xml:space="preserve">
+    <data name="CDRWIN_comments_0" xml:space="preserve">
     <value>CDRWIN comments: {0}</value>
   </data>
-  <data name="This_image_is_missing_vital_multi_session_data_and_cannot_be_read_correctly" xml:space="preserve">
+    <data name="This_image_is_missing_vital_multi_session_data_and_cannot_be_read_correctly" xml:space="preserve">
     <value>This image is missing vital multi-session data and cannot be read correctly.</value>
   </data>
-  <data name="Calculated_SHA1_0" xml:space="preserve">
+    <data name="Calculated_SHA1_0" xml:space="preserve">
     <value>Calculated SHA1: {0}</value>
   </data>
-  <data name="Expected_SHA1_0" xml:space="preserve">
+    <data name="Expected_SHA1_0" xml:space="preserve">
     <value>Expected SHA1: {0}</value>
   </data>
-  <data name="Calculated_MD5_0" xml:space="preserve">
+    <data name="Calculated_MD5_0" xml:space="preserve">
     <value>Calculated MD5: {0}</value>
   </data>
-  <data name="Expected_MD5_0" xml:space="preserve">
+    <data name="Expected_MD5_0" xml:space="preserve">
     <value>Expected MD5: {0}</value>
   </data>
-  <data name="Calculated_CRC32_0" xml:space="preserve">
+    <data name="Calculated_CRC32_0" xml:space="preserve">
     <value>Calculated CRC32: {0}</value>
   </data>
-  <data name="Expected_CRC32_0" xml:space="preserve">
+    <data name="Expected_CRC32_0" xml:space="preserve">
     <value>Expected CRC32: {0}</value>
   </data>
-  <data name="Found_unsupported_hash_0" xml:space="preserve">
+    <data name="Found_unsupported_hash_0" xml:space="preserve">
     <value>Found unsupported hash {0}</value>
   </data>
-  <data name="Unsupported_compression_0" xml:space="preserve">
+    <data name="Unsupported_compression_0" xml:space="preserve">
     <value>Unsupported compression {0}</value>
   </data>
-  <data name="Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1" xml:space="preserve">
+    <data name="Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1" xml:space="preserve">
     <value>Unable to decompress hunk correctly, got {0} bytes, expected {1}</value>
   </data>
-  <data name="Invalid_hunk_found" xml:space="preserve">
+    <data name="Invalid_hunk_found" xml:space="preserve">
     <value>Invalid hunk found.</value>
   </data>
-  <data name="Compressed_CD_GD_ROM_hunks_are_not_yet_supported" xml:space="preserve">
+    <data name="Compressed_CD_GD_ROM_hunks_are_not_yet_supported" xml:space="preserve">
     <value>Compressed CD/GD-ROM hunks are not yet supported</value>
   </data>
-  <data name="Parent_images_are_not_supported" xml:space="preserve">
+    <data name="Parent_images_are_not_supported" xml:space="preserve">
     <value>Parent images are not supported</value>
   </data>
-  <data name="FLAC_is_not_supported" xml:space="preserve">
+    <data name="FLAC_is_not_supported" xml:space="preserve">
     <value>FLAC is not supported</value>
   </data>
-  <data name="Hunk_type_0_is_not_supported" xml:space="preserve">
+    <data name="Hunk_type_0_is_not_supported" xml:space="preserve">
     <value>Hunk type {0} is not supported</value>
   </data>
-  <data name="Compressed_v5_hunks_not_yet_supported" xml:space="preserve">
+    <data name="Compressed_v5_hunks_not_yet_supported" xml:space="preserve">
     <value>Compressed v5 hunks not yet supported</value>
   </data>
-  <data name="Unsupported_hunk_map_version_0" xml:space="preserve">
+    <data name="Unsupported_hunk_map_version_0" xml:space="preserve">
     <value>Unsupported hunk map version {0}</value>
   </data>
-  <data name="Chd_Name" xml:space="preserve">
+    <data name="Chd_Name" xml:space="preserve">
     <value>MAME Compressed Hunks of Data</value>
   </data>
-  <data name="Reading_Hunk_map" xml:space="preserve">
+    <data name="Reading_Hunk_map" xml:space="preserve">
     <value>Reading Hunk map.</value>
   </data>
-  <data name="Took_0_seconds" xml:space="preserve">
+    <data name="Took_0_seconds" xml:space="preserve">
     <value>Took {0} seconds</value>
   </data>
-  <data name="CHD_version_5_is_not_yet_supported" xml:space="preserve">
+    <data name="CHD_version_5_is_not_yet_supported" xml:space="preserve">
     <value>CHD version 5 is not yet supported.</value>
   </data>
-  <data name="Cannot_read_compressed_CHD_version_5" xml:space="preserve">
+    <data name="Cannot_read_compressed_CHD_version_5" xml:space="preserve">
     <value>Cannot read compressed CHD version 5</value>
   </data>
-  <data name="Unsupported_CHD_version_0" xml:space="preserve">
+    <data name="Unsupported_CHD_version_0" xml:space="preserve">
     <value>Unsupported CHD version {0}</value>
   </data>
-  <data name="Reading_metadata" xml:space="preserve">
+    <data name="Reading_metadata" xml:space="preserve">
     <value>Reading metadata.</value>
   </data>
-  <data name="Found_metadata_0_" xml:space="preserve">
+    <data name="Found_metadata_0_" xml:space="preserve">
     <value>Found metadata "{0}"</value>
   </data>
-  <data name="Image_cannot_be_a_hard_disk_and_a_CGD_ROM_at_the_same_time_aborting" xml:space="preserve">
+    <data name="Image_cannot_be_a_hard_disk_and_a_CGD_ROM_at_the_same_time_aborting" xml:space="preserve">
     <value>Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.</value>
   </data>
-  <data name="Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting" xml:space="preserve">
+    <data name="Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting" xml:space="preserve">
     <value>Image cannot be a hard disk and a CD-ROM at the same time, aborting.</value>
   </data>
-  <data name="Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting" xml:space="preserve">
+    <data name="Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting" xml:space="preserve">
     <value>Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.</value>
   </data>
-  <data name="Unsupported_track_type_0" xml:space="preserve">
+    <data name="Unsupported_track_type_0" xml:space="preserve">
     <value>Unsupported track type {0}</value>
   </data>
-  <data name="Unsorted_tracks_cannot_proceed" xml:space="preserve">
+    <data name="Unsorted_tracks_cannot_proceed" xml:space="preserve">
     <value>Unsorted tracks, cannot proceed.</value>
   </data>
-  <data name="Image_cannot_be_a_hard_disk_and_a_GD_ROM_at_the_same_time_aborting" xml:space="preserve">
+    <data name="Image_cannot_be_a_hard_disk_and_a_GD_ROM_at_the_same_time_aborting" xml:space="preserve">
     <value>Image cannot be a hard disk and a GD-ROM at the same time, aborting.</value>
   </data>
-  <data name="Image_cannot_be_a_CD_ROM_and_a_GD_ROM_at_the_same_time_aborting" xml:space="preserve">
+    <data name="Image_cannot_be_a_CD_ROM_and_a_GD_ROM_at_the_same_time_aborting" xml:space="preserve">
     <value>Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.</value>
   </data>
-  <data name="Image_does_not_represent_a_known_media_aborting" xml:space="preserve">
+    <data name="Image_does_not_represent_a_known_media_aborting" xml:space="preserve">
     <value>Image does not represent a known media, aborting</value>
   </data>
-  <data name="CisCopy_Name" xml:space="preserve">
+    <data name="CisCopy_Name" xml:space="preserve">
     <value>CisCopy Disk Image (DC-File)</value>
   </data>
-  <data name="Incorrect_disk_type_0" xml:space="preserve">
+    <data name="Incorrect_disk_type_0" xml:space="preserve">
     <value>Incorrect disk type {0}</value>
   </data>
-  <data name="Compressed_images_are_not_supported" xml:space="preserve">
+    <data name="Compressed_images_are_not_supported" xml:space="preserve">
     <value>Compressed images are not supported.</value>
   </data>
-  <data name="CisCopy_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="CisCopy_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>CisCopy image contains a disk of type {0}</value>
   </data>
-  <data name="CloneCd_Name" xml:space="preserve">
+    <data name="CloneCd_Name" xml:space="preserve">
     <value>CloneCD</value>
   </data>
-  <data name="Found_CloneCD_out_of_order_in_line_0" xml:space="preserve">
+    <data name="Found_CloneCD_out_of_order_in_line_0" xml:space="preserve">
     <value>Found [CloneCD] out of order in line {0}</value>
   </data>
-  <data name="Found_Version_at_line_0" xml:space="preserve">
+    <data name="Found_Version_at_line_0" xml:space="preserve">
     <value>Found Version at line {0}</value>
   </data>
-  <data name="CloneCD_plugin_Warning_Unknown_CCD_image_version_0_may_not_work" xml:space="preserve">
+    <data name="CloneCD_plugin_Warning_Unknown_CCD_image_version_0_may_not_work" xml:space="preserve">
     <value>(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!</value>
   </data>
-  <data name="Found_TocEntries_at_line_0" xml:space="preserve">
+    <data name="Found_TocEntries_at_line_0" xml:space="preserve">
     <value>Found TocEntries at line {0}</value>
   </data>
-  <data name="Found_Sessions_at_line_0" xml:space="preserve">
+    <data name="Found_Sessions_at_line_0" xml:space="preserve">
     <value>Found Sessions at line {0}</value>
   </data>
-  <data name="Found_DataTracksScrambled_at_line_0" xml:space="preserve">
+    <data name="Found_DataTracksScrambled_at_line_0" xml:space="preserve">
     <value>Found DataTracksScrambled at line {0}</value>
   </data>
-  <data name="Found_CDTextLength_at_line_0" xml:space="preserve">
+    <data name="Found_CDTextLength_at_line_0" xml:space="preserve">
     <value>Found CDTextLength at line {0}</value>
   </data>
-  <data name="Found_Catalog_at_line_0_smallcase" xml:space="preserve">
+    <data name="Found_Catalog_at_line_0_smallcase" xml:space="preserve">
     <value>Found Catalog at line {0}</value>
   </data>
-  <data name="Found_CD_Text_Entries_at_line_0" xml:space="preserve">
+    <data name="Found_CD_Text_Entries_at_line_0" xml:space="preserve">
     <value>Found CD-Text Entries at line {0}</value>
   </data>
-  <data name="Found_CD_Text_Entry_at_line_0" xml:space="preserve">
+    <data name="Found_CD_Text_Entry_at_line_0" xml:space="preserve">
     <value>Found CD-Text Entry at line {0}</value>
   </data>
-  <data name="Found_PreGapMode_at_line_0" xml:space="preserve">
+    <data name="Found_PreGapMode_at_line_0" xml:space="preserve">
     <value>Found PreGapMode at line {0}</value>
   </data>
-  <data name="Found_PreGapSubC_at_line_0" xml:space="preserve">
+    <data name="Found_PreGapSubC_at_line_0" xml:space="preserve">
     <value>Found PreGapSubC at line {0}</value>
   </data>
-  <data name="Found_Session_at_line_0" xml:space="preserve">
+    <data name="Found_Session_at_line_0" xml:space="preserve">
     <value>Found Session at line {0}</value>
   </data>
-  <data name="Found_Point_at_line_0" xml:space="preserve">
+    <data name="Found_Point_at_line_0" xml:space="preserve">
     <value>Found Point at line {0}</value>
   </data>
-  <data name="Found_ADR_at_line_0" xml:space="preserve">
+    <data name="Found_ADR_at_line_0" xml:space="preserve">
     <value>Found ADR at line {0}</value>
   </data>
-  <data name="Found_Control_at_line_0" xml:space="preserve">
+    <data name="Found_Control_at_line_0" xml:space="preserve">
     <value>Found Control at line {0}</value>
   </data>
-  <data name="Found_TrackNo_at_line_0" xml:space="preserve">
+    <data name="Found_TrackNo_at_line_0" xml:space="preserve">
     <value>Found TrackNo at line {0}</value>
   </data>
-  <data name="Found_AMin_at_line_0" xml:space="preserve">
+    <data name="Found_AMin_at_line_0" xml:space="preserve">
     <value>Found AMin at line {0}</value>
   </data>
-  <data name="Found_ASec_at_line_0" xml:space="preserve">
+    <data name="Found_ASec_at_line_0" xml:space="preserve">
     <value>Found ASec at line {0}</value>
   </data>
-  <data name="Found_AFrame_at_line_0" xml:space="preserve">
+    <data name="Found_AFrame_at_line_0" xml:space="preserve">
     <value>Found AFrame at line {0}</value>
   </data>
-  <data name="Found_ALBA_at_line_0" xml:space="preserve">
+    <data name="Found_ALBA_at_line_0" xml:space="preserve">
     <value>Found ALBA at line {0}</value>
   </data>
-  <data name="Found_Zero_at_line_0" xml:space="preserve">
+    <data name="Found_Zero_at_line_0" xml:space="preserve">
     <value>Found Zero at line {0}</value>
   </data>
-  <data name="Found_PMin_at_line_0" xml:space="preserve">
+    <data name="Found_PMin_at_line_0" xml:space="preserve">
     <value>Found PMin at line {0}</value>
   </data>
-  <data name="Found_PSec_at_line_0" xml:space="preserve">
+    <data name="Found_PSec_at_line_0" xml:space="preserve">
     <value>Found PSec at line {0}</value>
   </data>
-  <data name="Found_PFrame_at_line_0" xml:space="preserve">
+    <data name="Found_PFrame_at_line_0" xml:space="preserve">
     <value>Found PFrame at line {0}</value>
   </data>
-  <data name="Found_PLBA_at_line_0" xml:space="preserve">
+    <data name="Found_PLBA_at_line_0" xml:space="preserve">
     <value>Found PLBA at line {0}</value>
   </data>
-  <data name="Did_not_find_any_track" xml:space="preserve">
+    <data name="Did_not_find_any_track" xml:space="preserve">
     <value>Did not find any track.</value>
   </data>
-  <data name="Disc_Type_0" xml:space="preserve">
+    <data name="Disc_Type_0" xml:space="preserve">
     <value>Disc Type: {0}</value>
   </data>
-  <data name="Disc_manufactured_by_0" xml:space="preserve">
+    <data name="Disc_manufactured_by_0" xml:space="preserve">
     <value>Disc manufactured by: {0}</value>
   </data>
-  <data name="Disc_ID_0_X6" xml:space="preserve">
+    <data name="Disc_ID_0_X6" xml:space="preserve">
     <value>Disc ID: {0:X6}</value>
   </data>
-  <data name="This_format_requires_sectors_to_be_raw_Generating_ECC_is_not_yet_implemented" xml:space="preserve">
+    <data name="This_format_requires_sectors_to_be_raw_Generating_ECC_is_not_yet_implemented" xml:space="preserve">
     <value>This format requires sectors to be raw. Generating ECC is not yet implemented</value>
   </data>
-  <data name="Unexpected_first_session_track_type_0" xml:space="preserve">
+    <data name="Unexpected_first_session_track_type_0" xml:space="preserve">
     <value>Unexpected first session track type {0}</value>
   </data>
-  <data name="Could_not_create_subchannel_file_exception_0" xml:space="preserve">
+    <data name="Could_not_create_subchannel_file_exception_0" xml:space="preserve">
     <value>Could not create subchannel file, exception {0}</value>
   </data>
-  <data name="CopyQm_Name" xml:space="preserve">
+    <data name="CopyQm_Name" xml:space="preserve">
     <value>Sydex CopyQM</value>
   </data>
-  <data name="Calculated_header_checksum_equals_0_X2_1" xml:space="preserve">
+    <data name="Calculated_header_checksum_equals_0_X2_1" xml:space="preserve">
     <value>Calculated header checksum = 0x{0:X2}, {1}</value>
   </data>
-  <data name="Calculated_data_CRC_equals_0_X8_1" xml:space="preserve">
+    <data name="Calculated_data_CRC_equals_0_X8_1" xml:space="preserve">
     <value>Calculated data CRC = 0x{0:X8}, {1}</value>
   </data>
-  <data name="CopyQM_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="CopyQM_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>CopyQM image contains a disk of type {0}</value>
   </data>
-  <data name="CopyQM_comments_0" xml:space="preserve">
+    <data name="CopyQM_comments_0" xml:space="preserve">
     <value>CopyQM comments: {0}</value>
   </data>
-  <data name="CopyTape_Name" xml:space="preserve">
+    <data name="CopyTape_Name" xml:space="preserve">
     <value>CopyTape</value>
   </data>
-  <data name="Found_unhandled_header_cannot_open" xml:space="preserve">
+    <data name="Found_unhandled_header_cannot_open" xml:space="preserve">
     <value>Found unhandled header, cannot open.</value>
   </data>
-  <data name="Cannot_decode_block_header_cannot_open" xml:space="preserve">
+    <data name="Cannot_decode_block_header_cannot_open" xml:space="preserve">
     <value>Cannot decode block header, cannot open.</value>
   </data>
-  <data name="Cannot_write_unwritten_blocks" xml:space="preserve">
+    <data name="Cannot_write_unwritten_blocks" xml:space="preserve">
     <value>Cannot write unwritten blocks</value>
   </data>
-  <data name="Cannot_skip_blocks" xml:space="preserve">
+    <data name="Cannot_skip_blocks" xml:space="preserve">
     <value>Cannot skip blocks</value>
   </data>
-  <data name="magic_equals_0_quoted" xml:space="preserve">
+    <data name="magic_equals_0_quoted" xml:space="preserve">
     <value>magic = "{0}"</value>
   </data>
-  <data name="Cpcdsk_Name" xml:space="preserve">
+    <data name="Cpcdsk_Name" xml:space="preserve">
     <value>CPCEMU Disk-File and Extended CPC Disk-File</value>
   </data>
-  <data name="Extended_equals_0" xml:space="preserve">
+    <data name="Extended_equals_0" xml:space="preserve">
     <value>Extended = {0}</value>
   </data>
-  <data name="Track_0_Side_1_size_equals_2" xml:space="preserve">
+    <data name="Track_0_Side_1_size_equals_2" xml:space="preserve">
     <value>Track {0} Side {1} size = {2}</value>
   </data>
-  <data name="Not_the_expected_track_info" xml:space="preserve">
+    <data name="Not_the_expected_track_info" xml:space="preserve">
     <value>Not the expected track info.</value>
   </data>
-  <data name="Read_0_sectors" xml:space="preserve">
+    <data name="Read_0_sectors" xml:space="preserve">
     <value>Read {0} sectors</value>
   </data>
-  <data name="Read_0_tracks" xml:space="preserve">
+    <data name="Read_0_tracks" xml:space="preserve">
     <value>Read {0} tracks</value>
   </data>
-  <data name="All_tracks_are_same_size_0" xml:space="preserve">
+    <data name="All_tracks_are_same_size_0" xml:space="preserve">
     <value>All tracks are same size? {0}</value>
   </data>
-  <data name="_0_tracks" xml:space="preserve">
+    <data name="_0_tracks" xml:space="preserve">
     <value>{0} tracks</value>
   </data>
-  <data name="D88_Name" xml:space="preserve">
+    <data name="D88_Name" xml:space="preserve">
     <value>D88 Disk Image</value>
   </data>
-  <data name="Disk_tracks_are_not_same_size" xml:space="preserve">
+    <data name="Disk_tracks_are_not_same_size" xml:space="preserve">
     <value>Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}</value>
   </data>
-  <data name="_0_sectors" xml:space="preserve">
+    <data name="_0_sectors" xml:space="preserve">
     <value>{0} sectors</value>
   </data>
-  <data name="Dart_Name" xml:space="preserve">
+    <data name="Dart_Name" xml:space="preserve">
     <value>Apple Disk Archival/Retrieval Tool</value>
   </data>
-  <data name="LZH_Compressed_images_not_yet_supported" xml:space="preserve">
+    <data name="LZH_Compressed_images_not_yet_supported" xml:space="preserve">
     <value>LZH Compressed images not yet supported</value>
   </data>
-  <data name="Image_application_0_version_1" xml:space="preserve">
+    <data name="Image_application_0_version_1" xml:space="preserve">
     <value>Image application = {0} version {1}</value>
   </data>
-  <data name="Dim_Name" xml:space="preserve">
+    <data name="Dim_Name" xml:space="preserve">
     <value>DIM Disk Image</value>
   </data>
-  <data name="DIM_shows_unknown_image_with_0_tracks" xml:space="preserve">
+    <data name="DIM_shows_unknown_image_with_0_tracks" xml:space="preserve">
     <value>DIM shows unknown image with {0} tracks</value>
   </data>
-  <data name="DIM_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="DIM_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>DIM image contains a disk of type {0}</value>
   </data>
-  <data name="DIM_comments_0" xml:space="preserve">
+    <data name="DIM_comments_0" xml:space="preserve">
     <value>DIM comments: {0}</value>
   </data>
-  <data name="DiscFerret_Name" xml:space="preserve">
+    <data name="DiscFerret_Name" xml:space="preserve">
     <value>DiscFerret</value>
   </data>
-  <data name="Invalid_track_block_found_at_0" xml:space="preserve">
+    <data name="Invalid_track_block_found_at_0" xml:space="preserve">
     <value>Invalid track block found at {0}</value>
   </data>
-  <data name="Flux_decoding_is_not_yet_implemented" xml:space="preserve">
+    <data name="Flux_decoding_is_not_yet_implemented" xml:space="preserve">
     <value>Flux decoding is not yet implemented.</value>
   </data>
-  <data name="DiscJuggler_Name" xml:space="preserve">
+    <data name="DiscJuggler_Name" xml:space="preserve">
     <value>DiscJuggler</value>
   </data>
-  <data name="Track_title_0" xml:space="preserve">
+    <data name="Track_title_0" xml:space="preserve">
     <value>Track title = {0}</value>
   </data>
-  <data name="Unknown_read_mode_0" xml:space="preserve">
+    <data name="Unknown_read_mode_0" xml:space="preserve">
     <value>Unknown read mode {0}</value>
   </data>
-  <data name="Invalid_read_mode_0_for_this_track" xml:space="preserve">
+    <data name="Invalid_read_mode_0_for_this_track" xml:space="preserve">
     <value>Invalid read mode {0} for this track</value>
   </data>
-  <data name="Unknown_track_mode_0" xml:space="preserve">
+    <data name="Unknown_track_mode_0" xml:space="preserve">
     <value>Unknown track mode {0}</value>
   </data>
-  <data name="Current_position_equals_0" xml:space="preserve">
+    <data name="Current_position_equals_0" xml:space="preserve">
     <value>Current position = {0}</value>
   </data>
-  <data name="End_position_equals_0" xml:space="preserve">
+    <data name="End_position_equals_0" xml:space="preserve">
     <value>End position = {0}</value>
   </data>
-  <data name="Unknown_tmp_header_format_equals_0_value" xml:space="preserve">
+    <data name="Unknown_tmp_header_format_equals_0_value" xml:space="preserve">
     <value>Unknown tmp_header.format = 0x{0:X2} value</value>
   </data>
-  <data name="Unknown_tmp_header_fmtByte_equals_0_value" xml:space="preserve">
+    <data name="Unknown_tmp_header_fmtByte_equals_0_value" xml:space="preserve">
     <value>Unknown tmp_header.fmtByte = 0x{0:X2} value</value>
   </data>
-  <data name="Image_says_its_unformatted" xml:space="preserve">
+    <data name="Image_says_its_unformatted" xml:space="preserve">
     <value>Image says it's unformatted</value>
   </data>
-  <data name="DiskCopy42_Name" xml:space="preserve">
+    <data name="DiskCopy42_Name" xml:space="preserve">
     <value>Apple DiskCopy 4.2</value>
   </data>
-  <data name="Use_Mac_OS_X_format_byte" xml:space="preserve">
+    <data name="Use_Mac_OS_X_format_byte" xml:space="preserve">
     <value>Use Mac OS X format byte</value>
   </data>
-  <data name="Unknown_header_format_equals_0_value" xml:space="preserve">
+    <data name="Unknown_header_format_equals_0_value" xml:space="preserve">
     <value>Unknown header.format = 0x{0:X2} value</value>
   </data>
-  <data name="Unknown_tag_size" xml:space="preserve">
+    <data name="Unknown_tag_size" xml:space="preserve">
     <value>Unknown tag size</value>
   </data>
-  <data name="Macintosh_Twiggy_detected_reversing_disk_sides" xml:space="preserve">
+    <data name="Macintosh_Twiggy_detected_reversing_disk_sides" xml:space="preserve">
     <value>Macintosh Twiggy detected, reversing disk sides</value>
   </data>
-  <data name="Lisa_Twiggy_detected_reversing_second_half_of_disk" xml:space="preserve">
+    <data name="Lisa_Twiggy_detected_reversing_second_half_of_disk" xml:space="preserve">
     <value>Lisa Twiggy detected, reversing second half of disk</value>
   </data>
-  <data name="DiskCopy_4_2_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="DiskCopy_4_2_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>DiskCopy 4.2 image contains a disk of type {0}</value>
   </data>
-  <data name="Reading_data" xml:space="preserve">
+    <data name="Reading_data" xml:space="preserve">
     <value>Reading data</value>
   </data>
-  <data name="Calculating_data_checksum" xml:space="preserve">
+    <data name="Calculating_data_checksum" xml:space="preserve">
     <value>Calculating data checksum</value>
   </data>
-  <data name="Calculated_data_checksum_equals_0_X8" xml:space="preserve">
+    <data name="Calculated_data_checksum_equals_0_X8" xml:space="preserve">
     <value>Calculated data checksum = 0x{0:X8}</value>
   </data>
-  <data name="Stored_data_checksum_equals_0_X8" xml:space="preserve">
+    <data name="Stored_data_checksum_equals_0_X8" xml:space="preserve">
     <value>Stored data checksum = 0x{0:X8}</value>
   </data>
-  <data name="Reading_tags" xml:space="preserve">
+    <data name="Reading_tags" xml:space="preserve">
     <value>Reading tags</value>
   </data>
-  <data name="Calculating_tag_checksum" xml:space="preserve">
+    <data name="Calculating_tag_checksum" xml:space="preserve">
     <value>Calculating tag checksum</value>
   </data>
-  <data name="Calculated_tag_checksum_equals_0_X8" xml:space="preserve">
+    <data name="Calculated_tag_checksum_equals_0_X8" xml:space="preserve">
     <value>Calculated tag checksum = 0x{0:X8}</value>
   </data>
-  <data name="Stored_tag_checksum_equals_0_X8" xml:space="preserve">
+    <data name="Stored_tag_checksum_equals_0_X8" xml:space="preserve">
     <value>Stored tag checksum = 0x{0:X8}</value>
   </data>
-  <data name="Twiggy_write_support_not_yet_implemented" xml:space="preserve">
+    <data name="Twiggy_write_support_not_yet_implemented" xml:space="preserve">
     <value>Twiggy write support not yet implemented</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_Apple_HD20_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_Apple_HD20_image" xml:space="preserve">
     <value>Incorrect number of sectors for Apple HD20 image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_Apple_Profile_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_Apple_Profile_image" xml:space="preserve">
     <value>Incorrect number of sectors for Apple Profile image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_Apple_MF2DD_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_Apple_MF2DD_image" xml:space="preserve">
     <value>Incorrect number of sectors for Apple MF2DD image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_Apple_MF1DD_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_Apple_MF1DD_image" xml:space="preserve">
     <value>Incorrect number of sectors for Apple MF1DD image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_Apple_Widget_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_Apple_Widget_image" xml:space="preserve">
     <value>Incorrect number of sectors for Apple Widget image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_MF2DD_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_MF2DD_image" xml:space="preserve">
     <value>Incorrect number of sectors for MF2DD image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_MF2HD_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_MF2HD_image" xml:space="preserve">
     <value>Incorrect number of sectors for MF2HD image</value>
   </data>
-  <data name="Incorrect_number_of_sectors_for_DMF_image" xml:space="preserve">
+    <data name="Incorrect_number_of_sectors_for_DMF_image" xml:space="preserve">
     <value>Incorrect number of sectors for DMF image</value>
   </data>
-  <data name="Identified_image_with_CHS_equals_0_1_2" xml:space="preserve">
+    <data name="Identified_image_with_CHS_equals_0_1_2" xml:space="preserve">
     <value>Identified image with C/H/S = {0}/{1}/{2}</value>
   </data>
-  <data name="DiskDupe_Name" xml:space="preserve">
+    <data name="DiskDupe_Name" xml:space="preserve">
     <value>DiskDupe DDI Disk Image</value>
   </data>
-  <data name="Detected_DiskDupe_DDI_image_with_0_tracks_and_1_sectors_per_track" xml:space="preserve">
+    <data name="Detected_DiskDupe_DDI_image_with_0_tracks_and_1_sectors_per_track" xml:space="preserve">
     <value>Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.</value>
   </data>
-  <data name="DriDiskCopy_Name" xml:space="preserve">
+    <data name="DriDiskCopy_Name" xml:space="preserve">
     <value>Digital Research DiskCopy</value>
   </data>
-  <data name="Digital_Research_DiskCopy_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="Digital_Research_DiskCopy_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>Digital Research DiskCopy image contains a disk of type {0}</value>
   </data>
-  <data name="Gdi_Name" xml:space="preserve">
+    <data name="Gdi_Name" xml:space="preserve">
     <value>Dreamcast GDI image</value>
   </data>
-  <data name="Not_a_correct_Dreamcast_GDI_image" xml:space="preserve">
+    <data name="Not_a_correct_Dreamcast_GDI_image" xml:space="preserve">
     <value>Not a correct Dreamcast GDI image</value>
   </data>
-  <data name="Unknown_line_0_at_line_1" xml:space="preserve">
+    <data name="Unknown_line_0_at_line_1" xml:space="preserve">
     <value>Unknown line "{0}" at line {1}</value>
   </data>
-  <data name="Found_track_0_starts_at_1_flags_2_type_3_file_4_offset_5_at_line_6" xml:space="preserve">
+    <data name="Found_track_0_starts_at_1_flags_2_type_3_file_4_offset_5_at_line_6" xml:space="preserve">
     <value>Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}</value>
   </data>
-  <data name="Track_size_not_a_multiple_of_sector_size" xml:space="preserve">
+    <data name="Track_size_not_a_multiple_of_sector_size" xml:space="preserve">
     <value>Track size not a multiple of sector size</value>
   </data>
-  <data name="Track_is_data" xml:space="preserve">
+    <data name="Track_is_data" xml:space="preserve">
     <value>Track is data</value>
   </data>
-  <data name="GDI_image_describes_a_disc_of_type_0" xml:space="preserve">
+    <data name="GDI_image_describes_a_disc_of_type_0" xml:space="preserve">
     <value>GDI image describes a disc of type {0}</value>
   </data>
-  <data name="Tried_reading_a_track_that_is_not_present_in_image" xml:space="preserve">
+    <data name="Tried_reading_a_track_that_is_not_present_in_image" xml:space="preserve">
     <value>Tried reading a track that is not present in image</value>
   </data>
-  <data name="Track_decompression_yielded_incomplete_data" xml:space="preserve">
+    <data name="Track_decompression_yielded_incomplete_data" xml:space="preserve">
     <value>Track decompression yielded incomplete data</value>
   </data>
-  <data name="HdCopy_Name" xml:space="preserve">
+    <data name="HdCopy_Name" xml:space="preserve">
     <value>HD-Copy disk image</value>
   </data>
-  <data name="Detected_HD_Copy_image_with_0_tracks_and_1_sectors_per_track" xml:space="preserve">
+    <data name="Detected_HD_Copy_image_with_0_tracks_and_1_sectors_per_track" xml:space="preserve">
     <value>Detected HD-Copy image with {0} tracks and {1} sectors per track.</value>
   </data>
-  <data name="Track_0_offset_1_size_equals_2" xml:space="preserve">
+    <data name="Track_0_offset_1_size_equals_2" xml:space="preserve">
     <value>Track {0} offset 0x{1:x8}, size={2:x4}</value>
   </data>
-  <data name="Imd_Name" xml:space="preserve">
+    <data name="Imd_Name" xml:space="preserve">
     <value>Dunfield's IMD</value>
   </data>
-  <data name="Invalid_sector_type_0" xml:space="preserve">
+    <data name="Invalid_sector_type_0" xml:space="preserve">
     <value>Invalid sector type {0}</value>
   </data>
-  <data name="IMD_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="IMD_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>IMD image contains a disk of type {0}</value>
   </data>
-  <data name="IMD_comments_0" xml:space="preserve">
+    <data name="IMD_comments_0" xml:space="preserve">
     <value>IMD comments: {0}</value>
   </data>
-  <data name="KryoFlux_Name" xml:space="preserve">
+    <data name="KryoFlux_Name" xml:space="preserve">
     <value>KryoFlux STREAM</value>
   </data>
-  <data name="Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped" xml:space="preserve">
+    <data name="Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped" xml:space="preserve">
     <value>Cannot find cyl 0 hd 0, supposing only top head was dumped</value>
   </data>
-  <data name="Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped" xml:space="preserve">
+    <data name="Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped" xml:space="preserve">
     <value>Cannot find cyl 0 hd 1, supposing only bottom head was dumped</value>
   </data>
-  <data name="Cannot_find_cyl_1_supposing_double_stepping" xml:space="preserve">
+    <data name="Cannot_find_cyl_1_supposing_double_stepping" xml:space="preserve">
     <value>Cannot find cyl 1, supposing double stepping</value>
   </data>
-  <data name="Arrived_end_of_disk_at_cylinder_0" xml:space="preserve">
+    <data name="Arrived_end_of_disk_at_cylinder_0" xml:space="preserve">
     <value>Arrived end of disk at cylinder {0}</value>
   </data>
-  <data name="Found_timestamp_0" xml:space="preserve">
+    <data name="Found_timestamp_0" xml:space="preserve">
     <value>Found timestamp: {0}</value>
   </data>
-  <data name="MaxiDisk_Name" xml:space="preserve">
+    <data name="MaxiDisk_Name" xml:space="preserve">
     <value>MAXI Disk image</value>
   </data>
-  <data name="Ndif_Name" xml:space="preserve">
+    <data name="Ndif_Name" xml:space="preserve">
     <value>Apple New Disk Image Format</value>
   </data>
-  <data name="Exception_trying_to_open_image_file_0" xml:space="preserve">
+    <data name="Exception_trying_to_open_image_file_0" xml:space="preserve">
     <value>Exception trying to open image file {0}</value>
   </data>
-  <data name="Chunks_compressed_with_KenCode_are_not_yet_supported" xml:space="preserve">
+    <data name="Chunks_compressed_with_KenCode_are_not_yet_supported" xml:space="preserve">
     <value>Chunks compressed with KenCode are not yet supported.</value>
   </data>
-  <data name="Chunks_compressed_with_LZH_are_not_yet_supported" xml:space="preserve">
+    <data name="Chunks_compressed_with_LZH_are_not_yet_supported" xml:space="preserve">
     <value>Chunks compressed with LZH are not yet supported.</value>
   </data>
-  <data name="Chunks_compressed_with_StuffIt_are_not_yet_supported" xml:space="preserve">
+    <data name="Chunks_compressed_with_StuffIt_are_not_yet_supported" xml:space="preserve">
     <value>Chunks compressed with StuffIt! are not yet supported.</value>
   </data>
-  <data name="Unsupported_chunk_type_0_found" xml:space="preserve">
+    <data name="Unsupported_chunk_type_0_found" xml:space="preserve">
     <value>Unsupported chunk type 0x{0:X8} found</value>
   </data>
-  <data name="Segmented_images_are_not_yet_supported" xml:space="preserve">
+    <data name="Segmented_images_are_not_yet_supported" xml:space="preserve">
     <value>Segmented images are not yet supported.</value>
   </data>
-  <data name="Encrypted_images_are_not_yet_supported" xml:space="preserve">
+    <data name="Encrypted_images_are_not_yet_supported" xml:space="preserve">
     <value>Encrypted images are not yet supported.</value>
   </data>
-  <data name="Nero_Name" xml:space="preserve">
+    <data name="Nero_Name" xml:space="preserve">
     <value>Nero Burning ROM image</value>
   </data>
-  <data name="Nero_version_not_recognized" xml:space="preserve">
+    <data name="Nero_version_not_recognized" xml:space="preserve">
     <value>Nero version not recognized.</value>
   </data>
-  <data name="Found_CUES_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_CUES_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "CUES" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Cuesheet_entry_0" xml:space="preserve">
+    <data name="Cuesheet_entry_0" xml:space="preserve">
     <value>Cuesheet entry {0}</value>
   </data>
-  <data name="Found_CUEX_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_CUEX_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "CUEX" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_DAOI_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_DAOI_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "DAOI" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Disc_At_Once_entry_0" xml:space="preserve">
+    <data name="Disc_At_Once_entry_0" xml:space="preserve">
     <value>Disc-At-Once entry {0}</value>
   </data>
-  <data name="Found_DAOX_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_DAOX_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "DAOX" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_CDTX_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_CDTX_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "CDTX" chunk, parsing {0} bytes</value>
   </data>
-  <data name="CD_TEXT_entry_0" xml:space="preserve">
+    <data name="CD_TEXT_entry_0" xml:space="preserve">
     <value>CD-TEXT entry {0}</value>
   </data>
-  <data name="Found_TINF_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_TINF_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "TINF" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Track_at_Once_entry_0" xml:space="preserve">
+    <data name="Track_at_Once_entry_0" xml:space="preserve">
     <value>Track-at-Once entry {0}</value>
   </data>
-  <data name="Found_ETNF_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_ETNF_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "ETNF" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_ETN2_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_ETN2_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "ETN2" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_SINF_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_SINF_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "SINF" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Session_0_has_1_tracks" xml:space="preserve">
+    <data name="Session_0_has_1_tracks" xml:space="preserve">
     <value>Session {0} has {1} tracks</value>
   </data>
-  <data name="Found_MTYP_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_MTYP_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "MTYP" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Media_type_is_0_1" xml:space="preserve">
+    <data name="Media_type_is_0_1" xml:space="preserve">
     <value>Media type is {0} ({1})</value>
   </data>
-  <data name="Found_DINF_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_DINF_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "DINF" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_RELO_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_RELO_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "RELO" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_TOCT_chunk_parsing_0_bytes" xml:space="preserve">
+    <data name="Found_TOCT_chunk_parsing_0_bytes" xml:space="preserve">
     <value>Found "TOCT" chunk, parsing {0} bytes</value>
   </data>
-  <data name="Found_END_chunk_finishing_parse" xml:space="preserve">
+    <data name="Found_END_chunk_finishing_parse" xml:space="preserve">
     <value>Found "END!" chunk, finishing parse</value>
   </data>
-  <data name="Unknown_chunk_ID_0_skipping" xml:space="preserve">
+    <data name="Unknown_chunk_ID_0_skipping" xml:space="preserve">
     <value>Unknown chunk ID "{0}", skipping...</value>
   </data>
-  <data name="Inconsistent_track_mode_and_track_sector_size_found" xml:space="preserve">
+    <data name="Inconsistent_track_mode_and_track_sector_size_found" xml:space="preserve">
     <value>Inconsistent track mode and track sector size found. A best try to fix has been done. It is recommended this disc is dumped with another software.</value>
   </data>
-  <data name="Building_offset_track_and_session_maps" xml:space="preserve">
+    <data name="Building_offset_track_and_session_maps" xml:space="preserve">
     <value>Building offset, track and session maps</value>
   </data>
-  <data name="This_image_contains_a_track_that_is_set_to_start_outside_the_file" xml:space="preserve">
+    <data name="This_image_contains_a_track_that_is_set_to_start_outside_the_file" xml:space="preserve">
     <value>This image contains a track that is set to start outside the file.</value>
   </data>
-  <data name="Breaking_track_processing_and_trying_recovery_of_information" xml:space="preserve">
+    <data name="Breaking_track_processing_and_trying_recovery_of_information" xml:space="preserve">
     <value>Breaking track processing and trying recovery of information.</value>
   </data>
-  <data name="Image_corrupted_beyond_recovery_cannot_open" xml:space="preserve">
+    <data name="Image_corrupted_beyond_recovery_cannot_open" xml:space="preserve">
     <value>Image corrupted beyond recovery, cannot open.</value>
   </data>
-  <data name="Warning_This_image_is_missing_the_last_150_sectors" xml:space="preserve">
+    <data name="Warning_This_image_is_missing_the_last_150_sectors" xml:space="preserve">
     <value>Warning! This image is missing the last 150 sectors.</value>
   </data>
-  <data name="Nero_image_contains_a_disc_of_type_0" xml:space="preserve">
+    <data name="Nero_image_contains_a_disc_of_type_0" xml:space="preserve">
     <value>Nero image contains a disc of type {0}</value>
   </data>
-  <data name="Exception_occurred_opening_file" xml:space="preserve">
+    <data name="Exception_occurred_opening_file" xml:space="preserve">
     <value>Exception occurred opening file.</value>
   </data>
-  <data name="Nhdr0_Name" xml:space="preserve">
+    <data name="Nhdr0_Name" xml:space="preserve">
     <value>T98-Next NHD r0 Disk Image</value>
   </data>
-  <data name="Parallels_Name" xml:space="preserve">
+    <data name="Parallels_Name" xml:space="preserve">
     <value>Parallels disk image</value>
   </data>
-  <data name="Reading_BAT" xml:space="preserve">
+    <data name="Reading_BAT" xml:space="preserve">
     <value>Reading BAT</value>
   </data>
-  <data name="Too_many_sectors_for_selected_cluster_size" xml:space="preserve">
+    <data name="Too_many_sectors_for_selected_cluster_size" xml:space="preserve">
     <value>Too many sectors for selected cluster size</value>
   </data>
-  <data name="PartClone_Name" xml:space="preserve">
+    <data name="PartClone_Name" xml:space="preserve">
     <value>PartClone disk image</value>
   </data>
-  <data name="Reading_bytemap_0_bytes" xml:space="preserve">
+    <data name="Reading_bytemap_0_bytes" xml:space="preserve">
     <value>Reading bytemap {0} bytes</value>
   </data>
-  <data name="Could_not_find_partclone_BiTmAgIc_not_continuing" xml:space="preserve">
+    <data name="Could_not_find_partclone_BiTmAgIc_not_continuing" xml:space="preserve">
     <value>Could not find partclone BiTmAgIc, not continuing...</value>
   </data>
-  <data name="Filling_extents" xml:space="preserve">
+    <data name="Filling_extents" xml:space="preserve">
     <value>Filling extents</value>
   </data>
-  <data name="Took_0_seconds_to_fill_extents" xml:space="preserve">
+    <data name="Took_0_seconds_to_fill_extents" xml:space="preserve">
     <value>Took {0} seconds to fill extents</value>
   </data>
-  <data name="Partimage_Name" xml:space="preserve">
+    <data name="Partimage_Name" xml:space="preserve">
     <value>Partimage disk image</value>
   </data>
-  <data name="Support_for_multiple_volumes_not_supported" xml:space="preserve">
+    <data name="Support_for_multiple_volumes_not_supported" xml:space="preserve">
     <value>Support for multiple volumes not supported</value>
   </data>
-  <data name="Cannot_find_MBRs" xml:space="preserve">
+    <data name="Cannot_find_MBRs" xml:space="preserve">
     <value>Cannot find MBRs</value>
   </data>
-  <data name="Cannot_find_local_header" xml:space="preserve">
+    <data name="Cannot_find_local_header" xml:space="preserve">
     <value>Cannot find local header</value>
   </data>
-  <data name="Cannot_find_bitmap" xml:space="preserve">
+    <data name="Cannot_find_bitmap" xml:space="preserve">
     <value>Cannot find bitmap</value>
   </data>
-  <data name="Cannot_find_info_block" xml:space="preserve">
+    <data name="Cannot_find_info_block" xml:space="preserve">
     <value>Cannot find info block</value>
   </data>
-  <data name="Cannot_find_data_blocks" xml:space="preserve">
+    <data name="Cannot_find_data_blocks" xml:space="preserve">
     <value>Cannot find data blocks</value>
   </data>
-  <data name="Cannot_find_tail_Multiple_volumes_are_not_supported_or_image_is_corrupt" xml:space="preserve">
+    <data name="Cannot_find_tail_Multiple_volumes_are_not_supported_or_image_is_corrupt" xml:space="preserve">
     <value>Cannot find tail. Multiple volumes are not supported or image is corrupt.</value>
   </data>
-  <data name="Qcow_Name" xml:space="preserve">
+    <data name="Qcow_Name" xml:space="preserve">
     <value>QEMU Copy-On-Write disk image</value>
   </data>
-  <data name="Image_size_is_too_small" xml:space="preserve">
+    <data name="Image_size_is_too_small" xml:space="preserve">
     <value>Image size is too small</value>
   </data>
-  <data name="Cluster_size_must_be_between_512_bytes_and_64_Kbytes" xml:space="preserve">
+    <data name="Cluster_size_must_be_between_512_bytes_and_64_Kbytes" xml:space="preserve">
     <value>Cluster size must be between 512 bytes and 64 Kbytes</value>
   </data>
-  <data name="L2_size_must_be_between_512_bytes_and_64_Kbytes" xml:space="preserve">
+    <data name="L2_size_must_be_between_512_bytes_and_64_Kbytes" xml:space="preserve">
     <value>L2 size must be between 512 bytes and 64 Kbytes</value>
   </data>
-  <data name="Invalid_encryption_method" xml:space="preserve">
+    <data name="Invalid_encryption_method" xml:space="preserve">
     <value>Invalid encryption method</value>
   </data>
-  <data name="AES_encrypted_images_not_yet_supported" xml:space="preserve">
+    <data name="AES_encrypted_images_not_yet_supported" xml:space="preserve">
     <value>AES encrypted images not yet supported</value>
   </data>
-  <data name="Differencing_images_not_yet_supported" xml:space="preserve">
+    <data name="Differencing_images_not_yet_supported" xml:space="preserve">
     <value>Differencing images not yet supported</value>
   </data>
-  <data name="Image_is_too_large" xml:space="preserve">
+    <data name="Image_is_too_large" xml:space="preserve">
     <value>Image is too large</value>
   </data>
-  <data name="Reading_L1_table" xml:space="preserve">
+    <data name="Reading_L1_table" xml:space="preserve">
     <value>Reading L1 table</value>
   </data>
-  <data name="Trying_to_read_past_L1_table_position_0_of_a_max_1" xml:space="preserve">
+    <data name="Trying_to_read_past_L1_table_position_0_of_a_max_1" xml:space="preserve">
     <value>Trying to read past L1 table, position {0} of a max {1}</value>
   </data>
-  <data name="Reading_L2_table_0" xml:space="preserve">
+    <data name="Reading_L2_table_0" xml:space="preserve">
     <value>Reading L2 table #{0}</value>
   </data>
-  <data name="Trying_to_write_past_L1_table_position_0_of_a_max_1" xml:space="preserve">
+    <data name="Trying_to_write_past_L1_table_position_0_of_a_max_1" xml:space="preserve">
     <value>Trying to write past L1 table, position {0} of a max {1}</value>
   </data>
-  <data name="Qcow2_Name" xml:space="preserve">
+    <data name="Qcow2_Name" xml:space="preserve">
     <value>QEMU Copy-On-Write disk image v2</value>
   </data>
-  <data name="Unknown_incompatible_features_0_enabled_not_proceeding" xml:space="preserve">
+    <data name="Unknown_incompatible_features_0_enabled_not_proceeding" xml:space="preserve">
     <value>Unknown incompatible features {0:X} enabled, not proceeding.</value>
   </data>
-  <data name="Qed_Name" xml:space="preserve">
+    <data name="Qed_Name" xml:space="preserve">
     <value>QEMU Enhanced Disk image</value>
   </data>
-  <data name="Cluster_size_must_be_a_power_of_2" xml:space="preserve">
+    <data name="Cluster_size_must_be_a_power_of_2" xml:space="preserve">
     <value>Cluster size must be a power of 2</value>
   </data>
-  <data name="Cluster_size_must_be_between_4_Kbytes_and_64_Mbytes" xml:space="preserve">
+    <data name="Cluster_size_must_be_between_4_Kbytes_and_64_Mbytes" xml:space="preserve">
     <value>Cluster size must be between 4 Kbytes and 64 Mbytes</value>
   </data>
-  <data name="Table_size_must_be_a_power_of_2" xml:space="preserve">
+    <data name="Table_size_must_be_a_power_of_2" xml:space="preserve">
     <value>Table size must be a power of 2</value>
   </data>
-  <data name="Table_size_must_be_between_1_and_16_clusters" xml:space="preserve">
+    <data name="Table_size_must_be_between_1_and_16_clusters" xml:space="preserve">
     <value>Table size must be between 1 and 16 clusters</value>
   </data>
-  <data name="Image_uses_unknown_incompatible_features_0" xml:space="preserve">
+    <data name="Image_uses_unknown_incompatible_features_0" xml:space="preserve">
     <value>Image uses unknown incompatible features {0:X}</value>
   </data>
-  <data name="RsIde_Name" xml:space="preserve">
+    <data name="RsIde_Name" xml:space="preserve">
     <value>RS-IDE Hard Disk Image</value>
   </data>
-  <data name="Unsupported_media_tag_0" xml:space="preserve">
+    <data name="Unsupported_media_tag_0" xml:space="preserve">
     <value>Unsupported media tag {0}.</value>
   </data>
-  <data name="SaveDskF_Name" xml:space="preserve">
+    <data name="SaveDskF_Name" xml:space="preserve">
     <value>IBM SaveDskF</value>
   </data>
-  <data name="Calculated_checksum_equals_0_X8_1" xml:space="preserve">
+    <data name="Calculated_checksum_equals_0_X8_1" xml:space="preserve">
     <value>Calculated checksum = 0x{0:X8}, {1}</value>
   </data>
-  <data name="SaveDskF_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="SaveDskF_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>SaveDskF image contains a disk of type {0}</value>
   </data>
-  <data name="SaveDskF_comments_0" xml:space="preserve">
+    <data name="SaveDskF_comments_0" xml:space="preserve">
     <value>SaveDskF comments: {0}</value>
   </data>
-  <data name="Compressed_SaveDskF_images_are_not_supported" xml:space="preserve">
+    <data name="Compressed_SaveDskF_images_are_not_supported" xml:space="preserve">
     <value>Compressed SaveDskF images are not supported.</value>
   </data>
-  <data name="SuperCardPro_Name" xml:space="preserve">
+    <data name="SuperCardPro_Name" xml:space="preserve">
     <value>SuperCardPro</value>
   </data>
-  <data name="Track_header_at_0_contains_incorrect_signature" xml:space="preserve">
+    <data name="Track_header_at_0_contains_incorrect_signature" xml:space="preserve">
     <value>Track header at {0} contains incorrect signature.</value>
   </data>
-  <data name="Track_number_at_0_should_be_1_but_is_2" xml:space="preserve">
+    <data name="Track_number_at_0_should_be_1_but_is_2" xml:space="preserve">
     <value>Track number at {0} should be {1} but is {2}.</value>
   </data>
-  <data name="Found_track_0_at_1" xml:space="preserve">
+    <data name="Found_track_0_at_1" xml:space="preserve">
     <value>Found track {0} at {1}.</value>
   </data>
-  <data name="Found_footer_at_0" xml:space="preserve">
+    <data name="Found_footer_at_0" xml:space="preserve">
     <value>Found footer at {0}</value>
   </data>
-  <data name="cylinders_equal_0" xml:space="preserve">
+    <data name="cylinders_equal_0" xml:space="preserve">
     <value>cylinders = {0}</value>
   </data>
-  <data name="T98_Name" xml:space="preserve">
+    <data name="T98_Name" xml:space="preserve">
     <value>T98 Hard Disk Image</value>
   </data>
-  <data name="Sector_size_0_is_incorrect" xml:space="preserve">
+    <data name="Sector_size_0_is_incorrect" xml:space="preserve">
     <value>Sector size {0} is incorrect.</value>
   </data>
-  <data name="Block_pattern_decoder_Input_data_size_0_bytes" xml:space="preserve">
+    <data name="Block_pattern_decoder_Input_data_size_0_bytes" xml:space="preserve">
     <value>(Block pattern decoder): Input data size: {0} bytes</value>
   </data>
-  <data name="Block_pattern_decoder_Processed_input_0_bytes" xml:space="preserve">
+    <data name="Block_pattern_decoder_Processed_input_0_bytes" xml:space="preserve">
     <value>(Block pattern decoder): Processed input: {0} bytes</value>
   </data>
-  <data name="Block_pattern_decoder_Output_data_size_0_bytes" xml:space="preserve">
+    <data name="Block_pattern_decoder_Output_data_size_0_bytes" xml:space="preserve">
     <value>(Block pattern decoder): Output data size: {0} bytes</value>
   </data>
-  <data name="Block_pattern_decoder_Processed_Output_0_bytes" xml:space="preserve">
+    <data name="Block_pattern_decoder_Processed_Output_0_bytes" xml:space="preserve">
     <value>(Block pattern decoder): Processed Output: {0} bytes</value>
   </data>
-  <data name="RLE_decoder_Input_data_size_0_bytes" xml:space="preserve">
+    <data name="RLE_decoder_Input_data_size_0_bytes" xml:space="preserve">
     <value>(RLE decoder): Input data size: {0} bytes</value>
   </data>
-  <data name="RLE_decoder_Processed_input_0_bytes" xml:space="preserve">
+    <data name="RLE_decoder_Processed_input_0_bytes" xml:space="preserve">
     <value>(RLE decoder): Processed input: {0} bytes</value>
   </data>
-  <data name="RLE_decoder_Output_data_size_0_bytes" xml:space="preserve">
+    <data name="RLE_decoder_Output_data_size_0_bytes" xml:space="preserve">
     <value>(RLE decoder): Output data size: {0} bytes</value>
   </data>
-  <data name="RLE_decoder_Processed_Output_0_bytes" xml:space="preserve">
+    <data name="RLE_decoder_Processed_Output_0_bytes" xml:space="preserve">
     <value>(RLE decoder): Processed Output: {0} bytes</value>
   </data>
-  <data name="Data_encoding_0_is_incorrect" xml:space="preserve">
+    <data name="Data_encoding_0_is_incorrect" xml:space="preserve">
     <value>Data encoding {0} is incorrect.</value>
   </data>
-  <data name="calculated_header_crc_equals_0_X4" xml:space="preserve">
+    <data name="calculated_header_crc_equals_0_X4" xml:space="preserve">
     <value>calculated header crc = 0x{0:X4}</value>
   </data>
-  <data name="TeleDisk_Name" xml:space="preserve">
+    <data name="TeleDisk_Name" xml:space="preserve">
     <value>Sydex TeleDisk</value>
   </data>
-  <data name="Calculated_CRC_does_not_coincide_with_stored_one" xml:space="preserve">
+    <data name="Calculated_CRC_does_not_coincide_with_stored_one" xml:space="preserve">
     <value>Calculated CRC does not coincide with stored one.</value>
   </data>
-  <data name="Comment_header" xml:space="preserve">
+    <data name="Comment_header" xml:space="preserve">
     <value>Comment header</value>
   </data>
-  <data name="Calculated_CRC_equals_0_X4" xml:space="preserve">
+    <data name="Calculated_CRC_equals_0_X4" xml:space="preserve">
     <value>Calculated CRC = 0x{0:X4}</value>
   </data>
-  <data name="Comment" xml:space="preserve">
+    <data name="Comment" xml:space="preserve">
     <value>Comment</value>
   </data>
-  <data name="Image_modified_on_0" xml:space="preserve">
+    <data name="Image_modified_on_0" xml:space="preserve">
     <value>Image modified on {0}</value>
   </data>
-  <data name="Parsing_image" xml:space="preserve">
+    <data name="Parsing_image" xml:space="preserve">
     <value>Parsing image</value>
   </data>
-  <data name="No_cylinders_or_heads_found" xml:space="preserve">
+    <data name="No_cylinders_or_heads_found" xml:space="preserve">
     <value>No cylinders or heads found</value>
   </data>
-  <data name="Track_follows" xml:space="preserve">
+    <data name="Track_follows" xml:space="preserve">
     <value>Track follows</value>
   </data>
-  <data name="Track_cylinder_0" xml:space="preserve">
+    <data name="Track_cylinder_0" xml:space="preserve">
     <value>Track cylinder: {0}</value>
   </data>
-  <data name="Track_head_0" xml:space="preserve">
+    <data name="Track_head_0" xml:space="preserve">
     <value>Track head: {0}</value>
   </data>
-  <data name="Sectors_in_track_0" xml:space="preserve">
+    <data name="Sectors_in_track_0" xml:space="preserve">
     <value>Sectors in track: {0}</value>
   </data>
-  <data name="Track_header_CRC_0_X2_calculated_1_X2" xml:space="preserve">
+    <data name="Track_header_CRC_0_X2_calculated_1_X2" xml:space="preserve">
     <value>Track header CRC: 0x{0:X2} (calculated 0x{1:X2})</value>
   </data>
-  <data name="End_of_disk_image_arrived" xml:space="preserve">
+    <data name="End_of_disk_image_arrived" xml:space="preserve">
     <value>End of disk image arrived</value>
   </data>
-  <data name="Total_of_0_data_sectors_for_1_bytes" xml:space="preserve">
+    <data name="Total_of_0_data_sectors_for_1_bytes" xml:space="preserve">
     <value>Total of {0} data sectors, for {1} bytes</value>
   </data>
-  <data name="Sector_follows" xml:space="preserve">
+    <data name="Sector_follows" xml:space="preserve">
     <value>Sector follows</value>
   </data>
-  <data name="AddressMark_cylinder_0" xml:space="preserve">
+    <data name="AddressMark_cylinder_0" xml:space="preserve">
     <value>AddressMark cylinder: {0}</value>
   </data>
-  <data name="AddressMark_head_0" xml:space="preserve">
+    <data name="AddressMark_head_0" xml:space="preserve">
     <value>AddressMark head: {0}</value>
   </data>
-  <data name="AddressMark_sector_number_0" xml:space="preserve">
+    <data name="AddressMark_sector_number_0" xml:space="preserve">
     <value>AddressMark sector number: {0}</value>
   </data>
-  <data name="Sector_size_0" xml:space="preserve">
+    <data name="Sector_size_0" xml:space="preserve">
     <value>Sector size: {0}</value>
   </data>
-  <data name="Sector_flags_0_X2" xml:space="preserve">
+    <data name="Sector_flags_0_X2" xml:space="preserve">
     <value>Sector flags: 0x{0:X2}</value>
   </data>
-  <data name="Sector_CRC_plus_headers_0_X2" xml:space="preserve">
+    <data name="Sector_CRC_plus_headers_0_X2" xml:space="preserve">
     <value>Sector CRC (plus headers): 0x{0:X2}</value>
   </data>
-  <data name="Data_size_in_image_0" xml:space="preserve">
+    <data name="Data_size_in_image_0" xml:space="preserve">
     <value>Data size (in-image): {0}</value>
   </data>
-  <data name="Data_encoding_0_X2" xml:space="preserve">
+    <data name="Data_encoding_0_X2" xml:space="preserve">
     <value>Data encoding: 0x{0:X2}</value>
   </data>
-  <data name="Sector_0_3_4_calculated_CRC_1_X2_differs_from_stored_CRC_2_X2" xml:space="preserve">
+    <data name="Sector_0_3_4_calculated_CRC_1_X2_differs_from_stored_CRC_2_X2" xml:space="preserve">
     <value>Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}</value>
   </data>
-  <data name="LBA_0" xml:space="preserve">
+    <data name="LBA_0" xml:space="preserve">
     <value>LBA: {0}</value>
   </data>
-  <data name="Sector_0_on_cylinder_1_head_2_is_duplicate_and_marked_so" xml:space="preserve">
+    <data name="Sector_0_on_cylinder_1_head_2_is_duplicate_and_marked_so" xml:space="preserve">
     <value>Sector {0} on cylinder {1} head {2} is duplicate, and marked so</value>
   </data>
-  <data name="Sector_0_on_cylinder_1_head_2_is_duplicate_but_is_not_marked_so" xml:space="preserve">
+    <data name="Sector_0_on_cylinder_1_head_2_is_duplicate_but_is_not_marked_so" xml:space="preserve">
     <value>Sector {0} on cylinder {1} head {2} is duplicate, but is not marked so</value>
   </data>
-  <data name="TeleDisk_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="TeleDisk_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>TeleDisk image contains a disk of type {0}</value>
   </data>
-  <data name="TeleDisk_comments_0" xml:space="preserve">
+    <data name="TeleDisk_comments_0" xml:space="preserve">
     <value>TeleDisk comments: {0}</value>
   </data>
-  <data name="Udif_Name" xml:space="preserve">
+    <data name="Udif_Name" xml:space="preserve">
     <value>Apple Universal Disk Image Format</value>
   </data>
-  <data name="Unable_to_find_UDIF_signature" xml:space="preserve">
+    <data name="Unable_to_find_UDIF_signature" xml:space="preserve">
     <value>Unable to find UDIF signature.</value>
   </data>
-  <data name="Found_obsolete_UDIF_format" xml:space="preserve">
+    <data name="Found_obsolete_UDIF_format" xml:space="preserve">
     <value>Found obsolete UDIF format.</value>
   </data>
-  <data name="Reading_resource_fork" xml:space="preserve">
+    <data name="Reading_resource_fork" xml:space="preserve">
     <value>Reading resource fork.</value>
   </data>
-  <data name="Image_resource_fork_doesnt_contain_UDIF_block_chunks" xml:space="preserve">
+    <data name="Image_resource_fork_doesnt_contain_UDIF_block_chunks" xml:space="preserve">
     <value>Image resource fork doesn't contain UDIF block chunks. Please fill an issue and send it to us.</value>
   </data>
-  <data name="Reading_property_list" xml:space="preserve">
+    <data name="Reading_property_list" xml:space="preserve">
     <value>Reading property list.</value>
   </data>
-  <data name="Could_not_parse_property_list" xml:space="preserve">
+    <data name="Could_not_parse_property_list" xml:space="preserve">
     <value>Could not parse property list.</value>
   </data>
-  <data name="Parsing_property_list" xml:space="preserve">
+    <data name="Parsing_property_list" xml:space="preserve">
     <value>Parsing property list.</value>
   </data>
-  <data name="Could_not_retrieve_resource_fork" xml:space="preserve">
+    <data name="Could_not_retrieve_resource_fork" xml:space="preserve">
     <value>Could not retrieve resource fork.</value>
   </data>
-  <data name="Could_not_retrieve_block_chunks_array" xml:space="preserve">
+    <data name="Could_not_retrieve_block_chunks_array" xml:space="preserve">
     <value>Could not retrieve block chunks array.</value>
   </data>
-  <data name="Could_not_retrieve_Name" xml:space="preserve">
+    <data name="Could_not_retrieve_Name" xml:space="preserve">
     <value>Could not retrieve Name</value>
   </data>
-  <data name="Could_not_retrieve_Data" xml:space="preserve">
+    <data name="Could_not_retrieve_Data" xml:space="preserve">
     <value>Could not retrieve Data</value>
   </data>
-  <data name="This_image_needs_the_resource_fork_to_work" xml:space="preserve">
+    <data name="This_image_needs_the_resource_fork_to_work" xml:space="preserve">
     <value>This image needs the resource fork to work.</value>
   </data>
-  <data name="Could_not_retrieve_block_chunks" xml:space="preserve">
+    <data name="Could_not_retrieve_block_chunks" xml:space="preserve">
     <value>Could not retrieve block chunks. Please fill an issue and send it to us.</value>
   </data>
-  <data name="Chunks_compressed_with_lzfse_are_not_yet_supported" xml:space="preserve">
+    <data name="Chunks_compressed_with_lzfse_are_not_yet_supported" xml:space="preserve">
     <value>Chunks compressed with lzfse are not yet supported.</value>
   </data>
-  <data name="zlib_exception_on_chunk_starting_at_sector_0" xml:space="preserve">
+    <data name="zlib_exception_on_chunk_starting_at_sector_0" xml:space="preserve">
     <value>zlib exception on chunk starting at sector {0}</value>
   </data>
-  <data name="Tried_to_rewind_this_format_not_supported" xml:space="preserve">
+    <data name="Tried_to_rewind_this_format_not_supported" xml:space="preserve">
     <value>Tried to rewind on writing, not supported by this format</value>
   </data>
-  <data name="UkvFdi_Name" xml:space="preserve">
+    <data name="UkvFdi_Name" xml:space="preserve">
     <value>Spectrum Floppy Disk Image</value>
   </data>
-  <data name="Vdi_Name" xml:space="preserve">
+    <data name="Vdi_Name" xml:space="preserve">
     <value>VirtualBox Disk Image</value>
   </data>
-  <data name="Support_for_image_type_0_not_yet_implemented" xml:space="preserve">
+    <data name="Support_for_image_type_0_not_yet_implemented" xml:space="preserve">
     <value>Support for image type {0} not yet implemented</value>
   </data>
-  <data name="Reading_Image_Block_Map" xml:space="preserve">
+    <data name="Reading_Image_Block_Map" xml:space="preserve">
     <value>Reading Image Block Map</value>
   </data>
-  <data name="Reading_Image_Block_Map_took_0_ms" xml:space="preserve">
+    <data name="Reading_Image_Block_Map_took_0_ms" xml:space="preserve">
     <value>Reading Image Block Map took {0} ms</value>
   </data>
-  <data name="Vhd_Name" xml:space="preserve">
+    <data name="Vhd_Name" xml:space="preserve">
     <value>Virtual PC</value>
   </data>
-  <data name="Header_checksum_equals_0_X8_calculated_equals_1_X8" xml:space="preserve">
+    <data name="Header_checksum_equals_0_X8_calculated_equals_1_X8" xml:space="preserve">
     <value>Header checksum = 0x{0:X8}, calculated = 0x{1:X8}</value>
   </data>
-  <data name="VirtualPC_plugin_Both_header_and_footer_are_corrupt_image_cannot_be_opened" xml:space="preserve">
+    <data name="VirtualPC_plugin_Both_header_and_footer_are_corrupt_image_cannot_be_opened" xml:space="preserve">
     <value>(Virtual PC plugin): Both header and footer are corrupt, image cannot be opened.</value>
   </data>
-  <data name="VirtualPC_plugin_Unknown_image_type_0_found" xml:space="preserve">
+    <data name="VirtualPC_plugin_Unknown_image_type_0_found" xml:space="preserve">
     <value>(Virtual PC plugin): Unknown image type {0} found. Please submit a bug with an example image.</value>
   </data>
-  <data name="VirtualBox_for_unknown_OS_0" xml:space="preserve">
+    <data name="VirtualBox_for_unknown_OS_0" xml:space="preserve">
     <value>VirtualBox for unknown OS "{0}"</value>
   </data>
-  <data name="Unknown_version_0_X8" xml:space="preserve">
+    <data name="Unknown_version_0_X8" xml:space="preserve">
     <value>Unknown version 0x{0:X8}</value>
   </data>
-  <data name="_5_6_or_7" xml:space="preserve">
+    <data name="_5_6_or_7" xml:space="preserve">
     <value>5, 6 or 7</value>
   </data>
-  <data name="Virtual_PC_for_unknown_OS_0" xml:space="preserve">
+    <data name="Virtual_PC_for_unknown_OS_0" xml:space="preserve">
     <value>Virtual PC for unknown OS "{0}"</value>
   </data>
-  <data name="Unknown_application_0" xml:space="preserve">
+    <data name="Unknown_application_0" xml:space="preserve">
     <value>Unknown application "{0}"</value>
   </data>
-  <data name="Dynamic_header_checksum_equals_0_X8_calculated_1_X8" xml:space="preserve">
+    <data name="Dynamic_header_checksum_equals_0_X8_calculated_1_X8" xml:space="preserve">
     <value>Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}</value>
   </data>
-  <data name="Filling_the_BAT_took_0_seconds" xml:space="preserve">
+    <data name="Filling_the_BAT_took_0_seconds" xml:space="preserve">
     <value>Filling the BAT took {0} seconds</value>
   </data>
-  <data name="Bitmap_is_0_sectors" xml:space="preserve">
+    <data name="Bitmap_is_0_sectors" xml:space="preserve">
     <value>Bitmap is {0} sectors</value>
   </data>
-  <data name="Unsupported_protocol_classified_found_in_URI_parent_path_0" xml:space="preserve">
+    <data name="Unsupported_protocol_classified_found_in_URI_parent_path_0" xml:space="preserve">
     <value>Unsupported protocol classified found in URI parent path: "{0}"</value>
   </data>
-  <data name="Possible_parent_path_0" xml:space="preserve">
+    <data name="Possible_parent_path_0" xml:space="preserve">
     <value>Possible parent path: "{0}"</value>
   </data>
-  <data name="VirtualPC_plugin_Cannot_find_parent_file_for_differencing_disk_image" xml:space="preserve">
+    <data name="VirtualPC_plugin_Cannot_find_parent_file_for_differencing_disk_image" xml:space="preserve">
     <value>(Virtual PC plugin): Cannot find parent file for differencing disk image</value>
   </data>
-  <data name="VirtualPC_plugin_Cannot_find_parent_image_filter" xml:space="preserve">
+    <data name="VirtualPC_plugin_Cannot_find_parent_image_filter" xml:space="preserve">
     <value>(Virtual PC plugin): Cannot find parent image filter</value>
   </data>
-  <data name="VirtualPC_plugin_Parent_image_is_not_a_Virtual_PC_disk_image" xml:space="preserve">
+    <data name="VirtualPC_plugin_Parent_image_is_not_a_Virtual_PC_disk_image" xml:space="preserve">
     <value>(Virtual PC plugin): Parent image is not a Virtual PC disk image</value>
   </data>
-  <data name="VirtualPC_plugin_Error_0_opening_parent_disk_image" xml:space="preserve">
+    <data name="VirtualPC_plugin_Error_0_opening_parent_disk_image" xml:space="preserve">
     <value>(Virtual PC plugin): Error {0} opening parent disk image</value>
   </data>
-  <data name="VirtualPC_plugin_Parent_image_is_of_different_size" xml:space="preserve">
+    <data name="VirtualPC_plugin_Parent_image_is_of_different_size" xml:space="preserve">
     <value>(Virtual PC plugin): Parent image is of different size</value>
   </data>
-  <data name="VirtualPC_plugin_Deprecated_image_type_found" xml:space="preserve">
+    <data name="VirtualPC_plugin_Deprecated_image_type_found" xml:space="preserve">
     <value>(Virtual PC plugin): Deprecated image type found. Please submit a bug with an example image.</value>
   </data>
-  <data name="Vhdx_Name" xml:space="preserve">
+    <data name="Vhdx_Name" xml:space="preserve">
     <value>Microsoft VHDX</value>
   </data>
-  <data name="VHDX_header_not_found" xml:space="preserve">
+    <data name="VHDX_header_not_found" xml:space="preserve">
     <value>VHDX header not found</value>
   </data>
-  <data name="VHDX_region_table_not_found" xml:space="preserve">
+    <data name="VHDX_region_table_not_found" xml:space="preserve">
     <value>VHDX region table not found</value>
   </data>
-  <data name="Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image" xml:space="preserve">
+    <data name="Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image" xml:space="preserve">
     <value>Found unsupported and required region Guid {0}, not proceeding with image.</value>
   </data>
-  <data name="BAT_not_found_cannot_continue" xml:space="preserve">
+    <data name="BAT_not_found_cannot_continue" xml:space="preserve">
     <value>BAT not found, cannot continue.</value>
   </data>
-  <data name="Metadata_not_found_cannot_continue" xml:space="preserve">
+    <data name="Metadata_not_found_cannot_continue" xml:space="preserve">
     <value>Metadata not found, cannot continue.</value>
   </data>
-  <data name="Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image" xml:space="preserve">
+    <data name="Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image" xml:space="preserve">
     <value>Found unsupported and required metadata Guid {0}, not proceeding with image.</value>
   </data>
-  <data name="File_parameters_not_found" xml:space="preserve">
+    <data name="File_parameters_not_found" xml:space="preserve">
     <value>File parameters not found.</value>
   </data>
-  <data name="Virtual_disk_size_not_found" xml:space="preserve">
+    <data name="Virtual_disk_size_not_found" xml:space="preserve">
     <value>Virtual disk size not found.</value>
   </data>
-  <data name="Logical_sector_size_not_found" xml:space="preserve">
+    <data name="Logical_sector_size_not_found" xml:space="preserve">
     <value>Logical sector size not found.</value>
   </data>
-  <data name="Physical_sector_size_not_found" xml:space="preserve">
+    <data name="Physical_sector_size_not_found" xml:space="preserve">
     <value>Physical sector size not found.</value>
   </data>
-  <data name="Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image" xml:space="preserve">
+    <data name="Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image" xml:space="preserve">
     <value>Found unsupported and required parent locator type {0}, not proceeding with image.</value>
   </data>
-  <data name="Parent_locator_not_found" xml:space="preserve">
+    <data name="Parent_locator_not_found" xml:space="preserve">
     <value>Parent locator not found.</value>
   </data>
-  <data name="Image_is_differential_but_parent_cannot_be_opened" xml:space="preserve">
+    <data name="Image_is_differential_but_parent_cannot_be_opened" xml:space="preserve">
     <value>Image is differential but parent cannot be opened.</value>
   </data>
-  <data name="Reading_Sector_Bitmap" xml:space="preserve">
+    <data name="Reading_Sector_Bitmap" xml:space="preserve">
     <value>Reading Sector Bitmap</value>
   </data>
-  <data name="Unsupported_sector_bitmap_block_flags_0_found_not_proceeding" xml:space="preserve">
+    <data name="Unsupported_sector_bitmap_block_flags_0_found_not_proceeding" xml:space="preserve">
     <value>Unsupported sector bitmap block flags (0x{0:X16}) found, not proceeding.</value>
   </data>
-  <data name="Virtual98_Name" xml:space="preserve">
+    <data name="Virtual98_Name" xml:space="preserve">
     <value>Virtual98 Disk Image</value>
   </data>
-  <data name="VMware_Name" xml:space="preserve">
+    <data name="VMware_Name" xml:space="preserve">
     <value>VMware disk image</value>
   </data>
-  <data name="Name_of_adapter_type" xml:space="preserve">
+    <data name="Name_of_adapter_type" xml:space="preserve">
     <value>Name of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.</value>
   </data>
-  <data name="VDMK_hardware_version" xml:space="preserve">
+    <data name="VDMK_hardware_version" xml:space="preserve">
     <value>VDMK hardware version.</value>
   </data>
-  <data name="VMware_SupportedOptions_Use_sparse_extents" xml:space="preserve">
+    <data name="VMware_SupportedOptions_Use_sparse_extents" xml:space="preserve">
     <value>Use sparse extents.</value>
   </data>
-  <data name="Split_data_file_at_2GiB" xml:space="preserve">
+    <data name="Split_data_file_at_2GiB" xml:space="preserve">
     <value>Split data file at 2GiB.</value>
   </data>
-  <data name="Please_open_VMDK_descriptor" xml:space="preserve">
+    <data name="Please_open_VMDK_descriptor" xml:space="preserve">
     <value>Please open VMDK descriptor.</value>
   </data>
-  <data name="Not_a_descriptor" xml:space="preserve">
+    <data name="Not_a_descriptor" xml:space="preserve">
     <value>Not a descriptor.</value>
   </data>
-  <data name="Did_not_find_any_extent" xml:space="preserve">
+    <data name="Did_not_find_any_extent" xml:space="preserve">
     <value>Did not find any extent</value>
   </data>
-  <data name="Raw_device_image_files_are_not_supported" xml:space="preserve">
+    <data name="Raw_device_image_files_are_not_supported" xml:space="preserve">
     <value>Raw device image files are not supported, try accessing the device directly.</value>
   </data>
-  <data name="Dunno_how_to_handle_0_extents" xml:space="preserve">
+    <data name="Dunno_how_to_handle_0_extents" xml:space="preserve">
     <value>Dunno how to handle "{0}" extents.</value>
   </data>
-  <data name="Extent_file_0_not_found" xml:space="preserve">
+    <data name="Extent_file_0_not_found" xml:space="preserve">
     <value>Extent file {0} not found.</value>
   </data>
-  <data name="Cannot_access_NOACCESS_extents" xml:space="preserve">
+    <data name="Cannot_access_NOACCESS_extents" xml:space="preserve">
     <value>Cannot access NOACCESS extents 😉.</value>
   </data>
-  <data name="Extent_0_is_too_small" xml:space="preserve">
+    <data name="Extent_0_is_too_small" xml:space="preserve">
     <value>Extent {0} is too small.</value>
   </data>
-  <data name="_0_is_not_an_VMware_extent" xml:space="preserve">
+    <data name="_0_is_not_an_VMware_extent" xml:space="preserve">
     <value>{0} is not an VMware extent.</value>
   </data>
-  <data name="Extent_contains_incorrect_number_of_sectors_0_1_were_expected" xml:space="preserve">
+    <data name="Extent_contains_incorrect_number_of_sectors_0_1_were_expected" xml:space="preserve">
     <value>Extent contains incorrect number of sectors, {0}. {1} were expected</value>
   </data>
-  <data name="Compressed_extents_are_not_yet_supported" xml:space="preserve">
+    <data name="Compressed_extents_are_not_yet_supported" xml:space="preserve">
     <value>Compressed extents are not yet supported.</value>
   </data>
-  <data name="There_are_sparse_extents_but_there_is_no_header_to_find_the_grain_tables_cannot_proceed"
-        xml:space="preserve">
+    <data name="There_are_sparse_extents_but_there_is_no_header_to_find_the_grain_tables_cannot_proceed"
+          xml:space="preserve">
     <value>There are sparse extents but there is no header to find the grain tables, cannot proceed.</value>
   </data>
-  <data name="Some_error_occurred_setting_GD_sizes" xml:space="preserve">
+    <data name="Some_error_occurred_setting_GD_sizes" xml:space="preserve">
     <value>Some error occurred setting GD sizes</value>
   </data>
-  <data name="_0_sectors_in_1_grains_in_2_tables" xml:space="preserve">
+    <data name="_0_sectors_in_1_grains_in_2_tables" xml:space="preserve">
     <value>{0} sectors in {1} grains in {2} tables</value>
   </data>
-  <data name="Reading_grain_directory" xml:space="preserve">
+    <data name="Reading_grain_directory" xml:space="preserve">
     <value>Reading grain directory</value>
   </data>
-  <data name="Reading_grain_tables" xml:space="preserve">
+    <data name="Reading_grain_tables" xml:space="preserve">
     <value>Reading grain tables</value>
   </data>
-  <data name="Cannot_find_parent_0" xml:space="preserve">
+    <data name="Cannot_find_parent_0" xml:space="preserve">
     <value>Cannot find parent "{0}".</value>
   </data>
-  <data name="Error_0_opening_parent_1" xml:space="preserve">
+    <data name="Error_0_opening_parent_1" xml:space="preserve">
     <value>Error {0} opening parent "{1}".</value>
   </data>
-  <data name="Invalid_adapter_type_0" xml:space="preserve">
+    <data name="Invalid_adapter_type_0" xml:space="preserve">
     <value>Invalid adapter type {0}</value>
   </data>
-  <data name="Invalid_value_for_hwversion_option" xml:space="preserve">
+    <data name="Invalid_value_for_hwversion_option" xml:space="preserve">
     <value>Invalid value for hwversion option</value>
   </data>
-  <data name="Splitted_images_not_yet_implemented" xml:space="preserve">
+    <data name="Splitted_images_not_yet_implemented" xml:space="preserve">
     <value>Splitted images not yet implemented</value>
   </data>
-  <data name="Invalid_value_for_sparse_option" xml:space="preserve">
+    <data name="Invalid_value_for_sparse_option" xml:space="preserve">
     <value>Invalid value for sparse option</value>
   </data>
-  <data name="Sparse_images_not_yet_implemented" xml:space="preserve">
+    <data name="Sparse_images_not_yet_implemented" xml:space="preserve">
     <value>Sparse images not yet implemented</value>
   </data>
-  <data name="WCDiskImage_Name" xml:space="preserve">
+    <data name="WCDiskImage_Name" xml:space="preserve">
     <value>d2f disk image</value>
   </data>
-  <data name="Detected_WC_DISK_IMAGE_with_0_heads_1_tracks_and_2_sectors_per_track" xml:space="preserve">
+    <data name="Detected_WC_DISK_IMAGE_with_0_heads_1_tracks_and_2_sectors_per_track" xml:space="preserve">
     <value>Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.</value>
   </data>
-  <data name="Extra_track_1_head_0_present_reading" xml:space="preserve">
+    <data name="Extra_track_1_head_0_present_reading" xml:space="preserve">
     <value>Extra track 1 (head 0) present, reading</value>
   </data>
-  <data name="Extra_track_1_head_1_present_reading" xml:space="preserve">
+    <data name="Extra_track_1_head_1_present_reading" xml:space="preserve">
     <value>Extra track 1 (head 1) present, reading</value>
   </data>
-  <data name="Extra_track_2_head_0_present_reading" xml:space="preserve">
+    <data name="Extra_track_2_head_0_present_reading" xml:space="preserve">
     <value>Extra track 2 (head 0) present, reading</value>
   </data>
-  <data name="Extra_track_2_head_1_present_reading" xml:space="preserve">
+    <data name="Extra_track_2_head_1_present_reading" xml:space="preserve">
     <value>Extra track 2 (head 1) present, reading</value>
   </data>
-  <data name="Comment_present_reading" xml:space="preserve">
+    <data name="Comment_present_reading" xml:space="preserve">
     <value>Comment present, reading</value>
   </data>
-  <data name="Invalid_sector_type_0_encountered" xml:space="preserve">
+    <data name="Invalid_sector_type_0_encountered" xml:space="preserve">
     <value>Invalid sector type '{0}' encountered</value>
   </data>
-  <data name="Directory_listing_present_reading" xml:space="preserve">
+    <data name="Directory_listing_present_reading" xml:space="preserve">
     <value>Directory listing present, reading</value>
   </data>
-  <data name="reading_bad_sector_0_1_2_3" xml:space="preserve">
+    <data name="reading_bad_sector_0_1_2_3" xml:space="preserve">
     <value>reading bad sector {0} ({1},{2},{3})</value>
   </data>
-  <data name="Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5" xml:space="preserve">
+    <data name="Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5" xml:space="preserve">
     <value>Unexpected sector encountered. Found CHS {0},{1},{2} but expected {3},{4},{5}</value>
   </data>
-  <data name="CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4" xml:space="preserve">
+    <data name="CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4" xml:space="preserve">
     <value>CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}</value>
   </data>
-  <data name="ZZZRawImage_Name" xml:space="preserve">
+    <data name="ZZZRawImage_Name" xml:space="preserve">
     <value>Raw Disk Image</value>
   </data>
-  <data name="Found_media_tag_0" xml:space="preserve">
+    <data name="Found_media_tag_0" xml:space="preserve">
     <value>Found media tag {0}</value>
   </data>
-  <data name="Raw_disk_image_contains_a_disk_of_type_0" xml:space="preserve">
+    <data name="Raw_disk_image_contains_a_disk_of_type_0" xml:space="preserve">
     <value>Raw disk image contains a disk of type {0}</value>
   </data>
-  <data name="The_specified_sector_size_does_not_correspond_with_the_requested_image_extension" xml:space="preserve">
+    <data name="The_specified_sector_size_does_not_correspond_with_the_requested_image_extension" xml:space="preserve">
     <value>The specified sector size does not correspond with the requested image extension.</value>
   </data>
-  <data name="Found_Aaru_Metadata_block_at_position_0" xml:space="preserve">
+    <data name="Found_Aaru_Metadata_block_at_position_0" xml:space="preserve">
     <value>Found Aaru Metadata block at position {0}</value>
   </data>
-  <data name="Exception_0_processing_Aaru_Metadata_block" xml:space="preserve">
+    <data name="Exception_0_processing_Aaru_Metadata_block" xml:space="preserve">
     <value>Exception {0} processing Aaru Metadata block</value>
   </data>
-  <data name="Writing_Aaru_Metadata_block_to_position_0" xml:space="preserve">
+    <data name="Writing_Aaru_Metadata_block_to_position_0" xml:space="preserve">
     <value>Writing Aaru Metadata block to position {0}</value>
   </data>
-  <data name="A2R_Name" xml:space="preserve">
+    <data name="A2R_Name" xml:space="preserve">
     <value>A2R</value>
   </data>
 </root>

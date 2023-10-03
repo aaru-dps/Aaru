@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing QEMU Enhanced Disk images</summary>
 public sealed partial class Qed : IWritableImage
 {
+    const string               MODULE_NAME = "QED plugin";
     int                        _clusterBits;
     Dictionary<ulong, byte[]>  _clusterCache;
     uint                       _clusterSectors;
@@ -83,6 +84,4 @@ public sealed partial class Qed : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "QED plugin";
 }

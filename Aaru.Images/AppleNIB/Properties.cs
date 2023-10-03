@@ -39,19 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleNib
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.AppleNib_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AE171AE8-6747-49CC-B861-9D450B7CD42E");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Apple nibbles";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

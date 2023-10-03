@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CdrWin
 {
+#region IVerifiableImage Members
+
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
@@ -81,7 +83,7 @@ public sealed partial class CdrWin
 
             string verifySha1 = ctx.End();
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_SHA1_0, verifySha1);
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_SHA1_0, sha1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_SHA1_0,   sha1);
 
             return verifySha1 == sha1;
         }
@@ -109,7 +111,7 @@ public sealed partial class CdrWin
 
             string verifyMd5 = ctx.End();
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_MD5_0, verifyMd5);
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_MD5_0, md5);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_MD5_0,   md5);
 
             return verifyMd5 == md5;
         }
@@ -137,7 +139,7 @@ public sealed partial class CdrWin
 
             string verifyCrc = ctx.End();
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_CRC32_0, verifyCrc);
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_CRC32_0, crc32);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_CRC32_0,   crc32);
 
             return verifyCrc == crc32;
         }
@@ -148,6 +150,10 @@ public sealed partial class CdrWin
         return null;
     }
 
+#endregion
+
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
@@ -157,7 +163,7 @@ public sealed partial class CdrWin
     }
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
         failingLbas = new List<ulong>();
@@ -167,10 +173,10 @@ public sealed partial class CdrWin
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -195,7 +201,7 @@ public sealed partial class CdrWin
     }
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
         failingLbas = new List<ulong>();
@@ -205,10 +211,10 @@ public sealed partial class CdrWin
         if(errno != ErrorNumber.NoError)
             return null;
 
-        int    bps    = (int)(buffer.Length / length);
-        byte[] sector = new byte[bps];
+        var bps    = (int)(buffer.Length / length);
+        var sector = new byte[bps];
 
-        for(int i = 0; i < length; i++)
+        for(var i = 0; i < length; i++)
         {
             Array.Copy(buffer, i * bps, sector, 0, bps);
             bool? sectorStatus = CdChecksums.CheckCdSector(sector);
@@ -231,4 +237,6 @@ public sealed partial class CdrWin
 
         return failingLbas.Count <= 0;
     }
+
+#endregion
 }

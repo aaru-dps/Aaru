@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
@@ -76,7 +78,7 @@ public sealed partial class SaveDskF
             return false;
         }
 
-        _writingStream.Seek((long)(512 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(512 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -108,7 +110,7 @@ public sealed partial class SaveDskF
             return false;
         }
 
-        _writingStream.Seek((long)(512 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(512 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -149,12 +151,13 @@ public sealed partial class SaveDskF
             _writingStream.Seek(_header.commentOffset, SeekOrigin.Begin);
 
             _writingStream.Write(commentsBytes, 0,
-                                 commentsBytes.Length >= 512 - _header.commentOffset ? 512 - _header.commentOffset
+                                 commentsBytes.Length >= 512 - _header.commentOffset
+                                     ? 512 - _header.commentOffset
                                      : commentsBytes.Length);
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        var  hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -203,7 +206,7 @@ public sealed partial class SaveDskF
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize == 0)
         {
@@ -288,4 +291,6 @@ public sealed partial class SaveDskF
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

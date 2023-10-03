@@ -47,9 +47,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Blu
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -130,7 +132,7 @@ public sealed partial class Blu
             return false;
         }
 
-        _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+        _writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -164,7 +166,7 @@ public sealed partial class Blu
             return false;
         }
 
-        _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+        _writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -253,8 +255,8 @@ public sealed partial class Blu
 
         newTag ??= new byte[longSectorSize - 512];
 
-        _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-        _writingStream.Write(data, 0, 512);
+        _writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
+        _writingStream.Write(data,   0, 512);
         _writingStream.Write(newTag, 0, newTag.Length);
 
         ErrorMessage = "";
@@ -287,7 +289,8 @@ public sealed partial class Blu
             case 536:
             case 532:
             case 524:
-            case 512: break;
+            case 512:
+                break;
             default:
                 ErrorMessage = Localization.Incorrect_data_size;
 
@@ -304,7 +307,7 @@ public sealed partial class Blu
                 // Sony tag, convert to Profile
                 case 12 when longSectorSize == 532:
                     oldTag = new byte[12];
-                    Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 12);
+                    Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 12);
                     newTag = LisaTag.DecodeSonyTag(oldTag)?.ToProfile().GetBytes();
 
                     break;
@@ -312,7 +315,7 @@ public sealed partial class Blu
                 // Sony tag, convert to Priam
                 case 12:
                     oldTag = new byte[12];
-                    Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 12);
+                    Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 12);
                     newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
 
                     break;
@@ -320,14 +323,14 @@ public sealed partial class Blu
                 // Profile tag, copy to Profile
                 case 20 when longSectorSize == 532:
                     newTag = new byte[20];
-                    Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 20);
+                    Array.Copy(data, givenSectorSize * i + 512, newTag, 0, 20);
 
                     break;
 
                 // Profile tag, convert to Priam
                 case 20:
                     oldTag = new byte[20];
-                    Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 20);
+                    Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 20);
                     newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
 
                     break;
@@ -335,7 +338,7 @@ public sealed partial class Blu
                 // Priam tag, convert to Profile
                 case 24 when longSectorSize == 532:
                     oldTag = new byte[24];
-                    Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 24);
+                    Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 24);
                     newTag = LisaTag.DecodePriamTag(oldTag)?.ToProfile().GetBytes();
 
                     break;
@@ -343,7 +346,7 @@ public sealed partial class Blu
                 // Priam tag, copy to Priam
                 case 24:
                     newTag = new byte[24];
-                    Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 24);
+                    Array.Copy(data, givenSectorSize * i + 512, newTag, 0, 24);
 
                     break;
                 case 0:
@@ -358,9 +361,9 @@ public sealed partial class Blu
 
             newTag ??= new byte[longSectorSize - 512];
 
-            _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-            _writingStream.Write(data, (int)(givenSectorSize          * i), 512);
-            _writingStream.Write(newTag, 0, newTag.Length);
+            _writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
+            _writingStream.Write(data,   (int)(givenSectorSize * i), 512);
+            _writingStream.Write(newTag, 0,                          newTag.Length);
         }
 
         ErrorMessage = "";
@@ -380,7 +383,7 @@ public sealed partial class Blu
 
         byte[] markerTag = Encoding.UTF8.GetBytes("Aaru " + Version.GetVersion());
         byte[] driveName;
-        byte[] driveType      = new byte[3];
+        var    driveType      = new byte[3];
         byte[] driveBlocks    = BigEndianBitConverter.GetBytes((uint)_imageInfo.Sectors);
         int    longSectorSize = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
         byte[] blockSize      = BigEndianBitConverter.GetBytes((ushort)longSectorSize);
@@ -456,4 +459,6 @@ public sealed partial class Blu
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

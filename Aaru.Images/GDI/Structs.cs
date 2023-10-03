@@ -40,6 +40,22 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Gdi
 {
+#region Nested type: GdiDisc
+
+    struct GdiDisc
+    {
+        /// <summary>Sessions</summary>
+        public List<Session> Sessions;
+        /// <summary>Tracks</summary>
+        public List<GdiTrack> Tracks;
+        /// <summary>Disk type</summary>
+        public MediaType Disktype;
+    }
+
+#endregion
+
+#region Nested type: GdiTrack
+
     struct GdiTrack
     {
         /// <summary>Track #</summary>
@@ -66,13 +82,5 @@ public sealed partial class Gdi
         public ulong Pregap;
     }
 
-    struct GdiDisc
-    {
-        /// <summary>Sessions</summary>
-        public List<Session> Sessions;
-        /// <summary>Tracks</summary>
-        public List<GdiTrack> Tracks;
-        /// <summary>Disk type</summary>
-        public MediaType Disktype;
-    }
+#endregion
 }

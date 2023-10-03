@@ -41,13 +41,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] tmp = new byte[imageFilter.DataForkLength];
+        var tmp = new byte[imageFilter.DataForkLength];
         stream.EnsureRead(tmp, 0, tmp.Length);
 
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
@@ -71,11 +73,13 @@ public sealed partial class AppleDos
                                     ? _interleave
                                     : _deinterleave;
 
-            for(int t = 0; t < 35; t++)
+            for(var t = 0; t < 35; t++)
             {
-                for(int s = 0; s < 16; s++)
-                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                for(var s = 0; s < 16; s++)
+                {
+                    Array.Copy(tmp, t * 16 * 256 + s * 256, _deinterleaved, t * 16 * 256 + offsets[s] * 256,
                                256);
+                }
             }
         }
 
@@ -114,4 +118,6 @@ public sealed partial class AppleDos
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

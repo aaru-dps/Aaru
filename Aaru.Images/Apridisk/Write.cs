@@ -45,9 +45,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
@@ -176,7 +178,7 @@ public sealed partial class Apridisk
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(_signature, 0, _signature.Length);
 
-        byte[] hdr = new byte[Marshal.SizeOf<Record>()];
+        var hdr = new byte[Marshal.SizeOf<Record>()];
 
         for(ushort c = 0; c < _imageInfo.Cylinders; c++)
         {
@@ -201,7 +203,7 @@ public sealed partial class Apridisk
 
                     MemoryMarshal.Write(hdr, in record);
 
-                    _writingStream.Write(hdr, 0, hdr.Length);
+                    _writingStream.Write(hdr,                   0, hdr.Length);
                     _writingStream.Write(_sectorsData[c][h][s], 0, _sectorsData[c][h][s].Length);
                 }
             }
@@ -224,7 +226,7 @@ public sealed partial class Apridisk
 
             MemoryMarshal.Write(hdr, in creatorRecord);
 
-            _writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Write(hdr,          0, hdr.Length);
             _writingStream.Write(creatorBytes, 0, creatorBytes.Length);
             _writingStream.WriteByte(0); // Termination
         }
@@ -246,7 +248,7 @@ public sealed partial class Apridisk
 
             MemoryMarshal.Write(hdr, in commentRecord);
 
-            _writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Write(hdr,          0, hdr.Length);
             _writingStream.Write(commentBytes, 0, commentBytes.Length);
             _writingStream.WriteByte(0); // Termination
         }
@@ -331,4 +333,6 @@ public sealed partial class Apridisk
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

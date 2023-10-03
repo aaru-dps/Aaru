@@ -39,19 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Vhdx_Name;
+
     /// <inheritdoc />
     public Guid Id => new("536B141B-D09C-4799-AB70-34631286EB9D");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "VHDX";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

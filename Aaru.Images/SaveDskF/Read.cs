@@ -43,41 +43,43 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdr = new byte[40];
+        var hdr = new byte[40];
 
         stream.EnsureRead(hdr, 0, 40);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = 0x{0:X4}", _header.magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mediaType = 0x{0:X2}", _header.mediaType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorSize = {0}", _header.sectorSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterMask = {0}", _header.clusterMask);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterShift = {0}", _header.clusterShift);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = 0x{0:X4}",      _header.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.mediaType = 0x{0:X2}",  _header.mediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorSize = {0}",      _header.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterMask = {0}",     _header.clusterMask);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clusterShift = {0}",    _header.clusterShift);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.reservedSectors = {0}", _header.reservedSectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.fatCopies = {0}", _header.fatCopies);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.rootEntries = {0}", _header.rootEntries);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.firstCluster = {0}", _header.firstCluster);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clustersCopied = {0}", _header.clustersCopied);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerFat = {0}", _header.sectorsPerFat);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}", _header.checksum);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.cylinders = {0}", _header.cylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}", _header.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.fatCopies = {0}",       _header.fatCopies);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.rootEntries = {0}",     _header.rootEntries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.firstCluster = {0}",    _header.firstCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.clustersCopied = {0}",  _header.clustersCopied);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerFat = {0}",   _header.sectorsPerFat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}",   _header.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.cylinders = {0}",       _header.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}",           _header.heads);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.padding = {0}", _header.padding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsCopied = {0}", _header.sectorsCopied);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.commentOffset = {0}", _header.commentOffset);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataOffset = {0}", _header.dataOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.padding = {0}",         _header.padding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsCopied = {0}",   _header.sectorsCopied);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.commentOffset = {0}",   _header.commentOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataOffset = {0}",      _header.dataOffset);
 
         if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD })
             _header.dataOffset = 512;
 
-        byte[] cmt = new byte[_header.dataOffset - _header.commentOffset];
+        var cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
         stream.EnsureRead(cmt, 0, cmt.Length);
 
@@ -158,4 +160,6 @@ public sealed partial class SaveDskF
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

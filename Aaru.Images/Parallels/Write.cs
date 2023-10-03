@@ -44,10 +44,12 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
+#region IWritableImage Members
+
     // TODO: Support extended
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -88,14 +90,14 @@ public sealed partial class Parallels
             return false;
         }
 
-        uint batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
+        var batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
 
         if(sectors * sectorSize % DEFAULT_CLUSTER_SIZE > 0)
             batEntries++;
 
-        uint headerSectors = (uint)Marshal.SizeOf<Header>() + (batEntries * 4);
+        uint headerSectors = (uint)Marshal.SizeOf<Header>() + batEntries * 4;
 
-        if((uint)Marshal.SizeOf<Header>() + (batEntries % 4) > 0)
+        if((uint)Marshal.SizeOf<Header>() + batEntries % 4 > 0)
             headerSectors++;
 
         _pHdr = new Header
@@ -168,7 +170,7 @@ public sealed partial class Parallels
 
         ulong imageOff = batOff * 512UL;
 
-        _writingStream.Seek((long)imageOff, SeekOrigin.Begin);
+        _writingStream.Seek((long)imageOff,     SeekOrigin.Begin);
         _writingStream.Seek((long)secOff * 512, SeekOrigin.Current);
         _writingStream.Write(data, 0, data.Length);
 
@@ -208,7 +210,7 @@ public sealed partial class Parallels
 
         for(uint i = 0; i < length; i++)
         {
-            byte[] tmp = new byte[512];
+            var tmp = new byte[512];
             Array.Copy(data, i * 512, tmp, 0, 512);
 
             if(!WriteSector(tmp, sectorAddress + i))
@@ -270,8 +272,8 @@ public sealed partial class Parallels
             }
         }
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        var  hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(_pHdr, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -324,4 +326,6 @@ public sealed partial class Parallels
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

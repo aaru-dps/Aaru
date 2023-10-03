@@ -41,6 +41,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Apple DART disk images</summary>
 public sealed partial class Dart : IMediaImage
 {
+    const string MODULE_NAME = "DART plugin";
     // DART images are at most 1474560 bytes, so let's cache the whole
     byte[]    _dataCache;
     uint      _dataChecksum;
@@ -71,6 +72,4 @@ public sealed partial class Dart : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "DART plugin";
 }

@@ -41,22 +41,48 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
+    /// <summary>
+    ///     SCP can only have one resolution. This is to help avoid changing the resolution and therefore create broken
+    ///     SCP files.
+    /// </summary>
+    bool IsResolutionSet { get; set; }
+
+    /// <summary>
+    ///     SCP can only have the same amount of revolutions for all tracks. This is to help avoid changing the number of
+    ///     revolutions and therefore create broken SCP files.
+    /// </summary>
+    bool IsRevolutionsSet { get; set; }
+
+#region IFluxImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.SuperCardPro_Name;
+
     /// <inheritdoc />
     public Guid Id => new("C5D3182E-1D45-4767-A205-E6E5C83444DC");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "SuperCardPro";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
+
+#region IWritableImage Members
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -64,28 +90,22 @@ public sealed partial class SuperCardPro
         MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD,
         MediaType.Unknown
     };
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".scp"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".scp" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
-    /// <summary>
-    /// SCP can only have one resolution. This is to help avoid changing the resolution and therefore create broken
-    /// SCP files.
-    /// </summary>
-    bool IsResolutionSet { get; set; }
-    /// <summary>
-    /// SCP can only have the same amount of revolutions for all tracks. This is to help avoid changing the number of
-    /// revolutions and therefore create broken SCP files.
-    /// </summary>
-    bool IsRevolutionsSet { get; set; }
+
+#endregion
 }

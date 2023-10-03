@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading nibbelized Apple II disk images</summary>
 public sealed partial class AppleNib : IMediaImage
 {
+    const string              MODULE_NAME = "Apple NIB Plugin";
     Dictionary<ulong, byte[]> _addressFields;
     Dictionary<ulong, byte[]> _cookedSectors;
     ImageInfo                 _imageInfo;
@@ -70,6 +71,4 @@ public sealed partial class AppleNib : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Apple NIB Plugin";
 }

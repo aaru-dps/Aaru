@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Virtual98 disk images</summary>
 public sealed partial class Virtual98 : IWritableImage
 {
+    const string    MODULE_NAME = "Virtual98 plugin";
     ImageInfo       _imageInfo;
     IFilter         _nhdImageFilter;
     Virtual98Header _v98Hdr;
@@ -71,6 +72,4 @@ public sealed partial class Virtual98 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Virtual98 plugin";
 }

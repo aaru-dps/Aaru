@@ -41,42 +41,52 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.AppleDos_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public string Format => _extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)"
+    public string Format => _extension == ".po"
+                                ? "Apple ][ Interleaved Disk Image (ProDOS order)"
                                 : "Apple ][ Interleaved Disk Image (DOS order)";
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[]
-    {
-        MediaType.Apple33SS
-    };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.Apple33SS };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".do", ".po"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".do", ".po" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

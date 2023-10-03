@@ -43,6 +43,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -180,7 +182,8 @@ public sealed partial class Dim
                 }
 
                 break;
-            default: return ErrorNumber.InvalidArgument;
+            default:
+                return ErrorNumber.InvalidArgument;
         }
 
         AaruConsole.VerboseWriteLine(Localization.DIM_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
@@ -260,10 +263,12 @@ public sealed partial class Dim
 
         Stream stream = _dimImageFilter.GetDataForkStream();
 
-        stream.Seek((long)(DATA_OFFSET + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)(DATA_OFFSET + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

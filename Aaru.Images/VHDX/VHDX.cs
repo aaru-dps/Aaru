@@ -45,12 +45,14 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Hyper-V disk images</summary>
 public sealed partial class Vhdx : IMediaImage
 {
+    const string              MODULE_NAME = "VHDX plugin";
     long                      _batOffset;
     ulong[]                   _blockAllocationTable;
     Dictionary<ulong, byte[]> _blockCache;
     long                      _chunkRatio;
     ulong                     _dataBlocks;
     bool                      _hasParent;
+    Identifier                _id;
     ImageInfo                 _imageInfo;
     Stream                    _imageStream;
     uint                      _logicalSectorSize;
@@ -65,7 +67,6 @@ public sealed partial class Vhdx : IMediaImage
     Dictionary<ulong, byte[]> _sectorCache;
     FileParameters            _vFileParms;
     Header                    _vHdr;
-    Identifier                _id;
     ulong                     _virtualDiskSize;
     MetadataTableHeader       _vMetHdr;
     MetadataTableEntry[]      _vMets;
@@ -97,6 +98,4 @@ public sealed partial class Vhdx : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "VHDX plugin";
 }

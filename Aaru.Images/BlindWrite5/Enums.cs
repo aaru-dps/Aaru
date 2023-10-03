@@ -37,15 +37,29 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class BlindWrite5
 {
-    enum TrackType : byte
-    {
-        NotData = 0, Audio   = 1, Mode1   = 2,
-        Mode2   = 3, Mode2F1 = 4, Mode2F2 = 5,
-        Dvd     = 6
-    }
+#region Nested type: TrackSubchannel
 
     enum TrackSubchannel : byte
     {
-        None = 0, Q16 = 2, Linear = 4
+        None   = 0,
+        Q16    = 2,
+        Linear = 4
     }
+
+#endregion
+
+#region Nested type: TrackType
+
+    enum TrackType : byte
+    {
+        NotData = 0,
+        Audio   = 1,
+        Mode1   = 2,
+        Mode2   = 3,
+        Mode2F1 = 4,
+        Mode2F2 = 5,
+        Dvd     = 6
+    }
+
+#endregion
 }

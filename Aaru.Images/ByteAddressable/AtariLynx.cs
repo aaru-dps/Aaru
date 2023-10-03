@@ -20,18 +20,27 @@ public class AtariLynx : IByteAddressableImage
     Stream    _dataStream;
     ImageInfo _imageInfo;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => "Atari Lynx cartridge dump";
+
     /// <inheritdoc />
     public Guid Id => new("809A6835-0486-4FD3-BD8B-2EF40C3EF97B");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.AtariLynx_Name;
 
@@ -48,9 +57,9 @@ public class AtariLynx : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         // "LYNX"
         return magic == 0x584E594C;
@@ -69,14 +78,14 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         if(magic != 0x584E594C)
             return ErrorNumber.InvalidArgument;
 
-        byte[] headerBytes = new byte[64];
+        var headerBytes = new byte[64];
         stream.Position = 0;
         stream.EnsureRead(headerBytes, 0, 64);
 
@@ -104,7 +113,7 @@ public class AtariLynx : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Name_0,         _imageInfo.MediaTitle).AppendLine();
         sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
 
         sb.AppendFormat(Localization.Bank_zero_size_0_pages_1_bytes, header.Bank0Length, header.Bank0Length * 65536).
@@ -123,29 +132,29 @@ public class AtariLynx : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".lnx"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".lnx" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[]
-    {
-        MediaType.AtariLynxCard
-    };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.AtariLynxCard };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
@@ -168,8 +177,8 @@ public class AtariLynx : IByteAddressableImage
 
         HandyHeader header = new()
         {
-            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072 / 256 : _data.Length / 256),
-            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - (4 * 131072)) / 256 : 0),
+            Bank0Length  = (short)(_data.Length > 4 * 131072 ? 4 * 131072                  / 256 : _data.Length / 256),
+            Bank1Length  = (short)(_data.Length > 4 * 131072 ? (_data.Length - 4 * 131072) / 256 : 0),
             Magic        = 0x584E594C,
             Manufacturer = new byte[16],
             Name         = new byte[32],
@@ -185,7 +194,7 @@ public class AtariLynx : IByteAddressableImage
         byte[] headerBytes = Marshal.StructureToByteArrayBigEndian(header);
 
         _dataStream.Write(headerBytes, 0, headerBytes.Length);
-        _dataStream.Write(_data, 0, _data.Length);
+        _dataStream.Write(_data,       0, _data.Length);
         _dataStream.Close();
 
         IsWriting = false;
@@ -396,18 +405,21 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom = false;
+        var foundRom = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
                     foundRom = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -450,7 +462,7 @@ public class AtariLynx : IByteAddressableImage
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -503,8 +515,13 @@ public class AtariLynx : IByteAddressableImage
         return ErrorNumber.NoError;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local"),
-     SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+#endregion
+
+#region Nested type: HandyHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct HandyHeader
     {
         public uint  Magic;
@@ -519,4 +536,6 @@ public class AtariLynx : IByteAddressableImage
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
         public byte[] Spare;
     }
+
+#endregion
 }

@@ -40,6 +40,21 @@ public sealed partial class WCDiskImage
     /// <summary>The expected signature of a proper image file.</summary>
     const string FILE_SIGNATURE = "WC DISK IMAGE\x1a\x1a";
 
+#region Nested type: ExtraFlag
+
+    enum ExtraFlag : byte
+    {
+        /// <summary>Set if a Comment is present after the image</summary>
+        Comment = 0x01,
+
+        /// <summary>Set if a directory listing is present after the image</summary>
+        Directory = 0x02
+    }
+
+#endregion
+
+#region Nested type: FileHeader
+
     /// <summary>The global header of a WCDiskImage file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct FileHeader
@@ -76,34 +91,9 @@ public sealed partial class WCDiskImage
         public readonly byte[] reserved;
     }
 
-    enum ExtraFlag : byte
-    {
-        /// <summary>Set if a Comment is present after the image</summary>
-        Comment = 0x01,
+#endregion
 
-        /// <summary>Set if a directory listing is present after the image</summary>
-        Directory = 0x02
-    }
-
-    /// <summary>The Sector header that precedes each sector</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SectorHeader
-    {
-        /// <summary>The sector flag (i.e. type)</summary>
-        public readonly SectorFlag flag;
-
-        /// <summary>The head this sector belongs to.</summary>
-        public readonly byte head;
-
-        /// <summary>The sector number within the track. Must be consecutive.</summary>
-        public readonly byte sector;
-
-        /// <summary>The cylinder number this sector belongs to.</summary>
-        public readonly byte cylinder;
-
-        /// <summary>A simple CRC16 over the data, to detect errors.</summary>
-        public readonly short crc;
-    }
+#region Nested type: SectorFlag
 
     enum SectorFlag : byte
     {
@@ -125,4 +115,30 @@ public sealed partial class WCDiskImage
         /// <summary>Not a sector but the directory information. The <c>crc</c> field is the length of the data.</summary>
         Directory = 0x04
     }
+
+#endregion
+
+#region Nested type: SectorHeader
+
+    /// <summary>The Sector header that precedes each sector</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SectorHeader
+    {
+        /// <summary>The sector flag (i.e. type)</summary>
+        public readonly SectorFlag flag;
+
+        /// <summary>The head this sector belongs to.</summary>
+        public readonly byte head;
+
+        /// <summary>The sector number within the track. Must be consecutive.</summary>
+        public readonly byte sector;
+
+        /// <summary>The cylinder number this sector belongs to.</summary>
+        public readonly byte cylinder;
+
+        /// <summary>A simple CRC16 over the data, to detect errors.</summary>
+        public readonly short crc;
+    }
+
+#endregion
 }

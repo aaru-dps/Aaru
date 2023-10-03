@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class HdCopy
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -49,4 +51,6 @@ public sealed partial class HdCopy
         // For now, having a valid header should be sufficient.
         return TryReadHeader(stream, ref fHeader, ref dataStartOffset);
     }
+
+#endregion
 }

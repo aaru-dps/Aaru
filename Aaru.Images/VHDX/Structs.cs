@@ -37,18 +37,23 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
+#region Nested type: FileParameters
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Identifier
+    struct FileParameters
     {
-        /// <summary>Signature, <see cref="Vhdx.VHDX_SIGNATURE" /></summary>
-        public readonly ulong signature;
-        /// <summary>UTF-16 string containing creator</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-        public readonly byte[] creator;
+        /// <summary>Block size in bytes</summary>
+        public uint blockSize;
+        /// <summary>Flags</summary>
+        public uint flags;
     }
 
-    #pragma warning disable 649
-    #pragma warning disable 169
+#endregion
+
+#region Nested type: Header
+
+#pragma warning disable 649
+#pragma warning disable 169
     struct Header
     {
         /// <summary>Signature, <see cref="Vhdx.VHDX_HEADER_SIG" /></summary>
@@ -74,48 +79,26 @@ public sealed partial class Vhdx
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4016)]
         public byte[] Reserved;
     }
-    #pragma warning restore 649
-    #pragma warning restore 169
+#pragma warning restore 649
+#pragma warning restore 169
+
+#endregion
+
+#region Nested type: Identifier
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct RegionTableHeader
+    readonly struct Identifier
     {
-        /// <summary>Signature, <see cref="Vhdx.VHDX_REGION_SIG" /></summary>
-        public readonly uint signature;
-        /// <summary>CRC-32C of whole 64Kb table with this field set to 0</summary>
-        public readonly uint checksum;
-        /// <summary>How many entries follow this table</summary>
-        public readonly uint entries;
-        /// <summary>Reserved</summary>
-        public readonly uint reserved;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct RegionTableEntry
-    {
-        /// <summary>Object identifier</summary>
-        public readonly Guid guid;
-        /// <summary>Offset in image of the object</summary>
-        public readonly ulong offset;
-        /// <summary>Length in bytes of the object</summary>
-        public readonly uint length;
-        /// <summary>Flags</summary>
-        public readonly uint flags;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct MetadataTableHeader
-    {
-        /// <summary>Signature</summary>
+        /// <summary>Signature, <see cref="Vhdx.VHDX_SIGNATURE" /></summary>
         public readonly ulong signature;
-        /// <summary>Reserved</summary>
-        public readonly ushort reserved;
-        /// <summary>How many entries are in the table</summary>
-        public readonly ushort entries;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly uint[] reserved2;
+        /// <summary>UTF-16 string containing creator</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
+        public readonly byte[] creator;
     }
+
+#endregion
+
+#region Nested type: MetadataTableEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MetadataTableEntry
@@ -132,24 +115,27 @@ public sealed partial class Vhdx
         public readonly uint reserved;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct FileParameters
-    {
-        /// <summary>Block size in bytes</summary>
-        public uint blockSize;
-        /// <summary>Flags</summary>
-        public uint flags;
-    }
+#endregion
+
+#region Nested type: MetadataTableHeader
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ParentLocatorHeader
+    readonly struct MetadataTableHeader
     {
-        /// <summary>Type of parent virtual disk</summary>
-        public readonly Guid locatorType;
+        /// <summary>Signature</summary>
+        public readonly ulong signature;
+        /// <summary>Reserved</summary>
         public readonly ushort reserved;
-        /// <summary>How many KVPs are in this parent locator</summary>
-        public readonly ushort keyValueCount;
+        /// <summary>How many entries are in the table</summary>
+        public readonly ushort entries;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+        public readonly uint[] reserved2;
     }
+
+#endregion
+
+#region Nested type: ParentLocatorEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ParentLocatorEntry
@@ -163,4 +149,54 @@ public sealed partial class Vhdx
         /// <summary>Size of value</summary>
         public readonly ushort valueLength;
     }
+
+#endregion
+
+#region Nested type: ParentLocatorHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ParentLocatorHeader
+    {
+        /// <summary>Type of parent virtual disk</summary>
+        public readonly Guid locatorType;
+        public readonly ushort reserved;
+        /// <summary>How many KVPs are in this parent locator</summary>
+        public readonly ushort keyValueCount;
+    }
+
+#endregion
+
+#region Nested type: RegionTableEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct RegionTableEntry
+    {
+        /// <summary>Object identifier</summary>
+        public readonly Guid guid;
+        /// <summary>Offset in image of the object</summary>
+        public readonly ulong offset;
+        /// <summary>Length in bytes of the object</summary>
+        public readonly uint length;
+        /// <summary>Flags</summary>
+        public readonly uint flags;
+    }
+
+#endregion
+
+#region Nested type: RegionTableHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct RegionTableHeader
+    {
+        /// <summary>Signature, <see cref="Vhdx.VHDX_REGION_SIG" /></summary>
+        public readonly uint signature;
+        /// <summary>CRC-32C of whole 64Kb table with this field set to 0</summary>
+        public readonly uint checksum;
+        /// <summary>How many entries follow this table</summary>
+        public readonly uint entries;
+        /// <summary>Reserved</summary>
+        public readonly uint reserved;
+    }
+
+#endregion
 }

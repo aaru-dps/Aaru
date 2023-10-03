@@ -44,6 +44,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                            OpticalImageCapabilities.CanStoreDataTracks     |
@@ -60,33 +62,47 @@ public sealed partial class AaruFormat
                                                            OpticalImageCapabilities.CanStoreNotCdTracks    |
                                                            OpticalImageCapabilities.CanStoreIndexes        |
                                                            OpticalImageCapabilities.CanStoreHiddenTracks;
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.AaruFormat_Name;
+
     /// <inheritdoc />
     public Guid Id => new("49360069-1784-4A2F-B723-0C844D610B0A");
+
     /// <inheritdoc />
     public string Format => "Aaru";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
+
     /// <inheritdoc />
     public List<Track> Tracks { get; private set; }
+
     /// <inheritdoc />
     public List<Session> Sessions { get; private set; }
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware { get; private set; }
+
     /// <inheritdoc />
     public Metadata AaruMetadata { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Enum.GetValues(typeof(MediaTagType)).Cast<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags =>
         Enum.GetValues(typeof(SectorTagType)).Cast<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => Enum.GetValues(typeof(MediaType)).Cast<MediaType>();
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
@@ -98,20 +114,23 @@ public sealed partial class AaruFormat
         ("md5", typeof(bool), Localization.Calculate_and_store_MD5_of_image_user_data, false),
         ("sha1", typeof(bool), Localization.Calculate_and_store_SHA1_of_image_user_data, false),
         ("sha256", typeof(bool), Localization.Calculate_and_store_SHA256_of_image_user_data, false),
-        ("spamsum", typeof(bool), Localization.Calculate_and_store_SpamSum_of_image_user_data, false),
-        ("deduplicate", typeof(bool),
-         Localization.Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default,
-         true),
+        ("spamsum", typeof(bool), Localization.Calculate_and_store_SpamSum_of_image_user_data, false), ("deduplicate",
+                    typeof(bool),
+                    Localization.
+                        Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default,
+                    true),
         ("compress", typeof(bool), Localization.Compress_user_data_blocks_Other_blocks_will_always_be_compressed,
          (object)true)
     };
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

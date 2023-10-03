@@ -38,12 +38,14 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskCopy42
 {
+#region IVerifiableImage Members
+
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        byte[] data    = new byte[header.DataSize];
-        byte[] tags    = new byte[header.TagSize];
-        uint   tagsChk = 0;
+        var  data    = new byte[header.DataSize];
+        var  tags    = new byte[header.TagSize];
+        uint tagsChk = 0;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_data);
         Stream dataStream = dc42ImageFilter.GetDataForkStream();
@@ -53,7 +55,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculating_data_checksum);
         uint dataChk = CheckSum(data);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_checksum_equals_0_X8, dataChk);
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_data_checksum_equals_0_X8, header.DataChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_data_checksum_equals_0_X8,     header.DataChecksum);
 
         if(header.TagSize <= 0)
             return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
@@ -66,8 +68,10 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculating_tag_checksum);
         tagsChk = CheckSum(tags);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_tag_checksum_equals_0_X8, tagsChk);
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_tag_checksum_equals_0_X8, header.TagChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_tag_checksum_equals_0_X8,     header.TagChecksum);
 
         return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
     }
+
+#endregion
 }

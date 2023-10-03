@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.UkvFdi_Name;
+
     /// <inheritdoc />
     public Guid Id => new("DADFC9B2-67C1-42A3-B124-825528163FC0");
+
     /// <inheritdoc />
     public string Format => "Spectrum floppy disk image";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

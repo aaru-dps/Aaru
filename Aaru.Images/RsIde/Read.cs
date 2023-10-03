@@ -43,13 +43,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -121,7 +123,7 @@ public sealed partial class RsIde
 
         Stream stream = _rsIdeImageFilter.GetDataForkStream();
 
-        stream.Seek((long)(_dataOff + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)(_dataOff + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
@@ -141,4 +143,6 @@ public sealed partial class RsIde
 
         return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
     }
+
+#endregion
 }

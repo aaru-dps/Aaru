@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Apple's Universal Disk Image Format disk images</summary>
 public sealed partial class Udif : IWritableImage
 {
+    const string                  MODULE_NAME = "UDIF plugin";
     uint                          _buffersize;
     Dictionary<ulong, byte[]>     _chunkCache;
     Dictionary<ulong, BlockChunk> _chunks;
@@ -82,6 +83,4 @@ public sealed partial class Udif : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "UDIF plugin";
 }

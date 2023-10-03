@@ -44,13 +44,16 @@ namespace Aaru.DiscImages;
 
 public sealed partial class VMware
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(options != null)
         {
             if(options.TryGetValue("adapter", out _adapterType))
+            {
                 switch(_adapterType.ToLowerInvariant())
                 {
                     case "ide":
@@ -68,6 +71,7 @@ public sealed partial class VMware
 
                         return false;
                 }
+            }
             else
                 _adapterType = "ide";
 
@@ -376,4 +380,6 @@ public sealed partial class VMware
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

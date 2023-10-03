@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
@@ -67,4 +69,6 @@ public sealed partial class RsIde
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

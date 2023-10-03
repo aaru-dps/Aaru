@@ -37,14 +37,14 @@ namespace Aaru.DiscImages;
 public sealed partial class Apple2Mg
 {
     MediaType GetMediaType() => _imageInfo.Sectors switch
-    {
-        455  => MediaType.Apple32SS,
-        910  => MediaType.Apple32DS,
-        560  => MediaType.Apple33SS,
-        1120 => MediaType.Apple33DS,
-        800  => MediaType.AppleSonySS,
-        1600 => MediaType.AppleSonyDS,
-        2880 => MediaType.DOS_35_HD,
-        _    => MediaType.Unknown
-    };
+                                {
+                                    455  => MediaType.Apple32SS,
+                                    910  => MediaType.Apple32DS,
+                                    560  => MediaType.Apple33SS,
+                                    1120 => MediaType.Apple33DS,
+                                    800  => MediaType.AppleSonySS,
+                                    1600 => MediaType.AppleSonyDS,
+                                    2880 => MediaType.DOS_35_HD,
+                                    _    => MediaType.Unknown
+                                };
 }

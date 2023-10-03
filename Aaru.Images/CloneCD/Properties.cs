@@ -43,6 +43,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CloneCd
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
                                                            OpticalImageCapabilities.CanStoreDataTracks   |
@@ -57,59 +59,72 @@ public sealed partial class CloneCd
                                                            OpticalImageCapabilities.CanStoreRawData    |
                                                            OpticalImageCapabilities.CanStoreCookedData |
                                                            OpticalImageCapabilities.CanStoreMultipleTracks;
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.CloneCd_Name;
+
     /// <inheritdoc />
     public Guid Id => new("EE9C2975-2E79-427A-8EE9-F86F19165784");
+
     /// <inheritdoc />
     public string Format => "CloneCD";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
+
     /// <inheritdoc />
     public List<Track> Tracks { get; private set; }
+
     /// <inheritdoc />
     public List<Session> Sessions { get; private set; }
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
-    {
-        MediaTagType.CD_MCN, MediaTagType.CD_FullTOC
-    };
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[] { MediaTagType.CD_MCN, MediaTagType.CD_FullTOC };
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
-        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ, SectorTagType.CdSectorEdc,
-        SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync,
-        SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
+        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
+        SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
+        SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
-        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI, MediaType.CDMRW,
-        MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW, MediaType.CDV,
-        MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2,
-        MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
-        MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
-        MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp,
-        MediaType.CVD, MediaType.PCD
+        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+        MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+        MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
+        MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
+        MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
+        MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
+        MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".ccd"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".ccd" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

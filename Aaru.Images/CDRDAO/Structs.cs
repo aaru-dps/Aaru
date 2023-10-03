@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cdrdao
 {
+#region Nested type: CdrdaoTrackFile
+
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     struct CdrdaoTrackFile
     {
@@ -54,7 +56,9 @@ public sealed partial class Cdrdao
         public string Filetype;
     }
 
-    #pragma warning disable 169
+#endregion
+
+#pragma warning disable 169
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     struct CdrdaoTrack
     {
@@ -134,5 +138,5 @@ public sealed partial class Cdrdao
         /// <summary>Disk comment</summary>
         public string Comment;
     }
-    #pragma warning restore 169
+#pragma warning restore 169
 }

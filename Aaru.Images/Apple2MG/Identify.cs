@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apple2Mg
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,7 +49,7 @@ public sealed partial class Apple2Mg
         if(stream.Length < 65)
             return false;
 
-        byte[] header = new byte[64];
+        var header = new byte[64];
         stream.EnsureRead(header, 0, 64);
 
         Header hdr = Marshal.SpanToStructureLittleEndian<Header>(header);
@@ -76,4 +78,6 @@ public sealed partial class Apple2Mg
 
         return hdr.CreatorSpecificOffset + hdr.CreatorSpecificSize <= stream.Length;
     }
+
+#endregion
 }

@@ -46,33 +46,35 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements reading Nero Burning ROM disc images</summary>
-[SuppressMessage("ReSharper", "NotAccessedField.Local"), SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
 public sealed partial class Nero : IOpticalMediaImage
 {
-    bool                                 _imageNewFormat;
-    Stream                               _imageStream;
-    ImageInfo                            _imageInfo;
+    const    string                      MODULE_NAME = "Nero plugin";
+    readonly Dictionary<ushort, uint>    _neroSessions;
+    readonly Dictionary<uint, NeroTrack> _neroTracks;
+    readonly Dictionary<uint, ulong>     _offsetmap;
     CdText                               _cdtxt;
     CuesheetV1                           _cuesheetV1;
     CuesheetV2                           _cuesheetV2;
+    DiscInformation                      _discInfo;
+    ImageInfo                            _imageInfo;
+    bool                                 _imageNewFormat;
+    Stream                               _imageStream;
+    bool                                 _isCd;
+    MediaType                            _mediaType;
     DaoV1                                _neroDaov1;
     DaoV2                                _neroDaov2;
-    DiscInformation                      _discInfo;
     IFilter                              _neroFilter;
-    MediaType                            _mediaType;
     ReloChunk                            _relo;
-    readonly Dictionary<ushort, uint>    _neroSessions;
+    SectorBuilder                        _sectorBuilder;
     TaoV0                                _taoV0;
     TaoV1                                _taoV1;
     TaoV2                                _taoV2;
     TocChunk                             _toc;
-    readonly Dictionary<uint, NeroTrack> _neroTracks;
-    readonly Dictionary<uint, ulong>     _offsetmap;
+    Dictionary<uint, byte>               _trackFlags;
     Dictionary<uint, byte[]>             _trackIsrCs;
     byte[]                               _upc;
-    SectorBuilder                        _sectorBuilder;
-    Dictionary<uint, byte>               _trackFlags;
-    bool                                 _isCd;
 
     public Nero()
     {
@@ -90,6 +92,4 @@ public sealed partial class Nero : IOpticalMediaImage
         Sessions      = new List<CommonTypes.Structs.Session>();
         Partitions    = new List<Partition>();
     }
-
-    const string MODULE_NAME = "Nero plugin";
 }

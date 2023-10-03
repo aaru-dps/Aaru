@@ -52,25 +52,27 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] magic = new byte[8];
+        var magic = new byte[8];
         stream.EnsureRead(magic, 0, 8);
 
         if(!_chdTag.SequenceEqual(magic))
             return ErrorNumber.InvalidArgument;
 
         // Read length
-        byte[] buffer = new byte[4];
+        var buffer = new byte[4];
         stream.EnsureRead(buffer, 0, 4);
-        uint length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
+        var length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
         buffer = new byte[4];
         stream.EnsureRead(buffer, 0, 4);
-        uint version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
+        var version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
 
         buffer = new byte[length];
         stream.Seek(0, SeekOrigin.Begin);
@@ -88,8 +90,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.length = {0} bytes", hdrV1.length);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.version = {0}", hdrV1.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.flags = {0}", (Flags)hdrV1.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.version = {0}",      hdrV1.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.flags = {0}",        (Flags)hdrV1.flags);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.compression = {0}", (Compression)hdrV1.compression);
 
@@ -101,7 +103,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
@@ -109,11 +112,11 @@ public sealed partial class Chd
                 hunkMapStopwatch.Restart();
                 _hunkTable = new ulong[hdrV1.totalhunks];
 
-                uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
+                var hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
 
-                byte[] hunkSectorBytes = new byte[512];
+                var hunkSectorBytes = new byte[512];
 
-                for(int i = 0; i < hunkSectorCount; i++)
+                for(var i = 0; i < hunkSectorCount; i++)
                 {
                     stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -124,10 +127,10 @@ public sealed partial class Chd
                     // This restores the order of elements
                     Array.Reverse(hunkSector.hunkEntry);
 
-                    if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
+                    if(_hunkTable.Length >= i * 512 / 8 + 512 / 8)
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                     else
-                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
+                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
                 }
 
                 hunkMapStopwatch.Stop();
@@ -162,8 +165,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.length = {0} bytes", hdrV2.length);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.version = {0}", hdrV2.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.flags = {0}", (Flags)hdrV2.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.version = {0}",      hdrV2.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.flags = {0}",        (Flags)hdrV2.flags);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.compression = {0}", (Compression)hdrV2.compression);
 
@@ -175,7 +178,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV2.parentmd5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.seclen = {0}", hdrV2.seclen);
@@ -186,11 +190,11 @@ public sealed partial class Chd
                 _hunkTable = new ulong[hdrV2.totalhunks];
 
                 // How many sectors uses the BAT
-                uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
+                var hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
 
-                byte[] hunkSectorBytes = new byte[512];
+                var hunkSectorBytes = new byte[512];
 
-                for(int i = 0; i < hunkSectorCount; i++)
+                for(var i = 0; i < hunkSectorCount; i++)
                 {
                     stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -201,10 +205,10 @@ public sealed partial class Chd
                     // This restores the order of elements
                     Array.Reverse(hunkSector.hunkEntry);
 
-                    if(_hunkTable.Length >= (i                                  * 512 / 8) + (512 / 8))
+                    if(_hunkTable.Length >= i * 512 / 8 + 512 / 8)
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, 512 / 8);
                     else
-                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - (i * 512 / 8));
+                        Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
                 }
 
                 hunkMapStopwatch.Stop();
@@ -239,8 +243,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.length = {0} bytes", hdrV3.length);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.version = {0}", hdrV3.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.flags = {0}", (Flags)hdrV3.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.version = {0}",      hdrV3.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.flags = {0}",        (Flags)hdrV3.flags);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.compression = {0}", (Compression)hdrV3.compression);
 
@@ -250,7 +254,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentmd5));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
@@ -258,7 +263,8 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
@@ -292,20 +298,21 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.length = {0} bytes", hdrV4.length);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.version = {0}", hdrV4.version);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.flags = {0}", (Flags)hdrV4.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.version = {0}",      hdrV4.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.flags = {0}",        (Flags)hdrV4.flags);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.compression = {0}", (Compression)hdrV4.compression);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.totalhunks = {0}",   hdrV4.totalhunks);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.metaoffset = {0}",   hdrV4.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.hunkbytes = {0}",    hdrV4.hunkbytes);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV4.parentsha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.rawsha1 = {0}",
@@ -347,7 +354,7 @@ public sealed partial class Chd
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.length = {0} bytes", hdrV5.length);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.version = {0}", hdrV5.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.version = {0}",      hdrV5.version);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.compressor0 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor0)));
@@ -362,15 +369,16 @@ public sealed partial class Chd
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor3)));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.mapoffset = {0}",    hdrV5.mapoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.metaoffset = {0}",   hdrV5.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.hunkbytes = {0}",    hdrV5.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.unitbytes = {0}",    hdrV5.unitbytes);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV5.parentsha1));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.rawsha1 = {0}",
@@ -384,13 +392,13 @@ public sealed partial class Chd
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
-                    uint hunkSectorCount = (uint)Math.Ceiling((double)_hunkTableSmall.Length * 4 / 512);
+                    var hunkSectorCount = (uint)Math.Ceiling((double)_hunkTableSmall.Length * 4 / 512);
 
-                    byte[] hunkSectorBytes = new byte[512];
+                    var hunkSectorBytes = new byte[512];
 
                     stream.Seek((long)hdrV5.mapoffset, SeekOrigin.Begin);
 
-                    for(int i = 0; i < hunkSectorCount; i++)
+                    for(var i = 0; i < hunkSectorCount; i++)
                     {
                         stream.EnsureRead(hunkSectorBytes, 0, 512);
 
@@ -403,11 +411,13 @@ public sealed partial class Chd
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(_hunkTableSmall.Length >= (i                                  * 512 / 4) + (512 / 4))
+                        if(_hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)
                             Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4, 512 / 4);
                         else
+                        {
                             Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4,
-                                       _hunkTableSmall.Length - (i * 512 / 4));
+                                       _hunkTableSmall.Length - i * 512            / 4);
+                        }
                     }
 
                     hunkMapStopwatch.Stop();
@@ -459,11 +469,11 @@ public sealed partial class Chd
 
             while(nextMetaOff > 0)
             {
-                byte[] hdrBytes = new byte[16];
+                var hdrBytes = new byte[16];
                 stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
                 stream.EnsureRead(hdrBytes, 0, hdrBytes.Length);
                 MetadataHeader header = Marshal.ByteArrayToStructureBigEndian<MetadataHeader>(hdrBytes);
-                byte[]         meta   = new byte[header.flagsAndLength & 0xFFFFFF];
+                var            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                 stream.EnsureRead(meta, 0, meta.Length);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_metadata_0_,
@@ -514,7 +524,7 @@ public sealed partial class Chd
                             return ErrorNumber.NotSupported;
                         }
 
-                        uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                        var chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                         // Byteswapped
                         if(chdTracksNumber > 99)
@@ -526,12 +536,12 @@ public sealed partial class Chd
                         {
                             var chdTrack = new TrackOld
                             {
-                                type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 0)),
-                                subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 4)),
-                                dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 8)),
-                                subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 12)),
-                                frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 16)),
-                                extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 20))
+                                type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0)),
+                                subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4)),
+                                dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8)),
+                                subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12)),
+                                frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16)),
+                                extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20))
                             };
 
                             var aaruTrack = new Track();
@@ -664,8 +674,8 @@ public sealed partial class Chd
                         {
                             _isCdrom = true;
 
-                            uint   trackNo   = uint.Parse(chtrMatch.Groups["track"].Value);
-                            uint   frames    = uint.Parse(chtrMatch.Groups["frames"].Value);
+                            var    trackNo   = uint.Parse(chtrMatch.Groups["track"].Value);
+                            var    frames    = uint.Parse(chtrMatch.Groups["frames"].Value);
                             string subtype   = chtrMatch.Groups["sub_type"].Value;
                             string tracktype = chtrMatch.Groups["track_type"].Value;
 
@@ -811,12 +821,12 @@ public sealed partial class Chd
                         {
                             _isCdrom = true;
 
-                            uint   trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
-                            uint   frames    = uint.Parse(cht2Match.Groups["frames"].Value);
+                            var    trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
+                            var    frames    = uint.Parse(cht2Match.Groups["frames"].Value);
                             string subtype   = cht2Match.Groups["sub_type"].Value;
                             string trackType = cht2Match.Groups["track_type"].Value;
 
-                            uint pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
+                            var pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
 
                             // What is this, really? Same as track type?
                             string pregapType = cht2Match.Groups["pgtype"].Value;
@@ -828,7 +838,7 @@ public sealed partial class Chd
                             // or of any data track followed by an audio track, according to Yellow Book.
                             // It is indistinguishable from normal data.
                             // TODO: Does CHD store it, or like CDRWin, ignores it?
-                            uint postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
+                            var postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
                             if(trackNo != currentTrack)
                             {
@@ -997,17 +1007,17 @@ public sealed partial class Chd
                         {
                             _isGdrom = true;
 
-                            uint   trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
-                            uint   frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
+                            var    trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
+                            var    frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
                             string subtype   = chgdMatch.Groups["sub_type"].Value;
                             string trackType = chgdMatch.Groups["track_type"].Value;
 
                             // TODO: Check pregap, postgap and pad behaviour
-                            uint   pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
+                            var    pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
                             string pregapType    = chgdMatch.Groups["pgtype"].Value;
                             string pregapSubType = chgdMatch.Groups["pgsub"].Value;
-                            uint   postgap       = uint.Parse(chgdMatch.Groups["postgap"].Value);
-                            uint   pad           = uint.Parse(chgdMatch.Groups["pad"].Value);
+                            var    postgap       = uint.Parse(chgdMatch.Groups["postgap"].Value);
+                            var    pad           = uint.Parse(chgdMatch.Groups["pad"].Value);
 
                             if(trackNo != currentTrack)
                             {
@@ -1249,8 +1259,10 @@ public sealed partial class Chd
                 _offsetmap.Add(aaruTrack.StartSector, aaruTrack.Sequence);
 
                 if(aaruTrack.SubchannelType != TrackSubchannelType.None)
+                {
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                }
 
                 switch(aaruTrack.Type)
                 {
@@ -1385,7 +1397,7 @@ public sealed partial class Chd
         }
 
         uint sectorOffset;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch(track.Type)
         {
@@ -1455,7 +1467,8 @@ public sealed partial class Chd
                 break;
             }
 
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize];
@@ -1463,11 +1476,13 @@ public sealed partial class Chd
         if(mode2)
             buffer = Sector.GetUserDataFromMode2(sector);
         else if(track.Type == TrackType.Audio && _swapAudio)
-            for(int i = 0; i < 2352; i += 2)
+        {
+            for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
@@ -1521,23 +1536,29 @@ public sealed partial class Chd
         uint sectorOffset;
 
         if(tag == SectorTagType.CdSectorSubchannel)
+        {
             switch(track.SubchannelType)
             {
-                case TrackSubchannelType.None: return ErrorNumber.NoData;
+                case TrackSubchannelType.None:
+                    return ErrorNumber.NoData;
                 case TrackSubchannelType.RawInterleaved:
                     sectorOffset = (uint)track.RawBytesPerSector;
                     sectorSize   = 96;
 
                     break;
-                default: return ErrorNumber.NotSupported;
+                default:
+                    return ErrorNumber.NotSupported;
             }
+        }
         else
+        {
             switch(track.Type)
             {
                 case TrackType.CdMode1:
                 case TrackType.CdMode2Form1:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
@@ -1556,7 +1577,8 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorSubHeader:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorEcc:
                             {
                                 sectorOffset = 2076;
@@ -1589,8 +1611,10 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
                         return ErrorNumber.NoData;
 
@@ -1600,6 +1624,7 @@ public sealed partial class Chd
                 case TrackType.CdMode2Form2:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
@@ -1634,16 +1659,20 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
                             case SectorTagType.CdSectorHeader:
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorEccQ:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorSubHeader:
                             {
                                 sectorOffset = 0;
@@ -1660,8 +1689,10 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
 
                     break;
                 }
@@ -1669,13 +1700,15 @@ public sealed partial class Chd
                 case TrackType.CdMode2Formless:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
                             case SectorTagType.CdSectorHeader:
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorEccQ:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorSubHeader:
                             {
                                 sectorOffset = 0;
@@ -1692,35 +1725,44 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
                         return ErrorNumber.NoData;
 
                     break;
                 }
 
-                case TrackType.Audio: return ErrorNumber.NoData;
-                default:              return ErrorNumber.NotImplemented;
+                case TrackType.Audio:
+                    return ErrorNumber.NoData;
+                default:
+                    return ErrorNumber.NotImplemented;
             }
+        }
 
         buffer = new byte[sectorSize];
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(int i = 0; i < 2352; i += 2)
+        {
+            for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(int i = 0; i < 2352; i += 2)
+        {
+            for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
@@ -1799,7 +1841,7 @@ public sealed partial class Chd
         if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
         {
             track = GetTrack(sectorAddress);
-            uint sectorSize = (uint)track.RawBytesPerSector;
+            var sectorSize = (uint)track.RawBytesPerSector;
 
             ulong hunkNo = sectorAddress              / _sectorsPerHunk;
             ulong secOff = sectorAddress * sectorSize % (_sectorsPerHunk * sectorSize);
@@ -1821,11 +1863,13 @@ public sealed partial class Chd
         buffer = new byte[track.RawBytesPerSector];
 
         if(track.Type == TrackType.Audio && _swapAudio)
-            for(int i = 0; i < 2352; i += 2)
+        {
+            for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, 0, buffer, 0, track.RawBytesPerSector);
 
@@ -1833,7 +1877,7 @@ public sealed partial class Chd
         {
             case TrackType.CdMode1 when track.RawBytesPerSector == 2048:
             {
-                byte[] fullSector = new byte[2352];
+                var fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 16, 2048);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)sectorAddress);
@@ -1845,7 +1889,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Form1 when track.RawBytesPerSector == 2048:
             {
-                byte[] fullSector = new byte[2352];
+                var fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 24, 2048);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)sectorAddress);
@@ -1857,7 +1901,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Form1 when track.RawBytesPerSector == 2324:
             {
-                byte[] fullSector = new byte[2352];
+                var fullSector = new byte[2352];
 
                 Array.Copy(buffer, 0, fullSector, 24, 2324);
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2, (long)sectorAddress);
@@ -1869,7 +1913,7 @@ public sealed partial class Chd
             }
             case TrackType.CdMode2Formless when track.RawBytesPerSector == 2336:
             {
-                byte[] fullSector = new byte[2352];
+                var fullSector = new byte[2352];
 
                 _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless, (long)sectorAddress);
                 Array.Copy(buffer, 0, fullSector, 16, 2336);
@@ -1928,7 +1972,8 @@ public sealed partial class Chd
                     buffer = _cis?.Clone() as byte[];
 
                 return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
     }
 
@@ -1952,7 +1997,8 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag, out buffer);
     }
 
@@ -1961,17 +2007,19 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectors(GetAbsoluteSector(sectorAddress, track), length, out buffer);
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag, out buffer);
     }
 
@@ -1988,7 +2036,10 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length, out buffer);
     }
+
+#endregion
 }

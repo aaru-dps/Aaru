@@ -43,10 +43,11 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing T98-Next disk images</summary>
 public sealed partial class Nhdr0 : IWritableImage
 {
-    ImageInfo  _imageInfo;
-    Header     _nhdhdr;
-    IFilter    _nhdImageFilter;
-    FileStream _writingStream;
+    const string MODULE_NAME = "NHDr0 plugin";
+    ImageInfo    _imageInfo;
+    Header       _nhdhdr;
+    IFilter      _nhdImageFilter;
+    FileStream   _writingStream;
 
     public Nhdr0() => _imageInfo = new ImageInfo
     {
@@ -71,6 +72,4 @@ public sealed partial class Nhdr0 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "NHDr0 plugin";
 }

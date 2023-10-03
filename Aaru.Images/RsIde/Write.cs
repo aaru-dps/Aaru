@@ -46,9 +46,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 256 &&
            sectorSize != 512)
@@ -143,7 +145,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -177,7 +179,7 @@ public sealed partial class RsIde
             return false;
         }
 
-        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
+        _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + sectorAddress * _imageInfo.SectorSize),
                             SeekOrigin.Begin);
 
         _writingStream.Write(data, 0, data.Length);
@@ -286,8 +288,8 @@ public sealed partial class RsIde
             if(string.IsNullOrEmpty(_imageInfo.DriveSerialNumber))
                 _imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
-            byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
-            nint   ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+            var  ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
+            nint ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
             System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, true);
 
             System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0, Marshal.SizeOf<Identify.IdentifyDevice>());
@@ -297,15 +299,15 @@ public sealed partial class RsIde
             Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40), 0, ataIdBytes,
                        27 * 2, 40);
 
-            Array.Copy(ScrambleAtaString(_imageInfo.DriveFirmwareRevision, 8), 0, ataIdBytes, 23 * 2, 8);
-            Array.Copy(ScrambleAtaString(_imageInfo.DriveSerialNumber, 20), 0, ataIdBytes, 10    * 2, 20);
-            Array.Copy(ataIdBytes, 0, header.identify, 0, 106);
+            Array.Copy(ScrambleAtaString(_imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
+            Array.Copy(ScrambleAtaString(_imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);
+            Array.Copy(ataIdBytes,                                              0, header.identify, 0,      106);
         }
         else
             Array.Copy(_identify, 0, header.identify, 0, 106);
 
-        byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
-        nint   hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        var  hdr    = new byte[Marshal.SizeOf<Header>()];
+        nint hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -385,4 +387,6 @@ public sealed partial class RsIde
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

@@ -41,7 +41,8 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading DiscFerret flux images</summary>
 public sealed partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
 {
-    ImageInfo _imageInfo;
+    const string MODULE_NAME = "DiscFerret plugin";
+    ImageInfo    _imageInfo;
 
     // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
     public SortedDictionary<int, long> TrackLengths;
@@ -70,6 +71,4 @@ public sealed partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "DiscFerret plugin";
 }

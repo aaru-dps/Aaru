@@ -48,6 +48,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CloneCd
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -60,7 +62,7 @@ public sealed partial class CloneCd
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _cueStream = new StreamReader(imageFilter.GetDataForkStream());
-            int lineNumber = 0;
+            var lineNumber = 0;
 
             var ccdIdRegex     = new Regex(CCD_IDENTIFIER);
             var discIdRegex    = new Regex(DISC_IDENTIFIER);
@@ -95,12 +97,12 @@ public sealed partial class CloneCd
             var trkModeRegex   = new Regex(TRACK_MODE);
             var trkIndexRegex  = new Regex(TRACK_INDEX);
 
-            bool                                    inCcd             = false;
-            bool                                    inDisk            = false;
-            bool                                    inSession         = false;
-            bool                                    inEntry           = false;
-            bool                                    inTrack           = false;
-            bool                                    inCdText          = false;
+            var                                     inCcd             = false;
+            var                                     inDisk            = false;
+            var                                     inSession         = false;
+            var                                     inEntry           = false;
+            var                                     inTrack           = false;
+            var                                     inCdText          = false;
             var                                     cdtMs             = new MemoryStream();
             int                                     minSession        = int.MaxValue;
             int                                     maxSession        = int.MinValue;
@@ -183,9 +185,12 @@ public sealed partial class CloneCd
 
                         if(_imageInfo.Version != "2" &&
                            _imageInfo.Version != "3")
+                        {
                             AaruConsole.
-                                ErrorWriteLine(Localization.CloneCD_plugin_Warning_Unknown_CCD_image_version_0_may_not_work,
-                                               _imageInfo.Version);
+                                ErrorWriteLine(
+                                    Localization.CloneCD_plugin_Warning_Unknown_CCD_image_version_0_may_not_work,
+                                    _imageInfo.Version);
+                        }
                     }
                     else if(inDisk)
                     {
@@ -196,11 +201,15 @@ public sealed partial class CloneCd
                         Match discCatMatch  = discCatRegex.Match(line);
 
                         if(discEntMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_TocEntries_at_line_0,
                                                        lineNumber);
+                        }
                         else if(discSessMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Sessions_at_line_0,
                                                        lineNumber);
+                        }
                         else if(discScrMatch.Success)
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -209,8 +218,10 @@ public sealed partial class CloneCd
                             _scrambled |= discScrMatch.Groups["value"].Value == "1";
                         }
                         else if(cdtLenMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CDTextLength_at_line_0,
                                                        lineNumber);
+                        }
                         else if(discCatMatch.Success)
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Catalog_at_line_0_smallcase,
@@ -227,17 +238,17 @@ public sealed partial class CloneCd
                         Match cdtEntMatch  = cdtEntRegex.Match(line);
 
                         if(cdtEntsMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CD_Text_Entries_at_line_0,
                                                        lineNumber);
+                        }
                         else if(cdtEntMatch.Success)
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CD_Text_Entry_at_line_0,
                                                        lineNumber);
 
-                            string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[]
-                            {
-                                ' '
-                            }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] bytes = cdtEntMatch.Groups["value"].Value.
+                                                         Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                             foreach(string byt in bytes)
                                 cdtMs.WriteByte(Convert.ToByte(byt, 16));
@@ -251,11 +262,15 @@ public sealed partial class CloneCd
                         Match sessSubcMatch = sessSubcRegex.Match(line);
 
                         if(sessPregMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PreGapMode_at_line_0,
                                                        lineNumber);
+                        }
                         else if(sessSubcMatch.Success)
+                        {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PreGapSubC_at_line_0,
                                                        lineNumber);
+                        }
                     }
                     else if(inEntry)
                     {
@@ -370,8 +385,8 @@ public sealed partial class CloneCd
                         else if(trkIndexMatch.Success &&
                                 currentTrackEntry > 0)
                         {
-                            byte indexNo  = Convert.ToByte(trkIndexMatch.Groups["index"].Value, 10);
-                            int  indexLba = Convert.ToInt32(trkIndexMatch.Groups["lba"].Value, 10);
+                            var indexNo  = Convert.ToByte(trkIndexMatch.Groups["index"].Value, 10);
+                            var indexLba = Convert.ToInt32(trkIndexMatch.Groups["lba"].Value, 10);
 
                             if(!trackIndexes.TryGetValue(currentTrackEntry, out _))
                                 trackIndexes[currentTrackEntry] = new Dictionary<byte, int>();
@@ -396,7 +411,7 @@ public sealed partial class CloneCd
             toc.TrackDescriptors     = entries.ToArray();
             toc.LastCompleteSession  = (byte)maxSession;
             toc.FirstCompleteSession = (byte)minSession;
-            toc.DataLength           = (ushort)((entries.Count * 11) + 2);
+            toc.DataLength           = (ushort)(entries.Count * 11 + 2);
             var tocMs = new MemoryStream();
             tocMs.WriteByte(toc.FirstCompleteSession);
             tocMs.WriteByte(toc.LastCompleteSession);
@@ -435,9 +450,9 @@ public sealed partial class CloneCd
             filtersList = new FiltersList();
             _subFilter  = filtersList.GetFilter(subFile);
 
-            int  curSessionNo        = 0;
-            var  currentTrack        = new Track();
-            bool firstTrackInSession = true;
+            var curSessionNo        = 0;
+            var currentTrack        = new Track();
+            var firstTrackInSession = true;
             Tracks = new List<Track>();
             ulong leadOutStart = 0;
 
@@ -567,9 +582,11 @@ public sealed partial class CloneCd
                                     _imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(descriptor.PSEC, frm);
 
                                     if(_imageInfo.MediaManufacturer != "")
+                                    {
                                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                    Localization.Disc_manufactured_by_0,
                                                                    _imageInfo.MediaManufacturer);
+                                    }
                                 }
 
                                 break;
@@ -578,7 +595,7 @@ public sealed partial class CloneCd
                         break;
                     case 6:
                     {
-                        uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                        var id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_ID_0_X6, id & 0x00FFFFFF);
                         _imageInfo.MediaSerialNumber = $"{id                                  & 0x00FFFFFF:X6}";
 
@@ -629,28 +646,33 @@ public sealed partial class CloneCd
                 }
 
                 if(trackModes.TryGetValue((byte)tmpTrack.Sequence, out int trackMode))
+                {
                     tmpTrack.Type = trackMode switch
-                    {
-                        0 => TrackType.Audio,
-                        1 => TrackType.CdMode1,
-                        2 => TrackType.CdMode2Formless,
-                        _ => TrackType.Data
-                    };
+                                    {
+                                        0 => TrackType.Audio,
+                                        1 => TrackType.CdMode1,
+                                        2 => TrackType.CdMode2Formless,
+                                        _ => TrackType.Data
+                                    };
+                }
 
                 if(trackIndexes.TryGetValue((byte)tmpTrack.Sequence, out Dictionary<byte, int> indexes))
+                {
                     foreach((byte index, int value) in indexes.OrderBy(i => i.Key).
                                                                Where(trackIndex => trackIndex.Key > 1))
 
                         // Untested as of 20210711
                         tmpTrack.Indexes[index] = value;
+                }
 
                 if(tmpTrack.Type == TrackType.Data)
-                    for(int s = 225; s < 750; s++)
+                {
+                    for(var s = 225; s < 750; s++)
                     {
-                        byte[] syncTest = new byte[12];
-                        byte[] sectTest = new byte[2352];
+                        var syncTest = new byte[12];
+                        var sectTest = new byte[2352];
 
-                        long pos = (long)tmpTrack.FileOffset + (s * 2352);
+                        long pos = (long)tmpTrack.FileOffset + s * 2352;
 
                         if(pos >= _dataStream.Length + 2352 ||
                            s   >= (int)(tmpTrack.EndSector - tmpTrack.StartSector))
@@ -698,15 +720,16 @@ public sealed partial class CloneCd
                         if(sectTest[15] != 2)
                             continue;
 
-                        byte[] subHdr1 = new byte[4];
-                        byte[] subHdr2 = new byte[4];
-                        byte[] empHdr  = new byte[4];
+                        var subHdr1 = new byte[4];
+                        var subHdr2 = new byte[4];
+                        var empHdr  = new byte[4];
 
                         Array.Copy(sectTest, 16, subHdr1, 0, 4);
                         Array.Copy(sectTest, 20, subHdr2, 0, 4);
 
                         if(subHdr1.SequenceEqual(subHdr2) &&
                            !empHdr.SequenceEqual(subHdr1))
+                        {
                             if((subHdr1[2] & 0x20) == 0x20)
                             {
                                 tmpTrack.BytesPerSector = 2324;
@@ -760,6 +783,7 @@ public sealed partial class CloneCd
 
                                 break;
                             }
+                        }
 
                         tmpTrack.BytesPerSector = 2336;
                         tmpTrack.Type           = TrackType.CdMode2Formless;
@@ -775,6 +799,7 @@ public sealed partial class CloneCd
 
                         break;
                     }
+                }
                 else
                 {
                     if(_imageInfo.SectorSize < 2352)
@@ -852,13 +877,13 @@ public sealed partial class CloneCd
 
             Sessions.Add(currentSession);
 
-            bool data       = false;
-            bool mode2      = false;
-            bool firstAudio = false;
-            bool firstData  = false;
-            bool audio      = false;
+            var data       = false;
+            var mode2      = false;
+            var firstAudio = false;
+            var firstData  = false;
+            var audio      = false;
 
-            for(int i = 0; i < Tracks.Count; i++)
+            for(var i = 0; i < Tracks.Count; i++)
             {
                 // First track is audio
                 firstAudio |= i == 0 && Tracks[i].Type == TrackType.Audio;
@@ -894,7 +919,7 @@ public sealed partial class CloneCd
                     Sessions.Count > 1 &&
                     mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
-            else if((firstData && audio) || mode2)
+            else if(firstData && audio || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
                 _imageInfo.MediaType = MediaType.CDROM;
@@ -912,7 +937,7 @@ public sealed partial class CloneCd
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.Filename);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -936,7 +961,8 @@ public sealed partial class CloneCd
 
                 return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
     }
 
@@ -960,10 +986,13 @@ public sealed partial class CloneCd
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from track in Tracks where track.Sequence  == kvp.Key
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from track in Tracks
+                                                 where track.Sequence == kvp.Key
                                                  where sectorAddress                       - kvp.Value <
-                                                       track.EndSector - track.StartSector + 1 select kvp)
+                                                       track.EndSector - track.StartSector + 1
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1003,7 +1032,7 @@ public sealed partial class CloneCd
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch(aaruTrack.Type)
         {
@@ -1034,12 +1063,13 @@ public sealed partial class CloneCd
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
 
-        _dataStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+        _dataStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * 2352), SeekOrigin.Begin);
 
         if(mode2)
         {
@@ -1047,9 +1077,9 @@ public sealed partial class CloneCd
 
             _dataStream.EnsureRead(buffer, 0, buffer.Length);
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1061,20 +1091,22 @@ public sealed partial class CloneCd
                 sectorSkip   == 0)
             _dataStream.EnsureRead(buffer, 0, buffer.Length);
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
                 _dataStream.EnsureRead(sector, 0, sector.Length);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
@@ -1101,26 +1133,25 @@ public sealed partial class CloneCd
             case SectorTagType.CdSectorEdc:
             case SectorTagType.CdSectorHeader:
             case SectorTagType.CdSectorSubHeader:
-            case SectorTagType.CdSectorSync: break;
+            case SectorTagType.CdSectorSync:
+                break;
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue((byte)aaruTrack.Sequence, out byte flags))
                     return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flags
-                };
+                buffer = new[] { flags };
 
                 return ErrorNumber.NoError;
             case SectorTagType.CdSectorSubchannel:
                 buffer = new byte[96 * length];
-                _subStream.Seek((long)(aaruTrack.SubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
+                _subStream.Seek((long)(aaruTrack.SubchannelOffset + sectorAddress * 96), SeekOrigin.Begin);
                 _subStream.EnsureRead(buffer, 0, buffer.Length);
 
                 buffer = Subchannel.Interleave(buffer);
 
                 return ErrorNumber.NoError;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         uint sectorOffset = 0;
@@ -1148,7 +1179,8 @@ public sealed partial class CloneCd
 
                         break;
                     }
-                    case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
+                    case SectorTagType.CdSectorSubHeader:
+                        return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorEcc:
                     {
                         sectorOffset = 2076;
@@ -1192,7 +1224,8 @@ public sealed partial class CloneCd
                     case SectorTagType.CdSectorHeader:
                     case SectorTagType.CdSectorEcc:
                     case SectorTagType.CdSectorEccP:
-                    case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
+                    case SectorTagType.CdSectorEccQ:
+                        return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorSubHeader:
                     {
                         sectorOffset = 0;
@@ -1310,7 +1343,8 @@ public sealed partial class CloneCd
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
+                    default:
+                        return ErrorNumber.NotSupported;
                 }
 
                 break;
@@ -1318,25 +1352,28 @@ public sealed partial class CloneCd
             {
                 return ErrorNumber.NotSupported;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
 
-        _dataStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+        _dataStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * 2352), SeekOrigin.Begin);
 
         if(sectorOffset == 0 &&
            sectorSkip   == 0)
             _dataStream.EnsureRead(buffer, 0, buffer.Length);
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
                 _dataStream.EnsureRead(sector, 0, sector.Length);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         return ErrorNumber.NoError;
     }
@@ -1354,10 +1391,13 @@ public sealed partial class CloneCd
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from track in Tracks where track.Sequence  == kvp.Key
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from track in Tracks
+                                                 where track.Sequence == kvp.Key
                                                  where sectorAddress                       - kvp.Value <
-                                                       track.EndSector - track.StartSector + 1 select kvp)
+                                                       track.EndSector - track.StartSector + 1
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1377,7 +1417,7 @@ public sealed partial class CloneCd
 
         buffer = new byte[2352 * length];
 
-        _dataStream.Seek((long)(aaruTrack.FileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+        _dataStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * 2352), SeekOrigin.Begin);
         _dataStream.EnsureRead(buffer, 0, buffer.Length);
 
         return ErrorNumber.NoError;
@@ -1389,4 +1429,6 @@ public sealed partial class CloneCd
 
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session) => Tracks.Where(track => track.Session == session).ToList();
+
+#endregion
 }

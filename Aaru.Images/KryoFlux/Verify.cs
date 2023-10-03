@@ -37,12 +37,16 @@ namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
+#region IVerifiableSectorsImage Members
+
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress) =>
         throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas) =>
         throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
+
+#endregion
 }

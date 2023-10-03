@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,7 +49,7 @@ public sealed partial class Udif
             return false;
 
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
-        byte[] footerB = new byte[Marshal.SizeOf<Footer>()];
+        var footerB = new byte[Marshal.SizeOf<Footer>()];
 
         stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
@@ -57,11 +59,13 @@ public sealed partial class Udif
 
         // Old UDIF as created by DiskCopy 6.5 using "OBSOLETE" format. (DiskCopy 5 rumored format?)
         stream.Seek(0, SeekOrigin.Begin);
-        byte[] headerB = new byte[Marshal.SizeOf<Footer>()];
+        var headerB = new byte[Marshal.SizeOf<Footer>()];
 
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(headerB);
 
         return _footer.signature == UDIF_SIGNATURE;
     }
+
+#endregion
 }

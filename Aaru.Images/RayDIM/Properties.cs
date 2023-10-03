@@ -41,22 +41,32 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public string Name => "Ray Arachelian's Disk IMage";
+
     /// <inheritdoc />
     public Guid Id => new("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Ray Arachelian's Disk IMage";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -72,16 +82,19 @@ public sealed partial class RayDim
         MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525,
         MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".dim"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".dim" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

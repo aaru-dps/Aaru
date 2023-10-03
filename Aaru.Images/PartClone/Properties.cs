@@ -39,18 +39,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public string Name => Localization.PartClone_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "PartClone";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow
 {
+#region Nested type: Header
+
     /// <summary>QCOW header, big-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -65,4 +67,6 @@ public sealed partial class Qcow
         /// <summary>Offset to L1 table</summary>
         public ulong l1_table_offset;
     }
+
+#endregion
 }

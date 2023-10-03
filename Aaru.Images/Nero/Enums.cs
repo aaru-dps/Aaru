@@ -38,15 +38,28 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Nero
 {
+#region Nested type: DaoMode
+
     enum DaoMode : ushort
     {
-        Data         = 0x0000, DataM2F1   = 0x0002, DataM2F2 = 0x0003,
-        DataRaw      = 0x0005, DataM2Raw  = 0x0006, Audio    = 0x0007,
-        AudioAlt     = 0x0008, DataRawSub = 0x000F, AudioSub = 0x0010,
+        Data         = 0x0000,
+        DataM2F1     = 0x0002,
+        DataM2F2     = 0x0003,
+        DataRaw      = 0x0005,
+        DataM2Raw    = 0x0006,
+        Audio        = 0x0007,
+        AudioAlt     = 0x0008,
+        DataRawSub   = 0x000F,
+        AudioSub     = 0x0010,
         DataM2RawSub = 0x0011
     }
 
-    [Flags, SuppressMessage("ReSharper", "InconsistentNaming")]
+#endregion
+
+#region Nested type: NeroMediaTypes
+
+    [Flags]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum NeroMediaTypes : uint
     {
         /// <summary>No media</summary>
@@ -132,4 +145,6 @@ public sealed partial class Nero
         /// <summary>Any DVD, old</summary>
         NeroMtypDvdAnyOld = NeroMtypDvdM | NeroMtypDvdP | NeroMtypDvdRam
     }
+
+#endregion
 }

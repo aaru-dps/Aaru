@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading Dreamcast GDI disc images</summary>
 public sealed partial class Gdi : IOpticalMediaImage
 {
+    const string MODULE_NAME = "GDI plugin";
     ulong        _densitySeparationSectors;
     GdiDisc      _discImage;
     StreamReader _gdiStream;
@@ -74,6 +75,4 @@ public sealed partial class Gdi : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "GDI plugin";
 }

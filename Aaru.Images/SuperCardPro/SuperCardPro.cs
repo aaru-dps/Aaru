@@ -43,11 +43,12 @@ namespace Aaru.DiscImages;
 public sealed partial class SuperCardPro : IFluxImage, IMediaImage, IWritableImage, IVerifiableImage,
                                            IVerifiableSectorsImage, IWritableFluxImage
 {
-    ImageInfo  _imageInfo;
-    Stream     _scpStream;
-    IFilter    _scpFilter;
-    FileStream _writingStream;
-    uint       _trackOffset;
+    const string MODULE_NAME = "SuperCardPro plugin";
+    ImageInfo    _imageInfo;
+    IFilter      _scpFilter;
+    Stream       _scpStream;
+    uint         _trackOffset;
+    FileStream   _writingStream;
 
     // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
     public ScpHeader                     Header;
@@ -76,6 +77,4 @@ public sealed partial class SuperCardPro : IFluxImage, IMediaImage, IWritableIma
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "SuperCardPro plugin";
 }

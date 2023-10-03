@@ -42,6 +42,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Alcohol 120% disk images</summary>
 public sealed partial class Alcohol120 : IWritableOpticalImage
 {
+    const string                            MODULE_NAME = "Alcohol 120% plugin";
     Footer                                  _alcFooter;
     IFilter                                 _alcImage;
     Dictionary<int, Session>                _alcSessions;
@@ -84,6 +85,4 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Alcohol 120% plugin";
 }

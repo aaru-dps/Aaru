@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vdi
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,10 +49,12 @@ public sealed partial class Vdi
         if(stream.Length < 512)
             return false;
 
-        byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+        var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
         return _vHdr.magic == VDI_MAGIC;
     }
+
+#endregion
 }

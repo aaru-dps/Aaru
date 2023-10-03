@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Parallels
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
@@ -75,4 +77,6 @@ public sealed partial class Parallels
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

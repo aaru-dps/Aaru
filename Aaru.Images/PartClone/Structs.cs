@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
+#region Nested type: Header
+
     /// <summary>PartClone disk image header, little-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -63,4 +65,6 @@ public sealed partial class PartClone
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
         public readonly byte[] buffer;
     }
+
+#endregion
 }

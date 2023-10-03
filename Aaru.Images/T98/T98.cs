@@ -42,9 +42,10 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing T98 disk images</summary>
 public sealed partial class T98 : IWritableImage
 {
-    ImageInfo  _imageInfo;
-    IFilter    _t98ImageFilter;
-    FileStream _writingStream;
+    const string MODULE_NAME = "T98 plugin";
+    ImageInfo    _imageInfo;
+    IFilter      _t98ImageFilter;
+    FileStream   _writingStream;
 
     public T98() => _imageInfo = new ImageInfo
     {
@@ -69,6 +70,4 @@ public sealed partial class T98 : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "T98 plugin";
 }

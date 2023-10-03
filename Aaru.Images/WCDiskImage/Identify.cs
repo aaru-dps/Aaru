@@ -40,6 +40,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class WCDiskImage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -49,7 +51,7 @@ public sealed partial class WCDiskImage
         if(stream.Length < 32)
             return false;
 
-        byte[] header = new byte[32];
+        var header = new byte[32];
         stream.EnsureRead(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
@@ -81,4 +83,6 @@ public sealed partial class WCDiskImage
         // For now, having a valid header will suffice.
         return ((byte)fheader.extraFlags & ~0x03) == 0;
     }
+
+#endregion
 }

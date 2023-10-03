@@ -45,9 +45,88 @@ namespace Aaru.DiscImages;
 
 public sealed partial class A2R
 {
+#region IWritableFluxImage Members
+
+    /// <inheritdoc />
+    public ErrorNumber WriteFluxCapture(ulong  indexResolution, ulong dataResolution, byte[] indexBuffer,
+                                        byte[] dataBuffer, uint head, ushort track, byte subTrack, uint captureIndex)
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
+
+            return ErrorNumber.WriteError;
+        }
+
+        // An RWCP chunk can only have one capture resolution. If the resolution changes we need to create a new chunk.
+        if(_currentResolution != dataResolution)
+        {
+            if(IsWritingRwcps)
+            {
+                CloseRwcpChunk();
+
+                _writingStream.Seek(_currentRwcpStart, SeekOrigin.Begin);
+                WriteRwcpHeader();
+
+                _currentRwcpStart     = _writingStream.Length;
+                _currentCaptureOffset = 16;
+            }
+
+            IsWritingRwcps = true;
+
+            _currentResolution = (uint)dataResolution;
+        }
+
+        _writingStream.Seek(_currentRwcpStart + _currentCaptureOffset + Marshal.SizeOf<ChunkHeader>(),
+                            SeekOrigin.Begin);
+
+        _writingStream.WriteByte(0x43);
+
+        _writingStream.WriteByte(IsCaptureTypeTiming(dataResolution, dataBuffer) ? (byte)1 : (byte)3);
+
+        _writingStream.
+            Write(
+                BitConverter.GetBytes((ushort)HeadTrackSubToA2rLocation(head, track, subTrack, _infoChunkV3.driveType)),
+                0, 2);
+
+        List<uint> a2rIndices = FluxRepresentationsToUInt32List(indexBuffer);
+
+        if(a2rIndices[0] == 0)
+            a2rIndices.RemoveAt(0);
+
+        _writingStream.WriteByte((byte)a2rIndices.Count);
+
+        long previousIndex = 0;
+
+        foreach(uint index in a2rIndices)
+        {
+            _writingStream.Write(BitConverter.GetBytes(index + previousIndex), 0, 4);
+            previousIndex += index;
+        }
+
+        _writingStream.Write(BitConverter.GetBytes(dataBuffer.Length), 0, 4);
+        _writingStream.Write(dataBuffer,                               0, dataBuffer.Length);
+
+        _currentCaptureOffset += (uint)(9 + a2rIndices.Count * 4 + dataBuffer.Length);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber WriteFluxIndexCapture(ulong resolution, byte[] index, uint head, ushort track, byte subTrack,
+                                             uint  captureIndex) => ErrorNumber.NoError;
+
+    /// <inheritdoc />
+    public ErrorNumber WriteFluxDataCapture(ulong resolution, byte[] data, uint head, ushort track, byte subTrack,
+                                            uint  captureIndex) => ErrorNumber.NoError;
+
+#endregion
+
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         try
         {
@@ -69,12 +148,12 @@ public sealed partial class A2R
         Header.lineTest    = "\n\r\n"u8.ToArray();
 
         _infoChunkV3.driveType = mediaType switch
-        {
-            MediaType.DOS_525_DS_DD_9 => A2rDriveType.DS_525_40trk,
-            MediaType.Apple32SS       => A2rDriveType.SS_525_40trk_quarterStep,
-            MediaType.Unknown         => A2rDriveType.DS_35_80trk,
-            _                         => _infoChunkV3.driveType
-        };
+                                 {
+                                     MediaType.DOS_525_DS_DD_9 => A2rDriveType.DS_525_40trk,
+                                     MediaType.Apple32SS       => A2rDriveType.SS_525_40trk_quarterStep,
+                                     MediaType.Unknown         => A2rDriveType.DS_35_80trk,
+                                     _                         => _infoChunkV3.driveType
+                                 };
 
         return true;
     }
@@ -134,7 +213,7 @@ public sealed partial class A2R
         _infoChunkV3.hardSectorCount = 0;
 
         Meta.Add("image_date", DateTime.Now.ToString("O"));
-        Meta.Add("title", imageInfo.MediaTitle);
+        Meta.Add("title",      imageInfo.MediaTitle);
 
         return true;
     }
@@ -169,80 +248,10 @@ public sealed partial class A2R
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length) => throw new NotImplementedException();
 
-    /// <inheritdoc />
-    public ErrorNumber WriteFluxCapture(ulong indexResolution, ulong dataResolution, byte[] indexBuffer,
-                                        byte[] dataBuffer, uint head, ushort track, byte subTrack, uint captureIndex)
-    {
-        if(!IsWriting)
-        {
-            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
-
-            return ErrorNumber.WriteError;
-        }
-
-        // An RWCP chunk can only have one capture resolution. If the resolution changes we need to create a new chunk.
-        if(_currentResolution != dataResolution)
-        {
-            if(IsWritingRwcps)
-            {
-                CloseRwcpChunk();
-
-                _writingStream.Seek(_currentRwcpStart, SeekOrigin.Begin);
-                WriteRwcpHeader();
-
-                _currentRwcpStart     = _writingStream.Length;
-                _currentCaptureOffset = 16;
-            }
-
-            IsWritingRwcps = true;
-
-            _currentResolution = (uint)dataResolution;
-        }
-
-        _writingStream.Seek(_currentRwcpStart + _currentCaptureOffset + Marshal.SizeOf<ChunkHeader>(),
-                            SeekOrigin.Begin);
-
-        _writingStream.WriteByte(0x43);
-
-        _writingStream.WriteByte(IsCaptureTypeTiming(dataResolution, dataBuffer) ? (byte)1 : (byte)3);
-
-        _writingStream.
-            Write(BitConverter.GetBytes((ushort)HeadTrackSubToA2rLocation(head, track, subTrack, _infoChunkV3.driveType)),
-                  0, 2);
-
-        List<uint> a2rIndices = FluxRepresentationsToUInt32List(indexBuffer);
-
-        if(a2rIndices[0] == 0)
-            a2rIndices.RemoveAt(0);
-
-        _writingStream.WriteByte((byte)a2rIndices.Count);
-
-        long previousIndex = 0;
-
-        foreach(uint index in a2rIndices)
-        {
-            _writingStream.Write(BitConverter.GetBytes(index + previousIndex), 0, 4);
-            previousIndex += index;
-        }
-
-        _writingStream.Write(BitConverter.GetBytes(dataBuffer.Length), 0, 4);
-        _writingStream.Write(dataBuffer, 0, dataBuffer.Length);
-
-        _currentCaptureOffset += (uint)(9 + (a2rIndices.Count * 4) + dataBuffer.Length);
-
-        return ErrorNumber.NoError;
-    }
-
-    /// <inheritdoc />
-    public ErrorNumber WriteFluxIndexCapture(ulong resolution, byte[] index, uint head, ushort track, byte subTrack,
-                                             uint captureIndex) => ErrorNumber.NoError;
-
-    /// <inheritdoc />
-    public ErrorNumber WriteFluxDataCapture(ulong resolution, byte[] data, uint head, ushort track, byte subTrack,
-                                            uint captureIndex) => ErrorNumber.NoError;
+#endregion
 
     /// <summary>
-    /// writes the header to an RWCP chunk, up to and including the reserved bytes, to stream.
+    ///     writes the header to an RWCP chunk, up to and including the reserved bytes, to stream.
     /// </summary>
     /// <returns></returns>
     ErrorNumber WriteRwcpHeader()
@@ -254,15 +263,12 @@ public sealed partial class A2R
             return ErrorNumber.WriteError;
         }
 
-        _writingStream.Write(_rwcpChunkSignature, 0, 4);
+        _writingStream.Write(_rwcpChunkSignature,                              0, 4);
         _writingStream.Write(BitConverter.GetBytes(_currentCaptureOffset + 1), 0, 4);
         _writingStream.WriteByte(1);
         _writingStream.Write(BitConverter.GetBytes(_currentResolution), 0, 4);
 
-        byte[] reserved =
-        {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
+        byte[] reserved = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         _writingStream.Write(reserved, 0, 11);
 
@@ -270,7 +276,7 @@ public sealed partial class A2R
     }
 
     /// <summary>
-    /// Writes the entire INFO chunk to stream.
+    ///     Writes the entire INFO chunk to stream.
     /// </summary>
     /// <returns></returns>
     ErrorNumber WriteInfoChunk()
@@ -282,7 +288,7 @@ public sealed partial class A2R
             return ErrorNumber.WriteError;
         }
 
-        _writingStream.Write(_infoChunkV3.header.chunkId, 0, 4);
+        _writingStream.Write(_infoChunkV3.header.chunkId,                          0, 4);
         _writingStream.Write(BitConverter.GetBytes(_infoChunkV3.header.chunkSize), 0, 4);
         _writingStream.WriteByte(_infoChunkV3.version);
         _writingStream.Write(_infoChunkV3.creator, 0, 32);
@@ -295,7 +301,7 @@ public sealed partial class A2R
     }
 
     /// <summary>
-    /// Writes the entire META chunk to stream.
+    ///     Writes the entire META chunk to stream.
     /// </summary>
     /// <returns></returns>
     ErrorNumber WriteMetaChunk()
@@ -313,13 +319,13 @@ public sealed partial class A2R
                                                         Aggregate(static (concat, str) => $"{concat}\n{str}") + '\n');
 
         _writingStream.Write(BitConverter.GetBytes((uint)metaString.Length), 0, 4);
-        _writingStream.Write(metaString, 0, metaString.Length);
+        _writingStream.Write(metaString,                                     0, metaString.Length);
 
         return ErrorNumber.NoError;
     }
 
     /// <summary>
-    /// Writes the closing byte to an RWCP chunk signaling its end, to stream.
+    ///     Writes the closing byte to an RWCP chunk signaling its end, to stream.
     /// </summary>
     /// <returns></returns>
     ErrorNumber CloseRwcpChunk()

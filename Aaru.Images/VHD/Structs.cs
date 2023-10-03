@@ -36,6 +36,42 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
+#region Nested type: DynamicDiskHeader
+
+    struct DynamicDiskHeader
+    {
+        /// <summary>Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE" /></summary>
+        public ulong Cookie;
+        /// <summary>Offset 0x08, Offset to next structure on disk image. Currently unused, 0xFFFFFFFF</summary>
+        public ulong DataOffset;
+        /// <summary>Offset 0x10, Offset of the Block Allocation Table (BAT)</summary>
+        public ulong TableOffset;
+        /// <summary>Offset 0x18, Version of this header</summary>
+        public uint HeaderVersion;
+        /// <summary>Offset 0x1C, Maximum entries present in the BAT</summary>
+        public uint MaxTableEntries;
+        /// <summary>Offset 0x20, Size of a block in bytes Should always be a power of two of 512</summary>
+        public uint BlockSize;
+        /// <summary>Offset 0x24, Checksum of this header</summary>
+        public uint Checksum;
+        /// <summary>Offset 0x28, UUID of parent disk image for differencing type</summary>
+        public Guid ParentId;
+        /// <summary>Offset 0x38, Timestamp of parent disk image</summary>
+        public uint ParentTimestamp;
+        /// <summary>Offset 0x3C, Reserved</summary>
+        public uint Reserved;
+        /// <summary>Offset 0x40, 512 bytes UTF-16 of parent disk image filename</summary>
+        public string ParentName;
+        /// <summary>Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry" /></summary>
+        public ParentLocatorEntry[] LocatorEntries;
+        /// <summary>Offset 0x300, 256 reserved bytes</summary>
+        public byte[] Reserved2;
+    }
+
+#endregion
+
+#region Nested type: HardDiskFooter
+
     struct HardDiskFooter
     {
         /// <summary>Offset 0x00, File magic number, <see cref="Vhd.IMAGE_COOKIE" /></summary>
@@ -72,6 +108,10 @@ public sealed partial class Vhd
         public byte[] Reserved;
     }
 
+#endregion
+
+#region Nested type: ParentLocatorEntry
+
     struct ParentLocatorEntry
     {
         /// <summary>Offset 0x00, Describes the platform specific type this entry belongs to</summary>
@@ -86,33 +126,5 @@ public sealed partial class Vhd
         public ulong PlatformDataOffset;
     }
 
-    struct DynamicDiskHeader
-    {
-        /// <summary>Offset 0x00, Header magic, <see cref="Vhd.DYNAMIC_COOKIE" /></summary>
-        public ulong Cookie;
-        /// <summary>Offset 0x08, Offset to next structure on disk image. Currently unused, 0xFFFFFFFF</summary>
-        public ulong DataOffset;
-        /// <summary>Offset 0x10, Offset of the Block Allocation Table (BAT)</summary>
-        public ulong TableOffset;
-        /// <summary>Offset 0x18, Version of this header</summary>
-        public uint HeaderVersion;
-        /// <summary>Offset 0x1C, Maximum entries present in the BAT</summary>
-        public uint MaxTableEntries;
-        /// <summary>Offset 0x20, Size of a block in bytes Should always be a power of two of 512</summary>
-        public uint BlockSize;
-        /// <summary>Offset 0x24, Checksum of this header</summary>
-        public uint Checksum;
-        /// <summary>Offset 0x28, UUID of parent disk image for differencing type</summary>
-        public Guid ParentId;
-        /// <summary>Offset 0x38, Timestamp of parent disk image</summary>
-        public uint ParentTimestamp;
-        /// <summary>Offset 0x3C, Reserved</summary>
-        public uint Reserved;
-        /// <summary>Offset 0x40, 512 bytes UTF-16 of parent disk image filename</summary>
-        public string ParentName;
-        /// <summary>Offset 0x240, Parent disk image locator entry, <see cref="ParentLocatorEntry" /></summary>
-        public ParentLocatorEntry[] LocatorEntries;
-        /// <summary>Offset 0x300, 256 reserved bytes</summary>
-        public byte[] Reserved2;
-    }
+#endregion
 }

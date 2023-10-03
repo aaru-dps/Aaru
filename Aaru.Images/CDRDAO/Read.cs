@@ -48,6 +48,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cdrdao
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -60,7 +62,7 @@ public sealed partial class Cdrdao
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _tocStream = new StreamReader(imageFilter.GetDataForkStream());
-            bool inTrack = false;
+            var inTrack = false;
 
             // Initialize all RegExs
             var regexComment         = new Regex(REGEX_COMMENT);
@@ -108,12 +110,12 @@ public sealed partial class Cdrdao
             currentTrack.Indexes = new Dictionary<int, ulong>();
             currentTrack.Pregap  = 0;
             ulong currentSector  = 0;
-            int   nextIndex      = 2;
+            var   nextIndex      = 2;
             var   commentBuilder = new StringBuilder();
 
             _tocStream = new StreamReader(_cdrdaoFilter.GetDataForkStream());
             string line;
-            int    lineNumber = 0;
+            var    lineNumber = 0;
 
             while(_tocStream.Peek() >= 0)
             {
@@ -196,13 +198,13 @@ public sealed partial class Cdrdao
                     _discimage.Disktypestr = matchDiskType.Groups["type"].Value;
 
                     _discimage.Disktype = matchDiskType.Groups["type"].Value switch
-                    {
-                        "CD_DA"     => MediaType.CDDA,
-                        "CD_ROM"    => MediaType.CDROM,
-                        "CD_ROM_XA" => MediaType.CDROMXA,
-                        "CD_I"      => MediaType.CDI,
-                        _           => MediaType.CD
-                    };
+                                          {
+                                              "CD_DA"     => MediaType.CDDA,
+                                              "CD_ROM"    => MediaType.CDROM,
+                                              "CD_ROM_XA" => MediaType.CDROMXA,
+                                              "CD_I"      => MediaType.CDI,
+                                              _           => MediaType.CD
+                                          };
                 }
                 else if(matchMcn.Success)
                 {
@@ -214,13 +216,17 @@ public sealed partial class Cdrdao
                 else if(matchTrack.Success)
                 {
                     if(matchTrack.Groups["subchan"].Value == "")
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Found_TRACK_type_1_with_no_subchannel_at_line_0,
                                                    lineNumber, matchTrack.Groups["type"].Value);
+                    }
                     else
+                    {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Found_TRACK_type_1_subchannel_2_at_line_0, lineNumber,
                                                    matchTrack.Groups["type"].Value, matchTrack.Groups["subchan"].Value);
+                    }
 
                     if(inTrack)
                     {
@@ -277,7 +283,8 @@ public sealed partial class Cdrdao
 
                     switch(matchTrack.Groups["subchan"].Value)
                     {
-                        case "": break;
+                        case "":
+                            break;
                         case "RW":
                             currentTrack.Packedsubchannel = true;
                             goto case "RW_RAW";
@@ -336,8 +343,8 @@ public sealed partial class Cdrdao
 
                     string[] lengthString = matchFile.Groups["length"].Value.Split(':');
 
-                    ulong nextIndexPos = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                         (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
+                    ulong nextIndexPos = ulong.Parse(lengthString[0]) * 60 * 75 +
+                                         ulong.Parse(lengthString[1]) * 75      + ulong.Parse(lengthString[2]);
 
                     currentTrack.Indexes.Add(nextIndex, nextIndexPos + currentTrack.Pregap + currentTrack.StartSector);
                 }
@@ -352,8 +359,8 @@ public sealed partial class Cdrdao
                     {
                         string[] lengthString = matchPregap.Groups["address"].Value.Split(':');
 
-                        currentTrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                              (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
+                        currentTrack.Pregap = ulong.Parse(lengthString[0]) * 60 * 75 +
+                                              ulong.Parse(lengthString[1]) * 75      + ulong.Parse(lengthString[2]);
                     }
                     else
                         currentTrack.Pregap = currentTrack.Sectors;
@@ -366,15 +373,19 @@ public sealed partial class Cdrdao
                     currentTrack.Indexes.Add(0, currentTrack.StartSector);
                     string[] lengthString = matchZeroPregap.Groups["length"].Value.Split(':');
 
-                    currentTrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                          (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
+                    currentTrack.Pregap = ulong.Parse(lengthString[0]) * 60 * 75 +
+                                          ulong.Parse(lengthString[1]) * 75      + ulong.Parse(lengthString[2]);
                 }
                 else if(matchZeroData.Success)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_ZERO_1_at_line_0, lineNumber,
                                                matchZeroData.Groups["length"].Value);
+                }
                 else if(matchZeroAudio.Success)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_SILENCE_1_at_line_0, lineNumber,
                                                matchZeroAudio.Groups["length"].Value);
+                }
                 else
                 {
                     FiltersList filtersList;
@@ -393,7 +404,8 @@ public sealed partial class Cdrdao
                                                                    matchAudioFile.Groups["filename"].Value)),
                             Datafile = matchAudioFile.Groups["filename"].Value,
                             Offset = matchAudioFile.Groups["base_offset"].Value != ""
-                                         ? ulong.Parse(matchAudioFile.Groups["base_offset"].Value) : 0,
+                                         ? ulong.Parse(matchAudioFile.Groups["base_offset"].Value)
+                                         : 0,
                             Filetype = "BINARY",
                             Sequence = currentTrackNumber
                         };
@@ -404,8 +416,8 @@ public sealed partial class Cdrdao
                         {
                             string[] startString = matchAudioFile.Groups["start"].Value.Split(':');
 
-                            startSectors = (ulong.Parse(startString[0]) * 60 * 75) +
-                                           (ulong.Parse(startString[1]) * 75)      + ulong.Parse(startString[2]);
+                            startSectors = ulong.Parse(startString[0]) * 60 * 75 +
+                                           ulong.Parse(startString[1]) * 75      + ulong.Parse(startString[2]);
                         }
 
                         currentTrack.Trackfile.Offset += startSectors * currentTrack.Bps;
@@ -414,13 +426,15 @@ public sealed partial class Cdrdao
                         {
                             string[] lengthString = matchAudioFile.Groups["length"].Value.Split(':');
 
-                            currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                                   (ulong.Parse(lengthString[1]) * 75) + ulong.Parse(lengthString[2]);
+                            currentTrack.Sectors = ulong.Parse(lengthString[0]) * 60 * 75 +
+                                                   ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         }
                         else
+                        {
                             currentTrack.Sectors =
                                 ((ulong)currentTrack.Trackfile.Datafilter.DataForkLength -
                                  currentTrack.Trackfile.Offset) / currentTrack.Bps;
+                        }
                     }
                     else if(matchFile.Success)
                     {
@@ -436,7 +450,8 @@ public sealed partial class Cdrdao
                                                                    matchFile.Groups["filename"].Value)),
                             Datafile = matchAudioFile.Groups["filename"].Value,
                             Offset = matchFile.Groups["base_offset"].Value != ""
-                                         ? ulong.Parse(matchFile.Groups["base_offset"].Value) : 0,
+                                         ? ulong.Parse(matchFile.Groups["base_offset"].Value)
+                                         : 0,
                             Filetype = "BINARY",
                             Sequence = currentTrackNumber
                         };
@@ -445,13 +460,15 @@ public sealed partial class Cdrdao
                         {
                             string[] lengthString = matchFile.Groups["length"].Value.Split(':');
 
-                            currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                                   (ulong.Parse(lengthString[1]) * 75) + ulong.Parse(lengthString[2]);
+                            currentTrack.Sectors = ulong.Parse(lengthString[0]) * 60 * 75 +
+                                                   ulong.Parse(lengthString[1]) * 75 + ulong.Parse(lengthString[2]);
                         }
                         else
+                        {
                             currentTrack.Sectors =
                                 ((ulong)currentTrack.Trackfile.Datafilter.DataForkLength -
                                  currentTrack.Trackfile.Offset) / currentTrack.Bps;
+                        }
                     }
                     else if(matchTitle.Success)
                     {
@@ -618,7 +635,7 @@ public sealed partial class Cdrdao
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Disc_contains_0_tracks,
                                        _discimage.Tracks.Count);
 
-            for(int i = 0; i < _discimage.Tracks.Count; i++)
+            for(var i = 0; i < _discimage.Tracks.Count; i++)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_0_information,
                                            _discimage.Tracks[i].Sequence);
@@ -654,44 +671,58 @@ public sealed partial class Cdrdao
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Indexes);
 
                 foreach(KeyValuePair<int, ulong> kvp in _discimage.Tracks[i].Indexes)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t\t" + Localization.Index_0_starts_at_sector_1,
                                                kvp.Key, kvp.Value);
+                }
 
                 if(_discimage.Tracks[i].Isrc == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.ISRC_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.ISRC_0,
                                                _discimage.Tracks[i].Isrc);
+                }
 
                 if(_discimage.Tracks[i].Arranger == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Arranger_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Arranger_0,
                                                _discimage.Tracks[i].Arranger);
+                }
 
                 if(_discimage.Tracks[i].Composer == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Composer_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Composer_0,
                                                _discimage.Tracks[i].Composer);
+                }
 
                 if(_discimage.Tracks[i].Performer == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Performer_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Performer_0,
                                                _discimage.Tracks[i].Performer);
+                }
 
                 if(_discimage.Tracks[i].Songwriter == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Songwriter_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Songwriter_0,
                                                _discimage.Tracks[i].Songwriter);
+                }
 
                 if(_discimage.Tracks[i].Title == null)
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Title_is_not_set);
                 else
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Title_0,
                                                _discimage.Tracks[i].Title);
+                }
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_offset_map);
@@ -702,7 +733,7 @@ public sealed partial class Cdrdao
             ulong byteOffset        = 0;
             ulong partitionSequence = 0;
 
-            for(int i = 0; i < _discimage.Tracks.Count; i++)
+            for(var i = 0; i < _discimage.Tracks.Count; i++)
             {
                 if(_discimage.Tracks[i].Sequence == 1 &&
                    i                             != 0)
@@ -749,7 +780,7 @@ public sealed partial class Cdrdao
 
             foreach(Partition partition in Partitions)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, partition.Sequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0,    partition.Sequence);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_name_0, partition.Name);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0,
@@ -804,8 +835,10 @@ public sealed partial class Cdrdao
             foreach(CdrdaoTrack track in _discimage.Tracks)
             {
                 if(track.Subchannel)
+                {
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                }
 
                 switch(track.Tracktype)
                 {
@@ -885,7 +918,7 @@ public sealed partial class Cdrdao
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0, ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -907,7 +940,8 @@ public sealed partial class Cdrdao
 
                 return ErrorNumber.NoError;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
     }
 
@@ -931,10 +965,12 @@ public sealed partial class Cdrdao
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrdaoTrack in _discimage.Tracks
                                                  where cdrdaoTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -945,10 +981,12 @@ public sealed partial class Cdrdao
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrdaoTrack in _discimage.Tracks
                                                  where cdrdaoTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                 select kvp)
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -980,7 +1018,7 @@ public sealed partial class Cdrdao
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
-        bool mode2 = false;
+        var  mode2 = false;
 
         switch(aaruTrack.Tracktype)
         {
@@ -1036,7 +1074,8 @@ public sealed partial class Cdrdao
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         if(aaruTrack.Subchannel)
@@ -1057,9 +1096,9 @@ public sealed partial class Cdrdao
 
             buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
-            for(int i = 0; i < length; i++)
+            for(var i = 0; i < length; i++)
             {
-                byte[] sector = new byte[sectorSize];
+                var sector = new byte[sectorSize];
                 Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                 sector = Sector.GetUserDataFromMode2(sector);
                 mode2Ms.Write(sector, 0, sector.Length);
@@ -1071,19 +1110,21 @@ public sealed partial class Cdrdao
                 sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         // cdrdao audio tracks are endian swapped corresponding to Aaru
         if(aaruTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO)
             return ErrorNumber.NoError;
 
-        byte[] swapped = new byte[buffer.Length];
+        var swapped = new byte[buffer.Length];
 
         for(long i = 0; i < buffer.Length; i += 2)
         {
@@ -1097,7 +1138,7 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
@@ -1140,7 +1181,8 @@ public sealed partial class Cdrdao
             case SectorTagType.CdSectorHeader:
             case SectorTagType.CdSectorSubchannel:
             case SectorTagType.CdSectorSubHeader:
-            case SectorTagType.CdSectorSync: break;
+            case SectorTagType.CdSectorSync:
+                break;
             case SectorTagType.CdTrackFlags:
             {
                 CdFlags flags = 0;
@@ -1157,10 +1199,7 @@ public sealed partial class Cdrdao
                 if(aaruTrack.Flag4Ch)
                     flags |= CdFlags.FourChannel;
 
-                buffer = new[]
-                {
-                    (byte)flags
-                };
+                buffer = new[] { (byte)flags };
 
                 return ErrorNumber.NoError;
             }
@@ -1171,7 +1210,8 @@ public sealed partial class Cdrdao
                 buffer = Encoding.UTF8.GetBytes(aaruTrack.Isrc);
 
                 return ErrorNumber.NoError;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         switch(aaruTrack.Tracktype)
@@ -1229,7 +1269,8 @@ public sealed partial class Cdrdao
 
                         break;
                     }
-                    case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
+                    case SectorTagType.CdSectorSubHeader:
+                        return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorEcc:
                     {
                         sectorOffset = 2076;
@@ -1274,7 +1315,8 @@ public sealed partial class Cdrdao
                 sectorSize   = 96;
 
                 break;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
@@ -1290,13 +1332,15 @@ public sealed partial class Cdrdao
            sectorSkip   == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
                 br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         return ErrorNumber.NoError;
     }
@@ -1314,10 +1358,12 @@ public sealed partial class Cdrdao
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap
+                                                 where sectorAddress >= kvp.Value
                                                  from cdrdaoTrack in _discimage.Tracks
                                                  where cdrdaoTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
+                                                 where sectorAddress - kvp.Value < cdrdaoTrack.Sectors
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -1388,7 +1434,8 @@ public sealed partial class Cdrdao
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         if(aaruTrack.Subchannel)
@@ -1405,7 +1452,8 @@ public sealed partial class Cdrdao
         if(sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
-            for(int i = 0; i < length; i++)
+        {
+            for(var i = 0; i < length; i++)
             {
                 br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                 byte[] sector = br.ReadBytes((int)sectorSize);
@@ -1413,13 +1461,14 @@ public sealed partial class Cdrdao
 
                 Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
+        }
 
         switch(aaruTrack.Tracktype)
         {
             case CDRDAO_TRACK_TYPE_MODE1:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -1435,8 +1484,8 @@ public sealed partial class Cdrdao
             }
             case CDRDAO_TRACK_TYPE_MODE2_FORM1:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -1454,8 +1503,8 @@ public sealed partial class Cdrdao
             }
             case CDRDAO_TRACK_TYPE_MODE2_FORM2:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -1474,16 +1523,16 @@ public sealed partial class Cdrdao
             case CDRDAO_TRACK_TYPE_MODE2:
             case CDRDAO_TRACK_TYPE_MODE2_MIX:
             {
-                byte[] fullSector = new byte[2352];
-                byte[] fullBuffer = new byte[2352 * length];
+                var fullSector = new byte[2352];
+                var fullBuffer = new byte[2352 * length];
 
                 for(uint i = 0; i < length; i++)
                 {
                     _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
                                                      (long)(sectorAddress + i));
 
-                    Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
-                    Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    Array.Copy(buffer,     i * 2336, fullSector, 16,       2336);
+                    Array.Copy(fullSector, 0,        fullBuffer, i * 2352, 2352);
                 }
 
                 buffer = fullBuffer;
@@ -1494,7 +1543,7 @@ public sealed partial class Cdrdao
             // cdrdao audio tracks are endian swapped corresponding to Aaru
             case CDRDAO_TRACK_TYPE_AUDIO:
             {
-                byte[] swapped = new byte[buffer.Length];
+                var swapped = new byte[buffer.Length];
 
                 for(long i = 0; i < buffer.Length; i += 2)
                 {
@@ -1516,4 +1565,6 @@ public sealed partial class Cdrdao
 
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session) => session == 1 ? Tracks : null;
+
+#endregion
 }

@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -59,4 +61,6 @@ public sealed partial class Dim
 
         return _headerId.SequenceEqual(_hdrId);
     }
+
+#endregion
 }

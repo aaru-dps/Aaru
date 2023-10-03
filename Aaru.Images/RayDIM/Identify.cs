@@ -40,6 +40,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,7 +50,7 @@ public sealed partial class RayDim
         if(stream.Length < Marshal.SizeOf<Header>())
             return false;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Header>()];
+        var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -57,8 +59,8 @@ public sealed partial class RayDim
         string signature = StringHandlers.CToString(header.signature);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = {0}", signature);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskType = {0}", header.diskType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}", header.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskType = {0}",  header.diskType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.heads = {0}",     header.heads);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.cylinders = {0}", header.cylinders);
 
@@ -72,4 +74,6 @@ public sealed partial class RayDim
 
         return sm.Success;
     }
+
+#endregion
 }

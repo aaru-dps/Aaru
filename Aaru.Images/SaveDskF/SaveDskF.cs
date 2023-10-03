@@ -42,11 +42,12 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing IBM's SaveDskF disk images</summary>
 public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
 {
-    uint       _calculatedChk;
-    byte[]     _decodedDisk;
-    Header     _header;
-    ImageInfo  _imageInfo;
-    FileStream _writingStream;
+    const string MODULE_NAME = "SaveDskF plugin";
+    uint         _calculatedChk;
+    byte[]       _decodedDisk;
+    Header       _header;
+    ImageInfo    _imageInfo;
+    FileStream   _writingStream;
 
     public SaveDskF() => _imageInfo = new ImageInfo
     {
@@ -71,6 +72,4 @@ public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "SaveDskF plugin";
 }

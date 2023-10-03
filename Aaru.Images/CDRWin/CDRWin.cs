@@ -44,6 +44,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>
 public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
 {
+    const string MODULE_NAME = "CDRWin plugin";
     IFilter      _cdrwinFilter;
     StreamReader _cueStream;
     StreamWriter _descriptorStream;
@@ -83,6 +84,4 @@ public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CDRWin plugin";
 }

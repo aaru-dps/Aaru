@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class A2R
 {
+#region IFluxImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,10 +50,12 @@ public sealed partial class A2R
         if(stream.Length < 8)
             return false;
 
-        byte[] hdr = new byte[4];
+        var hdr = new byte[4];
 
         stream.EnsureRead(hdr, 0, 4);
 
         return _a2rV2Signature.SequenceEqual(hdr) || _a2rV3Signature.SequenceEqual(hdr);
     }
+
+#endregion
 }

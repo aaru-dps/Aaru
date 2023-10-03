@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -48,4 +50,6 @@ public sealed partial class MaxiDisk
         public readonly byte unknown2;
         public readonly byte unknown3;
     }
+
+#endregion
 }

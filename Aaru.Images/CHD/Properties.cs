@@ -42,14 +42,20 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Chd
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.Chd_Name;
+
     /// <inheritdoc />
     public Guid Id => new("0D50233A-08BD-47D4-988B-27EAA0358597");
+
     /// <inheritdoc />
     public string Format => "Compressed Hunks of Data";
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -74,6 +80,9 @@ public sealed partial class Chd
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

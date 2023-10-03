@@ -42,6 +42,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class UkvFdi
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -51,20 +53,20 @@ public sealed partial class UkvFdi
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.addInfoLen = {0}", hdr.addInfoLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.cylinders = {0}", hdr.cylinders);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.dataOff = {0}", hdr.dataOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.descOff = {0}", hdr.descOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.flags = {0}", hdr.flags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.heads = {0}", hdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.cylinders = {0}",  hdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.dataOff = {0}",    hdr.dataOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.descOff = {0}",    hdr.descOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.flags = {0}",      hdr.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.heads = {0}",      hdr.heads);
 
         stream.Seek(hdr.descOff, SeekOrigin.Begin);
-        byte[] description = new byte[hdr.dataOff - hdr.descOff];
+        var description = new byte[hdr.dataOff - hdr.descOff];
         stream.EnsureRead(description, 0, description.Length);
         _imageInfo.Comments = StringHandlers.CToString(description);
 
@@ -72,8 +74,8 @@ public sealed partial class UkvFdi
 
         stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
-        long       spt        = long.MaxValue;
-        uint[][][] sectorsOff = new uint[hdr.cylinders][][];
+        long spt        = long.MaxValue;
+        var  sectorsOff = new uint[hdr.cylinders][][];
         _sectorsData = new byte[hdr.cylinders][][][];
 
         _imageInfo.Cylinders = hdr.cylinders;
@@ -87,16 +89,16 @@ public sealed partial class UkvFdi
 
             for(ushort head = 0; head < hdr.heads; head++)
             {
-                byte[] sctB = new byte[4];
+                var sctB = new byte[4];
                 stream.EnsureRead(sctB, 0, 4);
                 stream.Seek(2, SeekOrigin.Current);
-                byte sectors = (byte)stream.ReadByte();
-                uint trkOff  = BitConverter.ToUInt32(sctB, 0);
+                var sectors = (byte)stream.ReadByte();
+                var trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.c = {0}", cyl);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.h = {0}", head);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.c = {0}",       cyl);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.h = {0}",       head);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.sectors = {0}", sectors);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.off = {0}", trkOff);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trkhdr.off = {0}",     trkOff);
 
                 sectorsOff[cyl][head]   = new uint[sectors];
                 _sectorsData[cyl][head] = new byte[sectors][];
@@ -107,20 +109,20 @@ public sealed partial class UkvFdi
 
                 for(ushort sec = 0; sec < sectors; sec++)
                 {
-                    byte   c    = (byte)stream.ReadByte();
-                    byte   h    = (byte)stream.ReadByte();
-                    byte   r    = (byte)stream.ReadByte();
-                    byte   n    = (byte)stream.ReadByte();
-                    var    f    = (SectorFlags)stream.ReadByte();
-                    byte[] offB = new byte[2];
+                    var c    = (byte)stream.ReadByte();
+                    var h    = (byte)stream.ReadByte();
+                    var r    = (byte)stream.ReadByte();
+                    var n    = (byte)stream.ReadByte();
+                    var f    = (SectorFlags)stream.ReadByte();
+                    var offB = new byte[2];
                     stream.EnsureRead(offB, 0, 2);
-                    ushort secOff = BitConverter.ToUInt16(offB, 0);
+                    var secOff = BitConverter.ToUInt16(offB, 0);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.c = {0}", c);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.h = {0}", h);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.r = {0}", r);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.c = {0}",       c);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.h = {0}",       h);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.r = {0}",       r);
                     AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.n = {0} ({1})", n, 128 << n);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.f = {0}", f);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.f = {0}",       f);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.off = {0} ({1})", secOff,
                                                secOff + trkOff + hdr.dataOff);
@@ -138,7 +140,7 @@ public sealed partial class UkvFdi
         // Read sectors
         for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
         {
-            bool emptyCyl = false;
+            var emptyCyl = false;
 
             for(ushort head = 0; head < hdr.heads; head++)
             {
@@ -163,7 +165,7 @@ public sealed partial class UkvFdi
                 {
                     _sectorsData[cyl][head] = new byte[spt][];
 
-                    for(int i = 0; i < spt; i++)
+                    for(var i = 0; i < spt; i++)
                         _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
                 }
             }
@@ -232,4 +234,6 @@ public sealed partial class UkvFdi
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

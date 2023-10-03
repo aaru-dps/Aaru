@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -59,4 +61,6 @@ public sealed partial class Cpcdsk
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

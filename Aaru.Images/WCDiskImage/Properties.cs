@@ -40,19 +40,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class WCDiskImage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.WCDiskImage_Name;
+
     /// <inheritdoc />
     public Guid Id => new("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
+
     /// <inheritdoc />
     public string Author => Authors.MichaelDruing;
+
     /// <inheritdoc />
     public string Format => Localization.WCDiskImage_Name;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

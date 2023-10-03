@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiskDupe
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -50,4 +52,6 @@ public sealed partial class DiskDupe
         // For now, having a valid header should be sufficient.
         return TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets);
     }
+
+#endregion
 }

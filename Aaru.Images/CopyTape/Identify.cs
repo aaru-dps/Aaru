@@ -40,13 +40,15 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CopyTape
 {
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         if(imageFilter.DataForkLength <= 16)
             return false;
 
-        byte[] header = new byte[16];
+        var header = new byte[16];
 
         Stream strm = imageFilter.GetDataForkStream();
         strm.Position = 0;
@@ -78,4 +80,6 @@ public sealed partial class CopyTape
 
         return newLine == 0x0A;
     }
+
+#endregion
 }

@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing CloneCD disc images</summary>
 public sealed partial class CloneCd : IWritableOpticalImage
 {
+    const string            MODULE_NAME = "CloneCD plugin";
     string                  _catalog; // TODO: Use it
     IFilter                 _ccdFilter;
     byte[]                  _cdtext;
@@ -79,6 +80,4 @@ public sealed partial class CloneCd : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CloneCD plugin";
 }

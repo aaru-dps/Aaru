@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,13 +50,15 @@ public sealed partial class Qcow2
         if(stream.Length < 512)
             return false;
 
-        byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
+        var qHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.magic = 0x{0:X8}", _qHdr.magic);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.version = {0}", _qHdr.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.version = {0}",    _qHdr.version);
 
         return _qHdr is { magic: QCOW_MAGIC, version: QCOW_VERSION2 or QCOW_VERSION3 };
     }
+
+#endregion
 }

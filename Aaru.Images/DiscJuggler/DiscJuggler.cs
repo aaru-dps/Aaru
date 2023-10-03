@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading DiscJuggler disc images</summary>
 public sealed partial class DiscJuggler : IOpticalMediaImage
 {
+    const string            MODULE_NAME = "DiscJuggler plugin";
     byte[]                  _cdtext;
     ImageInfo               _imageInfo;
     Stream                  _imageStream;
@@ -73,6 +74,4 @@ public sealed partial class DiscJuggler : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "DiscJuggler plugin";
 }

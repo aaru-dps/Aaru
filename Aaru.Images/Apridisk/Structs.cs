@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Apridisk
 {
+#region Nested type: Record
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Record
     {
@@ -47,4 +49,6 @@ public sealed partial class Apridisk
         public byte         sector;
         public ushort       cylinder;
     }
+
+#endregion
 }

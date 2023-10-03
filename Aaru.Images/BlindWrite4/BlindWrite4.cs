@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading BlindWrite 4 disc images</summary>
 public sealed partial class BlindWrite4 : IOpticalMediaImage
 {
+    const string            MODULE_NAME = "BlindWrite4 plugin";
     List<TrackDescriptor>   _bwTracks;
     IFilter                 _dataFilter, _subFilter;
     Header                  _header;
@@ -71,6 +72,4 @@ public sealed partial class BlindWrite4 : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "BlindWrite4 plugin";
 }

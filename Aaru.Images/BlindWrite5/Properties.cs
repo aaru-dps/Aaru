@@ -41,15 +41,20 @@ namespace Aaru.DiscImages;
 
 public sealed partial class BlindWrite5
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.BlindWrite5_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "BlindWrite 5 TOC file";
 
@@ -64,6 +69,9 @@ public sealed partial class BlindWrite5
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
+#endregion
 }

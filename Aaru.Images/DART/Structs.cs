@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dart
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -43,4 +45,6 @@ public sealed partial class Dart
         public readonly byte  srcType;
         public readonly short srcSize;
     }
+
+#endregion
 }

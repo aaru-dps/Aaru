@@ -41,6 +41,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Nhdr0
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -53,7 +55,7 @@ public sealed partial class Nhdr0
         if(stream.Length < Marshal.SizeOf<Header>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
@@ -95,10 +97,12 @@ public sealed partial class Nhdr0
 
         Stream stream = _nhdImageFilter.GetDataForkStream();
 
-        stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+        stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
         stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

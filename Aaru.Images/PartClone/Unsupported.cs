@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
@@ -75,4 +77,6 @@ public sealed partial class PartClone
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

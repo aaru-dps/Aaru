@@ -39,14 +39,6 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class DiskDupe
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct DiskType
-    {
-        public byte cyl;
-        public byte hd;
-        public byte spt;
-    }
-
     readonly DiskType[] _diskTypes =
     {
         new()
@@ -81,16 +73,19 @@ public sealed partial class DiskDupe
         } // Type 4 - 1.44m
     };
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TrackInfo
+#region Nested type: DiskType
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct DiskType
     {
-        public readonly byte present; // 1 = present, 0 = absent
-        public readonly byte trackNumber;
-        public readonly byte zero1;
-        public readonly byte zero2;
-        public readonly byte zero3;
-        public readonly byte unknown; // always 1?
+        public byte cyl;
+        public byte hd;
+        public byte spt;
     }
+
+#endregion
+
+#region Nested type: FileHeader
 
     /// <summary>The global header of a DDI image file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -103,4 +98,21 @@ public sealed partial class DiskDupe
         /// <summary>Disk type</summary>
         public byte diskType;
     }
+
+#endregion
+
+#region Nested type: TrackInfo
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TrackInfo
+    {
+        public readonly byte present; // 1 = present, 0 = absent
+        public readonly byte trackNumber;
+        public readonly byte zero1;
+        public readonly byte zero2;
+        public readonly byte zero3;
+        public readonly byte unknown; // always 1?
+    }
+
+#endregion
 }

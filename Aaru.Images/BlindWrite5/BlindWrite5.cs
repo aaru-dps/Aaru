@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading BlindWrite 5/6/7 disc images</summary>
 public sealed partial class BlindWrite5 : IOpticalMediaImage
 {
+    const string                  MODULE_NAME = "BlindWrite5 plugin";
     byte[]                        _atip;
     byte[]                        _bca;
     List<SessionDescriptor>       _bwSessions;
@@ -84,6 +85,4 @@ public sealed partial class BlindWrite5 : IOpticalMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "BlindWrite5 plugin";
 }

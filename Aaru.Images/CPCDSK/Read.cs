@@ -47,6 +47,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Cpcdsk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -56,15 +58,17 @@ public sealed partial class Cpcdsk
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] headerB = new byte[256];
+        var headerB = new byte[256];
         stream.EnsureRead(headerB, 0, 256);
 
         int pos;
 
         for(pos = 0; pos < 254; pos++)
+        {
             if(headerB[pos]     == 0x0D &&
                headerB[pos + 1] == 0x0A)
                 break;
+        }
 
         if(pos >= 254)
             return ErrorNumber.InvalidArgument;
@@ -77,8 +81,8 @@ public sealed partial class Cpcdsk
         DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
         if(string.Compare(CPCDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
-           string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0 &&
-           string.Compare(DU54_ID, magic, StringComparison.InvariantCultureIgnoreCase)   != 0)
+           string.Compare(EDSK_ID,   magic, StringComparison.InvariantCultureIgnoreCase) != 0 &&
+           string.Compare(DU54_ID,   magic, StringComparison.InvariantCultureIgnoreCase) != 0)
             return ErrorNumber.InvalidArgument;
 
         _extended = string.Compare(EDSK_ID, magic, StringComparison.InvariantCultureIgnoreCase) == 0;
@@ -92,39 +96,43 @@ public sealed partial class Cpcdsk
                                    StringHandlers.CToString(header.creator));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.tracks = {0}", header.tracks);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = {0}", header.sides);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = {0}",  header.sides);
 
         if(!_extended)
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.tracksize = {0}", header.tracksize);
         else
-            for(int i = 0; i < header.tracks; i++)
+        {
+            for(var i = 0; i < header.tracks; i++)
             {
-                for(int j = 0; j < header.sides; j++)
+                for(var j = 0; j < header.sides; j++)
+                {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_0_Side_1_size_equals_2, i, j,
-                                               header.tracksizeTable[(i * header.sides) + j] * 256);
+                                               header.tracksizeTable[i * header.sides + j] * 256);
+                }
             }
+        }
 
         ulong currentSector = 0;
         _sectors      = new Dictionary<ulong, byte[]>();
         _addressMarks = new Dictionary<ulong, byte[]>();
         ulong readtracks        = 0;
-        bool  allTracksSameSize = true;
+        var   allTracksSameSize = true;
         ulong sectorsPerTrack   = 0;
 
         // Seek to first track descriptor
         stream.Seek(256, SeekOrigin.Begin);
 
-        for(int i = 0; i < header.tracks; i++)
+        for(var i = 0; i < header.tracks; i++)
         {
-            for(int j = 0; j < header.sides; j++)
+            for(var j = 0; j < header.sides; j++)
             {
                 // Track not stored in image
-                if(_extended && header.tracksizeTable[(i * header.sides) + j] == 0)
+                if(_extended && header.tracksizeTable[i * header.sides + j] == 0)
                     continue;
 
                 long trackPos = stream.Position;
 
-                byte[] trackB = new byte[256];
+                var trackB = new byte[256];
                 stream.EnsureRead(trackB, 0, 256);
                 TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
@@ -164,15 +172,17 @@ public sealed partial class Cpcdsk
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
                 if(trackInfo.sectors != sectorsPerTrack)
+                {
                     if(sectorsPerTrack == 0)
                         sectorsPerTrack = trackInfo.sectors;
                     else
                         allTracksSameSize = false;
+                }
 
                 Dictionary<int, byte[]> thisTrackSectors      = new();
                 Dictionary<int, byte[]> thisTrackAddressMarks = new();
 
-                for(int k = 1; k <= trackInfo.sectors; k++)
+                for(var k = 1; k <= trackInfo.sectors; k++)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
                                                trackInfo.sectorsInfo[k - 1].id, i, j, k);
@@ -195,28 +205,29 @@ public sealed partial class Cpcdsk
                     AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].track = {0}",
                                                trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
-                    int sectLen = _extended ? trackInfo.sectorsInfo[k - 1].len
+                    int sectLen = _extended
+                                      ? trackInfo.sectorsInfo[k - 1].len
                                       : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
-                    byte[] sector = new byte[sectLen];
+                    var sector = new byte[sectLen];
                     stream.EnsureRead(sector, 0, sectLen);
 
                     if(sectLen < SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size))
                     {
-                        byte[] temp = new byte[SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size)];
+                        var temp = new byte[SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size)];
                         Array.Copy(sector, 0, temp, 0, sector.Length);
                         sector = temp;
                     }
                     else if(sectLen > SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size))
                     {
-                        byte[] temp = new byte[SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size)];
+                        var temp = new byte[SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size)];
                         Array.Copy(sector, 0, temp, 0, temp.Length);
                         sector = temp;
                     }
 
                     thisTrackSectors[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = sector;
 
-                    byte[] amForCrc = new byte[8];
+                    var amForCrc = new byte[8];
                     amForCrc[0] = 0xA1;
                     amForCrc[1] = 0xA1;
                     amForCrc[2] = 0xA1;
@@ -228,9 +239,9 @@ public sealed partial class Cpcdsk
 
                     CRC16IBMContext.Data(amForCrc, 8, out byte[] amCrc);
 
-                    byte[] addressMark = new byte[22];
+                    var addressMark = new byte[22];
                     Array.Copy(amForCrc, 0, addressMark, 12, 8);
-                    Array.Copy(amCrc, 0, addressMark, 20, 2);
+                    Array.Copy(amCrc,    0, addressMark, 20, 2);
 
                     thisTrackAddressMarks[(trackInfo.sectorsInfo[k - 1].id & 0x3F) - 1] = addressMark;
                 }
@@ -249,8 +260,8 @@ public sealed partial class Cpcdsk
 
                 if(_extended)
                 {
-                    stream.Seek(header.tracksizeTable[(i * header.sides) + j] * 256, SeekOrigin.Current);
-                    _imageInfo.ImageSize += (ulong)(header.tracksizeTable[(i * header.sides) + j] * 256) - 256;
+                    stream.Seek(header.tracksizeTable[i * header.sides + j] * 256, SeekOrigin.Current);
+                    _imageInfo.ImageSize += (ulong)(header.tracksizeTable[i * header.sides + j] * 256) - 256;
                 }
                 else
                 {
@@ -262,8 +273,8 @@ public sealed partial class Cpcdsk
             }
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_sectors, _sectors.Count);
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_tracks, readtracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_sectors,             _sectors.Count);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Read_0_tracks,              readtracks);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.All_tracks_are_same_size_0, allTracksSameSize);
 
         _imageInfo.Application          = StringHandlers.CToString(header.creator);
@@ -355,4 +366,6 @@ public sealed partial class Cpcdsk
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

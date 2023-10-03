@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DiscFerret
 {
+#region Nested type: BlockHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BlockHeader
     {
@@ -44,4 +46,6 @@ public sealed partial class DiscFerret
         public readonly ushort sector;
         public readonly uint   length;
     }
+
+#endregion
 }

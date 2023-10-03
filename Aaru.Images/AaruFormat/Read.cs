@@ -63,6 +63,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -168,7 +170,7 @@ public sealed partial class AaruFormat
 
         _imageInfo.ImageSize = 0;
 
-        bool foundUserDataDdt = false;
+        var foundUserDataDdt = false;
         _mediaTags = new Dictionary<MediaTagType, byte[]>();
         List<CompactDiscIndexEntry> compactDiscIndexes = null;
 
@@ -228,7 +230,7 @@ public sealed partial class AaruFormat
 
                     // Decompress media tag
                     if(blockHeader.compression is CompressionType.Lzma
-                       or CompressionType.LzmaClauniaSubchannelTransform)
+                                               or CompressionType.LzmaClauniaSubchannelTransform)
                     {
                         if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform &&
                            entry.dataType          != DataType.CdSectorSubchannel)
@@ -243,10 +245,10 @@ public sealed partial class AaruFormat
 
                         var decompressStopwatch = new Stopwatch();
                         decompressStopwatch.Start();
-                        byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                        byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                        var compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                        var lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                         _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                        _imageStream.EnsureRead(compressedTag, 0, compressedTag.Length);
+                        _imageStream.EnsureRead(compressedTag,  0, compressedTag.Length);
                         data = new byte[blockHeader.length];
                         int decompressedLength = LZMA.DecodeBuffer(compressedTag, data, lzmaProperties);
 
@@ -487,13 +489,13 @@ public sealed partial class AaruFormat
                                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Decompressing_DDT);
                                     var ddtStopwatch = new Stopwatch();
                                     ddtStopwatch.Start();
-                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                    var compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                    var lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                     _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.EnsureRead(compressedDdt, 0, compressedDdt.Length);
-                                    byte[] decompressedDdt = new byte[ddtHeader.length];
+                                    _imageStream.EnsureRead(compressedDdt,  0, compressedDdt.Length);
+                                    var decompressedDdt = new byte[ddtHeader.length];
 
-                                    ulong decompressedLength =
+                                    var decompressedLength =
                                         (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
 
                                     if(decompressedLength != ddtHeader.length)
@@ -531,8 +533,9 @@ public sealed partial class AaruFormat
                                 default:
                                     AaruConsole.
                                         ErrorWriteLine(string.
-                                                           Format(Localization.Found_unsupported_compression_algorithm_0,
-                                                                  (ushort)ddtHeader.compression));
+                                                           Format(
+                                                               Localization.Found_unsupported_compression_algorithm_0,
+                                                               (ushort)ddtHeader.compression));
 
                                     return ErrorNumber.NotSupported;
                             }
@@ -543,7 +546,7 @@ public sealed partial class AaruFormat
                         case DataType.CdSectorPrefixCorrected:
                         case DataType.CdSectorSuffixCorrected:
                         {
-                            byte[] decompressedDdt = new byte[ddtHeader.length];
+                            var decompressedDdt = new byte[ddtHeader.length];
 
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                        GC.GetTotalMemory(false));
@@ -555,12 +558,12 @@ public sealed partial class AaruFormat
                                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Decompressing_DDT);
                                     var ddtStopwatch = new Stopwatch();
                                     ddtStopwatch.Start();
-                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                    var compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                    var lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
                                     _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.EnsureRead(compressedDdt, 0, compressedDdt.Length);
+                                    _imageStream.EnsureRead(compressedDdt,  0, compressedDdt.Length);
 
-                                    ulong decompressedLength =
+                                    var decompressedLength =
                                         (ulong)LZMA.DecodeBuffer(compressedDdt, decompressedDdt, lzmaProperties);
 
                                     ddtStopwatch.Stop();
@@ -595,8 +598,9 @@ public sealed partial class AaruFormat
                                 default:
                                     AaruConsole.
                                         ErrorWriteLine(string.
-                                                           Format(Localization.Found_unsupported_compression_algorithm_0,
-                                                                  (ushort)ddtHeader.compression));
+                                                           Format(
+                                                               Localization.Found_unsupported_compression_algorithm_0,
+                                                               (ushort)ddtHeader.compression));
 
                                     return ErrorNumber.NotSupported;
                             }
@@ -668,7 +672,7 @@ public sealed partial class AaruFormat
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_metadata_block_at_position_0,
                                                entry.offset);
 
-                    byte[] metadata = new byte[metadataBlock.blockSize];
+                    var metadata = new byte[metadataBlock.blockSize];
                     _imageStream.Position = (long)entry.offset;
                     _imageStream.EnsureRead(metadata, 0, metadata.Length);
 
@@ -917,23 +921,23 @@ public sealed partial class AaruFormat
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                GC.GetTotalMemory(false));
 
-                    byte[] cicmBytes = new byte[cicmBlock.length];
+                    var cicmBytes = new byte[cicmBlock.length];
                     _imageStream.EnsureRead(cicmBytes, 0, cicmBytes.Length);
                     var cicmMs = new MemoryStream(cicmBytes);
 
                     // The converter to AaruMetadata basically overcomes this (should?)
-                    #pragma warning disable IL2026
+                #pragma warning disable IL2026
                     var cicmXs = new XmlSerializer(typeof(CICMMetadataType));
-                    #pragma warning restore IL2026
+                #pragma warning restore IL2026
 
                     try
                     {
                         var sr = new StreamReader(cicmMs);
 
                         // The converter to AaruMetadata basically overcomes this (should?)
-                        #pragma warning disable IL2026
+                    #pragma warning disable IL2026
                         AaruMetadata = (CICMMetadataType)cicmXs.Deserialize(sr);
-                        #pragma warning restore IL2026
+                    #pragma warning restore IL2026
                         sr.Close();
                     }
                     catch(XmlException ex)
@@ -967,7 +971,7 @@ public sealed partial class AaruFormat
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                GC.GetTotalMemory(false));
 
-                    byte[] jsonBytes = new byte[aaruMetadataBlock.length];
+                    var jsonBytes = new byte[aaruMetadataBlock.length];
                     _imageStream.EnsureRead(jsonBytes, 0, jsonBytes.Length);
 
                     try
@@ -1145,7 +1149,7 @@ public sealed partial class AaruFormat
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Found_tape_partition_block_at_position_0, entry.offset);
 
-                    byte[] tapePartitionBytes = new byte[partitionHeader.length];
+                    var tapePartitionBytes = new byte[partitionHeader.length];
                     _imageStream.EnsureRead(tapePartitionBytes, 0, tapePartitionBytes.Length);
 
                     Span<TapePartitionEntry> tapePartitions =
@@ -1154,12 +1158,14 @@ public sealed partial class AaruFormat
                     TapePartitions = new List<TapePartition>();
 
                     foreach(TapePartitionEntry tapePartition in tapePartitions)
+                    {
                         TapePartitions.Add(new TapePartition
                         {
                             FirstBlock = tapePartition.FirstBlock,
                             LastBlock  = tapePartition.LastBlock,
                             Number     = tapePartition.Number
                         });
+                    }
 
                     IsTape = true;
 
@@ -1178,12 +1184,13 @@ public sealed partial class AaruFormat
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_tape_file_block_at_position_0,
                                                entry.offset);
 
-                    byte[] tapeFileBytes = new byte[fileHeader.length];
+                    var tapeFileBytes = new byte[fileHeader.length];
                     _imageStream.EnsureRead(tapeFileBytes, 0, tapeFileBytes.Length);
                     Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
                     Files = new List<TapeFile>();
 
                     foreach(TapeFileEntry file in tapeFiles)
+                    {
                         Files.Add(new TapeFile
                         {
                             FirstBlock = file.FirstBlock,
@@ -1191,6 +1198,7 @@ public sealed partial class AaruFormat
                             Partition  = file.Partition,
                             File       = file.File
                         });
+                    }
 
                     IsTape = true;
 
@@ -1298,12 +1306,12 @@ public sealed partial class AaruFormat
         {
             if(Tracks != null)
             {
-                bool leadOutFixed       = false;
-                bool sessionPregapFixed = false;
+                var leadOutFixed       = false;
+                var sessionPregapFixed = false;
 
                 if(_mediaTags.TryGetValue(MediaTagType.CD_FullTOC, out byte[] fullToc))
                 {
-                    byte[] tmp = new byte[fullToc.Length + 2];
+                    var tmp = new byte[fullToc.Length + 2];
                     Array.Copy(fullToc, 0, tmp, 2, fullToc.Length);
                     tmp[0] = (byte)(fullToc.Length >> 8);
                     tmp[1] = (byte)(fullToc.Length & 0xFF);
@@ -1354,8 +1362,8 @@ public sealed partial class AaruFormat
                                 phour  = trk.PHOUR;
                             }
 
-                            int lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
-                            leadOutStarts?.Add(trk.SessionNumber, lastSector                               + 1);
+                            int lastSector = phour * 3600 * 75 + pmin * 60 * 75 + psec * 75 + pframe - 150;
+                            leadOutStarts?.Add(trk.SessionNumber, lastSector                         + 1);
                         }
 
                         foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
@@ -1377,6 +1385,7 @@ public sealed partial class AaruFormat
                 }
 
                 if(_header.imageMajorVersion <= 1)
+                {
                     foreach(Track track in Tracks)
                     {
                         if(track.Sequence <= 1)
@@ -1398,13 +1407,16 @@ public sealed partial class AaruFormat
 
                         sessionPregapFixed = true;
                     }
+                }
 
                 if(leadOutFixed)
                     AaruConsole.ErrorWriteLine(Localization.This_image_has_a_corrupted_track_list_convert_will_fix_it);
 
                 if(sessionPregapFixed)
+                {
                     AaruConsole.ErrorWriteLine(Localization.
                                                    This_image_has_a_corrupted_track_list_a_best_effort_has_been_tried_but_may_require_manual_editing_or_redump);
+                }
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
@@ -1431,9 +1443,7 @@ public sealed partial class AaruFormat
 
                 _trackFlags = new Dictionary<byte, byte>
                 {
-                    {
-                        1, (byte)CdFlags.DataTrack
-                    }
+                    { 1, (byte)CdFlags.DataTrack }
                 };
 
                 _trackIsrcs = new Dictionary<byte, string>();
@@ -1444,7 +1454,8 @@ public sealed partial class AaruFormat
 
             Sessions = new List<Session>();
 
-            for(int i = 1; i <= Tracks.Max(t => t.Session); i++)
+            for(var i = 1; i <= Tracks.Max(t => t.Session); i++)
+            {
                 Sessions.Add(new Session
                 {
                     Sequence    = (ushort)i,
@@ -1453,6 +1464,7 @@ public sealed partial class AaruFormat
                     StartSector = Tracks.Where(t => t.Session == i).Min(t => t.StartSector),
                     EndSector   = Tracks.Where(t => t.Session == i).Max(t => t.EndSector)
                 });
+            }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                        GC.GetTotalMemory(false));
@@ -1519,8 +1531,10 @@ public sealed partial class AaruFormat
                 trk.BytesPerSector = sector.Length;
 
                 trk.RawBytesPerSector =
-                    (_sectorPrefix    != null && _sectorSuffix    != null) ||
-                    (_sectorPrefixDdt != null && _sectorSuffixDdt != null) ? 2352 : sector.Length;
+                    _sectorPrefix    != null && _sectorSuffix    != null ||
+                    _sectorPrefixDdt != null && _sectorSuffixDdt != null
+                        ? 2352
+                        : sector.Length;
 
                 if(_sectorSubchannel == null)
                     continue;
@@ -1539,6 +1553,7 @@ public sealed partial class AaruFormat
                                        GC.GetTotalMemory(false));
 
             if(compactDiscIndexes != null)
+            {
                 foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.OrderBy(i => i.Track).
                             ThenBy(i => i.Index))
                 {
@@ -1549,6 +1564,7 @@ public sealed partial class AaruFormat
 
                     track.Indexes[compactDiscIndex.Index] = compactDiscIndex.Lba;
                 }
+            }
         }
         else
         {
@@ -1569,13 +1585,20 @@ public sealed partial class AaruFormat
             return ErrorNumber.NoError;
 
         if(_imageInfo.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG or MediaType.CDI
-           or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO or MediaType.CDR
-           or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD or MediaType.PCD or MediaType.DTSCD
-           or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY or MediaType.FMTOWNS or MediaType.PS1CD
-           or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
-           or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO or MediaType.PCFX
-           or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
-           or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp or MediaType.CVD)
+                                or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO
+                                or MediaType.CDR
+                                or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD or MediaType.PCD
+                                or MediaType.DTSCD
+                                or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY or MediaType.FMTOWNS
+                                or MediaType.PS1CD
+                                or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM
+                                or MediaType.GDR
+                                or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO
+                                or MediaType.PCFX
+                                or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia
+                                or MediaType.Pippin
+                                or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
+                                or MediaType.CVD)
             return ErrorNumber.NoError;
 
         {
@@ -1606,7 +1629,7 @@ public sealed partial class AaruFormat
             return ErrorNumber.OutOfRange;
 
         ulong ddtEntry    = GetDdtEntry(sectorAddress);
-        uint  offsetMask  = (uint)((1 << _shift) - 1);
+        var   offsetMask  = (uint)((1 << _shift) - 1);
         ulong offset      = ddtEntry & offsetMask;
         ulong blockOffset = ddtEntry >> _shift;
 
@@ -1651,9 +1674,9 @@ public sealed partial class AaruFormat
 
                 break;
             case CompressionType.Lzma:
-                byte[] compressedBlock = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                byte[] lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
-                _imageStream.EnsureRead(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                var compressedBlock = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                var lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
+                _imageStream.EnsureRead(lzmaProperties,  0, LZMA_PROPERTIES_LENGTH);
                 _imageStream.EnsureRead(compressedBlock, 0, compressedBlock.Length);
                 block              = new byte[blockHeader.length];
                 decompressedLength = (ulong)LZMA.DecodeBuffer(compressedBlock, block, lzmaProperties);
@@ -1672,7 +1695,7 @@ public sealed partial class AaruFormat
 
                 break;
             case CompressionType.Flac:
-                byte[] flacBlock = new byte[blockHeader.cmpLength];
+                var flacBlock = new byte[blockHeader.cmpLength];
                 _imageStream.EnsureRead(flacBlock, 0, flacBlock.Length);
                 block              = new byte[blockHeader.length];
                 decompressedLength = (ulong)FLAC.DecodeBuffer(flacBlock, block);
@@ -1690,7 +1713,8 @@ public sealed partial class AaruFormat
                                            GC.GetTotalMemory(false));
 
                 break;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         // Check if cache needs to be emptied
@@ -1729,7 +1753,8 @@ public sealed partial class AaruFormat
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-        return trk?.Sequence != track ? ErrorNumber.SectorNotFound
+        return trk?.Sequence != track
+                   ? ErrorNumber.SectorNotFound
                    : ReadSector(trk.StartSector + sectorAddress, out buffer);
     }
 
@@ -1743,7 +1768,8 @@ public sealed partial class AaruFormat
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-        return trk?.Sequence != track ? ErrorNumber.SectorNotFound
+        return trk?.Sequence != track
+                   ? ErrorNumber.SectorNotFound
                    : ReadSectorTag(trk.StartSector + sectorAddress, tag, out buffer);
     }
 
@@ -1812,15 +1838,13 @@ public sealed partial class AaruFormat
                 case SectorTagType.DvdSectorNumber:
                 case SectorTagType.DvdSectorIed:
                 case SectorTagType.DvdSectorEdc:
-                case SectorTagType.DvdTitleKeyDecrypted: break;
+                case SectorTagType.DvdTitleKeyDecrypted:
+                    break;
                 case SectorTagType.CdTrackFlags:
                     if(!_trackFlags.TryGetValue((byte)sectorAddress, out byte flags))
                         return ErrorNumber.NoData;
 
-                    buffer = new[]
-                    {
-                        flags
-                    };
+                    buffer = new[] { flags };
 
                     return ErrorNumber.NoError;
                 case SectorTagType.CdTrackIsrc:
@@ -1830,7 +1854,8 @@ public sealed partial class AaruFormat
                     buffer = Encoding.UTF8.GetBytes(isrc);
 
                     return ErrorNumber.NoError;
-                default: return ErrorNumber.NotSupported;
+                default:
+                    return ErrorNumber.NotSupported;
             }
 
             switch(trk.Type)
@@ -1858,7 +1883,8 @@ public sealed partial class AaruFormat
                             break;
                         }
 
-                        case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
+                        case SectorTagType.CdSectorSubHeader:
+                            return ErrorNumber.NotSupported;
                         case SectorTagType.CdSectorEcc:
                         {
                             sectorOffset = 12;
@@ -1909,7 +1935,8 @@ public sealed partial class AaruFormat
                             break;
                         }
 
-                        default: return ErrorNumber.NotSupported;
+                        default:
+                            return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1953,7 +1980,8 @@ public sealed partial class AaruFormat
                         case SectorTagType.CdSectorEcc:
                         case SectorTagType.CdSectorEccP:
                         case SectorTagType.CdSectorEccQ:
-                        case SectorTagType.CdSectorEdc: return ErrorNumber.NotSupported;
+                        case SectorTagType.CdSectorEdc:
+                            return ErrorNumber.NotSupported;
                         case SectorTagType.CdSectorSubchannel:
                         {
                             sectorOffset = 0;
@@ -1964,7 +1992,8 @@ public sealed partial class AaruFormat
                             break;
                         }
 
-                        default: return ErrorNumber.NotSupported;
+                        default:
+                            return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1984,7 +2013,8 @@ public sealed partial class AaruFormat
                             break;
                         }
 
-                        default: return ErrorNumber.NotSupported;
+                        default:
+                            return ErrorNumber.NotSupported;
                     }
 
                     break;
@@ -1993,6 +2023,7 @@ public sealed partial class AaruFormat
                 case TrackType.Data:
                 {
                     if(_imageInfo.MediaType == MediaType.DVDROM)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.DvdSectorCmi:
@@ -2058,15 +2089,18 @@ public sealed partial class AaruFormat
 
                                 break;
                             }
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
                         return ErrorNumber.NotSupported;
 
                     break;
                 }
 
-                default: return ErrorNumber.NotSupported;
+                default:
+                    return ErrorNumber.NotSupported;
             }
         }
         else
@@ -2085,9 +2119,11 @@ public sealed partial class AaruFormat
             return ErrorNumber.NoError;
         }
 
-        for(int i = 0; i < length; i++)
-            Array.Copy(dataSource, (long)((sectorAddress * (sectorOffset + sectorSize + sectorSkip)) + sectorOffset),
+        for(var i = 0; i < length; i++)
+        {
+            Array.Copy(dataSource, (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) + sectorOffset),
                        buffer, i * sectorSize, sectorSize);
+        }
 
         return ErrorNumber.NoError;
     }
@@ -2105,12 +2141,13 @@ public sealed partial class AaruFormat
         if(trk?.Sequence != track)
             return ErrorNumber.SectorNotFound;
 
-        return trk.StartSector + sectorAddress + length > trk.EndSector + 1 ? ErrorNumber.OutOfRange
+        return trk.StartSector + sectorAddress + length > trk.EndSector + 1
+                   ? ErrorNumber.OutOfRange
                    : ReadSectors(trk.StartSector + sectorAddress, length, out buffer);
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
@@ -2306,7 +2343,7 @@ public sealed partial class AaruFormat
                         else if(_mode2Subheaders != null)
                         {
                             Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, buffer, 16, 8);
-                            Array.Copy(data, 0, buffer, 24, 2328);
+                            Array.Copy(data,             0,                      buffer, 24, 2328);
                         }
                         else
                             Array.Copy(data, 0, buffer, 16, 2336);
@@ -2323,7 +2360,8 @@ public sealed partial class AaruFormat
                     case MediaType.AppleSonySS:
                     case MediaType.AppleSonyDS:
                     case MediaType.AppleWidget:
-                    case MediaType.PriamDataTower: return ReadSectorsLong(sectorAddress, 1, out buffer);
+                    case MediaType.PriamDataTower:
+                        return ReadSectorsLong(sectorAddress, 1, out buffer);
                 }
 
                 break;
@@ -2342,7 +2380,8 @@ public sealed partial class AaruFormat
 
         Track trk = Tracks.FirstOrDefault(t => t.Sequence == track);
 
-        return trk?.Sequence != track ? ErrorNumber.SectorNotFound
+        return trk?.Sequence != track
+                   ? ErrorNumber.SectorNotFound
                    : ReadSectorLong(trk.StartSector + sectorAddress, out buffer);
     }
 
@@ -2373,7 +2412,8 @@ public sealed partial class AaruFormat
                 {
                     // These types only contain user data
                     case TrackType.Audio:
-                    case TrackType.Data: return ReadSectors(sectorAddress, length, out buffer);
+                    case TrackType.Data:
+                        return ReadSectors(sectorAddress, length, out buffer);
 
                     // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                     case TrackType.CdMode1:
@@ -2505,7 +2545,7 @@ public sealed partial class AaruFormat
                         for(uint i = 0; i < length; i++)
                         {
                             Array.Copy(_sectorSubchannel, (int)((sectorAddress + i) * tagSize), buffer,
-                                       (int)((i * sectorSize) + 512), tagSize);
+                                       (int)(i * sectorSize + 512), tagSize);
 
                             Array.Copy(data, (int)((sectorAddress + i) * 512), buffer, (int)(i * 512), 512);
                         }
@@ -2541,4 +2581,6 @@ public sealed partial class AaruFormat
 
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session) => Tracks.Where(t => t.Sequence == session).ToList();
+
+#endregion
 }

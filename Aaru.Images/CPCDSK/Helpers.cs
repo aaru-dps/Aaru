@@ -37,15 +37,15 @@ namespace Aaru.DiscImages;
 public sealed partial class Cpcdsk
 {
     static int SizeCodeToBytes(IBMSectorSizeCode code) => code switch
-    {
-        IBMSectorSizeCode.EighthKilo       => 128,
-        IBMSectorSizeCode.QuarterKilo      => 256,
-        IBMSectorSizeCode.HalfKilo         => 512,
-        IBMSectorSizeCode.Kilo             => 1024,
-        IBMSectorSizeCode.TwiceKilo        => 2048,
-        IBMSectorSizeCode.FriceKilo        => 4096,
-        IBMSectorSizeCode.TwiceFriceKilo   => 8192,
-        IBMSectorSizeCode.FricelyFriceKilo => 16384,
-        _                                  => 0
-    };
+                                                          {
+                                                              IBMSectorSizeCode.EighthKilo       => 128,
+                                                              IBMSectorSizeCode.QuarterKilo      => 256,
+                                                              IBMSectorSizeCode.HalfKilo         => 512,
+                                                              IBMSectorSizeCode.Kilo             => 1024,
+                                                              IBMSectorSizeCode.TwiceKilo        => 2048,
+                                                              IBMSectorSizeCode.FriceKilo        => 4096,
+                                                              IBMSectorSizeCode.TwiceFriceKilo   => 8192,
+                                                              IBMSectorSizeCode.FricelyFriceKilo => 16384,
+                                                              _                                  => 0
+                                                          };
 }

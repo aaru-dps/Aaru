@@ -41,22 +41,32 @@ namespace Aaru.DiscImages;
 
 public sealed partial class MaxiDisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Name => Localization.MaxiDisk_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D27D924A-7034-466E-ADE1-B81EF37E469E");
+
     /// <inheritdoc />
     public string Format => "MAXI Disk";
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -72,16 +82,19 @@ public sealed partial class MaxiDisk
         MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50, MediaType.XDF_35, MediaType.XDF_525,
         MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".hdk"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".hdk" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

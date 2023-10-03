@@ -41,6 +41,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading CPCDSK disk images</summary>
 public sealed partial class Cpcdsk : IMediaImage
 {
+    const string              MODULE_NAME = "CPCDSK plugin";
     Dictionary<ulong, byte[]> _addressMarks;
     bool                      _extended;
     ImageInfo                 _imageInfo;
@@ -69,6 +70,4 @@ public sealed partial class Cpcdsk : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CPCDSK plugin";
 }

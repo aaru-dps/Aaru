@@ -37,14 +37,24 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Partimage
 {
+#region Nested type: PCompression
+
     enum PCompression : uint
     {
-        None = 0, Gzip = 1, Bzip2 = 2,
-        Lzo  = 3
+        None  = 0,
+        Gzip  = 1,
+        Bzip2 = 2,
+        Lzo   = 3
     }
+
+#endregion
+
+#region Nested type: PEncryption
 
     enum PEncryption : uint
     {
         None = 0
     }
+
+#endregion
 }

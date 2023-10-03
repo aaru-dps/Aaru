@@ -44,6 +44,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing Parallels' disk images</summary>
 public sealed partial class Parallels : IWritableImage
 {
+    const string              MODULE_NAME = "Parallels plugin";
     uint[]                    _bat;
     uint                      _clusterBytes;
     long                      _currentWritingPosition;
@@ -79,6 +80,4 @@ public sealed partial class Parallels : IWritableImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "Parallels plugin";
 }

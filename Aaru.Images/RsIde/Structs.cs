@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RsIde
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -49,4 +51,6 @@ public sealed partial class RsIde
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 106)]
         public byte[] identify;
     }
+
+#endregion
 }

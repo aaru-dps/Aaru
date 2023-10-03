@@ -36,10 +36,6 @@ public sealed partial class SuperCardPro
 {
     /// <summary>SuperCardPro footer signature: "FPCS"</summary>
     const uint FOOTER_SIGNATURE = 0x53435046;
-    /// <summary>SuperCardPro header signature: "SCP"</summary>
-    readonly byte[] _scpSignature = "SCP"u8.ToArray();
-    /// <summary>SuperCardPro track header signature: "TRK"</summary>
-    readonly byte[] _trkSignature = "TRK"u8.ToArray();
 
     /// <summary>SuperCardPro device default capture resolution: 25 nanoseconds.</summary>
     const ushort DEFAULT_RESOLUTION = 25000;
@@ -47,4 +43,8 @@ public sealed partial class SuperCardPro
     const uint FULL_HEADER_OFFSET = 0x2b0;
     /// <summary>SuperCardPro format header length (without track offsets).</summary>
     const byte HEADER_OFFSET = 0x10;
+    /// <summary>SuperCardPro header signature: "SCP"</summary>
+    readonly byte[] _scpSignature = "SCP"u8.ToArray();
+    /// <summary>SuperCardPro track header signature: "TRK"</summary>
+    readonly byte[] _trkSignature = "TRK"u8.ToArray();
 }

@@ -34,9 +34,17 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Dim
 {
+#region Nested type: DiskType
+
     enum DiskType : byte
     {
-        Hd2  = 0, Hs2 = 1, Hc2 = 2,
-        Hde2 = 3, Hq2 = 9, N88 = 17
+        Hd2  = 0,
+        Hs2  = 1,
+        Hc2  = 2,
+        Hde2 = 3,
+        Hq2  = 9,
+        N88  = 17
     }
+
+#endregion
 }

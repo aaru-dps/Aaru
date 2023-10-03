@@ -49,9 +49,11 @@ public sealed partial class CopyTape
     ulong                    _lastWrittenBlock;
     Dictionary<ulong, ulong> _writtenBlockPositions;
 
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
@@ -126,7 +128,7 @@ public sealed partial class CopyTape
 
         _writtenBlockPositions[sectorAddress] = (ulong)_dataStream.Position;
         _dataStream.Write(header, 0, header.Length);
-        _dataStream.Write(data, 0, data.Length);
+        _dataStream.Write(data,   0, data.Length);
         _dataStream.WriteByte(0x0A);
 
         if(sectorAddress > _lastWrittenBlock)
@@ -256,4 +258,6 @@ public sealed partial class CopyTape
 
         return true;
     }
+
+#endregion
 }

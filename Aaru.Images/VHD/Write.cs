@@ -47,9 +47,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -121,7 +123,7 @@ public sealed partial class Vhd
             return false;
         }
 
-        _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -154,7 +156,7 @@ public sealed partial class Vhd
             return false;
         }
 
-        _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
+        _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
         ErrorMessage = "";
@@ -234,20 +236,20 @@ public sealed partial class Vhd
 
         footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
 
-        byte[] footerBytes = new byte[512];
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Cookie), 0, footerBytes, 0x00, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Features), 0, footerBytes, 0x08, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Version), 0, footerBytes, 0x0C, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Offset), 0, footerBytes, 0x10, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Timestamp), 0, footerBytes, 0x18, 4);
+        var footerBytes = new byte[512];
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.Cookie),             0, footerBytes, 0x00, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.Features),           0, footerBytes, 0x08, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.Version),            0, footerBytes, 0x0C, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.Offset),             0, footerBytes, 0x10, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.Timestamp),          0, footerBytes, 0x18, 4);
         Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorApplication), 0, footerBytes, 0x1C, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorVersion), 0, footerBytes, 0x20, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorHostOs), 0, footerBytes, 0x24, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.OriginalSize), 0, footerBytes, 0x28, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CurrentSize), 0, footerBytes, 0x30, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskGeometry), 0, footerBytes, 0x38, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskType), 0, footerBytes, 0x3C, 4);
-        Array.Copy(footer.UniqueId.ToByteArray(), 0, footerBytes, 0x44, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorVersion),     0, footerBytes, 0x20, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorHostOs),      0, footerBytes, 0x24, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.OriginalSize),       0, footerBytes, 0x28, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.CurrentSize),        0, footerBytes, 0x30, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskGeometry),       0, footerBytes, 0x38, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskType),           0, footerBytes, 0x3C, 4);
+        Array.Copy(footer.UniqueId.ToByteArray(),                             0, footerBytes, 0x44, 4);
 
         footer.Checksum = VhdChecksum(footerBytes);
         Array.Copy(BigEndianBitConverter.GetBytes(footer.Checksum), 0, footerBytes, 0x40, 4);
@@ -319,4 +321,6 @@ public sealed partial class Vhd
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

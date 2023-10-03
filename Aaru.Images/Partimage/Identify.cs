@@ -39,6 +39,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,10 +50,12 @@ public sealed partial class Partimage
         if(stream.Length < 512)
             return false;
 
-        byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+        var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
         return _partimageMagic.SequenceEqual(_cVolumeHeader.magic);
     }
+
+#endregion
 }

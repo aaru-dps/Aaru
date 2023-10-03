@@ -56,22 +56,31 @@ public class Nintendo64 : IByteAddressableImage
     bool      _interleaved;
     bool      _littleEndian;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => !_opened
                                 ? "Nintendo 64 cartridge dump"
                                 : _interleaved
                                     ? "Doctor V64"
                                     : "Mr. Backup Z64";
+
     /// <inheritdoc />
     public Guid Id => new("EF1B4319-48A0-4EEC-B8E8-D0EA36F8CC92");
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Name => Localization.Nintendo64_Name;
 
@@ -88,9 +97,9 @@ public class Nintendo64 : IByteAddressableImage
             return false;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
         {
@@ -101,8 +110,10 @@ public class Nintendo64 : IByteAddressableImage
             case 0x12408037:
             case 0x12418037:
             case 0x37804012:
-            case 0x37804112: return true;
-            default: return false;
+            case 0x37804112:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -119,9 +130,9 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
-        byte[] magicBytes = new byte[4];
+        var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
-        uint magic = BitConverter.ToUInt32(magicBytes, 0);
+        var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         switch(magic)
         {
@@ -149,7 +160,8 @@ public class Nintendo64 : IByteAddressableImage
                 _littleEndian = false;
 
                 break;
-            default: return ErrorNumber.InvalidArgument;
+            default:
+                return ErrorNumber.InvalidArgument;
         }
 
         _data           = new byte[imageFilter.DataForkLength];
@@ -169,9 +181,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_littleEndian)
         {
-            byte[] tmp = new byte[_data.Length];
+            var tmp = new byte[_data.Length];
 
-            for(int i = 0; i < _data.Length; i += 4)
+            for(var i = 0; i < _data.Length; i += 4)
             {
                 tmp[i] = _data[i + 3];
                 tmp[i            + 1] = _data[i + 2];
@@ -184,9 +196,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_interleaved)
         {
-            byte[] tmp = new byte[_data.Length];
+            var tmp = new byte[_data.Length];
 
-            for(int i = 0; i < _data.Length; i += 2)
+            for(var i = 0; i < _data.Length; i += 2)
             {
                 tmp[i] = _data[i + 1];
                 tmp[i            + 1] = _data[i];
@@ -208,17 +220,17 @@ public class Nintendo64 : IByteAddressableImage
         }
 
         _imageInfo.MediaPartNumber = StringHandlers.SpacePaddedToString(header.CartridgeId, encoding);
-        _imageInfo.MediaTitle      = StringHandlers.SpacePaddedToString(header.Name, encoding);
+        _imageInfo.MediaTitle      = StringHandlers.SpacePaddedToString(header.Name,        encoding);
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
-        sb.AppendFormat(Localization.Region_0, DecodeCountryCode(header.CountryCode)).AppendLine();
-        sb.AppendFormat(Localization.Cartridge_ID_0, _imageInfo.MediaPartNumber).AppendLine();
+        sb.AppendFormat(Localization.Name_0,           _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Region_0,         DecodeCountryCode(header.CountryCode)).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_ID_0,   _imageInfo.MediaPartNumber).AppendLine();
         sb.AppendFormat(Localization.Cartridge_type_0, (char)header.CartridgeType).AppendLine();
-        sb.AppendFormat(Localization.Version_0_1, (header.Version / 10) + 1, header.Version % 10).AppendLine();
-        sb.AppendFormat(Localization.CRC1_0, header.Crc1).AppendLine();
-        sb.AppendFormat(Localization.CRC2_0, header.Crc2).AppendLine();
+        sb.AppendFormat(Localization.Version_0_1,      header.Version / 10 + 1, header.Version % 10).AppendLine();
+        sb.AppendFormat(Localization.CRC1_0,           header.Crc1).AppendLine();
+        sb.AppendFormat(Localization.CRC2_0,           header.Crc2).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -669,11 +681,12 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.ReadOnly;
         }
 
-        bool foundRom     = false;
-        bool foundSaveRam = false;
+        var foundRom     = false;
+        var foundSaveRam = false;
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -686,8 +699,10 @@ public class Nintendo64 : IByteAddressableImage
                     foundSaveRam = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -730,7 +745,7 @@ public class Nintendo64 : IByteAddressableImage
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -785,29 +800,29 @@ public class Nintendo64 : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".n64", ".v64", ".z64"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".n64", ".v64", ".z64" };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[]
-    {
-        MediaType.N64GamePak
-    };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.N64GamePak };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
@@ -828,9 +843,9 @@ public class Nintendo64 : IByteAddressableImage
 
         if(_interleaved)
         {
-            byte[] tmp = new byte[_data.Length];
+            var tmp = new byte[_data.Length];
 
-            for(int i = 0; i < _data.Length; i += 2)
+            for(var i = 0; i < _data.Length; i += 2)
             {
                 tmp[i] = _data[i + 1];
                 tmp[i            + 1] = _data[i];
@@ -858,32 +873,37 @@ public class Nintendo64 : IByteAddressableImage
     /// <inheritdoc />
     public bool SetImageInfo(ImageInfo imageInfo) => true;
 
-    static string DecodeCountryCode(byte countryCode) => countryCode switch
-    {
-        0x37 => Localization.Beta,
-        0x41 => Localization.Asia_NTSC,
-        0x42 => Localization.Brazil,
-        0x43 => Localization.China,
-        0x44 => Localization.Germany,
-        0x45 => Localization.North_America,
-        0x46 => Localization.France,
-        0x47 => Localization.Gateway_64_NTSC,
-        0x48 => Localization.Netherlands,
-        0x49 => Localization.Italy,
-        0x4A => Localization.Japan,
-        0x4B => Localization.Korea,
-        0x4C => Localization.Gateway_64_PAL,
-        0x4E => Localization.Canada,
-        0x50 => Localization.Europe,
-        0x53 => Localization.Spain,
-        0x55 => Localization.Australia,
-        0x57 => Localization.Scandinavia,
-        0x58 => Localization.Europe,
-        0x59 => Localization.Europe,
-        _    => Localization.Unknown_country
-    };
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    static string DecodeCountryCode(byte countryCode) => countryCode switch
+                                                         {
+                                                             0x37 => Localization.Beta,
+                                                             0x41 => Localization.Asia_NTSC,
+                                                             0x42 => Localization.Brazil,
+                                                             0x43 => Localization.China,
+                                                             0x44 => Localization.Germany,
+                                                             0x45 => Localization.North_America,
+                                                             0x46 => Localization.France,
+                                                             0x47 => Localization.Gateway_64_NTSC,
+                                                             0x48 => Localization.Netherlands,
+                                                             0x49 => Localization.Italy,
+                                                             0x4A => Localization.Japan,
+                                                             0x4B => Localization.Korea,
+                                                             0x4C => Localization.Gateway_64_PAL,
+                                                             0x4E => Localization.Canada,
+                                                             0x50 => Localization.Europe,
+                                                             0x53 => Localization.Spain,
+                                                             0x55 => Localization.Australia,
+                                                             0x57 => Localization.Scandinavia,
+                                                             0x58 => Localization.Europe,
+                                                             0x59 => Localization.Europe,
+                                                             _    => Localization.Unknown_country
+                                                         };
+
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     struct Header
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
@@ -908,4 +928,6 @@ public class Nintendo64 : IByteAddressableImage
         public readonly byte CountryCode;
         public readonly byte Version;
     }
+
+#endregion
 }

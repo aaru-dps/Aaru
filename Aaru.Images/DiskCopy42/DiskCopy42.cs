@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
 {
+    const string MODULE_NAME = "DiskCopy 4.2 plugin";
     /// <summary>Bytes per tag, should be 12</summary>
     uint bptag;
     /// <summary>Start of data sectors in disk image, should be 0x58</summary>
@@ -86,6 +87,4 @@ public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
     };
 
     ~DiskCopy42() => Close();
-
-    const string MODULE_NAME = "DiskCopy 4.2 plugin";
 }

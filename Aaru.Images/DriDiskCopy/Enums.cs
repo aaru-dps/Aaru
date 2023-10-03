@@ -37,6 +37,8 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class DriDiskCopy
 {
+#region Nested type: DriveCode
+
     /// <summary>Drive codes change according to CMOS stored valued</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum DriveCode : byte
@@ -52,4 +54,6 @@ public sealed partial class DriDiskCopy
         /// <summary>3.5" 2.88M</summary>
         mf2ed = 9
     }
+
+#endregion
 }

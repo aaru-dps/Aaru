@@ -42,6 +42,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class DriDiskCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -50,7 +52,7 @@ public sealed partial class DriDiskCopy
         if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
             return ErrorNumber.InvalidArgument;
 
-        byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
+        var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
         stream.EnsureRead(buffer, 0, buffer.Length);
 
@@ -67,7 +69,7 @@ public sealed partial class DriDiskCopy
         if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
             return ErrorNumber.InvalidArgument;
 
-        if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<Footer>() != stream.Length)
+        if(_footer.bpb.sectors * _footer.bpb.bps + Marshal.SizeOf<Footer>() != stream.Length)
             return ErrorNumber.InvalidArgument;
 
         _imageInfo.Cylinders          = _footer.bpb.cylinders;
@@ -144,4 +146,6 @@ public sealed partial class DriDiskCopy
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -42,9 +42,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
@@ -137,12 +139,12 @@ public sealed partial class CisCopy
                 break;
         }
 
-        int headStep = 1;
+        var headStep = 1;
 
         if(diskType is DiskType.MD1DD or DiskType.MD1DD8)
             headStep = 2;
 
-        for(int i = 0; i < tracks; i += headStep)
+        for(var i = 0; i < tracks; i += headStep)
         {
             _writingStream.WriteByte((byte)TrackType.Copied);
 
@@ -293,4 +295,6 @@ public sealed partial class CisCopy
 
     /// <inheritdoc />
     public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

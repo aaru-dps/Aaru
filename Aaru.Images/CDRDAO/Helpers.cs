@@ -43,13 +43,18 @@ public sealed partial class Cdrdao
         {
             case CDRDAO_TRACK_TYPE_MODE1:
             case CDRDAO_TRACK_TYPE_MODE2_FORM1:
-            case CDRDAO_TRACK_TYPE_MODE1_RAW: return 2048;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM2: return 2324;
+            case CDRDAO_TRACK_TYPE_MODE1_RAW:
+                return 2048;
+            case CDRDAO_TRACK_TYPE_MODE2_FORM2:
+                return 2324;
             case CDRDAO_TRACK_TYPE_MODE2:
             case CDRDAO_TRACK_TYPE_MODE2_MIX:
-            case CDRDAO_TRACK_TYPE_MODE2_RAW: return 2336;
-            case CDRDAO_TRACK_TYPE_AUDIO: return 2352;
-            default:                      return 0;
+            case CDRDAO_TRACK_TYPE_MODE2_RAW:
+                return 2336;
+            case CDRDAO_TRACK_TYPE_AUDIO:
+                return 2352;
+            default:
+                return 0;
         }
     }
 
@@ -58,14 +63,20 @@ public sealed partial class Cdrdao
         switch(trackType)
         {
             case CDRDAO_TRACK_TYPE_MODE1:
-            case CDRDAO_TRACK_TYPE_MODE1_RAW: return TrackType.CdMode1;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM1: return TrackType.CdMode2Form1;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM2: return TrackType.CdMode2Form2;
+            case CDRDAO_TRACK_TYPE_MODE1_RAW:
+                return TrackType.CdMode1;
+            case CDRDAO_TRACK_TYPE_MODE2_FORM1:
+                return TrackType.CdMode2Form1;
+            case CDRDAO_TRACK_TYPE_MODE2_FORM2:
+                return TrackType.CdMode2Form2;
             case CDRDAO_TRACK_TYPE_MODE2:
             case CDRDAO_TRACK_TYPE_MODE2_MIX:
-            case CDRDAO_TRACK_TYPE_MODE2_RAW: return TrackType.CdMode2Formless;
-            case CDRDAO_TRACK_TYPE_AUDIO: return TrackType.Audio;
-            default:                      return TrackType.Data;
+            case CDRDAO_TRACK_TYPE_MODE2_RAW:
+                return TrackType.CdMode2Formless;
+            case CDRDAO_TRACK_TYPE_AUDIO:
+                return TrackType.Audio;
+            default:
+                return TrackType.Data;
         }
     }
 
@@ -76,16 +87,24 @@ public sealed partial class Cdrdao
     {
         switch(track.Type)
         {
-            case TrackType.Audio when track.RawBytesPerSector == 2352:           return CDRDAO_TRACK_TYPE_AUDIO;
-            case TrackType.Data:                                                 return CDRDAO_TRACK_TYPE_MODE1;
-            case TrackType.CdMode1 when track.RawBytesPerSector         == 2352: return CDRDAO_TRACK_TYPE_MODE1_RAW;
-            case TrackType.CdMode2Formless when track.RawBytesPerSector != 2352: return CDRDAO_TRACK_TYPE_MODE2;
-            case TrackType.CdMode2Form1 when track.RawBytesPerSector    != 2352: return CDRDAO_TRACK_TYPE_MODE2_FORM1;
-            case TrackType.CdMode2Form2 when track.RawBytesPerSector    != 2352: return CDRDAO_TRACK_TYPE_MODE2_FORM2;
+            case TrackType.Audio when track.RawBytesPerSector == 2352:
+                return CDRDAO_TRACK_TYPE_AUDIO;
+            case TrackType.Data:
+                return CDRDAO_TRACK_TYPE_MODE1;
+            case TrackType.CdMode1 when track.RawBytesPerSector == 2352:
+                return CDRDAO_TRACK_TYPE_MODE1_RAW;
+            case TrackType.CdMode2Formless when track.RawBytesPerSector != 2352:
+                return CDRDAO_TRACK_TYPE_MODE2;
+            case TrackType.CdMode2Form1 when track.RawBytesPerSector != 2352:
+                return CDRDAO_TRACK_TYPE_MODE2_FORM1;
+            case TrackType.CdMode2Form2 when track.RawBytesPerSector != 2352:
+                return CDRDAO_TRACK_TYPE_MODE2_FORM2;
             case TrackType.CdMode2Formless when track.RawBytesPerSector == 2352:
             case TrackType.CdMode2Form1 when track.RawBytesPerSector    == 2352:
-            case TrackType.CdMode2Form2 when track.RawBytesPerSector    == 2352: return CDRDAO_TRACK_TYPE_MODE2_RAW;
-            default: return CDRDAO_TRACK_TYPE_MODE1;
+            case TrackType.CdMode2Form2 when track.RawBytesPerSector    == 2352:
+                return CDRDAO_TRACK_TYPE_MODE2_RAW;
+            default:
+                return CDRDAO_TRACK_TYPE_MODE1;
         }
     }
 }

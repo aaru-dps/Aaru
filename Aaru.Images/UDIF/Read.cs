@@ -52,6 +52,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Udif
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -61,7 +63,7 @@ public sealed partial class Udif
             return ErrorNumber.InvalidArgument;
 
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
-        byte[] footerB = new byte[Marshal.SizeOf<Footer>()];
+        var footerB = new byte[Marshal.SizeOf<Footer>()];
 
         stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
@@ -84,28 +86,28 @@ public sealed partial class Udif
             AaruConsole.VerboseWriteLine(Localization.Found_obsolete_UDIF_format);
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.signature = 0x{0:X8}", _footer.signature);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.version = {0}", _footer.version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.headerSize = {0}", _footer.headerSize);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.flags = {0}", _footer.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.signature = 0x{0:X8}",     _footer.signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.version = {0}",            _footer.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.headerSize = {0}",         _footer.headerSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.flags = {0}",              _footer.flags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.runningDataForkOff = {0}", _footer.runningDataForkOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkOff = {0}", _footer.dataForkOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkLen = {0}", _footer.dataForkLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.rsrcForkOff = {0}", _footer.rsrcForkOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.rsrcForkLen = {0}", _footer.rsrcForkLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentNumber = {0}", _footer.segmentNumber);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentCount = {0}", _footer.segmentCount);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentId = {0}", _footer.segmentId);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkChkType = {0}", _footer.dataForkChkType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkLen = {0}", _footer.dataForkLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkChk = 0x{0:X8}", _footer.dataForkChk);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.plistOff = {0}", _footer.plistOff);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.plistLen = {0}", _footer.plistLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChkType = {0}", _footer.masterChkType);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChkLen = {0}", _footer.masterChkLen);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChk = 0x{0:X8}", _footer.masterChk);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.imageVariant = {0}", _footer.imageVariant);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.sectorCount = {0}", _footer.sectorCount);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkOff = {0}",        _footer.dataForkOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkLen = {0}",        _footer.dataForkLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.rsrcForkOff = {0}",        _footer.rsrcForkOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.rsrcForkLen = {0}",        _footer.rsrcForkLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentNumber = {0}",      _footer.segmentNumber);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentCount = {0}",       _footer.segmentCount);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmentId = {0}",          _footer.segmentId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkChkType = {0}",    _footer.dataForkChkType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkLen = {0}",        _footer.dataForkLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataForkChk = 0x{0:X8}",   _footer.dataForkChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.plistOff = {0}",           _footer.plistOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.plistLen = {0}",           _footer.plistLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChkType = {0}",      _footer.masterChkType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChkLen = {0}",       _footer.masterChkLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.masterChk = 0x{0:X8}",     _footer.masterChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.imageVariant = {0}",       _footer.imageVariant);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.sectorCount = {0}",        _footer.sectorCount);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved1 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved1));
@@ -129,7 +131,7 @@ public sealed partial class Udif
            _footer.rsrcForkLen != 0)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_resource_fork);
-            byte[] rsrcB = new byte[_footer.rsrcForkLen];
+            var rsrcB = new byte[_footer.rsrcForkLen];
             stream.Seek((long)_footer.rsrcForkOff, SeekOrigin.Begin);
             stream.EnsureRead(rsrcB, 0, rsrcB.Length);
 
@@ -168,7 +170,7 @@ public sealed partial class Udif
         else if(_footer.plistLen != 0)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_property_list);
-            byte[] plistB = new byte[_footer.plistLen];
+            var plistB = new byte[_footer.plistLen];
             stream.Seek((long)_footer.plistOff, SeekOrigin.Begin);
             stream.EnsureRead(plistB, 0, plistB.Length);
 
@@ -239,7 +241,7 @@ public sealed partial class Udif
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_resource_fork);
             Stream rsrcStream = imageFilter.GetResourceForkStream();
 
-            byte[] rsrcB = new byte[rsrcStream.Length];
+            var rsrcB = new byte[rsrcStream.Length];
             rsrcStream.Position = 0;
             rsrcStream.EnsureRead(rsrcB, 0, rsrcB.Length);
 
@@ -283,19 +285,19 @@ public sealed partial class Udif
             string release = null;
             string pre     = null;
 
-            string major = $"{version.MajorVersion}";
-            string minor = $".{version.MinorVersion / 10}";
+            var major = $"{version.MajorVersion}";
+            var minor = $".{version.MinorVersion / 10}";
 
             if(version.MinorVersion % 10 > 0)
                 release = $".{version.MinorVersion % 10}";
 
             string dev = version.DevStage switch
-            {
-                Version.DevelopmentStage.Alpha    => "a",
-                Version.DevelopmentStage.Beta     => "b",
-                Version.DevelopmentStage.PreAlpha => "d",
-                _                                 => null
-            };
+                         {
+                             Version.DevelopmentStage.Alpha    => "a",
+                             Version.DevelopmentStage.Beta     => "b",
+                             Version.DevelopmentStage.PreAlpha => "d",
+                             _                                 => null
+                         };
 
             if(dev                       == null &&
                version.PreReleaseVersion > 0)
@@ -309,11 +311,11 @@ public sealed partial class Udif
             _imageInfo.Comments           = version.VersionMessage;
 
             _imageInfo.Application = version.MajorVersion switch
-            {
-                3 => "ShrinkWrap™",
-                6 => "DiskCopy",
-                _ => _imageInfo.Application
-            };
+                                     {
+                                         3 => "ShrinkWrap™",
+                                         6 => "DiskCopy",
+                                         _ => _imageInfo.Application
+                                     };
         }
         else
             _imageInfo.Application = "DiskCopy";
@@ -334,27 +336,27 @@ public sealed partial class Udif
 
         foreach(byte[] blkxBytes in blkxList)
         {
-            byte[] bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
+            var bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
             Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.signature = 0x{0:X8}", bHdr.signature);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.version = {0}", bHdr.version);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.sectorStart = {0}", bHdr.sectorStart);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.sectorCount = {0}", bHdr.sectorCount);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.dataOffset = {0}", bHdr.dataOffset);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.buffers = {0}", bHdr.buffers);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.signature = 0x{0:X8}",  bHdr.signature);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.version = {0}",         bHdr.version);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.sectorStart = {0}",     bHdr.sectorStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.sectorCount = {0}",     bHdr.sectorCount);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.dataOffset = {0}",      bHdr.dataOffset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.buffers = {0}",         bHdr.buffers);
             AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.descriptor = 0x{0:X8}", bHdr.descriptor);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved1 = {0}", bHdr.reserved1);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved2 = {0}", bHdr.reserved2);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved3 = {0}", bHdr.reserved3);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved4 = {0}", bHdr.reserved4);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved5 = {0}", bHdr.reserved5);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved6 = {0}", bHdr.reserved6);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksumType = {0}", bHdr.checksumType);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksumLen = {0}", bHdr.checksumLen);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksum = 0x{0:X8}", bHdr.checksum);
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunks = {0}", bHdr.chunks);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved1 = {0}",       bHdr.reserved1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved2 = {0}",       bHdr.reserved2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved3 = {0}",       bHdr.reserved3);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved4 = {0}",       bHdr.reserved4);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved5 = {0}",       bHdr.reserved5);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reserved6 = {0}",       bHdr.reserved6);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksumType = {0}",    bHdr.checksumType);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksumLen = {0}",     bHdr.checksumLen);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksum = 0x{0:X8}",   bHdr.checksum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunks = {0}",          bHdr.chunks);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reservedChk is empty? = {0}",
                                        ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
@@ -362,21 +364,21 @@ public sealed partial class Udif
             if(bHdr.buffers > _buffersize)
                 _buffersize = bHdr.buffers * SECTOR_SIZE;
 
-            for(int i = 0; i < bHdr.chunks; i++)
+            for(var i = 0; i < bHdr.chunks; i++)
             {
-                byte[] bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
+                var bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
 
-                Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + (Marshal.SizeOf<BlockChunk>() * i), bChnkB, 0,
+                Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + Marshal.SizeOf<BlockChunk>() * i, bChnkB, 0,
                            Marshal.SizeOf<BlockChunk>());
 
                 BlockChunk bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].comment = {1}", i, bChnk.comment);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].sectors = {1}", i, bChnk.sectors);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].comment = {1}",   i, bChnk.comment);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].sectors = {1}",   i, bChnk.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
                 if(bChnk.type == CHUNK_TYPE_END)
                     break;
@@ -390,7 +392,8 @@ public sealed partial class Udif
                 switch(bChnk.type)
                 {
                     // TODO: Handle comments
-                    case CHUNK_TYPE_COMMNT: continue;
+                    case CHUNK_TYPE_COMMNT:
+                        continue;
 
                     // TODO: Handle compressed chunks
                     case CHUNK_TYPE_KENCODE:
@@ -452,7 +455,7 @@ public sealed partial class Udif
             return ErrorNumber.NoError;
 
         var   readChunk        = new BlockChunk();
-        bool  chunkFound       = false;
+        var   chunkFound       = false;
         ulong chunkStartSector = 0;
 
         foreach(KeyValuePair<ulong, BlockChunk> kvp in _chunks.Where(kvp => sectorAddress >= kvp.Key))
@@ -474,7 +477,7 @@ public sealed partial class Udif
         {
             if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] data))
             {
-                byte[] cmpBuffer = new byte[readChunk.length];
+                var cmpBuffer = new byte[readChunk.length];
                 _imageStream.Seek((long)(readChunk.offset + _footer.dataForkOff), SeekOrigin.Begin);
                 _imageStream.EnsureRead(cmpBuffer, 0, cmpBuffer.Length);
                 var    cmpMs     = new MemoryStream(cmpBuffer);
@@ -489,13 +492,15 @@ public sealed partial class Udif
                     case CHUNK_TYPE_BZIP:
                     case CHUNK_TYPE_ADC:
                     case CHUNK_TYPE_RLE:
-                    case CHUNK_TYPE_LZFSE: break;
+                    case CHUNK_TYPE_LZFSE:
+                        break;
                     case CHUNK_TYPE_LZMA:
                         decStream = new XZStream(cmpMs);
 
                         break;
 
-                    default: return ErrorNumber.NotImplemented;
+                    default:
+                        return ErrorNumber.NotImplemented;
                 }
 
             #if DEBUG
@@ -503,7 +508,7 @@ public sealed partial class Udif
                 {
                 #endif
                     byte[] tmpBuffer;
-                    int    realSize = 0;
+                    var    realSize = 0;
 
                     switch(readChunk.type)
                     {
@@ -631,4 +636,6 @@ public sealed partial class Udif
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Qcow2
 {
+#region Nested type: Header
+
     /// <summary>QCOW header, big-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -76,4 +78,6 @@ public sealed partial class Qcow2
         public readonly uint  refcount_order;
         public          uint  header_length;
     }
+
+#endregion
 }

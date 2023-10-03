@@ -45,6 +45,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Partimage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -54,7 +56,7 @@ public sealed partial class Partimage
         if(stream.Length < 512)
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+        var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, Marshal.SizeOf<Header>());
         _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -161,7 +163,7 @@ public sealed partial class Partimage
                                    StringHandlers.CToString(_cMainHeader.szVersion));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMbrCount = {0}", _cMainHeader.dwMbrCount);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMbrSize = {0}", _cMainHeader.dwMbrSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMbrSize = {0}",  _cMainHeader.dwMbrSize);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwEncryptAlgo = {0} ({1})",
                                    _cMainHeader.dwEncryptAlgo, (uint)_cMainHeader.dwEncryptAlgo);
@@ -249,7 +251,7 @@ public sealed partial class Partimage
         stream.EnsureRead(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
         CLocalHeader localHeader = Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBlockSize = {0}", localHeader.qwBlockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBlocksCount = {0}", localHeader.qwBlocksCount);
@@ -330,16 +332,17 @@ public sealed partial class Partimage
         extentsFillStopwatch.Start();
         _extents    = new ExtentsULong();
         _extentsOff = new Dictionary<ulong, ulong>();
-        bool  current     = (_bitmap[0] & (1 << (0 % 8))) != 0;
+        bool  current     = (_bitmap[0] & 1 << 0 % 8) != 0;
         ulong blockOff    = 0;
         ulong extentStart = 0;
 
         for(ulong i = 1; i <= localHeader.qwBlocksCount; i++)
         {
-            bool next = (_bitmap[i / 8] & (1 << (int)(i % 8))) != 0;
+            bool next = (_bitmap[i / 8] & 1 << (int)(i % 8)) != 0;
 
             // Flux
             if(next != current)
+            {
                 if(next)
                 {
                     extentStart = i;
@@ -350,6 +353,7 @@ public sealed partial class Partimage
                     _extents.Add(extentStart, i);
                     _extentsOff.TryGetValue(extentStart, out ulong _);
                 }
+            }
 
             if(next && current)
                 blockOff++;
@@ -390,7 +394,7 @@ public sealed partial class Partimage
         if(sectorAddress > _imageInfo.Sectors - 1)
             return ErrorNumber.OutOfRange;
 
-        if((_bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) == 0)
+        if((_bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0)
         {
             buffer = new byte[_imageInfo.SectorSize];
 
@@ -410,7 +414,7 @@ public sealed partial class Partimage
                         (long)(blockOff * _imageInfo.SectorSize) +
 
                         // How many bytes of CRC blocks to skip
-                        ((long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>());
+                        (long)(blockOff / (CHECK_FREQUENCY / _imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>();
 
         buffer = new byte[_imageInfo.SectorSize];
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
@@ -437,15 +441,17 @@ public sealed partial class Partimage
 
         var ms = new MemoryStream();
 
-        bool allEmpty = true;
+        var allEmpty = true;
 
         for(uint i = 0; i < length; i++)
-            if((_bitmap[sectorAddress / 8] & (1 << (int)(sectorAddress % 8))) != 0)
+        {
+            if((_bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) != 0)
             {
                 allEmpty = false;
 
                 break;
             }
+        }
 
         if(allEmpty)
         {
@@ -468,4 +474,6 @@ public sealed partial class Partimage
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

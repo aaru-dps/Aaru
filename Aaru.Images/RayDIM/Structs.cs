@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class RayDim
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -46,4 +48,6 @@ public sealed partial class RayDim
         public byte         sectorsPerTrack;
         public byte         heads;
     }
+
+#endregion
 }

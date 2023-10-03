@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhdx
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,10 +49,12 @@ public sealed partial class Vhdx
         if(stream.Length < 512)
             return false;
 
-        byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+        var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
         stream.EnsureRead(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
         _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
         return _id.signature == VHDX_SIGNATURE;
     }
+
+#endregion
 }

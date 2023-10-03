@@ -36,15 +36,28 @@ namespace Aaru.DiscImages;
 
 public sealed partial class A2R
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public enum A2rDriveType : byte
-    {
-        SS_525_40trk_quarterStep = 0x1, DS_35_80trk_appleCLV = 0x2, DS_525_80trk = 0x3,
-        DS_525_40trk             = 0x4, DS_35_80trk          = 0x5, DS_8         = 0x6
-    }
+#region A2rDiskType enum
 
     public enum A2rDiskType : byte
     {
-        _525 = 0x01, _35 = 0x2,
+        _525 = 0x01,
+        _35  = 0x2
     }
+
+#endregion
+
+#region A2rDriveType enum
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum A2rDriveType : byte
+    {
+        SS_525_40trk_quarterStep = 0x1,
+        DS_35_80trk_appleCLV     = 0x2,
+        DS_525_80trk             = 0x3,
+        DS_525_40trk             = 0x4,
+        DS_35_80trk              = 0x5,
+        DS_8                     = 0x6
+    }
+
+#endregion
 }

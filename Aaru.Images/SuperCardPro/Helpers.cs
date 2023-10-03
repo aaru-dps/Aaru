@@ -46,22 +46,22 @@ public sealed partial class SuperCardPro
             return null;
 
         stream.Position = position;
-        byte[] lenB = new byte[2];
+        var lenB = new byte[2];
         stream.EnsureRead(lenB, 0, 2);
-        ushort len = BitConverter.ToUInt16(lenB, 0);
+        var len = BitConverter.ToUInt16(lenB, 0);
 
         if(len                   == 0 ||
            len + stream.Position >= stream.Length)
             return null;
 
-        byte[] str = new byte[len];
+        var str = new byte[len];
         stream.EnsureRead(str, 0, len);
 
         return Encoding.UTF8.GetString(str);
     }
 
     /// <summary>
-    /// Takes a Head, Track and Sub-Track representation and converts it to the Track representation used by SCP.
+    ///     Takes a Head, Track and Sub-Track representation and converts it to the Track representation used by SCP.
     /// </summary>
     /// <param name="head">The head number</param>
     /// <param name="track">The track number</param>
@@ -70,19 +70,18 @@ public sealed partial class SuperCardPro
     static long HeadTrackSubToScpTrack(uint head, ushort track, byte subTrack) =>
 
         // TODO: Support single-sided disks
-        head + (track * 2);
+        head + track * 2;
 
     static byte[] UInt32ToFluxRepresentation(uint ticks)
     {
         uint over = ticks / 255;
 
         if(over == 0)
-            return new[]
-            {
-                (byte)ticks
-            };
+        {
+            return new[] { (byte)ticks };
+        }
 
-        byte[] expanded = new byte[over + 1];
+        var expanded = new byte[over + 1];
 
         Array.Fill(expanded, (byte)255, 0, (int)over);
         expanded[^1] = (byte)(ticks % 255);
@@ -113,7 +112,7 @@ public sealed partial class SuperCardPro
     }
 
     static List<byte> FluxRepresentationsToUInt16List(IEnumerable<byte> flux, IReadOnlyList<uint> indices,
-                                                      out uint[] trackLengths)
+                                                      out uint[]        trackLengths)
     {
         List<byte> scpData = new();
         ushort     tick    = 0;
@@ -159,8 +158,8 @@ public sealed partial class SuperCardPro
 
     static uint CalculateChecksum(Stream stream)
     {
-        byte[] wholeFile = new byte[stream.Length];
-        uint   sum       = 0;
+        var  wholeFile = new byte[stream.Length];
+        uint sum       = 0;
 
         stream.Position = 0;
         stream.EnsureRead(wholeFile, 0, wholeFile.Length);

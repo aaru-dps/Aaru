@@ -44,6 +44,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading of Sydex TeleDisk disk images</summary>
 public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
 {
+    const    string      MODULE_NAME = "TeleDisk plugin";
     readonly List<ulong> _sectorsWhereCrcHasFailed;
     bool                 _aDiskCrcHasFailed;
     byte[]               _commentBlock;
@@ -86,6 +87,4 @@ public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiabl
         _aDiskCrcHasFailed        = false;
         _sectorsWhereCrcHasFailed = new List<ulong>();
     }
-
-    const string MODULE_NAME = "TeleDisk plugin";
 }

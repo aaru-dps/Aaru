@@ -37,6 +37,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AppleDos
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -44,4 +46,6 @@ public sealed partial class AppleDos
 
         return imageFilter.DataForkLength == 143360 && _extension is ".po" or ".do";
     }
+
+#endregion
 }

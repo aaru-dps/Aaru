@@ -45,6 +45,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class KryoFlux
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -54,7 +56,7 @@ public sealed partial class KryoFlux
         if(stream.Length < Marshal.SizeOf<OobBlock>())
             return ErrorNumber.InvalidArgument;
 
-        byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+        var hdr = new byte[Marshal.SizeOf<OobBlock>()];
         stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
@@ -77,7 +79,7 @@ public sealed partial class KryoFlux
         tracks = new SortedDictionary<byte, IFilter>();
         byte step    = 1;
         byte heads   = 2;
-        bool topHead = false;
+        var  topHead = false;
 
         string basename = Path.Combine(imageFilter.ParentFolder, imageFilter.Filename[..^8]);
 
@@ -86,10 +88,12 @@ public sealed partial class KryoFlux
             int cylinder = t / heads;
             int head     = topHead ? 1 : t % heads;
 
-            string trackfile = Directory.Exists(basename) ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
+            string trackfile = Directory.Exists(basename)
+                                   ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
                                    : $"{basename}{cylinder:D2}.{head:D1}.raw";
 
             if(!File.Exists(trackfile))
+            {
                 if(cylinder == 0)
                 {
                     if(head == 0)
@@ -128,6 +132,7 @@ public sealed partial class KryoFlux
 
                     break;
                 }
+            }
 
             var         trackFilter = new ZZZNoFilter();
             ErrorNumber errno       = trackFilter.Open(trackfile);
@@ -142,7 +147,7 @@ public sealed partial class KryoFlux
 
             while(trackStream.Position < trackStream.Length)
             {
-                byte blockId = (byte)trackStream.ReadByte();
+                var blockId = (byte)trackStream.ReadByte();
 
                 switch(blockId)
                 {
@@ -150,7 +155,7 @@ public sealed partial class KryoFlux
                     {
                         trackStream.Position--;
 
-                        byte[] oob = new byte[Marshal.SizeOf<OobBlock>()];
+                        var oob = new byte[Marshal.SizeOf<OobBlock>()];
                         trackStream.EnsureRead(oob, 0, Marshal.SizeOf<OobBlock>());
 
                         OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
@@ -169,18 +174,15 @@ public sealed partial class KryoFlux
                             break;
                         }
 
-                        byte[] kfinfo = new byte[oobBlk.length];
+                        var kfinfo = new byte[oobBlk.length];
                         trackStream.EnsureRead(kfinfo, 0, oobBlk.length);
                         string kfinfoStr = StringHandlers.CToString(kfinfo);
 
-                        string[] lines = kfinfoStr.Split(new[]
-                        {
-                            ','
-                        }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] lines = kfinfoStr.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                         DateTime blockDate = DateTime.Now;
                         DateTime blockTime = DateTime.Now;
-                        bool     foundDate = false;
+                        var      foundDate = false;
 
                         foreach(string[] kvp in lines.Select(line => line.Split('=')).Where(kvp => kvp.Length == 2))
                         {
@@ -246,7 +248,8 @@ public sealed partial class KryoFlux
                         trackStream.Position += 2;
 
                         continue;
-                    default: continue;
+                    default:
+                        continue;
                 }
             }
 
@@ -303,4 +306,6 @@ public sealed partial class KryoFlux
 
         return ErrorNumber.NotImplemented;
     }
+
+#endregion
 }

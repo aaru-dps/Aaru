@@ -45,6 +45,7 @@ namespace Aaru.DiscImages;
 /// <summary>Implements reading and writing cdrdao cuesheet disc images</summary>
 public sealed partial class Cdrdao : IWritableOpticalImage
 {
+    const string MODULE_NAME = "CDRDAO plugin";
     IFilter      _cdrdaoFilter;
     StreamWriter _descriptorStream;
     CdrdaoDisc   _discimage;
@@ -81,6 +82,4 @@ public sealed partial class Cdrdao : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "CDRDAO plugin";
 }

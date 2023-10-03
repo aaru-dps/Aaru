@@ -34,7 +34,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class PartClone
 {
+#region IVerifiableImage Members
+
     // TODO: All blocks contain a CRC32 that's incompatible with current implementation. Need to check for compatibility.
     /// <inheritdoc />
     public bool? VerifyMediaImage() => null;
+
+#endregion
 }

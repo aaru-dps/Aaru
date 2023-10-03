@@ -36,9 +36,9 @@ public sealed partial class Vhdx
 {
     bool CheckBitmap(ulong sectorAddress)
     {
-        long index = (long)(sectorAddress / 8);
-        int  shift = (int)(sectorAddress  % 8);
-        byte val   = (byte)(1 << shift);
+        var index = (long)(sectorAddress / 8);
+        var shift = (int)(sectorAddress  % 8);
+        var val   = (byte)(1 << shift);
 
         if(index > _sectorBitmap.LongLength)
             return false;

@@ -41,16 +41,18 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Manages floppy disk images created with d2f by DataPackRat</summary>
-[SuppressMessage("ReSharper", "NotAccessedField.Local"), SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class WCDiskImage : IMediaImage
 {
+    const    string                                                 MODULE_NAME = "d2f plugin";
     readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors = new();
-    /// <summary>The file header after the image has been opened</summary>
-    FileHeader _fileHeader;
-    ImageInfo _imageInfo;
 
     /* the sectors are cached here */
     readonly Dictionary<(int cylinder, int head, int sector), byte[]> _sectorCache = new();
+    /// <summary>The file header after the image has been opened</summary>
+    FileHeader _fileHeader;
+    ImageInfo _imageInfo;
 
     /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
     IFilter _wcImageFilter;
@@ -79,6 +81,4 @@ public sealed partial class WCDiskImage : IMediaImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "d2f plugin";
 }

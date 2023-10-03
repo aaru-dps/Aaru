@@ -38,6 +38,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class AaruFormat
 {
+#region Nested type: AaruHeader
+
     /// <summary>Header, at start of file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode)]
     struct AaruHeader
@@ -65,6 +67,131 @@ public sealed partial class AaruFormat
         public long lastWrittenTime;
     }
 
+#endregion
+
+#region Nested type: AaruMetadataJsonBlock
+
+    /// <summary>Aaru Metadata JSON block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AaruMetadataJsonBlock
+    {
+        /// <summary>Identifier, <see cref="BlockType.AaruMetadataJsonBlock" /></summary>
+        public BlockType identifier;
+        public uint length;
+    }
+
+#endregion
+
+#region Nested type: BlockHeader
+
+    /// <summary>Block header, precedes block data</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct BlockHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.DataBlock" /></summary>
+        public BlockType identifier;
+        /// <summary>Type of data contained by this block</summary>
+        public DataType type;
+        /// <summary>Compression algorithm used to compress the block</summary>
+        public CompressionType compression;
+        /// <summary>Size in bytes of each sector contained in this block</summary>
+        public uint sectorSize;
+        /// <summary>Compressed length for the block</summary>
+        public uint cmpLength;
+        /// <summary>Uncompressed length for the block</summary>
+        public uint length;
+        /// <summary>CRC64-ECMA of the compressed block</summary>
+        public ulong cmpCrc64;
+        /// <summary>CRC64-ECMA of the uncompressed block</summary>
+        public ulong crc64;
+    }
+
+#endregion
+
+#region Nested type: ChecksumEntry
+
+    /// <summary>Checksum entry, followed by checksum data itself</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct ChecksumEntry
+    {
+        /// <summary>Checksum algorithm</summary>
+        public ChecksumAlgorithm type;
+        /// <summary>Length in bytes of checksum that follows this structure</summary>
+        public uint length;
+    }
+
+#endregion
+
+#region Nested type: ChecksumHeader
+
+    /// <summary>
+    ///     Checksum block, contains a checksum of all user data sectors (except for optical discs that is 2352 bytes raw
+    ///     sector if available
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct ChecksumHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.ChecksumBlock" /></summary>
+        public BlockType identifier;
+        /// <summary>Length in bytes of the block</summary>
+        public uint length;
+        /// <summary>How many checksums follow</summary>
+        public byte entries;
+    }
+
+#endregion
+
+#region Nested type: CicmMetadataBlock
+
+    /// <summary>CICM Metadata XML block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CicmMetadataBlock
+    {
+        /// <summary>Identifier, <see cref="BlockType.CicmBlock" /></summary>
+        public readonly BlockType identifier;
+        public readonly uint length;
+    }
+
+#endregion
+
+#region Nested type: CompactDiscIndexEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CompactDiscIndexEntry
+    {
+        /// <summary>How many entries follow this header</summary>
+        public ushort Track;
+        /// <summary>Size of the whole block, not including this header, in bytes</summary>
+        public ushort Index;
+        /// <summary>CRC64-ECMA of the block</summary>
+        public int Lba;
+    }
+
+#endregion
+
+#region Nested type: CompactDiscIndexesHeader
+
+    /// <summary>
+    ///     Compact Disc track indexes block, contains a cache of all Compact Disc indexes to not need to interpret
+    ///     subchannel
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct CompactDiscIndexesHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.CompactDiscIndexesBlock" /></summary>
+        public BlockType identifier;
+        /// <summary>How many entries follow this header</summary>
+        public ushort entries;
+        /// <summary>Size of the whole block, not including this header, in bytes</summary>
+        public readonly ulong length;
+        /// <summary>CRC64-ECMA of the block</summary>
+        public ulong crc64;
+    }
+
+#endregion
+
+#region Nested type: DdtHeader
+
     /// <summary>Header for a deduplication table. Table follows it</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct DdtHeader
@@ -89,29 +216,70 @@ public sealed partial class AaruFormat
         public readonly ulong crc64;
     }
 
-    /// <summary>Header for the index, followed by entries</summary>
+#endregion
+
+#region Nested type: DumpHardwareEntry
+
+    /// <summary>Dump hardware entry, contains length of strings that follow, in the same order as the length, this structure</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IndexHeader
+    struct DumpHardwareEntry
     {
-        /// <summary>Identifier, <see cref="BlockType.Index" /></summary>
+        /// <summary>Length of UTF-8 manufacturer string</summary>
+        public uint manufacturerLength;
+        /// <summary>Length of UTF-8 model string</summary>
+        public uint modelLength;
+        /// <summary>Length of UTF-8 revision string</summary>
+        public uint revisionLength;
+        /// <summary>Length of UTF-8 firmware version string</summary>
+        public uint firmwareLength;
+        /// <summary>Length of UTF-8 serial string</summary>
+        public uint serialLength;
+        /// <summary>Length of UTF-8 software name string</summary>
+        public uint softwareNameLength;
+        /// <summary>Length of UTF-8 software version string</summary>
+        public uint softwareVersionLength;
+        /// <summary>Length of UTF-8 software operating system string</summary>
+        public uint softwareOperatingSystemLength;
+        /// <summary>How many extents are after the strings</summary>
+        public uint extents;
+    }
+
+#endregion
+
+#region Nested type: DumpHardwareHeader
+
+    /// <summary>Dump hardware block, contains a list of hardware used to dump the media on this image</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DumpHardwareHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.DumpHardwareBlock" /></summary>
         public BlockType identifier;
         /// <summary>How many entries follow this header</summary>
         public ushort entries;
-        /// <summary>CRC64-ECMA of the index</summary>
+        /// <summary>Size of the whole block, not including this header, in bytes</summary>
+        public uint length;
+        /// <summary>CRC64-ECMA of the block</summary>
         public ulong crc64;
     }
 
-    /// <summary>Header for the index, followed by entries</summary>
+#endregion
+
+#region Nested type: GeometryBlock
+
+    /// <summary>Geometry block, contains physical geometry information</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IndexHeader2
+    struct GeometryBlock
     {
-        /// <summary>Identifier, <see cref="BlockType.Index2" /></summary>
+        /// <summary>Identifier, <see cref="BlockType.GeometryBlock" /></summary>
         public BlockType identifier;
-        /// <summary>How many entries follow this header</summary>
-        public ulong entries;
-        /// <summary>CRC64-ECMA of the index</summary>
-        public ulong crc64;
+        public uint cylinders;
+        public uint heads;
+        public uint sectorsPerTrack;
     }
+
+#endregion
+
+#region Nested type: IndexEntry
 
     /// <summary>Index entry</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -125,38 +293,41 @@ public sealed partial class AaruFormat
         public ulong offset;
     }
 
-    /// <summary>Block header, precedes block data</summary>
+#endregion
+
+#region Nested type: IndexHeader
+
+    /// <summary>Header for the index, followed by entries</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct BlockHeader
+    struct IndexHeader
     {
-        /// <summary>Identifier, <see cref="BlockType.DataBlock" /></summary>
+        /// <summary>Identifier, <see cref="BlockType.Index" /></summary>
         public BlockType identifier;
-        /// <summary>Type of data contained by this block</summary>
-        public DataType type;
-        /// <summary>Compression algorithm used to compress the block</summary>
-        public CompressionType compression;
-        /// <summary>Size in bytes of each sector contained in this block</summary>
-        public uint sectorSize;
-        /// <summary>Compressed length for the block</summary>
-        public uint cmpLength;
-        /// <summary>Uncompressed length for the block</summary>
-        public uint length;
-        /// <summary>CRC64-ECMA of the compressed block</summary>
-        public ulong cmpCrc64;
-        /// <summary>CRC64-ECMA of the uncompressed block</summary>
+        /// <summary>How many entries follow this header</summary>
+        public ushort entries;
+        /// <summary>CRC64-ECMA of the index</summary>
         public ulong crc64;
     }
 
-    /// <summary>Geometry block, contains physical geometry information</summary>
+#endregion
+
+#region Nested type: IndexHeader2
+
+    /// <summary>Header for the index, followed by entries</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct GeometryBlock
+    struct IndexHeader2
     {
-        /// <summary>Identifier, <see cref="BlockType.GeometryBlock" /></summary>
+        /// <summary>Identifier, <see cref="BlockType.Index2" /></summary>
         public BlockType identifier;
-        public uint cylinders;
-        public uint heads;
-        public uint sectorsPerTrack;
+        /// <summary>How many entries follow this header</summary>
+        public ulong entries;
+        /// <summary>CRC64-ECMA of the index</summary>
+        public ulong crc64;
     }
+
+#endregion
+
+#region Nested type: MetadataBlock
 
     /// <summary>Metadata block, contains metadata</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -220,17 +391,79 @@ public sealed partial class AaruFormat
         public uint driveFirmwareRevisionLength;
     }
 
-    /// <summary>Contains list of optical disc tracks</summary>
+#endregion
+
+#region Nested type: TapeFileEntry
+
+    /// <summary>Tape file entry</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TracksHeader
+    struct TapeFileEntry
     {
-        /// <summary>Identifier, <see cref="BlockType.TracksBlock" /></summary>
+        /// <summary>File number</summary>
+        public uint File;
+        /// <summary>Partition number</summary>
+        public readonly byte Partition;
+        /// <summary>First block, inclusive, of the file</summary>
+        public ulong FirstBlock;
+        /// <summary>Last block, inclusive, of the file</summary>
+        public ulong LastBlock;
+    }
+
+#endregion
+
+#region Nested type: TapeFileHeader
+
+    /// <summary>Tape file block, contains a list of all files in a tape</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TapeFileHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.TapeFileBlock" /></summary>
         public BlockType identifier;
         /// <summary>How many entries follow this header</summary>
-        public ushort entries;
+        public uint entries;
+        /// <summary>Size of the whole block, not including this header, in bytes</summary>
+        public ulong length;
         /// <summary>CRC64-ECMA of the block</summary>
         public ulong crc64;
     }
+
+#endregion
+
+#region Nested type: TapePartitionEntry
+
+    /// <summary>Tape partition entry</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TapePartitionEntry
+    {
+        /// <summary>Partition number</summary>
+        public byte Number;
+        /// <summary>First block, inclusive, of the partition</summary>
+        public ulong FirstBlock;
+        /// <summary>Last block, inclusive, of the partition</summary>
+        public ulong LastBlock;
+    }
+
+#endregion
+
+#region Nested type: TapePartitionHeader
+
+    /// <summary>Tape partition block, contains a list of all partitions in a tape</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TapePartitionHeader
+    {
+        /// <summary>Identifier, <see cref="BlockType.TapePartitionBlock" /></summary>
+        public BlockType identifier;
+        /// <summary>How many entries follow this header</summary>
+        public byte entries;
+        /// <summary>Size of the whole block, not including this header, in bytes</summary>
+        public ulong length;
+        /// <summary>CRC64-ECMA of the block</summary>
+        public ulong crc64;
+    }
+
+#endregion
+
+#region Nested type: TrackEntry
 
     /// <summary>Optical disc track</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
@@ -255,166 +488,21 @@ public sealed partial class AaruFormat
         public byte flags;
     }
 
-    /// <summary>CICM Metadata XML block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CicmMetadataBlock
-    {
-        /// <summary>Identifier, <see cref="BlockType.CicmBlock" /></summary>
-        public readonly BlockType identifier;
-        public readonly uint length;
-    }
+#endregion
 
-    /// <summary>Aaru Metadata JSON block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AaruMetadataJsonBlock
-    {
-        /// <summary>Identifier, <see cref="BlockType.AaruMetadataJsonBlock" /></summary>
-        public BlockType identifier;
-        public uint length;
-    }
+#region Nested type: TracksHeader
 
-    /// <summary>Dump hardware block, contains a list of hardware used to dump the media on this image</summary>
+    /// <summary>Contains list of optical disc tracks</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DumpHardwareHeader
+    struct TracksHeader
     {
-        /// <summary>Identifier, <see cref="BlockType.DumpHardwareBlock" /></summary>
+        /// <summary>Identifier, <see cref="BlockType.TracksBlock" /></summary>
         public BlockType identifier;
         /// <summary>How many entries follow this header</summary>
         public ushort entries;
-        /// <summary>Size of the whole block, not including this header, in bytes</summary>
-        public uint length;
         /// <summary>CRC64-ECMA of the block</summary>
         public ulong crc64;
     }
 
-    /// <summary>Dump hardware entry, contains length of strings that follow, in the same order as the length, this structure</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DumpHardwareEntry
-    {
-        /// <summary>Length of UTF-8 manufacturer string</summary>
-        public uint manufacturerLength;
-        /// <summary>Length of UTF-8 model string</summary>
-        public uint modelLength;
-        /// <summary>Length of UTF-8 revision string</summary>
-        public uint revisionLength;
-        /// <summary>Length of UTF-8 firmware version string</summary>
-        public uint firmwareLength;
-        /// <summary>Length of UTF-8 serial string</summary>
-        public uint serialLength;
-        /// <summary>Length of UTF-8 software name string</summary>
-        public uint softwareNameLength;
-        /// <summary>Length of UTF-8 software version string</summary>
-        public uint softwareVersionLength;
-        /// <summary>Length of UTF-8 software operating system string</summary>
-        public uint softwareOperatingSystemLength;
-        /// <summary>How many extents are after the strings</summary>
-        public uint extents;
-    }
-
-    /// <summary>
-    ///     Checksum block, contains a checksum of all user data sectors (except for optical discs that is 2352 bytes raw
-    ///     sector if available
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ChecksumHeader
-    {
-        /// <summary>Identifier, <see cref="BlockType.ChecksumBlock" /></summary>
-        public BlockType identifier;
-        /// <summary>Length in bytes of the block</summary>
-        public uint length;
-        /// <summary>How many checksums follow</summary>
-        public byte entries;
-    }
-
-    /// <summary>Checksum entry, followed by checksum data itself</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ChecksumEntry
-    {
-        /// <summary>Checksum algorithm</summary>
-        public ChecksumAlgorithm type;
-        /// <summary>Length in bytes of checksum that follows this structure</summary>
-        public uint length;
-    }
-
-    /// <summary>Tape file block, contains a list of all files in a tape</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TapeFileHeader
-    {
-        /// <summary>Identifier, <see cref="BlockType.TapeFileBlock" /></summary>
-        public BlockType identifier;
-        /// <summary>How many entries follow this header</summary>
-        public uint entries;
-        /// <summary>Size of the whole block, not including this header, in bytes</summary>
-        public ulong length;
-        /// <summary>CRC64-ECMA of the block</summary>
-        public ulong crc64;
-    }
-
-    /// <summary>Tape file entry</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TapeFileEntry
-    {
-        /// <summary>File number</summary>
-        public uint File;
-        /// <summary>Partition number</summary>
-        public readonly byte Partition;
-        /// <summary>First block, inclusive, of the file</summary>
-        public ulong FirstBlock;
-        /// <summary>Last block, inclusive, of the file</summary>
-        public ulong LastBlock;
-    }
-
-    /// <summary>Tape partition block, contains a list of all partitions in a tape</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TapePartitionHeader
-    {
-        /// <summary>Identifier, <see cref="BlockType.TapePartitionBlock" /></summary>
-        public BlockType identifier;
-        /// <summary>How many entries follow this header</summary>
-        public byte entries;
-        /// <summary>Size of the whole block, not including this header, in bytes</summary>
-        public ulong length;
-        /// <summary>CRC64-ECMA of the block</summary>
-        public ulong crc64;
-    }
-
-    /// <summary>Tape partition entry</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct TapePartitionEntry
-    {
-        /// <summary>Partition number</summary>
-        public byte Number;
-        /// <summary>First block, inclusive, of the partition</summary>
-        public ulong FirstBlock;
-        /// <summary>Last block, inclusive, of the partition</summary>
-        public ulong LastBlock;
-    }
-
-    /// <summary>
-    ///     Compact Disc track indexes block, contains a cache of all Compact Disc indexes to not need to interpret
-    ///     subchannel
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CompactDiscIndexesHeader
-    {
-        /// <summary>Identifier, <see cref="BlockType.CompactDiscIndexesBlock" /></summary>
-        public BlockType identifier;
-        /// <summary>How many entries follow this header</summary>
-        public ushort entries;
-        /// <summary>Size of the whole block, not including this header, in bytes</summary>
-        public readonly ulong length;
-        /// <summary>CRC64-ECMA of the block</summary>
-        public ulong crc64;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct CompactDiscIndexEntry
-    {
-        /// <summary>How many entries follow this header</summary>
-        public ushort Track;
-        /// <summary>Size of the whole block, not including this header, in bytes</summary>
-        public ushort Index;
-        /// <summary>CRC64-ECMA of the block</summary>
-        public int Lba;
-    }
+#endregion
 }

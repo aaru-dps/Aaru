@@ -36,6 +36,30 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SuperCardPro
 {
+#region Nested type: Footer
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Footer
+    {
+        public readonly uint manufacturerOffset;
+        public readonly uint modelOffset;
+        public readonly uint serialOffset;
+        public readonly uint creatorOffset;
+        public readonly uint applicationOffset;
+        public readonly uint commentsOffset;
+        public readonly long creationTime;
+        public readonly long modificationTime;
+        public readonly byte applicationVersion;
+        public readonly byte hardwareVersion;
+        public readonly byte firmwareVersion;
+        public readonly byte imageVersion;
+        public readonly uint signature;
+    }
+
+#endregion
+
+#region Nested type: ScpHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ScpHeader
     {
@@ -55,13 +79,9 @@ public sealed partial class SuperCardPro
         public uint[] offsets;
     }
 
-    public struct TrackHeader
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] Signature;
-        public byte         TrackNumber;
-        public TrackEntry[] Entries;
-    }
+#endregion
+
+#region Nested type: TrackEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TrackEntry
@@ -71,21 +91,17 @@ public sealed partial class SuperCardPro
         public uint dataOffset;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Footer
+#endregion
+
+#region Nested type: TrackHeader
+
+    public struct TrackHeader
     {
-        public readonly uint manufacturerOffset;
-        public readonly uint modelOffset;
-        public readonly uint serialOffset;
-        public readonly uint creatorOffset;
-        public readonly uint applicationOffset;
-        public readonly uint commentsOffset;
-        public readonly long creationTime;
-        public readonly long modificationTime;
-        public readonly byte applicationVersion;
-        public readonly byte hardwareVersion;
-        public readonly byte firmwareVersion;
-        public readonly byte imageVersion;
-        public readonly uint signature;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] Signature;
+        public byte         TrackNumber;
+        public TrackEntry[] Entries;
     }
+
+#endregion
 }

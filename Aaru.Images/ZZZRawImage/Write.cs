@@ -43,9 +43,11 @@ namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize == 0)
         {
@@ -277,4 +279,6 @@ public sealed partial class ZZZRawImage
 
     /// <inheritdoc />
     public bool SetImageInfo(ImageInfo imageInfo) => true;
+
+#endregion
 }

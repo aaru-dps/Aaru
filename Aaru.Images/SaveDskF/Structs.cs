@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class SaveDskF
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
     {
@@ -80,4 +82,6 @@ public sealed partial class SaveDskF
         /// <summary>0x26 offset to data</summary>
         public ushort dataOffset;
     }
+
+#endregion
 }

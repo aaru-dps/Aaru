@@ -36,6 +36,8 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Gdi
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadMediaTag(MediaTagType tag, out byte[] buffer)
     {
@@ -43,4 +45,6 @@ public sealed partial class Gdi
 
         return ErrorNumber.NoData;
     }
+
+#endregion
 }

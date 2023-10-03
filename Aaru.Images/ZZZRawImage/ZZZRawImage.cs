@@ -45,19 +45,20 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class ZZZRawImage : IWritableOpticalImage
 {
+    const string                     MODULE_NAME = "ZZZRawImage Plugin";
     string                           _basePath;
+    readonly Sector                  _decoding = new();
     bool                             _differentTrackZeroSize;
     string                           _extension;
     bool                             _hasSubchannel;
     ImageInfo                        _imageInfo;
     Dictionary<MediaTagType, byte[]> _mediaTags;
     bool                             _mode2;
-    bool                             _toastXa;
     bool                             _rawCompactDisc;
     bool                             _rawDvd;
     IFilter                          _rawImageFilter;
+    bool                             _toastXa;
     FileStream                       _writingStream;
-    Sector                           _decoding = new Sector();
 
     /// <summary>Implements reading and writing raw (sector by sector) images</summary>
     public ZZZRawImage() => _imageInfo = new ImageInfo
@@ -83,6 +84,4 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
         DriveSerialNumber     = null,
         DriveFirmwareRevision = null
     };
-
-    const string MODULE_NAME = "ZZZRawImage Plugin";
 }

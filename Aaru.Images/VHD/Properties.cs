@@ -41,33 +41,41 @@ namespace Aaru.DiscImages;
 
 public sealed partial class Vhd
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
     public string Name => Localization.Vhd_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8014d88f-64cd-4484-9441-7635c632958a");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public string Format => _thisFooter.DiskType switch
-    {
-        TYPE_FIXED        => "Virtual PC fixed size disk image",
-        TYPE_DYNAMIC      => "Virtual PC dynamic size disk image",
-        TYPE_DIFFERENCING => "Virtual PC differencing disk image",
-        _                 => "Virtual PC disk image"
-    };
+                            {
+                                TYPE_FIXED        => "Virtual PC fixed size disk image",
+                                TYPE_DYNAMIC      => "Virtual PC dynamic size disk image",
+                                TYPE_DIFFERENCING => "Virtual PC differencing disk image",
+                                _                 => "Virtual PC disk image"
+                            };
 
     /// <inheritdoc />
     public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -80,13 +88,15 @@ public sealed partial class Vhd
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[]
-    {
-        ".vhd"
-    };
+    public IEnumerable<string> KnownExtensions => new[] { ".vhd" };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }
