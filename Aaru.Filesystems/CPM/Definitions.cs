@@ -100,7 +100,7 @@ public sealed partial class CPM
                              IncludeFields = true)]
 [JsonSerializable(typeof(CpmDefinitions))]
 // ReSharper disable once PartialTypeWithSinglePart
-public partial class CpmDefinitionsContext : JsonSerializerContext {}
+public partial class CpmDefinitionsContext : JsonSerializerContext;
 
 /// <summary>CP/M disk definitions</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]

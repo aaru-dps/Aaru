@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Operating system</summary>
-public class OperatingSystem : BaseOperatingSystem {}
+public class OperatingSystem : BaseOperatingSystem;

@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Filesystem found</summary>
-public class Filesystem : NameCountModel {}
+public class Filesystem : NameCountModel;

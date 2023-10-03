@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Remote application</summary>
-public class RemoteApplication : BaseOperatingSystem {}
+public class RemoteApplication : BaseOperatingSystem;

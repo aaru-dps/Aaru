@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Filter used</summary>
-public class Filter : NameCountModel {}
+public class Filter : NameCountModel;

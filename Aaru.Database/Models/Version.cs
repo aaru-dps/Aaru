@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Aaru version</summary>
-public class Version : NameCountModel {}
+public class Version : NameCountModel;

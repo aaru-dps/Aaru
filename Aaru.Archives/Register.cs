@@ -45,4 +45,4 @@ namespace Aaru.Archives;
 // Needs to have the interface here so the source generator knows THIS IS the class
 // ReSharper disable once RedundantExtendsListEntry
 /// <inheritdoc />
-public sealed partial class Register : IPluginRegister {}
+public sealed partial class Register : IPluginRegister;

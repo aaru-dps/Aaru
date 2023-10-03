@@ -34,4 +34,4 @@ namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Command statistics.</summary>
-public class Command : NameCountModel {}
+public class Command : NameCountModel;

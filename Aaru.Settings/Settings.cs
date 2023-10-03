@@ -48,7 +48,7 @@ namespace Aaru.Settings;
                              IncludeFields = true)]
 [JsonSerializable(typeof(DicSettings))]
 // ReSharper disable once PartialTypeWithSinglePart
-public partial class SettingsContext : JsonSerializerContext {}
+public partial class SettingsContext : JsonSerializerContext;
 
 /// <summary>Settings</summary>
 public class DicSettings
