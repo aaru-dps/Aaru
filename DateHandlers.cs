@@ -39,9 +39,12 @@ namespace Aaru.Helpers;
 /// <summary>Helper operations for timestamp management (date and time)</summary>
 public static class DateHandlers
 {
-    static readonly DateTime _lisaEpoch = new(1901, 1, 1, 0, 0, 0);
-    static readonly DateTime _macEpoch  = new(1904, 1, 1, 0, 0, 0);
-    static readonly DateTime _unixEpoch = new(1970, 1, 1, 0, 0, 0);
+    const           string   ISO9660_MODULE_NAME = "ISO9600ToDateTime handler";
+    const           string   PASCAL_MODULE_NAME  = "UCSDPascalToDateTime handler";
+    const           string   DOS_MODULE_NAME     = "DOSToDateTime handler";
+    static readonly DateTime _lisaEpoch          = new(1901, 1, 1, 0, 0, 0);
+    static readonly DateTime _macEpoch           = new(1904, 1, 1, 0, 0, 0);
+    static readonly DateTime _unixEpoch          = new(1970, 1, 1, 0, 0, 0);
     /// <summary>Day 0 of Julian Date system</summary>
     static readonly DateTime _julianEpoch = new(1858, 11, 17, 0, 0, 0);
     static readonly DateTime _amigaEpoch = new(1978, 1, 1, 0, 0, 0);
@@ -108,7 +111,7 @@ public static class DateHandlers
         fourCharValue[2] = vdDateTime[2];
         fourCharValue[3] = vdDateTime[3];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "year = \"{0}\"",
                                    StringHandlers.CToString(fourCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII), out int year))
@@ -117,7 +120,7 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[4];
         twoCharValue[1] = vdDateTime[5];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "month = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int month))
@@ -126,7 +129,7 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[6];
         twoCharValue[1] = vdDateTime[7];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "day = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int day))
@@ -135,7 +138,7 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[8];
         twoCharValue[1] = vdDateTime[9];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "hour = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hour))
@@ -144,7 +147,7 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[10];
         twoCharValue[1] = vdDateTime[11];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "minute = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int minute))
@@ -153,7 +156,7 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[12];
         twoCharValue[1] = vdDateTime[13];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "second = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int second))
@@ -162,13 +165,13 @@ public static class DateHandlers
         twoCharValue[0] = vdDateTime[14];
         twoCharValue[1] = vdDateTime[15];
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "hundredths = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
         if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hundredths))
             hundredths = 0;
 
-        AaruConsole.DebugWriteLine("ISO9600ToDateTime handler",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
                                    "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                    year, month, day, hour, minute, second, hundredths * 10);
 
@@ -212,7 +215,7 @@ public static class DateHandlers
         int day   = (dateRecord & 0x01F0) >> 4;
         int month = dateRecord & 0x000F;
 
-        AaruConsole.DebugWriteLine("UCSDPascalToDateTime handler",
+        AaruConsole.DebugWriteLine(PASCAL_MODULE_NAME,
                                    "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month,
                                    day);
 
@@ -232,10 +235,10 @@ public static class DateHandlers
         int minute = (time & 0x7E0)  >> 5;
         int second = (time & 0x1F) * 2;
 
-        AaruConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date,
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date,
                                    year, month, day);
 
-        AaruConsole.DebugWriteLine("DOSToDateTime handler", "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}",
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}",
                                    time, hour, minute, second);
 
         DateTime dosDate;
