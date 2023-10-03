@@ -180,7 +180,7 @@ partial class Dump
             break;
         }
 
-        AaruConsole.DebugWriteLine("Pregap calculator", bcd switch
+        AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, bcd switch
         {
             true  => Localization.Core.Subchannel_is_BCD,
             false => Localization.Core.Subchannel_is_not_BCD,
@@ -210,7 +210,7 @@ partial class Dump
             // First track of each session has at least 150 sectors of pregap and is not always readable
             if(tracks.Where(trk => trk.Session == track.Session).MinBy(trk => trk.Sequence).Sequence == track.Sequence)
             {
-                AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Skipping_track_0, track.Sequence);
+                AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Skipping_track_0, track.Sequence);
 
                 if(track.Sequence > 1)
                     pregaps[track.Sequence] = 150;
@@ -222,21 +222,21 @@ partial class Dump
                tracks[t - 1].Type == tracks[t].Type &&
                dumping)
             {
-                AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Skipping_track_0, track.Sequence);
+                AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Skipping_track_0, track.Sequence);
 
                 continue;
             }
 
             if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor", StringComparison.Ordinal))
             {
-                AaruConsole.DebugWriteLine("Pregap calculator",
+                AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                            Localization.Core.Skipping_track_0_due_to_Plextor_firmware_bug,
                                            track.Sequence);
 
                 continue;
             }
 
-            AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Track_0, track.Sequence);
+            AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Track_0, track.Sequence);
 
             int   lba           = (int)track.StartSector - 1;
             bool  pregapFound   = false;
@@ -257,7 +257,7 @@ partial class Dump
 
                 if(sense)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.LBA_0_Try_1_Sense_2, lba,
+                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.LBA_0_Try_1_Sense_2, lba,
                                                retries + 1, sense);
 
                     continue;
@@ -268,7 +268,7 @@ partial class Dump
 
                 CRC16CCITTContext.Data(subBuf, 10, out crc);
 
-                AaruConsole.DebugWriteLine("Pregap calculator",
+                AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                            Localization.Core.
                                                         LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                            lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
@@ -309,7 +309,7 @@ partial class Dump
                     crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
                     if(crcOk)
-                        AaruConsole.DebugWriteLine("Pregap calculator",
+                        AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                    Localization.Core.
                                                                 LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                    lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
@@ -368,7 +368,7 @@ partial class Dump
 
                     CRC16CCITTContext.Data(subBuf, 10, out crc);
 
-                    AaruConsole.DebugWriteLine("Pregap calculator",
+                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                Localization.Core.
                                                             LBA_0_Try_1_Sense_2_Q_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
@@ -410,7 +410,7 @@ partial class Dump
 
                         if(crcOk)
                         {
-                            AaruConsole.DebugWriteLine("Pregap calculator",
+                            AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                        Localization.Core.
                                                                     LBA_0_Try_1_Sense_2_Q_FIXED_3_4_5_6_7_8_9_10_11_12_CRC_13_14_Calculated_CRC_15_16,
                                                        lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
@@ -492,7 +492,7 @@ partial class Dump
                 {
                     inexactPositioning = true;
 
-                    AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.All_Q_empty_for_LBA_0, lba);
+                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.All_Q_empty_for_LBA_0, lba);
 
                     break;
                 }
@@ -558,7 +558,7 @@ partial class Dump
 
                 if(diff != 0)
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator",
+                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                Localization.Core.Invalid_Q_position_for_LBA_0_got_1, lba, posQ);
 
                     inexactPositioning = true;
@@ -581,7 +581,7 @@ partial class Dump
                     // If CRC is not OK, only accept pregaps less than 10 sectors longer than previously now
                     if(crcOk || pregapQ - pregaps[track.Sequence] < 10)
                     {
-                        AaruConsole.DebugWriteLine("Pregap calculator", Localization.Core.Pregap_for_track_0_1,
+                        AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Pregap_for_track_0_1,
                                                    track.Sequence, pregapQ);
 
                         pregaps[track.Sequence] = pregapQ;

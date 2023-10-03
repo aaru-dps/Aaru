@@ -44,6 +44,8 @@ sealed partial class Reader
     readonly Device   _dev;
     readonly ErrorLog _errorLog;
     readonly uint     _timeout;
+    const    string   ATA_MODULE_NAME  = "ATA Reader";
+    const    string   SCSI_MODULE_NAME = "SCSI Reader";
 
     internal Reader(Device dev, uint timeout, byte[] identification, ErrorLog errorLog, bool raw = false)
     {

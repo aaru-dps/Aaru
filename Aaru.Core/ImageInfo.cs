@@ -64,6 +64,8 @@ namespace Aaru.Core;
 /// <summary>Image information operations</summary>
 public static class ImageInfo
 {
+    const string MODULE_NAME = "Image information";
+
     /// <summary>Prints image information to console</summary>
     /// <param name="imageFormat">Media image</param>
     public static void PrintImageInfo(IBaseImage imageFormat)
@@ -637,20 +639,20 @@ public static class ImageInfo
                             case TupleCodes.CISTPL_SPCL:
                             case TupleCodes.CISTPL_SWIL:
                             case TupleCodes.CISTPL_VERS_2:
-                                AaruConsole.DebugWriteLine("Device-Info command",
+                                AaruConsole.DebugWriteLine(MODULE_NAME,
                                                            Localization.Core.Invoke_Found_undecoded_tuple_ID_0,
                                                            tuple.Code);
 
                                 break;
                             default:
-                                AaruConsole.DebugWriteLine("Device-Info command",
+                                AaruConsole.DebugWriteLine(MODULE_NAME,
                                                            Localization.Core.Found_unknown_tuple_ID_0,
                                                            (byte)tuple.Code);
 
                                 break;
                         }
                 else
-                    AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Could_not_get_tuples);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Could_not_get_tuples);
             }
         }
 

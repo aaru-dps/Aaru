@@ -51,6 +51,7 @@ public sealed partial class MediaScan
     static readonly TimeSpan  _oneSecond = 1.Seconds();
     readonly        Stopwatch _scanStopwatch;
     readonly        Stopwatch _speedStopwatch;
+    const           string    MODULE_NAME = "Media scanning";
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
     /// <param name="ibgLogPath">Path to a IMGBurn log file</param>

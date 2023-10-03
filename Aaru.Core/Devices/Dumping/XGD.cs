@@ -157,7 +157,7 @@ partial class Dump
         mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
         // Get video partition size
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Getting_video_partition_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Getting_video_partition_size);
         UpdateStatus?.Invoke(Localization.Core.Locking_drive);
         _dumpLog.WriteLine(Localization.Core.Locking_drive);
         sense = _dev.KreonLock(out senseBuf, _dev.Timeout, out _);
@@ -205,7 +205,7 @@ partial class Dump
         Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
         mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Video_partition_total_size_0_sectors,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Video_partition_total_size_0_sectors,
                                    totalSize);
 
         ulong l0Video = (PFI.Decode(readBuffer, MediaType.DVDROM)?.Layer0EndPSN     ?? 0) -
@@ -244,7 +244,7 @@ partial class Dump
             mediaTags.Remove(MediaTagType.DVD_PFI);
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
-            AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Video_partition_total_size_0_sectors,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Video_partition_total_size_0_sectors,
                                        totalSize);
 
             l0Video = (PFI.Decode(coldPfi, MediaType.DVDROM)?.Layer0EndPSN     ?? 0) -
@@ -263,7 +263,7 @@ partial class Dump
         }
 
         // Get game partition size
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Getting_game_partition_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Getting_game_partition_size);
         UpdateStatus?.Invoke(Localization.Core.Unlocking_drive_Xtreme_);
         _dumpLog.WriteLine(Localization.Core.Unlocking_drive_Xtreme_);
         sense = _dev.KreonUnlockXtreme(out senseBuf, _dev.Timeout, out _);
@@ -293,11 +293,11 @@ partial class Dump
             ((ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) &
              0xFFFFFFFF) + 1;
 
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Game_partition_total_size_0_sectors,
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Game_partition_total_size_0_sectors,
                                    gameSize);
 
         // Get middle zone size
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Getting_middle_zone_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Getting_middle_zone_size);
         UpdateStatus?.Invoke(Localization.Core.Unlocking_drive_Wxripper);
         _dumpLog.WriteLine(Localization.Core.Unlocking_drive_Wxripper);
         sense = _dev.KreonUnlockWxripper(out senseBuf, _dev.Timeout, out _);
@@ -340,7 +340,7 @@ partial class Dump
             return;
         }
 
-        AaruConsole.DebugWriteLine("Dump-media command", Localization.Core.Unlocked_total_size_0_sectors, totalSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Unlocked_total_size_0_sectors, totalSize);
         ulong blocks = totalSize + 1;
 
         PFI.PhysicalFormatInformation? wxRipperPfiNullable = PFI.Decode(readBuffer, MediaType.DVDROM);
@@ -685,7 +685,7 @@ partial class Dump
                     for(ulong b = i; b < i + _skip; b++)
                         _resume.BadBlocks.Add(b);
 
-                    AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_error_0,
                                                Sense.PrettifySense(senseBuf));
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
@@ -888,7 +888,7 @@ partial class Dump
                 // TODO: Handle errors in video partition
                 //errored += blocksToRead;
                 //resume.BadBlocks.Add(l1);
-                AaruConsole.DebugWriteLine("Dump-Media", Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
                 mhddLog.Write(l1, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                 ibgLog.Write(l1, 0);

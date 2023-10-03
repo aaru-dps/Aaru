@@ -121,6 +121,8 @@ public partial class Dump
     readonly        Stopwatch           _trimStopwatch;
     readonly        Stopwatch           _writeStopwatch;
     readonly        Stopwatch           _imageCloseStopwatch;
+    const           string              PREGAP_MODULE_NAME = "Pregap calculator";
+    const           string              MODULE_NAME        = "Media dumping";
 
     /// <summary>Initializes dumpers</summary>
     /// <param name="doResume">Should resume?</param>

@@ -44,6 +44,7 @@ namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
+    const    string                                  MODULE_NAME = "Sidecar creation";
     readonly List<CommonTypes.AaruMetadata.Checksum> _emptyChecksums;
     readonly Encoding                                _encoding;
     readonly FileInfo                                _fi;

@@ -43,6 +43,8 @@ namespace Aaru.Core;
 /// <summary>Implements methods for handling partitions</summary>
 public static class Partitions
 {
+    const string MODULE_NAME = "Partitions";
+
     /// <summary>Gets a list of all partitions present in the specified image</summary>
     /// <param name="image">Image</param>
     /// <returns>List of found partitions</returns>
@@ -70,7 +72,7 @@ public static class Partitions
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
                                                tapeFile.FirstBlock);
                 }
 
@@ -91,7 +93,7 @@ public static class Partitions
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
                                                imagePartition.Start);
                 }
 
@@ -110,7 +112,7 @@ public static class Partitions
                     continue;
 
                 foundPartitions.AddRange(partitions);
-                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_zero, part.Name);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_zero, part.Name);
             }
 
             checkedLocations.Add(0);
@@ -133,13 +135,13 @@ public static class Partitions
                 if(Activator.CreateInstance(pluginType) is not IPartition part)
                     continue;
 
-                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Trying_0_at_1, part.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_0_at_1, part.Name,
                                            foundPartitions[0].Start);
 
                 if(!part.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
                     continue;
 
-                AaruConsole.DebugWriteLine("Partitions", Localization.Core.Found_0_at_1, part.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
                                            foundPartitions[0].Start);
 
                 children.AddRange(partitions);
@@ -147,7 +149,7 @@ public static class Partitions
 
             checkedLocations.Add(foundPartitions[0].Start);
 
-            AaruConsole.DebugWriteLine("Partitions", Localization.Core.Got_0_children, children.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_children, children.Count);
 
             if(children.Count > 0)
             {
@@ -165,8 +167,8 @@ public static class Partitions
                 foundPartitions.RemoveAt(0);
             }
 
-            AaruConsole.DebugWriteLine("Partitions", Localization.Core.Got_0_parents, foundPartitions.Count);
-            AaruConsole.DebugWriteLine("Partitions", Localization.Core.Got_0_partitions, childPartitions.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_parents, foundPartitions.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Got_0_partitions, childPartitions.Count);
         }
 
         // Be sure that device partitions are not excluded if not mapped by any scheme...

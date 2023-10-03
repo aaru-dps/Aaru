@@ -50,6 +50,8 @@ namespace Aaru.Core.Devices.Info;
 /// <summary>Obtains and contains information about a device</summary>
 public partial class DeviceInfo
 {
+    const string MODULE_NAME = "Device information";
+
     /// <summary>Initializes an instance of this class for the specified device</summary>
     /// <param name="dev">Device</param>
     public DeviceInfo(Device dev)
@@ -86,21 +88,21 @@ public partial class DeviceInfo
 
                 if(sense)
                 {
-                    AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                    AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "STATUS = 0x{0:X2}", errorRegisters.Status);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}",
                                                errorRegisters.CylinderHigh);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Error_code_equals_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0,
                                                dev.LastError);
 
                     break;
@@ -129,21 +131,21 @@ public partial class DeviceInfo
 
                 if(sense)
                 {
-                    AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                    AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "STATUS = 0x{0:X2}", errorRegisters.Status);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "NSECTOR = 0x{0:X2}", errorRegisters.SectorCount);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}",
                                                errorRegisters.CylinderHigh);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine("Device-Info command", Localization.Core.Error_code_equals_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0,
                                                dev.LastError);
 
                     break;
