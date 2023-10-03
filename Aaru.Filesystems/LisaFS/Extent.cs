@@ -205,57 +205,57 @@ public sealed partial class LisaFS
         if(_printedExtents.Contains(fileId))
             return ErrorNumber.NoError;
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filename = {1}", fileId,
                                    StringHandlers.CToString(file.filename, _encoding));
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].etype = 0x{1:X2}", fileId, file.etype);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].ftype = {1}", fileId, file.ftype);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId, file.unknown3);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtc = {1}", fileId, file.dtc);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dta = {1}", fileId, file.dta);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtm = {1}", fileId, file.dtm);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtb = {1}", fileId, file.dtb);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dts = {1}", fileId, file.dts);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].serial = {1}", fileId, file.serial);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId, file.unknown4);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].locked = {1}", fileId, file.locked       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].protect = {1}", fileId, file.protect     > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].master = {1}", fileId, file.master       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].scavenged = {1}", fileId, file.scavenged > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].closed = {1}", fileId, file.closed       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].open = {1}", fileId, file.open           > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].etype = 0x{1:X2}", fileId, file.etype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].ftype = {1}", fileId, file.ftype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId, file.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtc = {1}", fileId, file.dtc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dta = {1}", fileId, file.dta);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtm = {1}", fileId, file.dtm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtb = {1}", fileId, file.dtb);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dts = {1}", fileId, file.dts);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].serial = {1}", fileId, file.serial);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId, file.unknown4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].locked = {1}", fileId, file.locked       > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].protect = {1}", fileId, file.protect     > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].master = {1}", fileId, file.master       > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].scavenged = {1}", fileId, file.scavenged > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].closed = {1}", fileId, file.closed       > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].open = {1}", fileId, file.open           > 0);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
                                    "{10:X2}{11:X2}", fileId, file.unknown5[0], file.unknown5[1], file.unknown5[2],
                                    file.unknown5[3], file.unknown5[4], file.unknown5[5], file.unknown5[6],
                                    file.unknown5[7], file.unknown5[8], file.unknown5[9], file.unknown5[10]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].release = {1}", fileId, file.release);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].build = {1}", fileId, file.build);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].release = {1}", fileId, file.release);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].build = {1}", fileId, file.build);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].revision = {1}", fileId, file.revision);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].revision = {1}", fileId, file.revision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].password_valid = {1}", fileId,
                                    file.password_valid > 0);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].password = {1}", fileId,
                                    _encoding.GetString(file.password));
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
                                    file.unknown7[0], file.unknown7[1], file.unknown7[2]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown8 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
                                    "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}", fileId, file.unknown8[0],
                                    file.unknown8[1], file.unknown8[2], file.unknown8[3], file.unknown8[4],
@@ -263,19 +263,19 @@ public sealed partial class LisaFS
                                    file.unknown8[9], file.unknown8[10], file.unknown8[11], file.unknown8[12],
                                    file.unknown8[13], file.unknown8[14], file.unknown8[15]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].length = {1}", fileId, file.length);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].length = {1}", fileId, file.length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
 
         for(int ext = 0; ext < file.extents.Length; ext++)
         {
-            AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext,
                                        file.extents[ext].start);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].length = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].extents[{1}].length = {2}", fileId, ext,
                                        file.extents[ext].length);
         }
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
 
         _printedExtents.Add(fileId);
 

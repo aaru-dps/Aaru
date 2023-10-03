@@ -97,4 +97,6 @@ public sealed partial class CPM : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
+
+    const string MODULE_NAME = "CP/M Plugin";
 }

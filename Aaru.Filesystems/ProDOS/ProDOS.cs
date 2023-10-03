@@ -46,4 +46,5 @@ public sealed partial class ProDOSPlugin : IFilesystem
     public Guid Id => new("43874265-7B8A-4739-BCF7-07F80D5932BF");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "ProDOS plugin";
 }

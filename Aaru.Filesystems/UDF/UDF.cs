@@ -44,4 +44,5 @@ public sealed partial class UDF : IFilesystem
     public Guid Id => new("83976FEC-A91B-464B-9293-56C719461BAB");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "UDF Plugin";
 }

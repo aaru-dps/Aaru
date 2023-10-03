@@ -39,6 +39,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements the Apple Macintosh File System</summary>
 public sealed partial class AppleMFS : IReadOnlyFilesystem
 {
+    const string                MODULE_NAME = "Apple MFS plugin";
     bool                        _mounted;
     bool                        _debug;
     IMediaImage                 _device;

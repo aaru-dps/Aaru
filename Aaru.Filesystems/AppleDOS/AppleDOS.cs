@@ -39,7 +39,8 @@ namespace Aaru.Filesystems;
 public sealed partial class AppleDOS : IReadOnlyFilesystem
 {
     // Do not translate
-    const string FS_TYPE = "appledos";
+    const string FS_TYPE     = "appledos";
+    const string MODULE_NAME = "Apple DOS plugin";
     bool         _debug;
     IMediaImage  _device;
     Encoding     _encoding;

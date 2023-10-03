@@ -42,4 +42,5 @@ public sealed partial class BFS : IFilesystem
     public Guid Id => new("1E6E0DA6-F7E4-494C-80C6-CB5929E96155");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "BFS plugin";
 }

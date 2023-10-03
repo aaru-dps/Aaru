@@ -99,4 +99,6 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
             "debug", false.ToString()
         }
     };
+
+    const string MODULE_NAME = "Xbox FAT plugin";
 }

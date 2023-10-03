@@ -43,4 +43,5 @@ public sealed partial class QNX4 : IFilesystem
     public Guid Id => new("E73A63FA-B5B0-48BF-BF82-DA5F0A8170D2");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "QNX4 plugin";
 }

@@ -75,7 +75,7 @@ public sealed partial class RBF : IFilesystem
             IdSector    rbfSb     = Marshal.ByteArrayToStructureBigEndian<IdSector>(sector);
             NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
-            AaruConsole.DebugWriteLine("RBF plugin", Localization.magic_at_0_equals_1_or_2_expected_3_or_4, location,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_or_2_expected_3_or_4, location,
                                        rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
             if(rbfSb.dd_sync == RBF_SYNC ||
@@ -122,7 +122,7 @@ public sealed partial class RBF : IFilesystem
             rbfSb     = Marshal.ByteArrayToStructureBigEndian<IdSector>(sector);
             rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
-            AaruConsole.DebugWriteLine("RBF plugin", Localization.magic_at_0_equals_1_or_2_expected_3_or_4, location,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_or_2_expected_3_or_4, location,
                                        rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
             if(rbfSb.dd_sync == RBF_SYNC ||

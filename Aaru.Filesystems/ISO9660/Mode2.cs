@@ -71,18 +71,18 @@ public sealed partial class ISO9660
                 switch(data.Length)
                 {
                     case 2048:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                    realSector);
 
                         break;
                     case 2324:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
                                                    realSector);
 
                         break;
                     case 2336:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
                                                        tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                    realSector,
@@ -93,16 +93,16 @@ public sealed partial class ISO9660
                     case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
                                    data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
                                    data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Raw_Audio, realSector);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio, realSector);
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
                                                    realSector, data[12], data[13], data[14], data[15]);
 
                         break;
                     case 2352:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
                                                        tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
                                                    realSector, data[12], data[13], data[14],
@@ -146,18 +146,18 @@ public sealed partial class ISO9660
                     switch(data.Length)
                     {
                         case 2048:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                        dstSector);
 
                             break;
                         case 2324:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.tor_Sector_0_Cooked_Mode_two_Form_two, dstSector);
 
                             break;
                         case 2336:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.
                                                            tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                        dstSector,
@@ -168,17 +168,17 @@ public sealed partial class ISO9660
                         case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
                                        data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
                                        data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_Raw_Audio,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio,
                                                        dstSector);
 
                             break;
                         case 2352 when data[15] != 2:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
                                                        dstSector, data[12], data[13], data[14], data[15]);
 
                             break;
                         case 2352:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
                                                        Localization.
                                                            tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
                                                        dstSector, data[12], data[13], data[14],

@@ -109,33 +109,33 @@ public sealed partial class UDF
         {
             anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.descriptorVersion = {0}",
                                        anchor.tag.descriptorVersion);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}", anchor.tag.reserved);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.reserved = {0}", anchor.tag.reserved);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}", anchor.tag.tagSerialNumber);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagSerialNumber = {0}", anchor.tag.tagSerialNumber);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}", anchor.tag.descriptorCrc);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.descriptorCrc = 0x{0:X4}", anchor.tag.descriptorCrc);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.descriptorCrcLength = {0}",
                                        anchor.tag.descriptorCrcLength);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
                                        anchor.mainVolumeDescriptorSequenceExtent.length);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
                                        anchor.mainVolumeDescriptorSequenceExtent.location);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
                                        anchor.reserveVolumeDescriptorSequenceExtent.length);
 
-            AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
                                        anchor.reserveVolumeDescriptorSequenceExtent.location);
 
             if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||

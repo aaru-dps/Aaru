@@ -104,4 +104,6 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
             "debug", false.ToString()
         }
     };
+
+    const string MODULE_NAME = "ISO9660 plugin";
 }

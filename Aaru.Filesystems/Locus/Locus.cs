@@ -65,4 +65,5 @@ public sealed partial class Locus : IFilesystem
     public Guid Id => new("1A70B30A-437D-479A-88E1-D0C9C1797FF4");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "Locus plugin";
 }

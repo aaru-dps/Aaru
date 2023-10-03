@@ -90,15 +90,15 @@ public sealed partial class BFS
         Array.Copy(bfsSbSector, 0x22, sbStrings, 0, 6);
         bfsSb.s_volume = StringHandlers.CToString(sbStrings, encoding);
 
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}", bfsSb.s_end);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}", bfsSb.s_from);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}", bfsSb.s_to);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}", bfsSb.s_bto);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
-        AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_end: 0x{0:X8}", bfsSb.s_end);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_from: 0x{0:X8}", bfsSb.s_from);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_to: 0x{0:X8}", bfsSb.s_to);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_bto: 0x{0:X8}", bfsSb.s_bto);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
 
         sb.AppendLine(Localization.UNIX_Boot_Filesystem);
 

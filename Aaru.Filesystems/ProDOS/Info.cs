@@ -87,31 +87,31 @@ public sealed partial class ProDOSPlugin
         }
 
         ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
-        AaruConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "prePointer = {0}", prePointer);
 
         if(prePointer != 0)
             return false;
 
         byte storageType = (byte)((rootDirectoryKeyBlock[0x04] & STORAGE_TYPE_MASK) >> 4);
-        AaruConsole.DebugWriteLine("ProDOS plugin", "storage_type = {0}", storageType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "storage_type = {0}", storageType);
 
         if(storageType != ROOT_DIRECTORY_TYPE)
             return false;
 
         byte entryLength = rootDirectoryKeyBlock[0x23];
-        AaruConsole.DebugWriteLine("ProDOS plugin", "entry_length = {0}", entryLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "entry_length = {0}", entryLength);
 
         if(entryLength != ENTRY_LENGTH)
             return false;
 
         byte entriesPerBlock = rootDirectoryKeyBlock[0x24];
-        AaruConsole.DebugWriteLine("ProDOS plugin", "entries_per_block = {0}", entriesPerBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "entries_per_block = {0}", entriesPerBlock);
 
         if(entriesPerBlock != ENTRIES_PER_BLOCK)
             return false;
 
         ushort bitMapPointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
-        AaruConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bitMapPointer);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bit_map_pointer = {0}", bitMapPointer);
 
         if(bitMapPointer > partition.End)
             return false;
@@ -121,7 +121,7 @@ public sealed partial class ProDOSPlugin
         if(apmFromHddOnCd)
             totalBlocks /= 4;
 
-        AaruConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
                                    partition.Start, totalBlocks <= partition.End - partition.Start + 1);
 
         return totalBlocks <= partition.End - partition.Start + 1;
@@ -200,11 +200,11 @@ public sealed partial class ProDOSPlugin
             if(year < 1940)
                 year += 100;
 
-            AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}", tempTimestampLeft);
-            AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
-            AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}", tempTimestamp);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_left = 0x{0:X4}", tempTimestampLeft);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp = 0x{0:X8}", tempTimestamp);
 
-            AaruConsole.DebugWriteLine("ProDOS plugin",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Datetime_field_year_0_month_1_day_2_hour_3_minute_4, year, month,
                                        day, hour, minute);
 
@@ -291,7 +291,7 @@ public sealed partial class ProDOSPlugin
 
         // TODO: Fix mask
         if((rootDirectoryKeyBlock.header.access & RESERVED_ATTRIBUTE_MASK) != 0)
-            AaruConsole.DebugWriteLine("ProDOS plugin", Localization.Reserved_attributes_are_set_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reserved_attributes_are_set_0,
                                        rootDirectoryKeyBlock.header.access);
 
         information = sbInformation.ToString();

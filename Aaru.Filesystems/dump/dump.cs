@@ -48,4 +48,5 @@ public sealed partial class dump : IFilesystem
     public Guid Id => new("E53B4D28-C858-4800-B092-DDAE80D361B9");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "dump(8) plugin";
 }

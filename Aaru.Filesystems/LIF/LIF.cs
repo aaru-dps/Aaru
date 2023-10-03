@@ -42,4 +42,5 @@ public sealed partial class LIF : IFilesystem
     public Guid Id => new("41535647-77A5-477B-9206-DA727ACDC704");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "LIF plugin";
 }

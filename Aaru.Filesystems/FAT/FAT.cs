@@ -63,6 +63,8 @@ public sealed partial class FAT : IReadOnlyFilesystem
     FileSystemInfo                                                 _statfs;
     bool                                                           _useFirstFat;
     Encoding                                                       _encoding;
+    uint                                                           _fatEntriesPerSector;
+    IMediaImage                                                    _image;
 
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
@@ -103,4 +105,6 @@ public sealed partial class FAT : IReadOnlyFilesystem
             "debug", false.ToString()
         }
     };
+
+    const string MODULE_NAME = "FAT plugin";
 }

@@ -43,4 +43,5 @@ public sealed partial class HPOFS : IFilesystem
     public Guid Id => new("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "HPOFS Plugin";
 }

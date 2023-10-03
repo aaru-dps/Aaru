@@ -64,7 +64,7 @@ public sealed partial class LisaFS
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Sector_0_file_ID_1, i, searchTag.FileId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
             if(beforeMddf       == -1 &&
                searchTag.FileId == FILEID_LOADER_SIGNED)
@@ -88,18 +88,18 @@ public sealed partial class LisaFS
                 datasize                     = BigEndianBitConverter.ToUInt16(sector, 0x7E)
             };
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Current_sector_0, i);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.mddf_block = {0}", infoMddf.mddf_block);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Disk size = {0} sectors", imagePlugin.Info.Sectors);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size = {0} sectors", infoMddf.vol_size);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - 1 = {0}", infoMddf.volsize_minus_one);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Current_sector_0, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.mddf_block = {0}", infoMddf.mddf_block);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "Disk size = {0} sectors", imagePlugin.Info.Sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size = {0} sectors", infoMddf.vol_size);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size - 1 = {0}", infoMddf.volsize_minus_one);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.vol_size - mddf.mddf_block -1 = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size - mddf.mddf_block -1 = {0}",
                                        infoMddf.volsize_minus_mddf_minus_one);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "Disk sector = {0} bytes", imagePlugin.Info.SectorSize);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.blocksize = {0} bytes", infoMddf.blocksize);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.datasize = {0} bytes", infoMddf.datasize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "Disk sector = {0} bytes", imagePlugin.Info.SectorSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.blocksize = {0} bytes", infoMddf.blocksize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.datasize = {0} bytes", infoMddf.datasize);
 
             if(infoMddf.mddf_block != i - beforeMddf)
                 return false;
@@ -153,7 +153,7 @@ public sealed partial class LisaFS
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", Localization.Sector_0_file_ID_1, i, searchTag.FileId);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
             if(beforeMddf       == -1 &&
                searchTag.FileId == FILEID_LOADER_SIGNED)
@@ -250,45 +250,45 @@ public sealed partial class LisaFS
             infoMddf.vol_sequence                 = BigEndianBitConverter.ToUInt16(sector, 0x136);
             infoMddf.vol_left_mounted             = sector[0x138];
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown1 = 0x{0:X2} ({0})", infoMddf.unknown1);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown2 = 0x{0:X2} ({0})", infoMddf.unknown2);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown3 = 0x{0:X8} ({0})", infoMddf.unknown3);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown4 = 0x{0:X4} ({0})", infoMddf.unknown4);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown5 = 0x{0:X8} ({0})", infoMddf.unknown5);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown6 = 0x{0:X8} ({0})", infoMddf.unknown6);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown7 = 0x{0:X8} ({0})", infoMddf.unknown7);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown9 = 0x{0:X4} ({0})", infoMddf.unknown9);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown10 = 0x{0:X8} ({0})", infoMddf.unknown10);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown11 = 0x{0:X8} ({0})", infoMddf.unknown11);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown12 = 0x{0:X8} ({0})", infoMddf.unknown12);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown13 = 0x{0:X8} ({0})", infoMddf.unknown13);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown14 = 0x{0:X8} ({0})", infoMddf.unknown14);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown15 = 0x{0:X8} ({0})", infoMddf.unknown15);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown16 = 0x{0:X8} ({0})", infoMddf.unknown16);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown17 = 0x{0:X4} ({0})", infoMddf.unknown17);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown18 = 0x{0:X8} ({0})", infoMddf.unknown18);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown19 = 0x{0:X8} ({0})", infoMddf.unknown19);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown20 = 0x{0:X8} ({0})", infoMddf.unknown20);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown21 = 0x{0:X8} ({0})", infoMddf.unknown21);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown22 = 0x{0:X8} ({0})", infoMddf.unknown22);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown23 = 0x{0:X8} ({0})", infoMddf.unknown23);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown24 = 0x{0:X8} ({0})", infoMddf.unknown24);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown25 = 0x{0:X8} ({0})", infoMddf.unknown25);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown26 = 0x{0:X8} ({0})", infoMddf.unknown26);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown27 = 0x{0:X8} ({0})", infoMddf.unknown27);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown28 = 0x{0:X8} ({0})", infoMddf.unknown28);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown29 = 0x{0:X8} ({0})", infoMddf.unknown29);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown30 = 0x{0:X8} ({0})", infoMddf.unknown30);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown31 = 0x{0:X8} ({0})", infoMddf.unknown31);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown32 = 0x{0:X8} ({0})", infoMddf.unknown32);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown33 = 0x{0:X8} ({0})", infoMddf.unknown33);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown34 = 0x{0:X8} ({0})", infoMddf.unknown34);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown35 = 0x{0:X8} ({0})", infoMddf.unknown35);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown36 = 0x{0:X8} ({0})", infoMddf.unknown36);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown37 = 0x{0:X8} ({0})", infoMddf.unknown37);
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown38 = 0x{0:X8} ({0})", infoMddf.unknown38);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown1 = 0x{0:X2} ({0})", infoMddf.unknown1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown2 = 0x{0:X2} ({0})", infoMddf.unknown2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown3 = 0x{0:X8} ({0})", infoMddf.unknown3);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown4 = 0x{0:X4} ({0})", infoMddf.unknown4);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown5 = 0x{0:X8} ({0})", infoMddf.unknown5);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown6 = 0x{0:X8} ({0})", infoMddf.unknown6);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown7 = 0x{0:X8} ({0})", infoMddf.unknown7);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown9 = 0x{0:X4} ({0})", infoMddf.unknown9);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown10 = 0x{0:X8} ({0})", infoMddf.unknown10);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown11 = 0x{0:X8} ({0})", infoMddf.unknown11);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown12 = 0x{0:X8} ({0})", infoMddf.unknown12);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown13 = 0x{0:X8} ({0})", infoMddf.unknown13);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown14 = 0x{0:X8} ({0})", infoMddf.unknown14);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown15 = 0x{0:X8} ({0})", infoMddf.unknown15);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown16 = 0x{0:X8} ({0})", infoMddf.unknown16);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown17 = 0x{0:X4} ({0})", infoMddf.unknown17);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown18 = 0x{0:X8} ({0})", infoMddf.unknown18);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown19 = 0x{0:X8} ({0})", infoMddf.unknown19);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown20 = 0x{0:X8} ({0})", infoMddf.unknown20);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown21 = 0x{0:X8} ({0})", infoMddf.unknown21);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown22 = 0x{0:X8} ({0})", infoMddf.unknown22);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown23 = 0x{0:X8} ({0})", infoMddf.unknown23);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown24 = 0x{0:X8} ({0})", infoMddf.unknown24);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown25 = 0x{0:X8} ({0})", infoMddf.unknown25);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown26 = 0x{0:X8} ({0})", infoMddf.unknown26);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown27 = 0x{0:X8} ({0})", infoMddf.unknown27);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown28 = 0x{0:X8} ({0})", infoMddf.unknown28);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown29 = 0x{0:X8} ({0})", infoMddf.unknown29);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown30 = 0x{0:X8} ({0})", infoMddf.unknown30);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown31 = 0x{0:X8} ({0})", infoMddf.unknown31);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown32 = 0x{0:X8} ({0})", infoMddf.unknown32);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown33 = 0x{0:X8} ({0})", infoMddf.unknown33);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown34 = 0x{0:X8} ({0})", infoMddf.unknown34);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown35 = 0x{0:X8} ({0})", infoMddf.unknown35);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown36 = 0x{0:X8} ({0})", infoMddf.unknown36);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown37 = 0x{0:X8} ({0})", infoMddf.unknown37);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown38 = 0x{0:X8} ({0})", infoMddf.unknown38);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})",
                                        infoMddf.unknown_timestamp,
                                        DateHandlers.LisaToDateTime(infoMddf.unknown_timestamp));
 

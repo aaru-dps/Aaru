@@ -41,4 +41,5 @@ public sealed partial class Fossil : IFilesystem
     public Guid Id => new("932BF104-43F6-494F-973C-45EF58A51DA9");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "Fossil plugin";
 }

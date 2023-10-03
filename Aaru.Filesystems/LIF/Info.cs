@@ -53,7 +53,7 @@ public sealed partial class LIF
             return false;
 
         SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
-        AaruConsole.DebugWriteLine("LIF plugin", Localization.magic_0_expected_1, lifSb.magic, LIF_MAGIC);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_0_expected_1, lifSb.magic, LIF_MAGIC);
 
         return lifSb.magic == LIF_MAGIC;
     }

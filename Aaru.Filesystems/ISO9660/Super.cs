@@ -135,10 +135,10 @@ public sealed partial class ISO9660
 
         while(true)
         {
-            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Processing_VD_loop_no_0, counter);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Processing_VD_loop_no_0, counter);
 
             // Seek to Volume Descriptor
-            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Reading_sector_0, 16 + counter + partition.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_sector_0, 16 + counter + partition.Start);
             errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
 
             if(errno != ErrorNumber.NoError)
@@ -148,7 +148,7 @@ public sealed partial class ISO9660
             Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
             byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
-            AaruConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "VDType = {0}", vdType);
 
             if(vdType == 255) // Supposedly we are in the PVD.
             {
@@ -214,7 +214,7 @@ public sealed partial class ISO9660
                                svd.escape_sequences[2] == 'E')
                                 jolietvd = svd;
                             else
-                                AaruConsole.DebugWriteLine("ISO9660 plugin",
+                                AaruConsole.DebugWriteLine(MODULE_NAME,
                                                            Localization.Found_unknown_supplementary_volume_descriptor);
 
                         if(_debug)
@@ -367,7 +367,7 @@ public sealed partial class ISO9660
             if(_pathTable?.Length > 1 &&
                rootLocation       != _pathTable[0].Extent)
             {
-                AaruConsole.DebugWriteLine("ISO9660 plugin",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.
                                                Path_table_and_PVD_do_not_point_to_the_same_location_for_the_root_directory);
 
@@ -397,7 +397,7 @@ public sealed partial class ISO9660
 
                 if(pvdWrongRoot)
                 {
-                    AaruConsole.DebugWriteLine("ISO9660 plugin",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.
                                                    PVD_does_not_point_to_correct_root_directory_checking_path_table);
 

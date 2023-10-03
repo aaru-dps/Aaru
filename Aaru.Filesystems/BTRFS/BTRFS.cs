@@ -45,4 +45,5 @@ public sealed partial class BTRFS : IFilesystem
     public Guid Id => new("C904CF15-5222-446B-B7DB-02EAC5D781B3");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "BTRFS Plugin";
 }

@@ -81,16 +81,16 @@ public sealed partial class PascalPlugin
 
         Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
 
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}", volEntry.LastBlock);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}", volEntry.EntryType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.firstBlock = {0}", volEntry.FirstBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.lastBlock = {0}", volEntry.LastBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.entryType = {0}", volEntry.EntryType);
 
-        //            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}", volEntry.Blocks);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}", volEntry.Files);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.dummy = {0}", volEntry.Dummy);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBoot = {0}", volEntry.LastBoot);
-        AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.tail = {0}", volEntry.Tail);
+        //            AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.volumeName = {0}", volEntry.VolumeName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.blocks = {0}", volEntry.Blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.files = {0}", volEntry.Files);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.dummy = {0}", volEntry.Dummy);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.lastBoot = {0}", volEntry.LastBoot);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "volEntry.tail = {0}", volEntry.Tail);
 
         // First block is always 0 (even is it's sector 2)
         if(volEntry.FirstBlock != 0)

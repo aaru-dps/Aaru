@@ -54,4 +54,5 @@ public sealed partial class ODS : IFilesystem
     public Guid Id => new("de20633c-8021-4384-aeb0-83b0df14491f");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "Files-11 plugin";
 }

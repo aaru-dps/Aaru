@@ -96,4 +96,6 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
             "debug", false.ToString()
         }
     };
+
+    const string MODULE_NAME = "U.C.S.D. Pascal Plugin";
 }

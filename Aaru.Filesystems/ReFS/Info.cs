@@ -92,31 +92,31 @@ public sealed partial class ReFS : IFilesystem
 
         VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.jump empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.jump));
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.signature = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.signature = {0}",
                                    StringHandlers.CToString(vhdr.signature));
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.mustBeZero empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.mustBeZero empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero));
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.identifier = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.identifier = {0}",
                                    StringHandlers.CToString(BitConverter.GetBytes(vhdr.identifier)));
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.length = {0}", vhdr.length);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.checksum = 0x{0:X4}", vhdr.checksum);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectors = {0}", vhdr.sectors);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.bytesPerSector = {0}", vhdr.bytesPerSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.length = {0}", vhdr.length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.checksum = 0x{0:X4}", vhdr.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.sectors = {0}", vhdr.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.bytesPerSector = {0}", vhdr.bytesPerSector);
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectorsPerCluster = {0}", vhdr.sectorsPerCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.sectorsPerCluster = {0}", vhdr.sectorsPerCluster);
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown1 zero? = {0}", vhdr.unknown1 == 0);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown2 zero? = {0}", vhdr.unknown2 == 0);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown3 zero? = {0}", vhdr.unknown3 == 0);
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown4 zero? = {0}", vhdr.unknown4 == 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown1 zero? = {0}", vhdr.unknown1 == 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown2 zero? = {0}", vhdr.unknown2 == 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown3 zero? = {0}", vhdr.unknown3 == 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown4 zero? = {0}", vhdr.unknown4 == 0);
 
-        AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown5 empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown5 empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.unknown5));
 
         if(vhdr.identifier != FSRS                           ||

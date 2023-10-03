@@ -106,29 +106,29 @@ public sealed partial class SolarFS
         Array.Copy(bpbSector, 0x1B, bpb.unk3, 0, 10);
         bpb.unk4 = BitConverter.ToUInt32(bpbSector, 0x26);
 
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
                                    bpb.x86_jump[1], bpb.x86_jump[2]);
 
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", bpb.OEMName);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", bpb.bps);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", bpb.unk1);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}", bpb.unk2);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}", bpb.root_ent);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}", bpb.sectors);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}", bpb.media);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", bpb.spfat);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", bpb.sptrk);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", bpb.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.OEMName: \"{0}\"", bpb.OEMName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.bps: {0}", bpb.bps);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.unk1: 0x{0:X2}", bpb.unk1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.unk2: 0x{0:X4}", bpb.unk2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.root_ent: {0}", bpb.root_ent);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.sectors: {0}", bpb.sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.media: 0x{0:X2}", bpb.media);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.spfat: {0}", bpb.spfat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.sptrk: {0}", bpb.sptrk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.heads: {0}", bpb.heads);
 
-        AaruConsole.DebugWriteLine("SolarFS plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
                                    bpb.unk3[0], bpb.unk3[1], bpb.unk3[2], bpb.unk3[3], bpb.unk3[4], bpb.unk3[5],
                                    bpb.unk3[6], bpb.unk3[7], bpb.unk3[8], bpb.unk3[9]);
 
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", bpb.signature);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", bpb.unk4);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", bpb.vol_name);
-        AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", bpb.fs_type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.signature: 0x{0:X2}", bpb.signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.unk4: 0x{0:X8}", bpb.unk4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.vol_name: \"{0}\"", bpb.vol_name);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.fs_type: \"{0}\"", bpb.fs_type);
 
         sb.AppendLine(Localization.Solar_OS_filesystem);
         sb.AppendFormat(Localization.Media_descriptor_0, bpb.media).AppendLine();

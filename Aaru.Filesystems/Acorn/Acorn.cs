@@ -41,4 +41,5 @@ public sealed partial class AcornADFS : IFilesystem
     public Guid Id => new("BAFC1E50-9C64-4CD3-8400-80628CC27AFA");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "ADFS Plugin";
 }

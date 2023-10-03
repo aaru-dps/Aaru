@@ -41,4 +41,5 @@ public sealed partial class RBF : IFilesystem
     public Guid Id => new("E864E45B-0B52-4D29-A858-7BDFA9199FB2");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "RBF plugin";
 }

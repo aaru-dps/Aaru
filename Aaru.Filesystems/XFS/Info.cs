@@ -74,7 +74,7 @@ public sealed partial class XFS
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_X3_equals_1_expected_2, location,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -104,7 +104,7 @@ public sealed partial class XFS
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_equals_1_expected_2, location,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -152,7 +152,7 @@ public sealed partial class XFS
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_X3_equals_1_expected_2, location,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)
@@ -179,7 +179,7 @@ public sealed partial class XFS
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine("XFS plugin", Localization.magic_at_0_equals_1_expected_2, location,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2, location,
                                            xfsSb.magicnum, XFS_MAGIC);
 
                 if(xfsSb.magicnum == XFS_MAGIC)

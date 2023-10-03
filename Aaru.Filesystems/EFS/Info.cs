@@ -69,7 +69,7 @@ public sealed partial class EFS
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 0x200,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 0x200,
                                        sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
             if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
@@ -92,7 +92,7 @@ public sealed partial class EFS
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 1, sb.sb_magic,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1, sb.sb_magic,
                                        EFS_MAGIC, EFS_MAGIC_NEW);
 
             if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
@@ -137,7 +137,7 @@ public sealed partial class EFS
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_X3_equals_1_expected_2_or_3, 0x200,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2_or_3, 0x200,
                                        efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
         }
         else
@@ -157,7 +157,7 @@ public sealed partial class EFS
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine("EFS plugin", Localization.magic_at_0_equals_1_expected_2_or_3, 1,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1,
                                        efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
         }
 

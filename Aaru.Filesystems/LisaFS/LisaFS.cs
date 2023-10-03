@@ -97,4 +97,6 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
     Dictionary<short, DateTime> _directoryDtcCache;
     #endregion Caches
+
+    const string MODULE_NAME = "LisaFS plugin";
 }

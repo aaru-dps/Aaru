@@ -49,4 +49,5 @@ public sealed partial class UNICOS : IFilesystem
     public Guid Id => new("61712F04-066C-44D5-A2A0-1E44C66B33F0");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "UNICOS plugin";
 }

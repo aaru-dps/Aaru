@@ -76,8 +76,8 @@ public sealed partial class ISO9660
         Array.Copy(vdSector, 0x001 + xaOff, vdMagic, 0, 5);
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
 
-        AaruConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(vdMagic));
-        AaruConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "VDMagic = {0}", Encoding.ASCII.GetString(vdMagic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
 
         return Encoding.ASCII.GetString(vdMagic) == ISO_MAGIC         ||
                Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC || Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
@@ -132,10 +132,10 @@ public sealed partial class ISO9660
 
         while(true)
         {
-            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Processing_VD_loop_no_0, counter);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Processing_VD_loop_no_0, counter);
 
             // Seek to Volume Descriptor
-            AaruConsole.DebugWriteLine("ISO9660 plugin", Localization.Reading_sector_0, 16 + counter + partition.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_sector_0, 16 + counter + partition.Start);
             errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
 
             if(errno != ErrorNumber.NoError)
@@ -145,7 +145,7 @@ public sealed partial class ISO9660
             Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
             byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
-            AaruConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "VDType = {0}", vdType);
 
             if(vdType == 255) // Supposedly we are in the PVD.
             {
@@ -216,7 +216,7 @@ public sealed partial class ISO9660
                                svd.escape_sequences[2] == 'E')
                                 jolietvd = svd;
                             else
-                                AaruConsole.WriteLine("ISO9660 plugin",
+                                AaruConsole.WriteLine(MODULE_NAME,
                                                       Localization.Found_unknown_supplementary_volume_descriptor);
                     }
                     else
@@ -713,9 +713,9 @@ public sealed partial class ISO9660
 
             initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
-            AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.load_rba = {0}", initialEntry.load_rba);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "initialEntry.load_rba = {0}", initialEntry.load_rba);
 
-            AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.sector_count = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME, "initialEntry.sector_count = {0}",
                                        initialEntry.sector_count);
 
             byte[] bootImage = null;

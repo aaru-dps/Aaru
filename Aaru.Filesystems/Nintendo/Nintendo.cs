@@ -41,4 +41,5 @@ public sealed partial class NintendoPlugin : IFilesystem
     public Guid Id => new("4675fcb4-4418-4288-9e4a-33d6a4ac1126");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "Nintendo plugin";
 }

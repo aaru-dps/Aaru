@@ -41,4 +41,5 @@ public sealed partial class ReFS : IFilesystem
     public Guid Id => new("37766C4E-EBF5-4113-A712-B758B756ABD6");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "ReFS plugin";
 }

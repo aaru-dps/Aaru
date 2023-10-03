@@ -42,4 +42,5 @@ public sealed partial class SolarFS : IFilesystem
     public Guid Id => new("EA3101C1-E777-4B4F-B5A3-8C57F50F6E65");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "SolarFS plugin";
 }

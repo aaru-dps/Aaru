@@ -72,10 +72,10 @@ public sealed partial class BTRFS
             return false;
         }
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}", sbSectorOff);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}", sbSectorSize);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.Start);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorOff = {0}", sbSectorOff);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sbSectorSize = {0}", sbSectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "partition.PartitionStartSector = {0}", partition.Start);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = 0x{0:X16}", btrfsSb.magic);
 
         return btrfsSb.magic == BTRFS_MAGIC;
     }
@@ -98,66 +98,66 @@ public sealed partial class BTRFS
 
         SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}", btrfsSb.checksum);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.uuid = {0}", btrfsSb.uuid);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.pba = {0}", btrfsSb.pba);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.flags = {0}", btrfsSb.flags);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = {0}", btrfsSb.magic);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.generation = {0}", btrfsSb.generation);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_lba = {0}", btrfsSb.root_lba);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_lba = {0}", btrfsSb.chunk_lba);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_lba = {0}", btrfsSb.log_lba);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_transid = {0}", btrfsSb.log_root_transid);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.total_bytes = {0}", btrfsSb.total_bytes);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.bytes_used = {0}", btrfsSb.bytes_used);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_dir_objectid = {0}", btrfsSb.root_dir_objectid);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.num_devices = {0}", btrfsSb.num_devices);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.sectorsize = {0}", btrfsSb.sectorsize);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.nodesize = {0}", btrfsSb.nodesize);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.leafsize = {0}", btrfsSb.leafsize);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.stripesize = {0}", btrfsSb.stripesize);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.n = {0}", btrfsSb.n);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.checksum = {0}", btrfsSb.checksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.uuid = {0}", btrfsSb.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.pba = {0}", btrfsSb.pba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.flags = {0}", btrfsSb.flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.magic = {0}", btrfsSb.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.generation = {0}", btrfsSb.generation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_lba = {0}", btrfsSb.root_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_lba = {0}", btrfsSb.chunk_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_lba = {0}", btrfsSb.log_lba);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_transid = {0}", btrfsSb.log_root_transid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.total_bytes = {0}", btrfsSb.total_bytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.bytes_used = {0}", btrfsSb.bytes_used);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_dir_objectid = {0}", btrfsSb.root_dir_objectid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.num_devices = {0}", btrfsSb.num_devices);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.sectorsize = {0}", btrfsSb.sectorsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.nodesize = {0}", btrfsSb.nodesize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.leafsize = {0}", btrfsSb.leafsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.stripesize = {0}", btrfsSb.stripesize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.n = {0}", btrfsSb.n);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_generation = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_generation = {0}",
                                    btrfsSb.chunk_root_generation);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_flags = 0x{0:X16}", btrfsSb.compat_flags);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.incompat_flags = 0x{0:X16}", btrfsSb.incompat_flags);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.csum_type = {0}", btrfsSb.csum_type);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_level = {0}", btrfsSb.root_level);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_level = {0}", btrfsSb.chunk_root_level);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_level = {0}", btrfsSb.log_root_level);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.id = 0x{0:X16}", btrfsSb.dev_item.id);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bytes = {0}", btrfsSb.dev_item.bytes);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.used = {0}", btrfsSb.dev_item.used);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_flags = 0x{0:X16}", btrfsSb.compat_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.incompat_flags = 0x{0:X16}", btrfsSb.incompat_flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.csum_type = {0}", btrfsSb.csum_type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.root_level = {0}", btrfsSb.root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_level = {0}", btrfsSb.chunk_root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.log_root_level = {0}", btrfsSb.log_root_level);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.id = 0x{0:X16}", btrfsSb.dev_item.id);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.bytes = {0}", btrfsSb.dev_item.bytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.used = {0}", btrfsSb.dev_item.used);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_align = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_align = {0}",
                                    btrfsSb.dev_item.optimal_align);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_width = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_width = {0}",
                                    btrfsSb.dev_item.optimal_width);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.minimal_size = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.minimal_size = {0}",
                                    btrfsSb.dev_item.minimal_size);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.type = {0}", btrfsSb.dev_item.type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.type = {0}", btrfsSb.dev_item.type);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.start_offset = {0}",
                                    btrfsSb.dev_item.start_offset);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.dev_group = {0}", btrfsSb.dev_item.dev_group);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.dev_group = {0}", btrfsSb.dev_item.dev_group);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwidth = {0}", btrfsSb.dev_item.bandwidth);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.bandwidth = {0}", btrfsSb.dev_item.bandwidth);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.device_uuid = {0}", btrfsSb.dev_item.device_uuid);
 
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
-        AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}", btrfsSb.label);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.label = {0}", btrfsSb.label);
 
         sbInformation.AppendLine(Localization.B_tree_filesystem);
         sbInformation.AppendFormat(Localization.UUID_0, btrfsSb.uuid).AppendLine();

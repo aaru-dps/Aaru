@@ -46,4 +46,5 @@ public sealed partial class FFSPlugin : IFilesystem
     public Guid Id => new("CC90D342-05DB-48A8-988C-C1FE000034A3");
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
+    const string MODULE_NAME = "FFS plugin";
 }
