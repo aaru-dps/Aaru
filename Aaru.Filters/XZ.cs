@@ -46,10 +46,14 @@ public sealed class XZ : IFilter
     Stream _dataStream;
     Stream _innerStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.XZ_Name;
+
     /// <inheritdoc />
     public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -84,8 +88,8 @@ public sealed class XZ : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[6];
-        byte[] footer = new byte[2];
+        var buffer = new byte[6];
+        var footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -106,9 +110,9 @@ public sealed class XZ : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[6];
-        byte[] footer = new byte[2];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[6];
+        var footer = new byte[2];
 
         if(stream.Length < 8)
             return false;
@@ -187,7 +191,8 @@ public sealed class XZ : IFilter
             if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return BasePath[..^3];
 
-            return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+            return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath[..^5]
                        : BasePath;
         }
     }
@@ -195,13 +200,15 @@ public sealed class XZ : IFilter
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
 
+#endregion
+
     void GuessSize()
     {
         DataForkLength = 0;
 
         // Seek to footer backwards size field
         _dataStream.Seek(-8, SeekOrigin.End);
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
         _dataStream.EnsureRead(tmp, 0, 4);
         uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
@@ -228,7 +235,8 @@ public sealed class XZ : IFilter
     {
         switch(sizeMax)
         {
-            case 0: return 0;
+            case 0:
+                return 0;
             case > 9:
                 sizeMax = 9;
 
@@ -236,7 +244,7 @@ public sealed class XZ : IFilter
         }
 
         num = (ulong)(buf[0] & 0x7F);
-        int i = 0;
+        var i = 0;
 
         while((buf[i++] & 0x80) == 0x80)
         {
@@ -244,7 +252,7 @@ public sealed class XZ : IFilter
                buf[i] == 0x00)
                 return 0;
 
-            num |= (ulong)(buf[i] & 0x7F) << (i * 7);
+            num |= (ulong)(buf[i] & 0x7F) << i * 7;
         }
 
         return i;

@@ -86,7 +86,7 @@ public class SplitJoinStream : Stream
     ///     4096.
     /// </param>
     /// <param name="options">A bitwise combination of the enumeration values that specifies additional file options.</param>
-    public void Add(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
+    public void Add(string      path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
                     FileOptions options) => Add(new FileStream(path, mode, access, share, bufferSize, options));
 
     /// <summary>Adds the specified file to the end of the current stream</summary>
@@ -229,7 +229,7 @@ public class SplitJoinStream : Stream
     /// <param name="basePath">Base file path, directory path only</param>
     /// <param name="counterFormat">Counter format, includes filename and a formatting string</param>
     /// <param name="counterStart">Counter start, defaults to 0</param>
-    public void AddRange(string basePath, string counterFormat = "{0:D3}", int counterStart = 0,
+    public void AddRange(string     basePath, string counterFormat = "{0:D3}", int counterStart = 0,
                          FileAccess access = FileAccess.Read)
     {
         while(true)
@@ -311,7 +311,7 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        int read = 0;
+        var read = 0;
 
         while(count > 0)
         {

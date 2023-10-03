@@ -47,10 +47,14 @@ public sealed class GZip : IFilter
     uint   _decompressedSize;
     Stream _zStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.GZip_Name;
+
     /// <inheritdoc />
     public Guid Id => new("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -83,7 +87,7 @@ public sealed class GZip : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[3];
+        var buffer = new byte[3];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 3);
@@ -98,8 +102,8 @@ public sealed class GZip : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[3];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[3];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 3);
@@ -111,8 +115,8 @@ public sealed class GZip : IFilter
     /// <inheritdoc />
     public ErrorNumber Open(byte[] buffer)
     {
-        byte[] mtimeB = new byte[4];
-        byte[] isizeB = new byte[4];
+        var mtimeB = new byte[4];
+        var isizeB = new byte[4];
 
         _dataStream = new MemoryStream(buffer);
         BasePath    = null;
@@ -123,8 +127,8 @@ public sealed class GZip : IFilter
         _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
-        uint mtime = BitConverter.ToUInt32(mtimeB, 0);
-        uint isize = BitConverter.ToUInt32(isizeB, 0);
+        var mtime = BitConverter.ToUInt32(mtimeB, 0);
+        var isize = BitConverter.ToUInt32(isizeB, 0);
 
         _decompressedSize = isize;
         CreationTime      = DateHandlers.UnixUnsignedToDateTime(mtime);
@@ -138,8 +142,8 @@ public sealed class GZip : IFilter
     /// <inheritdoc />
     public ErrorNumber Open(Stream stream)
     {
-        byte[] mtimeB = new byte[4];
-        byte[] isizeB = new byte[4];
+        var mtimeB = new byte[4];
+        var isizeB = new byte[4];
 
         _dataStream = stream;
         BasePath    = null;
@@ -150,8 +154,8 @@ public sealed class GZip : IFilter
         _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
-        uint mtime = BitConverter.ToUInt32(mtimeB, 0);
-        uint isize = BitConverter.ToUInt32(isizeB, 0);
+        var mtime = BitConverter.ToUInt32(mtimeB, 0);
+        var isize = BitConverter.ToUInt32(isizeB, 0);
 
         _decompressedSize = isize;
         CreationTime      = DateHandlers.UnixUnsignedToDateTime(mtime);
@@ -165,8 +169,8 @@ public sealed class GZip : IFilter
     /// <inheritdoc />
     public ErrorNumber Open(string path)
     {
-        byte[] mtimeB = new byte[4];
-        byte[] isizeB = new byte[4];
+        var mtimeB = new byte[4];
+        var isizeB = new byte[4];
 
         _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
         BasePath    = System.IO.Path.GetFullPath(path);
@@ -177,8 +181,8 @@ public sealed class GZip : IFilter
         _dataStream.EnsureRead(isizeB, 0, 4);
         _dataStream.Seek(0, SeekOrigin.Begin);
 
-        uint mtime = BitConverter.ToUInt32(mtimeB, 0);
-        uint isize = BitConverter.ToUInt32(isizeB, 0);
+        var mtime = BitConverter.ToUInt32(mtimeB, 0);
+        var isize = BitConverter.ToUInt32(isizeB, 0);
 
         _decompressedSize = isize;
         var fi = new FileInfo(path);
@@ -212,11 +216,14 @@ public sealed class GZip : IFilter
             if(BasePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return BasePath[..^3];
 
-            return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+            return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath[..^5]
                        : BasePath;
         }
     }
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }

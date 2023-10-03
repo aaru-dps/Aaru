@@ -106,7 +106,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         do
         {
-            byte[] buffer = new byte[BUFFER_LEN];
+            var buffer = new byte[BUFFER_LEN];
             read = _baseStream.EnsureRead(buffer, 0, BUFFER_LEN);
             _backStream.Write(buffer, 0, read);
         } while(read == BUFFER_LEN);
@@ -132,13 +132,13 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
         _backStream.Position = _backStream.Length;
         long   toPosition      = position - _backStream.Position;
-        int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
-        int    restToRead      = (int)(toPosition % BUFFER_LEN);
+        var    fullBufferReads = (int)(toPosition / BUFFER_LEN);
+        var    restToRead      = (int)(toPosition % BUFFER_LEN);
         byte[] buffer;
         int    bufPos;
         int    left;
 
-        for(int i = 0; i < fullBufferReads; i++)
+        for(var i = 0; i < fullBufferReads; i++)
         {
             buffer = new byte[BUFFER_LEN];
             bufPos = 0;

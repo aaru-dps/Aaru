@@ -55,10 +55,14 @@ public sealed class PcExchange : IFilter
     string       _dataPath;
     string       _rsrcPath;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.PcExchange_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -122,26 +126,26 @@ public sealed class PcExchange : IFilter
 
         string baseFilename = System.IO.Path.GetFileName(path);
 
-        bool dataFound = false;
-        bool rsrcFound = false;
+        var dataFound = false;
+        var rsrcFound = false;
 
         var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
-            var    datEntry  = new Entry();
-            byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+            var datEntry  = new Entry();
+            var datEntryB = new byte[Marshal.SizeOf(datEntry)];
             finderDatStream.EnsureRead(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             // TODO: Add support for encoding on filters
             string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-            byte[] tmpDosNameB = new byte[8];
-            byte[] tmpDosExtB  = new byte[3];
+            var tmpDosNameB = new byte[8];
+            var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
-            Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
+            Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
             string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
@@ -188,17 +192,17 @@ public sealed class PcExchange : IFilter
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
-            var    datEntry  = new Entry();
-            byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+            var datEntry  = new Entry();
+            var datEntryB = new byte[Marshal.SizeOf(datEntry)];
             finderDatStream.EnsureRead(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-            byte[] tmpDosNameB = new byte[8];
-            byte[] tmpDosExtB  = new byte[3];
+            var tmpDosNameB = new byte[8];
+            var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
-            Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
+            Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
             string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
@@ -242,6 +246,10 @@ public sealed class PcExchange : IFilter
         return ErrorNumber.NoError;
     }
 
+#endregion
+
+#region Nested type: Entry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Entry
     {
@@ -278,4 +286,6 @@ public sealed class PcExchange : IFilter
         /// <summary>Unknown, flags?</summary>
         public readonly byte unknown3;
     }
+
+#endregion
 }

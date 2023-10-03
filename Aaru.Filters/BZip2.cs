@@ -46,10 +46,14 @@ public class BZip2 : IFilter
     Stream _dataStream;
     Stream _innerStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.BZip2_Name;
+
     /// <inheritdoc />
     public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -95,7 +99,7 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[4];
+        var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 4);
@@ -125,8 +129,8 @@ public class BZip2 : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[4];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 4);
@@ -214,11 +218,14 @@ public class BZip2 : IFilter
             if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
                 return BasePath[..^4];
 
-            return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^6]
+            return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath[..^6]
                        : BasePath;
         }
     }
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }

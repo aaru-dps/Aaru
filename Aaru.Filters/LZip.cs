@@ -47,10 +47,14 @@ public sealed class LZip : IFilter
     Stream _dataStream;
     Stream _innerStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.LZip_Name;
+
     /// <inheritdoc />
     public Guid Id => new("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -84,7 +88,7 @@ public sealed class LZip : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        byte[] buffer = new byte[5];
+        var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 5);
@@ -99,8 +103,8 @@ public sealed class LZip : IFilter
         if(!File.Exists(path))
             return false;
 
-        var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        byte[] buffer = new byte[5];
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var buffer = new byte[5];
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 5);
@@ -130,7 +134,7 @@ public sealed class LZip : IFilter
         BasePath      = null;
         CreationTime  = DateTime.UtcNow;
         LastWriteTime = CreationTime;
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
         _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
@@ -149,7 +153,7 @@ public sealed class LZip : IFilter
         var fi = new FileInfo(path);
         CreationTime  = fi.CreationTimeUtc;
         LastWriteTime = fi.LastWriteTimeUtc;
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
         _dataStream.Seek(-16, SeekOrigin.End);
         _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
@@ -182,11 +186,14 @@ public sealed class LZip : IFilter
             if(BasePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
                 return BasePath[..^3];
 
-            return BasePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true ? BasePath[..^5]
+            return BasePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? BasePath[..^5]
                        : BasePath;
         }
     }
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }

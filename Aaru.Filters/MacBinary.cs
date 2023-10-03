@@ -54,10 +54,14 @@ public sealed class MacBinary : IFilter
     long       _rsrcForkOff;
     Stream     _stream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.MacBinary_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -93,8 +97,10 @@ public sealed class MacBinary : IFilter
             return new OffsetStream(_stream, _dataForkOff, _dataForkOff + _header.dataLength - 1);
 
         if(_isPath)
+        {
             return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _dataForkOff,
                                     _dataForkOff + _header.dataLength - 1);
+        }
 
         return null;
     }
@@ -130,8 +136,10 @@ public sealed class MacBinary : IFilter
             return new OffsetStream(_stream, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
 
         if(_isPath)
+        {
             return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _rsrcForkOff,
                                     _rsrcForkOff + _header.resourceLength - 1);
+        }
 
         return null;
     }
@@ -146,13 +154,13 @@ public sealed class MacBinary : IFilter
            buffer.Length < 128)
             return false;
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         Array.Copy(buffer, 0, hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC || (_header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-                                          _header.zero1   == 0 && _header is { zero2: 0, reserved: 0 } &&
-                                          (_header.dataLength > 0 || _header.resourceLength > 0));
+        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
+               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+               (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 
     /// <inheritdoc />
@@ -162,14 +170,14 @@ public sealed class MacBinary : IFilter
            stream.Length < 128)
             return false;
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC || (_header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-                                          _header.zero1   == 0 && _header is { zero2: 0, reserved: 0 } &&
-                                          (_header.dataLength > 0 || _header.resourceLength > 0));
+        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
+               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+               (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 
     /// <inheritdoc />
@@ -183,15 +191,15 @@ public sealed class MacBinary : IFilter
         if(fstream.Length < 128)
             return false;
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         fstream.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         fstream.Close();
 
-        return _header.magic == MAGIC || (_header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-                                          _header.zero1   == 0 && _header is { zero2: 0, reserved: 0 } &&
-                                          (_header.dataLength > 0 || _header.resourceLength > 0));
+        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
+               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+               (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 
     /// <inheritdoc />
@@ -200,7 +208,7 @@ public sealed class MacBinary : IFilter
         var ms = new MemoryStream(buffer);
         ms.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         ms.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
@@ -234,7 +242,7 @@ public sealed class MacBinary : IFilter
     {
         stream.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         stream.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
@@ -269,7 +277,7 @@ public sealed class MacBinary : IFilter
         var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
         fs.Seek(0, SeekOrigin.Begin);
 
-        byte[] hdrB = new byte[128];
+        var hdrB = new byte[128];
         fs.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
@@ -297,6 +305,10 @@ public sealed class MacBinary : IFilter
 
         return ErrorNumber.NoError;
     }
+
+#endregion
+
+#region Nested type: Header
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Header
@@ -337,21 +349,24 @@ public sealed class MacBinary : IFilter
         /// <summary>0x65, Low byte of Finder flags</summary>
         public readonly byte finderFlags2;
 
-        #region MacBinary III
+    #region MacBinary III
+
         /// <summary>0x66, magic identifier, "mBIN"</summary>
         public readonly uint magic;
         /// <summary>0x6A, fdScript from fxInfo, identifies codepage of filename</summary>
         public readonly byte fdScript;
         /// <summary>0x6B, fdXFlags from fxInfo, extended Mac OS 8 finder flags</summary>
         public readonly byte fdXFlags;
-        #endregion MacBinary III
+
+    #endregion MacBinary III
 
         /// <summary>0x6C, unused</summary>
         public readonly ulong reserved;
         /// <summary>0x74, Total unpacked files</summary>
         public readonly uint totalPackedFiles;
 
-        #region MacBinary II
+    #region MacBinary II
+
         /// <summary>0x78, Length of secondary header</summary>
         public readonly ushort secondaryHeaderLength;
         /// <summary>0x7A, version number of MacBinary that wrote this file, starts at 129</summary>
@@ -360,9 +375,12 @@ public sealed class MacBinary : IFilter
         public readonly byte minVersion;
         /// <summary>0x7C, CRC of previous bytes</summary>
         public readonly short crc;
-        #endregion MacBinary II
+
+    #endregion MacBinary II
 
         /// <summary>0x7E, Reserved for computer type and OS ID</summary>
         public readonly short computerID;
     }
+
+#endregion
 }

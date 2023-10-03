@@ -43,10 +43,14 @@ public sealed class ZZZNoFilter : IFilter
 {
     Stream _dataStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
     public string Name => Localization.ZZZNoFilter_Name;
+
     /// <inheritdoc />
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
+
     /// <inheritdoc />
     public string Author => Authors.NataliaPortillo;
 
@@ -136,4 +140,6 @@ public sealed class ZZZNoFilter : IFilter
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }
