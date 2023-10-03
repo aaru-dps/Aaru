@@ -37,8 +37,10 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.MMC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class OCR
 {
     public byte AccessMode;
@@ -62,8 +64,9 @@ public class OCR
     public bool TwoZero;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Decoders
 {
     public static OCR DecodeOCR(uint response)

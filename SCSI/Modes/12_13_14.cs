@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
+#region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
+
     /// <summary>Medium partition page (2-4) Page codes 0x12, 0x13 and 0x14</summary>
     public struct ModePage_12_13_14
     {
@@ -74,7 +76,7 @@ public static partial class Modes
 
         decoded.PartitionSizes = new ushort[(pageResponse.Length - 2) / 2];
 
-        for(int i = 2; i < pageResponse.Length; i += 2)
+        for(var i = 2; i < pageResponse.Length; i += 2)
         {
             decoded.PartitionSizes[(i - 2) / 2] =  (ushort)(pageResponse[i] << 8);
             decoded.PartitionSizes[(i - 2) / 2] += pageResponse[i + 1];
@@ -101,10 +103,11 @@ public static partial class Modes
 
         sb.AppendFormat("\t" + Localization.Medium_has_defined_0_partitions, page.PartitionSizes.Length).AppendLine();
 
-        for(int i = 0; i < page.PartitionSizes.Length; i++)
+        for(var i = 0; i < page.PartitionSizes.Length; i++)
             sb.AppendFormat("\t" + Localization.Partition_0_is_1_units_long, i, page.PartitionSizes[i]).AppendLine();
 
         return sb.ToString();
     }
-    #endregion Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
+
+#endregion Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
 }

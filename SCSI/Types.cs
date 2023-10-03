@@ -39,7 +39,8 @@ public enum MediumTypes : byte
 {
     Default = 0x00,
 
-    #region Medium Types defined in ECMA-111 for Direct-Access devices
+#region Medium Types defined in ECMA-111 for Direct-Access devices
+
     /// <summary>ECMA-54: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on One Side</summary>
     ECMA54 = 0x09,
     /// <summary>
@@ -71,9 +72,11 @@ public enum MediumTypes : byte
     ///     5,3 Tracks per mm
     /// </summary>
     ECMA100 = 0x1E,
-    #endregion Medium Types defined in ECMA-111 for Direct-Access devices
 
-    #region Medium Types defined in SCSI-2 for Direct-Access devices
+#endregion Medium Types defined in ECMA-111 for Direct-Access devices
+
+#region Medium Types defined in SCSI-2 for Direct-Access devices
+
     /// <summary>Unspecified single sided flexible disk</summary>
     Unspecified_SS = 0x01,
     /// <summary>Unspecified double sided flexible disk</summary>
@@ -88,9 +91,11 @@ public enum MediumTypes : byte
     Tape12 = 0x40,
     /// <summary>6,3 mm tape with 24 tracks at 394 ftpmm</summary>
     Tape24 = 0x44,
-    #endregion Medium Types defined in SCSI-2 for Direct-Access devices
 
-    #region Medium Types defined in SCSI-3 SBC-1 for Optical devices
+#endregion Medium Types defined in SCSI-2 for Direct-Access devices
+
+#region Medium Types defined in SCSI-3 SBC-1 for Optical devices
+
     /// <summary>Read-only medium</summary>
     ReadOnly = 0x01,
     /// <summary>Write-once Read-many medium</summary>
@@ -103,9 +108,11 @@ public enum MediumTypes : byte
     RO_RW = 0x05,
     /// <summary>Combination of write-once and erasable medium</summary>
     WORM_RW = 0x06,
-    #endregion Medium Types defined in SCSI-3 SBC-1 for Optical devices
 
-    #region Medium Types defined in SCSI-2 for MultiMedia devices
+#endregion Medium Types defined in SCSI-3 SBC-1 for Optical devices
+
+#region Medium Types defined in SCSI-2 for MultiMedia devices
+
     /// <summary>120 mm CD-ROM</summary>
     CDROM = 0x01,
     /// <summary>120 mm Compact Disc Digital Audio</summary>
@@ -118,9 +125,11 @@ public enum MediumTypes : byte
     CDDA_80 = 0x06,
     /// <summary>80 mm Compact Disc with data and audio</summary>
     MixedCD_80 = 0x07,
-    #endregion Medium Types defined in SCSI-2 for MultiMedia devices
 
-    #region Medium Types defined in SFF-8020i
+#endregion Medium Types defined in SCSI-2 for MultiMedia devices
+
+#region Medium Types defined in SFF-8020i
+
     /// <summary>Unknown medium type</summary>
     Unknown_CD = 0x00,
     /// <summary>120 mm Hybrid disc (Photo CD)</summary>
@@ -173,25 +182,31 @@ public enum MediumTypes : byte
     TrayOpen = 0x71,
     /// <summary>Tray closed or caddy inserted but medium error</summary>
     MediumError = 0x72,
-    #endregion Medium Types defined in SFF-8020i
 
-    #region Medium Types defined in USB Mass Storage Class - UFI Command Specification
+#endregion Medium Types defined in SFF-8020i
+
+#region Medium Types defined in USB Mass Storage Class - UFI Command Specification
+
     /// <summary>3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)</summary>
     Type3Floppy = 0x93,
     /// <summary>3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)</summary>
     HDFloppy = 0x94,
-    #endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
 
-    #region Medium Types defined in INF-8070
+#endregion Medium Types defined in USB Mass Storage Class - UFI Command Specification
+
+#region Medium Types defined in INF-8070
+
     /// <summary>Unknown type block device</summary>
     UnknownBlockDevice = 0x40,
     /// <summary>Read-only block device</summary>
     ReadOnlyBlockDevice = 0x41,
     /// <summary>Read/Write block device</summary>
     ReadWriteBlockDevice = 0x42,
-    #endregion Medium Types defined in INF-8070
 
-    #region Medium Types found in vendor documents
+#endregion Medium Types defined in INF-8070
+
+#region Medium Types found in vendor documents
+
     /// <summary>LTO WORM as reported by HP drives</summary>
     LTOWORM = 0x01,
     /// <summary>LTO cleaning cartridge as reported by Certance/Seagate drives</summary>
@@ -338,12 +353,15 @@ public enum MediumTypes : byte
     Exatape150m = 0xD6,
     /// <summary>Exatape 75m</summary>
     Exatape75m = 0xD7,
-    #endregion Medium Types found in vendor documents
 
-    #region Medium Types found testing a Hi-MD drive
+#endregion Medium Types found in vendor documents
+
+#region Medium Types found testing a Hi-MD drive
+
     /// <summary>Hi-MD</summary>
     HiMD = 0x44,
-    #endregion Medium Types found testing a Hi-MD drive
+
+#endregion Medium Types found testing a Hi-MD drive
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -351,16 +369,19 @@ public enum DensityType : byte
 {
     Default = 0x00,
 
-    #region Density Types defined in ECMA-111 for Direct-Access devices
+#region Density Types defined in ECMA-111 for Direct-Access devices
+
     /// <summary>7958 flux transitions per radian</summary>
     Flux7958 = 0x01,
     /// <summary>13262 flux transitions per radian</summary>
     Flux13262 = 0x02,
     /// <summary>15916 flux transitions per radian</summary>
     Flux15916 = 0x03,
-    #endregion Density Types defined in ECMA-111 for Direct-Access devices
 
-    #region Density Types defined in ECMA-111 for Sequential-Access devices
+#endregion Density Types defined in ECMA-111 for Direct-Access devices
+
+#region Density Types defined in ECMA-111 for Sequential-Access devices
+
     /// <summary>ECMA-62 &amp; ANSI X3.22-1983: 12,7 mm 9-Track Magnetic Tape, 32 ftpmm, NRZI, 32 cpmm</summary>
     ECMA62 = 0x01,
     /// <summary>ECMA-62 &amp; ANSI X3.39-1986: 12,7 mm 9-Track Magnetic Tape, 126 ftpmm, Phase Encoding, 63 cpmm</summary>
@@ -378,9 +399,11 @@ public enum DensityType : byte
     ECMA46 = 0x0B,
     /// <summary>ECMA-98: 6,30 mm Magnetic Tape Cartridge, NRZI Recording, 394 ftpmm</summary>
     ECMA98 = 0x0E,
-    #endregion Density Types defined in ECMA-111 for Sequential-Access devices
 
-    #region Density Types defined in SCSI-2 for Sequential-Access devices
+#endregion Density Types defined in ECMA-111 for Sequential-Access devices
+
+#region Density Types defined in SCSI-2 for Sequential-Access devices
+
     /// <summary>ANXI X3.136-1986: 6,35 mm 4 or 9-Track Magnetic Tape Cartridge, 315 bpmm, GCR (QIC-24)</summary>
     X3_136 = 0x05,
     /// <summary>ANXI X3.157-1987: 12,7 mm 9-Track Magnetic Tape, 126 bpmm, Phase Encoding</summary>
@@ -411,9 +434,11 @@ public enum DensityType : byte
     X3_193 = 0x16,
     /// <summary>ANXI X3B5/97-174: 12,7 mm 48-Track Magnetic Tape Cartridge, 1673 bpmm, MFM</summary>
     X3B5_91 = 0x17,
-    #endregion Density Types defined in SCSI-2 for Sequential-Access devices
 
-    #region Density Types defined in SCSI-2 for MultiMedia devices
+#endregion Density Types defined in SCSI-2 for Sequential-Access devices
+
+#region Density Types defined in SCSI-2 for MultiMedia devices
+
     /// <summary>User data only</summary>
     User = 0x01,
     /// <summary>User data plus auxiliary data field</summary>
@@ -422,9 +447,11 @@ public enum DensityType : byte
     UserAuxiliaryTag = 0x03,
     /// <summary>Audio information only</summary>
     Audio = 0x04,
-    #endregion Density Types defined in SCSI-2 for MultiMedia devices
 
-    #region Density Types defined in SCSI-2 for Optical devices
+#endregion Density Types defined in SCSI-2 for MultiMedia devices
+
+#region Density Types defined in SCSI-2 for Optical devices
+
     /// <summary>ISO/IEC 10090: 86 mm Read/Write single-sided optical disc with 12500 tracks</summary>
     ISO10090 = 0x01,
     /// <summary>89 mm Read/Write double-sided optical disc with 12500 tracks</summary>
@@ -443,9 +470,11 @@ public enum DensityType : byte
     ISO13614 = 0x08,
     /// <summary>ANSI X3.200: 356 mm double-sided optical disc with 56350 tracks</summary>
     X3_200 = 0x09,
-    #endregion Density Types defined in SCSI-2 for Optical devices
 
-    #region Density Types found in vendor documents
+#endregion Density Types defined in SCSI-2 for Optical devices
+
+#region Density Types found in vendor documents
+
     /// <summary>QIC-11</summary>
     QIC11 = 0x04,
     /// <summary>CompactTape I</summary>
@@ -582,5 +611,6 @@ public enum DensityType : byte
     VStape1Alt = 0x98,
     /// <summary>VStape I compressed</summary>
     VStape1c = 0x99,
-    #endregion Density Types found in vendor documents
+
+#endregion Density Types found in vendor documents
 }

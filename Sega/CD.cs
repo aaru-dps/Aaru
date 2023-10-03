@@ -42,8 +42,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA CD / MEGA CD</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class CD
 {
     const string MODULE_NAME = "SegaCD IP.BIN Decoder";
@@ -76,7 +77,7 @@ public static class CD
                                    ipbin.system_version);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_loadsize = {0}",     ipbin.ip_loadsize);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_entry_address = 0x{0:X8}",
                                    ipbin.ip_entry_address);
@@ -85,7 +86,7 @@ public static class CD
                                    ipbin.ip_work_ram_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_loadsize = {0}",     ipbin.sp_loadsize);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_entry_address = 0x{0:X8}",
                                    ipbin.sp_entry_address);
@@ -152,12 +153,12 @@ public static class CD
             {
                 ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM", provider);
             }
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
             {
                 // ignored
             }
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
         }
 
         /*
@@ -183,14 +184,14 @@ public static class CD
                          AppendLine();
 
         //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(ipbin.system_version)).AppendLine();
-        IPBinInformation.AppendFormat(Localization.Initial_program_address_0, ipbin.ip_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_address_0,   ipbin.ip_address).AppendLine();
         IPBinInformation.AppendFormat(Localization.Initial_program_load_size_0, ipbin.ip_loadsize).AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Initial_program_entry_address_0, ipbin.ip_entry_address).
                          AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Initial_program_work_RAM_0, ipbin.ip_work_ram_size).AppendLine();
-        IPBinInformation.AppendFormat(Localization.System_program_address_0, ipbin.sp_address).AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_program_address_0,   ipbin.sp_address).AppendLine();
         IPBinInformation.AppendFormat(Localization.System_program_load_size_0, ipbin.sp_loadsize).AppendLine();
 
         IPBinInformation.AppendFormat(Localization.System_program_entry_address_0, ipbin.sp_entry_address).AppendLine();
@@ -219,6 +220,7 @@ public static class CD
         IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
         foreach(byte peripheral in ipbin.peripherals)
+        {
             switch((char)peripheral)
             {
                 case 'A':
@@ -265,17 +267,20 @@ public static class CD
                     IPBinInformation.AppendLine(Localization.Game_supports_paddle_controller);
 
                     break;
-                case ' ': break;
+                case ' ':
+                    break;
                 default:
                     IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
                                      AppendLine();
 
                     break;
             }
+        }
 
         IPBinInformation.AppendLine(Localization.Regions_supported);
 
         foreach(byte region in ipbin.region_codes)
+        {
             switch((char)region)
             {
                 case 'J':
@@ -290,15 +295,19 @@ public static class CD
                     IPBinInformation.AppendLine(Localization.Europe_PAL);
 
                     break;
-                case ' ': break;
+                case ' ':
+                    break;
                 default:
                     IPBinInformation.AppendFormat(Localization.Game_supports_unknown_region_0, region).AppendLine();
 
                     break;
             }
+        }
 
         return IPBinInformation.ToString();
     }
+
+#region Nested type: IPBin
 
     // TODO: Check if it is big or little endian
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -383,4 +392,6 @@ public static class CD
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] region_codes;
     }
+
+#endregion
 }

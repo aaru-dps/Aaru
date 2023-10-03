@@ -48,10 +48,13 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class CPRM
 {
+#region Nested type: DiscMediaIdentifier
+
     public struct DiscMediaIdentifier
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -64,6 +67,10 @@ public static class CPRM
         public byte[] MediaIdentifier;
     }
 
+#endregion
+
+#region Nested type: DiscMediaKeyBlock
+
     public struct DiscMediaKeyBlock
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -75,4 +82,6 @@ public static class CPRM
         /// <summary>Bytes 4 to end Disc Media Key Block for CPRM</summary>
         public byte[] MediaKeyBlock;
     }
+
+#endregion
 }

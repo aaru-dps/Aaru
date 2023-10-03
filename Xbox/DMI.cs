@@ -37,8 +37,10 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.Xbox;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DMI
 {
     public static bool IsXbox(byte[] dmi)
@@ -51,21 +53,25 @@ public static class DMI
             return false;
 
         // Catalogue number is two letters, five numbers, one letter
-        for(int i = 12; i < 14; i++)
+        for(var i = 12; i < 14; i++)
+        {
             if(dmi[i] < 0x41 ||
                dmi[i] > 0x5A)
                 return false;
+        }
 
-        for(int i = 14; i < 19; i++)
+        for(var i = 14; i < 19; i++)
+        {
             if(dmi[i] < 0x30 ||
                dmi[i] > 0x39)
                 return false;
+        }
 
         if(dmi[19] < 0x41 ||
            dmi[19] > 0x5A)
             return false;
 
-        long timestamp = BitConverter.ToInt64(dmi, 20);
+        var timestamp = BitConverter.ToInt64(dmi, 20);
 
         // Game cannot exist before the Xbox
         return timestamp >= 0x1BD164833DFC000;
@@ -76,7 +82,7 @@ public static class DMI
         if(dmi?.Length != 2052)
             return false;
 
-        uint signature = BitConverter.ToUInt32(dmi, 0x7EC);
+        var signature = BitConverter.ToUInt32(dmi, 0x7EC);
 
         // "XBOX" swapped as .NET is little endian
         return signature == 0x584F4258;
@@ -98,7 +104,7 @@ public static class DMI
             Timestamp  = BitConverter.ToInt64(response, 20)
         };
 
-        byte[] tmp = new byte[8];
+        var tmp = new byte[8];
         Array.Copy(response, 12, tmp, 0, 8);
         dmi.CatalogNumber = StringHandlers.CToString(tmp);
 
@@ -123,7 +129,7 @@ public static class DMI
         };
 
         Array.Copy(response, 36, dmi.MediaID, 0, 16);
-        byte[] tmp = new byte[16];
+        var tmp = new byte[16];
         Array.Copy(response, 68, tmp, 0, 16);
         dmi.CatalogNumber = StringHandlers.CToString(tmp);
 
@@ -140,12 +146,12 @@ public static class DMI
 
         sb.Append(Localization.Catalogue_number);
 
-        for(int i = 0; i < 2; i++)
+        for(var i = 0; i < 2; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
         sb.Append("-");
 
-        for(int i = 2; i < 7; i++)
+        for(var i = 2; i < 7; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
         sb.Append("-");
@@ -167,17 +173,17 @@ public static class DMI
 
         sb.Append(Localization.Catalogue_number);
 
-        for(int i = 0; i < 2; i++)
+        for(var i = 0; i < 2; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
         sb.Append("-");
 
-        for(int i = 2; i < 6; i++)
+        for(var i = 2; i < 6; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
         sb.Append("-");
 
-        for(int i = 6; i < 8; i++)
+        for(var i = 6; i < 8; i++)
             sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
         sb.Append("-");
@@ -185,27 +191,27 @@ public static class DMI
         switch(decoded.CatalogNumber.Length)
         {
             case 13:
-                for(int i = 8; i < 10; i++)
+                for(var i = 8; i < 10; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                 sb.Append("-");
 
-                for(int i = 10; i < 13; i++)
+                for(var i = 10; i < 13; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                 break;
             case 14:
-                for(int i = 8; i < 11; i++)
+                for(var i = 8; i < 11; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                 sb.Append("-");
 
-                for(int i = 11; i < 14; i++)
+                for(var i = 11; i < 14; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                 break;
             default:
-                for(int i = 8; i < decoded.CatalogNumber.Length - 3; i++)
+                for(var i = 8; i < decoded.CatalogNumber.Length - 3; i++)
                     sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                 sb.Append("-");
@@ -220,12 +226,12 @@ public static class DMI
 
         sb.Append(Localization.Media_ID);
 
-        for(int i = 0; i < 12; i++)
+        for(var i = 0; i < 12; i++)
             sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
 
         sb.Append("-");
 
-        for(int i = 12; i < 16; i++)
+        for(var i = 12; i < 16; i++)
             sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
 
         sb.AppendLine();
@@ -239,24 +245,7 @@ public static class DMI
 
     public static string PrettifyXbox360(byte[] response) => PrettifyXbox360(DecodeXbox360(response));
 
-    public struct XboxDMI
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-
-        /// <summary>Bytes 4 to 7 0x01 in XGD</summary>
-        public uint Version;
-
-        /// <summary>Bytes 12 to 16 Catalogue number in XX-XXXXX-X</summary>
-        public string CatalogNumber;
-
-        /// <summary>Bytes 20 to 27 DMI timestamp</summary>
-        public long Timestamp;
-    }
+#region Nested type: Xbox360DMI
 
     public struct Xbox360DMI
     {
@@ -279,4 +268,29 @@ public static class DMI
         /// <summary>Bytes 68 to 83 Catalogue number in XX-XXXX-XX-XXY-XXX, Y not always exists</summary>
         public string CatalogNumber;
     }
+
+#endregion
+
+#region Nested type: XboxDMI
+
+    public struct XboxDMI
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+
+        /// <summary>Bytes 4 to 7 0x01 in XGD</summary>
+        public uint Version;
+
+        /// <summary>Bytes 12 to 16 Catalogue number in XX-XXXXX-X</summary>
+        public string CatalogNumber;
+
+        /// <summary>Bytes 20 to 27 DMI timestamp</summary>
+        public long Timestamp;
+    }
+
+#endregion
 }

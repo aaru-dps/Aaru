@@ -87,7 +87,8 @@ public enum FeatureNumber : ushort
     /// <summary>Ability to recognize, read and optionally write DVD+RW</summary>
     DVDRWPlus = 0x002A,
     /// <summary>Ability to read DVD+R</summary>
-    DVDRPlus = 0x002B, RigidOverWrite = 0x002C,
+    DVDRPlus = 0x002B,
+    RigidOverWrite = 0x002C,
     /// <summary>Ability to write CD in Track-at-Once</summary>
     CDTAO = 0x002D,
     /// <summary>Ability to write CD in Session-at-Once or RAW</summary>
@@ -250,8 +251,9 @@ public enum ProfileNumber : ushort
     Unconforming = 0xFFFF
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Profile
 {
     public ProfileNumber Number;
@@ -259,8 +261,9 @@ public struct Profile
 }
 
 /// <summary>Profile List Feature (0000h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0000
 {
     /// <summary>Feature version</summary>
@@ -274,8 +277,9 @@ public struct Feature_0000
 }
 
 /// <summary>Core Feature (0001h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0001
 {
     /// <summary>Feature version</summary>
@@ -293,8 +297,9 @@ public struct Feature_0001
 }
 
 /// <summary>Morphing Feature (0002h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0002
 {
     /// <summary>Feature version</summary>
@@ -310,8 +315,9 @@ public struct Feature_0002
 }
 
 /// <summary>Removable Medium Feature (0003h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0003
 {
     /// <summary>Feature version</summary>
@@ -335,8 +341,9 @@ public struct Feature_0003
 }
 
 /// <summary>Write Protect Feature (0004h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0004
 {
     /// <summary>Feature version</summary>
@@ -356,8 +363,9 @@ public struct Feature_0004
 }
 
 /// <summary>Random Readable Feature (0010h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0010
 {
     /// <summary>Feature version</summary>
@@ -375,8 +383,9 @@ public struct Feature_0010
 }
 
 /// <summary>Multi-Read Feature (001Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001D
 {
     /// <summary>Feature version</summary>
@@ -388,8 +397,9 @@ public struct Feature_001D
 }
 
 /// <summary>CD Read Feature (001Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001E
 {
     /// <summary>Feature version</summary>
@@ -407,8 +417,9 @@ public struct Feature_001E
 }
 
 /// <summary>DVD Read Feature (001Fh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001F
 {
     /// <summary>Feature version</summary>
@@ -426,8 +437,9 @@ public struct Feature_001F
 }
 
 /// <summary>Random Writable Feature (0020h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0020
 {
     /// <summary>Feature version</summary>
@@ -447,8 +459,9 @@ public struct Feature_0020
 }
 
 /// <summary>Incremental Streaming Writable Feature (0021h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0021
 {
     /// <summary>Feature version</summary>
@@ -470,8 +483,9 @@ public struct Feature_0021
 }
 
 /// <summary>Sector Erasable Feature (0022h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0022
 {
     /// <summary>Feature version</summary>
@@ -483,8 +497,9 @@ public struct Feature_0022
 }
 
 /// <summary>Formattable Feature (0023h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0023
 {
     /// <summary>Feature version</summary>
@@ -508,8 +523,9 @@ public struct Feature_0023
 }
 
 /// <summary>Hardware Defect Management Feature (0024h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0024
 {
     /// <summary>Feature version</summary>
@@ -523,8 +539,9 @@ public struct Feature_0024
 }
 
 /// <summary>Write Once Feature (0025h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0025
 {
     /// <summary>Feature version</summary>
@@ -542,8 +559,9 @@ public struct Feature_0025
 }
 
 /// <summary>Restricted Overwrite Feature (0026h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0026
 {
     /// <summary>Feature version</summary>
@@ -555,8 +573,9 @@ public struct Feature_0026
 }
 
 /// <summary>CD-RW CAV Write Feature (0027h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0027
 {
     /// <summary>Feature version</summary>
@@ -568,8 +587,9 @@ public struct Feature_0027
 }
 
 /// <summary>MRW Feature (0028h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0028
 {
     /// <summary>Feature version</summary>
@@ -587,8 +607,9 @@ public struct Feature_0028
 }
 
 /// <summary>Enhanced Defect Reporting Feature (0029h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0029
 {
     /// <summary>Feature version</summary>
@@ -606,8 +627,9 @@ public struct Feature_0029
 }
 
 /// <summary>DVD+RW Feature (002Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002A
 {
     /// <summary>Feature version</summary>
@@ -625,8 +647,9 @@ public struct Feature_002A
 }
 
 /// <summary>DVD+R Feature (002Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002B
 {
     /// <summary>Feature version</summary>
@@ -640,8 +663,9 @@ public struct Feature_002B
 }
 
 /// <summary>Rigid Restricted Overwrite Feature (002Ch)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002C
 {
     /// <summary>Feature version</summary>
@@ -661,8 +685,9 @@ public struct Feature_002C
 }
 
 /// <summary>CD Track at Once Feature (002Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002D
 {
     /// <summary>Feature version</summary>
@@ -688,8 +713,9 @@ public struct Feature_002D
 }
 
 /// <summary>CD Mastering (Session at Once) Feature (002Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002E
 {
     /// <summary>Feature version</summary>
@@ -717,8 +743,9 @@ public struct Feature_002E
 }
 
 /// <summary>DVD-R/-RW Write Feature (002Fh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002F
 {
     /// <summary>Feature version</summary>
@@ -738,8 +765,9 @@ public struct Feature_002F
 }
 
 /// <summary>Double Density CD Read Feature (0030h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0030
 {
     /// <summary>Feature version</summary>
@@ -751,8 +779,9 @@ public struct Feature_0030
 }
 
 /// <summary>Double Density CD-R Write Feature (0031h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0031
 {
     /// <summary>Feature version</summary>
@@ -766,8 +795,9 @@ public struct Feature_0031
 }
 
 /// <summary>Double Density CD-RW Write Feature (0032h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0032
 {
     /// <summary>Feature version</summary>
@@ -783,8 +813,9 @@ public struct Feature_0032
 }
 
 /// <summary>Layer Jump Recording Feature (0033h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0033
 {
     /// <summary>Feature version</summary>
@@ -797,8 +828,9 @@ public struct Feature_0033
 }
 
 /// <summary>Stop Long Operation Feature (0035h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0035
 {
     /// <summary>Feature version</summary>
@@ -810,8 +842,9 @@ public struct Feature_0035
 }
 
 /// <summary>CD-RW Media Write Support Feature (0037h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0037
 {
     /// <summary>Feature version</summary>
@@ -825,8 +858,9 @@ public struct Feature_0037
 }
 
 /// <summary>BD-R Pseudo-Overwrite (POW) Feature (0038h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0038
 {
     /// <summary>Feature version</summary>
@@ -838,8 +872,9 @@ public struct Feature_0038
 }
 
 /// <summary>DVD+RW Dual Layer Feature (003Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_003A
 {
     /// <summary>Feature version</summary>
@@ -857,8 +892,9 @@ public struct Feature_003A
 }
 
 /// <summary>DVD+R Dual Layer Feature (003Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_003B
 {
     /// <summary>Feature version</summary>
@@ -876,8 +912,9 @@ public struct Feature_003B
 }
 
 /// <summary>BD Read Feature (0040h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0040
 {
     /// <summary>Feature version</summary>
@@ -905,8 +942,9 @@ public struct Feature_0040
 }
 
 /// <summary>BD Write Feature (0041h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0041
 {
     /// <summary>Feature version</summary>
@@ -930,8 +968,9 @@ public struct Feature_0041
 }
 
 /// <summary>TSR Feature (0042h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0042
 {
     /// <summary>Feature version</summary>
@@ -943,8 +982,9 @@ public struct Feature_0042
 }
 
 /// <summary>HD DVD Read Feature (0050h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0050
 {
     /// <summary>Feature version</summary>
@@ -960,8 +1000,9 @@ public struct Feature_0050
 }
 
 /// <summary>HD DVD Write Feature (0051h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0051
 {
     /// <summary>Feature version</summary>
@@ -977,8 +1018,9 @@ public struct Feature_0051
 }
 
 /// <summary>Hybrid Disc Feature (0080h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0080
 {
     /// <summary>Feature version</summary>
@@ -992,8 +1034,9 @@ public struct Feature_0080
 }
 
 /// <summary>Power Management Feature (0100h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0100
 {
     /// <summary>Feature version</summary>
@@ -1005,8 +1048,9 @@ public struct Feature_0100
 }
 
 /// <summary>S.M.A.R.T. Feature (0101h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0101
 {
     /// <summary>Feature version</summary>
@@ -1020,8 +1064,9 @@ public struct Feature_0101
 }
 
 /// <summary>Embedded Changer Feature (0102h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0102
 {
     /// <summary>Feature version</summary>
@@ -1039,8 +1084,9 @@ public struct Feature_0102
 }
 
 /// <summary>CD Audio External Play Feature (0103h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0103
 {
     /// <summary>Feature version</summary>
@@ -1060,8 +1106,9 @@ public struct Feature_0103
 }
 
 /// <summary>Microcode Upgrade Feature (0104h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0104
 {
     /// <summary>Feature version</summary>
@@ -1075,8 +1122,9 @@ public struct Feature_0104
 }
 
 /// <summary>Time-Out Feature (0105h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0105
 {
     /// <summary>Feature version</summary>
@@ -1092,8 +1140,9 @@ public struct Feature_0105
 }
 
 /// <summary>DVD-CSS Feature (0106h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0106
 {
     /// <summary>Feature version</summary>
@@ -1107,8 +1156,9 @@ public struct Feature_0106
 }
 
 /// <summary>Real Time Streaming Feature (0107h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0107
 {
     /// <summary>Feature version</summary>
@@ -1132,8 +1182,9 @@ public struct Feature_0107
 }
 
 /// <summary>Drive serial number (0108h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0108
 {
     /// <summary>Feature version</summary>
@@ -1147,8 +1198,9 @@ public struct Feature_0108
 }
 
 /// <summary>Media Serial Number Feature (0109h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0109
 {
     /// <summary>Feature version</summary>
@@ -1160,8 +1212,9 @@ public struct Feature_0109
 }
 
 /// <summary>Disc Control Blocks Feature (010Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010A
 {
     /// <summary>Feature version</summary>
@@ -1174,8 +1227,9 @@ public struct Feature_010A
 }
 
 /// <summary>DVD CPRM Feature (010Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010B
 {
     /// <summary>Feature version</summary>
@@ -1189,8 +1243,9 @@ public struct Feature_010B
 }
 
 /// <summary>Firmware Information Feature (010Ch)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010C
 {
     /// <summary>Feature version</summary>
@@ -1209,8 +1264,9 @@ public struct Feature_010C
 }
 
 /// <summary>AACS Feature (010Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010D
 {
     /// <summary>Feature version</summary>
@@ -1238,8 +1294,9 @@ public struct Feature_010D
 }
 
 /// <summary>DVD CSS Managed Recording Feature (010Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010E
 {
     /// <summary>Feature version</summary>
@@ -1253,8 +1310,9 @@ public struct Feature_010E
 }
 
 /// <summary>SecurDisc Feature (0113h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0113
 {
     /// <summary>Feature version</summary>
@@ -1266,8 +1324,9 @@ public struct Feature_0113
 }
 
 /// <summary>OSSC Feature (0142h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0142
 {
     /// <summary>Feature version</summary>
@@ -1286,8 +1345,9 @@ public struct Feature_0142
 }
 
 /// <summary>VCPS Feature (0110h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0110
 {
     /// <summary>Feature version</summary>
@@ -1308,7 +1368,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0000)
             return null;
@@ -1322,7 +1382,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        int           offset       = 4;
+        var           offset       = 4;
         List<Profile> listProfiles = new();
 
         while(offset < feature.Length)
@@ -1350,7 +1410,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0001)
             return null;
@@ -1386,7 +1446,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0002)
             return null;
@@ -1416,7 +1476,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0003)
             return null;
@@ -1452,7 +1512,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0004)
             return null;
@@ -1486,7 +1546,7 @@ public static class Features
         if(feature.Length < 12)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0010)
             return null;
@@ -1517,7 +1577,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001D)
             return null;
@@ -1542,7 +1602,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001E)
             return null;
@@ -1576,7 +1636,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x001F)
             return null;
@@ -1613,7 +1673,7 @@ public static class Features
         if(feature.Length < 16)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0020)
             return null;
@@ -1648,7 +1708,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0021)
             return null;
@@ -1689,7 +1749,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0022)
             return null;
@@ -1714,7 +1774,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0023)
             return null;
@@ -1753,7 +1813,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0024)
             return null;
@@ -1782,7 +1842,7 @@ public static class Features
         if(feature.Length < 12)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0025)
             return null;
@@ -1813,7 +1873,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0026)
             return null;
@@ -1838,7 +1898,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0027)
             return null;
@@ -1863,7 +1923,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0028)
             return null;
@@ -1896,7 +1956,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0029)
             return null;
@@ -1925,7 +1985,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002A)
             return null;
@@ -1956,7 +2016,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002B)
             return null;
@@ -1983,7 +2043,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002C)
             return null;
@@ -2013,7 +2073,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002D)
             return null;
@@ -2050,7 +2110,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002E)
             return null;
@@ -2086,7 +2146,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x002F)
             return null;
@@ -2120,7 +2180,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0030)
             return null;
@@ -2145,7 +2205,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0031)
             return null;
@@ -2172,7 +2232,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0032)
             return null;
@@ -2200,7 +2260,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0033)
             return null;
@@ -2232,7 +2292,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0035)
             return null;
@@ -2257,7 +2317,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0037)
             return null;
@@ -2284,7 +2344,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0038)
             return null;
@@ -2309,7 +2369,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x003A)
             return null;
@@ -2338,7 +2398,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x003B)
             return null;
@@ -2365,7 +2425,7 @@ public static class Features
         if(feature.Length < 32)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0040)
             return null;
@@ -2403,7 +2463,7 @@ public static class Features
         if(feature.Length < 24)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0041)
             return null;
@@ -2439,7 +2499,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0042)
             return null;
@@ -2464,7 +2524,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0050)
             return null;
@@ -2492,7 +2552,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0051)
             return null;
@@ -2520,7 +2580,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0080)
             return null;
@@ -2547,7 +2607,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0100)
             return null;
@@ -2572,7 +2632,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0101)
             return null;
@@ -2599,7 +2659,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0102)
             return null;
@@ -2628,7 +2688,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0103)
             return null;
@@ -2658,7 +2718,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0104)
             return null;
@@ -2687,7 +2747,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0105)
             return null;
@@ -2719,7 +2779,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0106)
             return null;
@@ -2746,7 +2806,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0107)
             return null;
@@ -2788,7 +2848,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0108)
             return null;
@@ -2802,7 +2862,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        byte[] serial = new byte[feature.Length];
+        var serial = new byte[feature.Length];
         Array.Copy(feature, 4, serial, 0, feature.Length - 4);
         decoded.Serial = StringHandlers.CToString(serial).Trim();
 
@@ -2817,7 +2877,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0109)
             return null;
@@ -2842,7 +2902,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010A)
             return null;
@@ -2858,9 +2918,11 @@ public static class Features
 
         decoded.DCBs = new uint[feature[3] / 4];
 
-        for(int i = 0; i < decoded.DCBs.Length; i++)
-            decoded.DCBs[i] = (uint)((feature[0 + 4 + (i * 4)] << 24) + (feature[1 + 4 + (i * 4)] << 16) +
-                                     (feature[2 + 4 + (i * 4)] << 8)  + feature[3 + 4 + (i * 4)]);
+        for(var i = 0; i < decoded.DCBs.Length; i++)
+        {
+            decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
+                                     (feature[2 + 4 + i * 4] << 8)  + feature[3 + 4 + i * 4]);
+        }
 
         return decoded;
     }
@@ -2873,7 +2935,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010B)
             return null;
@@ -2900,7 +2962,7 @@ public static class Features
         if(feature.Length < 20)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010C)
             return null;
@@ -2933,7 +2995,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010D)
             return null;
@@ -2971,7 +3033,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x010E)
             return null;
@@ -2998,7 +3060,7 @@ public static class Features
         if(feature.Length < 8)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0110)
             return null;
@@ -3023,7 +3085,7 @@ public static class Features
         if(feature.Length < 4)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0113)
             return null;
@@ -3048,7 +3110,7 @@ public static class Features
         if(feature.Length < 6)
             return null;
 
-        ushort number = (ushort)((feature[0] << 8) + feature[1]);
+        var number = (ushort)((feature[0] << 8) + feature[1]);
 
         if(number != 0x0142)
             return null;
@@ -3067,11 +3129,11 @@ public static class Features
         decoded.ME       |= (feature[4] & 0x01) == 0x01;
         decoded.Profiles =  new ushort[feature[5]];
 
-        if((feature[5] * 2) + 6 != feature.Length)
+        if(feature[5] * 2 + 6 != feature.Length)
             return decoded;
 
-        for(int i = 0; i < feature[5]; i++)
-            decoded.Profiles[i] = (ushort)((feature[0 + 6 + (2 * i)] << 8) + feature[1 + 6 + (2 * i)]);
+        for(var i = 0; i < feature[5]; i++)
+            decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
 
         return decoded;
     }
@@ -3328,8 +3390,10 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_supports_Device_Busy_events);
 
         if(ftr.INQ2)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_supports_EVPD_Page_Code_and_16_bit_Allocation_Length_as_described_in_SPC_3);
+        }
 
         return sb.ToString();
     }
@@ -3407,8 +3471,10 @@ public static class Features
             sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_load_media);
 
         if(ftr.DBML)
+        {
             sb.AppendLine("\t" + Localization.
                               Features_Prettify_0003_Drive_reports_Device_Busy_Class_events_during_medium_loading_unloading);
+        }
 
         return sb.ToString();
     }
@@ -3424,8 +3490,10 @@ public static class Features
         sb.AppendLine(Localization.MMC_Write_Protect);
 
         if(ftr.DWP)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_supports_reading_writing_the_Disc_Write_Protect_PAC_on_BD_R_RE_media);
+        }
 
         if(ftr.WDCB)
             sb.AppendLine("\t" + Localization.Drive_supports_writing_the_Write_Inhibit_DCB_on_DVD_RW_media);
@@ -3467,7 +3535,8 @@ public static class Features
     }
 
     public static string Prettify_001D(Feature_001D? feature) =>
-        !feature.HasValue ? null
+        !feature.HasValue
+            ? null
             : Localization.Drive_claims_capability_to_read_all_CD_formats_according_to_OSTA_Multi_Read_Specification +
               "\n";
 
@@ -3713,7 +3782,8 @@ public static class Features
     }
 
     public static string Prettify_0026(Feature_0026? feature) =>
-        !feature.HasValue ? null
+        !feature.HasValue
+            ? null
             : Localization.Drive_shall_have_the_ability_to_overwrite_logical_blocks_only_in_fixed_sets_at_a_time + "\n";
 
     public static string Prettify_0027(Feature_0027? feature)
@@ -3748,6 +3818,7 @@ public static class Features
         else if(ftr is { DVDPRead: true, DVDPWrite: true })
             sb.Append(Localization.Drive_can_read_and_write_DVD_MRW);
         else
+        {
             switch(ftr.Write)
             {
                 case true when ftr.DVDPRead:
@@ -3760,12 +3831,14 @@ public static class Features
                     break;
                 default:
                 {
-                    sb.Append(ftr.DVDPRead ? Localization.Drive_can_read_CD_MRW_and_DVD_MRW
+                    sb.Append(ftr.DVDPRead
+                                  ? Localization.Drive_can_read_CD_MRW_and_DVD_MRW
                                   : Localization.Drive_can_read_CD_MRW);
 
                     break;
                 }
             }
+        }
 
         if(ftr.Current)
             sb.AppendLine(Localization.current);
@@ -3785,8 +3858,9 @@ public static class Features
 
         sb.AppendLine(Localization.MMC_Enhanced_Defect_Reporting_Feature);
 
-        sb.AppendLine(ftr.DRTDM ? "\t" + Localization.Drive_supports_DRT_DM_mode
-                          : "\t"       + Localization.Drive_supports_Persistent_DM_mode);
+        sb.AppendLine(ftr.DRTDM
+                          ? "\t" + Localization.Drive_supports_DRT_DM_mode
+                          : "\t" + Localization.Drive_supports_Persistent_DM_mode);
 
         if(ftr.DBICacheZones > 0)
             sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_cache_zones, ftr.DBICacheZones).AppendLine();
@@ -3814,8 +3888,9 @@ public static class Features
             else
                 sb.AppendLine();
 
-            sb.AppendLine(ftr.CloseOnly ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
-                              : "\t"           + Localization.Drive_supports_both_forms_of_background_format_stopping);
+            sb.AppendLine(ftr.CloseOnly
+                              ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
+                              : "\t" + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
             if(ftr.QuickStart)
                 sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
@@ -3878,8 +3953,10 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
 
         if(ftr.Intermediate)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_supports_writing_on_an_intermediate_state_session_and_quick_formatting);
+        }
 
         if(ftr.DSDR)
             sb.AppendLine("\t" + Localization.Drive_can_read_Defect_Status_data_recorded_on_the_medium);
@@ -4018,8 +4095,10 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         if(ftr.MaxCueSheet > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet,
                             ftr.MaxCueSheet).AppendLine();
+        }
 
         return sb.ToString();
     }
@@ -4174,8 +4253,9 @@ public static class Features
             else
                 sb.AppendLine();
 
-            sb.AppendLine(ftr.CloseOnly ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
-                              : "\t"           + Localization.Drive_supports_both_forms_of_background_format_stopping);
+            sb.AppendLine(ftr.CloseOnly
+                              ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
+                              : "\t" + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
             if(ftr.QuickStart)
                 sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
@@ -4294,7 +4374,8 @@ public static class Features
     }
 
     public static string Prettify_0042(Feature_0042? feature) =>
-        !feature.HasValue ? null
+        !feature.HasValue
+            ? null
             : Localization.
                   Features_Prettify_0042_Drive_is_able_to_detect_and_report_defective_writable_unit_and_behave_accordingly +
               "\n";
@@ -4319,7 +4400,8 @@ public static class Features
                 break;
             default:
             {
-                sb.Append(ftr.HDDVDRAM ? Localization.Drive_can_read_HD_DVD_ROM_HD_DVD_RW_and_HD_DVD_RAM
+                sb.Append(ftr.HDDVDRAM
+                              ? Localization.Drive_can_read_HD_DVD_ROM_HD_DVD_RW_and_HD_DVD_RAM
                               : Localization.Drive_can_read_HD_DVD_ROM_and_HD_DVD_RW);
 
                 break;
@@ -4354,7 +4436,8 @@ public static class Features
                 break;
             default:
             {
-                sb.Append(ftr.HDDVDRAM ? Localization.Drive_can_write_HD_DVD_RW_and_HD_DVD_RAM
+                sb.Append(ftr.HDDVDRAM
+                              ? Localization.Drive_can_write_HD_DVD_RW_and_HD_DVD_RAM
                               : Localization.Drive_can_write_HD_DVD_RW);
 
                 break;
@@ -4385,14 +4468,17 @@ public static class Features
             sb.AppendLine();
 
         if(ftr.RI)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_is_able_to_maintain_the_online_format_layer_through_reset_and_power_cycling);
+        }
 
         return sb.ToString();
     }
 
     public static string Prettify_0100(Feature_0100? feature) =>
-        !feature.HasValue ? null
+        !feature.HasValue
+            ? null
             : Localization.Drive_is_able_to_perform_host_and_drive_directed_power_management + "\n";
 
     public static string Prettify_0101(Feature_0101? feature)
@@ -4467,8 +4553,10 @@ public static class Features
         sb.AppendLine(Localization.Drive_supports_Microcode_Upgrade);
 
         if(ftr.M5)
+        {
             sb.AppendLine(Localization.
                               Drive_supports_validating_the_5_bit_Mode_of_the_READ_BUFFER_and_WRITE_BUFFER_commands);
+        }
 
         return sb.ToString();
     }
@@ -4503,8 +4591,10 @@ public static class Features
         var          sb  = new StringBuilder();
 
         if(ftr.Current)
+        {
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0_and_current_disc_is_encrypted,
                             ftr.CSSVersion).AppendLine();
+        }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0, ftr.CSSVersion).AppendLine();
 
@@ -4531,12 +4621,16 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_supports_the_SET_CD_SPEED_command);
 
         if(ftr.MP2A)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_supports_the_Write_Speed_Performance_Descriptor_Blocks_in_the_MMC_mode_page_2Ah);
+        }
 
         if(ftr.WSPD)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_supports_the_Write_Speed_data_of_GET_PERFORMANCE_and_the_WRC_field_of_SET_STREAMING);
+        }
 
         if(ftr.SW)
             sb.AppendLine("\t" + Localization.Drive_supports_stream_recording);
@@ -4586,8 +4680,10 @@ public static class Features
         var          sb  = new StringBuilder();
 
         if(ftr.Current)
+        {
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0_and_current_disc_is_or_can_be_encrypted,
                             ftr.CPRMVersion).AppendLine();
+        }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0, ftr.CPRMVersion).AppendLine();
 
@@ -4602,7 +4698,7 @@ public static class Features
         Feature_010C ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        byte[] temp = new byte[4];
+        var temp = new byte[4];
         temp[0] = (byte)((ftr.Century & 0xFF00) >> 8);
         temp[1] = (byte)(ftr.Century & 0xFF);
         temp[2] = (byte)((ftr.Year & 0xFF00) >> 8);
@@ -4636,12 +4732,12 @@ public static class Features
 
             sb.AppendFormat(Localization.Drive_firmware_is_dated_0, fwDate).AppendLine();
         }
-        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
         {
             // ignored
         }
-        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
         return sb.ToString();
     }
@@ -4655,8 +4751,10 @@ public static class Features
         var          sb  = new StringBuilder();
 
         if(ftr.Current)
+        {
             sb.AppendFormat(Localization.Drive_supports_AACS_version_0_and_current_disc_is_encrypted, ftr.AACSVersion).
                AppendLine();
+        }
         else
             sb.AppendFormat(Localization.Drive_supports_AACS_version_0, ftr.AACSVersion).AppendLine();
 
@@ -4677,8 +4775,10 @@ public static class Features
             sb.AppendLine("\t" + Localization.Drive_supports_generating_the_binding_nonce);
 
             if(ftr.BindNonceBlocks > 0)
+            {
                 sb.AppendFormat("\t" + Localization._0_media_blocks_are_required_for_the_binding_nonce,
                                 ftr.BindNonceBlocks).AppendLine();
+            }
         }
 
         if(ftr.AGIDs > 0)
@@ -4703,8 +4803,10 @@ public static class Features
             sb.AppendLine();
 
         if(ftr.MaxScrambleExtent > 0)
+        {
             sb.AppendFormat("\t" + Localization.Maximum_0_scramble_extent_information_entries, ftr.MaxScrambleExtent).
                AppendLine();
+        }
 
         return sb.ToString();
     }
@@ -4717,7 +4819,8 @@ public static class Features
         Feature_0110 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine(ftr.Current ? Localization.Drive_and_currently_inserted_media_support_VCPS
+        sb.AppendLine(ftr.Current
+                          ? Localization.Drive_and_currently_inserted_media_support_VCPS
                           : Localization.Drive_supports_VCPS);
 
         return sb.ToString();
@@ -4731,7 +4834,8 @@ public static class Features
         Feature_0113 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        sb.AppendLine(ftr.Current ? Localization.Drive_and_currently_inserted_media_support_SecurDisc
+        sb.AppendLine(ftr.Current
+                          ? Localization.Drive_and_currently_inserted_media_support_SecurDisc
                           : Localization.Drive_supports_SecurDisc);
 
         return sb.ToString();
@@ -4762,7 +4866,7 @@ public static class Features
         if(ftr.Profiles == null)
             return sb.ToString();
 
-        for(int i = 0; i < ftr.Profiles.Length; i++)
+        for(var i = 0; i < ftr.Profiles.Length; i++)
             sb.AppendFormat("\t" + Localization.Profile_0_1, i, ftr.Profiles[i]).AppendLine();
 
         return sb.ToString();
@@ -4917,20 +5021,30 @@ public static class Features
         return dec;
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "NotAccessedField.Global")]
+#region Nested type: FeatureDescriptor
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct FeatureDescriptor
     {
         public ushort Code;
         public byte[] Data;
     }
 
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "NotAccessedField.Global")]
+#endregion
+
+#region Nested type: SeparatedFeatures
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct SeparatedFeatures
     {
         public uint                DataLength;
         public ushort              CurrentProfile;
         public FeatureDescriptor[] Descriptors;
     }
+
+#endregion
 }

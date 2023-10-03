@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x1B: Removable Block Access Capabilities page
+#region Mode Page 0x1B: Removable Block Access Capabilities page
+
     /// <summary>Removable Block Access Capabilities page Page code 0x1B 12 bytes in INF-8070</summary>
     public struct ModePage_1B
     {
@@ -117,5 +119,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1B: Removable Block Access Capabilities page
+
+#endregion Mode Page 0x1B: Removable Block Access Capabilities page
 }

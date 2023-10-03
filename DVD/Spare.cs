@@ -48,8 +48,10 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class Spare
 {
     public static SpareAreaInformation? Decode(byte[] response)
@@ -91,6 +93,8 @@ public static class Spare
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
 
+#region Nested type: SpareAreaInformation
+
     public struct SpareAreaInformation
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -106,4 +110,6 @@ public static class Spare
         /// <summary>Bytes 12 to 15 Data length</summary>
         public uint AllocatedSupplementaryBlocks;
     }
+
+#endregion
 }

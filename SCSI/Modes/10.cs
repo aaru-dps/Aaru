@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x10: XOR control mode page
+#region Mode Page 0x10: XOR control mode page
+
     /// <summary>XOR control mode page Page code 0x10 24 bytes in SBC-1, SBC-2</summary>
     public struct ModePage_10
     {
@@ -112,24 +114,34 @@ public static partial class Modes
         else
         {
             if(page.MaxXorWrite > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_single_XOR_WRITE_command,
                                 page.MaxXorWrite).AppendLine();
+            }
 
             if(page.MaxRegenSize > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_REGENERATE_command,
                                 page.MaxRegenSize).AppendLine();
+            }
 
             if(page.MaxRebuildRead > 0)
+            {
                 sb.
-                    AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
-                                 page.MaxRebuildRead).AppendLine();
+                    AppendFormat(
+                        "\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
+                        page.MaxRebuildRead).AppendLine();
+            }
 
             if(page.RebuildDelay > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_needs_a_minimum_of_0_ms_between_READ_commands_during_rebuild,
                                 page.RebuildDelay).AppendLine();
+            }
         }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x10: XOR control mode page
+
+#endregion Mode Page 0x10: XOR control mode page
 }

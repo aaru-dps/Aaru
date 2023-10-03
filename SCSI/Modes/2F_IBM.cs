@@ -35,11 +35,14 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnassignedField.Global")]
 public static partial class Modes
 {
-    #region IBM Mode Page 0x2F: Behaviour Configuration Mode page
+#region IBM Mode Page 0x2F: Behaviour Configuration Mode page
+
     public struct IBM_ModePage_2F
     {
         /// <summary>Parameters can be saved</summary>
@@ -192,5 +195,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion IBM Mode Page 0x2F: Behaviour Configuration Mode page
+
+#endregion IBM Mode Page 0x2F: Behaviour Configuration Mode page
 }

@@ -41,8 +41,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA Saturn</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Saturn
 {
     const string MODULE_NAME = "Saturn IP.BIN Decoder";
@@ -137,6 +138,7 @@ public static class Saturn
         IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
         foreach(byte peripheral in ipbin.peripherals)
+        {
             switch((char)peripheral)
             {
                 case 'A':
@@ -163,17 +165,20 @@ public static class Saturn
                     IPBinInformation.AppendLine(Localization.Game_supports_multitap);
 
                     break;
-                case ' ': break;
+                case ' ':
+                    break;
                 default:
                     IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
                                      AppendLine();
 
                     break;
             }
+        }
 
         IPBinInformation.AppendLine(Localization.Regions_supported);
 
         foreach(byte region in ipbin.region_codes)
+        {
             switch((char)region)
             {
                 case 'J':
@@ -192,15 +197,19 @@ public static class Saturn
                     IPBinInformation.AppendLine(Localization.Asia_NTSC);
 
                     break;
-                case ' ': break;
+                case ' ':
+                    break;
                 default:
                     IPBinInformation.AppendFormat(Localization.Game_supports_unknown_region_0, region).AppendLine();
 
                     break;
             }
+        }
 
         return IPBinInformation.ToString();
     }
+
+#region Nested type: IPBin
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct IPBin
@@ -242,4 +251,6 @@ public static class Saturn
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 112)]
         public byte[] product_name;
     }
+
+#endregion
 }

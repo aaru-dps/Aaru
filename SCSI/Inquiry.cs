@@ -49,8 +49,9 @@ namespace Aaru.Decoders.SCSI;
 // T10/502 revision 05
 // RFC 7144
 // ECMA-111
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Inquiry
 {
     public static string Prettify(CommonTypes.Structs.Devices.SCSI.Inquiry? SCSIInquiryResponse)
@@ -400,11 +401,14 @@ public static class Inquiry
         }
 
         if(response.VersionDescriptors != null)
+        {
             foreach(ushort VersionDescriptor in response.VersionDescriptors)
+            {
                 switch(VersionDescriptor)
                 {
                     case 0xFFFF:
-                    case 0x0000: break;
+                    case 0x0000:
+                        break;
                     case 0x0020:
                         sb.AppendLine(Localization.Device_complies_with_SAM_no_version_claimed);
 
@@ -2294,8 +2298,11 @@ public static class Inquiry
 
                         break;
                 }
+            }
+        }
 
-        #region Quantum vendor prettifying
+    #region Quantum vendor prettifying
+
         if(response.QuantumPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
         {
@@ -2341,7 +2348,7 @@ public static class Inquiry
             sb.AppendFormat(Localization.EEPROM_format_version_0_1, response.Qt_EEPROMFormatMajorVersion,
                             response.Qt_EEPROMFormatMinorVersion).AppendLine();
 
-            sb.AppendFormat(Localization.Firmware_personality_0, response.Qt_FirmwarePersonality).AppendLine();
+            sb.AppendFormat(Localization.Firmware_personality_0,     response.Qt_FirmwarePersonality).AppendLine();
             sb.AppendFormat(Localization.Firmware_sub_personality_0, response.Qt_FirmwareSubPersonality).AppendLine();
 
             sb.AppendFormat(Localization.Tape_directory_format_version_0, response.Qt_TapeDirectoryFormatVersion).
@@ -2350,7 +2357,7 @@ public static class Inquiry
             sb.AppendFormat(Localization.Controller_hardware_version_0, response.Qt_ControllerHardwareVersion).
                AppendLine();
 
-            sb.AppendFormat(Localization.Drive_EEPROM_version_0, response.Qt_DriveEEPROMVersion).AppendLine();
+            sb.AppendFormat(Localization.Drive_EEPROM_version_0,   response.Qt_DriveEEPROMVersion).AppendLine();
             sb.AppendFormat(Localization.Drive_hardware_version_0, response.Qt_DriveHardwareVersion).AppendLine();
 
             sb.AppendFormat(Localization.Media_loader_firmware_version_0, response.Qt_MediaLoaderFirmwareVersion).
@@ -2371,9 +2378,11 @@ public static class Inquiry
             sb.AppendFormat(Localization.Module_revision_0, StringHandlers.CToString(response.Qt_ModuleRevision)).
                AppendLine();
         }
-        #endregion Quantum vendor prettifying
 
-        #region IBM vendor prettifying
+    #endregion Quantum vendor prettifying
+
+    #region IBM vendor prettifying
+
         if(response.IBMPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
         {
@@ -2389,9 +2398,11 @@ public static class Inquiry
 
             sb.AppendFormat(Localization.IBM_OEM_Specific_Field_0, response.IBM_OEMSpecific).AppendLine();
         }
-        #endregion IBM vendor prettifying
 
-        #region HP vendor prettifying
+    #endregion IBM vendor prettifying
+
+    #region HP vendor prettifying
+
         if(response.HPPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "hp")
         {
@@ -2405,33 +2416,46 @@ public static class Inquiry
             if(OBDRSign.SequenceEqual(response.HP_OBDR))
                 sb.AppendLine(Localization.Device_supports_Tape_Disaster_Recovery);
         }
-        #endregion HP vendor prettifying
 
-        #region Seagate vendor prettifying
+    #endregion HP vendor prettifying
+
+    #region Seagate vendor prettifying
+
         if((response.SeagatePresent || response.Seagate2Present || response.Seagate3Present) &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "seagate")
         {
             sb.AppendLine(Localization.Seagate_vendor_specific_information);
 
             if(response.SeagatePresent)
+            {
                 sb.AppendFormat(Core.Drive_serial_number_0,
                                 StringHandlers.CToString(response.Seagate_DriveSerialNumber)).AppendLine();
+            }
 
             if(response.Seagate2Present)
+            {
                 sb.AppendFormat(Localization.Drive_copyright_0, StringHandlers.CToString(response.Seagate_Copyright)).
                    AppendLine();
+            }
 
             if(response.Seagate3Present)
+            {
                 sb.AppendFormat(Localization.Drive_servo_part_number_0,
                                 PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).AppendLine();
+            }
         }
-        #endregion Seagate vendor prettifying
 
-        #region Kreon vendor prettifying
+    #endregion Seagate vendor prettifying
+
+    #region Kreon vendor prettifying
+
         if(response.KreonPresent)
+        {
             sb.AppendFormat(Localization.Drive_is_flashed_with_Kreon_firmware_0,
                             StringHandlers.CToString(response.KreonVersion)).AppendLine();
-        #endregion Kreon vendor prettifying
+        }
+
+    #endregion Kreon vendor prettifying
 
     #if DEBUG
         if(response.DeviceTypeModifier != 0)
@@ -2454,10 +2478,11 @@ public static class Inquiry
             sb.AppendLine("============================================================");
         }
 
-        if(response is { VendorSpecific: {}, IsHiMD: true })
+        if(response is { VendorSpecific: not null, IsHiMD: true })
+        {
             if(response.KreonPresent)
             {
-                byte[] vendor = new byte[7];
+                var vendor = new byte[7];
                 Array.Copy(response.VendorSpecific, 11, vendor, 0, 7);
                 sb.AppendLine(Localization.Vendor_specific_bytes_47_to_55);
                 sb.AppendLine("============================================================");
@@ -2471,6 +2496,7 @@ public static class Inquiry
                 sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
                 sb.AppendLine("============================================================");
             }
+        }
 
         if(response.IsHiMD)
         {

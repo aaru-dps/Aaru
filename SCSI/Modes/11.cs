@@ -36,11 +36,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x11: Medium partition page (1)
+#region Mode Page 0x11: Medium partition page (1)
+
     public enum PartitionSizeUnitOfMeasures : byte
     {
         /// <summary>Partition size is measures in bytes</summary>
@@ -123,7 +125,7 @@ public static partial class Modes
         decoded.MediumFormatRecognition     =  (MediumFormatRecognitionValues)pageResponse[5];
         decoded.PartitionSizes              =  new ushort[(pageResponse.Length - 8) / 2];
 
-        for(int i = 8; i < pageResponse.Length; i += 2)
+        for(var i = 8; i < pageResponse.Length; i += 2)
         {
             decoded.PartitionSizes[(i - 8) / 2] =  (ushort)(pageResponse[i] << 8);
             decoded.PartitionSizes[(i - 8) / 2] += pageResponse[i + 1];
@@ -158,15 +160,19 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Partitions_are_fixed_under_device_definitions);
 
         if(page.SDP)
+        {
             sb.AppendLine("\t" + Localization.
                               Number_of_partitions_can_be_defined_but_their_size_is_defined_by_the_device);
+        }
 
         if(page.IDP)
             sb.AppendLine("\t" + Localization.Number_and_size_of_partitions_can_be_manually_defined);
 
         if(page.POFM)
+        {
             sb.AppendLine("\t" + Localization.
                               Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received);
+        }
 
         switch(page.CLEAR)
         {
@@ -251,17 +257,24 @@ public static partial class Modes
 
         sb.AppendFormat("\t" + Localization.Medium_has_defined_0_partitions, page.PartitionSizes.Length).AppendLine();
 
-        for(int i = 0; i < page.PartitionSizes.Length; i++)
+        for(var i = 0; i < page.PartitionSizes.Length; i++)
+        {
             if(page.PartitionSizes[i] == 0)
+            {
                 if(page.PartitionSizes.Length == 1)
                     sb.AppendLine("\t" + Localization.Device_recognizes_one_single_partition_spanning_whole_medium);
                 else
                     sb.AppendFormat("\t" + Localization.Partition_0_runs_for_rest_of_medium, i).AppendLine();
+            }
             else
+            {
                 sb.AppendFormat("\t" + Localization.Partition_0_is_1_2_long, i, page.PartitionSizes[i], measure).
                    AppendLine();
+            }
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x11: Medium partition page (1)
+
+#endregion Mode Page 0x11: Medium partition page (1)
 }

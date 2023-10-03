@@ -36,10 +36,13 @@ using System.Runtime.InteropServices;
 namespace Aaru.Decoders.Floppy;
 
 /// <summary>Methods and structures for Commodore Amiga decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Amiga
 {
+#region Nested type: Sector
+
     public struct Sector
     {
         /// <summary>Set to 0x00</summary>
@@ -66,4 +69,6 @@ public static class Amiga
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
         public byte[] data;
     }
+
+#endregion
 }

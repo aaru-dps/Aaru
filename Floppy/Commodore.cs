@@ -36,10 +36,31 @@ using System.Runtime.InteropServices;
 namespace Aaru.Decoders.Floppy;
 
 /// <summary>Methods and structures for Commodore GCR floppy decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Commodore
 {
+#region Nested type: SectorData
+
+    /// <summary>Decoded Commodore GCR sector data</summary>
+    public struct SectorData
+    {
+        /// <summary>Always 0x07</summary>
+        public byte id;
+        /// <summary>User data</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public byte data;
+        /// <summary>XOR of <see cref="data" /></summary>
+        public byte checksum;
+        /// <summary>Filled with 0x0F</summary>
+        public ushort fill;
+    }
+
+#endregion
+
+#region Nested type: SectorHeader
+
     /// <summary>Decoded Commodore GCR sector header</summary>
     public struct SectorHeader
     {
@@ -57,17 +78,5 @@ public static class Commodore
         public ushort fill;
     }
 
-    /// <summary>Decoded Commodore GCR sector data</summary>
-    public struct SectorData
-    {
-        /// <summary>Always 0x07</summary>
-        public byte id;
-        /// <summary>User data</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public byte data;
-        /// <summary>XOR of <see cref="data" /></summary>
-        public byte checksum;
-        /// <summary>Filled with 0x0F</summary>
-        public ushort fill;
-    }
+#endregion
 }

@@ -50,8 +50,10 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class CSS_CPRM
 {
     public static LeadInCopyright? DecodeLeadInCopyright(byte[] response)
@@ -123,7 +125,7 @@ public static class CSS_CPRM
                 break;
         }
 
-        sb.AppendLine(string.Format(Localization.Drive_has_0_vendor_resets_available, vendorResets));
+        sb.AppendLine(string.Format(Localization.Drive_has_0_vendor_resets_available,           vendorResets));
         sb.AppendLine(string.Format(Localization.Drive_has_0_user_controlled_changes_available, userControlledChanges));
 
         switch(decoded.RegionMask)
@@ -277,53 +279,7 @@ public static class CSS_CPRM
     public static string PrettifyLeadInCopyright(byte[] response) =>
         PrettifyLeadInCopyright(DecodeLeadInCopyright(response));
 
-    public struct LeadInCopyright
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Byte 4 Copy protection system type</summary>
-        public CopyrightType CopyrightType;
-        /// <summary>Byte 5 Bitmask of regions where this disc is playable</summary>
-        public byte RegionInformation;
-        /// <summary>Byte 6 Reserved</summary>
-        public byte Reserved3;
-        /// <summary>Byte 7 Reserved</summary>
-        public byte Reserved4;
-    }
-
-    public struct DiscKey
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to 2052 Disc key for CSS, Album Identifier for CPPM</summary>
-        public byte[] Key;
-    }
-
-    public struct TitleKey
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Byte 4 CPM</summary>
-        public byte CMI;
-        /// <summary>Bytes 5 to 10 Title key for CSS</summary>
-        public byte[] Key;
-        /// <summary>Byte 11 Reserved</summary>
-        public byte Reserved3;
-        /// <summary>Byte 12 Reserved</summary>
-        public byte Reserved4;
-    }
+#region Nested type: AuthenticationSuccessFlag
 
     public struct AuthenticationSuccessFlag
     {
@@ -343,6 +299,48 @@ public static class CSS_CPRM
         public byte ASF;
     }
 
+#endregion
+
+#region Nested type: DiscKey
+
+    public struct DiscKey
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to 2052 Disc key for CSS, Album Identifier for CPPM</summary>
+        public byte[] Key;
+    }
+
+#endregion
+
+#region Nested type: LeadInCopyright
+
+    public struct LeadInCopyright
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Byte 4 Copy protection system type</summary>
+        public CopyrightType CopyrightType;
+        /// <summary>Byte 5 Bitmask of regions where this disc is playable</summary>
+        public byte RegionInformation;
+        /// <summary>Byte 6 Reserved</summary>
+        public byte Reserved3;
+        /// <summary>Byte 7 Reserved</summary>
+        public byte Reserved4;
+    }
+
+#endregion
+
+#region Nested type: RegionalPlaybackControlState
+
     public struct RegionalPlaybackControlState
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -361,9 +359,39 @@ public static class CSS_CPRM
         public byte Reserved3;
     }
 
+#endregion
+
+#region Nested type: TitleKey
+
+    public struct TitleKey
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Byte 4 CPM</summary>
+        public byte CMI;
+        /// <summary>Bytes 5 to 10 Title key for CSS</summary>
+        public byte[] Key;
+        /// <summary>Byte 11 Reserved</summary>
+        public byte Reserved3;
+        /// <summary>Byte 12 Reserved</summary>
+        public byte Reserved4;
+    }
+
+#endregion
+
+#region Nested type: TypeCode
+
     enum TypeCode
     {
-        None = 0, Set = 1, LastChance = 2,
-        Perm = 3
+        None       = 0,
+        Set        = 1,
+        LastChance = 2,
+        Perm       = 3
     }
+
+#endregion
 }

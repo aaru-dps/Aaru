@@ -46,53 +46,12 @@ namespace Aaru.Decoders.Floppy;
 // ECMA-100
 
 /// <summary>Methods and structures for IBM System 34 floppy decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class System34
 {
-    /// <summary>Track format for IBM System 34 floppy Used by IBM PC, Apple Macintosh (high-density only), and a lot others</summary>
-    public struct Track
-    {
-        /// <summary>Start of track</summary>
-        public TrackPreamble trackStart;
-        /// <summary>Track sectors</summary>
-        public Sector[] sectors;
-        /// <summary>Undefined size</summary>
-        public byte[] gap;
-    }
-
-    /// <summary>Start of IBM PC MFM floppy track Used by IBM PC, Apple Macintosh (high-density only), and a lot others</summary>
-    public struct TrackPreamble
-    {
-        /// <summary>Gap from index pulse, 80 bytes set to 0x4E</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-        public byte[] gap;
-        /// <summary>12 bytes set to 0x00</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] zero;
-        /// <summary>3 bytes set to 0xC2</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] ctwo;
-        /// <summary>Set to <see cref="IBMIdType.IndexMark" /></summary>
-        public IBMIdType type;
-        /// <summary>Gap until first sector, 50 bytes to 0x4E</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-        public byte[] gap1;
-    }
-
-    /// <summary>Raw demodulated format for IBM System 34 floppies</summary>
-    public struct Sector
-    {
-        /// <summary>Sector address mark</summary>
-        public AddressMark addressMark;
-        /// <summary>22 bytes set to 0x4E, set to 0x22 on Commodore 1581</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-        public byte[] innerGap;
-        /// <summary>Sector data block</summary>
-        public DataBlock dataBlock;
-        /// <summary>Variable bytes set to 0x4E, ECMA defines 54</summary>
-        public byte[] outerGap;
-    }
+#region Nested type: AddressMark
 
     /// <summary>Sector address mark for IBM System 34 floppies, contains sync word</summary>
     public struct AddressMark
@@ -119,6 +78,10 @@ public static class System34
         public ushort crc;
     }
 
+#endregion
+
+#region Nested type: DataBlock
+
     /// <summary>Sector data block for IBM System 34 floppies</summary>
     public struct DataBlock
     {
@@ -135,4 +98,62 @@ public static class System34
         /// <summary>CRC16 from <see cref="aone" /> to end of <see cref="data" /></summary>
         public ushort crc;
     }
+
+#endregion
+
+#region Nested type: Sector
+
+    /// <summary>Raw demodulated format for IBM System 34 floppies</summary>
+    public struct Sector
+    {
+        /// <summary>Sector address mark</summary>
+        public AddressMark addressMark;
+        /// <summary>22 bytes set to 0x4E, set to 0x22 on Commodore 1581</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
+        public byte[] innerGap;
+        /// <summary>Sector data block</summary>
+        public DataBlock dataBlock;
+        /// <summary>Variable bytes set to 0x4E, ECMA defines 54</summary>
+        public byte[] outerGap;
+    }
+
+#endregion
+
+#region Nested type: Track
+
+    /// <summary>Track format for IBM System 34 floppy Used by IBM PC, Apple Macintosh (high-density only), and a lot others</summary>
+    public struct Track
+    {
+        /// <summary>Start of track</summary>
+        public TrackPreamble trackStart;
+        /// <summary>Track sectors</summary>
+        public Sector[] sectors;
+        /// <summary>Undefined size</summary>
+        public byte[] gap;
+    }
+
+#endregion
+
+#region Nested type: TrackPreamble
+
+    /// <summary>Start of IBM PC MFM floppy track Used by IBM PC, Apple Macintosh (high-density only), and a lot others</summary>
+    public struct TrackPreamble
+    {
+        /// <summary>Gap from index pulse, 80 bytes set to 0x4E</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
+        public byte[] gap;
+        /// <summary>12 bytes set to 0x00</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public byte[] zero;
+        /// <summary>3 bytes set to 0xC2</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] ctwo;
+        /// <summary>Set to <see cref="IBMIdType.IndexMark" /></summary>
+        public IBMIdType type;
+        /// <summary>Gap until first sector, 50 bytes to 0x4E</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
+        public byte[] gap1;
+    }
+
+#endregion
 }

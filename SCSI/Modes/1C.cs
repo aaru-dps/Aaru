@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x1C: Informational exceptions control page
+#region Mode Page 0x1C: Informational exceptions control page
+
     /// <summary>Informational exceptions control page Page code 0x1C 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4</summary>
     public struct ModePage_1C
     {
@@ -103,8 +105,10 @@ public static partial class Modes
         decoded.EBACKERR |= (pageResponse[2] & 0x02) == 0x02;
 
         if(pageResponse.Length >= 12)
+        {
             decoded.ReportCount = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
                                          pageResponse[11]);
+        }
 
         return decoded;
     }
@@ -170,8 +174,10 @@ public static partial class Modes
             }
 
             if(page.Perf)
+            {
                 sb.AppendLine("\t" + Localization.
                                   Informational_exceptions_reporting_should_not_affect_drive_performance);
+            }
 
             if(page.Test)
                 sb.AppendLine("\t" + Localization.A_test_informational_exception_will_raise_on_next_timer);
@@ -180,14 +186,19 @@ public static partial class Modes
                 sb.AppendLine("\t" + Localization.Drive_shall_log_informational_exception_conditions);
 
             if(page.IntervalTimer > 0)
+            {
                 if(page.IntervalTimer == 0xFFFFFFFF)
                     sb.AppendLine("\t" + Localization.Timer_interval_is_vendor_specific);
                 else
                     sb.AppendFormat("\t" + Localization.Timer_interval_is_0_ms, page.IntervalTimer * 100).AppendLine();
+            }
 
             if(page.ReportCount > 0)
-                sb.AppendFormat("\t" + Localization.Informational_exception_conditions_will_be_reported_a_maximum_of_0_times,
-                                page.ReportCount);
+            {
+                sb.AppendFormat(
+                    "\t" + Localization.Informational_exception_conditions_will_be_reported_a_maximum_of_0_times,
+                    page.ReportCount);
+            }
         }
 
         if(page.EWasc)
@@ -201,9 +212,11 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1C: Informational exceptions control page
 
-    #region Mode Page 0x1C subpage 0x01: Background Control mode page
+#endregion Mode Page 0x1C: Informational exceptions control page
+
+#region Mode Page 0x1C subpage 0x01: Background Control mode page
+
     /// <summary>Background Control mode page Page code 0x1A Subpage code 0x01 16 bytes in SPC-5</summary>
     public struct ModePage_1C_S01
     {
@@ -290,25 +303,40 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Background_pre_scans_are_enabled);
 
         if(page.BackgroundScanInterval > 0)
+        {
             sb.
-                AppendFormat("\t" + Localization._0__hours_shall_be_between_the_start_of_a_background_scan_operation_and_the_next,
-                             page.BackgroundScanInterval).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        _0__hours_shall_be_between_the_start_of_a_background_scan_operation_and_the_next,
+                    page.BackgroundScanInterval).AppendLine();
+        }
 
         if(page.BackgroundPrescanTimeLimit > 0)
+        {
             sb.AppendFormat("\t" + Localization.Background_pre_scan_operations_can_take_a_maximum_of_0_hours,
                             page.BackgroundPrescanTimeLimit).AppendLine();
+        }
 
         if(page.MinIdleBeforeBgScan > 0)
+        {
             sb.
-                AppendFormat("\t" + Localization.At_least_0_ms_must_be_idle_before_resuming_a_suspended_background_scan_operation,
-                             page.MinIdleBeforeBgScan).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        At_least_0_ms_must_be_idle_before_resuming_a_suspended_background_scan_operation,
+                    page.MinIdleBeforeBgScan).AppendLine();
+        }
 
         if(page.MaxTimeSuspendBgScan > 0)
+        {
             sb.
-                AppendFormat("\t" + Localization.At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands,
-                             page.MaxTimeSuspendBgScan).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands,
+                    page.MaxTimeSuspendBgScan).AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1C subpage 0x01: Background Control mode page
+
+#endregion Mode Page 0x1C subpage 0x01: Background Control mode page
 }

@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x0B: Medium types supported page
+#region Mode Page 0x0B: Medium types supported page
+
     /// <summary>Disconnect-reconnect page Page code 0x0B 8 bytes in SCSI-2</summary>
     public struct ModePage_0B
     {
@@ -93,22 +95,31 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.MediumType1 != MediumTypes.Default)
+        {
             sb.AppendFormat(Localization.Supported_medium_type_one_0, GetMediumTypeDescription(page.MediumType1)).
                AppendLine();
+        }
 
         if(page.MediumType2 != MediumTypes.Default)
+        {
             sb.AppendFormat(Localization.Supported_medium_type_two_0, GetMediumTypeDescription(page.MediumType2)).
                AppendLine();
+        }
 
         if(page.MediumType3 != MediumTypes.Default)
+        {
             sb.AppendFormat(Localization.Supported_medium_type_three_0, GetMediumTypeDescription(page.MediumType3)).
                AppendLine();
+        }
 
         if(page.MediumType4 != MediumTypes.Default)
+        {
             sb.AppendFormat(Localization.Supported_medium_type_four_0, GetMediumTypeDescription(page.MediumType4)).
                AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0B: Medium types supported page
+
+#endregion Mode Page 0x0B: Medium types supported page
 }

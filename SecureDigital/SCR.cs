@@ -36,8 +36,10 @@ using System.Text;
 
 namespace Aaru.Decoders.SecureDigital;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class SCR
 {
     public BusWidth       BusWidth;
@@ -56,17 +58,21 @@ public class SCR
 [Flags]
 public enum BusWidth : byte
 {
-    OneBit = 1 << 0, FourBit = 1 << 2
+    OneBit  = 1 << 0,
+    FourBit = 1 << 2
 }
 
 [Flags]
 public enum CommandSupport : byte
 {
-    SpeedClassControl           = 1 << 0, SetBlockCount = 1 << 1, ExtensionRegisterSingleBlock = 1 << 2,
-    ExtensionRegisterMultiBlock = 1 << 3
+    SpeedClassControl            = 1 << 0,
+    SetBlockCount                = 1 << 1,
+    ExtensionRegisterSingleBlock = 1 << 2,
+    ExtensionRegisterMultiBlock  = 1 << 3
 }
 
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public static partial class Decoders
 {
     public static SCR DecodeSCR(uint[] response)
@@ -74,7 +80,7 @@ public static partial class Decoders
         if(response?.Length != 2)
             return null;
 
-        byte[] data = new byte[8];
+        var data = new byte[8];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -175,8 +181,10 @@ public static partial class Decoders
                 break;
             default:
                 sb.
-                    AppendFormat("\t" + Localization.Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
-                                 scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
+                    AppendFormat(
+                        "\t" + Localization.
+                            Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
+                        scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
 
                 break;
         }

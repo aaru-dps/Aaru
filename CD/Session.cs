@@ -49,8 +49,9 @@ namespace Aaru.Decoders.CD;
 // T10/1545-D revision 5a
 // T10/1675-D revision 2c
 // T10/1675-D revision 4 T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Session
 {
     const string MODULE_NAME = "CD Session Info decoder";
@@ -79,16 +80,16 @@ public static class Session
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 8; i++)
         {
-            decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + (i * 8) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].Reserved1   = CDSessionInfoResponse[0 + i * 8 + 4];
+            decoded.TrackDescriptors[i].ADR         = (byte)((CDSessionInfoResponse[1 + i * 8 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDSessionInfoResponse[1 + i * 8 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TrackNumber = CDSessionInfoResponse[2 + i * 8 + 4];
+            decoded.TrackDescriptors[i].Reserved2   = CDSessionInfoResponse[3 + i * 8 + 4];
 
             decoded.TrackDescriptors[i].TrackStartAddress =
-                BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + (i * 8) + 4);
+                BigEndianBitConverter.ToUInt32(CDSessionInfoResponse, 4 + i * 8 + 4);
         }
 
         return decoded;
@@ -104,7 +105,7 @@ public static class Session
         var sb = new StringBuilder();
 
         sb.AppendFormat(Localization.First_complete_session_number_0, response.FirstCompleteSession).AppendLine();
-        sb.AppendFormat(Localization.Last_complete_session_number_0, response.LastCompleteSession).AppendLine();
+        sb.AppendFormat(Localization.Last_complete_session_number_0,  response.LastCompleteSession).AppendLine();
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
         {
@@ -169,7 +170,8 @@ public static class Session
                 }
 
                 sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
-                              (byte)TocControl.CopyPermissionMask ? Localization.Digital_copy_of_track_is_permitted
+                              (byte)TocControl.CopyPermissionMask
+                                  ? Localization.Digital_copy_of_track_is_permitted
                                   : Localization.Digital_copy_of_track_is_prohibited);
 
             #if DEBUG
@@ -194,6 +196,8 @@ public static class Session
         return Prettify(decoded);
     }
 
+#region Nested type: CDSessionInfo
+
     public struct CDSessionInfo
     {
         /// <summary>Total size of returned session information minus this field</summary>
@@ -205,6 +209,10 @@ public static class Session
         /// <summary>Track descriptors</summary>
         public TrackDataDescriptor[] TrackDescriptors;
     }
+
+#endregion
+
+#region Nested type: TrackDataDescriptor
 
     public struct TrackDataDescriptor
     {
@@ -221,4 +229,6 @@ public static class Session
         /// <summary>Bytes 4 to 7 First track number in last complete session start address in LBA or in MSF</summary>
         public uint TrackStartAddress;
     }
+
+#endregion
 }

@@ -42,8 +42,8 @@ public sealed class Sector
 {
     static readonly ushort[] _ecma267InitialValues =
     {
-        0x0001, 0x5500, 0x0002, 0x2A00, 0x0004, 0x5400, 0x0008, 0x2800, 0x0010, 0x5000, 0x0020, 0x2001, 0x0040, 0x4002,
-        0x0080, 0x0005
+        0x0001, 0x5500, 0x0002, 0x2A00, 0x0004, 0x5400, 0x0008, 0x2800, 0x0010, 0x5000, 0x0020, 0x2001, 0x0040,
+        0x4002, 0x0080, 0x0005
     };
 
     static readonly uint[] _edcTable =
@@ -81,9 +81,9 @@ public sealed class Sector
 
     readonly Dictionary<ushort, byte[]> _seeds = new();
 
-    ushort _lfsr;
-
     ushort _lastSeed;
+
+    ushort _lfsr;
 
     void LfsrInit(ushort seed) => _lfsr = seed;
 
@@ -91,8 +91,8 @@ public sealed class Sector
     {
         int ret = _lfsr >> 14;
 
-        int n = ret ^ ((_lfsr    >> 10) & 1);
-        _lfsr = (ushort)(((_lfsr << 1) | n) & 0x7FFF);
+        int n = ret ^ _lfsr >> 10 & 1;
+        _lfsr = (ushort)((_lfsr << 1 | n) & 0x7FFF);
 
         return ret;
     }
@@ -101,21 +101,21 @@ public sealed class Sector
     {
         byte ret = 0;
 
-        for(int i = 0; i < 8; i++)
-            ret = (byte)((ret << 1) | LfsrTick());
+        for(var i = 0; i < 8; i++)
+            ret = (byte)(ret << 1 | LfsrTick());
 
         return ret;
     }
 
     /// <summary>
-    /// Store seed and its cipher in cache 
+    ///     Store seed and its cipher in cache
     /// </summary>
     /// <param name="seed">The seed to store</param>
     /// <returns>The cipher for the seed</returns>
     byte[] AddSeed(ushort seed)
     {
-        int    i;
-        byte[] cypher = new byte[2048];
+        int i;
+        var cypher = new byte[2048];
 
         LfsrInit(seed);
 
@@ -129,35 +129,35 @@ public sealed class Sector
 
     static uint ComputeEdc(uint edc, IReadOnlyList<byte> src, int size)
     {
-        int pos = 0;
+        var pos = 0;
 
         for(; size > 0; size--)
-            edc = _edcTable[((edc >> 24) ^ src[pos++]) & 0xFF] ^ (edc << 8);
+            edc = _edcTable[(edc >> 24 ^ src[pos++]) & 0xFF] ^ edc << 8;
 
         return edc;
     }
 
     /// <summary>
-    /// Tests if a seed unscrambles a sector correctly
+    ///     Tests if a seed unscrambles a sector correctly
     /// </summary>
     /// <param name="sector">Buffer of the scrambled sector</param>
     /// <param name="seed">Seed to test</param>
     /// <returns><c>True</c> if seed is correct, <c>False</c> if not</returns>
     bool TestSeed(in byte[] sector, ushort seed)
     {
-        byte[] tmp = new byte[sector.Length];
+        var tmp = new byte[sector.Length];
         Array.Copy(sector, 0, tmp, 0, sector.Length);
 
         LfsrInit(seed);
 
-        for(int i = 12; i < 2060; i++)
+        for(var i = 12; i < 2060; i++)
             tmp[i] ^= LfsrByte();
 
         return ComputeEdc(0, tmp, 2060) == BigEndianBitConverter.ToUInt32(sector, 2060);
     }
 
     /// <summary>
-    /// Find the seed used for scrambling a sector
+    ///     Find the seed used for scrambling a sector
     /// </summary>
     /// <param name="sector">Buffer of the scrambled sector.</param>
     /// <returns>The scramble cipher</returns>
@@ -201,17 +201,17 @@ public sealed class Sector
     }
 
     /// <summary>
-    /// Unscramble a sector with a cipher
+    ///     Unscramble a sector with a cipher
     /// </summary>
     /// <param name="sector">Buffer of the scrambled sector</param>
     /// <param name="cipher">Buffer of the scrambling cipher</param>
     /// <returns>The unscrambled sector.</returns>
     static byte[] UnscrambleSector(byte[] sector, IReadOnlyList<byte> cipher)
     {
-        byte[] scrambled = new byte[sector.Length];
+        var scrambled = new byte[sector.Length];
         Array.Copy(sector, 0, scrambled, 0, sector.Length);
 
-        for(int i = 0; i < 2048; i++)
+        for(var i = 0; i < 2048; i++)
             scrambled[i + 12] = (byte)(sector[i + 12] ^ cipher[i]);
 
         return ComputeEdc(0, scrambled, 2060) != BigEndianBitConverter.ToUInt32(sector, 2060) ? sector : scrambled;
@@ -229,12 +229,12 @@ public sealed class Sector
 
     public byte[] Scramble(byte[] sector, uint transferLength)
     {
-        byte[] scrambled = new byte[sector.Length];
+        var scrambled = new byte[sector.Length];
 
         if(sector.Length % 2064 != 0 ||
            sector.Length / 2064 != transferLength)
             return sector;
-        
+
         for(uint i = 0; i < transferLength; i++)
             Array.Copy(Scramble(sector.Skip((int)(i * 2064)).Take(2064).ToArray()), 0, scrambled, i * 2064, 2064);
 

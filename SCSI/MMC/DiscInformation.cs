@@ -49,8 +49,10 @@ namespace Aaru.Decoders.SCSI.MMC;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DiscInformation
 {
     public static StandardDiscInformation? Decode000b(byte[] response)
@@ -95,7 +97,7 @@ public static class DiscInformation
         decoded.LastPossibleLeadOutStartLBA =
             (uint)((response[20] << 24) + (response[21] << 16) + (response[22] << 8) + response[23]);
 
-        byte[] temp = new byte[8];
+        var temp = new byte[8];
         Array.Copy(response, 24, temp, 0, 8);
         Array.Reverse(temp);
         decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
@@ -107,17 +109,17 @@ public static class DiscInformation
         decoded.OPCTablesNumber     = response[33];
 
         if(decoded.OPCTablesNumber <= 0 ||
-           response.Length         != (decoded.OPCTablesNumber * 8) + 34)
+           response.Length         != decoded.OPCTablesNumber * 8 + 34)
             return decoded;
 
         decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
 
-        for(int i = 0; i < decoded.OPCTablesNumber; i++)
+        for(var i = 0; i < decoded.OPCTablesNumber; i++)
         {
-            decoded.OPCTables[i].Speed = (ushort)((response[34 + (i * 8) + 0] << 16) + response[34 + (i * 8) + 1]);
+            decoded.OPCTables[i].Speed = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
 
             decoded.OPCTables[i].OPCValues = new byte[6];
-            Array.Copy(response, 34 + (i * 8) + 2, decoded.OPCTables[i].OPCValues, 0, 6);
+            Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
         }
 
         return decoded;
@@ -214,7 +216,7 @@ public static class DiscInformation
             sb.AppendLine(Localization.MRW_is_dirty);
 
         sb.AppendFormat(Localization.First_track_on_disc_is_track_0, information.Value.FirstTrackNumber).AppendLine();
-        sb.AppendFormat(Localization.Disc_has_0_sessions, information.Value.Sessions).AppendLine();
+        sb.AppendFormat(Localization.Disc_has_0_sessions,            information.Value.Sessions).AppendLine();
 
         sb.AppendFormat(Localization.First_track_in_last_session_is_track_0, information.Value.FirstTrackLastSession).
            AppendLine();
@@ -234,7 +236,8 @@ public static class DiscInformation
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF00)   >> 8,
                         information.Value.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
-        sb.AppendLine(information.Value.URU ? Localization.Disc_is_defined_for_unrestricted_use
+        sb.AppendLine(information.Value.URU
+                          ? Localization.Disc_is_defined_for_unrestricted_use
                           : Localization.Disc_is_defined_for_restricted_use);
 
         if(information.Value.DID_V)
@@ -250,9 +253,11 @@ public static class DiscInformation
             return sb.ToString();
 
         foreach(OPCTable table in information.Value.OPCTables)
+        {
             sb.AppendFormat(Localization.OPC_values_for_0_Kbit_sec_1_2_3_4_5_6, table.Speed, table.OPCValues[0],
                             table.OPCValues[1], table.OPCValues[2], table.OPCValues[3], table.OPCValues[4],
                             table.OPCValues[5]).AppendLine();
+        }
 
         return sb.ToString();
     }
@@ -358,13 +363,49 @@ public static class DiscInformation
             return null;
 
         return (response[2] & 0xE0) switch
-        {
-            0x00 => Prettify000b(Decode000b(response)),
-            0x20 => Prettify001b(Decode001b(response)),
-            0x40 => Prettify010b(Decode010b(response)),
-            _    => null
-        };
+               {
+                   0x00 => Prettify000b(Decode000b(response)),
+                   0x20 => Prettify001b(Decode001b(response)),
+                   0x40 => Prettify010b(Decode010b(response)),
+                   _    => null
+               };
     }
+
+#region Nested type: OPCTable
+
+    public struct OPCTable
+    {
+        /// <summary>Bytes 0 to 1 kilobytes/sec this OPC table applies to</summary>
+        public ushort Speed;
+        /// <summary>Bytes 2 to 7 OPC values</summary>
+        public byte[] OPCValues;
+    }
+
+#endregion
+
+#region Nested type: POWResourcesInformation
+
+    public struct POWResourcesInformation
+    {
+        /// <summary>Bytes 0 to 1 14</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2, bits 7 to 5 010b</summary>
+        public byte DataType;
+        /// <summary>Byte 2, bits 4 to 0 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to 7 Remaining POW replacements</summary>
+        public uint RemainingPOWReplacements;
+        /// <summary>Bytes 8 to 11 Remaining POW reallocation map entries</summary>
+        public uint RemainingPOWReallocation;
+        /// <summary>Bytes 12 to 15 Number of remaining POW updates</summary>
+        public uint RemainingPOWUpdates;
+    }
+
+#endregion
+
+#region Nested type: StandardDiscInformation
 
     public struct StandardDiscInformation
     {
@@ -418,13 +459,9 @@ public static class DiscInformation
         public OPCTable[] OPCTables;
     }
 
-    public struct OPCTable
-    {
-        /// <summary>Bytes 0 to 1 kilobytes/sec this OPC table applies to</summary>
-        public ushort Speed;
-        /// <summary>Bytes 2 to 7 OPC values</summary>
-        public byte[] OPCValues;
-    }
+#endregion
+
+#region Nested type: TrackResourcesInformation
 
     public struct TrackResourcesInformation
     {
@@ -446,21 +483,5 @@ public static class DiscInformation
         public ushort AppendableTracks;
     }
 
-    public struct POWResourcesInformation
-    {
-        /// <summary>Bytes 0 to 1 14</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2, bits 7 to 5 010b</summary>
-        public byte DataType;
-        /// <summary>Byte 2, bits 4 to 0 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to 7 Remaining POW replacements</summary>
-        public uint RemainingPOWReplacements;
-        /// <summary>Bytes 8 to 11 Remaining POW reallocation map entries</summary>
-        public uint RemainingPOWReallocation;
-        /// <summary>Bytes 12 to 15 Number of remaining POW updates</summary>
-        public uint RemainingPOWUpdates;
-    }
+#endregion
 }

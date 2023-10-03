@@ -35,13 +35,14 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
     public static byte[] EncodeModePage_01(ModePage_01 page)
     {
-        byte[] pg = new byte[8];
+        var pg = new byte[8];
 
         pg[0] = 0x01;
         pg[1] = 6;
@@ -89,7 +90,8 @@ public static partial class Modes
         return pg;
     }
 
-    #region Mode Page 0x01: Read-write error recovery page
+#region Mode Page 0x01: Read-write error recovery page
+
     /// <summary>Disconnect-reconnect page Page code 0x01 12 bytes in SCSI-2, SBC-1, SBC-2</summary>
     public struct ModePage_01
     {
@@ -192,12 +194,16 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Automatic_read_reallocation_is_enabled);
 
         if(page.TB)
+        {
             sb.AppendLine("\t" + Localization.
                               Data_not_recovered_within_limits_shall_be_transferred_back_before_a_CHECK_CONDITION);
+        }
 
         if(page.RC)
+        {
             sb.AppendLine("\t" + Localization.
                               Drive_will_transfer_the_entire_requested_length_without_delaying_to_perform_error_recovery);
+        }
 
         if(page.EER)
             sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
@@ -212,21 +218,28 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.ReadRetryCount > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount).
                AppendLine();
+        }
 
         if(page.WriteRetryCount > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount).
                AppendLine();
+        }
 
         if(page.RecoveryTimeLimit > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
                             page.RecoveryTimeLimit).AppendLine();
+        }
 
         if(page.LBPERE)
             sb.AppendLine(Localization.Logical_block_provisioning_error_reporting_is_enabled);
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x01: Read-write error recovery page
+
+#endregion Mode Page 0x01: Read-write error recovery page
 }

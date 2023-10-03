@@ -67,8 +67,10 @@ namespace Aaru.Decoders.DVD;
 // ECMA 374: Data Interchange on 120 mm and 80 mm Optical Disk using +RW DL Format - Capacity 8,55 and 2,66 Gbytes per side
 // ECMA 382: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Recordable Disk for Dual Layer (DVD-R for DL)
 // ECMA 384: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Re-recordable Disk for Dual Layer (DVD-RW for DL)
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class PFI
 {
     public static PhysicalFormatInformation? Decode(byte[] response, MediaType mediaType)
@@ -78,7 +80,7 @@ public static class PFI
 
         if(response.Length == 2048)
         {
-            byte[] tmp2 = new byte[2052];
+            var tmp2 = new byte[2052];
             Array.Copy(response, 0, tmp2, 4, 2048);
             response = tmp2;
         }
@@ -116,6 +118,7 @@ public static class PFI
         pfi.RecordedBookType = pfi.DiskCategory;
 
         if(mediaType != MediaType.DVDROM)
+        {
             switch(mediaType)
             {
                 case MediaType.DVDPR:
@@ -198,6 +201,7 @@ public static class PFI
 
                     break;
             }
+        }
 
         switch(pfi.DiskCategory)
         {
@@ -345,7 +349,7 @@ public static class PFI
 
         // DVD+R, DVD+RW, DVD+R DL and DVD+RW DL
         if(pfi.DiskCategory is DiskCategory.DVDPR or DiskCategory.DVDPRW or DiskCategory.DVDPRDL
-           or DiskCategory.DVDPRWDL)
+                            or DiskCategory.DVDPRWDL)
         {
             pfi.VCPS                |= (response[20] & 0x40) == 0x40;
             pfi.ApplicationCode     =  response[21];
@@ -478,11 +482,11 @@ public static class PFI
         var                       sb      = new StringBuilder();
 
         string sizeString = decoded.DiscSize switch
-        {
-            DVDSize.Eighty    => Localization._80mm,
-            DVDSize.OneTwenty => Localization._120mm,
-            _                 => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
-        };
+                            {
+                                DVDSize.Eighty => Localization._80mm,
+                                DVDSize.OneTwenty => Localization._120mm,
+                                _ => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
+                            };
 
         switch(decoded.DiskCategory)
         {
@@ -522,11 +526,15 @@ public static class PFI
                 break;
             case DiskCategory.DVDR:
                 if(decoded.PartVersion >= 6)
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-R DL", decoded.PartVersion).
                        AppendLine();
+                }
                 else
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-R", decoded.PartVersion).
                        AppendLine();
+                }
 
                 switch(decoded.PartVersion)
                 {
@@ -547,11 +555,15 @@ public static class PFI
                 break;
             case DiskCategory.DVDRW:
                 if(decoded.PartVersion >= 15)
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-RW DL", decoded.PartVersion).
                        AppendLine();
+                }
                 else
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, "DVD-RW", decoded.PartVersion).
                        AppendLine();
+                }
 
                 switch(decoded.PartVersion)
                 {
@@ -568,11 +580,15 @@ public static class PFI
                 break;
             case DiskCategory.UMD:
                 if(decoded.DiscSize == DVDSize.OneTwenty)
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization._60mm, "UMD",
                                     decoded.PartVersion).AppendLine();
+                }
                 else
+                {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization.invalid_size, "UMD",
                                     decoded.PartVersion).AppendLine();
+                }
 
                 switch(decoded.PartVersion)
                 {
@@ -645,12 +661,14 @@ public static class PFI
                 break;
             case DiskCategory.Nintendo:
                 if(decoded.PartVersion == 15)
+                {
                     if(decoded.DiscSize == DVDSize.Eighty)
                         sb.AppendLine(Localization.Disc_is_a_Nintendo_Gamecube_Optical_Disc_GOD);
                     else if(decoded.DiscSize == DVDSize.OneTwenty)
                         sb.AppendLine(Localization.Disc_is_a_Nintendo_Wii_Optical_Disc_WOD);
                     else
                         goto default;
+                }
                 else
                     goto default;
 
@@ -863,16 +881,18 @@ public static class PFI
         }
 
         if(decoded.DataAreaStartPSN > 0)
+        {
             if(decoded.DataAreaEndPSN > 0)
             {
                 sb.AppendFormat(Localization.Data_area_starts_at_PSN_0, decoded.DataAreaStartPSN).AppendLine();
-                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0, decoded.DataAreaEndPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0,   decoded.DataAreaEndPSN).AppendLine();
 
                 if(decoded is { Layers: 1, TrackPath: false })
                     sb.AppendFormat(Localization.Layer_zero_ends_at_PSN_0, decoded.Layer0EndPSN).AppendLine();
             }
             else
                 sb.AppendLine(Localization.Disc_is_empty);
+        }
         else
             sb.AppendLine(Localization.Disc_is_empty);
 
@@ -933,7 +953,7 @@ public static class PFI
                 sb.AppendFormat(Localization.Disc_manufacturer_is_0,
                                 ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).AppendLine();
 
-                sb.AppendFormat(Localization.Disc_media_type_is_0, decoded.MediaTypeID).AppendLine();
+                sb.AppendFormat(Localization.Disc_media_type_is_0,       decoded.MediaTypeID).AppendLine();
                 sb.AppendFormat(Localization.Disc_product_revision_is_0, decoded.ProductRevision).AppendLine();
 
                 break;
@@ -963,14 +983,15 @@ public static class PFI
     public static string Prettify(byte[] response, MediaType mediaType) => Prettify(Decode(response, mediaType));
 
     public static string ManufacturerFromDVDRAM(string manufacturerId) => manufacturerId switch
-    {
-        _ => ManufacturerFromDVDPlusID(manufacturerId)
-    };
+                                                                          {
+                                                                              _ => ManufacturerFromDVDPlusID(
+                                                                                  manufacturerId)
+                                                                          };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromDVDPlusID(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         switch(manufacturerId)
         {
@@ -1141,6 +1162,8 @@ public static class PFI
         return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
     }
 
+#region Nested type: PhysicalFormatInformation
+
     public struct PhysicalFormatInformation
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -1150,7 +1173,8 @@ public static class PFI
         /// <summary>Byte 3 Reserved</summary>
         public byte Reserved2;
 
-        #region PFI common to all
+    #region PFI common to all
+
         /// <summary>Byte 4, bits 7 to 4 Disk category field</summary>
         public DiskCategory DiskCategory;
         /// <summary>Byte 4, bits 3 to 0 Media version</summary>
@@ -1184,19 +1208,25 @@ public static class PFI
         public bool BCA;
         /// <summary>Byte 20, bits 6 to 0 Reserved</summary>
         public byte Reserved4;
-        #endregion PFI common to all
 
-        #region UMD PFI
+    #endregion PFI common to all
+
+    #region UMD PFI
+
         /// <summary>Bytes 21 to 22 UMD only, media attribute, application-defined, part of media specific in rest of discs</summary>
         public ushort MediaAttribute;
-        #endregion UMD PFI
 
-        #region DVD-RAM PFI
+    #endregion UMD PFI
+
+    #region DVD-RAM PFI
+
         /// <summary>Byte 36 Disc type, respecting case recordability</summary>
         public DVDRAMDiscType DiscType;
-        #endregion DVD-RAM PFI
 
-        #region DVD-RAM PFI, Version 0001b
+    #endregion DVD-RAM PFI
+
+    #region DVD-RAM PFI, Version 0001b
+
         /// <summary>Byte 52 Byte 504 in Version 0110b Linear velocity, in tenths of m/s</summary>
         public byte Velocity;
         /// <summary>Byte 53 Byte 505 in Version 0110b Read power on disk surface, tenths of mW</summary>
@@ -1233,16 +1263,20 @@ public static class PFI
         public byte LastPulseEndGroove;
         /// <summary>Byte 69 Bias power duration for recording on groove tracks</summary>
         public byte BiasPowerDurationGroove;
-        #endregion DVD-RAM PFI, Version 0001b
 
-        #region DVD-R PFI, DVD-RW PFI
+    #endregion DVD-RAM PFI, Version 0001b
+
+    #region DVD-R PFI, DVD-RW PFI
+
         /// <summary>Bytes 36 to 39 Sector number of the first sector of the current Border Out</summary>
         public uint CurrentBorderOutSector;
         /// <summary>Bytes 40 to 43 Sector number of the first sector of the next Border In</summary>
         public uint NextBorderInSector;
-        #endregion DVD-R PFI, DVD-RW PFI
 
-        #region DVD+RW PFI
+    #endregion DVD-R PFI, DVD-RW PFI
+
+    #region DVD+RW PFI
+
         /// <summary>Byte 36 Linear velocities 0 = CLV from 4,90 m/s to 6,25 m/s 1 = CAV from 3,02 m/s to 7,35 m/s</summary>
         public byte RecordingVelocity;
         /// <summary>Byte 37 Maximum read power in milliwatts at maximum velocity mW = 20 * (value - 1)</summary>
@@ -1281,9 +1315,11 @@ public static class PFI
         public byte E2MinVelocity;
         /// <summary>Byte 54 Target value for γ, γtarget at the minimum velocity</summary>
         public byte YTargetMinVelocity;
-        #endregion DVD+RW PFI
 
-        #region DVD-RAM PFI, version 0110b
+    #endregion DVD+RW PFI
+
+    #region DVD-RAM PFI, version 0110b
+
         /// <summary>Byte 506, bit 7 Mode of adaptative write pulse control</summary>
         public bool AdaptativeWritePulseControlFlag;
         /// <summary>Byte 508 Bias power 1 on disk surface for recording land tracks</summary>
@@ -1390,9 +1426,11 @@ public static class PFI
         public byte PowerRatioLandThreshold6T;
         /// <summary>Byte 627 Ratio of peak power for groove tracks to threshold 6T peak power for groove tracks</summary>
         public byte PowerRatioGrooveThreshold6T;
-        #endregion DVD-RAM PFI, version 0110b
 
-        #region DVD+RW PFI, DVD+R PFI, DVD+R DL PFI and DVD+RW DL PFI
+    #endregion DVD-RAM PFI, version 0110b
+
+    #region DVD+RW PFI, DVD+R PFI, DVD+R DL PFI and DVD+RW DL PFI
+
         /// <summary>Byte 20, bit 6 If set indicates data zone contains extended information for VCPS</summary>
         public bool VCPS;
         /// <summary>Byte 21 Indicates restricted usage disk</summary>
@@ -1407,9 +1445,11 @@ public static class PFI
         public byte ProductRevision;
         /// <summary>Byte 35 Indicates how many bytes, up to 63, are used in ADIP's PFI</summary>
         public byte PFIUsedInADIP;
-        #endregion DVD+RW PFI, DVD+R PFI, DVD+R DL PFI and DVD+RW DL PFI
 
-        #region DVD+RW PFI, version 0010b
+    #endregion DVD+RW PFI, DVD+R PFI, DVD+R DL PFI and DVD+RW DL PFI
+
+    #region DVD+RW PFI, version 0010b
+
         /// <summary>Byte 55 Ttop first pulse duration</summary>
         public byte TopFirstPulseDuration;
         /// <summary>Byte 56 Tmp multi pulse duration</summary>
@@ -1420,9 +1460,11 @@ public static class PFI
         public byte EraseLeadTimeRefVelocity;
         /// <summary>Byte 59 dTera erase lead time at upper velocity</summary>
         public byte EraseLeadTimeUppVelocity;
-        #endregion DVD+RW PFI, version 0010b
 
-        #region DVD+R PFI version 0001b and DVD+R DL PFI version 0001b
+    #endregion DVD+RW PFI, version 0010b
+
+    #region DVD+R PFI version 0001b and DVD+R DL PFI version 0001b
+
         /// <summary>Byte 36 Primary recording velocity for the basic write strategy</summary>
         public byte PrimaryVelocity;
         /// <summary>Byte 37 Upper recording velocity for the basic write strategy</summary>
@@ -1471,14 +1513,18 @@ public static class PFI
         public byte FirstPulseLeadTime3TUpperVelocity;
         /// <summary>Byte 59 dTle first pulse leading edge shift for ps∗ =3T at Upper velocity</summary>
         public byte FirstPulseLeadingEdgeUpperVelocity;
-        #endregion DVD+R PFI version 0001b and DVD+R DL PFI version 0001b
 
-        #region DVD+R DL PFI version 0001b
+    #endregion DVD+R PFI version 0001b and DVD+R DL PFI version 0001b
+
+    #region DVD+R DL PFI version 0001b
+
         /// <summary>Byte 34, bits 7 to 6</summary>
         public DVDLayerStructure LayerStructure;
-        #endregion DVD+R DL PFI version 0001b
 
-        #region DVD+RW DL PFI
+    #endregion DVD+R DL PFI version 0001b
+
+    #region DVD+RW DL PFI
+
         /// <summary>Byte 36 Primary recording velocity for the basic write strategy</summary>
         public byte BasicPrimaryVelocity;
         /// <summary>Byte 37 Maximum read power at Primary velocity</summary>
@@ -1515,9 +1561,11 @@ public static class PFI
         public byte ErasePulseLeadTime3T;
         /// <summary>Byte 55 dTera,4 erase lead/lag time when preceding mark length = 4T</summary>
         public byte ErasePulseLeadTime4T;
-        #endregion DVD+RW DL PFI
 
-        #region DVD-R DL PFI and DVD-RW DL PFI
+    #endregion DVD+RW DL PFI
+
+    #region DVD-R DL PFI and DVD-RW DL PFI
+
         /// <summary>Byte 21 Maximum recording speed</summary>
         public DVDRecordingSpeed MaxRecordingSpeed;
         /// <summary>Byte 22 Minimum recording speed</summary>
@@ -1554,8 +1602,11 @@ public static class PFI
         public byte ARCharLayer1;
         /// <summary>Byte 45 bits 4 to 7 Tracking polarity on Layer 1</summary>
         public byte TrackPolarityLayer1;
-        #endregion DVD-R DL PFI and DVD-RW DL PFI
+
+    #endregion DVD-R DL PFI and DVD-RW DL PFI
 
         public DiskCategory RecordedBookType;
     }
+
+#endregion
 }

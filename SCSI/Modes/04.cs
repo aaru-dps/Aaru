@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x04: Rigid disk drive geometry page
+#region Mode Page 0x04: Rigid disk drive geometry page
+
     /// <summary>Disconnect-reconnect page Page code 0x04 24 bytes in SCSI-2, SBC-1</summary>
     public struct ModePage_04
     {
@@ -116,16 +118,20 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t" + Localization._0_heads, page.Heads).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_heads,     page.Heads).AppendLine();
         sb.AppendFormat("\t" + Localization._0_cylinders, page.Cylinders).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
+        {
             sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
                AppendLine();
+        }
 
         if(page.WriteReduceCylinder < page.Cylinders)
+        {
             sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
                AppendLine();
+        }
 
         if(page.DriveStepRate > 0)
             sb.AppendFormat("\t" + Localization.Drive_steps_in_0_ns, (uint)page.DriveStepRate * 100).AppendLine();
@@ -157,5 +163,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x04: Rigid disk drive geometry page
+
+#endregion Mode Page 0x04: Rigid disk drive geometry page
 }

@@ -42,10 +42,11 @@ public static class VendorString
     /// <returns>Manufacturer</returns>
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string Prettify(byte mmcVendorId) => mmcVendorId switch
-    {
-        0x07 => "Nokia",
-        0x15 => "Samsung",
-        0x2C => "extreMEmory",
-        _    => string.Format(Localization.Unknown_manufacturer_ID_0, mmcVendorId)
-    };
+                                                       {
+                                                           0x07 => "Nokia",
+                                                           0x15 => "Samsung",
+                                                           0x2C => "extreMEmory",
+                                                           _ => string.Format(
+                                                               Localization.Unknown_manufacturer_ID_0, mmcVendorId)
+                                                       };
 }

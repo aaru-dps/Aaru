@@ -48,10 +48,13 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class UDI
 {
+#region Nested type: UniqueDiscIdentifier
+
     public struct UniqueDiscIdentifier
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -79,4 +82,6 @@ public static class UDI
         /// <summary>Byte 20 to 21 Second</summary>
         public ushort Second;
     }
+
+#endregion
 }

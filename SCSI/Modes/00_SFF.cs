@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x00: Drive Operation Mode page
+#region Mode Page 0x00: Drive Operation Mode page
+
     /// <summary>Drive Operation Mode page Page code 0x00 4 bytes in INF-8070</summary>
     public struct ModePage_00_SFF
     {
@@ -112,5 +114,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x00: Drive Operation Mode page
+
+#endregion Mode Page 0x00: Drive Operation Mode page
 }

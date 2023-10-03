@@ -39,12 +39,13 @@ public static class VendorString
     /// <param name="sdVendorId">SD vendor ID</param>
     /// <returns>Manufacturer</returns>
     public static string Prettify(byte sdVendorId) => sdVendorId switch
-    {
-        0x41 => "Kingston",
-        0x02 => "Kingston",
-        0x03 => "Sandisk",
-        0x27 => "CnMemory",
-        0xAA => "QEMU",
-        _    => string.Format(Localization.Unknown_manufacturer_ID_0, sdVendorId)
-    };
+                                                      {
+                                                          0x41 => "Kingston",
+                                                          0x02 => "Kingston",
+                                                          0x03 => "Sandisk",
+                                                          0x27 => "CnMemory",
+                                                          0xAA => "QEMU",
+                                                          _ => string.Format(
+                                                              Localization.Unknown_manufacturer_ID_0, sdVendorId)
+                                                      };
 }

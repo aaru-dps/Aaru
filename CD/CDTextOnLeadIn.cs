@@ -51,11 +51,13 @@ namespace Aaru.Decoders.CD;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class CDTextOnLeadIn
 {
-    const string MODULE_NAME = "CD-TEXT decoder";
+#region PackTypeIndicator enum
 
     public enum PackTypeIndicator : byte
     {
@@ -93,6 +95,10 @@ public static class CDTextOnLeadIn
         BlockSizeInformation = 0x8F
     }
 
+#endregion
+
+    const string MODULE_NAME = "CD-TEXT decoder";
+
     public static CDText? Decode(byte[] CDTextResponse)
     {
         if(CDTextResponse is not { Length: > 4 })
@@ -120,17 +126,17 @@ public static class CDTextOnLeadIn
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 18; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 18; i++)
         {
-            decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + (i * 18) + 4];
-            decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + (i * 18) + 4];
-            decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + (i * 18) + 4];
-            decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + (i * 18) + 4] & 0x80);
-            decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + (i * 18) + 4] & 0x70) >> 4);
-            decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + (i * 18) + 4] & 0x0F);
+            decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + i * 18 + 4];
+            decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + i * 18 + 4];
+            decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + i * 18 + 4];
+            decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
+            decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
+            decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 18 + 4] & 0x0F);
             decoded.DataPacks[i].TextDataField     = new byte[12];
-            Array.Copy(CDTextResponse, 4 + (i * 18) + 4, decoded.DataPacks[i].TextDataField, 0, 12);
-            decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + (i * 18) + 4);
+            Array.Copy(CDTextResponse, 4 + i * 18 + 4, decoded.DataPacks[i].TextDataField, 0, 12);
+            decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 18 + 4);
         }
 
         return decoded;
@@ -153,12 +159,15 @@ public static class CDTextOnLeadIn
     #endif
 
         foreach(CDTextPack descriptor in response.DataPacks)
+        {
             if((descriptor.HeaderID1 & 0x80) != 0x80)
             {
                 // Ignore NOPs
                 if((descriptor.HeaderID1 & 0x80) != 0)
+                {
                     sb.AppendFormat(Localization.Incorrect_CD_Text_pack_type_0_not_decoding, descriptor.HeaderID1).
                        AppendLine();
+                }
             }
             else
             {
@@ -169,8 +178,10 @@ public static class CDTextOnLeadIn
                         if(descriptor.HeaderID2 == 0x00)
                             sb.AppendLine(Localization.CD_Text_pack_contains_title_for_album);
                         else
+                        {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_title_for_track_0, descriptor.HeaderID2).
                                AppendLine();
+                        }
 
                         break;
                     }
@@ -180,8 +191,10 @@ public static class CDTextOnLeadIn
                         if(descriptor.HeaderID2 == 0x00)
                             sb.AppendLine(Localization.CD_Text_pack_contains_performer_for_album);
                         else
+                        {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_performer_for_track_0,
                                             descriptor.HeaderID2).AppendLine();
+                        }
 
                         break;
                     }
@@ -191,8 +204,10 @@ public static class CDTextOnLeadIn
                         if(descriptor.HeaderID2 == 0x00)
                             sb.AppendLine(Localization.CD_Text_pack_contains_songwriter_for_album);
                         else
+                        {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_songwriter_for_track_0,
                                             descriptor.HeaderID2).AppendLine();
+                        }
 
                         break;
                     }
@@ -212,8 +227,10 @@ public static class CDTextOnLeadIn
                         if(descriptor.HeaderID2 == 0x00)
                             sb.AppendLine(Localization.CD_Text_pack_contains_arranger_for_album);
                         else
+                        {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_arranger_for_track_0,
                                             descriptor.HeaderID2).AppendLine();
+                        }
 
                         break;
                     }
@@ -223,8 +240,10 @@ public static class CDTextOnLeadIn
                         if(descriptor.HeaderID2 == 0x00)
                             sb.AppendLine(Localization.CD_Text_pack_contains_content_provider_message_for_album);
                         else
+                        {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_content_provider_message_for_track_0,
                                             descriptor.HeaderID2).AppendLine();
+                        }
 
                         break;
                     }
@@ -306,7 +325,7 @@ public static class CDTextOnLeadIn
                         if(descriptor.DBCC)
                             sb.AppendLine(Localization.Double_Byte_Character_Code_is_used);
 
-                        sb.AppendFormat(Localization.Block_number_0, descriptor.BlockNumber).AppendLine();
+                        sb.AppendFormat(Localization.Block_number_0,       descriptor.BlockNumber).AppendLine();
                         sb.AppendFormat(Localization.Character_position_0, descriptor.CharacterPosition).AppendLine();
 
                         sb.AppendFormat(Localization.Text_field_0,
@@ -327,6 +346,7 @@ public static class CDTextOnLeadIn
 
                 sb.AppendFormat(Localization.CRC_0_X4, descriptor.CRC).AppendLine();
             }
+        }
 
         return sb.ToString();
     }
@@ -337,6 +357,8 @@ public static class CDTextOnLeadIn
 
         return Prettify(decoded);
     }
+
+#region Nested type: CDText
 
     public struct CDText
     {
@@ -349,6 +371,10 @@ public static class CDTextOnLeadIn
         /// <summary>CD-Text data packs</summary>
         public CDTextPack[] DataPacks;
     }
+
+#endregion
+
+#region Nested type: CDTextPack
 
     public struct CDTextPack
     {
@@ -369,4 +395,6 @@ public static class CDTextOnLeadIn
         /// <summary>Bytes 16 to 17 CRC16</summary>
         public ushort CRC;
     }
+
+#endregion
 }

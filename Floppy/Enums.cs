@@ -59,7 +59,9 @@ public enum IBMSectorSizeCode : byte
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum IBMIdType : byte
 {
-    IndexMark       = 0xFC, AddressMark = 0xFE, DataMark = 0xFB,
+    IndexMark       = 0xFC,
+    AddressMark     = 0xFE,
+    DataMark        = 0xFB,
     DeletedDataMark = 0xF8
 }
 

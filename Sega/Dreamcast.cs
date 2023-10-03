@@ -41,8 +41,9 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Decoders.Sega;
 
 /// <summary>Represents the IP.BIN from a SEGA Dreamcast</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Dreamcast
 {
     const string MODULE_NAME = "Dreamcast IP.BIN Decoder";
@@ -167,6 +168,7 @@ public static class Dreamcast
         IPBinInformation.AppendLine(Localization.Regions_supported);
 
         foreach(byte region in ipbin.region_codes)
+        {
             switch((char)region)
             {
                 case 'J':
@@ -181,14 +183,16 @@ public static class Dreamcast
                     IPBinInformation.AppendLine(Localization.Europe_PAL);
 
                     break;
-                case ' ': break;
+                case ' ':
+                    break;
                 default:
                     IPBinInformation.AppendFormat(Localization.Game_supports_unknown_region_0, region).AppendLine();
 
                     break;
             }
+        }
 
-        int iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
+        var iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
 
         if((iPeripherals & 0x00000001) == 0x00000001)
             IPBinInformation.AppendLine(Localization.Game_uses_Windows_CE);
@@ -264,6 +268,8 @@ public static class Dreamcast
         return IPBinInformation.ToString();
     }
 
+#region Nested type: IPBin
+
     /// <summary>SEGA IP.BIN format for Dreamcast</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct IPBin
@@ -323,4 +329,6 @@ public static class Dreamcast
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] product_name;
     }
+
+#endregion
 }

@@ -35,13 +35,15 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DiscStructureCapabilities
 {
     public static Capability[] Decode(byte[] response)
     {
-        ushort len = (ushort)((response[0] << 8) + response[1]);
+        var len = (ushort)((response[0] << 8) + response[1]);
 
         if(len + 2 != response.Length)
             return null;
@@ -66,6 +68,8 @@ public static class DiscStructureCapabilities
         return caps.ToArray();
     }
 
+#region Nested type: Capability
+
     public struct Capability
     {
         /// <summary>READ/SEND DISC STRUCTURE format code</summary>
@@ -75,4 +79,6 @@ public static class DiscStructureCapabilities
         /// <summary>Supported in READ DISC STRUCTURE</summary>
         public bool RDS;
     }
+
+#endregion
 }

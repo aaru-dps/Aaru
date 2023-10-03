@@ -49,8 +49,10 @@ namespace Aaru.Decoders.SCSI.MMC;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class Hybrid
 {
     public static RecognizedFormatLayers? DecodeFormatLayers(byte[] FormatLayersResponse)
@@ -74,8 +76,8 @@ public static class Hybrid
             FormatLayers       = new ushort[(FormatLayersResponse.Length - 6) / 2]
         };
 
-        for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
-            decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, (i * 2) + 6);
+        for(var i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
+            decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
 
         return decoded;
     }
@@ -91,7 +93,8 @@ public static class Hybrid
 
         sb.AppendFormat(Localization._0_format_layers_recognized, response.NumberOfLayers);
 
-        for(int i = 0; i < response.FormatLayers.Length; i++)
+        for(var i = 0; i < response.FormatLayers.Length; i++)
+        {
             switch(response.FormatLayers[i])
             {
                 case (ushort)FormatLayerTypeCodes.BDLayer:
@@ -160,6 +163,7 @@ public static class Hybrid
                     break;
                 }
             }
+        }
 
         return sb.ToString();
     }
@@ -170,6 +174,8 @@ public static class Hybrid
 
         return PrettifyFormatLayers(decoded);
     }
+
+#region Nested type: RecognizedFormatLayers
 
     public struct RecognizedFormatLayers
     {
@@ -192,4 +198,6 @@ public static class Hybrid
         /// <summary>Bytes 6 to end Recognized format layers</summary>
         public ushort[] FormatLayers;
     }
+
+#endregion
 }

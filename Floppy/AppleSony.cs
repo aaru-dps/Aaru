@@ -43,8 +43,10 @@ namespace Aaru.Decoders.Floppy;
 // Inside Macintosh, Volume II, ISBN 0-201-17732-3
 
 /// <summary>Methods and structures for Apple Sony GCR floppy decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class AppleSony
 {
     public static byte[] DecodeSector(RawSector sector)
@@ -54,16 +56,16 @@ public static class AppleSony
            sector.addressField.prologue[2] != 0x96)
             return null;
 
-        byte[] bf1      = new byte[175];
-        byte[] bf2      = new byte[175];
-        byte[] bf3      = new byte[175];
+        var    bf1      = new byte[175];
+        var    bf2      = new byte[175];
+        var    bf3      = new byte[175];
         byte[] nib_data = sector.dataField.data;
         var    ms       = new MemoryStream();
 
-        int  j  = 0;
+        var  j  = 0;
         byte w3 = 0;
 
-        for(int i = 0; i <= 174; i++)
+        for(var i = 0; i <= 174; i++)
         {
             byte w4 = nib_data[j++];
             byte w1 = nib_data[j++];
@@ -72,9 +74,9 @@ public static class AppleSony
             if(i != 174)
                 w3 = nib_data[j++];
 
-            bf1[i] = (byte)(((w1 & 0x3F) | ((w4 << 2) & 0xC0)) & 0x0F);
-            bf2[i] = (byte)(((w2 & 0x3F) | ((w4 << 4) & 0xC0)) & 0x0F);
-            bf3[i] = (byte)(((w3 & 0x3F) | ((w4 << 6) & 0xC0)) & 0x0F);
+            bf1[i] = (byte)((w1 & 0x3F | w4 << 2 & 0xC0) & 0x0F);
+            bf2[i] = (byte)((w2 & 0x3F | w4 << 4 & 0xC0) & 0x0F);
+            bf3[i] = (byte)((w3 & 0x3F | w4 << 6 & 0xC0) & 0x0F);
         }
 
         j = 0;
@@ -89,7 +91,7 @@ public static class AppleSony
             if((ck1 & 0x0100) > 0)
                 ck1++;
 
-            byte carry = (byte)((bf1[j] ^ ck1) & 0xFF);
+            var carry = (byte)((bf1[j] ^ ck1) & 0xFF);
             ck3 += carry;
 
             if((ck1 & 0x0100) > 0)
@@ -163,26 +165,20 @@ public static class AppleSony
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[]
-                            {
-                                data[position], data[position + 1], data[position + 2]
-                            },
+                            prologue = new[] { data[position], data[position + 1], data[position + 2] },
                             track    = data[position + 3],
                             sector   = data[position + 4],
                             side     = data[position + 5],
                             format   = (AppleEncodedFormat)data[position + 6],
                             checksum = data[position + 7],
-                            epilogue = new[]
-                            {
-                                data[position + 8], data[position + 9]
-                            }
+                            epilogue = new[] { data[position + 8], data[position + 9] }
                         }
                     };
 
                     position += 10;
-                    int  syncCount = 0;
-                    bool onSync    = false;
-                    var  gaps      = new MemoryStream();
+                    var syncCount = 0;
+                    var onSync    = false;
+                    var gaps      = new MemoryStream();
 
                     while(data[position] == 0xFF)
                     {
@@ -206,11 +202,8 @@ public static class AppleSony
 
                     sector.dataField = new RawDataField
                     {
-                        prologue = new[]
-                        {
-                            data[position], data[position + 1], data[position + 2]
-                        },
-                        spare = data[position + 3]
+                        prologue = new[] { data[position], data[position + 1], data[position + 2] },
+                        spare    = data[position + 3]
                     };
 
                     position += 4;
@@ -309,13 +302,13 @@ public static class AppleSony
         raw.WriteByte(sector.addressField.side);
         raw.WriteByte((byte)sector.addressField.format);
         raw.WriteByte(sector.addressField.checksum);
-        raw.Write(sector.innerGap, 0, sector.innerGap.Length);
+        raw.Write(sector.innerGap,           0, sector.innerGap.Length);
         raw.Write(sector.dataField.prologue, 0, sector.dataField.prologue.Length);
         raw.WriteByte(sector.dataField.spare);
-        raw.Write(sector.dataField.data, 0, sector.dataField.data.Length);
+        raw.Write(sector.dataField.data,     0, sector.dataField.data.Length);
         raw.Write(sector.dataField.checksum, 0, sector.dataField.checksum.Length);
         raw.Write(sector.dataField.epilogue, 0, sector.dataField.epilogue.Length);
-        raw.Write(sector.gap, 0, sector.gap.Length);
+        raw.Write(sector.gap,                0, sector.gap.Length);
 
         return raw.ToArray();
     }
@@ -325,10 +318,10 @@ public static class AppleSony
     public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
     {
         int             position    = offset;
-        bool            firstSector = true;
-        bool            onSync      = false;
+        var             firstSector = true;
+        var             onSync      = false;
         var             gaps        = new MemoryStream();
-        int             count       = 0;
+        var             count       = 0;
         List<RawSector> sectors     = new();
         byte            trackNumber = 0;
         byte            sideNumber  = 0;
@@ -449,26 +442,7 @@ public static class AppleSony
         return sector != null && position != 0;
     }
 
-    /// <summary>GCR-encoded Apple Sony GCR floppy track</summary>
-    public class RawTrack
-    {
-        /// <summary>Track preamble, set to self-sync 0xFF, 36 bytes</summary>
-        public byte[] gap;
-        public RawSector[] sectors;
-    }
-
-    /// <summary>GCR-encoded Apple Sony GCR floppy sector</summary>
-    public class RawSector
-    {
-        /// <summary>Address field</summary>
-        public RawAddressField addressField;
-        /// <summary>Data field</summary>
-        public RawDataField dataField;
-        /// <summary>Track preamble, set to self-sync 0xFF, unknown size</summary>
-        public byte[] gap;
-        /// <summary>Track preamble, set to self-sync 0xFF, 6 bytes</summary>
-        public byte[] innerGap;
-    }
+#region Nested type: RawAddressField
 
     /// <summary>GCR-encoded Apple Sony GCR floppy sector address field</summary>
     public class RawAddressField
@@ -491,6 +465,10 @@ public static class AppleSony
         public byte track;
     }
 
+#endregion
+
+#region Nested type: RawDataField
+
     /// <summary>GCR-encoded Apple ][ GCR floppy sector data field</summary>
     public class RawDataField
     {
@@ -509,4 +487,35 @@ public static class AppleSony
         /// <summary>Spare, usually <see cref="RawAddressField.sector" /></summary>
         public byte spare;
     }
+
+#endregion
+
+#region Nested type: RawSector
+
+    /// <summary>GCR-encoded Apple Sony GCR floppy sector</summary>
+    public class RawSector
+    {
+        /// <summary>Address field</summary>
+        public RawAddressField addressField;
+        /// <summary>Data field</summary>
+        public RawDataField dataField;
+        /// <summary>Track preamble, set to self-sync 0xFF, unknown size</summary>
+        public byte[] gap;
+        /// <summary>Track preamble, set to self-sync 0xFF, 6 bytes</summary>
+        public byte[] innerGap;
+    }
+
+#endregion
+
+#region Nested type: RawTrack
+
+    /// <summary>GCR-encoded Apple Sony GCR floppy track</summary>
+    public class RawTrack
+    {
+        /// <summary>Track preamble, set to self-sync 0xFF, 36 bytes</summary>
+        public byte[] gap;
+        public RawSector[] sectors;
+    }
+
+#endregion
 }

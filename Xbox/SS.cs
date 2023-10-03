@@ -37,8 +37,10 @@ using Aaru.Decoders.DVD;
 
 namespace Aaru.Decoders.Xbox;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class SS
 {
     public static SecuritySector? Decode(byte[] response)
@@ -87,45 +89,51 @@ public static class SS
         Array.Copy(response, 720, ss.Unknown4, 0, 4);
         Array.Copy(response, 724, ss.Unknown5, 0, 43);
 
-        for(int i = 0; i < 23; i++)
+        for(var i = 0; i < 23; i++)
+        {
             ss.ChallengeEntries[i] = new ChallengeEntry
             {
-                Level       = response[770 + (i * 11) + 0],
-                ChallengeId = response[770 + (i * 11) + 1],
-                ChallengeValue = (uint)((response[770 + (i * 11) + 2] << 24) + (response[770 + (i * 11) + 3] << 16) +
-                                        (response[770 + (i * 11) + 4] << 8)  + response[770 + (i * 11) + 5]),
-                ResponseModifier = response[770 + (i * 11) + 6],
-                ResponseValue = (uint)((response[770 + (i * 11) + 7] << 24) + (response[770 + (i * 11) + 8] << 16) +
-                                       (response[770 + (i * 11) + 9] << 8)  + response[770 + (i * 11) + 10])
+                Level       = response[770 + i * 11 + 0],
+                ChallengeId = response[770 + i * 11 + 1],
+                ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) +
+                                        (response[770 + i * 11 + 4] << 8)  + response[770 + i * 11 + 5]),
+                ResponseModifier = response[770 + i * 11 + 6],
+                ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
+                                       (response[770 + i * 11 + 9] << 8)  + response[770 + i * 11 + 10])
             };
+        }
 
-        Array.Copy(response, 1052, ss.Unknown7, 0, 48);
-        Array.Copy(response, 1120, ss.Unknown8, 0, 16);
-        Array.Copy(response, 1180, ss.Unknown9, 0, 16);
+        Array.Copy(response, 1052, ss.Unknown7,  0, 48);
+        Array.Copy(response, 1120, ss.Unknown8,  0, 16);
+        Array.Copy(response, 1180, ss.Unknown9,  0, 16);
         Array.Copy(response, 1208, ss.Unknown10, 0, 303);
         Array.Copy(response, 1528, ss.Unknown11, 0, 104);
 
-        for(int i = 0; i < 23; i++)
+        for(var i = 0; i < 23; i++)
+        {
             ss.Extents[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1633 + (i * 9) + 0] << 16) + (response[1633 + (i * 9) + 1] << 8) +
-                                 response[1633 + (i * 9) + 2]),
-                StartPSN = (uint)((response[1633 + (i * 9) + 3] << 16) + (response[1633 + (i * 9) + 4] << 8) +
-                                  response[1633 + (i * 9) + 5]),
-                EndPSN = (uint)((response[1633 + (i * 9) + 6] << 16) + (response[1633 + (i * 9) + 7] << 8) +
-                                response[1633 + (i * 9) + 8])
+                Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
+                                 response[1633 + i * 9 + 2]),
+                StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) +
+                                  response[1633 + i * 9 + 5]),
+                EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
+                                response[1633 + i * 9 + 8])
             };
+        }
 
-        for(int i = 0; i < 23; i++)
+        for(var i = 0; i < 23; i++)
+        {
             ss.ExtentsCopy[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1840 + (i * 9) + 0] << 16) + (response[1840 + (i * 9) + 1] << 8) +
-                                 response[1840 + (i * 9) + 2]),
-                StartPSN = (uint)((response[1840 + (i * 9) + 3] << 16) + (response[1840 + (i * 9) + 4] << 8) +
-                                  response[1840 + (i * 9) + 5]),
-                EndPSN = (uint)((response[1840 + (i * 9) + 6] << 16) + (response[1840 + (i * 9) + 7] << 8) +
-                                response[1840 + (i * 9) + 8])
+                Unknown = (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) +
+                                 response[1840 + i * 9 + 2]),
+                StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) + (response[1840 + i * 9 + 4] << 8) +
+                                  response[1840 + i * 9 + 5]),
+                EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) +
+                                response[1840 + i * 9 + 8])
             };
+        }
 
         return ss;
     }
@@ -139,11 +147,11 @@ public static class SS
         var            sb      = new StringBuilder();
 
         string sizeString = decoded.DiscSize switch
-        {
-            DVDSize.Eighty    => Localization._80mm,
-            DVDSize.OneTwenty => Localization._120mm,
-            _                 => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
-        };
+                            {
+                                DVDSize.Eighty => Localization._80mm,
+                                DVDSize.OneTwenty => Localization._120mm,
+                                _ => string.Format(Localization.unknown_size_identifier_0, decoded.DiscSize)
+                            };
 
         string categorySentence = Localization.Disc_is_a_0_1_version_2;
 
@@ -278,16 +286,18 @@ public static class SS
         }
 
         if(decoded.DataAreaStartPSN > 0)
+        {
             if(decoded.DataAreaEndPSN > 0)
             {
                 sb.AppendFormat(Localization.Data_area_starts_at_PSN_0, decoded.DataAreaStartPSN).AppendLine();
-                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0, decoded.DataAreaEndPSN).AppendLine();
+                sb.AppendFormat(Localization.Data_area_ends_at_PSN_0,   decoded.DataAreaEndPSN).AppendLine();
 
                 if(decoded is { Layers: 1, TrackPath: false })
                     sb.AppendFormat(Localization.Layer_zero_ends_at_PSN_0, decoded.Layer0EndPSN).AppendLine();
             }
             else
                 sb.AppendLine(Localization.Disc_is_empty);
+        }
         else
             sb.AppendLine(Localization.Disc_is_empty);
 
@@ -295,21 +305,38 @@ public static class SS
 
         foreach(ChallengeEntry entry in decoded.ChallengeEntries)
         {
-            sb.AppendFormat("\t" + Localization.Challenge_ID_0, entry.ChallengeId).AppendLine();
-            sb.AppendFormat("\t" + Localization.Challenge_level_0, entry.Level).AppendLine();
-            sb.AppendFormat("\t" + Localization.Challenge_value_0, entry.ChallengeValue).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_ID_0,      entry.ChallengeId).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_level_0,   entry.Level).AppendLine();
+            sb.AppendFormat("\t" + Localization.Challenge_value_0,   entry.ChallengeValue).AppendLine();
             sb.AppendFormat("\t" + Localization.Response_modifier_0, entry.ResponseModifier).AppendLine();
-            sb.AppendFormat("\t" + Localization.Response_value_0, entry.ResponseValue).AppendLine();
+            sb.AppendFormat("\t" + Localization.Response_value_0,    entry.ResponseValue).AppendLine();
         }
 
-        for(int i = 0; i < 16; i++)
+        for(var i = 0; i < 16; i++)
+        {
             sb.AppendFormat(Localization.Extent_starts_at_PSN_0_and_ends_at_PSN_1, decoded.Extents[i].StartPSN,
                             decoded.Extents[i].EndPSN).AppendLine();
+        }
 
         return sb.ToString();
     }
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+#region Nested type: ChallengeEntry
+
+    public struct ChallengeEntry
+    {
+        public byte Level;
+        public byte ChallengeId;
+        public uint ChallengeValue;
+        public byte ResponseModifier;
+        public uint ResponseValue;
+    }
+
+#endregion
+
+#region Nested type: SecuritySector
 
     public struct SecuritySector
     {
@@ -374,6 +401,10 @@ public static class SS
         public SecuritySectorExtent[] ExtentsCopy;
     }
 
+#endregion
+
+#region Nested type: SecuritySectorExtent
+
     public struct SecuritySectorExtent
     {
         /// <summary>Bytes 0 to 2 Unknown</summary>
@@ -384,12 +415,5 @@ public static class SS
         public uint EndPSN;
     }
 
-    public struct ChallengeEntry
-    {
-        public byte Level;
-        public byte ChallengeId;
-        public uint ChallengeValue;
-        public byte ResponseModifier;
-        public uint ResponseValue;
-    }
+#endregion
 }

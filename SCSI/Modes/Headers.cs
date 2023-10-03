@@ -36,50 +36,72 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
     public static string GetMediumTypeDescription(MediumTypes type) => type switch
-    {
-        MediumTypes.ECMA54  => Localization.GetMediumTypeDescription_ECMA_54,
-        MediumTypes.ECMA59  => Localization.GetMediumTypeDescription_ECMA_59,
-        MediumTypes.ECMA69  => Localization.GetMediumTypeDescription_ECMA_69,
-        MediumTypes.ECMA66  => Localization.GetMediumTypeDescription_ECMA_66,
-        MediumTypes.ECMA70  => Localization.GetMediumTypeDescription_ECMA_70,
-        MediumTypes.ECMA78  => Localization.GetMediumTypeDescription_ECMA_78,
-        MediumTypes.ECMA99  => Localization.GetMediumTypeDescription_ECMA_99,
-        MediumTypes.ECMA100 => Localization.GetMediumTypeDescription_ECMA_100,
+                                                                       {
+                                                                           MediumTypes.ECMA54 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_54,
+                                                                           MediumTypes.ECMA59 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_59,
+                                                                           MediumTypes.ECMA69 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_69,
+                                                                           MediumTypes.ECMA66 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_66,
+                                                                           MediumTypes.ECMA70 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_70,
+                                                                           MediumTypes.ECMA78 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_78,
+                                                                           MediumTypes.ECMA99 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_99,
+                                                                           MediumTypes.ECMA100 => Localization.
+                                                                               GetMediumTypeDescription_ECMA_100,
 
-        // Most probably they will never appear, but magneto-opticals use these codes
-        /*
-case MediumTypes.Unspecified_SS:
-return "Unspecified single sided flexible disk";
-case MediumTypes.Unspecified_DS:
-return "Unspecified double sided flexible disk";
-*/
-        MediumTypes.X3_73       => Localization.GetMediumTypeDescription_X3_73,
-        MediumTypes.X3_73_DS    => Localization.GetMediumTypeDescription_X3_73_DS,
-        MediumTypes.X3_82       => Localization.GetMediumTypeDescription_X3_82,
-        MediumTypes.Type3Floppy => Localization.GetMediumTypeDescription_Type3Floppy,
-        MediumTypes.HDFloppy    => Localization.GetMediumTypeDescription_HDFloppy,
-        MediumTypes.ReadOnly    => Localization.GetMediumTypeDescription_ReadOnly,
-        MediumTypes.WORM        => Localization.GetMediumTypeDescription_WORM,
-        MediumTypes.Erasable    => Localization.GetMediumTypeDescription_Erasable,
-        MediumTypes.RO_WORM     => Localization.GetMediumTypeDescription_RO_WORM,
+                                                                           // Most probably they will never appear, but magneto-opticals use these codes
+                                                                           /*
+                                                                   case MediumTypes.Unspecified_SS:
+                                                                   return "Unspecified single sided flexible disk";
+                                                                   case MediumTypes.Unspecified_DS:
+                                                                   return "Unspecified double sided flexible disk";
+                                                                   */
+                                                                           MediumTypes.X3_73 => Localization.
+                                                                               GetMediumTypeDescription_X3_73,
+                                                                           MediumTypes.X3_73_DS => Localization.
+                                                                               GetMediumTypeDescription_X3_73_DS,
+                                                                           MediumTypes.X3_82 => Localization.
+                                                                               GetMediumTypeDescription_X3_82,
+                                                                           MediumTypes.Type3Floppy => Localization.
+                                                                               GetMediumTypeDescription_Type3Floppy,
+                                                                           MediumTypes.HDFloppy => Localization.
+                                                                               GetMediumTypeDescription_HDFloppy,
+                                                                           MediumTypes.ReadOnly => Localization.
+                                                                               GetMediumTypeDescription_ReadOnly,
+                                                                           MediumTypes.WORM => Localization.
+                                                                               GetMediumTypeDescription_WORM,
+                                                                           MediumTypes.Erasable => Localization.
+                                                                               GetMediumTypeDescription_Erasable,
+                                                                           MediumTypes.RO_WORM => Localization.
+                                                                               GetMediumTypeDescription_RO_WORM,
 
-        // These magneto-opticals were never manufactured
-        /*
-case MediumTypes.RO_RW:
-return "a combination of read-only and erasable optical";
-break;
-case MediumTypes.WORM_RW:
-return "a combination of write-once and erasable optical";
-*/
-        MediumTypes.DOW  => Localization.GetMediumTypeDescription_DOW,
-        MediumTypes.HiMD => Localization.GetMediumTypeDescription_HiMD,
-        _                => string.Format(Localization.Unknown_medium_type_0, (byte)type)
-    };
+                                                                           // These magneto-opticals were never manufactured
+                                                                           /*
+                                                                   case MediumTypes.RO_RW:
+                                                                   return "a combination of read-only and erasable optical";
+                                                                   break;
+                                                                   case MediumTypes.WORM_RW:
+                                                                   return "a combination of write-once and erasable optical";
+                                                                   */
+                                                                           MediumTypes.DOW => Localization.
+                                                                               GetMediumTypeDescription_DOW,
+                                                                           MediumTypes.HiMD => Localization.
+                                                                               GetMediumTypeDescription_HiMD,
+                                                                           _ => string.Format(
+                                                                               Localization.Unknown_medium_type_0,
+                                                                               (byte)type)
+                                                                       };
 
     public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
     {
@@ -92,12 +114,15 @@ return "a combination of write-once and erasable optical";
 
         switch(deviceType)
         {
-            #region Direct access device mode header
+        #region Direct access device mode header
+
             case PeripheralDeviceTypes.DirectAccess:
             {
                 if(header.Value.MediumType != MediumTypes.Default)
+                {
                     sb.AppendFormat("\t" + Localization.Medium_is_0, GetMediumTypeDescription(header.Value.MediumType)).
                        AppendLine();
+                }
 
                 if(header.Value.WriteProtected)
                     sb.AppendLine("\t" + Localization.Medium_is_write_protected);
@@ -106,13 +131,15 @@ return "a combination of write-once and erasable optical";
                     sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
+                {
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {
-                            case DensityType.Default: break;
+                            case DensityType.Default:
+                                break;
                             case DensityType.Flux7958:
                                 density = Localization._7958_ftprad;
 
@@ -133,25 +160,38 @@ return "a combination of write-once and erasable optical";
                         }
 
                         if(density != "")
+                        {
                             if(descriptor.Blocks == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
                                                 density, descriptor.BlockLength).AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
                                                 descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.Blocks == 0)
+                        {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
                                             descriptor.BlockLength).AppendLine();
+                        }
                         else
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
                                             descriptor.BlockLength).AppendLine();
+                        }
                     }
+                }
 
                 break;
             }
-            #endregion Direct access device mode header
 
-            #region Sequential access device mode header
+        #endregion Direct access device mode header
+
+        #region Sequential access device mode header
+
             case PeripheralDeviceTypes.SequentialAccess:
             {
                 switch(header.Value.BufferedMode)
@@ -185,74 +225,76 @@ return "a combination of write-once and erasable optical";
                     sb.AppendLine("\t" + Localization.Medium_is_write_protected);
 
                 string medium = header.Value.MediumType switch
-                {
-                    MediumTypes.Default => Localization.MediumType_undefined,
-                    MediumTypes.Tape12 => Localization.MediumType_Tape12,
-                    MediumTypes.Tape24 => Localization.MediumType_Tape24,
-                    MediumTypes.LTOWORM => Localization.MediumType_LTOWORM,
-                    MediumTypes.LTO => Localization.MediumType_LTO,
-                    MediumTypes.LTO2 => Localization.MediumType_LTO2,
-                    MediumTypes.DC2900SL => Localization.MediumType_DC2900SL,
-                    MediumTypes.MLR1 => Localization.MediumType_MLR1,
-                    MediumTypes.DC9200 => Localization.MediumType_DC9200,
-                    MediumTypes.DAT72 => Localization.MediumType_DAT72,
-                    MediumTypes.LTO3 => Localization.MediumType_LTO3,
-                    MediumTypes.LTO3WORM => Localization.MediumType_LTO3WORM,
-                    MediumTypes.DDSCleaning => Localization.MediumType_DDSCleaning,
-                    MediumTypes.SLR32 => Localization.MediumType_SLR32,
-                    MediumTypes.SLRtape50 => Localization.MediumType_SLRtape50,
-                    MediumTypes.LTO4 => Localization.MediumType_LTO4,
-                    MediumTypes.LTO4WORM => Localization.MediumType_LTO4WORM,
-                    MediumTypes.SLRtape50SL => Localization.MediumType_SLRtape50SL,
-                    MediumTypes.SLR32SL => Localization.MediumType_SLR32SL,
-                    MediumTypes.SLR5 => Localization.MediumType_SLR5,
-                    MediumTypes.SLR5SL => Localization.MediumType_SLR5SL,
-                    MediumTypes.LTO5 => Localization.MediumType_LTO5,
-                    MediumTypes.LTO5WORM => Localization.MediumType_LTO5WORM,
-                    MediumTypes.SLRtape7 => Localization.MediumType_SLRtape7,
-                    MediumTypes.SLRtape7SL => Localization.MediumType_SLRtape7SL,
-                    MediumTypes.SLRtape24 => Localization.MediumType_SLRtape24,
-                    MediumTypes.SLRtape24SL => Localization.MediumType_SLRtape24SL,
-                    MediumTypes.LTO6 => Localization.MediumType_LTO6,
-                    MediumTypes.LTO6WORM => Localization.MediumType_LTO6WORM,
-                    MediumTypes.SLRtape140 => Localization.MediumType_SLRtape140,
-                    MediumTypes.SLRtape40 => Localization.MediumType_SLRtape40,
-                    MediumTypes.SLRtape60 => Localization.MediumType_SLRtape60,
-                    MediumTypes.SLRtape100 => Localization.MediumType_SLRtape100,
-                    MediumTypes.SLR40_60_100 => Localization.MediumType_SLR40_60_100,
-                    MediumTypes.LTO7 => Localization.MediumType_LTO7,
-                    MediumTypes.LTO7WORM => Localization.MediumType_LTO7WORM,
-                    MediumTypes.LTOCD => Localization.MediumType_LTO,
-                    MediumTypes.Exatape15m => Localization.MediumType_Exatape15m,
-                    MediumTypes.CT1 => Localization.MediumType_CT1,
-                    MediumTypes.Exatape54m => Localization.MediumType_Exatape54m,
-                    MediumTypes.Exatape80m => Localization.MediumType_Exatape80m,
-                    MediumTypes.Exatape106m => Localization.MediumType_Exatape106m,
-                    MediumTypes.Exatape106mXL => Localization.MediumType_Exatape106mXL,
-                    MediumTypes.SDLT2 => Localization.MediumType_SDLT2,
-                    MediumTypes.VStapeI => Localization.MediumType_VStapeI,
-                    MediumTypes.DLTtapeS4 => Localization.MediumType_DLTtapeS4,
-                    MediumTypes.Travan7 => Localization.MediumType_Travan7,
-                    MediumTypes.Exatape22m => Localization.MediumType_Exatape22m,
-                    MediumTypes.Exatape40m => Localization.MediumType_Exatape40m,
-                    MediumTypes.Exatape76m => Localization.MediumType_Exatape76m,
-                    MediumTypes.Exatape112m => Localization.MediumType_Exatape112m,
-                    MediumTypes.Exatape22mAME => Localization.MediumType_Exatape22mAME,
-                    MediumTypes.Exatape170m => Localization.MediumType_Exatape170m,
-                    MediumTypes.Exatape125m => Localization.MediumType_Exatape125m,
-                    MediumTypes.Exatape45m => Localization.MediumType_Exatape45m,
-                    MediumTypes.Exatape225m => Localization.MediumType_Exatape225m,
-                    MediumTypes.Exatape150m => Localization.MediumType_Exatape150m,
-                    MediumTypes.Exatape75m => Localization.MediumType_Exatape75m,
-                    _ => string.Format(Localization.Unknown_medium_type_0, (byte)header.Value.MediumType)
-                };
+                                {
+                                    MediumTypes.Default       => Localization.MediumType_undefined,
+                                    MediumTypes.Tape12        => Localization.MediumType_Tape12,
+                                    MediumTypes.Tape24        => Localization.MediumType_Tape24,
+                                    MediumTypes.LTOWORM       => Localization.MediumType_LTOWORM,
+                                    MediumTypes.LTO           => Localization.MediumType_LTO,
+                                    MediumTypes.LTO2          => Localization.MediumType_LTO2,
+                                    MediumTypes.DC2900SL      => Localization.MediumType_DC2900SL,
+                                    MediumTypes.MLR1          => Localization.MediumType_MLR1,
+                                    MediumTypes.DC9200        => Localization.MediumType_DC9200,
+                                    MediumTypes.DAT72         => Localization.MediumType_DAT72,
+                                    MediumTypes.LTO3          => Localization.MediumType_LTO3,
+                                    MediumTypes.LTO3WORM      => Localization.MediumType_LTO3WORM,
+                                    MediumTypes.DDSCleaning   => Localization.MediumType_DDSCleaning,
+                                    MediumTypes.SLR32         => Localization.MediumType_SLR32,
+                                    MediumTypes.SLRtape50     => Localization.MediumType_SLRtape50,
+                                    MediumTypes.LTO4          => Localization.MediumType_LTO4,
+                                    MediumTypes.LTO4WORM      => Localization.MediumType_LTO4WORM,
+                                    MediumTypes.SLRtape50SL   => Localization.MediumType_SLRtape50SL,
+                                    MediumTypes.SLR32SL       => Localization.MediumType_SLR32SL,
+                                    MediumTypes.SLR5          => Localization.MediumType_SLR5,
+                                    MediumTypes.SLR5SL        => Localization.MediumType_SLR5SL,
+                                    MediumTypes.LTO5          => Localization.MediumType_LTO5,
+                                    MediumTypes.LTO5WORM      => Localization.MediumType_LTO5WORM,
+                                    MediumTypes.SLRtape7      => Localization.MediumType_SLRtape7,
+                                    MediumTypes.SLRtape7SL    => Localization.MediumType_SLRtape7SL,
+                                    MediumTypes.SLRtape24     => Localization.MediumType_SLRtape24,
+                                    MediumTypes.SLRtape24SL   => Localization.MediumType_SLRtape24SL,
+                                    MediumTypes.LTO6          => Localization.MediumType_LTO6,
+                                    MediumTypes.LTO6WORM      => Localization.MediumType_LTO6WORM,
+                                    MediumTypes.SLRtape140    => Localization.MediumType_SLRtape140,
+                                    MediumTypes.SLRtape40     => Localization.MediumType_SLRtape40,
+                                    MediumTypes.SLRtape60     => Localization.MediumType_SLRtape60,
+                                    MediumTypes.SLRtape100    => Localization.MediumType_SLRtape100,
+                                    MediumTypes.SLR40_60_100  => Localization.MediumType_SLR40_60_100,
+                                    MediumTypes.LTO7          => Localization.MediumType_LTO7,
+                                    MediumTypes.LTO7WORM      => Localization.MediumType_LTO7WORM,
+                                    MediumTypes.LTOCD         => Localization.MediumType_LTO,
+                                    MediumTypes.Exatape15m    => Localization.MediumType_Exatape15m,
+                                    MediumTypes.CT1           => Localization.MediumType_CT1,
+                                    MediumTypes.Exatape54m    => Localization.MediumType_Exatape54m,
+                                    MediumTypes.Exatape80m    => Localization.MediumType_Exatape80m,
+                                    MediumTypes.Exatape106m   => Localization.MediumType_Exatape106m,
+                                    MediumTypes.Exatape106mXL => Localization.MediumType_Exatape106mXL,
+                                    MediumTypes.SDLT2         => Localization.MediumType_SDLT2,
+                                    MediumTypes.VStapeI       => Localization.MediumType_VStapeI,
+                                    MediumTypes.DLTtapeS4     => Localization.MediumType_DLTtapeS4,
+                                    MediumTypes.Travan7       => Localization.MediumType_Travan7,
+                                    MediumTypes.Exatape22m    => Localization.MediumType_Exatape22m,
+                                    MediumTypes.Exatape40m    => Localization.MediumType_Exatape40m,
+                                    MediumTypes.Exatape76m    => Localization.MediumType_Exatape76m,
+                                    MediumTypes.Exatape112m   => Localization.MediumType_Exatape112m,
+                                    MediumTypes.Exatape22mAME => Localization.MediumType_Exatape22mAME,
+                                    MediumTypes.Exatape170m   => Localization.MediumType_Exatape170m,
+                                    MediumTypes.Exatape125m   => Localization.MediumType_Exatape125m,
+                                    MediumTypes.Exatape45m    => Localization.MediumType_Exatape45m,
+                                    MediumTypes.Exatape225m   => Localization.MediumType_Exatape225m,
+                                    MediumTypes.Exatape150m   => Localization.MediumType_Exatape150m,
+                                    MediumTypes.Exatape75m    => Localization.MediumType_Exatape75m,
+                                    _ => string.Format(Localization.Unknown_medium_type_0,
+                                                       (byte)header.Value.MediumType)
+                                };
 
                 sb.AppendFormat("\t" + Localization.Medium_is_0, medium).AppendLine();
 
                 if(header.Value.BlockDescriptors != null)
+                {
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(header.Value.MediumType)
                         {
@@ -260,7 +302,8 @@ return "a combination of write-once and erasable optical";
                             {
                                 switch(descriptor.Density)
                                 {
-                                    case DensityType.Default: break;
+                                    case DensityType.Default:
+                                        break;
                                     case DensityType.ECMA62:
                                         density = Localization.ECMA62;
 
@@ -441,65 +484,71 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTOWORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.LTO_Ultrium_cleaning_cartridge,
-                                    DensityType.LTO3 => Localization.MediumType_LTO3WORM,
-                                    DensityType.LTO4 => Localization.MediumType_LTO4WORM,
-                                    DensityType.LTO5 => Localization.MediumType_LTO5WORM,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.LTO_Ultrium_cleaning_cartridge,
+                                              DensityType.LTO3    => Localization.MediumType_LTO3WORM,
+                                              DensityType.LTO4    => Localization.MediumType_LTO4WORM,
+                                              DensityType.LTO5    => Localization.MediumType_LTO5WORM,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.LTO:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO1 => Localization.MediumType_LTO,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO1 => Localization.MediumType_LTO,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.LTO2:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO2 => Localization.MediumType_LTO2,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO2 => Localization.MediumType_LTO2,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DDS3:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MLR1_26GB,
-                                    DensityType.DDS3 => Localization.DDS3,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MLR1_26GB,
+                                              DensityType.DDS3    => Localization.DDS3,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DDS4:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.DC9200,
-                                    DensityType.DDS4 => Localization.DDS4,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.DC9200,
+                                              DensityType.DDS4    => Localization.DDS4,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DAT72:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.DAT72 => Localization.MediumType_DAT72,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.DAT72 => Localization.MediumType_DAT72,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -507,20 +556,22 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTO3WORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO3 => Localization.MediumType_LTO3,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO3 => Localization.MediumType_LTO3,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DDSCleaning:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_DDSCleaning,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_DDSCleaning,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -528,10 +579,11 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTO4WORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO4 => Localization.MediumType_LTO4,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO4 => Localization.MediumType_LTO4,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -539,10 +591,11 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTO5WORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO5 => Localization.MediumType_LTO5,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO5 => Localization.MediumType_LTO5,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -550,10 +603,11 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTO6WORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO6 => Localization.MediumType_LTO6,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO6 => Localization.MediumType_LTO6,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -561,60 +615,64 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.LTO7WORM:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO7 => Localization.MediumType_LTO7,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO7 => Localization.MediumType_LTO7,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.LTOCD:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.LTO2 => Localization.LTO2_CDemu,
-                                    DensityType.LTO3 => Localization.LTO3_CDemu,
-                                    DensityType.LTO4 => Localization.LTO4_CDemu,
-                                    DensityType.LTO5 => Localization.LTO5_CDemu,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.LTO2 => Localization.LTO2_CDemu,
+                                              DensityType.LTO3 => Localization.LTO3_CDemu,
+                                              DensityType.LTO4 => Localization.LTO4_CDemu,
+                                              DensityType.LTO5 => Localization.LTO5_CDemu,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape15m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    DensityType.IBM3590 => Localization.IBM3590,
-                                    DensityType.IBM3590E => Localization.IBM3590E,
-                                    DensityType.VXA1 => Localization.VXA1,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200   => Localization.EXB8200,
+                                              DensityType.Ex8200c  => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500   => Localization.EXB8500,
+                                              DensityType.Ex8500c  => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth  => Localization.TapeName_Mammoth,
+                                              DensityType.IBM3590  => Localization.IBM3590,
+                                              DensityType.IBM3590E => Localization.IBM3590E,
+                                              DensityType.VXA1     => Localization.VXA1,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape28m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    DensityType.CT1 => Localization.CT1,
-                                    DensityType.CT2 => Localization.CT2,
-                                    DensityType.IBM3590 => Localization.IBM3590_extended,
-                                    DensityType.IBM3590E => Localization.IBM3590E_extended,
-                                    DensityType.VXA2 => Localization.VXA2,
-                                    DensityType.VXA3 => Localization.VXA3,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200   => Localization.EXB8200,
+                                              DensityType.Ex8200c  => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500   => Localization.EXB8500,
+                                              DensityType.Ex8500c  => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth  => Localization.TapeName_Mammoth,
+                                              DensityType.CT1      => Localization.CT1,
+                                              DensityType.CT2      => Localization.CT2,
+                                              DensityType.IBM3590  => Localization.IBM3590_extended,
+                                              DensityType.IBM3590E => Localization.IBM3590E_extended,
+                                              DensityType.VXA2     => Localization.VXA2,
+                                              DensityType.VXA3     => Localization.VXA3,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -834,10 +892,11 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.SDLT2:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.SDLT2 => Localization.MediumType_SDLT2,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.SDLT2 => Localization.MediumType_SDLT2,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -866,65 +925,70 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.DLTtapeS4:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.DLTS4 => Localization.MediumType_DLTtapeS4,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.DLTS4 => Localization.MediumType_DLTtapeS4,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape22m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200  => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500  => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape40m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200  => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500  => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape76m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200  => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500  => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape112m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Ex8200 => Localization.EXB8200,
-                                    DensityType.Ex8200c => Localization.EXB8200_compressed,
-                                    DensityType.Ex8500 => Localization.EXB8500,
-                                    DensityType.Ex8500c => Localization.EXB8500_compressed,
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Ex8200  => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500  => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -937,191 +1001,210 @@ return "a combination of write-once and erasable optical";
                             case MediumTypes.Exatape75m:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Mammoth => Localization.TapeName_Mammoth,
-                                    DensityType.Mammoth2 => Localization.Mammoth2,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Mammoth  => Localization.TapeName_Mammoth,
+                                              DensityType.Mammoth2 => Localization.Mammoth2,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DC2900SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_DC2900SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_DC2900SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.DC9250:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.DC9250,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.DC9250,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLR32:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLR32,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLR32,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.MLR1SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MLR1_26GBSL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MLR1_26GBSL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape50:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape50,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape50,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape50SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape50SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape50SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLR32SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.SLR32SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.SLR32SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLR5:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLR5,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLR5,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLR5SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.SLR5SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.SLR5SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape7:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape7,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape7,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape7SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape7SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape7SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape24:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape24,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape24,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape24SL:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape24SL,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape24SL,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape140:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape140,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape140,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape40:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape40,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape40,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape60:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape60,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape60,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLRtape100:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.MediumType_SLRtape100,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.MediumType_SLRtape100,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.SLR40_60_100:
                             {
                                 density = descriptor.Density switch
-                                {
-                                    DensityType.Default => Localization.SLR40_60_100,
-                                    _ => string.Format(Localization.unknown_density_code_0, (byte)descriptor.Density)
-                                };
+                                          {
+                                              DensityType.Default => Localization.SLR40_60_100,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -1132,41 +1215,69 @@ return "a combination of write-once and erasable optical";
                         }
 
                         if(density != "")
+                        {
                             if(descriptor.Blocks == 0)
+                            {
                                 if(descriptor.BlockLength == 0)
+                                {
                                     sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_have_a_variable_length,
-                                                     density).AppendLine();
+                                        AppendFormat(
+                                            "\t" + Localization.
+                                                All_remaining_blocks_conform_to_0_and_have_a_variable_length,
+                                            density).AppendLine();
+                                }
                                 else
+                                {
                                     sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
-                                                     density, descriptor.BlockLength).AppendLine();
+                                        AppendFormat(
+                                            "\t" + Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
+                                            density, descriptor.BlockLength).AppendLine();
+                                }
+                            }
                             else if(descriptor.BlockLength == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_have_a_variable_length,
                                                 descriptor.Blocks, density).AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_are_2_bytes_each,
                                                 descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.Blocks == 0)
+                        {
                             if(descriptor.BlockLength == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length).
                                    AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
                                                 descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.BlockLength == 0)
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks).
                                AppendLine();
+                        }
                         else
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
                                             descriptor.BlockLength).AppendLine();
+                        }
                     }
+                }
 
                 break;
             }
-            #endregion Sequential access device mode header
 
-            #region Printer device mode header
+        #endregion Sequential access device mode header
+
+        #region Printer device mode header
+
             case PeripheralDeviceTypes.PrinterDevice:
             {
                 switch(header.Value.BufferedMode)
@@ -1188,9 +1299,11 @@ return "a combination of write-once and erasable optical";
 
                 break;
             }
-            #endregion Printer device mode header
 
-            #region Optical device mode header
+        #endregion Printer device mode header
+
+        #region Optical device mode header
+
             case PeripheralDeviceTypes.OpticalDevice:
             {
                 if(header.Value.MediumType != MediumTypes.Default)
@@ -1245,13 +1358,15 @@ return "a combination of write-once and erasable optical";
                     sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
+                {
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {
-                            case DensityType.Default: break;
+                            case DensityType.Default:
+                                break;
                             case DensityType.ISO10090:
                                 density = Localization.ISO10090;
 
@@ -1295,40 +1410,66 @@ return "a combination of write-once and erasable optical";
                         }
 
                         if(density != "")
+                        {
                             if(descriptor.Blocks == 0)
+                            {
                                 if(descriptor.BlockLength == 0)
+                                {
                                     sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
-                                                     density).AppendLine();
+                                        AppendFormat(
+                                            "\t" + Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
+                                            density).AppendLine();
+                                }
                                 else
+                                {
                                     sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_are_1_bytes_each,
                                                     density, descriptor.BlockLength).AppendLine();
+                                }
+                            }
                             else if(descriptor.BlockLength == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_have_a_variable_length,
                                                 descriptor.Blocks, density).AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_are_2_bytes_each,
                                                 descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.Blocks == 0)
+                        {
                             if(descriptor.BlockLength == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length).
                                    AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
                                                 descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.BlockLength == 0)
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks).
                                AppendLine();
+                        }
                         else
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
                                             descriptor.BlockLength).AppendLine();
+                        }
                     }
+                }
 
                 break;
             }
-            #endregion Optical device mode header
 
-            #region Multimedia device mode header
+        #endregion Optical device mode header
+
+        #region Multimedia device mode header
+
             case PeripheralDeviceTypes.MultiMediaDevice:
             {
                 sb.Append("\t" + Localization.Medium_is_);
@@ -1492,13 +1633,15 @@ return "a combination of write-once and erasable optical";
                     sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
+                {
                     foreach(BlockDescriptor descriptor in header.Value.BlockDescriptors)
                     {
-                        string density = "";
+                        var density = "";
 
                         switch(descriptor.Density)
                         {
-                            case DensityType.Default: break;
+                            case DensityType.Default:
+                                break;
                             case DensityType.User:
                                 density = Localization.user_data_only;
 
@@ -1539,23 +1682,35 @@ return "a combination of write-once and erasable optical";
                         }
 
                         if(density != "")
+                        {
                             if(descriptor.Blocks == 0)
+                            {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
                                                 density, descriptor.BlockLength).AppendLine();
+                            }
                             else
+                            {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
                                                 descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                            }
+                        }
                         else if(descriptor.Blocks == 0)
+                        {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
                                             descriptor.BlockLength).AppendLine();
+                        }
                         else
+                        {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
                                             descriptor.BlockLength).AppendLine();
+                        }
                     }
+                }
 
                 break;
             }
-            #endregion Multimedia device mode header
+
+        #endregion Multimedia device mode header
         }
 
         return sb.ToString();

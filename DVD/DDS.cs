@@ -51,8 +51,10 @@ namespace Aaru.Decoders.DVD;
 // T10/1836-D revision 2g
 // ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM)
 // ECMA 330: 120 mm (4,7 Gbytes per side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM)
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DDS
 {
     public static DiscDefinitionStructure? Decode(byte[] response)
@@ -91,7 +93,7 @@ public static class DDS
             Array.Copy(response, 14, dds.Reserved, 0, 6);
             dds.GroupCertificationFlags = new GroupCertificationFlag[24];
 
-            for(int i = 0; i < 24; i++)
+            for(var i = 0; i < 24; i++)
             {
                 dds.GroupCertificationFlags[i].InProcess            |= (response[20 + i] & 0x80) == 0x80;
                 dds.GroupCertificationFlags[i].PartialCertification |= (response[20 + i] & 0x40) == 0x40;
@@ -115,9 +117,11 @@ public static class DDS
             dds.LSN0Location      = (uint)((response[93]   << 16) + (response[94] << 8) + response[95]);
             dds.StartLSNForZone   = new uint[dds.Zones];
 
-            for(int i = 0; i < dds.Zones; i++)
-                dds.StartLSNForZone[i] = (uint)((response[260 + (i * 4) + 1] << 16) +
-                                                (response[260 + (i * 4) + 2] << 8)  + response[260 + (i * 4) + 3]);
+            for(var i = 0; i < dds.Zones; i++)
+            {
+                dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) +
+                                                (response[260 + i * 4 + 2] << 8)  + response[260 + i * 4 + 3]);
+            }
         }
 
         return dds;
@@ -154,7 +158,8 @@ public static class DDS
         sb.AppendFormat(Localization.DDS_has_been_updated_0_times, decoded.UpdateCount).AppendLine();
 
         if(decoded.Groups == 24)
-            for(int i = 0; i < decoded.GroupCertificationFlags.Length; i++)
+        {
+            for(var i = 0; i < decoded.GroupCertificationFlags.Length; i++)
             {
                 if(decoded.GroupCertificationFlags[i].InProcess)
                 {
@@ -167,6 +172,7 @@ public static class DDS
                 if(decoded.GroupCertificationFlags[i].UserCertification)
                     sb.AppendFormat(Localization.Group_0_has_been_certified_by_an_user, i).AppendLine();
             }
+        }
 
         if(decoded.Groups != 1)
             return sb.ToString();
@@ -179,7 +185,7 @@ public static class DDS
 
             sb.AppendFormat(Localization.LSN_zero_is_at_PSN_0, decoded.LSN0Location).AppendLine();
 
-            for(int i = 0; i < decoded.StartLSNForZone.Length; i++)
+            for(var i = 0; i < decoded.StartLSNForZone.Length; i++)
                 sb.AppendFormat(Localization.Zone_0_starts_at_LSN_1, i, decoded.StartLSNForZone[i]).AppendLine();
         }
 
@@ -187,6 +193,8 @@ public static class DDS
     }
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+#region Nested type: DiscDefinitionStructure
 
     public struct DiscDefinitionStructure
     {
@@ -234,6 +242,10 @@ public static class DDS
         public uint[] StartLSNForZone;
     }
 
+#endregion
+
+#region Nested type: GroupCertificationFlag
+
     public struct GroupCertificationFlag
     {
         /// <summary>Bit 7 If set, formatting of this group is in process</summary>
@@ -247,4 +259,6 @@ public static class DDS
         /// <summary>Bit 0 Reserved</summary>
         public bool Reserved2;
     }
+
+#endregion
 }

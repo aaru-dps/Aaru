@@ -35,11 +35,14 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x07: Verify error recovery page
+#region Mode Page 0x07: Verify error recovery page
+
     /// <summary>Disconnect-reconnect page Page code 0x07 12 bytes in SCSI-2, SBC-1, SBC-2</summary>
     public struct ModePage_07
     {
@@ -119,14 +122,19 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.VerifyRetryCount > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount).
                AppendLine();
+        }
 
         if(page.RecoveryTimeLimit > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
                             page.RecoveryTimeLimit).AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x07: Verify error recovery page
+
+#endregion Mode Page 0x07: Verify error recovery page
 }

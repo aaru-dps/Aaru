@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x05: Flexible disk page
+#region Mode Page 0x05: Flexible disk page
+
     /// <summary>Disconnect-reconnect page Page code 0x05 32 bytes in SCSI-2, SBC-1</summary>
     public struct ModePage_05
     {
@@ -163,18 +165,22 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization.Transfer_rate_0_kbits, page.TransferRate).AppendLine();
-        sb.AppendFormat("\t" + Localization._0_heads, page.Heads).AppendLine();
-        sb.AppendFormat("\t" + Localization._0_cylinders, page.Cylinders).AppendLine();
-        sb.AppendFormat("\t" + Localization._0_sectors_per_track, page.SectorsPerTrack).AppendLine();
-        sb.AppendFormat("\t" + Localization._0_bytes_per_sector, page.BytesPerSector).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_heads,              page.Heads).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_cylinders,          page.Cylinders).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_sectors_per_track,  page.SectorsPerTrack).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_bytes_per_sector,   page.BytesPerSector).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
+        {
             sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
                AppendLine();
+        }
 
         if(page.WriteReduceCylinder < page.Cylinders)
+        {
             sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
                AppendLine();
+        }
 
         if(page.DriveStepRate > 0)
             sb.AppendFormat("\t" + Localization.Drive_steps_in_0_μs, (uint)page.DriveStepRate * 100).AppendLine();
@@ -186,18 +192,30 @@ public static partial class Modes
             sb.AppendFormat("\t" + Localization.Heads_settles_in_0_μs, (uint)page.HeadSettleDelay * 100).AppendLine();
 
         if(!page.TRDY)
+        {
             sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
-                             (double)page.MotorOnDelay * 10).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
+                    (double)page.MotorOnDelay * 10).AppendLine();
+        }
         else
+        {
             sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
-                             (double)page.MotorOnDelay * 10).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
+                    (double)page.MotorOnDelay * 10).AppendLine();
+        }
 
         if(page.MotorOffDelay != 0xFF)
+        {
             sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
-                             (double)page.MotorOffDelay * 10).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
+                    (double)page.MotorOffDelay * 10).AppendLine();
+        }
         else
             sb.AppendLine("\t" + Localization.Target_shall_never_release_the_motor_on_signal);
 
@@ -243,8 +261,11 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin34 & 0x08) == 0x08 ? Localization.Pin_34_indicates_unknown_function_0_when_active_high : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
-                                page.Pin34 & 0x07);
+                sb.AppendFormat(
+                    "\t" + ((page.Pin34 & 0x08) == 0x08
+                                ? Localization.Pin_34_indicates_unknown_function_0_when_active_high
+                                : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
+                    page.Pin34 & 0x07);
 
                 break;
         }
@@ -262,18 +283,23 @@ public static partial class Modes
 
                 break;
             case 2:
-                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_eject_when_active_high
+                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
+                                      ? Localization.Pin_4_indicates_eject_when_active_high
                                       : Localization.Pin_4_indicates_eject_when_active_low));
 
                 break;
             case 3:
-                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_head_load_when_active_high
+                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
+                                      ? Localization.Pin_4_indicates_head_load_when_active_high
                                       : Localization.Pin_4_indicates_head_load_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_unknown_function_0_when_active_high : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
-                                page.Pin4 & 0x07);
+                sb.AppendFormat(
+                    "\t" + ((page.Pin4 & 0x08) == 0x08
+                                ? Localization.Pin_4_indicates_unknown_function_0_when_active_high
+                                : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
+                    page.Pin4 & 0x07);
 
                 break;
         }
@@ -285,8 +311,11 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin2 & 0x08) == 0x08 ? Localization.Pin_2_indicates_unknown_function_0_when_active_high : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
-                                page.Pin2 & 0x07);
+                sb.AppendFormat(
+                    "\t" + ((page.Pin2 & 0x08) == 0x08
+                                ? Localization.Pin_2_indicates_unknown_function_0_when_active_high
+                                : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
+                    page.Pin2 & 0x07);
 
                 break;
         }
@@ -304,13 +333,17 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin1 & 0x08) == 0x08 ? Localization.Pin_1_indicates_unknown_function_0_when_active_high : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
-                                page.Pin1 & 0x07);
+                sb.AppendFormat(
+                    "\t" + ((page.Pin1 & 0x08) == 0x08
+                                ? Localization.Pin_1_indicates_unknown_function_0_when_active_high
+                                : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
+                    page.Pin1 & 0x07);
 
                 break;
         }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x05: Flexible disk page
+
+#endregion Mode Page 0x05: Flexible disk page
 }

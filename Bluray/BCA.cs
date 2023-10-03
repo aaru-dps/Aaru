@@ -51,12 +51,18 @@ namespace Aaru.Decoders.Bluray;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class BCA
 {
     const string MODULE_NAME = "BD BCA decoder";
-    #region Public structures
+
+#region Nested type: BurstCuttingArea
+
+#region Public structures
+
     public struct BurstCuttingArea
     {
         /// <summary>Bytes 0 to 1 Always 66</summary>
@@ -68,8 +74,13 @@ public static class BCA
         /// <summary>Byte 4 to 67 BCA data</summary>
         public byte[] BCA;
     }
-    #endregion Public structures
-    #region Public methods
+
+#endregion Public structures
+
+#endregion
+
+#region Public methods
+
     public static BurstCuttingArea? Decode(byte[] BCAResponse)
     {
         if(BCAResponse == null)
@@ -120,5 +131,6 @@ public static class BCA
     }
 
     public static string Prettify(byte[] BCAResponse) => Prettify(Decode(BCAResponse));
-    #endregion Public methods
+
+#endregion Public methods
 }

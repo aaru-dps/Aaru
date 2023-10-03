@@ -35,13 +35,14 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
     public static byte[] EncodeModePage_01_MMC(ModePage_01_MMC page)
     {
-        byte[] pg = new byte[12];
+        var pg = new byte[12];
 
         pg[0] = 0x01;
         pg[1] = 10;
@@ -61,7 +62,8 @@ public static partial class Modes
         return pg;
     }
 
-    #region Mode Page 0x01: Read error recovery page for MultiMedia Devices
+#region Mode Page 0x01: Read error recovery page for MultiMedia Devices
+
     /// <summary>
     ///     Read error recovery page for MultiMedia Devices Page code 0x01 8 bytes in SCSI-2, MMC-1 12 bytes in MMC-2,
     ///     MMC-3
@@ -126,8 +128,10 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.ReadRetryCount > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount).
                AppendLine();
+        }
 
         string AllUsed              = "\t" + Localization.All_available_recovery_procedures_will_be_used + "\n";
         string CIRCRetriesUsed      = "\t" + Localization.Only_retries_and_CIRC_are_used                 + "\n";
@@ -215,10 +219,14 @@ public static partial class Modes
                 sb.AppendLine(RetriesUsed + RecoveredAbort + UnrecCIRCAbortData);
 
                 break;
-            case 0x30: goto case 0x10;
-            case 0x31: goto case 0x11;
-            case 0x34: goto case 0x14;
-            case 0x35: goto case 0x15;
+            case 0x30:
+                goto case 0x10;
+            case 0x31:
+                goto case 0x11;
+            case 0x34:
+                goto case 0x14;
+            case 0x35:
+                goto case 0x15;
             default:
                 sb.AppendFormat(Localization.Unknown_recovery_parameter_0, page.Parameter).AppendLine();
 
@@ -226,14 +234,19 @@ public static partial class Modes
         }
 
         if(page.WriteRetryCount > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount).
                AppendLine();
+        }
 
         if(page.RecoveryTimeLimit > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
                             page.RecoveryTimeLimit).AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
+
+#endregion Mode Page 0x01: Read error recovery page for MultiMedia Devices
 }

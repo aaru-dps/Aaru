@@ -37,11 +37,14 @@ using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x2A: CD-ROM capabilities page
+#region Mode Page 0x2A: CD-ROM capabilities page
+
     public static string PrettifyModePage_2A(byte[] pageResponse) =>
         PrettifyModePage_2A(ModePage_2A.Decode(pageResponse));
 
@@ -126,14 +129,17 @@ public static partial class Modes
         {
             sb.AppendLine("\t" + Localization.Drive_power_ups_locked);
 
-            sb.AppendLine(modePage.LockState ? "\t" + Localization.Drive_is_locked__media_cannot_be_ejected_or_inserted
+            sb.AppendLine(modePage.LockState
+                              ? "\t" + Localization.Drive_is_locked__media_cannot_be_ejected_or_inserted
                               : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
         }
         else
+        {
             sb.AppendLine(modePage.LockState
                               ? "\t" + Localization.
                                     Drive_is_locked__media_cannot_be_ejected__but_if_empty__can_be_inserted
                               : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
+        }
 
         if(modePage.Eject)
             sb.AppendLine("\t" + Localization.Drive_can_eject_media);
@@ -145,43 +151,59 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Each_channel_s_volume_can_be_controlled_independently);
 
         if(modePage.SupportedVolumeLevels > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_supports_0_volume_levels, modePage.SupportedVolumeLevels).
                AppendLine();
+        }
 
         if(modePage.BufferSize > 0)
             sb.AppendFormat("\t" + Localization.Drive_has_0_Kbyte_of_buffer, modePage.BufferSize).AppendLine();
 
         if(modePage.MaximumSpeed > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_maximum_reading_speed_is_0_Kbyte_sec, modePage.MaximumSpeed).
                AppendLine();
+        }
 
         if(modePage.CurrentSpeed > 0)
+        {
             sb.AppendFormat("\t" + Localization.Drive_current_reading_speed_is_0_Kbyte_sec, modePage.CurrentSpeed).
                AppendLine();
+        }
 
         if(modePage.ReadCDR)
         {
-            sb.AppendLine(modePage.WriteCDR ? "\t" + Localization.Drive_can_read_and_write_CD_R
-                              : "\t"               + Localization.Drive_can_read_CD_R);
+            sb.AppendLine(modePage.WriteCDR
+                              ? "\t" + Localization.Drive_can_read_and_write_CD_R
+                              : "\t" + Localization.Drive_can_read_CD_R);
 
             if(modePage.Method2)
                 sb.AppendLine("\t" + Localization.Drive_supports_reading_CD_R_packet_media);
         }
 
         if(modePage.ReadCDRW)
-            sb.AppendLine(modePage.WriteCDRW ? "\t" + Localization.Drive_can_read_and_write_CD_RW
-                              : "\t"                + Localization.Drive_can_read_CD_RW);
+        {
+            sb.AppendLine(modePage.WriteCDRW
+                              ? "\t" + Localization.Drive_can_read_and_write_CD_RW
+                              : "\t" + Localization.Drive_can_read_CD_RW);
+        }
 
         if(modePage.ReadDVDROM)
             sb.AppendLine("\t" + Localization.Drive_can_read_DVD_ROM);
 
         if(modePage.ReadDVDR)
-            sb.AppendLine(modePage.WriteDVDR ? "\t" + Localization.Drive_can_read_and_write_DVD_R
-                              : "\t"                + Localization.Drive_can_read_DVD_R);
+        {
+            sb.AppendLine(modePage.WriteDVDR
+                              ? "\t" + Localization.Drive_can_read_and_write_DVD_R
+                              : "\t" + Localization.Drive_can_read_DVD_R);
+        }
 
         if(modePage.ReadDVDRAM)
-            sb.AppendLine(modePage.WriteDVDRAM ? "\t" + Localization.Drive_can_read_and_write_DVD_RAM
-                              : "\t"                  + Localization.Drive_can_read_DVD_RAM);
+        {
+            sb.AppendLine(modePage.WriteDVDRAM
+                              ? "\t" + Localization.Drive_can_read_and_write_DVD_RAM
+                              : "\t" + Localization.Drive_can_read_DVD_RAM);
+        }
 
         if(modePage.Composite)
             sb.AppendLine("\t" + Localization.Drive_can_deliver_a_composite_audio_and_video_data_stream);
@@ -196,6 +218,7 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Drive_contains_a_changer_that_can_report_the_exact_contents_of_the_slots);
 
         if(modePage.CurrentWriteSpeedSelected > 0)
+        {
             switch(modePage.RotationControlSelected)
             {
                 case 0:
@@ -209,20 +232,27 @@ public static partial class Modes
 
                     break;
             }
+        }
         else
         {
             if(modePage.MaxWriteSpeed > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_maximum_writing_speed_is_0_Kbyte_sec, modePage.MaxWriteSpeed).
                    AppendLine();
+            }
 
             if(modePage.CurrentWriteSpeed > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec,
                                 modePage.CurrentWriteSpeed).AppendLine();
+            }
         }
 
         if(modePage.WriteSpeedPerformanceDescriptors != null)
+        {
             foreach(ModePage_2A_WriteDescriptor descriptor in
                     modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+            {
                 switch(descriptor.RotationControl)
                 {
                     case 0:
@@ -236,6 +266,8 @@ public static partial class Modes
 
                         break;
                 }
+            }
+        }
 
         if(modePage.TestWrite)
             sb.AppendLine("\t" + Localization.Drive_supports_test_writing);
@@ -257,5 +289,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x2A: CD-ROM capabilities page
+
+#endregion Mode Page 0x2A: CD-ROM capabilities page
 }

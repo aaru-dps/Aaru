@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x06: Optical memory page
+#region Mode Page 0x06: Optical memory page
+
     /// <summary>Optical memory page Page code 0x06 4 bytes in SCSI-2</summary>
     public struct ModePage_06
     {
@@ -92,5 +94,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x06: Optical memory page
+
+#endregion Mode Page 0x06: Optical memory page
 }

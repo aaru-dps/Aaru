@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x1C: Timer & Protect page
+#region Mode Page 0x1C: Timer & Protect page
+
     /// <summary>Timer &amp; Protect page Page code 0x1C 8 bytes in INF-8070</summary>
     public struct ModePage_1C_SFF
     {
@@ -186,5 +188,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1C: Timer & Protect page
+
+#endregion Mode Page 0x1C: Timer & Protect page
 }

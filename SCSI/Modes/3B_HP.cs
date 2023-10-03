@@ -37,11 +37,13 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region HP Mode Page 0x3B: Serial Number Override Mode page
+#region HP Mode Page 0x3B: Serial Number Override Mode page
+
     public struct HP_ModePage_3B
     {
         /// <summary>Parameters can be saved</summary>
@@ -106,5 +108,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion HP Mode Page 0x3B: Serial Number Override Mode page
+
+#endregion HP Mode Page 0x3B: Serial Number Override Mode page
 }

@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x10: Device configuration page
+#region Mode Page 0x10: Device configuration page
+
     /// <summary>Device configuration page Page code 0x10 16 bytes in SCSI-2, SSC-1, SSC-2, SSC-3</summary>
     public struct ModePage_10_SSC
     {
@@ -175,26 +177,30 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t" + Localization.Active_format_0, page.ActiveFormat).AppendLine();
+        sb.AppendFormat("\t" + Localization.Active_format_0,    page.ActiveFormat).AppendLine();
         sb.AppendFormat("\t" + Localization.Active_partition_0, page.ActivePartition).AppendLine();
 
         sb.AppendFormat("\t" + Localization.Write_buffer_shall_have_a_full_ratio_of_0_before_being_flushed_to_medium,
                         page.WriteBufferFullRatio).AppendLine();
 
         sb.
-            AppendFormat("\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
-                         page.ReadBufferEmptyRatio).AppendLine();
+            AppendFormat(
+                "\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
+                page.ReadBufferEmptyRatio).AppendLine();
 
         sb.
-            AppendFormat("\t" + Localization.Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
-                         page.WriteDelayTime * 100).AppendLine();
+            AppendFormat(
+                "\t" + Localization.
+                    Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
+                page.WriteDelayTime * 100).AppendLine();
 
         if(page.DBR)
         {
             sb.AppendLine("\t" + Localization.Drive_supports_recovering_data_from_buffer);
 
-            sb.AppendLine(page.RBO ? "\t" + Localization.Recovered_buffer_data_comes_in_LIFO_order
-                              : "\t"      + Localization.Recovered_buffer_data_comes_in_FIFO_order);
+            sb.AppendLine(page.RBO
+                              ? "\t" + Localization.Recovered_buffer_data_comes_in_LIFO_order
+                              : "\t" + Localization.Recovered_buffer_data_comes_in_FIFO_order);
         }
 
         if(page.BIS)
@@ -233,7 +239,8 @@ public static partial class Modes
 
         switch(page.GapSize)
         {
-            case 0: break;
+            case 0:
+                break;
             case 1:
                 sb.AppendLine("\t" + Localization.Inter_block_gap_is_long_enough_to_support_update_in_place);
 
@@ -295,8 +302,11 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Permanent_write_protect_is_enabled);
 
         if(page.BAML)
-            sb.AppendLine(page.BAM ? "\t" + Localization.Drive_operates_using_explicit_address_mode
-                              : "\t"      + Localization.Drive_operates_using_implicit_address_mode);
+        {
+            sb.AppendLine(page.BAM
+                              ? "\t" + Localization.Drive_operates_using_explicit_address_mode
+                              : "\t" + Localization.Drive_operates_using_implicit_address_mode);
+        }
 
         switch(page.RewindOnReset)
         {
@@ -327,5 +337,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x10: Device configuration page
+
+#endregion Mode Page 0x10: Device configuration page
 }

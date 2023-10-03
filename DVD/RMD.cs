@@ -48,21 +48,12 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class RMD
 {
-    public struct LastBorderOutRMD
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to end RMD in last recorded Border-out</summary>
-        public byte[] RMD;
-    }
+#region Nested type: HDMediumStatus
 
     public struct HDMediumStatus
     {
@@ -81,4 +72,22 @@ public static class RMD
         /// <summary>Bytes 6 to 7 Number of remaining RMDs in current RMZ</summary>
         public ushort CurrentRemainingRMDs;
     }
+
+#endregion
+
+#region Nested type: LastBorderOutRMD
+
+    public struct LastBorderOutRMD
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to end RMD in last recorded Border-out</summary>
+        public byte[] RMD;
+    }
+
+#endregion
 }

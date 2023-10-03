@@ -38,8 +38,10 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI.SSC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DensitySupport
 {
     public static DensitySupportHeader? DecodeDensity(byte[] response)
@@ -47,13 +49,13 @@ public static class DensitySupport
         if(response is not { Length: > 56 })
             return null;
 
-        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
         List<DensitySupportDescriptor> descriptors = new();
-        int                            offset      = 4;
+        var                            offset      = 4;
 
         while(offset < response.Length)
         {
@@ -74,7 +76,7 @@ public static class DensitySupport
                                   (response[offset + 14] << 8)  + response[offset + 15])
             };
 
-            byte[] tmp = new byte[8];
+            var tmp = new byte[8];
             Array.Copy(response, offset + 16, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -148,13 +150,13 @@ public static class DensitySupport
         if(response is not { Length: > 60 })
             return null;
 
-        ushort responseLen = (ushort)((response[0] << 8) + response[1] + 2);
+        var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
         if(response.Length != responseLen)
             return null;
 
         List<MediaTypeSupportDescriptor> descriptors = new();
-        int                              offset      = 4;
+        var                              offset      = 4;
 
         while(offset < response.Length)
         {
@@ -175,7 +177,7 @@ public static class DensitySupport
             descriptor.length    = (ushort)((response[offset + 16] << 8) + response[offset + 17]);
             descriptor.reserved1 = response[offset + 18];
             descriptor.reserved1 = response[offset + 19];
-            byte[] tmp = new byte[8];
+            var tmp = new byte[8];
             Array.Copy(response, offset + 20, tmp, 0, 8);
             descriptor.organization = StringHandlers.CToString(tmp).Trim();
             tmp                     = new byte[8];
@@ -219,7 +221,7 @@ public static class DensitySupport
             {
                 sb.AppendFormat("\t" + Localization.Medium_supports_following_density_codes);
 
-                for(int i = 0; i < descriptor.numberOfCodes; i++)
+                for(var i = 0; i < descriptor.numberOfCodes; i++)
                     sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
 
                 sb.AppendLine();
@@ -237,19 +239,7 @@ public static class DensitySupport
 
     public static string PrettifyMediumType(byte[] response) => PrettifyMediumType(DecodeMediumType(response));
 
-    public struct DensitySupportHeader
-    {
-        public ushort                     length;
-        public ushort                     reserved;
-        public DensitySupportDescriptor[] descriptors;
-    }
-
-    public struct MediaTypeSupportHeader
-    {
-        public ushort                       length;
-        public ushort                       reserved;
-        public MediaTypeSupportDescriptor[] descriptors;
-    }
+#region Nested type: DensitySupportDescriptor
 
     public struct DensitySupportDescriptor
     {
@@ -270,6 +260,21 @@ public static class DensitySupport
         public string description;
     }
 
+#endregion
+
+#region Nested type: DensitySupportHeader
+
+    public struct DensitySupportHeader
+    {
+        public ushort                     length;
+        public ushort                     reserved;
+        public DensitySupportDescriptor[] descriptors;
+    }
+
+#endregion
+
+#region Nested type: MediaTypeSupportDescriptor
+
     public struct MediaTypeSupportDescriptor
     {
         public byte   mediumType;
@@ -285,4 +290,17 @@ public static class DensitySupport
         public string name;
         public string description;
     }
+
+#endregion
+
+#region Nested type: MediaTypeSupportHeader
+
+    public struct MediaTypeSupportHeader
+    {
+        public ushort                       length;
+        public ushort                       reserved;
+        public MediaTypeSupportDescriptor[] descriptors;
+    }
+
+#endregion
 }

@@ -51,17 +51,16 @@ namespace Aaru.Decoders.Bluray;
 /// T10/1675-D revision 2c
 /// T10/1675-D revision 4
 /// T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DDS
 {
-    #region Private constants
-    /// <summary>Disc Definition Structure Identifier "DS"</summary>
-    const ushort DDSIdentifier = 0x4453;
-    const string MODULE_NAME = "BD DDS decoder";
-    #endregion Private constants
+#region Nested type: DiscDefinitionStructure
 
-    #region Public structures
+#region Public structures
+
     public struct DiscDefinitionStructure
     {
         /// <summary>Bytes 0 to 1 Data Length</summary>
@@ -115,9 +114,21 @@ public static class DDS
         /// <summary>Bytes 100 to end Disc type specific data</summary>
         public byte[] DiscTypeSpecificData;
     }
-    #endregion Public structures
 
-    #region Public methods
+#endregion Public structures
+
+#endregion
+
+#region Private constants
+
+    /// <summary>Disc Definition Structure Identifier "DS"</summary>
+    const ushort DDSIdentifier = 0x4453;
+    const string MODULE_NAME = "BD DDS decoder";
+
+#endregion Private constants
+
+#region Public methods
+
     public static DiscDefinitionStructure? Decode(byte[] DDSResponse)
     {
         if(DDSResponse == null)
@@ -175,18 +186,18 @@ public static class DDS
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat(Localization.DDS_Format_0, response.Format).AppendLine();
-        sb.AppendFormat(Localization.DDS_has_been_updated_0_times, response.UpdateCount).AppendLine();
-        sb.AppendFormat(Localization.First_PSN_of_Drive_Area_0, response.DriveAreaPSN).AppendLine();
-        sb.AppendFormat(Localization.First_PSN_of_Defect_List_0, response.DefectListPSN).AppendLine();
+        sb.AppendFormat(Localization.DDS_Format_0,                   response.Format).AppendLine();
+        sb.AppendFormat(Localization.DDS_has_been_updated_0_times,   response.UpdateCount).AppendLine();
+        sb.AppendFormat(Localization.First_PSN_of_Drive_Area_0,      response.DriveAreaPSN).AppendLine();
+        sb.AppendFormat(Localization.First_PSN_of_Defect_List_0,     response.DefectListPSN).AppendLine();
         sb.AppendFormat(Localization.PSN_of_User_Data_Areas_LSN_0_0, response.PSNofLSNZero).AppendLine();
-        sb.AppendFormat(Localization.Last_User_Data_Areas_LSN_0_0, response.LastUserAreaLSN).AppendLine();
-        sb.AppendFormat(Localization.ISA0_size_0, response.ISA0).AppendLine();
-        sb.AppendFormat(Localization.OSA_size_0, response.OSA).AppendLine();
-        sb.AppendFormat(Localization.ISA1_size_0, response.ISA1).AppendLine();
-        sb.AppendFormat(Localization.Spare_Area_Full_Flags_0, response.SpareAreaFullFlags).AppendLine();
-        sb.AppendFormat(Localization.Disc_Type_Specific_Field_1_0, response.DiscTypeSpecificField1).AppendLine();
-        sb.AppendFormat(Localization.Disc_Type_Specific_Field_2_0, response.DiscTypeSpecificField2).AppendLine();
+        sb.AppendFormat(Localization.Last_User_Data_Areas_LSN_0_0,   response.LastUserAreaLSN).AppendLine();
+        sb.AppendFormat(Localization.ISA0_size_0,                    response.ISA0).AppendLine();
+        sb.AppendFormat(Localization.OSA_size_0,                     response.OSA).AppendLine();
+        sb.AppendFormat(Localization.ISA1_size_0,                    response.ISA1).AppendLine();
+        sb.AppendFormat(Localization.Spare_Area_Full_Flags_0,        response.SpareAreaFullFlags).AppendLine();
+        sb.AppendFormat(Localization.Disc_Type_Specific_Field_1_0,   response.DiscTypeSpecificField1).AppendLine();
+        sb.AppendFormat(Localization.Disc_Type_Specific_Field_2_0,   response.DiscTypeSpecificField2).AppendLine();
         sb.AppendFormat(Localization.Blu_ray_DDS_Status_Bits_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.StatusBits, 80));
         sb.AppendFormat(Localization.Blu_ray_DDS_Disc_Type_Specific_Data_in_hex_follows);
@@ -225,5 +236,6 @@ public static class DDS
     }
 
     public static string Prettify(byte[] DDSResponse) => Prettify(Decode(DDSResponse));
-    #endregion Public methods
+
+#endregion Public methods
 }

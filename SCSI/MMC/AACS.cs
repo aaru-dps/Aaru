@@ -50,8 +50,10 @@ namespace Aaru.Decoders.SCSI.MMC;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class AACS
 {
     public static AACSVolumeIdentifier? DecodeAACSVolumeIdentifier(byte[] AACSVIResponse)
@@ -306,12 +308,12 @@ public static class AACS
 
         decoded.Extents = new AACSLBAExtent[(AACSLBAExtsResponse.Length - 4) / 16];
 
-        for(int i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
+        for(var i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
         {
             decoded.Extents[i].Reserved = new byte[8];
-            Array.Copy(AACSLBAExtsResponse, 0 + (i * 16) + 4, decoded.Extents[i].Reserved, 0, 8);
-            decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8  + (i * 16) + 4);
-            decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + (i * 16) + 4);
+            Array.Copy(AACSLBAExtsResponse, 0 + i * 16 + 4, decoded.Extents[i].Reserved, 0, 8);
+            decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8  + i * 16 + 4);
+            decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + i * 16 + 4);
         }
 
         return decoded;
@@ -327,14 +329,19 @@ public static class AACS
         var sb = new StringBuilder();
 
         if(response.MaxLBAExtents == 0)
-            sb.AppendLine(response.DataLength > 2 ? Localization.Drive_can_store_256_LBA_Extents
+        {
+            sb.AppendLine(response.DataLength > 2
+                              ? Localization.Drive_can_store_256_LBA_Extents
                               : Localization.Drive_cannot_store_LBA_Extents);
+        }
         else
             sb.AppendFormat(Localization.Drive_can_store_0_LBA_Extents, response.MaxLBAExtents).AppendLine();
 
-        for(int i = 0; i < response.Extents.Length; i++)
+        for(var i = 0; i < response.Extents.Length; i++)
+        {
             sb.AppendFormat(Localization.LBA_Extent_0_starts_at_LBA_1_and_goes_for_2_sectors, i,
                             response.Extents[i].StartLBA, response.Extents[i].LBACount);
+        }
 
         return sb.ToString();
     }
@@ -346,53 +353,7 @@ public static class AACS
         return PrettifyAACSLBAExtents(decoded);
     }
 
-    public struct AACSVolumeIdentifier
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to end AACS volume identifier data</summary>
-        public byte[] VolumeIdentifier;
-    }
-
-    public struct AACSMediaSerialNumber
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to end AACS media serial number</summary>
-        public byte[] MediaSerialNumber;
-    }
-
-    public struct AACSMediaIdentifier
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Bytes 4 to end AACS media identifier data</summary>
-        public byte[] MediaIdentifier;
-    }
-
-    public struct AACSMediaKeyBlock
-    {
-        /// <summary>Bytes 0 to 1 Data length</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved;
-        /// <summary>Byte 3 Number of MKB packs available to transfer</summary>
-        public byte TotalPacks;
-        /// <summary>Bytes 4 to end AACS media key block packs</summary>
-        public byte[] MediaKeyBlockPacks;
-    }
+#region Nested type: AACSDataKeys
 
     public struct AACSDataKeys
     {
@@ -405,6 +366,24 @@ public static class AACS
         /// <summary>Bytes 4 to end AACS data keys</summary>
         public byte[] DataKeys;
     }
+
+#endregion
+
+#region Nested type: AACSLBAExtent
+
+    public struct AACSLBAExtent
+    {
+        /// <summary>Bytes 0 to 7 Reserved</summary>
+        public byte[] Reserved;
+        /// <summary>Bytes 8 to 11 Start LBA of extent</summary>
+        public uint StartLBA;
+        /// <summary>Bytes 12 to 15 Extent length</summary>
+        public uint LBACount;
+    }
+
+#endregion
+
+#region Nested type: AACSLBAExtentsResponse
 
     public struct AACSLBAExtentsResponse
     {
@@ -421,13 +400,69 @@ public static class AACS
         public AACSLBAExtent[] Extents;
     }
 
-    public struct AACSLBAExtent
+#endregion
+
+#region Nested type: AACSMediaIdentifier
+
+    public struct AACSMediaIdentifier
     {
-        /// <summary>Bytes 0 to 7 Reserved</summary>
-        public byte[] Reserved;
-        /// <summary>Bytes 8 to 11 Start LBA of extent</summary>
-        public uint StartLBA;
-        /// <summary>Bytes 12 to 15 Extent length</summary>
-        public uint LBACount;
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to end AACS media identifier data</summary>
+        public byte[] MediaIdentifier;
     }
+
+#endregion
+
+#region Nested type: AACSMediaKeyBlock
+
+    public struct AACSMediaKeyBlock
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved;
+        /// <summary>Byte 3 Number of MKB packs available to transfer</summary>
+        public byte TotalPacks;
+        /// <summary>Bytes 4 to end AACS media key block packs</summary>
+        public byte[] MediaKeyBlockPacks;
+    }
+
+#endregion
+
+#region Nested type: AACSMediaSerialNumber
+
+    public struct AACSMediaSerialNumber
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to end AACS media serial number</summary>
+        public byte[] MediaSerialNumber;
+    }
+
+#endregion
+
+#region Nested type: AACSVolumeIdentifier
+
+    public struct AACSVolumeIdentifier
+    {
+        /// <summary>Bytes 0 to 1 Data length</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Bytes 4 to end AACS volume identifier data</summary>
+        public byte[] VolumeIdentifier;
+    }
+
+#endregion
 }

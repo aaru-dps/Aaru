@@ -46,12 +46,12 @@ public class SectorBuilder
         for(uint i = 0; i < 256; i++)
         {
             uint edc = i;
-            uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            var  j   = (uint)(i << 1 ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
             for(j = 0; j < 8; j++)
-                edc = (edc >> 1) ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
+                edc = edc >> 1 ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
 
             _edcTable[i] = edc;
         }
@@ -61,7 +61,7 @@ public class SectorBuilder
         ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
 
     public void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
-                                  TrackType type, long lba)
+                                  TrackType  type,   long lba)
     {
         //
         // Sync
@@ -81,9 +81,9 @@ public class SectorBuilder
 
         (byte minute, byte second, byte frame) msf = LbaToMsf(lba);
 
-        sector[0x00C] = (byte)(((msf.minute / 10) << 4) + (msf.minute % 10));
-        sector[0x00D] = (byte)(((msf.second / 10) << 4) + (msf.second % 10));
-        sector[0x00E] = (byte)(((msf.frame  / 10) << 4) + (msf.frame  % 10));
+        sector[0x00C] = (byte)((msf.minute / 10 << 4) + msf.minute % 10);
+        sector[0x00D] = (byte)((msf.second / 10 << 4) + msf.second % 10);
+        sector[0x00E] = (byte)((msf.frame  / 10 << 4) + msf.frame  % 10);
 
         switch(type)
         {
@@ -111,7 +111,8 @@ public class SectorBuilder
                 sector[0x013] = sector[0x017];
 
                 break;
-            default: return;
+            default:
+                return;
         }
     }
 
@@ -120,13 +121,13 @@ public class SectorBuilder
         int pos = srcOffset;
 
         for(; size > 0; size--)
-            edc = (edc >> 8) ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
+            edc = edc >> 8 ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
 
         return edc;
     }
 
     public void ReconstructEcc(ref byte[] sector, // must point to a full 2352-byte sector
-                               TrackType type)
+                               TrackType  type)
     {
         byte[] computedEdc;
 
@@ -159,10 +160,11 @@ public class SectorBuilder
                 sector[0x92F] = computedEdc[3];
 
                 break;
-            default: return;
+            default:
+                return;
         }
 
-        byte[] zeroaddress = new byte[4];
+        var zeroaddress = new byte[4];
 
         switch(type)
         {
@@ -188,7 +190,8 @@ public class SectorBuilder
                 EccWriteSector(zeroaddress, sector, ref sector, 0, 0x10, 0x81C);
 
                 break;
-            default: return;
+            default:
+                return;
         }
 
         //
@@ -198,19 +201,19 @@ public class SectorBuilder
 
     void EccWriteSector(byte[] address, byte[] data, ref byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
     {
-        WriteEcc(address, data, 86, 24, 2, 86, ref ecc, addressOffset, dataOffset, eccOffset);         // P
+        WriteEcc(address, data, 86, 24, 2,  86, ref ecc, addressOffset, dataOffset, eccOffset);        // P
         WriteEcc(address, data, 52, 43, 86, 88, ref ecc, addressOffset, dataOffset, eccOffset + 0xAC); // Q
     }
 
-    void WriteEcc(byte[] address, byte[] data, uint majorCount, uint minorCount, uint majorMult, uint minorInc,
-                  ref byte[] ecc, int addressOffset, int dataOffset, int eccOffset)
+    void WriteEcc(byte[]     address, byte[] data, uint majorCount, uint minorCount, uint majorMult, uint minorInc,
+                  ref byte[] ecc,     int    addressOffset, int dataOffset, int eccOffset)
     {
         uint size = majorCount * minorCount;
         uint major;
 
         for(major = 0; major < majorCount; major++)
         {
-            uint idx  = ((major >> 1) * majorMult) + (major & 1);
+            uint idx  = (major >> 1) * majorMult + (major & 1);
             byte eccA = 0;
             byte eccB = 0;
             uint minor;

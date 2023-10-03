@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
+#region HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
+
     public struct HP_ModePage_3E
     {
         /// <summary>Parameters can be saved</summary>
@@ -87,13 +89,15 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendLine(page.CDmode ? "\t" + Localization.Drive_is_emulating_a_CD_ROM_drive
-                          : "\t"         + Localization.Drive_is_not_emulating_a_CD_ROM_drive);
+        sb.AppendLine(page.CDmode
+                          ? "\t" + Localization.Drive_is_emulating_a_CD_ROM_drive
+                          : "\t" + Localization.Drive_is_not_emulating_a_CD_ROM_drive);
 
         if(page.NonAuto)
             sb.AppendLine("\t" + Localization.Drive_will_not_exit_emulation_automatically);
 
         return sb.ToString();
     }
-    #endregion HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
+
+#endregion HP Mode Page 0x3E: CD-ROM Emulation/Disaster Recovery Mode page
 }

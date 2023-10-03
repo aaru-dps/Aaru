@@ -52,8 +52,9 @@ namespace Aaru.Decoders.CD;
 // T10/1836-D revision 2g
 // ISO/IEC 61104: Compact disc video system - 12 cm CD-V
 // ISO/IEC 60908: Audio recording - Compact disc digital audio system
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class TOC
 {
     const string MODULE_NAME = "CD TOC decoder";
@@ -82,16 +83,16 @@ public static class TOC
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 8; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 8; i++)
         {
-            decoded.TrackDescriptors[i].Reserved1   = CDTOCResponse[0 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].ADR         = (byte)((CDTOCResponse[1 + (i * 8) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDTOCResponse[1 + (i * 8) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + (i * 8) + 4];
-            decoded.TrackDescriptors[i].Reserved2   = CDTOCResponse[3 + (i * 8) + 4];
+            decoded.TrackDescriptors[i].Reserved1   = CDTOCResponse[0 + i * 8 + 4];
+            decoded.TrackDescriptors[i].ADR         = (byte)((CDTOCResponse[1 + i * 8 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL     = (byte)(CDTOCResponse[1 + i * 8 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TrackNumber = CDTOCResponse[2 + i * 8 + 4];
+            decoded.TrackDescriptors[i].Reserved2   = CDTOCResponse[3 + i * 8 + 4];
 
             decoded.TrackDescriptors[i].TrackStartAddress =
-                BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + (i * 8) + 4);
+                BigEndianBitConverter.ToUInt32(CDTOCResponse, 4 + i * 8 + 4);
         }
 
         return decoded;
@@ -107,7 +108,7 @@ public static class TOC
         var sb = new StringBuilder();
 
         sb.AppendFormat(Localization.First_track_number_in_first_complete_session_0, response.FirstTrack).AppendLine();
-        sb.AppendFormat(Localization.Last_track_number_in_last_complete_session_0, response.LastTrack).AppendLine();
+        sb.AppendFormat(Localization.Last_track_number_in_last_complete_session_0,   response.LastTrack).AppendLine();
 
         foreach(CDTOCTrackDataDescriptor descriptor in response.TrackDescriptors)
         {
@@ -182,7 +183,8 @@ public static class TOC
                 }
 
                 sb.AppendLine((descriptor.CONTROL & (byte)TocControl.CopyPermissionMask) ==
-                              (byte)TocControl.CopyPermissionMask ? Localization.Digital_copy_of_track_is_permitted
+                              (byte)TocControl.CopyPermissionMask
+                                  ? Localization.Digital_copy_of_track_is_permitted
                                   : Localization.Digital_copy_of_track_is_prohibited);
 
             #if DEBUG
@@ -207,6 +209,8 @@ public static class TOC
         return Prettify(decoded);
     }
 
+#region Nested type: CDTOC
+
     public struct CDTOC
     {
         /// <summary>Total size of returned TOC minus this field</summary>
@@ -218,6 +222,10 @@ public static class TOC
         /// <summary>Track descriptors</summary>
         public CDTOCTrackDataDescriptor[] TrackDescriptors;
     }
+
+#endregion
+
+#region Nested type: CDTOCTrackDataDescriptor
 
     public struct CDTOCTrackDataDescriptor
     {
@@ -234,4 +242,6 @@ public static class TOC
         /// <summary>Bytes 4 to 7 The track start address in LBA or in MSF</summary>
         public uint TrackStartAddress;
     }
+
+#endregion
 }

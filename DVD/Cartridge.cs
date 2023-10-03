@@ -49,8 +49,10 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class Cartridge
 {
     public static MediumStatus? Decode(byte[] response)
@@ -119,7 +121,8 @@ public static class Cartridge
 
         switch(decoded.RAMSWI)
         {
-            case 0: break;
+            case 0:
+                break;
             case 1:
                 sb.AppendLine(Localization.Disc_is_write_inhibited_because_it_has_been_extracted_from_the_cartridge);
 
@@ -139,6 +142,8 @@ public static class Cartridge
     }
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+#region Nested type: MediumStatus
 
     public struct MediumStatus
     {
@@ -172,4 +177,6 @@ public static class Cartridge
         /// </summary>
         public byte RAMSWI;
     }
+
+#endregion
 }

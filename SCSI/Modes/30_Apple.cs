@@ -36,11 +36,13 @@ using System.Linq;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Apple Mode Page 0x30: Apple OEM String
+#region Apple Mode Page 0x30: Apple OEM String
+
     static readonly byte[] AppleOEMString = "APPLE COMPUTER, INC."u8.ToArray();
 
     public static bool IsAppleModePage_30(byte[] pageResponse)
@@ -57,10 +59,11 @@ public static partial class Modes
         if(pageResponse.Length != 30)
             return false;
 
-        byte[] str = new byte[20];
+        var str = new byte[20];
         Array.Copy(pageResponse, 10, str, 0, 20);
 
         return AppleOEMString.SequenceEqual(str);
     }
-    #endregion Apple Mode Page 0x30: Apple OEM String
+
+#endregion Apple Mode Page 0x30: Apple OEM String
 }

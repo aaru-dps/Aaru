@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x1D: Medium Configuration Mode Page
+#region Mode Page 0x1D: Medium Configuration Mode Page
+
     public struct ModePage_1D
     {
         /// <summary>Parameters can be saved</summary>
@@ -134,5 +136,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1D: Medium Configuration Mode Page
+
+#endregion Mode Page 0x1D: Medium Configuration Mode Page
 }

@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x03: Format device page
+#region Mode Page 0x03: Format device page
+
     /// <summary>Disconnect-reconnect page Page code 0x03 24 bytes in SCSI-2, SBC-1</summary>
     public struct ModePage_03
     {
@@ -127,8 +129,10 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.
-            AppendFormat("\t" + Localization._0_tracks_per_zone_to_use_in_dividing_the_capacity_for_the_purpose_of_allocating_alternate_sectors,
-                         page.TracksPerZone).AppendLine();
+            AppendFormat(
+                "\t" + Localization.
+                    _0_tracks_per_zone_to_use_in_dividing_the_capacity_for_the_purpose_of_allocating_alternate_sectors,
+                page.TracksPerZone).AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_sectors_per_zone_that_shall_be_reserved_for_defect_handling,
                         page.AltSectorsPerZone).AppendLine();
@@ -139,8 +143,8 @@ public static partial class Modes
         sb.AppendFormat("\t" + Localization._0_tracks_per_LUN_that_shall_be_reserved_for_defect_handling,
                         page.AltTracksPerLun).AppendLine();
 
-        sb.AppendFormat("\t" + Localization._0_physical_sectors_per_track, page.SectorsPerTrack).AppendLine();
-        sb.AppendFormat("\t" + Localization._0_Bytes_per_physical_sector, page.BytesPerSector).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_physical_sectors_per_track,          page.SectorsPerTrack).AppendLine();
+        sb.AppendFormat("\t" + Localization._0_Bytes_per_physical_sector,           page.BytesPerSector).AppendLine();
         sb.AppendFormat("\t" + Localization.Target_dependent_interleave_value_is_0, page.Interleave).AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_sectors_between_last_block_of_one_track_and_first_block_of_the_next,
@@ -166,5 +170,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x03: Format device page
+
+#endregion Mode Page 0x03: Format device page
 }

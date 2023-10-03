@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Certance Mode Page 0x21: Drive Capabilities Control Mode page
+#region Certance Mode Page 0x21: Drive Capabilities Control Mode page
+
     public struct Certance_ModePage_21
     {
         /// <summary>Parameters can be saved</summary>
@@ -113,6 +115,7 @@ public static partial class Modes
         }
 
         if(page.FirmwareTestControl == page.FirmwareTestControl2)
+        {
             switch(page.FirmwareTestControl)
             {
                 case 0:
@@ -133,6 +136,7 @@ public static partial class Modes
 
                     break;
             }
+        }
 
         switch(page.ExtendedPOSTMode)
         {
@@ -204,5 +208,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Certance Mode Page 0x21: Drive Capabilities Control Mode page
+
+#endregion Certance Mode Page 0x21: Drive Capabilities Control Mode page
 }

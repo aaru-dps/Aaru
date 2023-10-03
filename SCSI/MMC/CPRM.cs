@@ -50,8 +50,10 @@ namespace Aaru.Decoders.SCSI.MMC;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class CPRM
 {
     public static CPRMMediaKeyBlock? DecodeCPRMMediaKeyBlock(byte[] CPRMMKBResponse)
@@ -101,6 +103,8 @@ public static class CPRM
         return PrettifyCPRMMediaKeyBlock(decoded);
     }
 
+#region Nested type: CPRMMediaKeyBlock
+
     public struct CPRMMediaKeyBlock
     {
         /// <summary>Bytes 0 to 1 Data Length</summary>
@@ -112,4 +116,6 @@ public static class CPRM
         /// <summary>Byte 4 MKB Packs</summary>
         public byte[] MKBPackData;
     }
+
+#endregion
 }

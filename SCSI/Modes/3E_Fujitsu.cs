@@ -37,11 +37,14 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static partial class Modes
 {
-    #region Fujitsu Mode Page 0x3E: Verify Control page
+#region Fujitsu Mode Page 0x3E: Verify Control page
+
     public enum Fujitsu_VerifyModes : byte
     {
         /// <summary>Always verify after writing</summary>
@@ -49,7 +52,8 @@ public static partial class Modes
         /// <summary>Never verify after writing</summary>
         Never = 1,
         /// <summary>Verify after writing depending on condition</summary>
-        Depends = 2, Reserved = 4
+        Depends = 2,
+        Reserved = 4
     }
 
     public struct Fujitsu_ModePage_3E
@@ -144,5 +148,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Fujitsu Mode Page 0x3E: Verify Control page
+
+#endregion Fujitsu Mode Page 0x3E: Verify Control page
 }

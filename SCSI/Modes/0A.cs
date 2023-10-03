@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x0A: Control mode page
+#region Mode Page 0x0A: Control mode page
+
     /// <summary>Control mode page Page code 0x0A 8 bytes in SCSI-2 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4, SPC-5</summary>
     public struct ModePage_0A
     {
@@ -198,16 +200,22 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Extended_Contingent_Allegiance_is_enabled);
 
         if(page.RAENP)
+        {
             sb.AppendLine("\t" + Localization.
                               Target_may_issue_an_asynchronous_event_notification_upon_completing_its_initialization);
+        }
 
         if(page.UAAENP)
+        {
             sb.AppendLine("\t" + Localization.
                               Target_may_issue_an_asynchronous_event_notification_instead_of_a_unit_attention_condition);
+        }
 
         if(page.EAENP)
+        {
             sb.AppendLine("\t" + Localization.
                               Target_may_issue_an_asynchronous_event_notification_instead_of_a_deferred_error);
+        }
 
         if(page.GLTSD)
             sb.AppendLine("\t" + Localization.Global_logging_target_save_disabled);
@@ -219,16 +227,22 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
 
         if(page.TAS)
+        {
             sb.AppendLine("\t" + Localization.
                               Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED);
+        }
 
         if(page.TMF_ONLY)
+        {
             sb.AppendLine("\t" + Localization.
                               All_tasks_received_in_nexus_with_ACA_ACTIVE_is_set_and_an_ACA_condition_is_established_shall_terminate);
+        }
 
         if(page.D_SENSE)
+        {
             sb.AppendLine("\t" + Localization.
                               Device_shall_return_descriptor_format_sense_data_when_returning_sense_data_in_the_same_transactions_as_a_CHECK_CONDITION);
+        }
 
         if(page.ATO)
             sb.AppendLine("\t" + Localization.LOGICAL_BLOCK_APPLICATION_TAG_should_not_be_modified);
@@ -348,26 +362,37 @@ public static partial class Modes
         }
 
         if(page.ReadyAENHoldOffPeriod > 0)
+        {
             sb.
-                AppendFormat("\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
-                             page.ReadyAENHoldOffPeriod).AppendLine();
+                AppendFormat(
+                    "\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
+                    page.ReadyAENHoldOffPeriod).AppendLine();
+        }
 
         if(page.BusyTimeoutPeriod > 0)
+        {
             if(page.BusyTimeoutPeriod == 0xFFFF)
                 sb.AppendLine("\t" + Localization.There_is_no_limit_on_the_maximum_time_that_is_allowed_to_remain_busy);
             else
+            {
                 sb.AppendFormat("\t" + Localization.A_maximum_of_0_ms_are_allowed_to_remain_busy,
                                 page.BusyTimeoutPeriod * 100).AppendLine();
+            }
+        }
 
         if(page.ExtendedSelfTestCompletionTime > 0)
+        {
             sb.AppendFormat("\t" + Localization._0_seconds_to_complete_extended_self_test,
                             page.ExtendedSelfTestCompletionTime);
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0A: Control mode page
 
-    #region Mode Page 0x0A subpage 0x01: Control Extension mode page
+#endregion Mode Page 0x0A: Control mode page
+
+#region Mode Page 0x0A subpage 0x01: Control Extension mode page
+
     /// <summary>Control Extension mode page Page code 0x0A Subpage code 0x01 32 bytes in SPC-3, SPC-4, SPC-5</summary>
     public struct ModePage_0A_S01
     {
@@ -437,11 +462,15 @@ public static partial class Modes
         if(page.TCMOS)
         {
             if(page.SCSIP)
+            {
                 sb.AppendLine("\t" + Localization.
                                   S01_Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards_but_SCSI_SET_TIMESTAMP_shall_take_precedence_over_them);
+            }
             else
+            {
                 sb.AppendLine("\t" + Localization.
                                   Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards);
+            }
         }
 
         if(page.IALUAE)
@@ -453,10 +482,13 @@ public static partial class Modes
             sb.AppendLine("\t" + Localization.Device_will_not_degrade_performance_to_extend_its_life);
 
         if(page.MaximumSenseLength > 0)
+        {
             sb.AppendFormat("\t" + Localization.Maximum_sense_data_would_be_0_bytes, page.MaximumSenseLength).
                AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
+
+#endregion Mode Page 0x0A subpage 0x01: Control Extension mode page
 }

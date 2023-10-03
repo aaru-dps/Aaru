@@ -42,8 +42,9 @@ using Aaru.Localization;
 namespace Aaru.Decoders.Floppy;
 
 /// <summary>Methods and structures for Apple ][ floppy decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Apple2
 {
     const string MODULE_NAME = "Apple ][ GCR Decoder";
@@ -156,32 +157,32 @@ public static class Apple2
         if(data is not { Length: 410 })
             return null;
 
-        byte[] buffer = new byte[data.Length];
-        byte   carry  = 0;
+        var  buffer = new byte[data.Length];
+        byte carry  = 0;
 
-        for(int i = 0; i < data.Length; i++)
+        for(var i = 0; i < data.Length; i++)
         {
             carry     ^= ReadTable5and3[data[i]];
             buffer[i] =  carry;
         }
 
-        byte[] output = new byte[256];
+        var output = new byte[256];
 
-        for(int i = 0; i < 51; i++)
+        for(var i = 0; i < 51; i++)
         {
-            byte b1 = buffer[(51 * 3) - i];
-            byte b2 = buffer[(51 * 2) - i];
-            byte b3 = buffer[51 - i];
-            byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2) | ((b3 & 2) >> 1)) & 0xFF);
-            byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1)) & 0xFF);
-            output[250 - (5 * i)] = (byte)(((buffer[i + (51 * 3) + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
-            output[251 - (5 * i)] = (byte)(((buffer[i + (51 * 4) + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
-            output[252 - (5 * i)] = (byte)(((buffer[i + (51 * 5) + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
-            output[253 - (5 * i)] = (byte)(((buffer[i + (51 * 6) + 1] << 3) | b4) & 0xFF);
-            output[254 - (5 * i)] = (byte)(((buffer[i + (51 * 7) + 1] << 3) | b5) & 0xFF);
+            byte b1 = buffer[51 * 3 - i];
+            byte b2 = buffer[51 * 2 - i];
+            byte b3 = buffer[51     - i];
+            var  b4 = (byte)(((b1 & 2) << 1 | b2 & 2 | (b3 & 2) >> 1)          & 0xFF);
+            var  b5 = (byte)(((b1 & 1) << 2 | (b2          & 1) << 1 | b3 & 1) & 0xFF);
+            output[250 - 5 * i] = (byte)((buffer[i + 51 * 3 + 1] << 3 | b1 >> 2 & 0x7) & 0xFF);
+            output[251 - 5 * i] = (byte)((buffer[i + 51 * 4 + 1] << 3 | b2 >> 2 & 0x7) & 0xFF);
+            output[252 - 5 * i] = (byte)((buffer[i + 51 * 5 + 1] << 3 | b3 >> 2 & 0x7) & 0xFF);
+            output[253 - 5 * i] = (byte)((buffer[i + 51 * 6 + 1] << 3 | b4)            & 0xFF);
+            output[254 - 5 * i] = (byte)((buffer[i + 51 * 7 + 1] << 3 | b5)            & 0xFF);
         }
 
-        output[255] = (byte)(((buffer[409] << 3) | (buffer[0] & 0x7)) & 0xFF);
+        output[255] = (byte)((buffer[409] << 3 | buffer[0] & 0x7) & 0xFF);
 
         return output;
     }
@@ -193,36 +194,36 @@ public static class Apple2
         if(data is not { Length: 342 })
             return null;
 
-        byte[] buffer = new byte[data.Length];
-        byte   carry  = 0;
+        var  buffer = new byte[data.Length];
+        byte carry  = 0;
 
-        for(int i = 0; i < data.Length; i++)
+        for(var i = 0; i < data.Length; i++)
         {
             carry     ^= ReadTable6and2[data[i]];
             buffer[i] =  carry;
         }
 
-        byte[] output = new byte[256];
+        var output = new byte[256];
 
         for(uint i = 0; i < 256; i++)
         {
-            output[i] = (byte)((buffer[86 + i] << 2) & 0xFF);
+            output[i] = (byte)(buffer[86 + i] << 2 & 0xFF);
 
             switch(i)
             {
                 case < 86:
-                    output[i] |= (byte)(((buffer[i] & 1) << 1) & 0xFF);
-                    output[i] |= (byte)(((buffer[i] & 2) >> 1) & 0xFF);
+                    output[i] |= (byte)((buffer[i] & 1) << 1 & 0xFF);
+                    output[i] |= (byte)((buffer[i] & 2) >> 1 & 0xFF);
 
                     break;
                 case < 86 * 2:
-                    output[i] |= (byte)(((buffer[i - 86] & 4) >> 1) & 0xFF);
-                    output[i] |= (byte)(((buffer[i - 86] & 8) >> 3) & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86] & 4) >> 1 & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86] & 8) >> 3 & 0xFF);
 
                     break;
                 default:
-                    output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x10) >> 3) & 0xFF);
-                    output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x20) >> 5) & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x10) >> 3 & 0xFF);
+                    output[i] |= (byte)((buffer[i - 86 * 2] & 0x20) >> 5 & 0xFF);
 
                     break;
             }
@@ -281,57 +282,39 @@ public static class Apple2
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[]
-                            {
-                                data[position], data[position + 1], data[position + 2]
-                            },
-                            volume = new[]
-                            {
-                                data[position + 3], data[position + 4]
-                            },
-                            track = new[]
-                            {
-                                data[position + 5], data[position + 6]
-                            },
-                            sector = new[]
-                            {
-                                data[position + 7], data[position + 8]
-                            },
-                            checksum = new[]
-                            {
-                                data[position + 9], data[position + 10]
-                            },
-                            epilogue = new[]
-                            {
-                                data[position + 11], data[position + 12], data[position + 13]
-                            }
+                            prologue = new[] { data[position], data[position + 1], data[position + 2] },
+                            volume   = new[] { data[position + 3], data[position + 4] },
+                            track    = new[] { data[position + 5], data[position + 6] },
+                            sector   = new[] { data[position + 7], data[position + 8] },
+                            checksum = new[] { data[position + 9], data[position + 10] },
+                            epilogue = new[] { data[position + 11], data[position + 12], data[position + 13] }
                         }
                     };
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Volume_0,
-                                               (((sector.addressField.volume[0] & 0x55) << 1) |
-                                                (sector.addressField.volume[1] & 0x55)) & 0xFF);
+                                               ((sector.addressField.volume[0] & 0x55) << 1 |
+                                                sector.addressField.volume[1] & 0x55) & 0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Core.Track_0,
-                                               (((sector.addressField.track[0] & 0x55) << 1) |
-                                                (sector.addressField.track[1] & 0x55)) & 0xFF);
+                                               ((sector.addressField.track[0] & 0x55) << 1 |
+                                                sector.addressField.track[1] & 0x55) & 0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0,
-                                               (((sector.addressField.sector[0] & 0x55) << 1) |
-                                                (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                                               ((sector.addressField.sector[0] & 0x55) << 1 |
+                                                sector.addressField.sector[1] & 0x55) & 0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Checksum_0,
-                                               (((sector.addressField.checksum[0] & 0x55) << 1) |
-                                                (sector.addressField.checksum[1] & 0x55)) & 0xFF);
+                                               ((sector.addressField.checksum[0] & 0x55) << 1 |
+                                                sector.addressField.checksum[1] & 0x55) & 0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Epilogue_0_1_2,
                                                sector.addressField.epilogue[0], sector.addressField.epilogue[1],
                                                sector.addressField.epilogue[2]);
 
                     position += 14;
-                    int  syncCount = 0;
-                    bool onSync    = false;
-                    var  gaps      = new MemoryStream();
+                    var syncCount = 0;
+                    var onSync    = false;
+                    var gaps      = new MemoryStream();
 
                     while(data[position] == 0xFF)
                     {
@@ -442,9 +425,9 @@ public static class Apple2
 
         var raw = new MemoryStream();
         raw.Write(addressField.prologue, 0, addressField.prologue.Length);
-        raw.Write(addressField.volume, 0, addressField.volume.Length);
-        raw.Write(addressField.track, 0, addressField.track.Length);
-        raw.Write(addressField.sector, 0, addressField.sector.Length);
+        raw.Write(addressField.volume,   0, addressField.volume.Length);
+        raw.Write(addressField.track,    0, addressField.track.Length);
+        raw.Write(addressField.sector,   0, addressField.sector.Length);
         raw.Write(addressField.checksum, 0, addressField.checksum.Length);
         raw.Write(addressField.epilogue, 0, addressField.epilogue.Length);
 
@@ -458,17 +441,17 @@ public static class Apple2
 
         var raw = new MemoryStream();
         raw.Write(sector.addressField.prologue, 0, sector.addressField.prologue.Length);
-        raw.Write(sector.addressField.volume, 0, sector.addressField.volume.Length);
-        raw.Write(sector.addressField.track, 0, sector.addressField.track.Length);
-        raw.Write(sector.addressField.sector, 0, sector.addressField.sector.Length);
+        raw.Write(sector.addressField.volume,   0, sector.addressField.volume.Length);
+        raw.Write(sector.addressField.track,    0, sector.addressField.track.Length);
+        raw.Write(sector.addressField.sector,   0, sector.addressField.sector.Length);
         raw.Write(sector.addressField.checksum, 0, sector.addressField.checksum.Length);
         raw.Write(sector.addressField.epilogue, 0, sector.addressField.epilogue.Length);
-        raw.Write(sector.innerGap, 0, sector.innerGap.Length);
-        raw.Write(sector.dataField.prologue, 0, sector.dataField.prologue.Length);
-        raw.Write(sector.dataField.data, 0, sector.dataField.data.Length);
+        raw.Write(sector.innerGap,              0, sector.innerGap.Length);
+        raw.Write(sector.dataField.prologue,    0, sector.dataField.prologue.Length);
+        raw.Write(sector.dataField.data,        0, sector.dataField.data.Length);
         raw.WriteByte(sector.dataField.checksum);
         raw.Write(sector.dataField.epilogue, 0, sector.dataField.epilogue.Length);
-        raw.Write(sector.gap, 0, sector.gap.Length);
+        raw.Write(sector.gap,                0, sector.gap.Length);
 
         return raw.ToArray();
     }
@@ -478,12 +461,12 @@ public static class Apple2
     public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
     {
         int             position    = offset;
-        bool            firstSector = true;
-        bool            onSync      = false;
+        var             firstSector = true;
+        var             onSync      = false;
         var             gaps        = new MemoryStream();
-        int             count       = 0;
+        var             count       = 0;
         List<RawSector> sectors     = new();
-        byte[]          trackNumber = new byte[2];
+        var             trackNumber = new byte[2];
         endOffset = offset;
 
         while(position       < data.Length &&
@@ -525,10 +508,10 @@ public static class Apple2
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Adding_sector_0_of_track_1,
-                                       (((sector.addressField.sector[0] & 0x55) << 1) |
-                                        (sector.addressField.sector[1] & 0x55)) & 0xFF,
-                                       (((sector.addressField.track[0] & 0x55) << 1) |
-                                        (sector.addressField.track[1] & 0x55)) & 0xFF);
+                                       ((sector.addressField.sector[0] & 0x55) << 1 |
+                                        sector.addressField.sector[1] & 0x55) & 0xFF,
+                                       ((sector.addressField.track[0] & 0x55) << 1 |
+                                        sector.addressField.track[1] & 0x55) & 0xFF);
 
             sectors.Add(sector);
         }
@@ -607,26 +590,7 @@ public static class Apple2
         return sector != null && position != 0;
     }
 
-    /// <summary>GCR-encoded Apple ][ GCR floppy track</summary>
-    public class RawTrack
-    {
-        /// <summary>Track preamble, set to self-sync 0xFF, between 40 and 95 bytes</summary>
-        public byte[] gap;
-        public RawSector[] sectors;
-    }
-
-    /// <summary>GCR-encoded Apple ][ GCR floppy sector</summary>
-    public class RawSector
-    {
-        /// <summary>Address field</summary>
-        public RawAddressField addressField;
-        /// <summary>Data field</summary>
-        public RawDataField dataField;
-        /// <summary>Track preamble, set to self-sync 0xFF, between 14 and 24 bytes</summary>
-        public byte[] gap;
-        /// <summary>Track preamble, set to self-sync 0xFF, between 5 and 10 bytes</summary>
-        public byte[] innerGap;
-    }
+#region Nested type: RawAddressField
 
     /// <summary>GCR-encoded Apple ][ GCR floppy sector address field</summary>
     public class RawAddressField
@@ -654,6 +618,10 @@ public static class Apple2
         public byte[] volume;
     }
 
+#endregion
+
+#region Nested type: RawDataField
+
     /// <summary>GCR-encoded Apple ][ GCR floppy sector data field</summary>
     public class RawDataField
     {
@@ -667,4 +635,35 @@ public static class Apple2
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public byte[] prologue;
     }
+
+#endregion
+
+#region Nested type: RawSector
+
+    /// <summary>GCR-encoded Apple ][ GCR floppy sector</summary>
+    public class RawSector
+    {
+        /// <summary>Address field</summary>
+        public RawAddressField addressField;
+        /// <summary>Data field</summary>
+        public RawDataField dataField;
+        /// <summary>Track preamble, set to self-sync 0xFF, between 14 and 24 bytes</summary>
+        public byte[] gap;
+        /// <summary>Track preamble, set to self-sync 0xFF, between 5 and 10 bytes</summary>
+        public byte[] innerGap;
+    }
+
+#endregion
+
+#region Nested type: RawTrack
+
+    /// <summary>GCR-encoded Apple ][ GCR floppy track</summary>
+    public class RawTrack
+    {
+        /// <summary>Track preamble, set to self-sync 0xFF, between 40 and 95 bytes</summary>
+        public byte[] gap;
+        public RawSector[] sectors;
+    }
+
+#endregion
 }

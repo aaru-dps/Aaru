@@ -48,10 +48,37 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Layers
 {
+#region Nested type: JumpIntervalSize
+
+    public struct JumpIntervalSize
+    {
+        /// <summary>Bytes 0 to 1 Data length = 10</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Byte 4 Reserved</summary>
+        public byte Reserved3;
+        /// <summary>Byte 5 Reserved</summary>
+        public byte Reserved4;
+        /// <summary>Byte 6 Reserved</summary>
+        public byte Reserved5;
+        /// <summary>Byte 7 Reserved</summary>
+        public byte Reserved6;
+        /// <summary>Byte 8 to 11 Jump Interval size for the Regular Interval Layer Jump</summary>
+        public uint Size;
+    }
+
+#endregion
+
+#region Nested type: LayerCapacity
+
     public struct LayerCapacity
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -73,6 +100,34 @@ public static class Layers
         /// <summary>Byte 8 to 11 L0 Data Area Capacity</summary>
         public uint Capacity;
     }
+
+#endregion
+
+#region Nested type: ManualLayerJumpAddress
+
+    public struct ManualLayerJumpAddress
+    {
+        /// <summary>Bytes 0 to 1 Data length = 10</summary>
+        public ushort DataLength;
+        /// <summary>Byte 2 Reserved</summary>
+        public byte Reserved1;
+        /// <summary>Byte 3 Reserved</summary>
+        public byte Reserved2;
+        /// <summary>Byte 4 Reserved</summary>
+        public byte Reserved3;
+        /// <summary>Byte 5 Reserved</summary>
+        public byte Reserved4;
+        /// <summary>Byte 6 Reserved</summary>
+        public byte Reserved5;
+        /// <summary>Byte 7 Reserved</summary>
+        public byte Reserved6;
+        /// <summary>Byte 8 to 11 LBA for the manual layer jump</summary>
+        public uint LBA;
+    }
+
+#endregion
+
+#region Nested type: MiddleZoneStartAddress
 
     public struct MiddleZoneStartAddress
     {
@@ -96,43 +151,5 @@ public static class Layers
         public uint ShiftedMiddleAreaStartAddress;
     }
 
-    public struct JumpIntervalSize
-    {
-        /// <summary>Bytes 0 to 1 Data length = 10</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Byte 4 Reserved</summary>
-        public byte Reserved3;
-        /// <summary>Byte 5 Reserved</summary>
-        public byte Reserved4;
-        /// <summary>Byte 6 Reserved</summary>
-        public byte Reserved5;
-        /// <summary>Byte 7 Reserved</summary>
-        public byte Reserved6;
-        /// <summary>Byte 8 to 11 Jump Interval size for the Regular Interval Layer Jump</summary>
-        public uint Size;
-    }
-
-    public struct ManualLayerJumpAddress
-    {
-        /// <summary>Bytes 0 to 1 Data length = 10</summary>
-        public ushort DataLength;
-        /// <summary>Byte 2 Reserved</summary>
-        public byte Reserved1;
-        /// <summary>Byte 3 Reserved</summary>
-        public byte Reserved2;
-        /// <summary>Byte 4 Reserved</summary>
-        public byte Reserved3;
-        /// <summary>Byte 5 Reserved</summary>
-        public byte Reserved4;
-        /// <summary>Byte 6 Reserved</summary>
-        public byte Reserved5;
-        /// <summary>Byte 7 Reserved</summary>
-        public byte Reserved6;
-        /// <summary>Byte 8 to 11 LBA for the manual layer jump</summary>
-        public uint LBA;
-    }
+#endregion
 }

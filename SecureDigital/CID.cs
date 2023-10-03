@@ -37,8 +37,9 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.SecureDigital;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class CID
 {
     public string ApplicationID;
@@ -50,8 +51,9 @@ public class CID
     public uint   ProductSerialNumber;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Decoders
 {
     public static CID DecodeCID(uint[] response)
@@ -59,7 +61,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        byte[] data = new byte[16];
+        var data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -87,7 +89,7 @@ public static partial class Decoders
             CRC                 = (byte)((response[15] & 0xFE) >> 1)
         };
 
-        byte[] tmp = new byte[2];
+        var tmp = new byte[2];
         Array.Copy(response, 1, tmp, 0, 2);
         cid.ApplicationID = StringHandlers.CToString(tmp);
         tmp               = new byte[5];
@@ -105,9 +107,9 @@ public static partial class Decoders
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.SecureDigital_Device_Identification_Register);
-        sb.AppendFormat(Localization.Manufacturer_0, VendorString.Prettify(cid.Manufacturer)).AppendLine();
+        sb.AppendFormat(Localization.Manufacturer_0,   VendorString.Prettify(cid.Manufacturer)).AppendLine();
         sb.AppendFormat(Localization.Application_ID_0, cid.ApplicationID).AppendLine();
-        sb.AppendFormat(Localization.Product_name_0, cid.ProductName).AppendLine();
+        sb.AppendFormat(Localization.Product_name_0,   cid.ProductName).AppendLine();
 
         sb.AppendFormat(Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
                         cid.ProductRevision & 0x0F).AppendLine();

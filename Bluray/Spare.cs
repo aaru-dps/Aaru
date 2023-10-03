@@ -50,12 +50,18 @@ namespace Aaru.Decoders.Bluray;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class Spare
 {
     const string MODULE_NAME = "BD Spare Area Information decoder";
-    #region Public structures
+
+#region Nested type: SpareAreaInformation
+
+#region Public structures
+
     public struct SpareAreaInformation
     {
         /// <summary>Bytes 0 to 1 Always 14</summary>
@@ -71,8 +77,13 @@ public static class Spare
         /// <summary>Bytes 12 to 15 Allocated spare blocks</summary>
         public uint AllocatedSpareBlocks;
     }
-    #endregion Public structures
-    #region Public methods
+
+#endregion Public structures
+
+#endregion
+
+#region Public methods
+
     public static SpareAreaInformation? Decode(byte[] SAIResponse)
     {
         if(SAIResponse == null)
@@ -120,12 +131,13 @@ public static class Spare
         if(response.Reserved3 != 0)
             sb.AppendFormat(Localization.Reserved3_equals_0_X8, response.Reserved3).AppendLine();
     #endif
-        sb.AppendFormat(Localization._0_free_spare_blocks, response.FreeSpareBlocks).AppendLine();
+        sb.AppendFormat(Localization._0_free_spare_blocks,      response.FreeSpareBlocks).AppendLine();
         sb.AppendFormat(Localization._0_allocated_spare_blocks, response.AllocatedSpareBlocks).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify(byte[] SAIResponse) => Prettify(Decode(SAIResponse));
-    #endregion Public methods
+
+#endregion Public methods
 }

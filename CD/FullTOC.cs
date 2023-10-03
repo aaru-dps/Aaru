@@ -56,8 +56,9 @@ namespace Aaru.Decoders.CD;
 // T10/1836-D revision 2g
 // ISO/IEC 61104: Compact disc video system - 12 cm CD-V
 // ISO/IEC 60908: Audio recording - Compact disc digital audio system
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class FullTOC
 {
     const string MODULE_NAME = "CD full TOC decoder";
@@ -86,22 +87,22 @@ public static class FullTOC
             return null;
         }
 
-        for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
+        for(var i = 0; i < (decoded.DataLength - 2) / 11; i++)
         {
-            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + (i * 11) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + (i * 11) + 4];
-            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
-            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + (i * 11) + 4] & 0x0F);
-            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + (i * 11) + 4];
-            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + (i * 11) + 4];
-            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + (i * 11) + 4];
+            decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
+            decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + i * 11 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + i * 11 + 4];
+            decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + i * 11 + 4];
+            decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + i * 11 + 4];
+            decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
+            decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + i * 11 + 4] & 0x0F);
+            decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + i * 11 + 4];
+            decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + i * 11 + 4];
+            decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + i * 11 + 4];
         }
 
         return decoded;
@@ -116,14 +117,15 @@ public static class FullTOC
 
         var sb = new StringBuilder();
 
-        int lastSession = 0;
+        var lastSession = 0;
 
         sb.AppendFormat(Localization.First_complete_session_number_0, response.FirstCompleteSession).AppendLine();
-        sb.AppendFormat(Localization.Last_complete_session_number_0, response.LastCompleteSession).AppendLine();
+        sb.AppendFormat(Localization.Last_complete_session_number_0,  response.LastCompleteSession).AppendLine();
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-            if((descriptor.CONTROL & 0x08) == 0x08                                                        ||
-               (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
+        {
+            if((descriptor.CONTROL & 0x08) == 0x08                                                      ||
+               descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
                descriptor.TNO != 0)
             {
                 sb.AppendLine(Localization.Unknown_TOC_entry_format_printing_values_as_is);
@@ -288,11 +290,15 @@ public static class FullTOC
                             case 0xA2:
                             {
                                 if(descriptor.PHOUR > 0)
+                                {
                                     sb.AppendFormat(Localization.Lead_out_start_position_3_0_1_2, descriptor.PMIN,
                                                     descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
+                                }
                                 else
+                                {
                                     sb.AppendFormat(Localization.Lead_out_start_position_0_1_2, descriptor.PMIN,
                                                     descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                }
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
 
@@ -317,16 +323,20 @@ public static class FullTOC
 
                             case 0xF0:
                             {
-                                sb.AppendFormat(Localization.Book_type_0, descriptor.PMIN);
-                                sb.AppendFormat(Localization.Material_type_0, descriptor.PSEC);
+                                sb.AppendFormat(Localization.Book_type_0,         descriptor.PMIN);
+                                sb.AppendFormat(Localization.Material_type_0,     descriptor.PSEC);
                                 sb.AppendFormat(Localization.Moment_of_inertia_0, descriptor.PFRAME);
 
                                 if(descriptor.PHOUR > 0)
+                                {
                                     sb.AppendFormat(Localization.Absolute_time_3_0_1_2, descriptor.Min, descriptor.Sec,
                                                     descriptor.Frame, descriptor.HOUR).AppendLine();
+                                }
                                 else
+                                {
                                     sb.AppendFormat(Localization.Absolute_time_0_1_2, descriptor.Min, descriptor.Sec,
                                                     descriptor.Frame).AppendLine();
+                                }
 
                                 break;
                             }
@@ -334,10 +344,13 @@ public static class FullTOC
                             default:
                             {
                                 if(descriptor.POINT is >= 0x01 and <= 0x63)
+                                {
                                     if(descriptor.ADR == 4)
+                                    {
                                         sb.AppendFormat(Localization.Video_track_3_starts_at_0_1_2, descriptor.PMIN,
                                                         descriptor.PSEC, descriptor.PFRAME, descriptor.POINT).
                                            AppendLine();
+                                    }
                                     else
                                     {
                                         bool data = (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -345,14 +358,24 @@ public static class FullTOC
                                                     TocControl.DataTrackIncremental;
 
                                         if(descriptor.PHOUR > 0)
-                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_4_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_4_0_1_2_open_parenthesis,
-                                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                            descriptor.POINT, descriptor.PHOUR);
+                                        {
+                                            sb.AppendFormat(
+                                                data
+                                                    ? Localization.Data_track_3_starts_at_4_0_1_2_open_parenthesis
+                                                    : Localization.Audio_track_3_starts_at_4_0_1_2_open_parenthesis,
+                                                descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                descriptor.POINT, descriptor.PHOUR);
+                                        }
 
                                         else
-                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_0_1_2_open_parenthesis,
-                                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                            descriptor.POINT);
+                                        {
+                                            sb.AppendFormat(
+                                                data
+                                                    ? Localization.Data_track_3_starts_at_0_1_2_open_parenthesis
+                                                    : Localization.Audio_track_3_starts_at_0_1_2_open_parenthesis,
+                                                descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                descriptor.POINT);
+                                        }
 
                                         switch((TocControl)(descriptor.CONTROL & 0x0D))
                                         {
@@ -385,6 +408,7 @@ public static class FullTOC
 
                                         sb.AppendLine(Localization.close_parenthesis);
                                     }
+                                }
                                 else
                                 {
                                     sb.Append($"ADR = {descriptor.ADR}").AppendLine();
@@ -417,24 +441,32 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.
-                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_3_0_1_2,
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
+                                        AppendFormat(
+                                            Localization.
+                                                Start_of_next_possible_program_in_the_recordable_area_of_the_disc_3_0_1_2,
+                                            descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
                                         AppendLine();
 
                                     sb.
-                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2,
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                     descriptor.PHOUR).AppendLine();
+                                        AppendFormat(
+                                            Localization.
+                                                Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2,
+                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                            descriptor.PHOUR).AppendLine();
                                 }
                                 else
                                 {
                                     sb.
-                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2,
-                                                     descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                        AppendFormat(
+                                            Localization.
+                                                Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2,
+                                            descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
 
                                     sb.
-                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2,
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                        AppendFormat(
+                                            Localization.
+                                                Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2,
+                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
                                 }
 
                                 break;
@@ -471,13 +503,18 @@ public static class FullTOC
                                 sb.AppendFormat(Localization.Optimum_recording_power_0, descriptor.Min).AppendLine();
 
                                 if(descriptor.PHOUR > 0)
+                                {
                                     sb.
-                                        AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_3_0_1_2,
-                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                     descriptor.PHOUR).AppendLine();
+                                        AppendFormat(
+                                            Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_3_0_1_2,
+                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                            descriptor.PHOUR).AppendLine();
+                                }
                                 else
+                                {
                                     sb.AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_0_1_2,
                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                }
 
                                 break;
                             }
@@ -555,13 +592,14 @@ public static class FullTOC
 
                     case 6:
                     {
-                        uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
+                        var id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                         sb.AppendFormat(Localization.Disc_ID_0_X6, id & 0x00FFFFFF).AppendLine();
 
                         break;
                     }
                 }
             }
+        }
 
         return sb.ToString();
     }
@@ -571,50 +609,6 @@ public static class FullTOC
         CDFullTOC? decoded = Decode(CDFullTOCResponse);
 
         return Prettify(decoded);
-    }
-
-    public struct CDFullTOC
-    {
-        /// <summary>Total size of returned session information minus this field</summary>
-        public ushort DataLength;
-        /// <summary>First complete session number in hex</summary>
-        public byte FirstCompleteSession;
-        /// <summary>Last complete session number in hex</summary>
-        public byte LastCompleteSession;
-        /// <summary>Track descriptors</summary>
-        public TrackDataDescriptor[] TrackDescriptors;
-    }
-
-    public struct TrackDataDescriptor
-    {
-        /// <summary>Byte 0 Session number in hex</summary>
-        public byte SessionNumber;
-        /// <summary>Byte 1, bits 7 to 4 Type of information in Q subchannel of block where this TOC entry was found</summary>
-        public byte ADR;
-        /// <summary>Byte 1, bits 3 to 0 Track attributes</summary>
-        public byte CONTROL;
-        /// <summary>Byte 2</summary>
-        public byte TNO;
-        /// <summary>Byte 3</summary>
-        public byte POINT;
-        /// <summary>Byte 4</summary>
-        public byte Min;
-        /// <summary>Byte 5</summary>
-        public byte Sec;
-        /// <summary>Byte 6</summary>
-        public byte Frame;
-        /// <summary>Byte 7, CD only</summary>
-        public byte Zero;
-        /// <summary>Byte 7, bits 7 to 4, DDCD only</summary>
-        public byte HOUR;
-        /// <summary>Byte 7, bits 3 to 0, DDCD only</summary>
-        public byte PHOUR;
-        /// <summary>Byte 8</summary>
-        public byte PMIN;
-        /// <summary>Byte 9</summary>
-        public byte PSEC;
-        /// <summary>Byte 10</summary>
-        public byte PFRAME;
     }
 
     public static CDFullTOC Create(List<Track> tracks, Dictionary<byte, byte> trackFlags, bool createC0Entry = false)
@@ -645,9 +639,11 @@ public static class FullTOC
         }
 
         if(!sessionEndingTrack.ContainsKey(toc.LastCompleteSession))
+        {
             sessionEndingTrack[toc.LastCompleteSession] = (byte)tracks.
                                                                 Where(t => t.Session == toc.LastCompleteSession).
                                                                 Max(t => t.Sequence);
+        }
 
         byte currentSession = 0;
 
@@ -688,6 +684,7 @@ public static class FullTOC
                 // This seems to be constant? It should not exist on CD-ROM but CloneCD creates them anyway
                 // Format seems like ATIP, but ATIP should not be as 0xC0 in TOC...
                 if(createC0Entry)
+                {
                     trackDescriptors.Add(new TrackDataDescriptor
                     {
                         SessionNumber = currentSession,
@@ -698,6 +695,7 @@ public static class FullTOC
                         PMIN          = 97,
                         PSEC          = 25
                     });
+                }
             }
 
             // Lead-in
@@ -766,4 +764,56 @@ public static class FullTOC
 
     static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
         ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
+
+#region Nested type: CDFullTOC
+
+    public struct CDFullTOC
+    {
+        /// <summary>Total size of returned session information minus this field</summary>
+        public ushort DataLength;
+        /// <summary>First complete session number in hex</summary>
+        public byte FirstCompleteSession;
+        /// <summary>Last complete session number in hex</summary>
+        public byte LastCompleteSession;
+        /// <summary>Track descriptors</summary>
+        public TrackDataDescriptor[] TrackDescriptors;
+    }
+
+#endregion
+
+#region Nested type: TrackDataDescriptor
+
+    public struct TrackDataDescriptor
+    {
+        /// <summary>Byte 0 Session number in hex</summary>
+        public byte SessionNumber;
+        /// <summary>Byte 1, bits 7 to 4 Type of information in Q subchannel of block where this TOC entry was found</summary>
+        public byte ADR;
+        /// <summary>Byte 1, bits 3 to 0 Track attributes</summary>
+        public byte CONTROL;
+        /// <summary>Byte 2</summary>
+        public byte TNO;
+        /// <summary>Byte 3</summary>
+        public byte POINT;
+        /// <summary>Byte 4</summary>
+        public byte Min;
+        /// <summary>Byte 5</summary>
+        public byte Sec;
+        /// <summary>Byte 6</summary>
+        public byte Frame;
+        /// <summary>Byte 7, CD only</summary>
+        public byte Zero;
+        /// <summary>Byte 7, bits 7 to 4, DDCD only</summary>
+        public byte HOUR;
+        /// <summary>Byte 7, bits 3 to 0, DDCD only</summary>
+        public byte PHOUR;
+        /// <summary>Byte 8</summary>
+        public byte PMIN;
+        /// <summary>Byte 9</summary>
+        public byte PSEC;
+        /// <summary>Byte 10</summary>
+        public byte PFRAME;
+    }
+
+#endregion
 }

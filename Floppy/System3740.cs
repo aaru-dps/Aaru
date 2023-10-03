@@ -46,50 +46,12 @@ namespace Aaru.Decoders.Floppy;
 // ECMA-100
 
 /// <summary>Methods and structures for IBM System 3740 floppy decoding</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class System3740
 {
-    /// <summary>Track format for IBM System 3740 floppy</summary>
-    public struct Track
-    {
-        /// <summary>Start of track</summary>
-        public TrackPreamble trackStart;
-        /// <summary>Track sectors</summary>
-        public Sector[] sectors;
-        /// <summary>Undefined size</summary>
-        public byte[] gap;
-    }
-
-    /// <summary>Start of IBM PC FM floppy track</summary>
-    public struct TrackPreamble
-    {
-        /// <summary>Gap from index pulse, 80 bytes set to 0xFF</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)]
-        public byte[] gap;
-        /// <summary>6 bytes set to 0x00</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public byte[] zero;
-        /// <summary>Set to <see cref="IBMIdType.IndexMark" /></summary>
-        public IBMIdType type;
-        /// <summary>Gap until first sector, 26 bytes to 0xFF</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
-        public byte[] gap1;
-    }
-
-    /// <summary>Raw demodulated format for IBM System 3740 floppies</summary>
-    public struct Sector
-    {
-        /// <summary>Sector address mark</summary>
-        public AddressMark addressMark;
-        /// <summary>11 bytes set to 0xFF</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-        public byte[] innerGap;
-        /// <summary>Sector data block</summary>
-        public DataBlock dataBlock;
-        /// <summary>Variable bytes set to 0xFF</summary>
-        public byte[] outerGap;
-    }
+#region Nested type: AddressMark
 
     /// <summary>Sector address mark for IBM System 3740 floppies, contains sync word</summary>
     public struct AddressMark
@@ -113,6 +75,10 @@ public static class System3740
         public ushort crc;
     }
 
+#endregion
+
+#region Nested type: DataBlock
+
     /// <summary>Sector data block for IBM System 3740 floppies</summary>
     public struct DataBlock
     {
@@ -126,4 +92,59 @@ public static class System3740
         /// <summary>CRC16 from <see cref="type" /> to end of <see cref="data" /></summary>
         public ushort crc;
     }
+
+#endregion
+
+#region Nested type: Sector
+
+    /// <summary>Raw demodulated format for IBM System 3740 floppies</summary>
+    public struct Sector
+    {
+        /// <summary>Sector address mark</summary>
+        public AddressMark addressMark;
+        /// <summary>11 bytes set to 0xFF</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
+        public byte[] innerGap;
+        /// <summary>Sector data block</summary>
+        public DataBlock dataBlock;
+        /// <summary>Variable bytes set to 0xFF</summary>
+        public byte[] outerGap;
+    }
+
+#endregion
+
+#region Nested type: Track
+
+    /// <summary>Track format for IBM System 3740 floppy</summary>
+    public struct Track
+    {
+        /// <summary>Start of track</summary>
+        public TrackPreamble trackStart;
+        /// <summary>Track sectors</summary>
+        public Sector[] sectors;
+        /// <summary>Undefined size</summary>
+        public byte[] gap;
+    }
+
+#endregion
+
+#region Nested type: TrackPreamble
+
+    /// <summary>Start of IBM PC FM floppy track</summary>
+    public struct TrackPreamble
+    {
+        /// <summary>Gap from index pulse, 80 bytes set to 0xFF</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 40)]
+        public byte[] gap;
+        /// <summary>6 bytes set to 0x00</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public byte[] zero;
+        /// <summary>Set to <see cref="IBMIdType.IndexMark" /></summary>
+        public IBMIdType type;
+        /// <summary>Gap until first sector, 26 bytes to 0xFF</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
+        public byte[] gap1;
+    }
+
+#endregion
 }

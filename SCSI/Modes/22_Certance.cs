@@ -35,11 +35,14 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static partial class Modes
 {
-    #region Certance Mode Page 0x22: Interface Control Mode Page
+#region Certance Mode Page 0x22: Interface Control Mode Page
+
     public struct Certance_ModePage_22
     {
         /// <summary>Parameters can be saved</summary>
@@ -136,7 +139,8 @@ public static partial class Modes
                 break;
         }
 
-        sb.AppendLine(page.StopBits ? Localization.Library_interface_transmits_2_stop_bits_per_byte
+        sb.AppendLine(page.StopBits
+                          ? Localization.Library_interface_transmits_2_stop_bits_per_byte
                           : Localization.Library_interface_transmits_1_stop_bits_per_byte);
 
         switch(page.CmdFwd)
@@ -180,13 +184,16 @@ public static partial class Modes
 
         sb.AppendFormat("\t" + Localization.Drive_jumpers_choose_SCSI_ID_0, page.JumperedSelectionID).AppendLine();
 
-        sb.AppendLine(page.PortAEnabled ? "\t" + Localization.SCSI_port_is_enabled
-                          : "\t"               + Localization.SCSI_port_is_disabled);
+        sb.AppendLine(page.PortAEnabled
+                          ? "\t" + Localization.SCSI_port_is_enabled
+                          : "\t" + Localization.SCSI_port_is_disabled);
 
-        sb.AppendLine(page.PortAEnabledOnPower ? "\t" + Localization.SCSI_port_will_be_enabled_on_next_power_up
-                          : "\t"                      + Localization.SCSI_port_will_be_disabled_on_next_power_up);
+        sb.AppendLine(page.PortAEnabledOnPower
+                          ? "\t" + Localization.SCSI_port_will_be_enabled_on_next_power_up
+                          : "\t" + Localization.SCSI_port_will_be_disabled_on_next_power_up);
 
         return sb.ToString();
     }
-    #endregion Certance Mode Page 0x22: Interface Control Mode Page
+
+#endregion Certance Mode Page 0x22: Interface Control Mode Page
 }

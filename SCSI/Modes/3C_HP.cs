@@ -37,11 +37,13 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region HP Mode Page 0x3C: Device Time Mode page
+#region HP Mode Page 0x3C: Device Time Mode page
+
     public struct HP_ModePage_3C
     {
         /// <summary>Parameters can be saved</summary>
@@ -141,11 +143,14 @@ public static partial class Modes
         }
 
         if(page.LT)
+        {
             sb.AppendFormat("\t" + Localization.Library_time_is_0,
                             new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours,
                                          page.LibraryMinutes, page.LibrarySeconds)).AppendLine();
+        }
 
         return sb.ToString();
     }
-    #endregion HP Mode Page 0x3C: Device Time Mode page
+
+#endregion HP Mode Page 0x3C: Device Time Mode page
 }

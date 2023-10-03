@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x0D: CD-ROM parameteres page
+#region Mode Page 0x0D: CD-ROM parameteres page
+
     /// <summary>CD-ROM parameteres page Page code 0x0D 8 bytes in SCSI-2, MMC-1, MMC-2, MMC-3</summary>
     public struct ModePage_0D
     {
@@ -174,5 +176,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0D: CD-ROM parameteres page
+
+#endregion Mode Page 0x0D: CD-ROM parameteres page
 }

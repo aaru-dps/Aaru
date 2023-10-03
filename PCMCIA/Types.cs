@@ -35,8 +35,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Decoders.PCMCIA;
 
 /// <summary>Basic classure of a PCMCIA tuple</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Tuple
 {
     public TupleCodes Code;
@@ -45,8 +46,9 @@ public class Tuple
 }
 
 /// <summary>Checksum tuple</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class ChecksumTuple
 {
     /// <summary>Modulo-256 sum of region</summary>
@@ -64,8 +66,9 @@ public class ChecksumTuple
 }
 
 /// <summary>Indirect Access PC Card Memory</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class IndirectTuple
 {
     /// <summary>
@@ -77,8 +80,9 @@ public class IndirectTuple
 }
 
 /// <summary>Link target tuple</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class LinkTargetTuple
 {
     /// <summary>
@@ -92,8 +96,9 @@ public class LinkTargetTuple
 }
 
 /// <summary>16-bit PC Card Long Link Tuple</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class LongLinkTuple
 {
     /// <summary>Target address</summary>
@@ -107,9 +112,10 @@ public class LongLinkTuple
     public byte Link;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"),
- SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class ConfigurationAddress
 {
     /// <summary>Target address</summary>
@@ -119,8 +125,9 @@ public class ConfigurationAddress
 }
 
 /// <summary>Multiple function link tuple</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class MultipleFunctionLinkTuple
 {
     /// <summary>Link to more configuration registers</summary>
@@ -135,8 +142,9 @@ public class MultipleFunctionLinkTuple
     public byte NumberFunctions;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class NoLinkTuple
 {
     /// <summary>
@@ -147,8 +155,9 @@ public class NoLinkTuple
     public byte Link;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class AlternateStringTuple
 {
     /// <summary>
@@ -164,9 +173,10 @@ public class AlternateStringTuple
     public string[] Strings;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"),
- SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class ExtendedDeviceSpeed
 {
     /// <summary>Speed exponent</summary>
@@ -177,8 +187,9 @@ public class ExtendedDeviceSpeed
     public byte Mantissa;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public struct DeviceInfo
 {
     /// <summary>Device type code</summary>
@@ -197,8 +208,9 @@ public struct DeviceInfo
     public byte SizeCode;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class DeviceTuple
 {
     /// <summary><see cref="TupleCodes.CISTPL_DEVICE" /> or <see cref="TupleCodes.CISTPL_DEVICE_A" /></summary>
@@ -209,8 +221,9 @@ public class DeviceTuple
     public byte Link;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public struct OtherConditionInfo
 {
     /// <summary>True if another other condition info follows</summary>
@@ -221,8 +234,9 @@ public struct OtherConditionInfo
     public bool MWAIT;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class OtherConditionTuple
 {
     /// <summary><see cref="TupleCodes.CISTPL_DEVICE_OC" /> or <see cref="TupleCodes.CISTPL_DEVICE_OA" /></summary>
@@ -235,8 +249,9 @@ public class OtherConditionTuple
     public OtherConditionInfo[] OtherConditionInfos;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public struct DeviceGeometry
 {
     /// <summary>1 &lt;&lt; n-1 bytes, 2 = 16-bit PC Card, 3 = CardBus PC Card</summary>
@@ -265,8 +280,10 @@ public struct DeviceGeometry
     public byte Interleaving;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class DeviceGeometryTuple
 {
     /// <summary><see cref="TupleCodes.CISTPL_DEVICEGEO" /> or <see cref="TupleCodes.CISTPL_DEVICEGEO_A" /></summary>
@@ -277,8 +294,9 @@ public class DeviceGeometryTuple
     public byte Link;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class FunctionIdentificationTuple
 {
     /// <summary>
@@ -295,8 +313,10 @@ public class FunctionIdentificationTuple
     public bool ROM;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class ManufacturerIdentificationTuple
 {
     /// <summary>Card ID</summary>
@@ -311,8 +331,10 @@ public class ManufacturerIdentificationTuple
     public ushort ManufacturerID;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class Level1VersionTuple
 {
     /// <summary>Additional information strings</summary>
@@ -333,8 +355,9 @@ public class Level1VersionTuple
     public string Product;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class Level2VersionTuple
 {
     /// <summary>Address of first data byte</summary>
@@ -361,8 +384,9 @@ public class Level2VersionTuple
     public byte VendorSpecific2;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public class GeometryTuple
 {
     /// <summary>

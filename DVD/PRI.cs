@@ -51,8 +51,9 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class PRI
 {
     public static PreRecordedInformation? Decode(byte[] response)
@@ -106,9 +107,9 @@ public static class PRI
         Array.Copy(response, 21, pri.ManufacturerId1, 0, 6);
         Array.Copy(response, 29, pri.ManufacturerId2, 0, 6);
         Array.Copy(response, 37, pri.ManufacturerId3, 0, 6);
-        Array.Copy(response, 44, pri.Reserved8, 0, pri.Reserved8.Length);
+        Array.Copy(response, 44, pri.Reserved8,       0, pri.Reserved8.Length);
 
-        byte[] tmp = new byte[18];
+        var tmp = new byte[18];
 
         Array.Copy(response, 21, tmp, 0, 6);
         Array.Copy(response, 29, tmp, 6, 6);
@@ -117,8 +118,10 @@ public static class PRI
         if((pri.DiscPhysicalCode & 0x2) > 0 ||
            pri.PartVersion              > 0 ||
            pri.ExtensionCode            > 0)
+        {
             pri.WriteStrategyCode2 =
                 (uint)((response[37] << 24) + (response[38] << 16) + (response[39] << 8) + response[40]);
+        }
         else
             Array.Copy(response, 37, tmp, 12, 6);
 
@@ -140,8 +143,10 @@ public static class PRI
             sb.AppendLine(Localization.Disc_for_unrestricted_use);
 
             if((decoded.DiscApplicationCode & 0x3F) > 0)
+            {
                 sb.AppendFormat(Localization.Invalid_purpose_field_with_value_0, decoded.DiscApplicationCode & 0x3F).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Consumer_purpose_disc_for_use_in_consumer_purpose_drives);
         }
@@ -150,31 +155,40 @@ public static class PRI
             sb.AppendLine(Localization.Disc_for_restricted_use);
 
             if((decoded.DiscApplicationCode & 0x3F) > 0)
+            {
                 sb.AppendFormat(Localization.Disc_for_use_in_special_drives_according_with_purpose_value_0,
                                 decoded.DiscApplicationCode & 0x3F).AppendLine();
+            }
             else
                 sb.AppendLine(Localization.General_purpose_disc_for_use_in_general_purpose_drives);
         }
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0 ? Localization.Disc_track_pitch_is_0_74_μm
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x80) > 0
+                          ? Localization.Disc_track_pitch_is_0_74_μm
                           : Localization.Unknown_track_pitch);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x40) > 0 ? Localization.Reference_velocity_is_3_49_m_s
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x40) > 0
+                          ? Localization.Reference_velocity_is_3_49_m_s
                           : Localization.Unknown_reference_velocity);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x20) > 0 ? Localization.Disc_has_80mm_diameter
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x20) > 0
+                          ? Localization.Disc_has_80mm_diameter
                           : Localization.Disc_has_120mm_diameter);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x10) > 0 ? Localization.Disc_reflectivity_is_between_18_and_30
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x10) > 0
+                          ? Localization.Disc_reflectivity_is_between_18_and_30
                           : Localization.Disc_reflectivity_is_between_45_and_85);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x04) > 0 ? Localization.Dye_is_organic
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x04) > 0
+                          ? Localization.Dye_is_organic
                           : Localization.Dye_is_phase_change);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x02) > 0 ? Localization.Disc_is_RW_rewritable
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x02) > 0
+                          ? Localization.Disc_is_RW_rewritable
                           : Localization.Disc_is_R_recordable);
 
-        sb.AppendLine((decoded.DiscPhysicalCode & 0x01) > 0 ? Localization.Wavelength_is_650nm
+        sb.AppendLine((decoded.DiscPhysicalCode & 0x01) > 0
+                          ? Localization.Wavelength_is_650nm
                           : Localization.Unknown_wavelength);
 
         sb.AppendFormat(Localization.Last_writable_ECC_block_address_0_X6_, decoded.LastAddressOfDataRecordableArea).
@@ -190,24 +204,24 @@ public static class PRI
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
                 double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
-                {
-                    1  => 7.0,
-                    2  => 7.5,
-                    3  => 8.0,
-                    4  => 8.5,
-                    5  => 9.0,
-                    6  => 9.5,
-                    7  => 10.0,
-                    8  => 10.5,
-                    9  => 11.0,
-                    10 => 11.5,
-                    11 => 12.0,
-                    12 => 12.5,
-                    13 => 13.0,
-                    14 => 13.5,
-                    15 => 14.0,
-                    _  => 0
-                };
+                                        {
+                                            1  => 7.0,
+                                            2  => 7.5,
+                                            3  => 8.0,
+                                            4  => 8.5,
+                                            5  => 9.0,
+                                            6  => 9.5,
+                                            7  => 10.0,
+                                            8  => 10.5,
+                                            9  => 11.0,
+                                            10 => 11.5,
+                                            11 => 12.0,
+                                            12 => 12.5,
+                                            13 => 13.0,
+                                            14 => 13.5,
+                                            15 => 14.0,
+                                            _  => 0
+                                        };
 
                 sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, recordingPower).AppendLine();
             }
@@ -217,24 +231,24 @@ public static class PRI
             if((decoded.WaveLengthCode & 0xF) > 0)
             {
                 double erasingPower = (decoded.WaveLengthCode & 0xF) switch
-                {
-                    1  => 0.38,
-                    2  => 0.40,
-                    3  => 0.42,
-                    4  => 0.44,
-                    5  => 0.46,
-                    6  => 0.48,
-                    7  => 0.50,
-                    8  => 0.52,
-                    9  => 0.54,
-                    10 => 0.56,
-                    11 => 0.58,
-                    12 => 0.60,
-                    13 => 0.62,
-                    14 => 0.64,
-                    15 => 0.66,
-                    _  => 0
-                };
+                                      {
+                                          1  => 0.38,
+                                          2  => 0.40,
+                                          3  => 0.42,
+                                          4  => 0.44,
+                                          5  => 0.46,
+                                          6  => 0.48,
+                                          7  => 0.50,
+                                          8  => 0.52,
+                                          9  => 0.54,
+                                          10 => 0.56,
+                                          11 => 0.58,
+                                          12 => 0.60,
+                                          13 => 0.62,
+                                          14 => 0.64,
+                                          15 => 0.66,
+                                          _  => 0
+                                      };
 
                 sb.AppendFormat(Localization.Recommended_erasing_power_ratio_is_0, erasingPower).AppendLine();
             }
@@ -246,22 +260,22 @@ public static class PRI
             if((decoded.OPCSuggestedCode & 0xF) > 0)
             {
                 double recordingPower = (decoded.OPCSuggestedCode & 0xF) switch
-                {
-                    1  => 6.0,
-                    2  => 6.5,
-                    3  => 7.0,
-                    4  => 7.5,
-                    5  => 8.0,
-                    6  => 8.5,
-                    7  => 9.0,
-                    8  => 9.5,
-                    9  => 10.0,
-                    10 => 10.5,
-                    11 => 11.0,
-                    12 => 11.5,
-                    13 => 12.0,
-                    _  => 0
-                };
+                                        {
+                                            1  => 6.0,
+                                            2  => 6.5,
+                                            3  => 7.0,
+                                            4  => 7.5,
+                                            5  => 8.0,
+                                            6  => 8.5,
+                                            7  => 9.0,
+                                            8  => 9.5,
+                                            9  => 10.0,
+                                            10 => 10.5,
+                                            11 => 11.0,
+                                            12 => 11.5,
+                                            13 => 12.0,
+                                            _  => 0
+                                        };
 
                 sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, recordingPower).AppendLine();
             }
@@ -269,25 +283,25 @@ public static class PRI
             if(decoded.WaveLengthCode > 0)
             {
                 int wavelength = decoded.WaveLengthCode switch
-                {
-                    1  => 645,
-                    2  => 646,
-                    3  => 647,
-                    4  => 648,
-                    5  => 649,
-                    6  => 650,
-                    7  => 651,
-                    8  => 652,
-                    9  => 653,
-                    10 => 654,
-                    11 => 655,
-                    12 => 656,
-                    13 => 657,
-                    14 => 658,
-                    15 => 659,
-                    16 => 660,
-                    _  => 0
-                };
+                                 {
+                                     1  => 645,
+                                     2  => 646,
+                                     3  => 647,
+                                     4  => 648,
+                                     5  => 649,
+                                     6  => 650,
+                                     7  => 651,
+                                     8  => 652,
+                                     9  => 653,
+                                     10 => 654,
+                                     11 => 655,
+                                     12 => 656,
+                                     13 => 657,
+                                     14 => 658,
+                                     15 => 659,
+                                     16 => 660,
+                                     _  => 0
+                                 };
 
                 sb.AppendFormat(Localization.Recommended_recording_power_is_0_mW, wavelength).AppendLine();
             }
@@ -304,7 +318,7 @@ public static class PRI
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromPrePit(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         // Bad thing is that it also includes a media code...
         if(manufacturerId.StartsWith("RITEK", StringComparison.Ordinal))
@@ -332,7 +346,7 @@ public static class PRI
             manufacturer = "Princo Corporation";
         else if(manufacturerId.StartsWith("Prodisc", StringComparison.Ordinal))
             manufacturer = "Prodisc Technology Inc.";
-        else if(manufacturerId.StartsWith("SONY", StringComparison.Ordinal) ||
+        else if(manufacturerId.StartsWith("SONY",   StringComparison.Ordinal) ||
                 manufacturerId.StartsWith("80SONY", StringComparison.Ordinal))
             manufacturer = "Sony Corporation";
         else if(manufacturerId.StartsWith("TCLDS", StringComparison.Ordinal))
@@ -351,7 +365,7 @@ public static class PRI
             manufacturer = "Fuji Photo Film, Co., Ltd.";
         else if(manufacturerId.StartsWith("MBI", StringComparison.Ordinal))
             manufacturer = "Moser Baer India Ltd.";
-        else if(manufacturerId.StartsWith("TT", StringComparison.Ordinal) ||
+        else if(manufacturerId.StartsWith("TT",  StringComparison.Ordinal) ||
                 manufacturerId.StartsWith("TDK", StringComparison.Ordinal))
             manufacturer = "TDK Corporation";
         else if(manufacturerId.StartsWith("JVC", StringComparison.Ordinal))
@@ -376,7 +390,7 @@ public static class PRI
             manufacturer = "Vanguard Disc Inc.";
         else if(manufacturerId.StartsWith("MJC", StringComparison.Ordinal))
             manufacturer = "Megan Media Holdings Berhad";
-        else if(manufacturerId.StartsWith("DKM", StringComparison.Ordinal) ||
+        else if(manufacturerId.StartsWith("DKM",  StringComparison.Ordinal) ||
                 manufacturerId.StartsWith("EDMA", StringComparison.Ordinal))
             manufacturer = "E-TOP Mediatek Inc.";
         else if(manufacturerId.StartsWith("BeAll", StringComparison.Ordinal))
@@ -384,6 +398,8 @@ public static class PRI
 
         return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
     }
+
+#region Nested type: PreRecordedInformation
 
     public struct PreRecordedInformation
     {
@@ -441,4 +457,6 @@ public static class PRI
         public string ManufacturerId;
         public uint   WriteStrategyCode2;
     }
+
+#endregion
 }

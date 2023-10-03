@@ -34,16 +34,33 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
+#region Nested type: BlockDescriptor
+
     public struct BlockDescriptor
     {
         public DensityType Density;
         public ulong       Blocks;
         public uint        BlockLength;
     }
+
+#endregion
+
+#region Nested type: DecodedMode
+
+    public struct DecodedMode
+    {
+        public ModeHeader Header;
+        public ModePage[] Pages;
+    }
+
+#endregion
+
+#region Nested type: ModeHeader
 
     public struct ModeHeader
     {
@@ -56,6 +73,10 @@ public static partial class Modes
         public bool              DPOFUA;
     }
 
+#endregion
+
+#region Nested type: ModePage
+
     public struct ModePage
     {
         public byte   Page;
@@ -63,9 +84,5 @@ public static partial class Modes
         public byte[] PageResponse;
     }
 
-    public struct DecodedMode
-    {
-        public ModeHeader Header;
-        public ModePage[] Pages;
-    }
+#endregion
 }

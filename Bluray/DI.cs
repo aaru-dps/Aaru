@@ -52,10 +52,14 @@ namespace Aaru.Decoders.Bluray;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class DI
 {
+#region BluSize enum
+
     public enum BluSize : byte
     {
         /// <summary>120mm</summary>
@@ -64,6 +68,10 @@ public static class DI
         Eighty = 1
     }
 
+#endregion
+
+#region ChannelLength enum
+
     public enum ChannelLength : byte
     {
         /// <summary>74.5nm channel or 25Gb/layer</summary>
@@ -71,6 +79,10 @@ public static class DI
         /// <summary>69.0nm channel or 27Gb/layer</summary>
         Sixty = 2
     }
+
+#endregion
+
+#region HybridLayer enum
 
     public enum HybridLayer : byte
     {
@@ -84,7 +96,10 @@ public static class DI
         Rewritable = 3
     }
 
-    #region Private constants
+#endregion
+
+#region Private constants
+
     const string DiscTypeBDROM = "BDO";
     const string DiscTypeBDRE  = "BDW";
     const string DiscTypeBDR   = "BDR";
@@ -92,9 +107,11 @@ public static class DI
     /// <summary>Disc Information Unit Identifier "DI"</summary>
     const ushort DIUIdentifier = 0x4449;
     const string MODULE_NAME = "BD Disc Information decoder";
-    #endregion Private constants
 
-    #region Public methods
+#endregion Private constants
+
+#region Public methods
+
     public static DiscInformation? Decode(byte[] DIResponse)
     {
         if(DIResponse == null)
@@ -116,7 +133,7 @@ public static class DI
             Reserved2  = DIResponse[3]
         };
 
-        int                        offset = 4;
+        var                        offset = 4;
         List<DiscInformationUnits> units  = new();
 
         while(true)
@@ -211,7 +228,7 @@ public static class DI
 
         decoded.Units = new DiscInformationUnits[units.Count];
 
-        for(int i = 0; i < units.Count; i++)
+        for(var i = 0; i < units.Count; i++)
             decoded.Units[i] = units[i];
 
         return decoded;
@@ -228,15 +245,16 @@ public static class DI
 
         foreach(DiscInformationUnits unit in response.Units)
         {
-            sb.AppendFormat(Localization.DI_Unit_Sequence_0, unit.Sequence).AppendLine();
-            sb.AppendFormat(Localization.DI_Unit_Format_0, unit.Format).AppendLine();
-            sb.AppendFormat(Localization.There_are_0_per_block, unit.UnitsPerBlock).AppendLine();
+            sb.AppendFormat(Localization.DI_Unit_Sequence_0,        unit.Sequence).AppendLine();
+            sb.AppendFormat(Localization.DI_Unit_Format_0,          unit.Format).AppendLine();
+            sb.AppendFormat(Localization.There_are_0_per_block,     unit.UnitsPerBlock).AppendLine();
             sb.AppendFormat(Localization.This_DI_refers_to_layer_0, unit.Layer).AppendLine();
 
             if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
                 sb.AppendFormat(Localization.Legacy_value_0, unit.Legacy).AppendLine();
 
-            sb.AppendLine(unit.Continuation ? Localization.This_DI_continues_previous_unit
+            sb.AppendLine(unit.Continuation
+                              ? Localization.This_DI_continues_previous_unit
                               : Localization.This_DI_starts_a_new_unit);
 
             sb.AppendFormat(Localization.DI_Unit_is_0_bytes, unit.Length).AppendLine();
@@ -260,8 +278,8 @@ public static class DI
                     break;
             }
 
-            sb.AppendFormat(Localization.Disc_class_0, unit.DiscClass).AppendLine();
-            sb.AppendFormat(Localization.Disc_version_0, unit.DiscVersion).AppendLine();
+            sb.AppendFormat(Localization.Disc_class_0,           unit.DiscClass).AppendLine();
+            sb.AppendFormat(Localization.Disc_version_0,         unit.DiscVersion).AppendLine();
             sb.AppendFormat(Localization.This_disc_has_0_layers, unit.Layers).AppendLine();
 
             switch(unit.DvdLayer)
@@ -338,6 +356,7 @@ public static class DI
             }
 
             if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR)
+            {
                 switch(unit.RecordedPolarity)
                 {
                     case 0:
@@ -356,6 +375,7 @@ public static class DI
 
                         break;
                 }
+            }
 
             switch(unit.Bca)
             {
@@ -374,8 +394,10 @@ public static class DI
             }
 
             if(unit.MaxTransfer > 0)
+            {
                 sb.AppendFormat(Localization.Disc_has_a_maximum_transfer_rate_of_0_Mbit_sec, unit.MaxTransfer).
                    AppendLine();
+            }
             else
                 sb.AppendLine(Localization.Disc_does_not_specify_a_maximum_transfer_rate);
 
@@ -396,7 +418,7 @@ public static class DI
                 sb.AppendFormat(Localization.Disc_media_type_ID_0, Encoding.ASCII.GetString(unit.MediaTypeID)).
                    AppendLine();
 
-                sb.AppendFormat(Localization.Disc_timestamp_0, unit.TimeStamp).AppendLine();
+                sb.AppendFormat(Localization.Disc_timestamp_0,               unit.TimeStamp).AppendLine();
                 sb.AppendFormat(Localization.Disc_product_revision_number_0, unit.ProductRevisionNumber).AppendLine();
             }
 
@@ -411,7 +433,7 @@ public static class DI
 
     public static string ManufacturerFromDI(string manufacturerId)
     {
-        string manufacturer = "";
+        var manufacturer = "";
 
         // ReSharper disable StringLiteralTypo
         switch(manufacturerId)
@@ -500,9 +522,11 @@ public static class DI
 
         return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
     }
-    #endregion Public methods
 
-    #region Public structures
+#endregion Public methods
+
+#region Public structures
+
     public struct DiscInformation
     {
         /// <summary>Bytes 0 to 1 Always 4098</summary>
@@ -585,5 +609,6 @@ public static class DI
         /// <summary>Byte 111 Product revision number</summary>
         public byte ProductRevisionNumber;
     }
-    #endregion Public structures
+
+#endregion Public structures
 }

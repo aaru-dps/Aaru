@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x0E: CD-ROM audio control parameters page
+#region Mode Page 0x0E: CD-ROM audio control parameters page
+
     /// <summary>CD-ROM audio control parameters Page code 0x0E 16 bytes in SCSI-2, MMC-1, MMC-2, MMC-3</summary>
     public struct ModePage_0E
     {
@@ -123,8 +125,9 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendLine(page.Immed ? "\t" + Localization.Drive_will_return_from_playback_command_immediately
-                          : "\t"        + Localization.Drive_will_return_from_playback_command_when_playback_ends);
+        sb.AppendLine(page.Immed
+                          ? "\t" + Localization.Drive_will_return_from_playback_command_immediately
+                          : "\t" + Localization.Drive_will_return_from_playback_command_when_playback_ends);
 
         if(page.SOTC)
             sb.AppendLine("\t" + Localization.Drive_will_stop_playback_on_track_end);
@@ -275,5 +278,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0E: CD-ROM audio control parameters page
+
+#endregion Mode Page 0x0E: CD-ROM audio control parameters page
 }

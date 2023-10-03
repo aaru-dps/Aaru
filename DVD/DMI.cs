@@ -48,10 +48,13 @@ namespace Aaru.Decoders.DVD;
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
 // ECMA 365
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class DMI
 {
+#region Nested type: DiscManufacturingInformation
+
     public struct DiscManufacturingInformation
     {
         /// <summary>Bytes 0 to 1 Data length</summary>
@@ -63,4 +66,6 @@ public static class DMI
         /// <summary>Bytes 4 to 2052 Disc Manufacturing Information</summary>
         public byte[] DMI;
     }
+
+#endregion
 }

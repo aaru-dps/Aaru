@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x0F: Data compression page
+#region Mode Page 0x0F: Data compression page
+
     /// <summary>Data compression page Page code 0x0F 16 bytes in SSC-1, SSC-2, SSC-3</summary>
     public struct ModePage_0F
     {
@@ -200,5 +202,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x0F: Data compression page
+
+#endregion Mode Page 0x0F: Data compression page
 }

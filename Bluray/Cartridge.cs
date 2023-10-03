@@ -51,13 +51,19 @@ namespace Aaru.Decoders.Bluray;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
- SuppressMessage("ReSharper", "UnassignedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnassignedField.Global")]
 public static class Cartridge
 {
     const string MODULE_NAME = "BD Cartridge Status decoder";
-    #region Public structures
+
+#region Nested type: CartridgeStatus
+
+#region Public structures
+
     public struct CartridgeStatus
     {
         /// <summary>Bytes 0 to 1 Always 6</summary>
@@ -83,8 +89,13 @@ public static class Cartridge
         /// <summary>Byte 7 Reserved</summary>
         public byte Reserved7;
     }
-    #endregion Public structures
-    #region Public methods
+
+#endregion Public structures
+
+#endregion
+
+#region Public methods
+
     public static CartridgeStatus? Decode(byte[] CSResponse)
     {
         if(CSResponse == null)
@@ -176,5 +187,6 @@ public static class Cartridge
     }
 
     public static string Prettify(byte[] CSResponse) => Prettify(Decode(CSResponse));
-    #endregion Public methods
+
+#endregion Public methods
 }

@@ -39,8 +39,9 @@ using Aaru.Checksums;
 
 namespace Aaru.Decoders.CD;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class Sector
 {
     public static readonly byte[] ScrambleTable =
@@ -178,10 +179,7 @@ public static class Sector
         0x1C, 0x43, 0x49, 0xF1, 0xF6, 0xC4, 0x46, 0xD3, 0x72, 0xDD, 0xE5, 0x99
     };
 
-    public static readonly byte[] SyncMark =
-    {
-        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-    };
+    public static readonly byte[] SyncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
 
     public static byte[] Scramble(byte[] sector)
     {
@@ -189,21 +187,21 @@ public static class Sector
            sector.Length < 2352)
             return sector;
 
-        byte[] sync = new byte[12];
+        var sync = new byte[12];
         Array.Copy(sector, 0, sync, 0, 12);
 
         if(!SyncMark.SequenceEqual(sync))
             return sector;
 
-        byte[] scrambled = new byte[sector.Length];
+        var scrambled = new byte[sector.Length];
 
-        for(int i = 0; i < 2352; i++)
+        for(var i = 0; i < 2352; i++)
             scrambled[i] = (byte)(sector[i] ^ ScrambleTable[i]);
 
         if(sector.Length <= 2352)
             return scrambled;
 
-        for(int i = 2352; i < sector.Length; i++)
+        for(var i = 2352; i < sector.Length; i++)
             scrambled[i] = sector[i];
 
         return scrambled;
@@ -216,21 +214,27 @@ public static class Sector
         {
             case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
                            data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                           data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00: return data;
+                           data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
+                return data;
             case 2352:
                 switch(data[15])
                 {
-                    case 0: return new byte[2048];
+                    case 0:
+                        return new byte[2048];
                     case 1:
-                        byte[] sector = new byte[2048];
+                        var sector = new byte[2048];
                         Array.Copy(data, 16, sector, 0, 2048);
 
                         return sector;
-                    case 2:  return GetUserDataFromMode2(data, interleaved, fileNumber);
-                    default: return data;
+                    case 2:
+                        return GetUserDataFromMode2(data, interleaved, fileNumber);
+                    default:
+                        return data;
                 }
-            case 2336: return GetUserDataFromMode2(data, interleaved, fileNumber);
-            default:   return data;
+            case 2336:
+                return GetUserDataFromMode2(data, interleaved, fileNumber);
+            default:
+                return data;
         }
     }
 
@@ -241,7 +245,7 @@ public static class Sector
            data.Length != 2336)
             return data;
 
-        int pos = 0;
+        var pos = 0;
 
         if(data.Length == 2352)
         {
@@ -270,7 +274,7 @@ public static class Sector
         int len = (data[pos + 2] & 0x20) == 0x20 ? 2324 : 2048;
         pos += 8;
 
-        byte[] sector = new byte[len];
+        var sector = new byte[len];
         Array.Copy(data, pos, sector, 0, len);
 
         return sector;
@@ -303,8 +307,8 @@ public static class Sector
         byte min        = buffer[12];
         byte sec        = buffer[13];
         byte frame      = buffer[14];
-        int  lba        = 0;
-        bool moreThan90 = false;
+        var  lba        = 0;
+        var  moreThan90 = false;
 
         if(min > 0x90)
         {
@@ -313,9 +317,9 @@ public static class Sector
             moreThan90 =  true;
         }
 
-        lba += (((min >> 4) * 10) + (min & 0x0F)) * 75 * 60;
-        lba += (((sec >> 4) * 10) + (sec & 0x0F)) * 75;
-        lba += ((frame >> 4) * 10) + (frame & 0x0F);
+        lba += ((min >> 4) * 10 + (min & 0x0F)) * 75 * 60;
+        lba += ((sec >> 4) * 10 + (sec & 0x0F)) * 75;
+        lba += (frame >> 4) * 10 + (frame & 0x0F);
         lba -= 150;
 
         if(moreThan90)
@@ -381,19 +385,21 @@ public static class Sector
 
         CdChecksums.CheckCdSector(buffer, out bool? correctEccP, out bool? correctEccQ, out bool? correctEdc);
 
-        bool empty = true;
+        var empty = true;
 
         switch(buffer[15] & 0x03)
         {
             case 0:
 
-                for(int i = 16; i < 2352; i++)
+                for(var i = 16; i < 2352; i++)
+                {
                     if(buffer[i] != 0x00)
                     {
                         empty = false;
 
                         break;
                     }
+                }
 
                 sb.AppendLine(empty ? Localization.Correct_sector_contents : Localization.Incorrect_sector_contents);
 
@@ -403,13 +409,15 @@ public static class Sector
                 sb.AppendLine(correctEccP == true ? Localization.Correct_ECC_P : Localization.Incorrect_ECC_P);
                 sb.AppendLine(correctEccQ == true ? Localization.Correct_ECC_Q : Localization.Incorrect_ECC_Q);
 
-                for(int i = 2068; i < 2076; i++)
+                for(var i = 2068; i < 2076; i++)
+                {
                     if(buffer[i] != 0x00)
                     {
                         empty = false;
 
                         break;
                     }
+                }
 
                 sb.AppendLine(empty ? Localization.Correct_zero_fill : Localization.Incorrect_zero_fill);
 
@@ -428,8 +436,8 @@ public static class Sector
                     break;
                 }
 
-                sb.AppendFormat(Localization.File_number_0, buffer[16]).AppendLine();
-                sb.AppendFormat(Localization.Channel_number_0, buffer[17]).AppendLine();
+                sb.AppendFormat(Localization.File_number_0,               buffer[16]).AppendLine();
+                sb.AppendFormat(Localization.Channel_number_0,            buffer[17]).AppendLine();
                 sb.AppendFormat(Localization.Coding_information_number_0, buffer[19]).AppendLine();
 
                 if((buffer[18] & 0x80) == 0x80)

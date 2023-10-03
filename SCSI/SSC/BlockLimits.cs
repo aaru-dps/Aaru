@@ -37,8 +37,9 @@ using Aaru.Localization;
 
 namespace Aaru.Decoders.SCSI.SSC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class BlockLimits
 {
     public static BlockLimitsData? Decode(byte[] response)
@@ -73,14 +74,18 @@ public static class BlockLimits
             sb.AppendFormat(Core.Device_minimum_block_size_is_0_bytes, decoded.Value.minBlockLen).AppendLine();
 
             if(decoded.Value.granularity > 0)
+            {
                 sb.AppendFormat(Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes, decoded.Value.granularity,
                                 Math.Pow(2, decoded.Value.granularity)).AppendLine();
+            }
         }
 
         return sb.ToString();
     }
 
     public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+#region Nested type: BlockLimitsData
 
     public struct BlockLimitsData
     {
@@ -91,4 +96,6 @@ public static class BlockLimits
         /// <summary>Minimum block length in bytes</summary>
         public ushort minBlockLen;
     }
+
+#endregion
 }

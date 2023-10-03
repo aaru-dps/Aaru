@@ -36,8 +36,10 @@ using System.Text;
 
 namespace Aaru.Decoders.MMC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class CSD
 {
     public ushort Classes;
@@ -75,8 +77,9 @@ public class CSD
     public byte   WriteSpeedFactor;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Decoders
 {
     public static CSD DecodeCSD(uint[] response)
@@ -84,7 +87,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        byte[] data = new byte[16];
+        var data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -148,7 +151,7 @@ public static partial class Decoders
 
         double unitFactor = 0;
         double multiplier = 0;
-        string unit       = "";
+        var    unit       = "";
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.MultiMediaCard_Device_Specific_Data_Register_);
@@ -219,25 +222,25 @@ public static partial class Decoders
         }
 
         multiplier = ((csd.TAAC & 0x78) >> 3) switch
-        {
-            0  => 0,
-            1  => 1,
-            2  => 1.2,
-            3  => 1.3,
-            4  => 1.5,
-            5  => 2,
-            6  => 2.5,
-            7  => 3,
-            8  => 3.5,
-            9  => 4,
-            10 => 4.5,
-            11 => 5,
-            12 => 5.5,
-            13 => 6,
-            14 => 7,
-            15 => 8,
-            _  => multiplier
-        };
+                     {
+                         0  => 0,
+                         1  => 1,
+                         2  => 1.2,
+                         3  => 1.3,
+                         4  => 1.5,
+                         5  => 2,
+                         6  => 2.5,
+                         7  => 3,
+                         8  => 3.5,
+                         9  => 4,
+                         10 => 4.5,
+                         11 => 5,
+                         12 => 5.5,
+                         13 => 6,
+                         14 => 7,
+                         15 => 8,
+                         _  => multiplier
+                     };
 
         double result = unitFactor * multiplier;
         sb.AppendFormat("\t" + Localization.Asynchronous_data_access_time_is_0_1, result, unit).AppendLine();
@@ -273,25 +276,25 @@ public static partial class Decoders
         }
 
         multiplier = ((csd.Speed & 0x78) >> 3) switch
-        {
-            0  => 0,
-            1  => 1,
-            2  => 1.2,
-            3  => 1.3,
-            4  => 1.5,
-            5  => 2,
-            6  => 2.6,
-            7  => 3,
-            8  => 3.5,
-            9  => 4,
-            10 => 4.5,
-            11 => 5.2,
-            12 => 5.5,
-            13 => 6,
-            14 => 7,
-            15 => 8,
-            _  => multiplier
-        };
+                     {
+                         0  => 0,
+                         1  => 1,
+                         2  => 1.2,
+                         3  => 1.3,
+                         4  => 1.5,
+                         5  => 2,
+                         6  => 2.6,
+                         7  => 3,
+                         8  => 3.5,
+                         9  => 4,
+                         10 => 4.5,
+                         11 => 5.2,
+                         12 => 5.5,
+                         13 => 6,
+                         14 => 7,
+                         15 => 8,
+                         _  => multiplier
+                     };
 
         result = unitFactor * multiplier;
         sb.AppendFormat("\t" + Localization.Device_s_clock_frequency_0_1, result, unit).AppendLine();
@@ -299,16 +302,20 @@ public static partial class Decoders
         unit = "";
 
         for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
+        {
             if((csd.Classes & mask) == mask)
                 unit += $" {cl}";
+        }
 
         sb.AppendFormat("\t" + Localization.Device_support_command_classes_0, unit).AppendLine();
 
         if(csd.ReadBlockLength == 15)
             sb.AppendLine("\t" + Localization.Read_block_length_size_is_defined_in_extended_CSD);
         else
+        {
             sb.AppendFormat("\t" + Localization.Read_block_length_is_0_bytes, Math.Pow(2, csd.ReadBlockLength)).
                AppendLine();
+        }
 
         if(csd.ReadsPartialBlocks)
             sb.AppendLine("\t" + Localization.Device_allows_reading_partial_blocks);
@@ -323,8 +330,10 @@ public static partial class Decoders
             sb.AppendLine("\t" + Localization.Device_implements_configurable_driver_stage);
 
         if(csd.Size == 0xFFF)
+        {
             sb.AppendLine("\t" + Localization.
                               Device_may_be_bigger_than_2GiB_and_have_its_real_size_defined_in_the_extended_CSD);
+        }
 
         result = (csd.Size   + 1) * Math.Pow(2, csd.SizeMultiplier + 2);
         sb.AppendFormat("\t" + Localization.Device_has_0_blocks, (int)result).AppendLine();
@@ -537,8 +546,10 @@ public static partial class Decoders
         if(csd.WriteBlockLength == 15)
             sb.AppendLine("\t" + Localization.Write_block_length_size_is_defined_in_extended_CSD);
         else
+        {
             sb.AppendFormat("\t" + Localization.Write_block_length_is_0_bytes, Math.Pow(2, csd.WriteBlockLength)).
                AppendLine();
+        }
 
         if(csd.WritesPartialBlocks)
             sb.AppendLine("\t" + Localization.Device_allows_writing_partial_blocks);
@@ -556,6 +567,7 @@ public static partial class Decoders
             sb.AppendLine("\t" + Localization.Device_is_temporarily_write_protected);
 
         if(!csd.FileFormatGroup)
+        {
             switch(csd.FileFormat)
             {
                 case 0:
@@ -576,9 +588,12 @@ public static partial class Decoders
 
                     break;
             }
+        }
         else
+        {
             sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0_and_file_format_group_1,
                             csd.FileFormat).AppendLine();
+        }
 
         switch(csd.ECC)
         {

@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x1A: Power condition page
+#region Mode Page 0x1A: Power condition page
+
     /// <summary>Power condition page Page code 0x1A 12 bytes in SPC-1, SPC-2, SPC-3, SPC-4 40 bytes in SPC-5</summary>
     public struct ModePage_1A
     {
@@ -170,7 +172,8 @@ public static partial class Modes
 
         switch(page.PM_BG_Precedence)
         {
-            case 0: break;
+            case 0:
+                break;
             case 1:
                 sb.AppendLine("\t" +
                               "Performing background functions take precedence over maintaining low power conditions");
@@ -185,9 +188,11 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1A: Power condition page
 
-    #region Mode Page 0x1A subpage 0x01: Power Consumption mode page
+#endregion Mode Page 0x1A: Power condition page
+
+#region Mode Page 0x1A subpage 0x01: Power Consumption mode page
+
     /// <summary>Power Consumption mode page Page code 0x1A Subpage code 0x01 16 bytes in SPC-5</summary>
     public struct ModePage_1A_S01
     {
@@ -245,8 +250,10 @@ public static partial class Modes
         {
             case 0:
                 sb.
-                    AppendFormat("\t" + Localization.Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
-                                 page.PowerConsumptionIdentifier).AppendLine();
+                    AppendFormat(
+                        "\t" + Localization.
+                            Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
+                        page.PowerConsumptionIdentifier).AppendLine();
 
                 break;
             case 1:
@@ -265,5 +272,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
+
+#endregion Mode Page 0x1A subpage 0x01: Power Consumption mode page
 }

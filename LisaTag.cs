@@ -37,9 +37,10 @@ using Aaru.Helpers;
 namespace Aaru.Decoders;
 
 /// <summary>Represents a Lisa Office 7/7 sector tag</summary>
-[SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"),
- SuppressMessage("ReSharper", "StructMemberCanBeMadeReadOnly")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "StructMemberCanBeMadeReadOnly")]
 public static class LisaTag
 {
     /// <summary>Decodes tag from a 3.5" Sony micro-floppy</summary>
@@ -78,7 +79,7 @@ public static class LisaTag
 
         var phTag = new ProfileTag();
 
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
 
         phTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         phTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -125,7 +126,7 @@ public static class LisaTag
 
         var pmTag = new PriamTag();
 
-        byte[] tmp = new byte[4];
+        var tmp = new byte[4];
 
         pmTag.Version   =  BigEndianBitConverter.ToUInt16(tag, 0);
         pmTag.Kind      =  (byte)((tag[2] & 0xC0) >> 6);
@@ -228,106 +229,14 @@ public static class LisaTag
                 };
 
                 return pmTag;
-            case 24: return DecodePriamTag(tag);
-            default: return null;
+            case 24:
+                return DecodePriamTag(tag);
+            default:
+                return null;
         }
     }
 
-    /// <summary>LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)</summary>
-    public struct ProfileTag
-    {
-        /// <summary>0x00, Lisa OS version number</summary>
-        public ushort Version;
-        /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-        public byte Kind;
-        /// <summary>0x02 bits 5 to 0, reserved</summary>
-        public byte Reserved;
-        /// <summary>0x03, disk volume number</summary>
-        public byte Volume;
-        /// <summary>0x04, file ID</summary>
-        public short FileId;
-        /// <summary>0x06 bit 7, checksum valid?</summary>
-        public bool ValidChk;
-        /// <summary>0x06 bits 6 to 0, used bytes in block</summary>
-        public ushort UsedBytes;
-        /// <summary>0x08, 3 bytes, absolute page number</summary>
-        public uint AbsPage;
-        /// <summary>0x0B, checksum of data</summary>
-        public byte Checksum;
-        /// <summary>0x0C, relative page number</summary>
-        public ushort RelPage;
-        /// <summary>0x0E, 3 bytes, next block, 0xFFFFFF if it's last block</summary>
-        public uint NextBlock;
-        /// <summary>0x11, 3 bytes, previous block, 0xFFFFFF if it's first block</summary>
-        public uint PrevBlock;
-
-        /// <summary>On-memory value for easy first block search.</summary>
-        public bool IsFirst;
-        /// <summary>On-memory value for easy last block search.</summary>
-        public bool IsLast;
-
-        /// <summary>Converts this tag to Priam DataTower format</summary>
-        public PriamTag ToPriam() => new()
-        {
-            AbsPage   = AbsPage,
-            Checksum  = Checksum,
-            FileId    = FileId,
-            IsFirst   = IsFirst,
-            IsLast    = IsLast,
-            Kind      = Kind,
-            NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
-            PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
-            RelPage   = RelPage,
-            UsedBytes = UsedBytes,
-            ValidChk  = ValidChk,
-            Version   = Version,
-            Volume    = Volume
-        };
-
-        /// <summary>Converts this tag to Sony format</summary>
-        public SonyTag ToSony() => new()
-        {
-            FileId    = FileId,
-            IsFirst   = IsFirst,
-            IsLast    = IsLast,
-            Kind      = Kind,
-            NextBlock = (ushort)NextBlock,
-            PrevBlock = (ushort)PrevBlock,
-            RelPage   = RelPage,
-            Version   = Version,
-            Volume    = Volume
-        };
-
-        /// <summary>Gets a byte array representation of this tag</summary>
-        public byte[] GetBytes()
-        {
-            byte[] tagBytes = new byte[20];
-
-            byte[] tmp = BigEndianBitConverter.GetBytes(Version);
-            Array.Copy(tmp, 0, tagBytes, 0, 2);
-            tagBytes[2] = (byte)(Kind << 6);
-            tagBytes[3] = Volume;
-            tmp         = BigEndianBitConverter.GetBytes(FileId);
-            Array.Copy(tmp, 0, tagBytes, 4, 2);
-            tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
-            Array.Copy(tmp, 0, tagBytes, 6, 2);
-
-            if(ValidChk)
-                tagBytes[6] += 0x80;
-
-            tmp = BigEndianBitConverter.GetBytes(AbsPage);
-            Array.Copy(tmp, 1, tagBytes, 8, 3);
-            tagBytes[11] = Checksum;
-            tmp          = BigEndianBitConverter.GetBytes(RelPage);
-            Array.Copy(tmp, 0, tagBytes, 12, 2);
-            tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
-            Array.Copy(tmp, 1, tagBytes, 14, 3);
-            tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
-            Array.Copy(tmp, 1, tagBytes, 17, 3);
-
-            return tagBytes;
-        }
-    }
+#region Nested type: PriamTag
 
     /// <summary>LisaOS tag as stored on Priam DataTower disks (24 bytes)</summary>
     public struct PriamTag
@@ -399,7 +308,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            byte[] tagBytes = new byte[24];
+            var tagBytes = new byte[24];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -428,6 +337,110 @@ public static class LisaTag
             return tagBytes;
         }
     }
+
+#endregion
+
+#region Nested type: ProfileTag
+
+    /// <summary>LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)</summary>
+    public struct ProfileTag
+    {
+        /// <summary>0x00, Lisa OS version number</summary>
+        public ushort Version;
+        /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
+        public byte Kind;
+        /// <summary>0x02 bits 5 to 0, reserved</summary>
+        public byte Reserved;
+        /// <summary>0x03, disk volume number</summary>
+        public byte Volume;
+        /// <summary>0x04, file ID</summary>
+        public short FileId;
+        /// <summary>0x06 bit 7, checksum valid?</summary>
+        public bool ValidChk;
+        /// <summary>0x06 bits 6 to 0, used bytes in block</summary>
+        public ushort UsedBytes;
+        /// <summary>0x08, 3 bytes, absolute page number</summary>
+        public uint AbsPage;
+        /// <summary>0x0B, checksum of data</summary>
+        public byte Checksum;
+        /// <summary>0x0C, relative page number</summary>
+        public ushort RelPage;
+        /// <summary>0x0E, 3 bytes, next block, 0xFFFFFF if it's last block</summary>
+        public uint NextBlock;
+        /// <summary>0x11, 3 bytes, previous block, 0xFFFFFF if it's first block</summary>
+        public uint PrevBlock;
+
+        /// <summary>On-memory value for easy first block search.</summary>
+        public bool IsFirst;
+        /// <summary>On-memory value for easy last block search.</summary>
+        public bool IsLast;
+
+        /// <summary>Converts this tag to Priam DataTower format</summary>
+        public PriamTag ToPriam() => new()
+        {
+            AbsPage   = AbsPage,
+            Checksum  = Checksum,
+            FileId    = FileId,
+            IsFirst   = IsFirst,
+            IsLast    = IsLast,
+            Kind      = Kind,
+            NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
+            PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
+            RelPage   = RelPage,
+            UsedBytes = UsedBytes,
+            ValidChk  = ValidChk,
+            Version   = Version,
+            Volume    = Volume
+        };
+
+        /// <summary>Converts this tag to Sony format</summary>
+        public SonyTag ToSony() => new()
+        {
+            FileId    = FileId,
+            IsFirst   = IsFirst,
+            IsLast    = IsLast,
+            Kind      = Kind,
+            NextBlock = (ushort)NextBlock,
+            PrevBlock = (ushort)PrevBlock,
+            RelPage   = RelPage,
+            Version   = Version,
+            Volume    = Volume
+        };
+
+        /// <summary>Gets a byte array representation of this tag</summary>
+        public byte[] GetBytes()
+        {
+            var tagBytes = new byte[20];
+
+            byte[] tmp = BigEndianBitConverter.GetBytes(Version);
+            Array.Copy(tmp, 0, tagBytes, 0, 2);
+            tagBytes[2] = (byte)(Kind << 6);
+            tagBytes[3] = Volume;
+            tmp         = BigEndianBitConverter.GetBytes(FileId);
+            Array.Copy(tmp, 0, tagBytes, 4, 2);
+            tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
+            Array.Copy(tmp, 0, tagBytes, 6, 2);
+
+            if(ValidChk)
+                tagBytes[6] += 0x80;
+
+            tmp = BigEndianBitConverter.GetBytes(AbsPage);
+            Array.Copy(tmp, 1, tagBytes, 8, 3);
+            tagBytes[11] = Checksum;
+            tmp          = BigEndianBitConverter.GetBytes(RelPage);
+            Array.Copy(tmp, 0, tagBytes, 12, 2);
+            tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
+            Array.Copy(tmp, 1, tagBytes, 14, 3);
+            tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
+            Array.Copy(tmp, 1, tagBytes, 17, 3);
+
+            return tagBytes;
+        }
+    }
+
+#endregion
+
+#region Nested type: SonyTag
 
     /// <summary>LisaOS tag as stored on Apple Sony disks (12 bytes)</summary>
     public struct SonyTag
@@ -485,7 +498,7 @@ public static class LisaTag
         /// <summary>Gets a byte array representation of this tag</summary>
         public byte[] GetBytes()
         {
-            byte[] tagBytes = new byte[12];
+            var tagBytes = new byte[12];
 
             byte[] tmp = BigEndianBitConverter.GetBytes(Version);
             Array.Copy(tmp, 0, tagBytes, 0, 2);
@@ -503,4 +516,6 @@ public static class LisaTag
             return tagBytes;
         }
     }
+
+#endregion
 }

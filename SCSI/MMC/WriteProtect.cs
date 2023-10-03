@@ -50,8 +50,10 @@ namespace Aaru.Decoders.SCSI.MMC;
 // T10/1675-D revision 2c
 // T10/1675-D revision 4
 // T10/1836-D revision 2g
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public static class WriteProtect
 {
     public static WriteProtectionStatus? DecodeWriteProtectionStatus(byte[] WPSResponse)
@@ -128,6 +130,8 @@ public static class WriteProtect
         return PrettifyWriteProtectionStatus(decoded);
     }
 
+#region Nested type: WriteProtectionStatus
+
     public struct WriteProtectionStatus
     {
         /// <summary>Bytes 0 to 1 Data Length</summary>
@@ -153,4 +157,6 @@ public static class WriteProtect
         /// <summary>Byte 7 Reserved</summary>
         public byte Reserved6;
     }
+
+#endregion
 }

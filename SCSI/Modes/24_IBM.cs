@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region IBM Mode Page 0x24: Drive Capabilities Control Mode page
+#region IBM Mode Page 0x24: Drive Capabilities Control Mode page
+
     public struct IBM_ModePage_24
     {
         /// <summary>Parameters can be saved</summary>
@@ -91,7 +93,7 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t" + Localization.Vendor_specific_mode_control_0, page.ModeControl);
+        sb.AppendFormat("\t" + Localization.Vendor_specific_mode_control_0,     page.ModeControl);
         sb.AppendFormat("\t" + Localization.Vendor_specific_velocity_setting_0, page.VelocitySetting);
 
         if(!page.EncryptionCapable)
@@ -104,5 +106,6 @@ public static partial class Modes
 
         return sb.ToString();
     }
-    #endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
+
+#endregion IBM Mode Page 0x24: Drive Capabilities Control Mode page
 }

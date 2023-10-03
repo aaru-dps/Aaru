@@ -37,8 +37,10 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.MMC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnassignedField.Global")]
 public class CID
 {
     public byte   ApplicationID;
@@ -51,8 +53,9 @@ public class CID
     public uint   ProductSerialNumber;
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Decoders
 {
     public static CID DecodeCID(uint[] response)
@@ -60,7 +63,7 @@ public static partial class Decoders
         if(response?.Length != 4)
             return null;
 
-        byte[] data = new byte[16];
+        var data = new byte[16];
 
         byte[] tmp = BitConverter.GetBytes(response[0]);
         Array.Copy(tmp, 0, data, 0, 4);
@@ -89,7 +92,7 @@ public static partial class Decoders
             CRC                 = (byte)((response[15] & 0xFE) >> 1)
         };
 
-        byte[] tmp = new byte[6];
+        var tmp = new byte[6];
         Array.Copy(response, 3, tmp, 0, 6);
         cid.ProductName = StringHandlers.CToString(tmp);
 
@@ -123,7 +126,7 @@ public static partial class Decoders
         }
 
         sb.AppendFormat("\t" + Localization.Application_ID_0, cid.ApplicationID).AppendLine();
-        sb.AppendFormat("\t" + Localization.Product_name_0, cid.ProductName).AppendLine();
+        sb.AppendFormat("\t" + Localization.Product_name_0,   cid.ProductName).AppendLine();
 
         sb.AppendFormat("\t" + Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
                         cid.ProductRevision & 0x0F).AppendLine();
@@ -131,25 +134,25 @@ public static partial class Decoders
         sb.AppendFormat("\t" + Localization.Product_serial_number_0, cid.ProductSerialNumber).AppendLine();
 
         string year = (cid.ManufacturingDate & 0x0F) switch
-        {
-            0  => Localization._1997_or_2013,
-            1  => Localization._1998_or_2014,
-            2  => Localization._1999_or_2015,
-            3  => Localization._2000_or_2016,
-            4  => Localization._2001_or_2017,
-            5  => Localization._2002_or_2018,
-            6  => Localization._2003_or_2019,
-            7  => Localization._2004_or_2020,
-            8  => Localization._2005_or_2021,
-            9  => Localization._2006_or_2022,
-            10 => Localization._2007_or_2023,
-            11 => Localization._2008_or_2024,
-            12 => Localization._2009_or_2025,
-            13 => "2010",
-            14 => "2011",
-            15 => "2012",
-            _  => ""
-        };
+                      {
+                          0  => Localization._1997_or_2013,
+                          1  => Localization._1998_or_2014,
+                          2  => Localization._1999_or_2015,
+                          3  => Localization._2000_or_2016,
+                          4  => Localization._2001_or_2017,
+                          5  => Localization._2002_or_2018,
+                          6  => Localization._2003_or_2019,
+                          7  => Localization._2004_or_2020,
+                          8  => Localization._2005_or_2021,
+                          9  => Localization._2006_or_2022,
+                          10 => Localization._2007_or_2023,
+                          11 => Localization._2008_or_2024,
+                          12 => Localization._2009_or_2025,
+                          13 => "2010",
+                          14 => "2011",
+                          15 => "2012",
+                          _  => ""
+                      };
 
         sb.AppendFormat("\t" + Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF0) >> 4,
                         year).AppendLine();

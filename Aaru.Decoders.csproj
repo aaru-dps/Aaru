@@ -33,8 +33,8 @@
     <NoWarn>CS1591;CS1574</NoWarn>
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <InternalsVisibleTo Include="Aaru.Tests" />
-    <InternalsVisibleTo Include="Aaru.Tests.Devices" />
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
   </ItemGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
@@ -42,24 +42,24 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
-    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
-    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Bluray" />
-    <Folder Include="SCSI\" />
-    <Folder Include="ATA\" />
-    <Folder Include="SCSI\MMC\" />
-    <Folder Include="CD\" />
-    <Folder Include="Floppy\" />
-    <Folder Include="Xbox\" />
-    <Folder Include="SCSI\SSC\" />
-    <Folder Include="PCMCIA\" />
-    <Folder Include="MMC\" />
-    <Folder Include="SecureDigital\" />
-    <Folder Include="Sega\" />
+    <Folder Include="Bluray"/>
+    <Folder Include="SCSI\"/>
+    <Folder Include="ATA\"/>
+    <Folder Include="SCSI\MMC\"/>
+    <Folder Include="CD\"/>
+    <Folder Include="Floppy\"/>
+    <Folder Include="Xbox\"/>
+    <Folder Include="SCSI\SSC\"/>
+    <Folder Include="PCMCIA\"/>
+    <Folder Include="MMC\"/>
+    <Folder Include="SecureDigital\"/>
+    <Folder Include="Sega\"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\LICENSE.LGPL">
@@ -71,7 +71,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>
 </Project>

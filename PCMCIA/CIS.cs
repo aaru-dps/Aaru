@@ -39,15 +39,16 @@ using Aaru.Helpers;
 
 namespace Aaru.Decoders.PCMCIA;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static class CIS
 {
     // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?
     public static Tuple[] GetTuples(byte[] data)
     {
         List<Tuple> tuples   = new();
-        int         position = 0;
+        var         position = 0;
 
         while(position < data.Length)
         {
@@ -97,7 +98,7 @@ public static class CIS
         var                  tuple      = new DeviceGeometryTuple();
         List<DeviceGeometry> geometries = new();
 
-        for(int position = 2; position < data.Length; position += 6)
+        for(var position = 2; position < data.Length; position += 6)
         {
             var geometry = new DeviceGeometry
             {
@@ -135,21 +136,21 @@ public static class CIS
         {
             sb.AppendLine("\t" + Localization.Geometry);
 
-            sb.AppendFormat("\t\t" + Localization.Device_width_0_bits, (1 << (geometry.CardInterface - 1)) * 8).
+            sb.AppendFormat("\t\t" + Localization.Device_width_0_bits, (1 << geometry.CardInterface - 1) * 8).
                AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Erase_block_0_bytes,
-                            (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Read_block_0_bytes,
-                            (1 << (geometry.ReadBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                            (1 << geometry.ReadBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Write_block_0_bytes,
-                            (1 << (geometry.WriteBlockSize - 1)) * (1 << (geometry.Interleaving - 1))).AppendLine();
+                            (1 << geometry.WriteBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Partition_alignment_0_bytes,
-                            (1 << (geometry.EraseBlockSize - 1)) * (1 << (geometry.Interleaving - 1)) *
-                            (1 << (geometry.Partitions     - 1))).AppendLine();
+                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1) *
+                            (1 << geometry.Partitions     - 1)).AppendLine();
         }
 
         return sb.ToString();
@@ -194,7 +195,7 @@ public static class CIS
         var sb = new StringBuilder();
         sb.AppendLine(Localization.Manufacturer_Identification_Tuple);
         sb.AppendFormat("\t" + Localization.Manufacturer_ID_0, VendorCode.Prettify(tuple.ManufacturerID)).AppendLine();
-        sb.AppendFormat("\t" + Localization.Card_ID_0, tuple.CardID).AppendLine();
+        sb.AppendFormat("\t" + Localization.Card_ID_0,         tuple.CardID).AppendLine();
 
         return sb.ToString();
     }
@@ -223,7 +224,7 @@ public static class CIS
 
         List<byte>   buffer       = new();
         List<string> strings      = null;
-        bool         firstString  = false;
+        var          firstString  = false;
         const bool   secondString = false;
 
         var tuple = new Level1VersionTuple
@@ -234,7 +235,7 @@ public static class CIS
             MinorVersion = data[3]
         };
 
-        for(int position = 4; position < data.Length; position++)
+        for(var position = 4; position < data.Length; position++)
         {
             if(data[position] == 0xFF)
                 break;

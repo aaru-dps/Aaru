@@ -35,11 +35,13 @@ using System.Text;
 
 namespace Aaru.Decoders.SCSI;
 
-[SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
- SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public static partial class Modes
 {
-    #region Mode Page 0x08: Caching page
+#region Mode Page 0x08: Caching page
+
     /// <summary>Disconnect-reconnect page Page code 0x08 12 bytes in SCSI-2 20 bytes in SBC-1, SBC-2, SBC-3</summary>
     public struct ModePage_08
     {
@@ -223,21 +225,31 @@ public static partial class Modes
                                 page.DisablePreFetch).AppendLine();
 
                 if(page.MinimumPreFetch > 0)
+                {
                     sb.AppendFormat(Localization.At_least_0_blocks_will_be_always_pre_fetched, page.MinimumPreFetch).
                        AppendLine();
+                }
 
                 if(page.MaximumPreFetch > 0)
+                {
                     sb.AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched,
                                     page.MaximumPreFetch).AppendLine();
+                }
 
                 if(page.MaximumPreFetchCeiling > 0)
+                {
                     sb.
-                        AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched_even_if_it_is_commanded_to_pre_fetch_more,
-                                     page.MaximumPreFetchCeiling).AppendLine();
+                        AppendFormat(
+                            "\t" + Localization.
+                                A_maximum_of_0_blocks_will_be_pre_fetched_even_if_it_is_commanded_to_pre_fetch_more,
+                            page.MaximumPreFetchCeiling).AppendLine();
+                }
 
                 if(page.IC)
+                {
                     sb.AppendLine("\t" + Localization.
                                       Device_should_use_number_of_cache_segments_or_cache_segment_size_for_caching);
+                }
 
                 if(page.ABPF)
                     sb.AppendLine("\t" + Localization.Pre_fetch_should_be_aborted_upon_receiving_a_new_command);
@@ -246,8 +258,10 @@ public static partial class Modes
                     sb.AppendLine("\t" + Localization.Caching_analysis_is_permitted);
 
                 if(page.Disc)
+                {
                     sb.AppendLine("\t" + Localization.
                                       Pre_fetch_can_continue_across_discontinuities_such_as_cylinders_or_tracks);
+                }
             }
         }
 
@@ -257,29 +271,42 @@ public static partial class Modes
         if(page.Size)
         {
             if(page.CacheSegmentSize > 0)
+            {
                 if(page.LBCSS)
+                {
                     sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_blocks_long,
                                     page.CacheSegmentSize).AppendLine();
+                }
                 else
+                {
                     sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_bytes_long,
                                     page.CacheSegmentSize).AppendLine();
+                }
+            }
         }
         else
         {
             if(page.CacheSegments > 0)
+            {
                 sb.AppendFormat("\t" + Localization.Drive_should_have_0_cache_segments, page.CacheSegments).
                    AppendLine();
+            }
         }
 
         if(page.NonCacheSegmentSize > 0)
+        {
             sb.
-                AppendFormat("\t" + Localization.Drive_shall_allocate_0_bytes_to_buffer_even_when_all_cached_data_cannot_be_evicted,
-                             page.NonCacheSegmentSize).AppendLine();
+                AppendFormat(
+                    "\t" + Localization.
+                        Drive_shall_allocate_0_bytes_to_buffer_even_when_all_cached_data_cannot_be_evicted,
+                    page.NonCacheSegmentSize).AppendLine();
+        }
 
         if(page.NV_DIS)
             sb.AppendLine("\t" + Localization.Non_Volatile_cache_is_disabled);
 
         return sb.ToString();
     }
-    #endregion Mode Page 0x08: Caching page
+
+#endregion Mode Page 0x08: Caching page
 }
