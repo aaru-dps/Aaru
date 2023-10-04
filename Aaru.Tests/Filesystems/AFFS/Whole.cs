@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFFS;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("affs")
 {
-    public Whole() : base("affs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();

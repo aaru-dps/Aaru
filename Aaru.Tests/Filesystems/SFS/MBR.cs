@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("sfs")
 {
-    public MBR() : base("sfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)");
     public override IFilesystem Plugin => new Aaru.Filesystems.SFS();
     public override bool Partitions => true;

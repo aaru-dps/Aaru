@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFS;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("sysv_r4")
 {
-    public Whole() : base("sysv_r4") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System");
 
     public override IFilesystem Plugin     => new SysVfs();

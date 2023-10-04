@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Atheos : FilesystemTest
+public class Atheos() : FilesystemTest("atheos")
 {
-    public Atheos() : base("atheos") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "AtheOS (MBR)");
     public override IFilesystem Plugin     => new AtheOS();
     public override bool        Partitions => true;

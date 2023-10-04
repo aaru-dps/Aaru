@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Iso9660 : ReadOnlyFilesystemTest
+public class Iso9660() : ReadOnlyFilesystemTest("iso9660")
 {
-    public Iso9660() : base("iso9660") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ISO9660");
     public override IFilesystem Plugin     => new ISO9660();
     public override bool        Partitions => false;

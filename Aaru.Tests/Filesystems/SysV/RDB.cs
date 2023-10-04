@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SysV;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB() : FilesystemTest("sysv_r4")
 {
-    public RDB() : base("sysv_r4") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (RDB)");
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;

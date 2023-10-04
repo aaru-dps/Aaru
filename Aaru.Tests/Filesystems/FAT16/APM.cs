@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT16;
 
 [TestFixture]
-public class APM : ReadOnlyFilesystemTest
+public class APM() : ReadOnlyFilesystemTest("fat16")
 {
-    public APM() : base("fat16") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (APM)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;

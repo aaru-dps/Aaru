@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HTFS;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("HTFS")
 {
-    public Whole() : base("HTFS") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughput File System");
 

@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HTFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("HTFS")
 {
-    public MBR() : base("HTFS") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughput File System (MBR)");
 

@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.QNX4;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("qnx4")
 {
-    public MBR() : base("qnx4") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
     public override IFilesystem Plugin => new Aaru.Filesystems.QNX4();
     public override bool Partitions => true;

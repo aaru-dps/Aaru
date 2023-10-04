@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.DTFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("DTFS")
 {
-    public MBR() : base("DTFS") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "DTFS (MBR)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;

@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Zfs : FilesystemTest
+public class Zfs() : FilesystemTest("zfs")
 {
-    public Zfs() : base("zfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Zettabyte File System");
 
     public override IFilesystem Plugin     => new ZFS();

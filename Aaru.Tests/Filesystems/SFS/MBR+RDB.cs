@@ -36,10 +36,8 @@ namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class MBR_RDB : FilesystemTest
+public class MBR_RDB() : FilesystemTest("sfs")
 {
-    public MBR_RDB() : base("sfs") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR+RDB)");
 

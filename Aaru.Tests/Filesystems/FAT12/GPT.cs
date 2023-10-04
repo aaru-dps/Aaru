@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT12;
 
 [TestFixture]
-public class GPT : ReadOnlyFilesystemTest
+public class GPT() : ReadOnlyFilesystemTest("fat12")
 {
-    public GPT() : base("fat12") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (GPT)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;

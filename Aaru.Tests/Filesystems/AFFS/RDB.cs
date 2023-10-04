@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFFS;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB() : FilesystemTest("affs")
 {
-    public RDB() : base("affs") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (RDB)");
 

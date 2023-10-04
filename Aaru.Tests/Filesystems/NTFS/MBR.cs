@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.NTFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("ntfs")
 {
-    public MBR() : base("ntfs") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (MBR)");
 

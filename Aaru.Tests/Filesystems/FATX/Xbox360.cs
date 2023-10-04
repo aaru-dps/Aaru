@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FATX;
 
 [TestFixture]
-public class Xbox360 : ReadOnlyFilesystemTest
+public class Xbox360() : ReadOnlyFilesystemTest("fatx")
 {
-    public Xbox360() : base("fatx") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "be");
 
     public override IFilesystem Plugin     => new XboxFatPlugin();

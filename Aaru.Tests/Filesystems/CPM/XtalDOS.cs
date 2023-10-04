@@ -33,10 +33,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
-public class XtalDOS : ReadOnlyFilesystemTest
+public class XtalDOS() : ReadOnlyFilesystemTest("cpmfs")
 {
-    public XtalDOS() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "XtalDOS");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

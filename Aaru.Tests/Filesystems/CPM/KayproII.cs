@@ -35,10 +35,8 @@ namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class KayproII : ReadOnlyFilesystemTest
+public class KayproII() : ReadOnlyFilesystemTest("cpmfs")
 {
-    public KayproII() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Kaypro II");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

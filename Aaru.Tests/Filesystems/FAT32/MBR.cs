@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.FAT32;
 
 [TestFixture]
-public class MBR : ReadOnlyFilesystemTest
+public class MBR() : ReadOnlyFilesystemTest("fat32")
 {
-    public MBR() : base("fat32") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (MBR)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;

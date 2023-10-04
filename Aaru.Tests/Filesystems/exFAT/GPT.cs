@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.exFAT;
 
 [TestFixture]
-public class GPT : FilesystemTest
+public class GPT() : FilesystemTest("exfat")
 {
-    public GPT() : base("exfat") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (GPT)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
     public override bool        Partitions => true;

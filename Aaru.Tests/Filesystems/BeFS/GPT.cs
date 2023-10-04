@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.BeFS;
 
 [TestFixture]
-public class GPT : FilesystemTest
+public class GPT() : FilesystemTest("befs")
 {
-    public GPT() : base("befs") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (GPT)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
     public override bool        Partitions => true;

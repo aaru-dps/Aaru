@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Reiser3 : FilesystemTest
+public class Reiser3() : FilesystemTest("reiserfs")
 {
-    public Reiser3() : base("reiserfs") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v3");
     public override IFilesystem Plugin     => new Reiser();
     public override bool        Partitions => true;

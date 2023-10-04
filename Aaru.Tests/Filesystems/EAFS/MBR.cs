@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.EAFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("Extended Acer Fast Filesystem")
 {
-    public MBR() : base("Extended Acer Fast Filesystem") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "EAFS (MBR)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;

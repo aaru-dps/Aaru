@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.XENIX;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("xenixfs")
 {
-    public Whole() : base("xenixfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();

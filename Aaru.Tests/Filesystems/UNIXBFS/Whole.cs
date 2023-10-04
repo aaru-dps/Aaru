@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UNIXBFS;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("bfs")
 {
-    public Whole() : base("bfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System");
 
     public override IFilesystem Plugin     => new BFS();

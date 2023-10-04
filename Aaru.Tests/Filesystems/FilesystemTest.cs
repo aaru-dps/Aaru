@@ -11,13 +11,9 @@ using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Tests.Filesystems;
 
-public abstract class FilesystemTest
+public abstract class FilesystemTest(string fileSystemType)
 {
-    readonly string _fileSystemType;
-
-    protected FilesystemTest() => _fileSystemType = null;
-
-    protected FilesystemTest(string fileSystemType) => _fileSystemType = fileSystemType;
+    protected FilesystemTest() : this(null) {}
 
     public abstract string      DataFolder { get; }
     public abstract IFilesystem Plugin     { get; }
@@ -250,7 +246,7 @@ public abstract class FilesystemTest
                                     string.Format(Localization.System_ID_0, testFile));
                 }
 
-                Assert.AreEqual(_fileSystemType ?? test.Type, fsMetadata.Type,
+                Assert.AreEqual(fileSystemType ?? test.Type, fsMetadata.Type,
                                 string.Format(Localization.Filesystem_type_0, testFile));
 
                 Assert.AreEqual(test.VolumeName, fsMetadata.VolumeName,

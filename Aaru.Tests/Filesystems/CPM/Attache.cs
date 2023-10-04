@@ -33,10 +33,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
-public class Attache : FilesystemTest
+public class Attache() : FilesystemTest("cpmfs")
 {
-    public Attache() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Otrona Attaché");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

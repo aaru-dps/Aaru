@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.QNX4;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("qnx4")
 {
-    public Whole() : base("qnx4") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();

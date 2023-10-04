@@ -50,14 +50,11 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
-public sealed class SplashWindowViewModel : ViewModelBase
+public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
 {
-    readonly SplashWindow _view;
-    double                _currentProgress;
-    double                _maxProgress;
-    string                _message;
-
-    public SplashWindowViewModel(SplashWindow view) => _view = view;
+    double _currentProgress;
+    double _maxProgress;
+    string _message;
 
     public string Message
     {
@@ -234,7 +231,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
             var settingsDialog          = new SettingsDialog();
             var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);
             settingsDialog.DataContext = settingsDialogViewModel;
-            await settingsDialog.ShowDialog(_view);
+            await settingsDialog.ShowDialog(view);
         }
 
         LoadStatistics();

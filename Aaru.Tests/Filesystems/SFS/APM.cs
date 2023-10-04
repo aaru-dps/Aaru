@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
-public class APM : FilesystemTest
+public class APM() : FilesystemTest("sfs")
 {
-    public APM() : base("sfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (APM)");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();

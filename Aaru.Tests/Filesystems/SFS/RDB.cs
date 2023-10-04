@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB() : FilesystemTest("sfs")
 {
-    public RDB() : base("sfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (RDB)");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();

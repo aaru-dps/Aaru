@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class LisaFs : ReadOnlyFilesystemTest
+public class LisaFs() : ReadOnlyFilesystemTest("lisafs")
 {
-    public LisaFs() : base("lisafs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple Lisa filesystem");
     public override IFilesystem Plugin => new LisaFS();
     public override bool Partitions => false;

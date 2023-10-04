@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Btrfs : FilesystemTest
+public class Btrfs() : FilesystemTest("btrfs")
 {
-    public Btrfs() : base("btrfs") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "btrfs");
     public override IFilesystem Plugin     => new BTRFS();
     public override bool        Partitions => true;

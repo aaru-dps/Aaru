@@ -33,10 +33,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
-public class AmstradCPMPlus : FilesystemTest
+public class AmstradCPMPlus() : FilesystemTest("cpmfs")
 {
-    public AmstradCPMPlus() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Amstrad CPM+");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

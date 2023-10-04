@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.COHERENT;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("coherent")
 {
-    public Whole() : base("coherent") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();

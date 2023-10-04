@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.PFS3;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB() : FilesystemTest("pfs")
 {
-    public RDB() : base("pfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "Professional File System 3 (RDB)");
 

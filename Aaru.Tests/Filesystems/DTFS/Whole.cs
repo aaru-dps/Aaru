@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.DTFS;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("DTFS")
 {
-    public Whole() : base("DTFS") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "DTFS");
 
     public override IFilesystem Plugin     => new SysVfs();

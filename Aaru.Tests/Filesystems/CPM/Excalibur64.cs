@@ -33,10 +33,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
-public class Excalibur64 : FilesystemTest
+public class Excalibur64() : FilesystemTest("cpmfs")
 {
-    public Excalibur64() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Excalibur 64");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

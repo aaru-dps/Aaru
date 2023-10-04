@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Xia : FilesystemTest
+public class Xia() : FilesystemTest("xia")
 {
-    public Xia() : base("xia") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xia filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
     public override bool        Partitions => true;

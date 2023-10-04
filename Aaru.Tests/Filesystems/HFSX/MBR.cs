@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFSX;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("hfsx")
 {
-    public MBR() : base("hfsx") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (MBR)");
 
     public override IFilesystem Plugin     => new AppleHFSPlus();

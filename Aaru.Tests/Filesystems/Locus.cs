@@ -34,10 +34,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Locus : FilesystemTest
+public class Locus() : FilesystemTest("locus")
 {
-    public Locus() : base("locus") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Locus filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Locus();
     public override bool        Partitions => false;

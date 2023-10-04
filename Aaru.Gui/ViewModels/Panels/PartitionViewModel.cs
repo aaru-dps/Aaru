@@ -34,25 +34,18 @@ using Aaru.CommonTypes;
 
 namespace Aaru.Gui.ViewModels.Panels;
 
-public sealed class PartitionViewModel
+public sealed class PartitionViewModel(Partition partition)
 {
-    public PartitionViewModel(Partition partition)
-    {
-        NameText  = string.Format(Localization.Core.Partition_name_0,                partition.Name);
-        TypeText  = string.Format(Localization.Core.Partition_type_0,                partition.Type);
-        StartText = string.Format(Localization.Core.Partition_start_sector_0_byte_1, partition.Start, partition.Offset);
+    public string NameText { get; } = string.Format(Localization.Core.Partition_name_0, partition.Name);
+    public string TypeText { get; } = string.Format(Localization.Core.Partition_type_0, partition.Type);
 
-        LengthText = string.Format(Localization.Core.Partition_length_0_sectors_1_bytes, partition.Length,
-                                   partition.Size);
+    public string StartText { get; } =
+        string.Format(Localization.Core.Partition_start_sector_0_byte_1, partition.Start, partition.Offset);
 
-        DescriptionLabelText = Localization.Core.Title_Partition_description;
-        DescriptionText      = partition.Description;
-    }
+    public string LengthText { get; } = string.Format(Localization.Core.Partition_length_0_sectors_1_bytes,
+                                                      partition.Length,
+                                                      partition.Size);
 
-    public string NameText             { get; }
-    public string TypeText             { get; }
-    public string StartText            { get; }
-    public string LengthText           { get; }
-    public string DescriptionLabelText { get; }
-    public string DescriptionText      { get; }
+    public string DescriptionLabelText { get; } = Localization.Core.Title_Partition_description;
+    public string DescriptionText      { get; } = partition.Description;
 }

@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFS;
 
 [TestFixture]
-public class APM : FilesystemTest
+public class APM() : FilesystemTest("hfs")
 {
-    public APM() : base("hfs") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (APM)");
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;

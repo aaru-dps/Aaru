@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AOFS;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB() : FilesystemTest("aofs")
 {
-    public RDB() : base("aofs") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (RDB)");
 

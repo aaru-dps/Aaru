@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Jfs2 : FilesystemTest
+public class Jfs2() : FilesystemTest("jfs")
 {
-    public Jfs2() : base("jfs") {}
-
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2");
     public override IFilesystem Plugin     => new JFS();
     public override bool        Partitions => true;

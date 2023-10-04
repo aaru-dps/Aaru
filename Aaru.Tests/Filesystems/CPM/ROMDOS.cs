@@ -35,10 +35,8 @@ namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class ROMDOS : FilesystemTest
+public class ROMDOS() : FilesystemTest("cpmfs")
 {
-    public ROMDOS() : base("cpmfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "ROMDOS");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();

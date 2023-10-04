@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.XENIX;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("xenixfs")
 {
-    public MBR() : base("xenixfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;

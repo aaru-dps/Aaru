@@ -35,15 +35,13 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Ext : FilesystemTest
+public class Ext() : FilesystemTest("ext")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Linux extended File System");
 
     public override IFilesystem Plugin     => new extFS();
     public override bool        Partitions => true;
-
-    public Ext() : base("ext") {}
 
     public override FileSystemTest[] Tests => new[]
     {

@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFFS;
 
 [TestFixture]
-public class APM : FilesystemTest
+public class APM() : FilesystemTest("affs")
 {
-    public APM() : base("affs") {}
-
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (APM)");
 

@@ -35,10 +35,8 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Hpfs : FilesystemTest
+public class Hpfs() : FilesystemTest("hpfs")
 {
-    public Hpfs() : base("hpfs") {}
-
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
                                                       "High Performance File System");
 
