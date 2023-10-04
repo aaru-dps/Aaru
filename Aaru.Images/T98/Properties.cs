@@ -50,6 +50,7 @@ public sealed partial class T98
     public Guid Id => new("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

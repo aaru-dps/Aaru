@@ -79,6 +79,7 @@ public class Nintendo64 : IByteAddressableImage
     public Guid Id => new("EF1B4319-48A0-4EEC-B8E8-D0EA36F8CC92");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

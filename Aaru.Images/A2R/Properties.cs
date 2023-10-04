@@ -46,6 +46,7 @@ public sealed partial class A2R
 #region IFluxImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

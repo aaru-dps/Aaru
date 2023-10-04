@@ -56,6 +56,7 @@ public sealed partial class SuperCardPro
 #region IFluxImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

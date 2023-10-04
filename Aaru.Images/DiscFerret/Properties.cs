@@ -48,6 +48,7 @@ public sealed partial class DiscFerret
     public Guid Id => new("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

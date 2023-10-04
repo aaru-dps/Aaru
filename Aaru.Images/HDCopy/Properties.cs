@@ -43,6 +43,7 @@ public sealed partial class HdCopy
 #region IMediaImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

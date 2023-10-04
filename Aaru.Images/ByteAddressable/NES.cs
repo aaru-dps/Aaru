@@ -54,6 +54,7 @@ public class Nes : IByteAddressableImage
     public Guid Id => new("D597A3F4-2B1C-441C-8487-0BCABC509302");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

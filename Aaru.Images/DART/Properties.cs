@@ -48,6 +48,7 @@ public sealed partial class Dart
     public Guid Id => new("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

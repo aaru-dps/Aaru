@@ -44,6 +44,7 @@ public sealed partial class BlindWrite5
 #region IOpticalMediaImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

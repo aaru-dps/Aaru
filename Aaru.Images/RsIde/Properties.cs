@@ -50,6 +50,7 @@ public sealed partial class RsIde
     public Guid Id => new("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

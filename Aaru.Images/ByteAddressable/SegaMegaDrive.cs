@@ -81,6 +81,7 @@ public class SegaMegaDrive : IByteAddressableImage
     public Guid Id => new("7B1CE2E7-3BC4-4283-BFA4-F292D646DF15");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

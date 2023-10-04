@@ -41,6 +41,7 @@ public class MasterSystem : IByteAddressableImage
     public Guid Id => new("B0C02927-890D-41D0-8E95-C5D9A2A74131");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

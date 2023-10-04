@@ -62,6 +62,7 @@ public sealed partial class CdrWin
                                                            OpticalImageCapabilities.CanStoreIndexes;
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

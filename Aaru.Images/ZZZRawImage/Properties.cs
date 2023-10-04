@@ -59,6 +59,7 @@ public sealed partial class ZZZRawImage
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

@@ -39,6 +39,7 @@ public class GameBoy : IByteAddressableImage
     public Guid Id => new("04AFDB93-587E-413B-9B52-10D4A92966CF");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

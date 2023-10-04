@@ -45,6 +45,7 @@ public sealed partial class Chd
 #region IOpticalMediaImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

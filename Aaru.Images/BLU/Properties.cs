@@ -44,6 +44,7 @@ public sealed partial class Blu
 #region IWritableImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

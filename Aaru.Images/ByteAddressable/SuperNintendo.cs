@@ -25,6 +25,7 @@ public class SuperNintendo : IByteAddressableImage
 #region IByteAddressableImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

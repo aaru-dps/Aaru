@@ -56,6 +56,7 @@ public sealed partial class CisCopy
     public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

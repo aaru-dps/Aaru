@@ -60,6 +60,7 @@ public sealed partial class Cdrdao
                                                            OpticalImageCapabilities.CanStoreIndexes;
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

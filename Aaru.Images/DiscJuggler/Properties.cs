@@ -50,6 +50,7 @@ public sealed partial class DiscJuggler
     public Guid Id => new("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

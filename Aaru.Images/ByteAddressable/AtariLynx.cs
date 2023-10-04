@@ -39,6 +39,7 @@ public class AtariLynx : IByteAddressableImage
     public Guid Id => new("809A6835-0486-4FD3-BD8B-2EF40C3EF97B");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

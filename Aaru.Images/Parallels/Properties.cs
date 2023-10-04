@@ -50,6 +50,7 @@ public sealed partial class Parallels
     public Guid Id => new("E314DE35-C103-48A3-AD36-990F68523C46");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

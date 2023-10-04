@@ -54,6 +54,7 @@ public sealed partial class UkvFdi
     public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

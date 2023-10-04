@@ -43,6 +43,7 @@ public sealed partial class WCDiskImage
 #region IMediaImage Members
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

@@ -60,6 +60,7 @@ public sealed partial class Alcohol120
                                                            OpticalImageCapabilities.CanStoreMultipleTracks;
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />

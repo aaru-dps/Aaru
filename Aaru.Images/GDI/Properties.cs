@@ -52,6 +52,7 @@ public sealed partial class Gdi
     public Guid Id => new("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
 
     /// <inheritdoc />
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
