@@ -58,10 +58,12 @@ public class UserManual
         if(cicm is null)
             return null;
 
-        var manual = new UserManual();
-        manual.Pages    = cicm.Pages;
-        manual.PageSize = cicm.PageSize;
-        manual.Scan     = cicm.Scan;
+        var manual = new UserManual
+        {
+            Pages    = cicm.Pages,
+            PageSize = cicm.PageSize,
+            Scan     = cicm.Scan
+        };
 
         if(cicm.Language is null)
             return manual;

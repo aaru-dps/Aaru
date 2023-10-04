@@ -60,8 +60,10 @@ public class Scan
         if(cicm is null)
             return null;
 
-        var scan = new Scan();
-        scan.File = cicm.File;
+        var scan = new Scan
+        {
+            File = cicm.File
+        };
 
         if(cicm.Checksums is not null)
         {

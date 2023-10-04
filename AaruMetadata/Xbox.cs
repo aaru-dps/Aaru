@@ -57,9 +57,11 @@ public class Xbox
         if(cicm is null)
             return null;
 
-        Xbox xbox = new();
-        xbox.Pfi = cicm.PFI;
-        xbox.Dmi = cicm.DMI;
+        Xbox xbox = new()
+        {
+            Pfi = cicm.PFI,
+            Dmi = cicm.DMI
+        };
 
         if(cicm.SecuritySectors is null)
             return xbox;
