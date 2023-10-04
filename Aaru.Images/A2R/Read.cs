@@ -275,13 +275,9 @@ public sealed partial class A2R
 
                     string[] metaFields = metaData.Split('\n');
 
-                    foreach(string field in metaFields)
-                    {
-                        string[] keyValue = field.Split('\t');
-
-                        if(keyValue.Length == 2)
-                            Meta.Add(keyValue[0], keyValue[1]);
-                    }
+                    foreach(string[] keyValue in metaFields.Select(field => field.Split('\t')).
+                                                            Where(keyValue => keyValue.Length == 2))
+                        Meta.Add(keyValue[0], keyValue[1]);
 
                     if(Meta.TryGetValue("image_date", out string imageDate))
                         _imageInfo.CreationTime = DateTime.Parse(imageDate);

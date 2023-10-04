@@ -174,14 +174,13 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 
                 bool useLong = inputFormat.Info.ReadableSectorTags.Except(new[] { SectorTagType.CdTrackFlags }).Any();
 
-                foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
-                            !outputFormat.SupportedSectorTags.Contains(sectorTag)))
-                {
-                    if(sectorTag != SectorTagType.CdTrackFlags &&
-                       sectorTag != SectorTagType.CdTrackIsrc  &&
-                       sectorTag != SectorTagType.CdSectorSubchannel)
-                        useLong = false;
-                }
+                // TODO: Can be done with LINQ only
+                foreach(SectorTagType _ in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
+                            !outputFormat.SupportedSectorTags.Contains(sectorTag)).Where(
+                            sectorTag => sectorTag != SectorTagType.CdTrackFlags &&
+                                         sectorTag != SectorTagType.CdTrackIsrc  &&
+                                         sectorTag != SectorTagType.CdSectorSubchannel))
+                    useLong = false;
 
                 Assert.IsTrue(
                     outputFormat.Create(outputPath, inputFormat.Info.MediaType, new Dictionary<string, string>(),
@@ -455,9 +454,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 if(trackFlags.Count > 0)
                 {
                     foreach((byte track, byte flags) in trackFlags)
-                    {
                         outputFormat.WriteSectorTag(new[] { flags }, track, SectorTagType.CdTrackFlags);
-                    }
                 }
 
                 if(mcn != null)
