@@ -638,12 +638,9 @@ public static class FullTOC
             toc.LastCompleteSession = (byte)track.Session;
         }
 
-        if(!sessionEndingTrack.ContainsKey(toc.LastCompleteSession))
-        {
-            sessionEndingTrack[toc.LastCompleteSession] = (byte)tracks.
-                                                                Where(t => t.Session == toc.LastCompleteSession).
-                                                                Max(t => t.Sequence);
-        }
+        sessionEndingTrack.TryAdd(toc.LastCompleteSession, (byte)tracks.
+                                                                 Where(t => t.Session == toc.LastCompleteSession).
+                                                                 Max(t => t.Sequence));
 
         byte currentSession = 0;
 

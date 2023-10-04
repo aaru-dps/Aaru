@@ -340,8 +340,7 @@ public static class Sense
 
                 Array.Copy(sense, offset, desc, 0, descLen);
 
-                if(!decoded.Descriptors.ContainsKey(descType))
-                    decoded.Descriptors.Add(descType, desc);
+                decoded.Descriptors.TryAdd(descType, desc);
 
                 offset += descLen;
             }
