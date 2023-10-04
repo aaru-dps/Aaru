@@ -202,7 +202,7 @@ public static class EVPD
         var sb      = new StringBuilder();
 
         foreach(byte b in element)
-            sb.AppendFormat("{0:X2}", b);
+            sb.Append($"{b:X2}");
 
         return sb.ToString();
     }
@@ -573,7 +573,7 @@ public static class EVPD
                         sb.AppendFormat("\t" + Localization.IEEE_EUI_64_0_X2, descriptor.Binary[0]);
 
                         for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+                            sb.Append($":{descriptor.Binary[i]:X2}");
 
                         sb.AppendLine();
                     }
@@ -587,7 +587,7 @@ public static class EVPD
                         sb.AppendFormat("\t" + Localization.NAA_0_X2, descriptor.Binary[0]);
 
                         for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.AppendFormat(":{0:X2}", descriptor.Binary[i]);
+                            sb.Append($":{descriptor.Binary[i]:X2}");
 
                         sb.AppendLine();
                     }
@@ -640,7 +640,7 @@ public static class EVPD
                         sb.AppendFormat("\t" + Localization.MD5_logical_unit_identifier_0_x2, descriptor.Binary[0]);
 
                         for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.AppendFormat("{0:x2}", descriptor.Binary[i]);
+                            sb.Append($"{descriptor.Binary[i]:x2}");
 
                         sb.AppendLine();
                     }
@@ -909,7 +909,7 @@ public static class EVPD
             sb.AppendFormat("\t" + "{0:X2}", identifier.Identifier[0]);
 
             for(var i = 1; i < identifier.Identifier.Length; i++)
-                sb.AppendFormat(":{0:X2}", identifier.Identifier[i]);
+                sb.Append($":{identifier.Identifier[i]:X2}");
 
             sb.AppendLine();
         }
@@ -1481,7 +1481,7 @@ public static class EVPD
         if(id != null)
         {
             sb.AppendLine("\t" + Localization.ATA_IDENTIFY_information_follows);
-            sb.AppendFormat("{0}", ATA.Identify.Prettify(id)).AppendLine();
+            sb.Append($"{ATA.Identify.Prettify(id)}").AppendLine();
         }
         else
             sb.AppendLine("\t" + Localization.Could_not_decode_ATA_IDENTIFY_information);

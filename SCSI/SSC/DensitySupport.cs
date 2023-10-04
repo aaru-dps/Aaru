@@ -222,7 +222,7 @@ public static class DensitySupport
                 sb.AppendFormat("\t" + Localization.Medium_supports_following_density_codes);
 
                 for(var i = 0; i < descriptor.numberOfCodes; i++)
-                    sb.AppendFormat(" {0:X2}h", descriptor.densityCodes[i]);
+                    sb.Append($" {descriptor.densityCodes[i]:X2}h");
 
                 sb.AppendLine();
             }

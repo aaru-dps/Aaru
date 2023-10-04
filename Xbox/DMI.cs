@@ -147,15 +147,15 @@ public static class DMI
         sb.Append(Localization.Catalogue_number);
 
         for(var i = 0; i < 2; i++)
-            sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
         for(var i = 2; i < 7; i++)
-            sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
-        sb.AppendFormat("{0}", decoded.CatalogNumber[7]);
+        sb.Append($"{decoded.CatalogNumber[7]}");
         sb.AppendLine();
 
         sb.AppendFormat(Localization.Timestamp_0, DateTime.FromFileTimeUtc(decoded.Timestamp)).AppendLine();
@@ -174,17 +174,17 @@ public static class DMI
         sb.Append(Localization.Catalogue_number);
 
         for(var i = 0; i < 2; i++)
-            sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
         for(var i = 2; i < 6; i++)
-            sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
         for(var i = 6; i < 8; i++)
-            sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+            sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
@@ -192,32 +192,32 @@ public static class DMI
         {
             case 13:
                 for(var i = 8; i < 10; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
                 for(var i = 10; i < 13; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 break;
             case 14:
                 for(var i = 8; i < 11; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
                 for(var i = 11; i < 14; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 break;
             default:
                 for(var i = 8; i < decoded.CatalogNumber.Length - 3; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
                 for(int i = decoded.CatalogNumber.Length - 3; i < decoded.CatalogNumber.Length; i++)
-                    sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    sb.Append($"{decoded.CatalogNumber[i]}");
 
                 break;
         }
@@ -227,12 +227,12 @@ public static class DMI
         sb.Append(Localization.Media_ID);
 
         for(var i = 0; i < 12; i++)
-            sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+            sb.Append($"{decoded.MediaID[i]:X2}");
 
         sb.Append("-");
 
         for(var i = 12; i < 16; i++)
-            sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+            sb.Append($"{decoded.MediaID[i]:X2}");
 
         sb.AppendLine();
 

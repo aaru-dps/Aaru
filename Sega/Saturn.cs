@@ -125,7 +125,7 @@ public static class Saturn
         IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name)).
                          AppendLine();
 
-        IPBinInformation.AppendFormat("Product number: {0}", Encoding.ASCII.GetString(ipbin.product_no)).AppendLine();
+        IPBinInformation.Append($"Product number: {Encoding.ASCII.GetString(ipbin.product_no)}").AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version)).
                          AppendLine();
