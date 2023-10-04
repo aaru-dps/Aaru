@@ -73,8 +73,8 @@ public sealed class Dump(Device dev)
 
         dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
-                                   duration, Agid, sense, dev.LastError);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms, duration,
+                                   Agid, sense, dev.LastError);
 
         return sense;
     }
@@ -101,8 +101,8 @@ public sealed class Dump(Device dev)
 
         dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
-                                   duration, Agid, sense, dev.LastError);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms, duration,
+                                   Agid, sense, dev.LastError);
 
         return sense;
     }
@@ -157,9 +157,8 @@ public sealed class Dump(Device dev)
 
         dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                   Localization.REPORT_AGID_CSS_CPPM_AGID_1_Sense_2_Last_Error_3_took_0_ms, duration,
-                                   Agid, sense, dev.LastError);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.REPORT_AGID_CSS_CPPM_AGID_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration, Agid, sense, dev.LastError);
 
         return sense;
     }
@@ -253,8 +252,7 @@ public sealed class Dump(Device dev)
         buffer[12] = challengeKey[1];
         buffer[13] = challengeKey[0];
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
-                            out bool sense);
+        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.SEND_CHALLENGE_AGID_1_Challenge_2_Sense_3_Last_Error_4_took_0_ms,
@@ -291,8 +289,7 @@ public sealed class Dump(Device dev)
         buffer[7] = key2[1];
         buffer[8] = key2[0];
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
-                            out bool sense);
+        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.SEND_CHALLENGE_AGID_1_KEY2_2_Sense_3_Last_Error_4_took_0_ms, duration,

@@ -127,7 +127,10 @@ public class MPEG
 
 #endregion
 
-    static readonly byte[] _mpeg2PackHeaderStartCode = { 0x0, 0x0, 0x1 };
+    static readonly byte[] _mpeg2PackHeaderStartCode =
+    {
+        0x0, 0x0, 0x1
+    };
 
     public static bool ContainsMpegPackets(byte[] sectorData, uint blocks = 1, uint blockSize = 2048)
     {

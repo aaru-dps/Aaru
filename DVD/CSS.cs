@@ -58,17 +58,99 @@ public class CSS
 {
     static readonly byte[,] _playerKeys =
     {
-        { 0x01, 0xaf, 0xe3, 0x12, 0x80 }, { 0x12, 0x11, 0xca, 0x04, 0x3b }, { 0x14, 0x0c, 0x9e, 0xd0, 0x09 },
-        { 0x14, 0x71, 0x35, 0xba, 0xe2 }, { 0x1a, 0xa4, 0x33, 0x21, 0xa6 }, { 0x26, 0xec, 0xc4, 0xa7, 0x4e },
-        { 0x2c, 0xb2, 0xc1, 0x09, 0xee }, { 0x2f, 0x25, 0x9e, 0x96, 0xdd }, { 0x33, 0x2f, 0x49, 0x6c, 0xe0 },
-        { 0x35, 0x5b, 0xc1, 0x31, 0x0f }, { 0x36, 0x67, 0xb2, 0xe3, 0x85 }, { 0x39, 0x3d, 0xf1, 0xf1, 0xbd },
-        { 0x3b, 0x31, 0x34, 0x0d, 0x91 }, { 0x45, 0xed, 0x28, 0xeb, 0xd3 }, { 0x48, 0xb7, 0x6c, 0xce, 0x69 },
-        { 0x4b, 0x65, 0x0d, 0xc1, 0xee }, { 0x4c, 0xbb, 0xf5, 0x5b, 0x23 }, { 0x51, 0x67, 0x67, 0xc5, 0xe0 },
-        { 0x53, 0x94, 0xe1, 0x75, 0xbf }, { 0x57, 0x2c, 0x8b, 0x31, 0xae }, { 0x63, 0xdb, 0x4c, 0x5b, 0x4a },
-        { 0x7b, 0x1e, 0x5e, 0x2b, 0x57 }, { 0x85, 0xf3, 0x85, 0xa0, 0xe0 }, { 0xab, 0x1e, 0xe7, 0x7b, 0x72 },
-        { 0xab, 0x36, 0xe3, 0xeb, 0x76 }, { 0xb1, 0xb8, 0xf9, 0x38, 0x03 }, { 0xb8, 0x5d, 0xd8, 0x53, 0xbd },
-        { 0xbf, 0x92, 0xc3, 0xb0, 0xe2 }, { 0xcf, 0x1a, 0xb2, 0xf8, 0x0a }, { 0xec, 0xa0, 0xcf, 0xb3, 0xff },
-        { 0xfc, 0x95, 0xa9, 0x87, 0x35 }
+        {
+            0x01, 0xaf, 0xe3, 0x12, 0x80
+        },
+        {
+            0x12, 0x11, 0xca, 0x04, 0x3b
+        },
+        {
+            0x14, 0x0c, 0x9e, 0xd0, 0x09
+        },
+        {
+            0x14, 0x71, 0x35, 0xba, 0xe2
+        },
+        {
+            0x1a, 0xa4, 0x33, 0x21, 0xa6
+        },
+        {
+            0x26, 0xec, 0xc4, 0xa7, 0x4e
+        },
+        {
+            0x2c, 0xb2, 0xc1, 0x09, 0xee
+        },
+        {
+            0x2f, 0x25, 0x9e, 0x96, 0xdd
+        },
+        {
+            0x33, 0x2f, 0x49, 0x6c, 0xe0
+        },
+        {
+            0x35, 0x5b, 0xc1, 0x31, 0x0f
+        },
+        {
+            0x36, 0x67, 0xb2, 0xe3, 0x85
+        },
+        {
+            0x39, 0x3d, 0xf1, 0xf1, 0xbd
+        },
+        {
+            0x3b, 0x31, 0x34, 0x0d, 0x91
+        },
+        {
+            0x45, 0xed, 0x28, 0xeb, 0xd3
+        },
+        {
+            0x48, 0xb7, 0x6c, 0xce, 0x69
+        },
+        {
+            0x4b, 0x65, 0x0d, 0xc1, 0xee
+        },
+        {
+            0x4c, 0xbb, 0xf5, 0x5b, 0x23
+        },
+        {
+            0x51, 0x67, 0x67, 0xc5, 0xe0
+        },
+        {
+            0x53, 0x94, 0xe1, 0x75, 0xbf
+        },
+        {
+            0x57, 0x2c, 0x8b, 0x31, 0xae
+        },
+        {
+            0x63, 0xdb, 0x4c, 0x5b, 0x4a
+        },
+        {
+            0x7b, 0x1e, 0x5e, 0x2b, 0x57
+        },
+        {
+            0x85, 0xf3, 0x85, 0xa0, 0xe0
+        },
+        {
+            0xab, 0x1e, 0xe7, 0x7b, 0x72
+        },
+        {
+            0xab, 0x36, 0xe3, 0xeb, 0x76
+        },
+        {
+            0xb1, 0xb8, 0xf9, 0x38, 0x03
+        },
+        {
+            0xb8, 0x5d, 0xd8, 0x53, 0xbd
+        },
+        {
+            0xbf, 0x92, 0xc3, 0xb0, 0xe2
+        },
+        {
+            0xcf, 0x1a, 0xb2, 0xf8, 0x0a
+        },
+        {
+            0xec, 0xa0, 0xcf, 0xb3, 0xff
+        },
+        {
+            0xfc, 0x95, 0xa9, 0x87, 0x35
+        }
     };
 
     static readonly byte[] _cssTable1 =
@@ -259,7 +341,15 @@ public class CSS
 
     static readonly byte[,] _permutationChallenge =
     {
-        { 1, 3, 0, 7, 5, 2, 9, 6, 4, 8 }, { 6, 1, 9, 3, 8, 5, 7, 4, 0, 2 }, { 4, 0, 3, 5, 7, 2, 8, 6, 1, 9 }
+        {
+            1, 3, 0, 7, 5, 2, 9, 6, 4, 8
+        },
+        {
+            6, 1, 9, 3, 8, 5, 7, 4, 0, 2
+        },
+        {
+            4, 0, 3, 5, 7, 2, 8, 6, 1, 9
+        }
     };
 
     static readonly byte[,] _permutationVariant =
@@ -280,7 +370,10 @@ public class CSS
         0xF2, 0x2A, 0x79, 0x52, 0xFF, 0x1B, 0x7A, 0x11, 0xCA, 0x1A, 0x9B, 0x40, 0xAD, 0x01
     };
 
-    static readonly byte[] _secret = { 0x55, 0xD6, 0xC4, 0xC5, 0x28 };
+    static readonly byte[] _secret =
+    {
+        0x55, 0xD6, 0xC4, 0xC5, 0x28
+    };
 
     /// <summary>
     ///     The disc key returned by the logical unit is encoded with the bus key to prevent man-in-the-middle attacks.
@@ -291,8 +384,7 @@ public class CSS
     /// <returns>A DiscKey struct with the decoded key.</returns>
     public static CSS_CPRM.DiscKey? DecodeDiscKey(byte[] response, byte[] busKey)
     {
-        if(response.Length != 2052 ||
-           busKey.Length   != 5)
+        if(response.Length != 2052 || busKey.Length != 5)
             return null;
 
         byte[] key = response.Skip(4).Take(2048).ToArray();
@@ -318,8 +410,7 @@ public class CSS
     /// <returns>A TitleKey struct with the decoded key.</returns>
     public static CSS_CPRM.TitleKey? DecodeTitleKey(byte[] response, byte[] busKey)
     {
-        if(response.Length != 12 ||
-           busKey.Length   != 5)
+        if(response.Length != 12 || busKey.Length != 5)
             return null;
 
         byte[] key = response.Skip(5).Take(5).ToArray();
@@ -468,11 +559,12 @@ public class CSS
         var  lfsr1Lo = (uint)(cryptoKey[0] | 0x100);
         uint lfsr1Hi = cryptoKey[1];
 
-        var lfsr0 = (uint)((cryptoKey[4] << 17 | cryptoKey[3] << 9 | cryptoKey[2] << 1) + 8 -
-                           (cryptoKey[2] & 7));
+        var lfsr0 = (uint)((cryptoKey[4] << 17 | cryptoKey[3] << 9 | cryptoKey[2] << 1) + 8 - (cryptoKey[2] & 7));
 
-        lfsr0 = (uint)(_cssTable4[lfsr0 & 0xff] << 24 | _cssTable4[lfsr0 >> 8 & 0xff] << 16 |
-                       _cssTable4[lfsr0 >> 16 & 0xff] << 8 | _cssTable4[lfsr0 >> 24 & 0xff]);
+        lfsr0 = (uint)(_cssTable4[lfsr0       & 0xff] << 24 |
+                       _cssTable4[lfsr0 >> 8  & 0xff] << 16 |
+                       _cssTable4[lfsr0 >> 16 & 0xff] << 8  |
+                       _cssTable4[lfsr0 >> 24 & 0xff]);
 
         uint combined = 0;
 
@@ -515,8 +607,8 @@ public class CSS
 
         for(uint n = 0; n < _playerKeys.GetLength(0); n++)
         {
-            byte[] currentPlayerKey = Enumerable.Range(0, _playerKeys.GetLength(1)).Select(x => _playerKeys[n, x]).
-                                                 ToArray();
+            byte[] currentPlayerKey =
+                Enumerable.Range(0, _playerKeys.GetLength(1)).Select(x => _playerKeys[n, x]).ToArray();
 
             for(uint i = 1; i < 409; i++)
             {
@@ -546,8 +638,7 @@ public class CSS
                                        uint   blockSize = 2048)
     {
         // None of the sectors are encrypted
-        if(cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0) ||
-           keyData.All(static k => k == 0))
+        if(cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0) || keyData.All(static k => k == 0))
             return sectorData;
 
         var decryptedBuffer = new byte[sectorData.Length];
@@ -582,8 +673,7 @@ public class CSS
         long lfsr1Lo = key[0] ^ sector[0x54] | 0x100;
         long lfsr1Hi = key[1] ^ sector[0x55];
 
-        long lfsr0 = (key[2]       | key[3]       << 8 | key[4]       << 16) ^
-                     (sector[0x56] | sector[0x57] << 8 | sector[0x58] << 16);
+        long lfsr0 = (key[2] | key[3] << 8 | key[4] << 16) ^ (sector[0x56] | sector[0x57] << 8 | sector[0x58] << 16);
 
         long oLfsr1 = lfsr0 & 7;
         lfsr0 = lfsr0 * 2 + 8 - oLfsr1;
@@ -635,13 +725,11 @@ public class CSS
             return false;
 
         // The CMI tells us the sector is not encrypted.
-        if(cmi               != null &&
-           (cmi & 0x80) >> 7 == 0)
+        if(cmi != null && (cmi & 0x80) >> 7 == 0)
             return false;
 
         // We have the key but it's all zeroes, so sector is unencrypted.
-        if(key != null &&
-           key.All(static k => k == 0))
+        if(key != null && key.All(static k => k == 0))
             return false;
 
         // These packet types cannot be encrypted
@@ -703,9 +791,7 @@ public class CSS
         }
 
         // If we found an adequate pattern.
-        if(bestPattern                     <= 0 ||
-           bestPatternLength               <= 3 ||
-           bestPatternLength / bestPattern < 2)
+        if(bestPattern <= 0 || bestPatternLength <= 3 || bestPatternLength / bestPattern < 2)
             return false;
 
         var offset = (int)(0x80 - bestPatternLength / bestPattern * bestPattern);
@@ -890,8 +976,7 @@ public class CSS
 
             if(fs.OpenDir("VIDEO_TS", out IDirNode node) == ErrorNumber.NoError)
             {
-                while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-                      entry is not null)
+                while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
                 {
                     if(!entry.ToLower().EndsWith(".vob"))
                         continue;
