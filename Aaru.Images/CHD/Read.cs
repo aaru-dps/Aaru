@@ -1167,9 +1167,7 @@ public sealed partial class Chd
                             _imageInfo.DriveSerialNumber     = idnt.Value.SerialNumber;
                             _imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
 
-                            if(idnt.Value.CurrentCylinders       > 0 &&
-                               idnt.Value.CurrentHeads           > 0 &&
-                               idnt.Value.CurrentSectorsPerTrack > 0)
+                            if(idnt is { CurrentCylinders: > 0, CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
                             {
                                 _imageInfo.Cylinders       = idnt.Value.CurrentCylinders;
                                 _imageInfo.Heads           = idnt.Value.CurrentHeads;

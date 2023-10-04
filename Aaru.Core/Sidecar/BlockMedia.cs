@@ -843,24 +843,18 @@ public sealed partial class Sidecar
             if(errno == ErrorNumber.NoError)
                 ataId = Identify.Decode(buffer);
 
-            if(ataId.HasValue)
+            switch(ataId)
             {
-                if(ataId.Value.CurrentCylinders       > 0 &&
-                   ataId.Value.CurrentHeads           > 0 &&
-                   ataId.Value.CurrentSectorsPerTrack > 0)
-                {
+                case { CurrentCylinders: > 0, CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 }:
                     sidecar.BlockMedias[0].Cylinders       = ataId.Value.CurrentCylinders;
                     sidecar.BlockMedias[0].Heads           = ataId.Value.CurrentHeads;
                     sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
-                }
-                else if(ataId.Value.Cylinders       > 0 &&
-                        ataId.Value.Heads           > 0 &&
-                        ataId.Value.SectorsPerTrack > 0)
-                {
+                    break;
+                case { Cylinders: > 0, Heads: > 0, SectorsPerTrack: > 0 }:
                     sidecar.BlockMedias[0].Cylinders       = ataId.Value.Cylinders;
                     sidecar.BlockMedias[0].Heads           = ataId.Value.Heads;
                     sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
-                }
+                    break;
             }
         }
 

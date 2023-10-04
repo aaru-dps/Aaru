@@ -347,43 +347,115 @@ partial class Dump
 
             if(decSense.HasValue)
             {
-                if(decSense.Value.SenseKey == SenseKeys.IllegalRequest)
+                switch(decSense)
                 {
-                    sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
-
-                    if(sense)
+                    case { SenseKey: SenseKeys.IllegalRequest }:
                     {
-                        decSense = Sense.Decode(senseBuf);
+                        sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
 
-                        bool eom = decSense?.Fixed?.EOM == true;
-
-                        if(decSense?.Descriptor != null &&
-                           decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] sscDescriptor))
-                            Sense.DecodeDescriptor04(sscDescriptor, out _, out eom, out _);
-
-                        if(!eom)
+                        if(sense)
                         {
-                            StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_return_back_Sense_follows +
+                            decSense = Sense.Decode(senseBuf);
+
+                            bool eom = decSense?.Fixed?.EOM == true;
+
+                            if(decSense?.Descriptor != null &&
+                               decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] sscDescriptor))
+                                Sense.DecodeDescriptor04(sscDescriptor, out _, out eom, out _);
+
+                            if(!eom)
+                            {
+                                StoppingErrorMessage?.Invoke(
+                                    Localization.Core.Drive_could_not_return_back_Sense_follows +
+                                    Environment.NewLine + decSense.Value.Description);
+
+                                _dumpLog.WriteLine(Localization.Core.Drive_could_not_return_back_Sense_follows);
+
+                                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
+                                                   decSense.Value.ASC, decSense.Value.ASCQ);
+
+                                return;
+                            }
+                        }
+
+                        fixedLen    = true;
+                        transferLen = 1;
+
+                        sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize,
+                                           _dev.Timeout,
+                                           out duration);
+
+                        if(sense)
+                        {
+                            decSense = Sense.Decode(senseBuf);
+
+                            StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
                                                          Environment.NewLine + decSense.Value.Description);
 
-                            _dumpLog.WriteLine(Localization.Core.Drive_could_not_return_back_Sense_follows);
+                            _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
 
                             _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
                                                decSense.Value.ASC, decSense.Value.ASCQ);
 
                             return;
                         }
+
+                        break;
                     }
-
-                    fixedLen    = true;
-                    transferLen = 1;
-
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
-                                       out duration);
-
-                    if(sense)
+                    case { ASC: 0x00, ASCQ: 0x00 }:
                     {
-                        decSense = Sense.Decode(senseBuf);
+                        bool ili         = decSense.Value.Fixed?.ILI              == true;
+                        bool valid       = decSense.Value.Fixed?.InformationValid == true;
+                        uint information = decSense.Value.Fixed?.Information ?? 0;
+
+                        if(decSense.Value.Descriptor.HasValue)
+                        {
+                            valid = decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00);
+
+                            if(valid)
+                                information = (uint)Sense.DecodeDescriptor00(desc00);
+
+                            if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
+                                Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
+                        }
+
+                        if(ili && valid)
+                        {
+                            blockSize = (uint)((int)blockSize -
+                                               BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
+
+                            transferLen = blockSize;
+
+                            UpdateStatus?.Invoke(string.Format(
+                                                     Localization.Core.Blocksize_changed_to_0_bytes_at_block_1,
+                                                     blockSize, currentBlock));
+
+                            _dumpLog.WriteLine(Localization.Core.Blocksize_changed_to_0_bytes_at_block_1, blockSize,
+                                               currentBlock);
+
+                            sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout,
+                                               out duration);
+
+                            totalDuration += duration;
+
+                            if(sense)
+                            {
+                                decSense = Sense.Decode(senseBuf);
+
+                                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                                          Drive_could_not_go_back_one_block_Sense_follows +
+                                                             Environment.NewLine + decSense.Value.Description);
+
+                                _dumpLog.WriteLine(Localization.Core.Drive_could_not_go_back_one_block_Sense_follows);
+
+                                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
+                                                   decSense.Value.ASC, decSense.Value.ASCQ);
+
+                                return;
+                            }
+
+                            goto firstRead;
+                        }
 
                         StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
                                                      Environment.NewLine + decSense.Value.Description);
@@ -395,82 +467,16 @@ partial class Dump
 
                         return;
                     }
-                }
-                else if(decSense.Value.ASC  == 0x00 &&
-                        decSense.Value.ASCQ == 0x00)
-                {
-                    bool ili         = decSense.Value.Fixed?.ILI              == true;
-                    bool valid       = decSense.Value.Fixed?.InformationValid == true;
-                    uint information = decSense.Value.Fixed?.Information ?? 0;
+                    default:
+                        StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
+                                                     Environment.NewLine + decSense.Value.Description);
 
-                    if(decSense.Value.Descriptor.HasValue)
-                    {
-                        valid = decSense.Value.Descriptor.Value.Descriptors.TryGetValue(0, out byte[] desc00);
+                        _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
 
-                        if(valid)
-                            information = (uint)Sense.DecodeDescriptor00(desc00);
+                        _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
+                                           decSense.Value.ASC, decSense.Value.ASCQ);
 
-                        if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4, out byte[] desc04))
-                            Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
-                    }
-
-                    if(ili && valid)
-                    {
-                        blockSize = (uint)((int)blockSize -
-                                           BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
-
-                        transferLen = blockSize;
-
-                        UpdateStatus?.Invoke(string.Format(Localization.Core.Blocksize_changed_to_0_bytes_at_block_1,
-                                                           blockSize, currentBlock));
-
-                        _dumpLog.WriteLine(Localization.Core.Blocksize_changed_to_0_bytes_at_block_1, blockSize,
-                                           currentBlock);
-
-                        sense = _dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, _dev.Timeout, out duration);
-
-                        totalDuration += duration;
-
-                        if(sense)
-                        {
-                            decSense = Sense.Decode(senseBuf);
-
-                            StoppingErrorMessage?.Invoke(Localization.Core.
-                                                                      Drive_could_not_go_back_one_block_Sense_follows +
-                                                         Environment.NewLine + decSense.Value.Description);
-
-                            _dumpLog.WriteLine(Localization.Core.Drive_could_not_go_back_one_block_Sense_follows);
-
-                            _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                               decSense.Value.ASC, decSense.Value.ASCQ);
-
-                            return;
-                        }
-
-                        goto firstRead;
-                    }
-
-                    StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
-                                                 Environment.NewLine + decSense.Value.Description);
-
-                    _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
-
-                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                       decSense.Value.ASC, decSense.Value.ASCQ);
-
-                    return;
-                }
-                else
-                {
-                    StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
-                                                 Environment.NewLine + decSense.Value.Description);
-
-                    _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
-
-                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                       decSense.Value.ASC, decSense.Value.ASCQ);
-
-                    return;
+                        return;
                 }
             }
             else
@@ -939,9 +945,8 @@ partial class Dump
                         Sense.DecodeDescriptor04(desc04, out filemark, out eom, out ili);
                 }
 
-                if(decSense.Value.ASC  == 0x00 &&
-                   decSense.Value.ASCQ == 0x00 &&
-                   ili                         &&
+                if(decSense.Value is { ASC: 0x00, ASCQ: 0x00 } &&
+                   ili                                         &&
                    valid)
                 {
                     blockSize = (uint)((int)blockSize - BitConverter.ToInt32(BitConverter.GetBytes(information), 0));

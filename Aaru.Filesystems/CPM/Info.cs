@@ -920,9 +920,8 @@ public sealed partial class CPM
                 // Load all definitions
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Trying_to_load_definitions);
 
-                if(LoadDefinitions()                      &&
-                   _definitions?.definitions      != null &&
-                   _definitions.definitions.Count > 0)
+                if(LoadDefinitions() &&
+                   _definitions?.definitions is { Count: > 0 })
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Trying_all_known_definitions);
 

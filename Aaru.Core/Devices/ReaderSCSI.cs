@@ -405,9 +405,7 @@ sealed partial class Reader
 
                         if(decSense.HasValue)
                         {
-                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                               decSense.Value.ASC      == 0x24                     &&
-                               decSense.Value.ASCQ     == 0x00)
+                            if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
                             {
                                 CanReadRaw = true;
 

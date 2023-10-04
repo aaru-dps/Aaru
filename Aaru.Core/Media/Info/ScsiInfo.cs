@@ -1297,8 +1297,7 @@ public sealed class ScsiInfo
                     {
                         AaruConsole.WriteLine("PFI:\n{0}", PFI.Prettify(cmdBuf, MediaType));
 
-                        if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
-                           nintendoPfi.Value.PartVersion  == 15)
+                        if(nintendoPfi is { DiskCategory: DiskCategory.Nintendo, PartVersion: 15 })
                         {
                             MediaType = nintendoPfi.Value.DiscSize switch
                                         {
