@@ -443,11 +443,11 @@ public class ReedSolomon
 
                 for(j = 1; j <= noEras; j++)
                 {
-                    if(reg[j] != _a0)
-                    {
-                        reg[j] =  Modnn(reg[j] + j);
-                        q      ^= _alphaTo[reg[j]];
-                    }
+                    if(reg[j] == _a0)
+                        continue;
+
+                    reg[j] =  Modnn(reg[j] + j);
+                    q      ^= _alphaTo[reg[j]];
                 }
 
                 if(q != 0)
@@ -570,11 +570,11 @@ public class ReedSolomon
 
             for(j = degLambda; j > 0; j--)
             {
-                if(reg[j] != _a0)
-                {
-                    reg[j] =  Modnn(reg[j] + j);
-                    q      ^= _alphaTo[reg[j]];
-                }
+                if(reg[j] == _a0)
+                    continue;
+
+                reg[j] =  Modnn(reg[j] + j);
+                q      ^= _alphaTo[reg[j]];
             }
 
             if(q != 0)

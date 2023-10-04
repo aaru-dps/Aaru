@@ -205,14 +205,14 @@ public static class CdChecksums
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 for(var i = 0x010; i < 0x930; i++)
                 {
-                    if(channel[i] != 0x00)
-                    {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
-                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
+                    if(channel[i] == 0x00)
+                        continue;
 
-                        return false;
-                    }
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
+                                               channel[0x00C], channel[0x00D], channel[0x00E]);
+
+                    return false;
                 }
 
                 return true;
