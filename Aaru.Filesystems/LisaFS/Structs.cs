@@ -32,7 +32,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Interfaces;
 
-#pragma warning disable CS0649
 namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
@@ -412,6 +411,7 @@ public sealed partial class LisaFS
         public ushort vol_sequence;
         /// <summary>0x138, Volume is dirty?</summary>
         public byte vol_left_mounted;
+    #pragma warning disable CS0649
         /// <summary>Is password present? (On-disk position unknown)</summary>
         public byte passwd_present;
         /// <summary>Opened files (memory-only?) (On-disk position unknown)</summary>
@@ -426,16 +426,14 @@ public sealed partial class LisaFS
         public byte write_protected;
         /// <summary>Master disk (On-disk position unknown)</summary>
         public byte master;
-    #pragma warning restore CS0649
         /// <summary>Copy disk (On-disk position unknown)</summary>
         public byte copy;
         /// <summary>No idea (On-disk position unknown)</summary>
         public byte copy_flag;
         /// <summary>No idea (On-disk position unknown)</summary>
         public byte scavenge_flag;
+    #pragma warning restore CS0649
     }
-
-#region Nested type: MDDF
 
 #endregion
 
