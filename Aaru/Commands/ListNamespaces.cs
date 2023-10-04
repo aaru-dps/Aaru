@@ -49,7 +49,7 @@ sealed class ListNamespacesCommand : Command
     const string MODULE_NAME = "List-Namespaces command";
 
     public ListNamespacesCommand() : base("list-namespaces", UI.List_Namespaces_Command_Description) =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool debug, bool verbose)
     {

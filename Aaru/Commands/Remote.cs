@@ -57,7 +57,7 @@ sealed class RemoteCommand : Command
             Name        = "host"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string host)

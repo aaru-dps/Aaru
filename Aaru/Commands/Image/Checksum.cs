@@ -89,7 +89,7 @@ sealed class ChecksumCommand : Command
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug,      bool verbose,    bool   adler32,   bool crc16, bool crc32, bool crc64,

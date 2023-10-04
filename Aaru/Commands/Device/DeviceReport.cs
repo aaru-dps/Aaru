@@ -72,7 +72,7 @@ sealed class DeviceReportCommand : Command
 
         Add(new Option<bool>(new[] { "--trap-disc", "-t" }, () => false, UI.Device_report_using_trap_disc));
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string devicePath, bool trapDisc)
@@ -274,7 +274,7 @@ sealed class DeviceReportCommand : Command
                 }
                 else if(!removable &&
                         report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.
-                            Removable) == true)
+                                Removable) == true)
                     removable = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
 
                 if(removable)

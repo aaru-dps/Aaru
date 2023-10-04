@@ -72,7 +72,7 @@ sealed class CreateSidecarCommand : Command
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool   debug,     bool verbose, uint blockSize, [CanBeNull] string encodingName,

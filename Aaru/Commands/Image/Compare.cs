@@ -71,7 +71,7 @@ sealed class CompareCommand : Command
             Name        = "image-path2"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string imagePath1, string imagePath2)

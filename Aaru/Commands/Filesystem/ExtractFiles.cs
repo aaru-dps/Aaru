@@ -80,7 +80,7 @@ sealed class ExtractFilesCommand : Command
             Name        = "output-dir"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool   debug,      bool   verbose,   string encoding, bool xattrs, string imagePath,

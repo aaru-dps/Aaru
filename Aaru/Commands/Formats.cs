@@ -50,7 +50,7 @@ sealed class FormatsCommand : Command
     const string MODULE_NAME = "Formats command";
 
     public FormatsCommand() : base("formats", UI.List_Formats_Command_Description) =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool verbose, bool debug)
     {

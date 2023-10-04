@@ -138,7 +138,7 @@ sealed class ConvertImageCommand : Command
             Name        = "output-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool   verbose, bool debug, string cicmXml, string comments, int count, string creator,
@@ -564,7 +564,7 @@ sealed class ConvertImageCommand : Command
         }
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-                    !outputFormat.SupportedMediaTags.Contains(mediaTag) && !force))
+                        !outputFormat.SupportedMediaTags.Contains(mediaTag) && !force))
         {
             AaruConsole.ErrorWriteLine(UI.Converting_image_will_lose_media_tag_0, mediaTag);
             AaruConsole.ErrorWriteLine(UI.If_you_dont_care_use_force_option);
@@ -575,7 +575,7 @@ sealed class ConvertImageCommand : Command
         bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
 
         foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
-                    !outputFormat.SupportedSectorTags.Contains(sectorTag)))
+                        !outputFormat.SupportedSectorTags.Contains(sectorTag)))
         {
             if(force)
             {
@@ -624,7 +624,7 @@ sealed class ConvertImageCommand : Command
         }
 
         if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-               CanStoreSessions) != true &&
+                   CanStoreSessions) != true &&
            (inputFormat as IOpticalMediaImage)?.Sessions?.Count > 1)
         {
             // TODO: Disabled until 6.0
@@ -639,7 +639,7 @@ sealed class ConvertImageCommand : Command
         }
 
         if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-               CanStoreHiddenTracks) != true &&
+                   CanStoreHiddenTracks) != true &&
            (inputFormat as IOpticalMediaImage)?.Tracks?.Any(t => t.Sequence == 0) == true)
         {
             // TODO: Disabled until 6.0
@@ -707,7 +707,7 @@ sealed class ConvertImageCommand : Command
         List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-                    !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
+                        !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
         {
             ErrorNumber errorNumber = ErrorNumber.NoError;
 
@@ -908,7 +908,7 @@ sealed class ConvertImageCommand : Command
                                                                 Core.Filesystems.
                                                                      Identify(inputOptical,
                                                                               out List<string>
-                                                                                  idPlugins, p);
+                                                                                      idPlugins, p);
 
                                                                 return idPlugins.
                                                                     Contains("iso9660 filesystem");
@@ -969,7 +969,7 @@ sealed class ConvertImageCommand : Command
                                                                 Core.Filesystems.
                                                                      Identify(inputOptical,
                                                                               out List<string>
-                                                                                  idPlugins, p);
+                                                                                      idPlugins, p);
 
                                                                 return idPlugins.
                                                                     Contains("iso9660 filesystem");

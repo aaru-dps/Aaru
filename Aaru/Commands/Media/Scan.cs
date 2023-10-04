@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
@@ -66,7 +67,7 @@ sealed class MediaScanCommand : Command
             Name        = "device-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string devicePath, string ibgLog, string mhddLog,

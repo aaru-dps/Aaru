@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -47,7 +48,7 @@ sealed class ListEncodingsCommand : Command
     const string MODULE_NAME = "List-Encodings command";
 
     public ListEncodingsCommand() : base("list-encodings", UI.List_Encodings_Command_Description) =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool debug, bool verbose)
     {

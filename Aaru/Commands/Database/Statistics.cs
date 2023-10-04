@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
@@ -45,7 +46,7 @@ namespace Aaru.Commands.Database;
 sealed class StatisticsCommand : Command
 {
     public StatisticsCommand() : base("stats", UI.Database_Stats_Command_Description) =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool debug, bool verbose)
     {

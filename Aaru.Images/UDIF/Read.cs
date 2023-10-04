@@ -571,6 +571,11 @@ public sealed partial class Udif
             }
 
             buffer = new byte[SECTOR_SIZE];
+
+            // Shall not happen
+            if(data is null)
+                return ErrorNumber.InvalidArgument;
+
             Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
 
             if(_sectorCache.Count >= MAX_CACHED_SECTORS)

@@ -190,9 +190,15 @@ public sealed class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _devicesSupported, value);
     }
 
-    public bool NativeMenuSupported =>
-        NativeMenu.GetIsNativeMenuExported((Application.Current?.ApplicationLifetime as
-                                                IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+    public bool NativeMenuSupported
+    {
+        get
+        {
+            Window mainWindow = (Application.Current?.ApplicationLifetime as
+                                     IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            return mainWindow is not null && NativeMenu.GetIsNativeMenuExported(mainWindow);
+        }
+    }
 
     [NotNull]
     public string Greeting => UI.Welcome_to_Aaru;

@@ -50,7 +50,7 @@ sealed class ListOptionsCommand : Command
     const string MODULE_NAME = "List-Options command";
 
     public ListOptionsCommand() : base("options", UI.Image_Options_Command_Description) =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool debug, bool verbose)
     {

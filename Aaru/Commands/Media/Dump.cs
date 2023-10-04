@@ -156,7 +156,7 @@ sealed class DumpMediaCommand : Command
         Add(new Option<string>(new[] { "--aaru-metadata", "-m" }, () => null,
                                "Take metadata from existing Aaru Metadata sidecar."));
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,

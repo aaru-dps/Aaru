@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Globalization;
@@ -68,7 +69,7 @@ sealed class DecodeCommand : Command
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool  verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
