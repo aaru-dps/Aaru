@@ -488,7 +488,7 @@ public static partial class MediaTypeFromDevice
                                                    Localization.SCSI_Media_Type_Description_PocketZIP);
 
                         return MediaType.PocketZip;
-                    case 86700 when vendor.ToLowerInvariant() == "syquest":
+                    case 86700 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SQ400);
 
                         return MediaType.SQ400;
@@ -497,7 +497,7 @@ public static partial class MediaTypeFromDevice
                                                    Localization.SCSI_Media_Type_Description_Bernoulli2_44);
 
                         return MediaType.Bernoulli44;
-                    case 173456 when vendor.ToLowerInvariant() == "syquest":
+                    case 173456 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SQ800);
 
                         return MediaType.SQ800;
@@ -511,7 +511,7 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.ZIP100;
 
-                    case 215440 when vendor.ToLowerInvariant() == "syquest":
+                    case 215440 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SQ310);
 
                         return MediaType.SQ310;
@@ -524,7 +524,7 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_154;
-                    case 262144 when vendor.ToLowerInvariant() == "syquest":
+                    case 262144 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_EZ135);
 
                         return MediaType.EZ135;
@@ -533,7 +533,7 @@ public static partial class MediaTypeFromDevice
                                                    Localization.SCSI_Media_Type_Description_Bernoulli2_150);
 
                         return MediaType.Bernoulli150;
-                    case 390696 when vendor.ToLowerInvariant() == "syquest":
+                    case 390696 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SQ2000);
 
                         return MediaType.SQ2000;
@@ -553,7 +553,7 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_201;
-                    case 450560 when vendor.ToLowerInvariant() == "syquest":
+                    case 450560 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_EZ230);
 
                         return MediaType.EZ230;
@@ -565,7 +565,7 @@ public static partial class MediaTypeFromDevice
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_ZIP250);
 
                         return MediaType.ZIP250;
-                    case 524288 when vendor.ToLowerInvariant() == "syquest":
+                    case 524288 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SQ327);
 
                         return MediaType.SQ327;
@@ -614,7 +614,7 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ECMA_195_512;
-                    case 1961069 when vendor.ToLowerInvariant() == "syquest":
+                    case 1961069 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
                                                        Drive_manufacturer_is_SyQuest_media_has_1961069_blocks_of_512_bytes_setting_media_type_to_SparQ);
@@ -629,7 +629,7 @@ public static partial class MediaTypeFromDevice
                                                    mediumType, blocks, blockSize);
 
                         return MediaType.ISO_14517_512;
-                    case 2929800 when vendor.ToLowerInvariant() == "syquest":
+                    case 2929800 when vendor.Equals("syquest", StringComparison.InvariantCultureIgnoreCase):
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_SyJet);
 
                         return MediaType.SyJet;

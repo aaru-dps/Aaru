@@ -32,6 +32,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 
 namespace Aaru.CommonTypes;
@@ -57,9 +58,9 @@ public static partial class MediaTypeFromDevice
             return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
         }
 
-        if(manufacturer.ToLowerInvariant() != "syquest" ||
-           model.ToLowerInvariant()        != "sparq"   ||
-           blocks                          != 1961069)
+        if(!manufacturer.Equals("syquest", StringComparison.InvariantCultureIgnoreCase) ||
+           !model.Equals("sparq", StringComparison.InvariantCultureIgnoreCase)          ||
+           blocks != 1961069)
             return MediaType.Unknown;
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
