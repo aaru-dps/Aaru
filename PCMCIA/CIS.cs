@@ -83,8 +83,7 @@ public static class CIS
         if(tuple == null)
             return null;
 
-        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO &&
-           tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
+        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
             return null;
 
         return tuple.Data == null ? null : DecodeDeviceGeometryTuple(tuple.Data);
@@ -125,8 +124,7 @@ public static class CIS
         if(tuple == null)
             return null;
 
-        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO &&
-           tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
+        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
             return null;
 
         var sb = new StringBuilder();
@@ -140,17 +138,22 @@ public static class CIS
                AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Erase_block_0_bytes,
-                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
+                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1)).
+               AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Read_block_0_bytes,
-                            (1 << geometry.ReadBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
+                            (1 << geometry.ReadBlockSize - 1) * (1 << geometry.Interleaving - 1)).
+               AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Write_block_0_bytes,
-                            (1 << geometry.WriteBlockSize - 1) * (1 << geometry.Interleaving - 1)).AppendLine();
+                            (1 << geometry.WriteBlockSize - 1) * (1 << geometry.Interleaving - 1)).
+               AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Partition_alignment_0_bytes,
-                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1) *
-                            (1 << geometry.Partitions     - 1)).AppendLine();
+                            (1 << geometry.EraseBlockSize - 1) *
+                            (1 << geometry.Interleaving   - 1) *
+                            (1 << geometry.Partitions     - 1)).
+               AppendLine();
         }
 
         return sb.ToString();
@@ -286,7 +289,8 @@ public static class CIS
         sb.AppendLine(Localization.PCMCIA_Level_1_Version_Product_Information_Tuple);
 
         sb.AppendFormat("\t" + Localization.Card_indicates_compliance_with_PC_Card_Standard_Release_0_1,
-                        tuple.MajorVersion, tuple.MinorVersion).AppendLine();
+                        tuple.MajorVersion, tuple.MinorVersion).
+           AppendLine();
 
         if(string.IsNullOrEmpty(tuple.Manufacturer))
             sb.AppendLine("\t" + Localization.No_manufacturer_information_string);
@@ -298,8 +302,7 @@ public static class CIS
         else
             sb.AppendFormat(Localization.Product_name_0, tuple.Product).AppendLine();
 
-        if(tuple.AdditionalInformation        == null ||
-           tuple.AdditionalInformation.Length == 0)
+        if(tuple.AdditionalInformation == null || tuple.AdditionalInformation.Length == 0)
             sb.AppendLine("\t" + Localization.No_additional_information);
         else
         {

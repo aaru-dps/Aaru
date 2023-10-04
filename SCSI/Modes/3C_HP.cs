@@ -84,21 +84,27 @@ public static partial class Modes
         decoded.PT             |= (pageResponse[2] & 0x01) == 0x01;
         decoded.CurrentPowerOn =  (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
-        decoded.PowerOnTime = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+        decoded.PowerOnTime = (uint)((pageResponse[8]  << 24) +
+                                     (pageResponse[9]  << 16) +
+                                     (pageResponse[10] << 8)  +
                                      pageResponse[11]);
 
         decoded.UTC |= (pageResponse[14] & 0x02) == 0x02;
         decoded.NTP |= (pageResponse[14] & 0x01) == 0x01;
 
-        decoded.WorldTime = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+        decoded.WorldTime = (uint)((pageResponse[16] << 24) +
+                                   (pageResponse[17] << 16) +
+                                   (pageResponse[18] << 8)  +
                                    pageResponse[19]);
 
         decoded.LibraryHours   = pageResponse[23];
         decoded.LibraryMinutes = pageResponse[24];
         decoded.LibrarySeconds = pageResponse[25];
 
-        decoded.CumulativePowerOn = (uint)((pageResponse[32] << 24) + (pageResponse[33] << 16) +
-                                           (pageResponse[34] << 8)  + pageResponse[35]);
+        decoded.CumulativePowerOn = (uint)((pageResponse[32] << 24) +
+                                           (pageResponse[33] << 16) +
+                                           (pageResponse[34] << 8)  +
+                                           pageResponse[35]);
 
         return decoded;
     }
@@ -124,16 +130,19 @@ public static partial class Modes
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_0_times, page.CurrentPowerOn);
 
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_since_0_seconds_ago_this_time,
-                            TimeSpan.FromSeconds(page.PowerOnTime)).AppendLine();
+                            TimeSpan.FromSeconds(page.PowerOnTime)).
+               AppendLine();
 
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_a_total_of_0_seconds,
-                            TimeSpan.FromSeconds(page.CumulativePowerOn)).AppendLine();
+                            TimeSpan.FromSeconds(page.CumulativePowerOn)).
+               AppendLine();
         }
 
         if(page.WT)
         {
             sb.AppendFormat("\t" + Localization.Drive_date_time_is_0,
-                            DateHandlers.UnixUnsignedToDateTime(page.WorldTime)).AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(page.WorldTime)).
+               AppendLine();
 
             if(page.UTC)
                 sb.AppendLine("\t" + Localization.Drive_time_is_UTC);
@@ -146,7 +155,8 @@ public static partial class Modes
         {
             sb.AppendFormat("\t" + Localization.Library_time_is_0,
                             new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours,
-                                         page.LibraryMinutes, page.LibrarySeconds)).AppendLine();
+                                         page.LibraryMinutes, page.LibrarySeconds)).
+               AppendLine();
         }
 
         return sb.ToString();

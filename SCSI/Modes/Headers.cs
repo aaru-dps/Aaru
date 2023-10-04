@@ -98,9 +98,9 @@ public static partial class Modes
                                                                                GetMediumTypeDescription_DOW,
                                                                            MediumTypes.HiMD => Localization.
                                                                                GetMediumTypeDescription_HiMD,
-                                                                           _ => string.Format(
-                                                                               Localization.Unknown_medium_type_0,
-                                                                               (byte)type)
+                                                                           _ => string.
+                                                                               Format(Localization.Unknown_medium_type_0,
+                                                                                   (byte)type)
                                                                        };
 
     public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
@@ -164,23 +164,27 @@ public static partial class Modes
                             if(descriptor.Blocks == 0)
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
-                                                density, descriptor.BlockLength).AppendLine();
+                                                density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                                descriptor.Blocks, density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                         else
                         {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                     }
                 }
@@ -205,8 +209,8 @@ public static partial class Modes
 
                         break;
                     case 2:
-                        sb.AppendLine("\t" + Localization.
-                                          Device_uses_a_write_cache_but_doesn_t_return_until_cache_is_flushed);
+                        sb.AppendLine("\t" +
+                                      Localization.Device_uses_a_write_cache_but_doesn_t_return_until_cache_is_flushed);
 
                         break;
                     default:
@@ -1221,28 +1225,29 @@ public static partial class Modes
                                 if(descriptor.BlockLength == 0)
                                 {
                                     sb.
-                                        AppendFormat(
-                                            "\t" + Localization.
-                                                All_remaining_blocks_conform_to_0_and_have_a_variable_length,
-                                            density).AppendLine();
+                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_have_a_variable_length,
+                                                     density).
+                                        AppendLine();
                                 }
                                 else
                                 {
                                     sb.
-                                        AppendFormat(
-                                            "\t" + Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
-                                            density, descriptor.BlockLength).AppendLine();
+                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
+                                                     density, descriptor.BlockLength).
+                                        AppendLine();
                                 }
                             }
                             else if(descriptor.BlockLength == 0)
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_have_a_variable_length,
-                                                descriptor.Blocks, density).AppendLine();
+                                                descriptor.Blocks, density).
+                                   AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                                descriptor.Blocks, density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
@@ -1255,7 +1260,8 @@ public static partial class Modes
                             else
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                                descriptor.BlockLength).AppendLine();
+                                                descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.BlockLength == 0)
@@ -1266,7 +1272,8 @@ public static partial class Modes
                         else
                         {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                     }
                 }
@@ -1416,25 +1423,28 @@ public static partial class Modes
                                 if(descriptor.BlockLength == 0)
                                 {
                                     sb.
-                                        AppendFormat(
-                                            "\t" + Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
-                                            density).AppendLine();
+                                        AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
+                                                     density).
+                                        AppendLine();
                                 }
                                 else
                                 {
                                     sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_are_1_bytes_each,
-                                                    density, descriptor.BlockLength).AppendLine();
+                                                    density, descriptor.BlockLength).
+                                       AppendLine();
                                 }
                             }
                             else if(descriptor.BlockLength == 0)
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_have_a_variable_length,
-                                                descriptor.Blocks, density).AppendLine();
+                                                descriptor.Blocks, density).
+                                   AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                                descriptor.Blocks, density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
@@ -1447,7 +1457,8 @@ public static partial class Modes
                             else
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                                descriptor.BlockLength).AppendLine();
+                                                descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.BlockLength == 0)
@@ -1458,7 +1469,8 @@ public static partial class Modes
                         else
                         {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                     }
                 }
@@ -1686,23 +1698,27 @@ public static partial class Modes
                             if(descriptor.Blocks == 0)
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
-                                                density, descriptor.BlockLength).AppendLine();
+                                                density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).AppendLine();
+                                                descriptor.Blocks, density, descriptor.BlockLength).
+                                   AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                         else
                         {
                             sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).AppendLine();
+                                            descriptor.BlockLength).
+                               AppendLine();
                         }
                     }
                 }

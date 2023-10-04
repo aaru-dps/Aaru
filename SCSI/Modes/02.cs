@@ -132,59 +132,60 @@ public static partial class Modes
         if(page.BufferFullRatio > 0)
         {
             sb.AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_full_prior_to_attempting_a_reselection,
-                            page.BufferFullRatio).AppendLine();
+                            page.BufferFullRatio).
+               AppendLine();
         }
 
         if(page.BufferEmptyRatio > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization._0_ratio_of_buffer_that_shall_be_empty_prior_to_attempting_a_reselection,
-                    page.BufferEmptyRatio).AppendLine();
+                AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_empty_prior_to_attempting_a_reselection,
+                             page.BufferEmptyRatio).
+                AppendLine();
         }
 
         if(page.BusInactivityLimit > 0)
         {
             sb.AppendFormat("\t" + Localization._0_µs_maximum_permitted_to_assert_BSY_without_a_REQ_ACK_handshake,
-                            page.BusInactivityLimit * 100).AppendLine();
+                            page.BusInactivityLimit * 100).
+               AppendLine();
         }
 
         if(page.DisconnectTimeLimit > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        _0_µs_maximum_permitted_wait_after_releasing_the_bus_before_attempting_reselection,
-                    page.DisconnectTimeLimit * 100).AppendLine();
+                AppendFormat("\t" + Localization._0_µs_maximum_permitted_wait_after_releasing_the_bus_before_attempting_reselection,
+                             page.DisconnectTimeLimit * 100).
+                AppendLine();
         }
 
         if(page.ConnectTimeLimit > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        _0_µs_allowed_to_use_the_bus_before_disconnecting_if_granted_the_privilege_and_not_restricted,
-                    page.ConnectTimeLimit * 100).AppendLine();
+                AppendFormat("\t" + Localization._0_µs_allowed_to_use_the_bus_before_disconnecting_if_granted_the_privilege_and_not_restricted,
+                             page.ConnectTimeLimit * 100).
+                AppendLine();
         }
 
         if(page.MaxBurstSize > 0)
         {
             sb.AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_before_disconnecting,
-                            page.MaxBurstSize * 512).AppendLine();
+                            page.MaxBurstSize * 512).
+               AppendLine();
         }
 
         if(page.FirstBurstSize > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        _0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command,
-                    page.FirstBurstSize * 512).AppendLine();
+                AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command,
+                             page.FirstBurstSize * 512).
+                AppendLine();
         }
 
         if(page.DIMM)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Target_shall_not_transfer_data_for_a_command_during_the_same_interconnect_tenancy);
         }
 
@@ -198,12 +199,14 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   All_data_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   All_data_and_the_response_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;

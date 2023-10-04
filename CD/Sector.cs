@@ -179,12 +179,14 @@ public static class Sector
         0x1C, 0x43, 0x49, 0xF1, 0xF6, 0xC4, 0x46, 0xD3, 0x72, 0xDD, 0xE5, 0x99
     };
 
-    public static readonly byte[] SyncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+    public static readonly byte[] SyncMark =
+    {
+        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+    };
 
     public static byte[] Scramble(byte[] sector)
     {
-        if(sector        == null ||
-           sector.Length < 2352)
+        if(sector == null || sector.Length < 2352)
             return sector;
 
         var sync = new byte[12];
@@ -212,9 +214,18 @@ public static class Sector
     {
         switch(data.Length)
         {
-            case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
-                           data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                           data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
+            case 2352 when data[0]  != 0x00 ||
+                           data[1]  != 0xFF ||
+                           data[2]  != 0xFF ||
+                           data[3]  != 0xFF ||
+                           data[4]  != 0xFF ||
+                           data[5]  != 0xFF ||
+                           data[6]  != 0xFF ||
+                           data[7]  != 0xFF ||
+                           data[8]  != 0xFF ||
+                           data[9]  != 0xFF ||
+                           data[10] != 0xFF ||
+                           data[11] != 0x00:
                 return data;
             case 2352:
                 switch(data[15])
@@ -241,8 +252,7 @@ public static class Sector
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetUserDataFromMode2(byte[] data, bool interleaved = false, byte fileNumber = 0)
     {
-        if(data.Length != 2352 &&
-           data.Length != 2336)
+        if(data.Length != 2352 && data.Length != 2336)
             return data;
 
         var pos = 0;
@@ -282,8 +292,7 @@ public static class Sector
 
     public static string Prettify(byte[] buffer)
     {
-        if(buffer is null ||
-           buffer.Length <= 0)
+        if(buffer is null || buffer.Length <= 0)
             return null;
 
         if(buffer[0]  != 0x00 ||

@@ -141,126 +141,102 @@ public static class PMA
                             case TocControl.TwoChanNoPreEmph:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
                             case TocControl.TwoChanPreEmph:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Stereo_audio_track_with_50_15_s_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_50_15_s_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Stereo_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Stereo_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
                             case TocControl.FourChanNoPreEmph:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
                             case TocControl.FourChanPreEmph:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Quadraphonic_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
                             case TocControl.DataTrack:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Data_track_recorded_uninterrupted_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_uninterrupted_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Data_track_recorded_uninterrupted_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_uninterrupted_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
                             case TocControl.DataTrackIncremental:
                                 if(descriptor.PHOUR > 0)
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Data_track_recorded_incrementally_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame, descriptor.HOUR);
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_incrementally_starts_at_4_1_2_3_and_ends_at_8_5_6_7,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.PHOUR, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame, descriptor.HOUR);
                                 }
                                 else
                                 {
-                                    sb.AppendFormat(
-                                        Localization.
-                                            Track_0_Data_track_recorded_incrementally_starts_at_1_2_3_and_ends_at_4_5_6,
-                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
-                                        descriptor.PFRAME, descriptor.Min, descriptor.Sec,
-                                        descriptor.Frame);
+                                    sb.AppendFormat(Localization.Track_0_Data_track_recorded_incrementally_starts_at_1_2_3_and_ends_at_4_5_6,
+                                                    descriptor.POINT, descriptor.PMIN, descriptor.PSEC,
+                                                    descriptor.PFRAME, descriptor.Min, descriptor.Sec,
+                                                    descriptor.Frame);
                                 }
 
                                 break;
@@ -330,40 +306,32 @@ public static class PMA
                 case 5:
                     if(descriptor.PHOUR > 0)
                     {
-                        sb.AppendFormat(
-                            Localization.
-                                Skip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_be_skipped,
-                            descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                            descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
-                            descriptor.HOUR);
+                        sb.AppendFormat(Localization.Skip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
+                                        descriptor.HOUR);
                     }
                     else
                     {
-                        sb.AppendFormat(
-                            Localization.
-                                Skip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_be_skipped,
-                            descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                            descriptor.Min, descriptor.Sec, descriptor.Frame);
+                        sb.AppendFormat(Localization.Skip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.Min, descriptor.Sec, descriptor.Frame);
                     }
 
                     break;
                 case 6:
                     if(descriptor.PHOUR > 0)
                     {
-                        sb.AppendFormat(
-                            Localization.
-                                Unskip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_not_be_skipped,
-                            descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                            descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
-                            descriptor.HOUR);
+                        sb.AppendFormat(Localization.Unskip_time_interval_assignment_0_says_that_from_4_1_2_3_to_8_5_6_7_should_not_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.PHOUR, descriptor.Min, descriptor.Sec, descriptor.Frame,
+                                        descriptor.HOUR);
                     }
                     else
                     {
-                        sb.AppendFormat(
-                            Localization.
-                                Unskip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_not_be_skipped,
-                            descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                            descriptor.Min, descriptor.Sec, descriptor.Frame);
+                        sb.AppendFormat(Localization.Unskip_time_interval_assignment_0_says_that_from_1_2_3_to_4_5_6_should_not_be_skipped,
+                                        descriptor.POINT, descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                        descriptor.Min, descriptor.Sec, descriptor.Frame);
                     }
 
                     break;

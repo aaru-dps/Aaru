@@ -108,8 +108,7 @@ public static class DiscInformation
         decoded.DiscApplicationCode = response[32];
         decoded.OPCTablesNumber     = response[33];
 
-        if(decoded.OPCTablesNumber <= 0 ||
-           response.Length         != decoded.OPCTablesNumber * 8 + 34)
+        if(decoded.OPCTablesNumber <= 0 || response.Length != decoded.OPCTablesNumber * 8 + 34)
             return decoded;
 
         decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
@@ -228,13 +227,15 @@ public static class DiscInformation
                         information.Value.LastSessionLeadInStartLBA,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF00)   >> 8,
-                        information.Value.LastSessionLeadInStartLBA & 0xFF).AppendLine();
+                        information.Value.LastSessionLeadInStartLBA & 0xFF).
+           AppendLine();
 
         sb.AppendFormat(Localization.Last_possible_Lead_Out_address_is_0_as_LBA_or_1_2_3,
                         information.Value.LastPossibleLeadOutStartLBA,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF00)   >> 8,
-                        information.Value.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
+                        information.Value.LastPossibleLeadOutStartLBA & 0xFF).
+           AppendLine();
 
         sb.AppendLine(information.Value.URU
                           ? Localization.Disc_is_defined_for_unrestricted_use
@@ -256,7 +257,8 @@ public static class DiscInformation
         {
             sb.AppendFormat(Localization.OPC_values_for_0_Kbit_sec_1_2_3_4_5_6, table.Speed, table.OPCValues[0],
                             table.OPCValues[1], table.OPCValues[2], table.OPCValues[3], table.OPCValues[4],
-                            table.OPCValues[5]).AppendLine();
+                            table.OPCValues[5]).
+               AppendLine();
         }
 
         return sb.ToString();
@@ -298,7 +300,8 @@ public static class DiscInformation
         sb.AppendFormat(Localization._0_assigned_tracks_on_the_disc, information.Value.AssignedTracks).AppendLine();
 
         sb.AppendFormat(Localization._0_maximum_possible_appendable_tracks_on_the_disc,
-                        information.Value.AppendableTracks).AppendLine();
+                        information.Value.AppendableTracks).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_current_appendable_tracks_on_the_disc, information.Value.MaxAppendableTracks).
            AppendLine();
@@ -347,7 +350,8 @@ public static class DiscInformation
            AppendLine();
 
         sb.AppendFormat(Localization._0_remaining_POW_reallocation_map_entries,
-                        information.Value.RemainingPOWReallocation).AppendLine();
+                        information.Value.RemainingPOWReallocation).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_remaining_POW_updates, information.Value.RemainingPOWUpdates).AppendLine();
 

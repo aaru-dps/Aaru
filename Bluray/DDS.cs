@@ -144,8 +144,7 @@ public static class DDS
 
         if(decoded.Signature != DDSIdentifier)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_DDS_signature_0,
-                                       decoded.Signature);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_DDS_signature_0, decoded.Signature);
 
             return null;
         }

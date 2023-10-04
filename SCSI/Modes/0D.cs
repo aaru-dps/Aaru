@@ -98,7 +98,8 @@ public static partial class Modes
         switch(page.InactivityTimerMultiplier)
         {
             case 0:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_track_hold_state_a_vendor_specified_time_after_a_seek_or_read);
 
                 break;
@@ -131,13 +132,13 @@ public static partial class Modes
 
                 break;
             case 8:
-                sb.AppendLine("\t" + Localization.
-                                  Drive_will_remain_in_track_hold_state_16_seconds_after_a_seek_or_read);
+                sb.AppendLine("\t" +
+                              Localization.Drive_will_remain_in_track_hold_state_16_seconds_after_a_seek_or_read);
 
                 break;
             case 9:
-                sb.AppendLine("\t" + Localization.
-                                  Drive_will_remain_in_track_hold_state_32_seconds_after_a_seek_or_read);
+                sb.AppendLine("\t" +
+                              Localization.Drive_will_remain_in_track_hold_state_32_seconds_after_a_seek_or_read);
 
                 break;
             case 10:
@@ -157,13 +158,13 @@ public static partial class Modes
 
                 break;
             case 14:
-                sb.AppendLine("\t" + Localization.
-                                  Drive_will_remain_in_track_hold_state_16_minutes_after_a_seek_or_read);
+                sb.AppendLine("\t" +
+                              Localization.Drive_will_remain_in_track_hold_state_16_minutes_after_a_seek_or_read);
 
                 break;
             case 15:
-                sb.AppendLine("\t" + Localization.
-                                  Drive_will_remain_in_track_hold_state_32_minutes_after_a_seek_or_read);
+                sb.AppendLine("\t" +
+                              Localization.Drive_will_remain_in_track_hold_state_32_minutes_after_a_seek_or_read);
 
                 break;
         }

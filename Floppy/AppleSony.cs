@@ -141,8 +141,7 @@ public static class AppleSony
         endOffset = offset;
 
         // Not an Apple ][ GCR sector
-        if(data        == null ||
-           data.Length < 363)
+        if(data == null || data.Length < 363)
             return null;
 
         int position = offset;
@@ -152,26 +151,29 @@ public static class AppleSony
             while(position < data.Length)
             {
                 // Prologue found
-                if(data[position]     == 0xD5 &&
-                   data[position + 1] == 0xAA &&
-                   data[position + 2] == 0x96)
+                if(data[position] == 0xD5 && data[position + 1] == 0xAA && data[position + 2] == 0x96)
                 {
                     // Epilogue not in correct position
-                    if(data[position + 8] != 0xDE ||
-                       data[position + 9] != 0xAA)
+                    if(data[position + 8] != 0xDE || data[position + 9] != 0xAA)
                         return null;
 
                     var sector = new RawSector
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[] { data[position], data[position + 1], data[position + 2] },
+                            prologue = new[]
+                            {
+                                data[position], data[position + 1], data[position + 2]
+                            },
                             track    = data[position + 3],
                             sector   = data[position + 4],
                             side     = data[position + 5],
                             format   = (AppleEncodedFormat)data[position + 6],
                             checksum = data[position + 7],
-                            epilogue = new[] { data[position + 8], data[position + 9] }
+                            epilogue = new[]
+                            {
+                                data[position + 8], data[position + 9]
+                            }
                         }
                     };
 
@@ -193,17 +195,18 @@ public static class AppleSony
                         return null;
 
                     // Prologue not found
-                    if(data[position]     != 0xDE ||
-                       data[position + 1] != 0xAA ||
-                       data[position + 2] != 0xAD)
+                    if(data[position] != 0xDE || data[position + 1] != 0xAA || data[position + 2] != 0xAD)
                         return null;
 
                     sector.innerGap = gaps.ToArray();
 
                     sector.dataField = new RawDataField
                     {
-                        prologue = new[] { data[position], data[position + 1], data[position + 2] },
-                        spare    = data[position + 3]
+                        prologue = new[]
+                        {
+                            data[position], data[position + 1], data[position + 2]
+                        },
+                        spare = data[position + 3]
                     };
 
                     position += 4;
@@ -211,8 +214,7 @@ public static class AppleSony
                     gaps = new MemoryStream();
 
                     // Read data until epilogue is found
-                    while(data[position + 4] != 0xD5 ||
-                          data[position + 5] != 0xAA)
+                    while(data[position + 4] != 0xD5 || data[position + 5] != 0xAA)
                     {
                         gaps.WriteByte(data[position]);
                         position++;
@@ -236,8 +238,7 @@ public static class AppleSony
                     gaps     =  new MemoryStream();
 
                     // Read gap, if any
-                    while(position       < data.Length &&
-                          data[position] == 0xFF)
+                    while(position < data.Length && data[position] == 0xFF)
                     {
                         gaps.WriteByte(data[position]);
                         position++;
@@ -327,8 +328,7 @@ public static class AppleSony
         byte            sideNumber  = 0;
         endOffset = offset;
 
-        while(position       < data.Length &&
-              data[position] == 0xFF)
+        while(position < data.Length && data[position] == 0xFF)
         {
             gaps.WriteByte(data[position]);
             count++;
@@ -357,8 +357,7 @@ public static class AppleSony
                 firstSector = false;
             }
 
-            if(sector.addressField.track != trackNumber ||
-               sector.addressField.side  != sideNumber)
+            if(sector.addressField.track != trackNumber || sector.addressField.side != sideNumber)
             {
                 position = oldPosition;
 

@@ -411,7 +411,8 @@ public static partial class Decoders
             sb.AppendLine("\t" + Localization.Device_supports_background_operations);
 
         sb.AppendFormat("\t" + Localization.Device_supports_a_maximum_of_0_packed_reads_and_1_packed_writes,
-                        csd.MaxPackedReadCommands, csd.MaxPackedWriteCommands).AppendLine();
+                        csd.MaxPackedReadCommands, csd.MaxPackedWriteCommands).
+           AppendLine();
 
         if(csd.DataTagSupport.HasFlag(DataTagSupport.Supported))
         {
@@ -428,7 +429,8 @@ public static partial class Decoders
             sb.AppendFormat("\t" + Localization.Max_context_ID_is_0, csd.ContextManagementCaps & 0xF).AppendLine();
 
             sb.AppendFormat("\t"                                      + Localization.Large_unit_maximum_multiplier_is_0,
-                            ((csd.ContextManagementCaps & 0x70) >> 4) + 1).AppendLine();
+                            ((csd.ContextManagementCaps & 0x70) >> 4) + 1).
+               AppendLine();
         }
 
         sb.AppendFormat("\t" + Localization.Large_unit_size_is_0_MiB, csd.LargeUnitSize + 1).AppendLine();
@@ -456,26 +458,23 @@ public static partial class Decoders
                     {
                         case > 1000000:
                             sb.
-                                AppendFormat(
-                                    "\t" + Localization.
-                                        Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_s,
-                                    unit / 1000000).AppendLine();
+                                AppendFormat("\t" + Localization.Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_s,
+                                             unit / 1000000).
+                                AppendLine();
 
                             break;
                         case > 1000:
                             sb.
-                                AppendFormat(
-                                    "\t" + Localization.
-                                        Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_ms,
-                                    unit / 1000).AppendLine();
+                                AppendFormat("\t" + Localization.Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_ms,
+                                             unit / 1000).
+                                AppendLine();
 
                             break;
                         default:
                             sb.
-                                AppendFormat(
-                                    "\t" + Localization.
-                                        Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_µs,
-                                    unit).AppendLine();
+                                AppendFormat("\t" + Localization.Maximum_timeout_for_switch_command_when_setting_a_value_to_the_mode_operation_codes_field_is_0_µs,
+                                             unit).
+                                AppendLine();
 
                             break;
                     }
@@ -492,11 +491,13 @@ public static partial class Decoders
         if(csd.CMDQueuingSupport.HasFlag(CMDQueuingSupport.Supported))
         {
             sb.AppendFormat("\t"                + Localization.Device_supports_command_queuing_with_a_depth_of_0,
-                            csd.CMDQueuingDepth + 1).AppendLine();
+                            csd.CMDQueuingDepth + 1).
+               AppendLine();
         }
 
         sb.AppendFormat("\t" + Localization._0_firmware_sectors_correctly_programmed,
-                        csd.NumberOfFWSectorsCorrectlyProgrammed).AppendLine();
+                        csd.NumberOfFWSectorsCorrectlyProgrammed).
+           AppendLine();
 
         switch(csd.DeviceLifeEstimationTypeB)
         {
@@ -625,7 +626,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Optimal_trim_size_is_0_KiB,
-                            4 * Math.Pow(2, csd.OptimalTrimUnitSize - 1)).AppendLine();
+                            4 * Math.Pow(2, csd.OptimalTrimUnitSize - 1)).
+               AppendLine();
         }
 
         sb.AppendFormat("\t" + Localization.Device_version_0,   csd.DeviceVersion).AppendLine();
@@ -639,16 +641,16 @@ public static partial class Decoders
         if(csd.GenericCMD6Timeout > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_by_default_for_a_SWITCH_command,
-                            csd.GenericCMD6Timeout * 10).AppendLine();
+                            csd.GenericCMD6Timeout * 10).
+               AppendLine();
         }
 
         if(csd.PowerOffNotificationTimeout > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        Device_takes_a_maximum_of_0_by_default_to_power_off_from_a_SWITCH_command_notification,
-                    csd.PowerOffNotificationTimeout * 10).AppendLine();
+                AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_by_default_to_power_off_from_a_SWITCH_command_notification,
+                             csd.PowerOffNotificationTimeout * 10).
+                AppendLine();
         }
 
         switch(csd.BackgroundOperationsStatus & 0x03)
@@ -672,12 +674,14 @@ public static partial class Decoders
         }
 
         sb.AppendFormat("\t" + Localization.Last_WRITE_MULTIPLE_command_correctly_programmed_0_sectors,
-                        csd.CorrectlyProgrammedSectors).AppendLine();
+                        csd.CorrectlyProgrammedSectors).
+           AppendLine();
 
         if(csd.InitializationTimeAfterPartition > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_for_initialization_after_partition,
-                            csd.InitializationTimeAfterPartition * 100).AppendLine();
+                            csd.InitializationTimeAfterPartition * 100).
+               AppendLine();
         }
 
         if(csd.CacheFlushingPolicy.HasFlag(CacheFlushingPolicy.FIFO))
@@ -686,7 +690,8 @@ public static partial class Decoders
         if(csd.TRIMMultiplier > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_for_trimming_a_single_erase_group,
-                            csd.TRIMMultiplier * 300).AppendLine();
+                            csd.TRIMMultiplier * 300).
+               AppendLine();
         }
 
         if(csd.SecureFeatureSupport.HasFlag(SecureFeatureSupport.Sanitize))
@@ -704,17 +709,17 @@ public static partial class Decoders
         if(csd.SecureEraseMultiplier > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.Device_takes_a_maximum_of_0_ms_for_securely_erasing_a_single_erase_group,
-                    csd.SecureEraseMultiplier * 300).AppendLine();
+                AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_for_securely_erasing_a_single_erase_group,
+                             csd.SecureEraseMultiplier * 300).
+                AppendLine();
         }
 
         if(csd.SecureTRIMMultiplier > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.Device_takes_a_maximum_of_0_ms_for_securely_trimming_a_single_erase_group,
-                    csd.SecureTRIMMultiplier * 300).AppendLine();
+                AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_for_securely_trimming_a_single_erase_group,
+                             csd.SecureTRIMMultiplier * 300).
+                AppendLine();
         }
 
         if(csd.BootInformation.HasFlag(BootInformation.HighSpeed))
@@ -735,7 +740,8 @@ public static partial class Decoders
         if((csd.AccessSize & 0x0F) > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_has_a_page_size_of_0_KiB,
-                            512 * Math.Pow(2, (csd.AccessSize & 0x0F) - 1) / 1024.0).AppendLine();
+                            512 * Math.Pow(2, (csd.AccessSize & 0x0F) - 1) / 1024.0).
+               AppendLine();
         }
 
         if(csd.HighCapacityEraseUnitSize > 0)
@@ -747,13 +753,15 @@ public static partial class Decoders
         if(csd.HighCapacityEraseTimeout > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_for_erasing_a_single_erase_group,
-                            csd.HighCapacityEraseTimeout * 300).AppendLine();
+                            csd.HighCapacityEraseTimeout * 300).
+               AppendLine();
         }
 
         if(csd.HighCapacityWriteProtectGroupSize > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_smallest_write_protect_group_is_made_of_0_erase_groups,
-                            csd.HighCapacityWriteProtectGroupSize).AppendLine();
+                            csd.HighCapacityWriteProtectGroupSize).
+               AppendLine();
         }
 
         if(csd.SleepCurrentVcc > 0)
@@ -784,23 +792,23 @@ public static partial class Decoders
             {
                 case > 1000000:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.Device_takes_a_maximum_of_0_s_to_switch_production_state_awareness,
-                            unit / 1000000).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_s_to_switch_production_state_awareness,
+                                     unit / 1000000).
+                        AppendLine();
 
                     break;
                 case > 1000:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.Device_takes_a_maximum_of_0_ms_to_switch_production_state_awareness,
-                            unit / 1000).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_to_switch_production_state_awareness,
+                                     unit / 1000).
+                        AppendLine();
 
                     break;
                 default:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.Device_takes_a_maximum_of_0_μs_to_switch_production_state_awareness,
-                            unit).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_μs_to_switch_production_state_awareness,
+                                     unit).
+                        AppendLine();
 
                     break;
             }
@@ -814,26 +822,23 @@ public static partial class Decoders
             {
                 case > 1000000:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.
-                                Device_takes_a_maximum_of_0_ms_to_transition_between_sleep_and_standby_states,
-                            unit / 1000000).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_to_transition_between_sleep_and_standby_states,
+                                     unit / 1000000).
+                        AppendLine();
 
                     break;
                 case > 1000:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.
-                                Device_takes_a_maximum_of_0_μs_to_transition_between_sleep_and_standby_states,
-                            unit / 1000).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_μs_to_transition_between_sleep_and_standby_states,
+                                     unit / 1000).
+                        AppendLine();
 
                     break;
                 default:
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.
-                                Device_takes_a_maximum_of_0_ns_to_transition_between_sleep_and_standby_states,
-                            unit).AppendLine();
+                        AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ns_to_transition_between_sleep_and_standby_states,
+                                     unit).
+                        AppendLine();
 
                     break;
             }
@@ -847,12 +852,14 @@ public static partial class Decoders
             {
                 case > 1000000:
                     sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_s_to_move_to_sleep_state,
-                                    unit / 1000000).AppendLine();
+                                    unit / 1000000).
+                       AppendLine();
 
                     break;
                 case > 1000:
                     sb.AppendFormat("\t" + Localization.Device_takes_a_maximum_of_0_ms_to_move_to_sleep_state,
-                                    unit / 1000).AppendLine();
+                                    unit / 1000).
+                       AppendLine();
 
                     break;
                 default:
@@ -880,7 +887,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_reading_in_SDR_26Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumReadPerformance26_4 * 300;
@@ -890,7 +898,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_reading_in_SDR_26Mhz_4_bit_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumReadPerformance52 * 300;
@@ -900,7 +909,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_reading_in_SDR_52Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumReadPerformanceDDR52 * 600;
@@ -910,7 +920,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_reading_in_DDR_52Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumWritePerformance26 * 300;
@@ -920,7 +931,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_writing_in_SDR_26Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumWritePerformance26_4 * 300;
@@ -930,7 +942,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_writing_in_SDR_26Mhz_4_bit_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumWritePerformance52 * 300;
@@ -940,7 +953,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_writing_in_SDR_52Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         unit = csd.MinimumWritePerformanceDDR52 * 600;
@@ -950,19 +964,22 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_can_achieve_a_minimum_of_0_MB_s_writing_in_DDR_52Mhz_mode,
-                            unit / 1000).AppendLine();
+                            unit / 1000).
+               AppendLine();
         }
 
         if(csd.PartitionSwitchingTime > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_can_take_a_maximum_of_0_ms_when_switching_partitions,
-                            csd.PartitionSwitchingTime * 10).AppendLine();
+                            csd.PartitionSwitchingTime * 10).
+               AppendLine();
         }
 
         if(csd.OutOfInterruptBusyTiming > 0)
         {
             sb.AppendFormat("\t" + Localization.Device_can_take_a_maximum_of_0_ms_when_releasing_from_an_interrupt,
-                            csd.OutOfInterruptBusyTiming * 10).AppendLine();
+                            csd.OutOfInterruptBusyTiming * 10).
+               AppendLine();
         }
 
         if(csd.DriverStrength.HasFlag(DriverStrength.Type0))
@@ -1021,9 +1038,9 @@ public static partial class Decoders
                         break;
                     default:
                         sb.
-                            AppendFormat(
-                                "\t" + Localization.Device_follows_standard_MMC_command_set_with_unknown_version_code_0,
-                                csd.CommandSetRevision).AppendLine();
+                            AppendFormat("\t" + Localization.Device_follows_standard_MMC_command_set_with_unknown_version_code_0,
+                                         csd.CommandSetRevision).
+                            AppendLine();
 
                         break;
                 }
@@ -1031,7 +1048,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Device_follows_unknown_MMC_command_set_code_0_with_revision_code_1,
-                                csd.CommandSet, csd.CommandSetRevision).AppendLine();
+                                csd.CommandSet, csd.CommandSetRevision).
+                   AppendLine();
 
                 break;
         }
@@ -1054,13 +1072,15 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Device_has_unknown_timing_mode_0,
-                                csd.HighSpeedInterfaceTiming & 0x0F).AppendLine();
+                                csd.HighSpeedInterfaceTiming & 0x0F).
+                   AppendLine();
 
                 break;
         }
 
         sb.AppendFormat("\t" + Localization.Selected_driver_strength_is_type_0,
-                        (csd.HighSpeedInterfaceTiming & 0xF0) >> 4).AppendLine();
+                        (csd.HighSpeedInterfaceTiming & 0xF0) >> 4).
+           AppendLine();
 
         if((csd.StrobeSupport & 0x01) == 0x01)
         {
@@ -1138,7 +1158,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_enabled_boot_partition_code_0,
-                                (csd.PartitionConfiguration & 0x38) >> 3).AppendLine();
+                                (csd.PartitionConfiguration & 0x38) >> 3).
+                   AppendLine();
 
                 break;
         }
@@ -1163,7 +1184,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.There_is_access_to_general_purpose_partition_0,
-                                (csd.PartitionConfiguration & 0x07) - 3).AppendLine();
+                                (csd.PartitionConfiguration & 0x07) - 3).
+                   AppendLine();
 
                 break;
         }
@@ -1172,7 +1194,8 @@ public static partial class Decoders
             sb.AppendLine("\t" + Localization.Change_of_the_boot_configuration_register_bits_is_permanently_disabled);
         else if(csd.BootConfigProtection.HasFlag(BootConfigProtection.PowerCycle))
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Change_of_the_boot_configuration_register_bits_is_disabled_until_the_next_power_cycle);
         }
 
@@ -1198,19 +1221,19 @@ public static partial class Decoders
 
         sb.AppendLine((csd.BootBusConditions & 4) == 4
                           ? "\t" + Localization.Device_will_retain_boot_conditions_after_boot_operation
-                          : "\t" + Localization.
-                                Device_will_reset_boot_conditions_to_compatibility_mode_after_boot_operation);
+                          : "\t" +
+                            Localization.Device_will_reset_boot_conditions_to_compatibility_mode_after_boot_operation);
 
         switch((csd.BootBusConditions & 0x24) >> 3)
         {
             case 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_will_use_single_data_rate_with_compatible_timings_in_boot_operation);
+                sb.AppendLine("\t" +
+                              Localization.Device_will_use_single_data_rate_with_compatible_timings_in_boot_operation);
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
-                                  Device_will_use_single_data_rate_with_high_speed_timings_in_boot_operation);
+                sb.AppendLine("\t" +
+                              Localization.Device_will_use_single_data_rate_with_high_speed_timings_in_boot_operation);
 
                 break;
             case 2:
@@ -1225,7 +1248,8 @@ public static partial class Decoders
 
         if(csd.HighCapacityEraseGroupDefinition.HasFlag(HighCapacityEraseGroupDefinition.Enabled))
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Device_will_use_high_capacity_erase_unit_size__timeout_and_write_protect_group_size_definitions);
         }
 
@@ -1324,7 +1348,8 @@ public static partial class Decoders
 
             if(csd.PartitioningSupport.HasFlag(PartitioningSupport.Enhanced))
             {
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Device_can_have_enhanced_technological_features_in_partitions_and_user_data_area);
             }
 
@@ -1344,7 +1369,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Device_natively_uses_unknown_sector_size_indicated_by_code_0,
-                                csd.NativeSectorSize).AppendLine();
+                                csd.NativeSectorSize).
+                   AppendLine();
 
                 break;
         }
@@ -1361,7 +1387,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Device_emulates_unknown_sector_size_indicated_by_code_0,
-                                csd.NativeSectorSize).AppendLine();
+                                csd.NativeSectorSize).
+                   AppendLine();
 
                 break;
         }
@@ -1378,7 +1405,8 @@ public static partial class Decoders
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Device_currently_addresses_unknown_sector_size_indicated_by_code_0,
-                                csd.NativeSectorSize).AppendLine();
+                                csd.NativeSectorSize).
+                   AppendLine();
 
                 break;
         }

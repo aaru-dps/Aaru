@@ -119,8 +119,7 @@ public static class DI
 
         if(DIResponse.Length != 4100)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
                                        DIResponse.Length);
 
             return null;
@@ -171,15 +170,21 @@ public static class DI
             unit.Bca              = (byte)(DIResponse[16 + offset] & 0x0F);
             unit.MaxTransfer      = DIResponse[17 + offset];
 
-            unit.LastPsn = (uint)((DIResponse[20 + offset] << 24) + (DIResponse[21 + offset] << 16) +
-                                  (DIResponse[22 + offset] << 8)  + DIResponse[23 + offset]);
+            unit.LastPsn = (uint)((DIResponse[20 + offset] << 24) +
+                                  (DIResponse[21 + offset] << 16) +
+                                  (DIResponse[22 + offset] << 8)  +
+                                  DIResponse[23 + offset]);
 
             // TODO: In -R/-RE how does this relate to layer size???
-            unit.FirstAun = (uint)((DIResponse[24 + offset] << 24) + (DIResponse[25 + offset] << 16) +
-                                   (DIResponse[26 + offset] << 8)  + DIResponse[27 + offset]);
+            unit.FirstAun = (uint)((DIResponse[24 + offset] << 24) +
+                                   (DIResponse[25 + offset] << 16) +
+                                   (DIResponse[26 + offset] << 8)  +
+                                   DIResponse[27 + offset]);
 
-            unit.LastAun = (uint)((DIResponse[28 + offset] << 24) + (DIResponse[29 + offset] << 16) +
-                                  (DIResponse[30 + offset] << 8)  + DIResponse[31 + offset]);
+            unit.LastAun = (uint)((DIResponse[28 + offset] << 24) +
+                                  (DIResponse[29 + offset] << 16) +
+                                  (DIResponse[30 + offset] << 8)  +
+                                  DIResponse[31 + offset]);
 
             switch(Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
             {
@@ -210,8 +215,7 @@ public static class DI
 
                 default:
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_unknown_disc_type_identifier_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_unknown_disc_type_identifier_0,
                                                Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 
                     break;
@@ -334,7 +338,8 @@ public static class DI
                     break;
                 default:
                     sb.AppendFormat(Localization.Disc_uses_unknown_channel_length_with_code_0,
-                                    (byte)unit.ChannelLength).AppendLine();
+                                    (byte)unit.ChannelLength).
+                       AppendLine();
 
                     break;
             }
@@ -371,7 +376,8 @@ public static class DI
                         break;
                     default:
                         sb.AppendFormat(Localization.Disc_uses_unknown_recorded_reflectivity_polarity_with_code_0,
-                                        unit.RecordedPolarity).AppendLine();
+                                        unit.RecordedPolarity).
+                           AppendLine();
 
                         break;
                 }

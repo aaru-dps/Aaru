@@ -76,7 +76,8 @@ public static class BlockLimits
             if(decoded.Value.granularity > 0)
             {
                 sb.AppendFormat(Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes, decoded.Value.granularity,
-                                Math.Pow(2, decoded.Value.granularity)).AppendLine();
+                                Math.Pow(2, decoded.Value.granularity)).
+                   AppendLine();
             }
         }
 

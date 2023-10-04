@@ -76,11 +76,7 @@ public static class PRI
             FieldId5   = response[36]
         };
 
-        if(pri.FieldId1 != 1 ||
-           pri.FieldId2 != 2 ||
-           pri.FieldId3 != 3 ||
-           pri.FieldId4 != 4 ||
-           pri.FieldId5 != 5)
+        if(pri.FieldId1 != 1 || pri.FieldId2 != 2 || pri.FieldId3 != 3 || pri.FieldId4 != 4 || pri.FieldId5 != 5)
             return null;
 
         pri.DiscApplicationCode             = response[5];
@@ -115,9 +111,7 @@ public static class PRI
         Array.Copy(response, 29, tmp, 6, 6);
 
         // If RW or has part version or has extension code, 3rd manufacturer ID is a write strategy code
-        if((pri.DiscPhysicalCode & 0x2) > 0 ||
-           pri.PartVersion              > 0 ||
-           pri.ExtensionCode            > 0)
+        if((pri.DiscPhysicalCode & 0x2) > 0 || pri.PartVersion > 0 || pri.ExtensionCode > 0)
         {
             pri.WriteStrategyCode2 =
                 (uint)((response[37] << 24) + (response[38] << 16) + (response[39] << 8) + response[40]);
@@ -157,7 +151,8 @@ public static class PRI
             if((decoded.DiscApplicationCode & 0x3F) > 0)
             {
                 sb.AppendFormat(Localization.Disc_for_use_in_special_drives_according_with_purpose_value_0,
-                                decoded.DiscApplicationCode & 0x3F).AppendLine();
+                                decoded.DiscApplicationCode & 0x3F).
+                   AppendLine();
             }
             else
                 sb.AppendLine(Localization.General_purpose_disc_for_use_in_general_purpose_drives);

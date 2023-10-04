@@ -195,13 +195,15 @@ public static partial class Modes
 
         if(page.TB)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Data_not_recovered_within_limits_shall_be_transferred_back_before_a_CHECK_CONDITION);
         }
 
         if(page.RC)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Drive_will_transfer_the_entire_requested_length_without_delaying_to_perform_error_recovery);
         }
 
@@ -232,7 +234,8 @@ public static partial class Modes
         if(page.RecoveryTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
-                            page.RecoveryTimeLimit).AppendLine();
+                            page.RecoveryTimeLimit).
+               AppendLine();
         }
 
         if(page.LBPERE)

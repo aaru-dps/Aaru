@@ -117,7 +117,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Drive_uses_unknown_loading_mechanism_type__0_,
-                                modePage.LoadingMechanism).AppendLine();
+                                modePage.LoadingMechanism).
+                   AppendLine();
 
                 break;
         }
@@ -136,8 +137,8 @@ public static partial class Modes
         else
         {
             sb.AppendLine(modePage.LockState
-                              ? "\t" + Localization.
-                                    Drive_is_locked__media_cannot_be_ejected__but_if_empty__can_be_inserted
+                              ? "\t" +
+                                Localization.Drive_is_locked__media_cannot_be_ejected__but_if_empty__can_be_inserted
                               : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
         }
 
@@ -223,12 +224,14 @@ public static partial class Modes
             {
                 case 0:
                     sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_CLV_mode,
-                                    modePage.CurrentWriteSpeedSelected).AppendLine();
+                                    modePage.CurrentWriteSpeedSelected).
+                       AppendLine();
 
                     break;
                 case 1:
                     sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_pure_CAV_mode,
-                                    modePage.CurrentWriteSpeedSelected).AppendLine();
+                                    modePage.CurrentWriteSpeedSelected).
+                       AppendLine();
 
                     break;
             }
@@ -244,25 +247,28 @@ public static partial class Modes
             if(modePage.CurrentWriteSpeed > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec,
-                                modePage.CurrentWriteSpeed).AppendLine();
+                                modePage.CurrentWriteSpeed).
+                   AppendLine();
             }
         }
 
         if(modePage.WriteSpeedPerformanceDescriptors != null)
         {
             foreach(ModePage_2A_WriteDescriptor descriptor in
-                    modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+                modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
             {
                 switch(descriptor.RotationControl)
                 {
                     case 0:
                         sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_0_Kbyte_sec_in_CLV_mode,
-                                        descriptor.WriteSpeed).AppendLine();
+                                        descriptor.WriteSpeed).
+                           AppendLine();
 
                         break;
                     case 1:
                         sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_is_0_Kbyte_sec_in_pure_CAV_mode,
-                                        descriptor.WriteSpeed).AppendLine();
+                                        descriptor.WriteSpeed).
+                           AppendLine();
 
                         break;
                 }

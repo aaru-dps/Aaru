@@ -109,7 +109,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Operating_systems_support_is_unknown_code_0,
-                                page.OperatingSystemsSupport).AppendLine();
+                                page.OperatingSystemsSupport).
+                   AppendLine();
 
                 break;
         }
@@ -179,7 +180,8 @@ public static partial class Modes
         if(page.HostUnloadOverride)
             sb.AppendLine("\t" + Localization.SCSI_UNLOAD_command_will_not_eject_the_cartridge);
 
-        sb.Append("\t" + Localization.
+        sb.Append("\t" +
+                  Localization.
                       How_should_tapes_be_unloaded_in_a_power_cycle_tape_incompatibility_firmware_download_or_cleaning_end);
 
         switch(page.AutoUnloadMode)

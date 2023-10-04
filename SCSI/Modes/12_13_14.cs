@@ -59,9 +59,7 @@ public static partial class Modes
         if((pageResponse[0] & 0x40) == 0x40)
             return null;
 
-        if((pageResponse[0] & 0x3F) != 0x12 &&
-           (pageResponse[0] & 0x3F) != 0x13 &&
-           (pageResponse[0] & 0x3F) != 0x14)
+        if((pageResponse[0] & 0x3F) != 0x12 && (pageResponse[0] & 0x3F) != 0x13 && (pageResponse[0] & 0x3F) != 0x14)
             return null;
 
         if(pageResponse[1] + 2 != pageResponse.Length)

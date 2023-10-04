@@ -45,9 +45,7 @@ public static partial class Modes
 {
     public static ModeHeader? DecodeModeHeader6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
     {
-        if(modeResponse        == null ||
-           modeResponse.Length < 4     ||
-           modeResponse.Length < modeResponse[0] + 1)
+        if(modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
             return null;
 
         var header = new ModeHeader

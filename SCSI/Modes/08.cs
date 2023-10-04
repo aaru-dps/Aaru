@@ -171,18 +171,21 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Data_put_by_READ_commands_should_be_evicted_from_cache_sooner_than_data_put_in_read_cache_by_other_means);
 
                 break;
             case 0xF:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Data_put_by_READ_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted);
 
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_demand_read_retention_priority_value_0,
-                                page.DemandReadRetentionPrio).AppendLine();
+                                page.DemandReadRetentionPrio).
+                   AppendLine();
 
                 break;
         }
@@ -194,18 +197,21 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Data_put_by_WRITE_commands_should_be_evicted_from_cache_sooner_than_data_put_in_write_cache_by_other_means);
 
                 break;
             case 0xF:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Data_put_by_WRITE_commands_should_not_be_evicted_if_there_is_data_cached_by_other_means_that_can_be_evicted);
 
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_demand_write_retention_priority_value_0,
-                                page.DemandReadRetentionPrio).AppendLine();
+                                page.DemandReadRetentionPrio).
+                   AppendLine();
 
                 break;
         }
@@ -222,7 +228,8 @@ public static partial class Modes
             else
             {
                 sb.AppendFormat("\t" + Localization.Pre_fetch_will_be_done_for_READ_commands_of_0_blocks_or_less,
-                                page.DisablePreFetch).AppendLine();
+                                page.DisablePreFetch).
+                   AppendLine();
 
                 if(page.MinimumPreFetch > 0)
                 {
@@ -233,21 +240,22 @@ public static partial class Modes
                 if(page.MaximumPreFetch > 0)
                 {
                     sb.AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched,
-                                    page.MaximumPreFetch).AppendLine();
+                                    page.MaximumPreFetch).
+                       AppendLine();
                 }
 
                 if(page.MaximumPreFetchCeiling > 0)
                 {
                     sb.
-                        AppendFormat(
-                            "\t" + Localization.
-                                A_maximum_of_0_blocks_will_be_pre_fetched_even_if_it_is_commanded_to_pre_fetch_more,
-                            page.MaximumPreFetchCeiling).AppendLine();
+                        AppendFormat("\t" + Localization.A_maximum_of_0_blocks_will_be_pre_fetched_even_if_it_is_commanded_to_pre_fetch_more,
+                                     page.MaximumPreFetchCeiling).
+                        AppendLine();
                 }
 
                 if(page.IC)
                 {
-                    sb.AppendLine("\t" + Localization.
+                    sb.AppendLine("\t" +
+                                  Localization.
                                       Device_should_use_number_of_cache_segments_or_cache_segment_size_for_caching);
                 }
 
@@ -259,7 +267,8 @@ public static partial class Modes
 
                 if(page.Disc)
                 {
-                    sb.AppendLine("\t" + Localization.
+                    sb.AppendLine("\t" +
+                                  Localization.
                                       Pre_fetch_can_continue_across_discontinuities_such_as_cylinders_or_tracks);
                 }
             }
@@ -275,12 +284,14 @@ public static partial class Modes
                 if(page.LBCSS)
                 {
                     sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_blocks_long,
-                                    page.CacheSegmentSize).AppendLine();
+                                    page.CacheSegmentSize).
+                       AppendLine();
                 }
                 else
                 {
                     sb.AppendFormat("\t" + Localization.Drive_cache_segments_should_be_0_bytes_long,
-                                    page.CacheSegmentSize).AppendLine();
+                                    page.CacheSegmentSize).
+                       AppendLine();
                 }
             }
         }
@@ -296,10 +307,9 @@ public static partial class Modes
         if(page.NonCacheSegmentSize > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        Drive_shall_allocate_0_bytes_to_buffer_even_when_all_cached_data_cannot_be_evicted,
-                    page.NonCacheSegmentSize).AppendLine();
+                AppendFormat("\t" + Localization.Drive_shall_allocate_0_bytes_to_buffer_even_when_all_cached_data_cannot_be_evicted,
+                             page.NonCacheSegmentSize).
+                AppendLine();
         }
 
         if(page.NV_DIS)

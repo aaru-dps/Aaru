@@ -129,50 +129,54 @@ public static partial class Decoders
         switch(scr.Spec)
         {
             case 0 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_1_0x);
+                sb.AppendLine("\t" +
+                              Localization.Device_follows_SecureDigital_Physical_Layer_Specification_version_1_0x);
 
                 break;
             case 1 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_1_10);
+                sb.AppendLine("\t" +
+                              Localization.Device_follows_SecureDigital_Physical_Layer_Specification_version_1_10);
 
                 break;
             case 2 when scr.Spec3 == false && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_2_00);
+                sb.AppendLine("\t" +
+                              Localization.Device_follows_SecureDigital_Physical_Layer_Specification_version_2_00);
 
                 break;
             case 2 when scr.Spec3 && scr.Spec4 == false && scr.SpecX == 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_3_0x);
+                sb.AppendLine("\t" +
+                              Localization.Device_follows_SecureDigital_Physical_Layer_Specification_version_3_0x);
 
                 break;
             case 2 when scr.Spec3 && scr.Spec4 && scr.SpecX == 0:
-                sb.AppendLine("\t" + Localization.
-                                  Device_follows_SecureDigital_Physical_Layer_Specification_version_4_xx);
+                sb.AppendLine("\t" +
+                              Localization.Device_follows_SecureDigital_Physical_Layer_Specification_version_4_xx);
 
                 break;
             case 2 when scr.Spec3:
                 switch(scr.SpecX)
                 {
                     case 1:
-                        sb.AppendLine("\t" + Localization.
+                        sb.AppendLine("\t" +
+                                      Localization.
                                           Device_follows_SecureDigital_Physical_Layer_Specification_version_5_xx);
 
                         break;
                     case 2:
-                        sb.AppendLine("\t" + Localization.
+                        sb.AppendLine("\t" +
+                                      Localization.
                                           Device_follows_SecureDigital_Physical_Layer_Specification_version_6_xx);
 
                         break;
                     case 3:
-                        sb.AppendLine("\t" + Localization.
+                        sb.AppendLine("\t" +
+                                      Localization.
                                           Device_follows_SecureDigital_Physical_Layer_Specification_version_7_xx);
 
                         break;
                     case 4:
-                        sb.AppendLine("\t" + Localization.
+                        sb.AppendLine("\t" +
+                                      Localization.
                                           Device_follows_SecureDigital_Physical_Layer_Specification_version_8_xx);
 
                         break;
@@ -181,10 +185,9 @@ public static partial class Decoders
                 break;
             default:
                 sb.
-                    AppendFormat(
-                        "\t" + Localization.
-                            Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
-                        scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).AppendLine();
+                    AppendFormat("\t" + Localization.Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
+                                 scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).
+                    AppendLine();
 
                 break;
         }

@@ -120,7 +120,8 @@ public static class TOC
             sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3, descriptor.TrackStartAddress,
                             (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
                             (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                            (descriptor.TrackStartAddress & 0xFF000000) >> 24).AppendLine();
+                            (descriptor.TrackStartAddress & 0xFF000000) >> 24).
+               AppendLine();
 
             switch((TocAdr)descriptor.ADR)
             {

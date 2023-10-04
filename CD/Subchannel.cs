@@ -50,8 +50,7 @@ public static class Subchannel
 
     public static void BinaryToBcdQ(byte[] q)
     {
-        if((q[0] & 0xF) == 1 ||
-           (q[0] & 0xF) == 5)
+        if((q[0] & 0xF) == 1 || (q[0] & 0xF) == 5)
         {
             q[1] = (byte)((q[1] / 10 << 4) + q[1] % 10);
             q[2] = (byte)((q[2] / 10 << 4) + q[2] % 10);
@@ -68,8 +67,7 @@ public static class Subchannel
 
     public static void BcdToBinaryQ(byte[] q)
     {
-        if((q[0] & 0xF) == 1 ||
-           (q[0] & 0xF) == 5)
+        if((q[0] & 0xF) == 1 || (q[0] & 0xF) == 5)
         {
             q[1] = (byte)(q[1] / 16 * 10 + (q[1] & 0x0F));
             q[2] = (byte)(q[2] / 16 * 10 + (q[2] & 0x0F));
@@ -378,24 +376,21 @@ public static class Subchannel
                 case 1 when subBuf[2] < 0xA0:
                     return
                         string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_starts_at_14_15_16_LBA_17_Q_CRC_18_19_20_R_W_21,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2],
-                            subBuf[7], subBuf[8], subBuf[9], qStart, subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                                      Localization.
+                                          Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_starts_at_14_15_16_LBA_17_Q_CRC_18_19_20_R_W_21,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr,
+                                      subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2], subBuf[7], subBuf[8], subBuf[9],
+                                      qStart, subBuf[10], subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
                 case 1 when subBuf[2] == 0xA0:
                 {
                     string format = subBuf[8] switch
@@ -408,129 +403,106 @@ public static class Subchannel
 
                     return
                         string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_is_first_program_area_track_in_14_format_Q_CRC_15_16_17_R_W_18,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2], format,
-                            subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                                      Localization.
+                                          Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_is_first_program_area_track_in_14_format_Q_CRC_15_16_17_R_W_18,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr,
+                                      subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2], format, subBuf[10], subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
                 }
                 case 1 when subBuf[2] == 0xA1:
                     return
                         string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_is_last_program_area_track_Q_CRC_14_15_16_R_W_17,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2],
-                            subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                                      Localization.
+                                          Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_is_last_program_area_track_Q_CRC_14_15_16_R_W_17,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr,
+                                      subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2], subBuf[10], subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
                 case 1:
                     return subBuf[2] == 0xA2
-                               ? string.
-                                   Format(
-                                       Localization.
-                                           Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_starts_at_14_15_16_LBA_17_Q_CRC_18_19_20_R_W_21,
-                                       minute, second, frame, lba, area, corruptedPause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_corrupted_pause
-                                                                             : pause
-                                                                                 ? Localization.
-                                                                                     Subchannel_PrettifyQ_pause
-                                                                                 : Localization.
-                                                                                     Subchannel_PrettifyQ_not_pause,
-                                       controlInfo, copy,      adr, subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2],
-                                       subBuf[7],   subBuf[8], subBuf[9], qStart, subBuf[10], subBuf[11],
-                                       crcOk
-                                           ? Localization.Subchannel_PrettifyQ_OK
-                                           : Localization.Subchannel_PrettifyQ_BAD,
-                                       rwEmpty
-                                           ? Localization.Subchannel_PrettifyQ_empty
-                                           : Localization.Subchannel_PrettifyQ_not_empty)
-                               : string.
-                                   Format(
-                                       Localization.
-                                           Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
-                                       minute, second, frame, lba, area, corruptedPause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_corrupted_pause
-                                                                             : pause
-                                                                                 ? Localization.
-                                                                                     Subchannel_PrettifyQ_pause
-                                                                                 : Localization.
-                                                                                     Subchannel_PrettifyQ_not_pause,
-                                       controlInfo, copy,      subBuf[0], subBuf[1], subBuf[2], subBuf[3],  subBuf[4],
-                                       subBuf[5],   subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
-                                       crcOk
-                                           ? Localization.Subchannel_PrettifyQ_OK
-                                           : Localization.Subchannel_PrettifyQ_BAD,
-                                       rwEmpty
-                                           ? Localization.Subchannel_PrettifyQ_empty
-                                           : Localization.Subchannel_PrettifyQ_not_empty);
+                               ? string.Format(
+                                               Localization.
+                                                   Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_9_10_11_LBA_12_track_13_starts_at_14_15_16_LBA_17_Q_CRC_18_19_20_R_W_21,
+                                               minute, second, frame, lba, area,
+                                               corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                               pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                                Localization.Subchannel_PrettifyQ_not_pause,
+                                               controlInfo, copy,
+                                               adr, subBuf[3], subBuf[4], subBuf[5], qPos, subBuf[2], subBuf[7],
+                                               subBuf[8], subBuf[9], qStart, subBuf[10], subBuf[11],
+                                               crcOk
+                                                   ? Localization.Subchannel_PrettifyQ_OK
+                                                   : Localization.Subchannel_PrettifyQ_BAD,
+                                               rwEmpty
+                                                   ? Localization.Subchannel_PrettifyQ_empty
+                                                   : Localization.Subchannel_PrettifyQ_not_empty)
+                               : string.Format(
+                                               Localization.
+                                                   Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
+                                               minute, second, frame, lba, area,
+                                               corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                               pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                                Localization.Subchannel_PrettifyQ_not_pause,
+                                               controlInfo, copy,
+                                               subBuf[0], subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5],
+                                               subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
+                                               crcOk
+                                                   ? Localization.Subchannel_PrettifyQ_OK
+                                                   : Localization.Subchannel_PrettifyQ_BAD,
+                                               rwEmpty
+                                                   ? Localization.Subchannel_PrettifyQ_empty
+                                                   : Localization.Subchannel_PrettifyQ_not_empty);
                 case 2:
                     return
-                        string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_MCN_9_frame_10_CRC_11_12_13_R_W_14,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, DecodeMcn(subBuf), subBuf[9], subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                        string.Format(Localization.Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_MCN_9_frame_10_CRC_11_12_13_R_W_14,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr,
+                                      DecodeMcn(subBuf), subBuf[9], subBuf[10], subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
             }
 
             if(adr != 5)
             {
                 return
                     string.Format(
-                        Localization.
-                            Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
-                        minute, second, frame, lba, area, corruptedPause
-                                                              ? Localization.
-                                                                  Subchannel_PrettifyQ_corrupted_pause
-                                                              : pause
-                                                                  ? Localization.Subchannel_PrettifyQ_pause
-                                                                  : Localization.
-                                                                      Subchannel_PrettifyQ_not_pause,
-                        controlInfo, copy, subBuf[0], subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5],
-                        subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
-                        crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                        rwEmpty
-                            ? Localization.Subchannel_PrettifyQ_empty
-                            : Localization.Subchannel_PrettifyQ_not_empty);
+                                  Localization.
+                                      Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
+                                  minute, second, frame, lba, area,
+                                  corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                  pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                   Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                  subBuf[0],
+                                  subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7],
+                                  subBuf[8], subBuf[9], subBuf[10], subBuf[11],
+                                  crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
+                                  rwEmpty
+                                      ? Localization.Subchannel_PrettifyQ_empty
+                                      : Localization.Subchannel_PrettifyQ_not_empty);
             }
 
             switch(subBuf[2])
@@ -538,133 +510,109 @@ public static class Subchannel
                 case <= 0x40:
                     return
                         string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_skip_interval_start_time_9_10_11_skip_interval_stop_time_12_13_14_CRC_15_16_17_R_W_18,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, subBuf[7], subBuf[8], subBuf[9], subBuf[3], subBuf[4],
-                            subBuf[5], subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                                      Localization.
+                                          Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_skip_interval_start_time_9_10_11_skip_interval_stop_time_12_13_14_CRC_15_16_17_R_W_18,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr,
+                                      subBuf[7], subBuf[8], subBuf[9], subBuf[3], subBuf[4], subBuf[5], subBuf[10],
+                                      subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
                 case 0xB0:
                     return final
-                               ? string.
-                                   Format(
-                                       Localization.
-                                           Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_next_program_area_can_start_at_9_10_11_LBA_12_last_session_13_mode_5_pointers_CRC_14_15_16_R_W_17,
-                                       minute, second, frame, lba, area, corruptedPause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_corrupted_pause
-                                                                             : pause
-                                                                                 ? Localization.
-                                                                                     Subchannel_PrettifyQ_pause
-                                                                                 : Localization.
-                                                                                     Subchannel_PrettifyQ_not_pause,
-                                       controlInfo, copy, adr, subBuf[3], subBuf[4], subBuf[5], nextPos, zero,
-                                       subBuf[10],  subBuf[11],
-                                       crcOk
-                                           ? Localization.Subchannel_PrettifyQ_OK
-                                           : Localization.Subchannel_PrettifyQ_BAD,
-                                       rwEmpty
-                                           ? Localization.Subchannel_PrettifyQ_empty
-                                           : Localization.Subchannel_PrettifyQ_not_empty)
-                               : string.
-                                   Format(
-                                       Localization.
-                                           Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_next_program_area_can_start_at_9_10_11_LBA_12_maximum_Lead_out_at_13_14_15_LBA_16_17_mode_5_pointers_CRC_18_19_20_R_W_21,
-                                       minute, second, frame, lba, area, corruptedPause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_corrupted_pause
-                                                                             : pause
-                                                                                 ? Localization.
-                                                                                     Subchannel_PrettifyQ_pause
-                                                                                 : Localization.
-                                                                                     Subchannel_PrettifyQ_not_pause,
-                                       controlInfo, copy,      adr, subBuf[3], subBuf[4], subBuf[5], nextPos, subBuf[7],
-                                       subBuf[8],   subBuf[9], maxOut, zero, subBuf[10], subBuf[11],
-                                       crcOk
-                                           ? Localization.Subchannel_PrettifyQ_OK
-                                           : Localization.Subchannel_PrettifyQ_BAD,
-                                       rwEmpty
-                                           ? Localization.Subchannel_PrettifyQ_empty
-                                           : Localization.Subchannel_PrettifyQ_not_empty);
+                               ? string.Format(
+                                               Localization.
+                                                   Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_next_program_area_can_start_at_9_10_11_LBA_12_last_session_13_mode_5_pointers_CRC_14_15_16_R_W_17,
+                                               minute, second, frame, lba, area,
+                                               corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                               pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                                Localization.Subchannel_PrettifyQ_not_pause,
+                                               controlInfo, copy,
+                                               adr, subBuf[3], subBuf[4], subBuf[5], nextPos, zero, subBuf[10],
+                                               subBuf[11],
+                                               crcOk
+                                                   ? Localization.Subchannel_PrettifyQ_OK
+                                                   : Localization.Subchannel_PrettifyQ_BAD,
+                                               rwEmpty
+                                                   ? Localization.Subchannel_PrettifyQ_empty
+                                                   : Localization.Subchannel_PrettifyQ_not_empty)
+                               : string.Format(
+                                               Localization.
+                                                   Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_next_program_area_can_start_at_9_10_11_LBA_12_maximum_Lead_out_at_13_14_15_LBA_16_17_mode_5_pointers_CRC_18_19_20_R_W_21,
+                                               minute, second, frame, lba, area,
+                                               corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                               pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                                Localization.Subchannel_PrettifyQ_not_pause,
+                                               controlInfo, copy,
+                                               adr, subBuf[3], subBuf[4], subBuf[5], nextPos, subBuf[7], subBuf[8],
+                                               subBuf[9], maxOut, zero, subBuf[10], subBuf[11],
+                                               crcOk
+                                                   ? Localization.Subchannel_PrettifyQ_OK
+                                                   : Localization.Subchannel_PrettifyQ_BAD,
+                                               rwEmpty
+                                                   ? Localization.Subchannel_PrettifyQ_empty
+                                                   : Localization.Subchannel_PrettifyQ_not_empty);
                 case 0xB1:
                     return
                         string.Format(
-                            Localization.
-                                Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_9_skip_interval_pointers_10_skip_track_assignments_CRC_11_12_13_R_W_14,
-                            minute, second, frame, lba, area, corruptedPause
-                                                                  ? Localization.
-                                                                      Subchannel_PrettifyQ_corrupted_pause
-                                                                  : pause
-                                                                      ? Localization.
-                                                                          Subchannel_PrettifyQ_pause
-                                                                      : Localization.
-                                                                          Subchannel_PrettifyQ_not_pause,
-                            controlInfo, copy, adr, pmin, psec, subBuf[10], subBuf[11],
-                            crcOk
-                                ? Localization.Subchannel_PrettifyQ_OK
-                                : Localization.Subchannel_PrettifyQ_BAD,
-                            rwEmpty
-                                ? Localization.Subchannel_PrettifyQ_empty
-                                : Localization.Subchannel_PrettifyQ_not_empty);
+                                      Localization.
+                                          Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_9_skip_interval_pointers_10_skip_track_assignments_CRC_11_12_13_R_W_14,
+                                      minute, second, frame, lba, area,
+                                      corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                      pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                       Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                      adr, pmin,
+                                      psec, subBuf[10], subBuf[11],
+                                      crcOk
+                                          ? Localization.Subchannel_PrettifyQ_OK
+                                          : Localization.Subchannel_PrettifyQ_BAD,
+                                      rwEmpty
+                                          ? Localization.Subchannel_PrettifyQ_empty
+                                          : Localization.Subchannel_PrettifyQ_not_empty);
             }
 
-            if(subBuf[2] != 0xB2 &&
-               subBuf[2] != 0xB3 &&
-               subBuf[2] != 0xB4)
+            if(subBuf[2] != 0xB2 && subBuf[2] != 0xB3 && subBuf[2] != 0xB4)
             {
                 return subBuf[2] == 0xC0
-                           ? string.
-                               Format(
-                                   Localization.
-                                       Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_ATIP_values_9_10_11_first_disc_Lead_in_starts_at_12_13_14_LBA_15_CRC_16_17_18_R_W_19,
-                                   minute, second, frame, lba, area, corruptedPause
-                                                                         ? Localization.
-                                                                             Subchannel_PrettifyQ_corrupted_pause
-                                                                         : pause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_pause
-                                                                             : Localization.
-                                                                                 Subchannel_PrettifyQ_not_pause,
-                                   controlInfo, copy,   adr, subBuf[3], subBuf[4], subBuf[5], subBuf[7], subBuf[8],
-                                   subBuf[9],   qStart, subBuf[10], subBuf[11],
-                                   crcOk
-                                       ? Localization.Subchannel_PrettifyQ_OK
-                                       : Localization.Subchannel_PrettifyQ_BAD,
-                                   rwEmpty
-                                       ? Localization.Subchannel_PrettifyQ_empty
-                                       : Localization.Subchannel_PrettifyQ_not_empty)
-                           : string.
-                               Format(
-                                   Localization.
-                                       Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
-                                   minute, second, frame, lba, area, corruptedPause
-                                                                         ? Localization.
-                                                                             Subchannel_PrettifyQ_corrupted_pause
-                                                                         : pause
-                                                                             ? Localization.
-                                                                                 Subchannel_PrettifyQ_pause
-                                                                             : Localization.
-                                                                                 Subchannel_PrettifyQ_not_pause,
-                                   controlInfo, copy,      subBuf[0], subBuf[1], subBuf[2], subBuf[3],  subBuf[4],
-                                   subBuf[5],   subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
-                                   crcOk
-                                       ? Localization.Subchannel_PrettifyQ_OK
-                                       : Localization.Subchannel_PrettifyQ_BAD,
-                                   rwEmpty
-                                       ? Localization.Subchannel_PrettifyQ_empty
-                                       : Localization.Subchannel_PrettifyQ_not_empty);
+                           ? string.Format(
+                                           Localization.
+                                               Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_ATIP_values_9_10_11_first_disc_Lead_in_starts_at_12_13_14_LBA_15_CRC_16_17_18_R_W_19,
+                                           minute, second, frame, lba, area,
+                                           corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                           pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                            Localization.Subchannel_PrettifyQ_not_pause, controlInfo,
+                                           copy, adr,
+                                           subBuf[3], subBuf[4], subBuf[5], subBuf[7], subBuf[8], subBuf[9], qStart,
+                                           subBuf[10], subBuf[11],
+                                           crcOk
+                                               ? Localization.Subchannel_PrettifyQ_OK
+                                               : Localization.Subchannel_PrettifyQ_BAD,
+                                           rwEmpty
+                                               ? Localization.Subchannel_PrettifyQ_empty
+                                               : Localization.Subchannel_PrettifyQ_not_empty)
+                           : string.Format(
+                                           Localization.
+                                               Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
+                                           minute, second, frame, lba, area,
+                                           corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                           pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                            Localization.Subchannel_PrettifyQ_not_pause, controlInfo,
+                                           copy,
+                                           subBuf[0], subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5], subBuf[6],
+                                           subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
+                                           crcOk
+                                               ? Localization.Subchannel_PrettifyQ_OK
+                                               : Localization.Subchannel_PrettifyQ_BAD,
+                                           rwEmpty
+                                               ? Localization.Subchannel_PrettifyQ_empty
+                                               : Localization.Subchannel_PrettifyQ_not_empty);
             }
 
             var skipTracks = $"{subBuf[3]:X2}";
@@ -685,19 +633,17 @@ public static class Subchannel
                 skipTracks += $", {subBuf[4]:X2}";
 
             return
-                string.Format(
-                    Localization.
-                        Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_tracks_9_to_be_skipped_CRC_10_11_12_R_W_13,
-                    minute, second, frame, lba, area, corruptedPause
-                                                          ? Localization.Subchannel_PrettifyQ_corrupted_pause
-                                                          : pause
-                                                              ? Localization.Subchannel_PrettifyQ_pause
-                                                              : Localization.Subchannel_PrettifyQ_not_pause,
-                    controlInfo, copy, adr, skipTracks, subBuf[10], subBuf[11],
-                    crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                    rwEmpty
-                        ? Localization.Subchannel_PrettifyQ_empty
-                        : Localization.Subchannel_PrettifyQ_not_empty);
+                string.Format(Localization.Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_tracks_9_to_be_skipped_CRC_10_11_12_R_W_13,
+                              minute, second, frame, lba, area,
+                              corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                              pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                               Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy, adr,
+                              skipTracks,
+                              subBuf[10], subBuf[11],
+                              crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
+                              rwEmpty
+                                  ? Localization.Subchannel_PrettifyQ_empty
+                                  : Localization.Subchannel_PrettifyQ_not_empty);
         }
 
         area = subBuf[1] == 0xAA
@@ -708,62 +654,66 @@ public static class Subchannel
                {
                    1 =>
                        string.Format(
-                           Localization.
-                               Subchannel_PrettifyQ_0_D2_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_track_9_index_10_relative_position_11_12_13_LBA_14_absolute_position_15_16_17_LBA_18_Q_CRC_19_20_21_R_W_22,
-                           minute, second, frame, lba, area, corruptedPause
-                                                                 ? Localization.Subchannel_PrettifyQ_corrupted_pause
-                                                                 : pause
-                                                                     ? Localization.Subchannel_PrettifyQ_pause
-                                                                     : Localization.Subchannel_PrettifyQ_not_pause,
-                           controlInfo, copy, adr, subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5], qPos + 150,
-                           subBuf[7], subBuf[8], subBuf[9], qStart, subBuf[10], subBuf[11],
-                           crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                           rwEmpty
-                               ? Localization.Subchannel_PrettifyQ_empty
-                               : Localization.Subchannel_PrettifyQ_not_empty),
+                                     Localization.
+                                         Subchannel_PrettifyQ_0_D2_1_2_LBA_3_4_area_5_6_7_Q_mode_8_position_track_9_index_10_relative_position_11_12_13_LBA_14_absolute_position_15_16_17_LBA_18_Q_CRC_19_20_21_R_W_22,
+                                     minute, second, frame, lba, area,
+                                     corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                     pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                      Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                     adr,
+                                     subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5], qPos + 150, subBuf[7],
+                                     subBuf[8], subBuf[9], qStart, subBuf[10], subBuf[11],
+                                     crcOk
+                                         ? Localization.Subchannel_PrettifyQ_OK
+                                         : Localization.Subchannel_PrettifyQ_BAD,
+                                     rwEmpty
+                                         ? Localization.Subchannel_PrettifyQ_empty
+                                         : Localization.Subchannel_PrettifyQ_not_empty),
                    2 =>
-                       string.Format(
-                           Localization.
-                               Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_MCN_9_frame_10_CRC_11_12_13_R_W_14,
-                           minute, second, frame, lba, area, corruptedPause
-                                                                 ? Localization.Subchannel_PrettifyQ_corrupted_pause
-                                                                 : pause
-                                                                     ? Localization.Subchannel_PrettifyQ_pause
-                                                                     : Localization.Subchannel_PrettifyQ_not_pause,
-                           controlInfo, copy, adr, DecodeMcn(subBuf), subBuf[9], subBuf[10], subBuf[11],
-                           crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                           rwEmpty
-                               ? Localization.Subchannel_PrettifyQ_empty
-                               : Localization.Subchannel_PrettifyQ_not_empty),
+                       string.Format(Localization.Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_MCN_9_frame_10_CRC_11_12_13_R_W_14,
+                                     minute, second, frame, lba, area,
+                                     corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                     pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                      Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                     adr,
+                                     DecodeMcn(subBuf), subBuf[9], subBuf[10], subBuf[11],
+                                     crcOk
+                                         ? Localization.Subchannel_PrettifyQ_OK
+                                         : Localization.Subchannel_PrettifyQ_BAD,
+                                     rwEmpty
+                                         ? Localization.Subchannel_PrettifyQ_empty
+                                         : Localization.Subchannel_PrettifyQ_not_empty),
                    3 =>
-                       string.Format(
-                           Localization.
-                               Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_ISRC_9_frame_10_CRC_11_12_13_R_W_14,
-                           minute, second, frame, lba, area, corruptedPause
-                                                                 ? Localization.Subchannel_PrettifyQ_corrupted_pause
-                                                                 : pause
-                                                                     ? Localization.Subchannel_PrettifyQ_pause
-                                                                     : Localization.Subchannel_PrettifyQ_not_pause,
-                           controlInfo, copy, adr, DecodeIsrc(subBuf), subBuf[9], subBuf[10], subBuf[11],
-                           crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                           rwEmpty
-                               ? Localization.Subchannel_PrettifyQ_empty
-                               : Localization.Subchannel_PrettifyQ_not_empty),
+                       string.Format(Localization.Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_mode_8_ISRC_9_frame_10_CRC_11_12_13_R_W_14,
+                                     minute, second, frame, lba, area,
+                                     corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                     pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                      Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                     adr,
+                                     DecodeIsrc(subBuf), subBuf[9], subBuf[10], subBuf[11],
+                                     crcOk
+                                         ? Localization.Subchannel_PrettifyQ_OK
+                                         : Localization.Subchannel_PrettifyQ_BAD,
+                                     rwEmpty
+                                         ? Localization.Subchannel_PrettifyQ_empty
+                                         : Localization.Subchannel_PrettifyQ_not_empty),
                    _ =>
                        string.Format(
-                           Localization.
-                               Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
-                           minute, second, frame, lba, area, corruptedPause
-                                                                 ? Localization.Subchannel_PrettifyQ_corrupted_pause
-                                                                 : pause
-                                                                     ? Localization.Subchannel_PrettifyQ_pause
-                                                                     : Localization.Subchannel_PrettifyQ_not_pause,
-                           controlInfo, copy, subBuf[0], subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5],
-                           subBuf[6], subBuf[7], subBuf[8], subBuf[9], subBuf[10], subBuf[11],
-                           crcOk ? Localization.Subchannel_PrettifyQ_OK : Localization.Subchannel_PrettifyQ_BAD,
-                           rwEmpty
-                               ? Localization.Subchannel_PrettifyQ_empty
-                               : Localization.Subchannel_PrettifyQ_not_empty)
+                                     Localization.
+                                         Subchannel_PrettifyQ_0_1_2_LBA_3_4_area_5_6_7_Q_8_9_10_11_12_13_14_15_16_17_CRC_18_19_20_R_W_21,
+                                     minute, second, frame, lba, area,
+                                     corruptedPause ? Localization.Subchannel_PrettifyQ_corrupted_pause :
+                                     pause          ? Localization.Subchannel_PrettifyQ_pause :
+                                                      Localization.Subchannel_PrettifyQ_not_pause, controlInfo, copy,
+                                     subBuf[0],
+                                     subBuf[1], subBuf[2], subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7],
+                                     subBuf[8], subBuf[9], subBuf[10], subBuf[11],
+                                     crcOk
+                                         ? Localization.Subchannel_PrettifyQ_OK
+                                         : Localization.Subchannel_PrettifyQ_BAD,
+                                     rwEmpty
+                                         ? Localization.Subchannel_PrettifyQ_empty
+                                         : Localization.Subchannel_PrettifyQ_not_empty)
                };
     }
 

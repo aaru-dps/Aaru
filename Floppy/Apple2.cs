@@ -234,8 +234,7 @@ public static class Apple2
 
     public static byte[] DecodeSector(RawSector sector)
     {
-        if(sector.addressField.prologue[0] != 0xD5 ||
-           sector.addressField.prologue[1] != 0xAA)
+        if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA)
             return null;
 
         // Pre DOS 3.3
@@ -257,8 +256,7 @@ public static class Apple2
         endOffset = offset;
 
         // Not an Apple ][ GCR sector
-        if(data        == null ||
-           data.Length < 363)
+        if(data == null || data.Length < 363)
             return null;
 
         int position = offset;
@@ -268,44 +266,64 @@ public static class Apple2
             while(position < data.Length)
             {
                 // Prologue found
-                if(data[position]     == 0xD5 &&
-                   data[position + 1] == 0xAA)
+                if(data[position] == 0xD5 && data[position + 1] == 0xAA)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Prologue_found_at_0, position);
 
                     // Epilogue not in correct position
-                    if(data[position + 11] != 0xDE ||
-                       data[position + 12] != 0xAA)
+                    if(data[position + 11] != 0xDE || data[position + 12] != 0xAA)
                         return null;
 
                     var sector = new RawSector
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[] { data[position], data[position + 1], data[position + 2] },
-                            volume   = new[] { data[position + 3], data[position + 4] },
-                            track    = new[] { data[position + 5], data[position + 6] },
-                            sector   = new[] { data[position + 7], data[position + 8] },
-                            checksum = new[] { data[position + 9], data[position + 10] },
-                            epilogue = new[] { data[position + 11], data[position + 12], data[position + 13] }
+                            prologue = new[]
+                            {
+                                data[position], data[position + 1], data[position + 2]
+                            },
+                            volume = new[]
+                            {
+                                data[position + 3], data[position + 4]
+                            },
+                            track = new[]
+                            {
+                                data[position + 5], data[position + 6]
+                            },
+                            sector = new[]
+                            {
+                                data[position + 7], data[position + 8]
+                            },
+                            checksum = new[]
+                            {
+                                data[position + 9], data[position + 10]
+                            },
+                            epilogue = new[]
+                            {
+                                data[position + 11], data[position + 12], data[position + 13]
+                            }
                         }
                     };
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Volume_0,
                                                ((sector.addressField.volume[0] & 0x55) << 1 |
-                                                sector.addressField.volume[1] & 0x55) & 0xFF);
+                                                sector.addressField.volume[1] & 0x55) &
+                                               0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Core.Track_0,
                                                ((sector.addressField.track[0] & 0x55) << 1 |
-                                                sector.addressField.track[1] & 0x55) & 0xFF);
+                                                sector.addressField.track[1] & 0x55) &
+                                               0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0,
                                                ((sector.addressField.sector[0] & 0x55) << 1 |
-                                                sector.addressField.sector[1] & 0x55) & 0xFF);
+                                                sector.addressField.sector[1] & 0x55) &
+                                               0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Checksum_0,
                                                ((sector.addressField.checksum[0] & 0x55) << 1 |
-                                                sector.addressField.checksum[1] & 0x55) & 0xFF);
+                                                sector.addressField.checksum[1] & 0x55) &
+                                               0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Epilogue_0_1_2,
                                                sector.addressField.epilogue[0], sector.addressField.epilogue[1],
@@ -329,15 +347,13 @@ public static class Apple2
                         return null;
 
                     // Prologue not found
-                    if(data[position]     != 0xD5 ||
-                       data[position + 1] != 0xAA)
+                    if(data[position] != 0xD5 || data[position + 1] != 0xAA)
                         return null;
 
                     sector.innerGap  = gaps.ToArray();
                     sector.dataField = new RawDataField();
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Inner_gap_has_0_bytes,
-                                               sector.innerGap.Length);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Inner_gap_has_0_bytes, sector.innerGap.Length);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Prologue_found_at_0, position);
                     sector.dataField.prologue    =  new byte[3];
@@ -349,8 +365,7 @@ public static class Apple2
                     gaps = new MemoryStream();
 
                     // Read data until epilogue is found
-                    while(data[position + 1] != 0xDE ||
-                          data[position + 2] != 0xAA)
+                    while(data[position + 1] != 0xDE || data[position + 2] != 0xAA)
                     {
                         gaps.WriteByte(data[position]);
                         position++;
@@ -375,8 +390,7 @@ public static class Apple2
                     gaps     =  new MemoryStream();
 
                     // Read gap, if any
-                    while(position       < data.Length &&
-                          data[position] == 0xFF)
+                    while(position < data.Length && data[position] == 0xFF)
                     {
                         gaps.WriteByte(data[position]);
                         position++;
@@ -394,8 +408,7 @@ public static class Apple2
                     // Return current position to be able to read separate sectors
                     endOffset = position;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_bytes_of_gap,
-                                               sector.gap.Length);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_bytes_of_gap, sector.gap.Length);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Finished_sector_at_0, position);
 
@@ -469,8 +482,7 @@ public static class Apple2
         var             trackNumber = new byte[2];
         endOffset = offset;
 
-        while(position       < data.Length &&
-              data[position] == 0xFF)
+        while(position < data.Length && data[position] == 0xFF)
         {
             gaps.WriteByte(data[position]);
             count++;
@@ -499,8 +511,7 @@ public static class Apple2
                 firstSector    = false;
             }
 
-            if(sector.addressField.track[0] != trackNumber[0] ||
-               sector.addressField.track[1] != trackNumber[1])
+            if(sector.addressField.track[0] != trackNumber[0] || sector.addressField.track[1] != trackNumber[1])
             {
                 position = oldPosition;
 
@@ -509,9 +520,11 @@ public static class Apple2
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Adding_sector_0_of_track_1,
                                        ((sector.addressField.sector[0] & 0x55) << 1 |
-                                        sector.addressField.sector[1] & 0x55) & 0xFF,
+                                        sector.addressField.sector[1] & 0x55) &
+                                       0xFF,
                                        ((sector.addressField.track[0] & 0x55) << 1 |
-                                        sector.addressField.track[1] & 0x55) & 0xFF);
+                                        sector.addressField.track[1] & 0x55) &
+                                       0xFF);
 
             sectors.Add(sector);
         }

@@ -522,7 +522,8 @@ public static partial class Decoders
 
             // TODO: Check specification
             sb.AppendFormat("\t" + Localization.Device_must_erase_a_minimum_of_0_blocks_at_a_time,
-                            Convert.ToUInt32(csd.EraseSectorSize) + 1).AppendLine();
+                            Convert.ToUInt32(csd.EraseSectorSize) + 1).
+               AppendLine();
 
             if(csd.WriteProtectGroupEnable)
             {
@@ -532,7 +533,8 @@ public static partial class Decoders
                 // unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
 
                 sb.AppendFormat("\t" + Localization.Device_can_write_protect_a_minimum_of_0_blocks_at_a_time,
-                                (int)(result + 1)).AppendLine();
+                                (int)(result + 1)).
+                   AppendLine();
             }
             else
                 sb.AppendLine("\t" + Localization.Device_cant_write_protect_regions);
@@ -582,7 +584,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0_and_file_format_group_1,
-                            csd.FileFormat).AppendLine();
+                            csd.FileFormat).
+               AppendLine();
         }
 
         sb.AppendFormat("\t" + Localization.CSD_CRC_0, csd.CRC).AppendLine();

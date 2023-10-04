@@ -105,82 +105,98 @@ public static partial class Modes
         switch(page.InactivityTimeMultiplier)
         {
             case 0:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_a_vendor_specified_time_after_a_seek_read_or_write_operation);
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_125_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 2:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_250_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_500_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 4:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_1_second_after_a_seek_read_or_write_operation);
 
                 break;
             case 5:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_2_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 6:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_4_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 7:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_8_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 8:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_16_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 9:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_32_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 10:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_1_minute_after_a_seek_read_or_write_operation);
 
                 break;
             case 11:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_2_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 12:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_4_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 13:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_8_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 14:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_16_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 15:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Drive_will_remain_in_same_status_32_minutes_after_a_seek_read_or_write_operation);
 
                 break;

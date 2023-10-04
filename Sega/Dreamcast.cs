@@ -64,8 +64,7 @@ public static class Dreamcast
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.maker_id = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.maker_id));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space1 = \"{0}\"",
-                                   (char)ipbin.spare_space1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space1 = \"{0}\"", (char)ipbin.spare_space1);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.dreamcast_media = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.dreamcast_media));
@@ -75,8 +74,7 @@ public static class Dreamcast
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_no_separator = \"{0}\"",
                                    (char)ipbin.disc_no_separator);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_total_nos = \"{0}\"",
-                                   (char)ipbin.disc_total_nos);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_total_nos = \"{0}\"", (char)ipbin.disc_total_nos);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space2 = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.spare_space2));
@@ -96,8 +94,7 @@ public static class Dreamcast
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space3 = \"{0}\"",
-                                   (char)ipbin.spare_space3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space3 = \"{0}\"", (char)ipbin.spare_space3);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.boot_filename = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.boot_filename));
@@ -160,7 +157,8 @@ public static class Dreamcast
                 break;
             default:
                 IPBinInformation.AppendFormat(Localization.Disc_boots_using_unknown_loader_0,
-                                              Encoding.ASCII.GetString(ipbin.boot_filename)).AppendLine();
+                                              Encoding.ASCII.GetString(ipbin.boot_filename)).
+                                 AppendLine();
 
                 break;
         }

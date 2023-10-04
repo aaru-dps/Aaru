@@ -129,7 +129,8 @@ public static partial class Decoders
         sb.AppendFormat("\t" + Localization.Product_name_0,   cid.ProductName).AppendLine();
 
         sb.AppendFormat("\t" + Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
-                        cid.ProductRevision & 0x0F).AppendLine();
+                        cid.ProductRevision & 0x0F).
+           AppendLine();
 
         sb.AppendFormat("\t" + Localization.Product_serial_number_0, cid.ProductSerialNumber).AppendLine();
 
@@ -155,7 +156,8 @@ public static partial class Decoders
                       };
 
         sb.AppendFormat("\t" + Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF0) >> 4,
-                        year).AppendLine();
+                        year).
+           AppendLine();
 
         sb.AppendFormat("\t" + Localization.CID_CRC_0, cid.CRC).AppendLine();
 

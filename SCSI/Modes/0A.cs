@@ -201,20 +201,22 @@ public static partial class Modes
 
         if(page.RAENP)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Target_may_issue_an_asynchronous_event_notification_upon_completing_its_initialization);
         }
 
         if(page.UAAENP)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Target_may_issue_an_asynchronous_event_notification_instead_of_a_unit_attention_condition);
         }
 
         if(page.EAENP)
         {
-            sb.AppendLine("\t" + Localization.
-                              Target_may_issue_an_asynchronous_event_notification_instead_of_a_deferred_error);
+            sb.AppendLine("\t" +
+                          Localization.Target_may_issue_an_asynchronous_event_notification_instead_of_a_deferred_error);
         }
 
         if(page.GLTSD)
@@ -228,19 +230,22 @@ public static partial class Modes
 
         if(page.TAS)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED);
         }
 
         if(page.TMF_ONLY)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               All_tasks_received_in_nexus_with_ACA_ACTIVE_is_set_and_an_ACA_condition_is_established_shall_terminate);
         }
 
         if(page.D_SENSE)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Device_shall_return_descriptor_format_sense_data_when_returning_sense_data_in_the_same_transactions_as_a_CHECK_CONDITION);
         }
 
@@ -298,17 +303,20 @@ public static partial class Modes
         switch(page.QErr)
         {
             case 0:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   If_ACA_is_established_the_task_set_commands_shall_resume_after_it_is_cleared_otherwise_they_shall_terminate_with_CHECK_CONDITION);
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   All_the_affected_commands_in_the_task_set_shall_be_aborted_when_CHECK_CONDITION_is_returned);
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Affected_commands_in_the_task_set_belonging_with_the_CHECK_CONDITION_nexus_shall_be_aborted);
 
                 break;
@@ -325,12 +333,13 @@ public static partial class Modes
 
                 break;
             case 2:
-                sb.AppendLine("\t" + Localization.
-                                  LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus);
+                sb.AppendLine("\t" +
+                              Localization.LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus);
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus_and_shall_establish_a_unit_attention_condition_for_the_initiator);
 
                 break;
@@ -347,8 +356,8 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.AppendLine("\t" + Localization.
-                                  On_medium_insertion_it_shall_be_loaded_for_auxiliary_memory_access_only);
+                sb.AppendLine("\t" +
+                              Localization.On_medium_insertion_it_shall_be_loaded_for_auxiliary_memory_access_only);
 
                 break;
             case 2:
@@ -364,9 +373,9 @@ public static partial class Modes
         if(page.ReadyAENHoldOffPeriod > 0)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
-                    page.ReadyAENHoldOffPeriod).AppendLine();
+                AppendFormat("\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
+                             page.ReadyAENHoldOffPeriod).
+                AppendLine();
         }
 
         if(page.BusyTimeoutPeriod > 0)
@@ -376,7 +385,8 @@ public static partial class Modes
             else
             {
                 sb.AppendFormat("\t" + Localization.A_maximum_of_0_ms_are_allowed_to_remain_busy,
-                                page.BusyTimeoutPeriod * 100).AppendLine();
+                                page.BusyTimeoutPeriod * 100).
+                   AppendLine();
             }
         }
 
@@ -463,13 +473,14 @@ public static partial class Modes
         {
             if(page.SCSIP)
             {
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   S01_Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards_but_SCSI_SET_TIMESTAMP_shall_take_precedence_over_them);
             }
             else
             {
-                sb.AppendLine("\t" + Localization.
-                                  Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards);
+                sb.AppendLine("\t" +
+                              Localization.Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards);
             }
         }
 

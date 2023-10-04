@@ -194,27 +194,24 @@ public static partial class Modes
         if(!page.TRDY)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
-                    (double)page.MotorOnDelay * 10).AppendLine();
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
+                             (double)page.MotorOnDelay * 10).
+                AppendLine();
         }
         else
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
-                    (double)page.MotorOnDelay * 10).AppendLine();
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
+                             (double)page.MotorOnDelay * 10).
+                AppendLine();
         }
 
         if(page.MotorOffDelay != 0xFF)
         {
             sb.
-                AppendFormat(
-                    "\t" + Localization.
-                        Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
-                    (double)page.MotorOffDelay * 10).AppendLine();
+                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
+                             (double)page.MotorOffDelay * 10).
+                AppendLine();
         }
         else
             sb.AppendLine("\t" + Localization.Target_shall_never_release_the_motor_on_signal);
@@ -249,23 +246,22 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.Append("\t" + ((page.Pin34 & 0x08) == 0x08
-                                      ? Localization.Pin_34_indicates_drive_is_ready_when_active_high
-                                      : Localization.Pin_34_indicates_drive_is_ready_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin34 & 0x08) == 0x08
+                               ? Localization.Pin_34_indicates_drive_is_ready_when_active_high
+                               : Localization.Pin_34_indicates_drive_is_ready_when_active_low));
 
                 break;
             case 2:
-                sb.Append("\t" + ((page.Pin34 & 0x08) == 0x08
-                                      ? Localization.Pin_34_indicates_disk_has_changed_when_active_high
-                                      : Localization.Pin_34_indicates_disk_has_changed_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin34 & 0x08) == 0x08
+                               ? Localization.Pin_34_indicates_disk_has_changed_when_active_high
+                               : Localization.Pin_34_indicates_disk_has_changed_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat(
-                    "\t" + ((page.Pin34 & 0x08) == 0x08
-                                ? Localization.Pin_34_indicates_unknown_function_0_when_active_high
-                                : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
-                    page.Pin34 & 0x07);
+                sb.AppendFormat("\t" + ((page.Pin34 & 0x08) == 0x08 ? Localization.Pin_34_indicates_unknown_function_0_when_active_high : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
+                                page.Pin34 & 0x07);
 
                 break;
         }
@@ -277,29 +273,29 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
-                                      ? Localization.Pin_4_indicates_drive_is_in_use_when_active_high
-                                      : Localization.Pin_4_indicates_drive_is_in_use_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin4 & 0x08) == 0x08
+                               ? Localization.Pin_4_indicates_drive_is_in_use_when_active_high
+                               : Localization.Pin_4_indicates_drive_is_in_use_when_active_low));
 
                 break;
             case 2:
-                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
-                                      ? Localization.Pin_4_indicates_eject_when_active_high
-                                      : Localization.Pin_4_indicates_eject_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin4 & 0x08) == 0x08
+                               ? Localization.Pin_4_indicates_eject_when_active_high
+                               : Localization.Pin_4_indicates_eject_when_active_low));
 
                 break;
             case 3:
-                sb.Append("\t" + ((page.Pin4 & 0x08) == 0x08
-                                      ? Localization.Pin_4_indicates_head_load_when_active_high
-                                      : Localization.Pin_4_indicates_head_load_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin4 & 0x08) == 0x08
+                               ? Localization.Pin_4_indicates_head_load_when_active_high
+                               : Localization.Pin_4_indicates_head_load_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat(
-                    "\t" + ((page.Pin4 & 0x08) == 0x08
-                                ? Localization.Pin_4_indicates_unknown_function_0_when_active_high
-                                : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
-                    page.Pin4 & 0x07);
+                sb.AppendFormat("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_unknown_function_0_when_active_high : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
+                                page.Pin4 & 0x07);
 
                 break;
         }
@@ -311,11 +307,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat(
-                    "\t" + ((page.Pin2 & 0x08) == 0x08
-                                ? Localization.Pin_2_indicates_unknown_function_0_when_active_high
-                                : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
-                    page.Pin2 & 0x07);
+                sb.AppendFormat("\t" + ((page.Pin2 & 0x08) == 0x08 ? Localization.Pin_2_indicates_unknown_function_0_when_active_high : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
+                                page.Pin2 & 0x07);
 
                 break;
         }
@@ -327,17 +320,15 @@ public static partial class Modes
 
                 break;
             case 1:
-                sb.Append("\t" + ((page.Pin1 & 0x08) == 0x08
-                                      ? Localization.Pin_1_indicates_disk_change_reset_when_active_high
-                                      : Localization.Pin_1_indicates_disk_change_reset_when_active_low));
+                sb.Append("\t" +
+                          ((page.Pin1 & 0x08) == 0x08
+                               ? Localization.Pin_1_indicates_disk_change_reset_when_active_high
+                               : Localization.Pin_1_indicates_disk_change_reset_when_active_low));
 
                 break;
             default:
-                sb.AppendFormat(
-                    "\t" + ((page.Pin1 & 0x08) == 0x08
-                                ? Localization.Pin_1_indicates_unknown_function_0_when_active_high
-                                : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
-                    page.Pin1 & 0x07);
+                sb.AppendFormat("\t" + ((page.Pin1 & 0x08) == 0x08 ? Localization.Pin_1_indicates_unknown_function_0_when_active_high : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
+                                page.Pin1 & 0x07);
 
                 break;
         }

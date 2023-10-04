@@ -144,7 +144,8 @@ public static partial class Modes
         }
 
         sb.AppendFormat("\t" + Localization.The_device_type_that_would_be_provided_in_the_INQUIRY_response_is_0,
-                        page.devType).AppendLine();
+                        page.devType).
+           AppendLine();
 
         return sb.ToString();
     }

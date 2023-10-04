@@ -139,8 +139,8 @@ public static partial class Modes
         string RecoveredNotReported = "\t" + Localization.Recovered_errors_will_not_be_reported          + "\n";
         string RecoveredReported    = "\t" + Localization.Recovered_errors_will_be_reported              + "\n";
 
-        string RecoveredAbort = "\t" + Localization.Recovered_errors_will_be_reported_and_aborted_with_CHECK_CONDITION +
-                                "\n";
+        string RecoveredAbort =
+            "\t" + Localization.Recovered_errors_will_be_reported_and_aborted_with_CHECK_CONDITION + "\n";
 
         string UnrecECCAbort     = "\t" + Localization.Unrecovered_ECC_errors_will_return_CHECK_CONDITION;
         string UnrecCIRCAbort    = "\t" + Localization.Unrecovered_CIRC_errors_will_return_CHECK_CONDITION;
@@ -242,7 +242,8 @@ public static partial class Modes
         if(page.RecoveryTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
-                            page.RecoveryTimeLimit).AppendLine();
+                            page.RecoveryTimeLimit).
+               AppendLine();
         }
 
         return sb.ToString();

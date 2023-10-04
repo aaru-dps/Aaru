@@ -181,18 +181,18 @@ public static partial class Modes
         sb.AppendFormat("\t" + Localization.Active_partition_0, page.ActivePartition).AppendLine();
 
         sb.AppendFormat("\t" + Localization.Write_buffer_shall_have_a_full_ratio_of_0_before_being_flushed_to_medium,
-                        page.WriteBufferFullRatio).AppendLine();
+                        page.WriteBufferFullRatio).
+           AppendLine();
 
         sb.
-            AppendFormat(
-                "\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
-                page.ReadBufferEmptyRatio).AppendLine();
+            AppendFormat("\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
+                         page.ReadBufferEmptyRatio).
+            AppendLine();
 
         sb.
-            AppendFormat(
-                "\t" + Localization.
-                    Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
-                page.WriteDelayTime * 100).AppendLine();
+            AppendFormat("\t" + Localization.Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
+                         page.WriteDelayTime * 100).
+            AppendLine();
 
         if(page.DBR)
         {
@@ -260,7 +260,8 @@ public static partial class Modes
             case 14:
             case 15:
                 sb.AppendFormat("\t" + Localization.Inter_block_gap_is_0_times_the_device_defined_gap_size,
-                                page.GapSize).AppendLine();
+                                page.GapSize).
+                   AppendLine();
 
                 break;
             default:

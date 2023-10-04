@@ -1427,12 +1427,10 @@ public static class Features
         decoded.PhysicalInterfaceStandard =
             (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
-        if(decoded.Version >= 1 &&
-           feature.Length  >= 12)
+        if(decoded.Version >= 1 && feature.Length >= 12)
             decoded.DBE |= (feature[8] & 0x01) == 0x01;
 
-        if(decoded.Version >= 2 &&
-           feature.Length  >= 12)
+        if(decoded.Version >= 2 && feature.Length >= 12)
             decoded.INQ2 |= (feature[8] & 0x02) == 0x02;
 
         return decoded;
@@ -1650,16 +1648,14 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 2 &&
-           feature.Length  >= 8)
+        if(decoded.Version >= 2 && feature.Length >= 8)
         {
             decoded.MULTI110 |= (feature[4] & 0x01) == 0x01;
             decoded.DualR    |= (feature[6] & 0x01) == 0x01;
         }
 
         // TODO: Check this
-        if(decoded.Version >= 2 &&
-           feature.Length  >= 8)
+        if(decoded.Version >= 2 && feature.Length >= 8)
             decoded.DualRW |= (feature[6] & 0x02) == 0x02;
 
         return decoded;
@@ -1788,8 +1784,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 1 &&
-           feature.Length  >= 12)
+        if(decoded.Version >= 1 && feature.Length >= 12)
         {
             decoded.RENoSA |= (feature[4] & 0x08) == 0x08;
             decoded.Expand |= (feature[4] & 0x04) == 0x04;
@@ -1798,8 +1793,7 @@ public static class Features
             decoded.RRM    |= (feature[8] & 0x01) == 0x01;
         }
 
-        if(decoded.Version >= 2 &&
-           feature.Length  >= 12)
+        if(decoded.Version >= 2 && feature.Length >= 12)
             decoded.FRF |= (feature[4] & 0x80) == 0x80;
 
         return decoded;
@@ -1827,8 +1821,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 1 &&
-           feature.Length  >= 8)
+        if(decoded.Version >= 1 && feature.Length >= 8)
             decoded.SSA |= (feature[4] & 0x80) == 0x80;
 
         return decoded;
@@ -2274,8 +2267,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(feature[7]     <= 0 ||
-           feature.Length <= feature[7] + 8)
+        if(feature[7] <= 0 || feature.Length <= feature[7] + 8)
             return decoded;
 
         decoded.LinkSizes = new byte[feature[7]];
@@ -2732,8 +2724,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 1 &&
-           feature.Length  >= 8)
+        if(decoded.Version >= 1 && feature.Length >= 8)
             decoded.M5 |= (feature[4] & 0x01) == 0x01;
 
         return decoded;
@@ -2761,8 +2752,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version < 1 ||
-           feature.Length  < 8)
+        if(decoded.Version < 1 || feature.Length < 8)
             return decoded;
 
         decoded.Group3     |= (feature[4] & 0x01) == 0x01;
@@ -2820,8 +2810,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 3 &&
-           feature.Length  >= 8)
+        if(decoded.Version >= 3 && feature.Length >= 8)
         {
             decoded.RBCB |= (feature[4] & 0x10) == 0x10;
             decoded.SCS  |= (feature[4] & 0x08) == 0x08;
@@ -2830,8 +2819,7 @@ public static class Features
             decoded.SW   |= (feature[4] & 0x01) == 0x01;
         }
 
-        if(decoded.Version < 5 ||
-           feature.Length  < 8)
+        if(decoded.Version < 5 || feature.Length < 8)
             return decoded;
 
         decoded.SMP  |= (feature[4] & 0x20) == 0x20;
@@ -2920,8 +2908,10 @@ public static class Features
 
         for(var i = 0; i < decoded.DCBs.Length; i++)
         {
-            decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) + (feature[1 + 4 + i * 4] << 16) +
-                                     (feature[2 + 4 + i * 4] << 8)  + feature[3 + 4 + i * 4]);
+            decoded.DCBs[i] = (uint)((feature[0 + 4 + i * 4] << 24) +
+                                     (feature[1 + 4 + i * 4] << 16) +
+                                     (feature[2 + 4 + i * 4] << 8)  +
+                                     feature[3 + 4 + i * 4]);
         }
 
         return decoded;
@@ -3381,7 +3371,8 @@ public static class Features
                 break;
             default:
                 sb.AppendFormat(Localization.Drive_uses_an_unknown_interface_with_code_0,
-                                (uint)ftr.PhysicalInterfaceStandard).AppendLine();
+                                (uint)ftr.PhysicalInterfaceStandard).
+                   AppendLine();
 
                 break;
         }
@@ -3391,7 +3382,8 @@ public static class Features
 
         if(ftr.INQ2)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Drive_supports_EVPD_Page_Code_and_16_bit_Allocation_Length_as_described_in_SPC_3);
         }
 
@@ -3443,7 +3435,8 @@ public static class Features
 
                 break;
             case 4:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Features_Prettify_0003_Drive_is_a_changer_with_individually_changeable_discs);
 
                 break;
@@ -3453,7 +3446,8 @@ public static class Features
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Features_Prettify_0003_Drive_uses_unknown_loading_mechanism_type_0,
-                                ftr.LoadingMechanismType).AppendLine();
+                                ftr.LoadingMechanismType).
+                   AppendLine();
 
                 break;
         }
@@ -3472,7 +3466,8 @@ public static class Features
 
         if(ftr.DBML)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Features_Prettify_0003_Drive_reports_Device_Busy_Class_events_during_medium_loading_unloading);
         }
 
@@ -3491,8 +3486,8 @@ public static class Features
 
         if(ftr.DWP)
         {
-            sb.AppendLine("\t" + Localization.
-                              Drive_supports_reading_writing_the_Disc_Write_Protect_PAC_on_BD_R_RE_media);
+            sb.AppendLine("\t" +
+                          Localization.Drive_supports_reading_writing_the_Disc_Write_Protect_PAC_on_BD_R_RE_media);
         }
 
         if(ftr.WDCB)
@@ -3812,8 +3807,7 @@ public static class Features
         Feature_0028 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        if(ftr.Write &&
-           ftr is { DVDPRead: true, DVDPWrite: true })
+        if(ftr.Write && ftr is { DVDPRead: true, DVDPWrite: true })
             sb.Append(Localization.Drive_can_read_and_write_CD_MRW_and_DVD_MRW);
         else if(ftr is { DVDPRead: true, DVDPWrite: true })
             sb.Append(Localization.Drive_can_read_and_write_DVD_MRW);
@@ -3954,8 +3948,8 @@ public static class Features
 
         if(ftr.Intermediate)
         {
-            sb.AppendLine("\t" + Localization.
-                              Drive_supports_writing_on_an_intermediate_state_session_and_quick_formatting);
+            sb.AppendLine("\t" +
+                          Localization.Drive_supports_writing_on_an_intermediate_state_session_and_quick_formatting);
         }
 
         if(ftr.DSDR)
@@ -4097,7 +4091,8 @@ public static class Features
         if(ftr.MaxCueSheet > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet,
-                            ftr.MaxCueSheet).AppendLine();
+                            ftr.MaxCueSheet).
+               AppendLine();
         }
 
         return sb.ToString();
@@ -4469,7 +4464,8 @@ public static class Features
 
         if(ftr.RI)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Drive_is_able_to_maintain_the_online_format_layer_through_reset_and_power_cycling);
         }
 
@@ -4593,7 +4589,8 @@ public static class Features
         if(ftr.Current)
         {
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0_and_current_disc_is_encrypted,
-                            ftr.CSSVersion).AppendLine();
+                            ftr.CSSVersion).
+               AppendLine();
         }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0, ftr.CSSVersion).AppendLine();
@@ -4622,13 +4619,15 @@ public static class Features
 
         if(ftr.MP2A)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Drive_supports_the_Write_Speed_Performance_Descriptor_Blocks_in_the_MMC_mode_page_2Ah);
         }
 
         if(ftr.WSPD)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Drive_supports_the_Write_Speed_data_of_GET_PERFORMANCE_and_the_WRC_field_of_SET_STREAMING);
         }
 
@@ -4682,7 +4681,8 @@ public static class Features
         if(ftr.Current)
         {
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0_and_current_disc_is_or_can_be_encrypted,
-                            ftr.CPRMVersion).AppendLine();
+                            ftr.CPRMVersion).
+               AppendLine();
         }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0, ftr.CPRMVersion).AppendLine();
@@ -4777,7 +4777,8 @@ public static class Features
             if(ftr.BindNonceBlocks > 0)
             {
                 sb.AppendFormat("\t" + Localization._0_media_blocks_are_required_for_the_binding_nonce,
-                                ftr.BindNonceBlocks).AppendLine();
+                                ftr.BindNonceBlocks).
+                   AppendLine();
             }
         }
 

@@ -248,12 +248,10 @@ public static class Sense
     {
         senseDescription = null;
 
-        if(sense is null ||
-           sense.Length == 0)
+        if(sense is null || sense.Length == 0)
             return null;
 
-        if((sense[0] & 0x7F) != 0x70 &&
-           (sense[0] & 0x7F) != 0x71)
+        if((sense[0] & 0x7F) != 0x70 && (sense[0] & 0x7F) != 0x71)
             return null;
 
         if(sense.Length < 8)
@@ -309,8 +307,7 @@ public static class Sense
             return null;
 
         // Fixed sense
-        if((sense[0] & 0x7F) == 0x70 ||
-           (sense[0] & 0x7F) == 0x71)
+        if((sense[0] & 0x7F) == 0x70 || (sense[0] & 0x7F) == 0x71)
             return null;
 
         var decoded = new DescriptorSense
@@ -469,8 +466,7 @@ public static class Sense
         sb.AppendFormat(Localization.SCSI_SENSE_0, GetSenseKey(decoded.SenseKey)).AppendLine();
         sb.AppendLine(GetSenseDescription(decoded.ASC, decoded.ASCQ));
 
-        if(decoded.Descriptors       == null ||
-           decoded.Descriptors.Count == 0)
+        if(decoded.Descriptors == null || decoded.Descriptors.Count == 0)
             return sb.ToString();
 
         foreach(KeyValuePair<byte, byte[]> kvp in decoded.Descriptors)
@@ -492,8 +488,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static ulong DecodeDescriptor00(byte[] descriptor)
     {
-        if(descriptor.Length != 12 ||
-           descriptor[0]     != 0x00)
+        if(descriptor.Length != 12 || descriptor[0] != 0x00)
             return 0;
 
         var temp = new byte[8];
@@ -515,8 +510,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static ulong DecodeDescriptor01(byte[] descriptor)
     {
-        if(descriptor.Length != 12 ||
-           descriptor[0]     != 0x01)
+        if(descriptor.Length != 12 || descriptor[0] != 0x01)
             return 0;
 
         var temp = new byte[8];
@@ -538,8 +532,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static byte[] DecodeDescriptor02(byte[] descriptor)
     {
-        if(descriptor.Length != 8 ||
-           descriptor[0]     != 0x02)
+        if(descriptor.Length != 8 || descriptor[0] != 0x02)
             return null;
 
         var temp = new byte[3];
@@ -553,8 +546,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static byte DecodeDescriptor03(byte[] descriptor)
     {
-        if(descriptor.Length != 4 ||
-           descriptor[0]     != 0x03)
+        if(descriptor.Length != 4 || descriptor[0] != 0x03)
             return 0;
 
         return descriptor[3];
@@ -565,8 +557,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static AnotherProgressIndicationSenseDescriptor? DecodeDescriptor0A(byte[] descriptor)
     {
-        if(descriptor.Length != 8 ||
-           descriptor[0]     != 0x0A)
+        if(descriptor.Length != 8 || descriptor[0] != 0x0A)
             return null;
 
         return new AnotherProgressIndicationSenseDescriptor
@@ -2737,9 +2728,10 @@ public static class Sense
         }
 
         return ASC >= 0x80
-                   ? ASCQ >= 0x80
-                         ? string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
-                         : string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_ASCQ_1,                 ASC, ASCQ)
+                   ?
+                   ASCQ >= 0x80
+                       ? string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
+                       : string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_ASCQ_1,                 ASC, ASCQ)
                    : ASCQ >= 0x80
                        ? string.Format(Localization.ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
                        : string.Format(Localization.ASC_0_WITH_ASCQ_1,                 ASC, ASCQ);

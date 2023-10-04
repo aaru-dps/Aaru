@@ -161,8 +161,8 @@ public static partial class Modes
 
         if(page.SDP)
         {
-            sb.AppendLine("\t" + Localization.
-                              Number_of_partitions_can_be_defined_but_their_size_is_defined_by_the_device);
+            sb.AppendLine("\t" +
+                          Localization.Number_of_partitions_can_be_defined_but_their_size_is_defined_by_the_device);
         }
 
         if(page.IDP)
@@ -170,15 +170,16 @@ public static partial class Modes
 
         if(page.POFM)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received);
         }
 
         switch(page.CLEAR)
         {
             case false when !page.ADDP:
-                sb.AppendLine("\t" + Localization.
-                                  Device_may_erase_any_or_all_partitions_on_MODE_SELECT_for_partitioning);
+                sb.AppendLine("\t" +
+                              Localization.Device_may_erase_any_or_all_partitions_on_MODE_SELECT_for_partitioning);
 
                 break;
             case true when !page.ADDP:
@@ -190,7 +191,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendLine("\t" + Localization.
+                sb.AppendLine("\t" +
+                              Localization.
                                   Device_shall_erase_all_partitions_differing_on_size_on_MODE_SELECT_for_partitioning);
 
                 break;
@@ -217,7 +219,8 @@ public static partial class Modes
                 break;
             case PartitionSizeUnitOfMeasures.Exponential:
                 sb.AppendFormat("\t" + Localization.Partitions_are_defined_in_units_of_0_bytes,
-                                Math.Pow(10, page.PartitionUnits)).AppendLine();
+                                Math.Pow(10, page.PartitionUnits)).
+                   AppendLine();
 
                 measure = string.Format(Localization.units_of_0_bytes, Math.Pow(10, page.PartitionUnits));
 
@@ -244,13 +247,14 @@ public static partial class Modes
 
                 break;
             case MediumFormatRecognitionValues.Incapable:
-                sb.AppendLine("\t" + Localization.
-                                  Device_is_not_capable_of_recognizing_neither_medium_partitions_nor_format);
+                sb.AppendLine("\t" +
+                              Localization.Device_is_not_capable_of_recognizing_neither_medium_partitions_nor_format);
 
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_medium_recognition_code_0,
-                                (byte)page.MediumFormatRecognition).AppendLine();
+                                (byte)page.MediumFormatRecognition).
+                   AppendLine();
 
                 break;
         }

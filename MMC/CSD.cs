@@ -171,8 +171,8 @@ public static partial class Decoders
 
                 break;
             case 3:
-                sb.AppendLine("\t" + Localization.
-                                  Register_version_is_defined_in_Extended_Device_Specific_Data_Register);
+                sb.AppendLine("\t" +
+                              Localization.Register_version_is_defined_in_Extended_Device_Specific_Data_Register);
 
                 break;
         }
@@ -331,7 +331,8 @@ public static partial class Decoders
 
         if(csd.Size == 0xFFF)
         {
-            sb.AppendLine("\t" + Localization.
+            sb.AppendLine("\t" +
+                          Localization.
                               Device_may_be_bigger_than_2GiB_and_have_its_real_size_defined_in_the_extended_CSD);
         }
 
@@ -518,7 +519,8 @@ public static partial class Decoders
             // unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
 
             sb.AppendFormat("\t" + Localization.Device_can_write_protect_a_minimum_of_0_blocks_at_a_time,
-                            (int)(result + 1)).AppendLine();
+                            (int)(result + 1)).
+               AppendLine();
         }
         else
             sb.AppendLine("\t" + Localization.Device_cant_write_protect_regions);
@@ -592,7 +594,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0_and_file_format_group_1,
-                            csd.FileFormat).AppendLine();
+                            csd.FileFormat).
+               AppendLine();
         }
 
         switch(csd.ECC)

@@ -134,8 +134,7 @@ public static class Identify
              acs3 = false,
              acs4 = false;
 
-        if((ushort)ATAID.MajorVersion == 0x0000 ||
-           (ushort)ATAID.MajorVersion == 0xFFFF)
+        if((ushort)ATAID.MajorVersion == 0x0000 || (ushort)ATAID.MajorVersion == 0xFFFF)
         {
             // Obsolete in ATA-2, if present, device supports ATA-1
             ata1 |=
@@ -149,10 +148,7 @@ public static class Identify
             ata2 |= ATAID.ExtendedIdentify.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.
                                                                Words64to70Valid);
 
-            if(!ata1  &&
-               !ata2  &&
-               !atapi &&
-               !cfa)
+            if(!ata1 && !ata2 && !atapi && !cfa)
                 ata2 = true;
 
             ata4 |= atapi;
@@ -629,7 +625,8 @@ public static class Identify
                     break;
                 default:
                     sb.AppendFormat(Localization.ATAPI_Unknown_device_type_field_value_0,
-                                    ((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8).AppendLine();
+                                    ((ushort)ATAID.GeneralConfiguration & 0x1F00) >> 8).
+                       AppendLine();
 
                     break;
             }
@@ -651,7 +648,8 @@ public static class Identify
                     break;
                 default:
                     sb.AppendFormat(Localization.Unknown_ATAPI_DRQ_behaviour_code_0,
-                                    ((ushort)ATAID.GeneralConfiguration & 0x60) >> 5).AppendLine();
+                                    ((ushort)ATAID.GeneralConfiguration & 0x60) >> 5).
+                       AppendLine();
 
                     break;
             }
@@ -669,7 +667,8 @@ public static class Identify
                     break;
                 default:
                     sb.AppendFormat(Localization.Unknown_ATAPI_packet_size_code_0,
-                                    (ushort)ATAID.GeneralConfiguration & 0x03).AppendLine();
+                                    (ushort)ATAID.GeneralConfiguration & 0x03).
+                       AppendLine();
 
                     break;
             }
@@ -750,8 +749,7 @@ public static class Identify
             }
         }
 
-        if(ATAID.NominalRotationRate != 0x0000 &&
-           ATAID.NominalRotationRate != 0xFFFF)
+        if(ATAID.NominalRotationRate != 0x0000 && ATAID.NominalRotationRate != 0xFFFF)
         {
             if(ATAID.NominalRotationRate == 0x0001)
                 sb.AppendLine(Localization.Device_does_not_rotate);
@@ -765,13 +763,11 @@ public static class Identify
         {
             uint physicalSectorSize;
 
-            if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 &&
-               (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
+            if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 && (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ATAID.PhysLogSectorSize & 0x1000) == 0x1000)
                 {
-                    if(ATAID.LogicalSectorWords <= 255 ||
-                       ATAID.LogicalAlignment   == 0xFFFF)
+                    if(ATAID.LogicalSectorWords <= 255 || ATAID.LogicalAlignment == 0xFFFF)
                         logicalSectorSize = 512;
                     else
                         logicalSectorSize = ATAID.LogicalSectorWords * 2;
@@ -798,13 +794,13 @@ public static class Identify
                (ATAID.LogicalAlignment & 0x4000) == 0x4000)
             {
                 sb.AppendFormat(Localization.Logical_sector_starts_at_offset_0_from_physical_sector,
-                                ATAID.LogicalAlignment & 0x3FFF).AppendLine();
+                                ATAID.LogicalAlignment & 0x3FFF).
+                   AppendLine();
             }
 
             if(minatalevel <= 5)
             {
-                if(ATAID.CurrentCylinders > 0 &&
-                   ATAID is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
+                if(ATAID.CurrentCylinders > 0 && ATAID is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
                 {
                     sb.AppendFormat(Localization.Cylinders_0_max_1_current, ATAID.Cylinders, ATAID.CurrentCylinders).
                        AppendLine();
@@ -812,7 +808,8 @@ public static class Identify
                     sb.AppendFormat(Localization.Heads_0_max_1_current, ATAID.Heads, ATAID.CurrentHeads).AppendLine();
 
                     sb.AppendFormat(Localization.Sectors_per_track_0_max_1_current, ATAID.SectorsPerTrack,
-                                    ATAID.CurrentSectorsPerTrack).AppendLine();
+                                    ATAID.CurrentSectorsPerTrack).
+                       AppendLine();
 
                     sb.AppendFormat(Localization.Sectors_addressable_in_CHS_mode_0_max_1_current,
                                     ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack, ATAID.CurrentSectors).
@@ -825,7 +822,8 @@ public static class Identify
                     sb.AppendFormat(Localization.Sectors_per_track_0, ATAID.SectorsPerTrack).AppendLine();
 
                     sb.AppendFormat(Localization.Sectors_addressable_in_CHS_mode_0,
-                                    ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack).AppendLine();
+                                    ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack).
+                       AppendLine();
                 }
             }
 
@@ -842,7 +840,8 @@ public static class Identify
                     sb.AppendFormat(Localization.Device_size_in_CHS_mode_0_bytes_1_Mb_2_MiB,
                                     (ulong)ATAID.CurrentSectors                     * logicalSectorSize,
                                     (ulong)ATAID.CurrentSectors * logicalSectorSize / 1000 / 1000,
-                                    (ulong)ATAID.CurrentSectors * 512               / 1024 / 1024).AppendLine();
+                                    (ulong)ATAID.CurrentSectors * 512               / 1024 / 1024).
+                       AppendLine();
                 }
                 else
                 {
@@ -851,7 +850,8 @@ public static class Identify
                     sb.AppendFormat(Localization.Device_size_in_CHS_mode_0_bytes_1_Mb_2_MiB,
                                     currentSectors                     * logicalSectorSize,
                                     currentSectors * logicalSectorSize / 1000 / 1000,
-                                    currentSectors * 512               / 1024 / 1024).AppendLine();
+                                    currentSectors * 512               / 1024 / 1024).
+                       AppendLine();
                 }
             }
 
@@ -861,23 +861,26 @@ public static class Identify
                 {
                     case > 1000000:
                         sb.AppendFormat(Localization.Device_size_in_28_bit_LBA_mode_0_bytes_1_Tb_2_TiB,
-                                        (ulong)ATAID.LBASectors * logicalSectorSize,
+                                        (ulong)ATAID.LBASectors                     * logicalSectorSize,
                                         (ulong)ATAID.LBASectors * logicalSectorSize / 1000 / 1000 / 1000 / 1000,
-                                        (ulong)ATAID.LBASectors * 512 / 1024 / 1024 / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * 512               / 1024 / 1024 / 1024 / 1024).
+                           AppendLine();
 
                         break;
                     case > 1000:
                         sb.AppendFormat(Localization.Device_size_in_28_bit_LBA_mode_0_bytes_1_Gb_2_GiB,
                                         (ulong)ATAID.LBASectors                     * logicalSectorSize,
                                         (ulong)ATAID.LBASectors * logicalSectorSize / 1000 / 1000 / 1000,
-                                        (ulong)ATAID.LBASectors * 512               / 1024 / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * 512               / 1024 / 1024 / 1024).
+                           AppendLine();
 
                         break;
                     default:
                         sb.AppendFormat(Localization.Device_size_in_28_bit_LBA_mode_0_bytes_1_Mb_2_MiB,
                                         (ulong)ATAID.LBASectors                     * logicalSectorSize,
                                         (ulong)ATAID.LBASectors * logicalSectorSize / 1000 / 1000,
-                                        (ulong)ATAID.LBASectors * 512               / 1024 / 1024).AppendLine();
+                                        (ulong)ATAID.LBASectors * 512               / 1024 / 1024).
+                           AppendLine();
 
                         break;
                 }
@@ -909,7 +912,8 @@ public static class Identify
                             sb.AppendFormat(Localization.Device_size_in_48_bit_LBA_mode_0_bytes_1_Mb_2_MiB,
                                             ATAID.ExtendedUserSectors                     * logicalSectorSize,
                                             ATAID.ExtendedUserSectors * logicalSectorSize / 1000 / 1000,
-                                            ATAID.ExtendedUserSectors * logicalSectorSize / 1024 / 1024).AppendLine();
+                                            ATAID.ExtendedUserSectors * logicalSectorSize / 1024 / 1024).
+                               AppendLine();
 
                             break;
                     }
@@ -930,14 +934,16 @@ public static class Identify
                             sb.AppendFormat(Localization.Device_size_in_48_bit_LBA_mode_0_bytes_1_Gb_2_GiB,
                                             ATAID.LBA48Sectors                     * logicalSectorSize,
                                             ATAID.LBA48Sectors * logicalSectorSize / 1000 / 1000 / 1000,
-                                            ATAID.LBA48Sectors * logicalSectorSize / 1024 / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors * logicalSectorSize / 1024 / 1024 / 1024).
+                               AppendLine();
 
                             break;
                         default:
                             sb.AppendFormat(Localization.Device_size_in_48_bit_LBA_mode_0_bytes_1_Mb_2_MiB,
                                             ATAID.LBA48Sectors                     * logicalSectorSize,
                                             ATAID.LBA48Sectors * logicalSectorSize / 1000 / 1000,
-                                            ATAID.LBA48Sectors * logicalSectorSize / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors * logicalSectorSize / 1024 / 1024).
+                               AppendLine();
 
                             break;
                     }
@@ -957,8 +963,7 @@ public static class Identify
             }
         }
 
-        if((ushort)ATAID.SpecificConfiguration != 0x0000 &&
-           (ushort)ATAID.SpecificConfiguration != 0xFFFF)
+        if((ushort)ATAID.SpecificConfiguration != 0x0000 && (ushort)ATAID.SpecificConfiguration != 0xFFFF)
         {
             switch(ATAID.SpecificConfiguration)
             {
@@ -985,7 +990,8 @@ public static class Identify
                     break;
                 default:
                     sb.AppendFormat(Localization.Unknown_device_specific_configuration_0,
-                                    (ushort)ATAID.SpecificConfiguration).AppendLine();
+                                    (ushort)ATAID.SpecificConfiguration).
+                       AppendLine();
 
                     break;
             }
@@ -1001,29 +1007,32 @@ public static class Identify
             {
                 case 1:
                     sb.AppendFormat(Localization._0_KiB_of_single_ported_single_sector_buffer,
-                                    ATAID.BufferSize * 512 / 1024).AppendLine();
+                                    ATAID.BufferSize * 512 / 1024).
+                       AppendLine();
 
                     break;
                 case 2:
                     sb.AppendFormat(Localization._0_KiB_of_dual_ported_multi_sector_buffer,
-                                    ATAID.BufferSize * 512 / 1024).AppendLine();
+                                    ATAID.BufferSize * 512 / 1024).
+                       AppendLine();
 
                     break;
                 case 3:
                     sb.AppendFormat(Localization._0_KiB_of_dual_ported_multi_sector_buffer_with_read_caching,
-                                    ATAID.BufferSize * 512 / 1024).AppendLine();
+                                    ATAID.BufferSize * 512 / 1024).
+                       AppendLine();
 
                     break;
                 default:
                     sb.AppendFormat(Localization._0_KiB_of_unknown_type_1_buffer, ATAID.BufferSize * 512 / 1024,
-                                    ATAID.BufferType).AppendLine();
+                                    ATAID.BufferType).
+                       AppendLine();
 
                     break;
             }
         }
 
-        if(ATAID.EccBytes != 0x0000 &&
-           ATAID.EccBytes != 0xFFFF)
+        if(ATAID.EccBytes != 0x0000 && ATAID.EccBytes != 0xFFFF)
             sb.AppendFormat(Localization.READ_WRITE_LONG_has_0_extra_bytes, ATAID.EccBytes).AppendLine();
 
         sb.AppendLine();
@@ -1059,15 +1068,15 @@ public static class Identify
                AppendFormat(Localization.A_maximum_of_0_sectors_can_be_transferred_per_interrupt_on_READ_WRITE_MULTIPLE,
                             ATAID.MultipleSectorNumber);
 
-            sb.AppendLine().AppendFormat(Localization.Device_supports_setting_a_maximum_of_0_sectors,
-                                         ATAID.MultipleMaxSectors);
+            sb.AppendLine().
+               AppendFormat(Localization.Device_supports_setting_a_maximum_of_0_sectors, ATAID.MultipleMaxSectors);
         }
 
         if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.PhysicalAlignment1) ||
            ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.PhysicalAlignment0))
         {
-            sb.AppendLine().AppendFormat(Localization.Long_Physical_Alignment_setting_is_0,
-                                         (ushort)ATAID.Capabilities & 0x03);
+            sb.AppendLine().
+               AppendFormat(Localization.Long_Physical_Alignment_setting_is_0, (ushort)ATAID.Capabilities & 0x03);
         }
 
         if(ata1)
@@ -1125,8 +1134,7 @@ public static class Identify
         if(ATAID.APIOSupported.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode7))
             sb.Append("PIO7 ");
 
-        if(minatalevel <= 3 &&
-           !atapi)
+        if(minatalevel <= 3 && !atapi)
         {
             sb.AppendLine().Append(Localization.Single_word_DMA);
 
@@ -1327,8 +1335,7 @@ public static class Identify
                 sb.Append(Localization._active_);
         }
 
-        if(ATAID.MinMDMACycleTime != 0 &&
-           ATAID.RecMDMACycleTime != 0)
+        if(ATAID.MinMDMACycleTime != 0 && ATAID.RecMDMACycleTime != 0)
         {
             sb.AppendLine().
                AppendFormat(Localization.At_minimum_0_ns_transfer_cycle_time_per_word_in_MDMA_1_ns_recommended,
@@ -1356,19 +1363,20 @@ public static class Identify
         {
             if(ATAID.PacketBusRelease != 0)
             {
-                sb.AppendLine().AppendFormat(Localization._0_ns_typical_to_release_bus_from_receipt_of_PACKET,
-                                             ATAID.PacketBusRelease);
+                sb.AppendLine().
+                   AppendFormat(Localization._0_ns_typical_to_release_bus_from_receipt_of_PACKET,
+                                ATAID.PacketBusRelease);
             }
 
             if(ATAID.ServiceBusyClear != 0)
             {
-                sb.AppendLine().AppendFormat(Localization._0_ns_typical_to_clear_BSY_bit_from_receipt_of_SERVICE,
-                                             ATAID.ServiceBusyClear);
+                sb.AppendLine().
+                   AppendFormat(Localization._0_ns_typical_to_clear_BSY_bit_from_receipt_of_SERVICE,
+                                ATAID.ServiceBusyClear);
             }
         }
 
-        if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
-           (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
+        if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 || (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
         {
             if(!ATAID.SATACapabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit.Clear))
             {
@@ -1456,15 +1464,14 @@ public static class Identify
             }
         }
 
-        if(ATAID.InterseekDelay != 0x0000 &&
-           ATAID.InterseekDelay != 0xFFFF)
+        if(ATAID.InterseekDelay != 0x0000 && ATAID.InterseekDelay != 0xFFFF)
         {
-            sb.AppendLine().AppendFormat(Localization._0_microseconds_of_interseek_delay_for_ISO_7779_acoustic_testing,
-                                         ATAID.InterseekDelay);
+            sb.AppendLine().
+               AppendFormat(Localization._0_microseconds_of_interseek_delay_for_ISO_7779_acoustic_testing,
+                            ATAID.InterseekDelay);
         }
 
-        if((ushort)ATAID.DeviceFormFactor != 0x0000 &&
-           (ushort)ATAID.DeviceFormFactor != 0xFFFF)
+        if((ushort)ATAID.DeviceFormFactor != 0x0000 && (ushort)ATAID.DeviceFormFactor != 0xFFFF)
         {
             switch(ATAID.DeviceFormFactor)
             {
@@ -1489,8 +1496,8 @@ public static class Identify
 
                     break;
                 default:
-                    sb.AppendLine().AppendFormat(Localization.Device_nominal_size_field_value_0_is_unknown,
-                                                 ATAID.DeviceFormFactor);
+                    sb.AppendLine().
+                       AppendFormat(Localization.Device_nominal_size_field_value_0_is_unknown, ATAID.DeviceFormFactor);
 
                     break;
             }
@@ -1514,8 +1521,8 @@ public static class Identify
                 if((ATAID.CFAPowerMode & 0x1000) == 0x1000)
                     sb.AppendLine().Append(Localization.CompactFlash_power_mode_1_is_disabled);
 
-                sb.AppendLine().AppendFormat(Localization.CompactFlash_device_uses_a_maximum_of_0_mA,
-                                             ATAID.CFAPowerMode & 0x0FFF);
+                sb.AppendLine().
+                   AppendFormat(Localization.CompactFlash_device_uses_a_maximum_of_0_mA, ATAID.CFAPowerMode & 0x0FFF);
             }
         }
 
@@ -1643,8 +1650,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit2.
                                                                        LBA48)
-                              ? Localization.
-                                  _48_bit_LBA_is_supported_and_enabled
+                              ? Localization._48_bit_LBA_is_supported_and_enabled
                               : Localization._48_bit_LBA_is_supported);
             }
 
@@ -1653,8 +1659,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit2.
                                                                        FlushCache)
-                              ? Localization.
-                                  FLUSH_CACHE_is_supported_and_enabled
+                              ? Localization.FLUSH_CACHE_is_supported_and_enabled
                               : Localization.FLUSH_CACHE_is_supported);
             }
 
@@ -1680,10 +1685,8 @@ public static class Identify
                 if(ATAID.EnabledCommandSet2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit2.AAM))
                 {
                     sb.AppendLine().
-                       AppendFormat(
-                           Localization.
-                               Automatic_Acoustic_Management_is_supported_and_enabled_with_value_0_vendor_recommends_1,
-                           ATAID.CurrentAAM, ATAID.RecommendedAAM);
+                       AppendFormat(Localization.Automatic_Acoustic_Management_is_supported_and_enabled_with_value_0_vendor_recommends_1,
+                                    ATAID.CurrentAAM, ATAID.RecommendedAAM);
                 }
                 else
                     sb.AppendLine().Append(Localization.Automatic_Acoustic_Management_is_supported);
@@ -1694,8 +1697,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit2.
                                                                        SetMax)
-                              ? Localization.
-                                  SET_MAX_security_extension_is_supported_and_enabled
+                              ? Localization.SET_MAX_security_extension_is_supported_and_enabled
                               : Localization.SET_MAX_security_extension_is_supported);
             }
 
@@ -1798,8 +1800,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet3.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit3.
                                                                        SMARTLog)
-                              ? Localization.
-                                  SMART_error_logging_is_supported_and_enabled
+                              ? Localization.SMART_error_logging_is_supported_and_enabled
                               : Localization.SMART_error_logging_is_supported);
             }
 
@@ -1944,8 +1945,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet4.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit4.
                                                                        WriteUnc)
-                              ? Localization.
-                                  WRITE_UNCORRECTABLE_is_supported_and_enabled
+                              ? Localization.WRITE_UNCORRECTABLE_is_supported_and_enabled
                               : Localization.WRITE_UNCORRECTABLE_is_supported);
             }
 
@@ -1956,11 +1956,11 @@ public static class Identify
                               ? Localization.Write_Read_Verify_is_supported_and_enabled
                               : Localization.Write_Read_Verify_is_supported);
 
-                sb.AppendLine().AppendFormat(Localization._0_sectors_for_Write_Read_Verify_mode_two,
-                                             ATAID.WRVSectorCountMode2);
+                sb.AppendLine().
+                   AppendFormat(Localization._0_sectors_for_Write_Read_Verify_mode_two, ATAID.WRVSectorCountMode2);
 
-                sb.AppendLine().AppendFormat(Localization._0_sectors_for_Write_Read_Verify_mode_three,
-                                             ATAID.WRVSectorCountMode3);
+                sb.AppendLine().
+                   AppendFormat(Localization._0_sectors_for_Write_Read_Verify_mode_three, ATAID.WRVSectorCountMode3);
 
                 if(ATAID.EnabledCommandSet4.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit4.WRV))
                     sb.AppendLine().AppendFormat(Localization.Current_Write_Read_Verify_mode_0, ATAID.WRVMode);
@@ -1971,8 +1971,7 @@ public static class Identify
                 sb.AppendLine().
                    Append(ATAID.EnabledCommandSet4.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit4.
                                                                        DT1825)
-                              ? Localization.
-                                  DT1825_is_supported_and_enabled
+                              ? Localization.DT1825_is_supported_and_enabled
                               : Localization.DT1825_is_supported);
             }
         }
@@ -1988,8 +1987,8 @@ public static class Identify
 
         if(ATAID.CommandSet5.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit5.DeviceConfDMA))
         {
-            sb.AppendLine().Append(Localization.
-                                       DEVICE_CONFIGURATION_IDENTIFY_DMA_and_DEVICE_CONFIGURATION_SET_DMA_are_supported);
+            sb.AppendLine().
+               Append(Localization.DEVICE_CONFIGURATION_IDENTIFY_DMA_and_DEVICE_CONFIGURATION_SET_DMA_are_supported);
         }
 
         if(ATAID.CommandSet5.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit5.ReadBufferDMA))
@@ -2049,8 +2048,7 @@ public static class Identify
                 sb.AppendLine().Append(Localization.SANITIZE_ANTIFREEZE_LOCK_EXT_is_supported);
         }
 
-        if(!ata1 &&
-           maxatalevel >= 8)
+        if(!ata1 && maxatalevel >= 8)
         {
             if(ATAID.TrustedComputing.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.TrustedComputingBit.Set)    &&
                !ATAID.TrustedComputing.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.TrustedComputingBit.Clear) &&
@@ -2059,8 +2057,7 @@ public static class Identify
                 sb.AppendLine().Append(Localization.Trusted_Computing_feature_set_is_supported);
         }
 
-        if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 ||
-           (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
+        if((ATAID.TransportMajorVersion & 0xF000) >> 12 == 0x1 || (ATAID.TransportMajorVersion & 0xF000) >> 12 == 0xE)
         {
             if(!ATAID.SATACapabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATACapabilitiesBit.Clear))
             {
@@ -2082,8 +2079,8 @@ public static class Identify
                                                           NonZeroBufferOffset))
                 {
                     sb.AppendLine().
-                       Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                  CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.NonZeroBufferOffset)
+                       Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.NonZeroBufferOffset)
                                   ? Localization.Non_zero_buffer_offsets_are_supported_and_enabled
                                   : Localization.Non_zero_buffer_offsets_are_supported);
                 }
@@ -2091,8 +2088,8 @@ public static class Identify
                 if(ATAID.SATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.DMASetup))
                 {
                     sb.AppendLine().
-                       Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                  CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.DMASetup)
+                       Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.DMASetup)
                                   ? Localization.DMA_Setup_auto_activation_is_supported_and_enabled
                                   : Localization.DMA_Setup_auto_activation_is_supported);
                 }
@@ -2100,8 +2097,8 @@ public static class Identify
                 if(ATAID.SATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.InitPowerMgmt))
                 {
                     sb.AppendLine().
-                       Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                  CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.InitPowerMgmt)
+                       Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.InitPowerMgmt)
                                   ? Localization.Device_initiated_power_management_is_supported_and_enabled
                                   : Localization.Device_initiated_power_management_is_supported);
                 }
@@ -2109,8 +2106,8 @@ public static class Identify
                 if(ATAID.SATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.InOrderData))
                 {
                     sb.AppendLine().
-                       Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                  CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.InOrderData)
+                       Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.InOrderData)
                                   ? Localization.In_order_data_delivery_is_supported_and_enabled
                                   : Localization.In_order_data_delivery_is_supported);
                 }
@@ -2123,9 +2120,8 @@ public static class Identify
                                                                   HardwareFeatureControl))
                         {
                             sb.AppendLine().
-                               Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                          CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.
-                                                      HardwareFeatureControl)
+                               Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.HardwareFeatureControl)
                                           ? Localization.Hardware_Feature_Control_is_supported_and_enabled
                                           : Localization.Hardware_Feature_Control_is_supported);
                         }
@@ -2138,8 +2134,8 @@ public static class Identify
                                                                   AsyncNotification))
                         {
                             sb.AppendLine().
-                               Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                          CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.AsyncNotification)
+                               Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.AsyncNotification)
                                           ? Localization.Asynchronous_notification_is_supported_and_enabled
                                           : Localization.Asynchronous_notification_is_supported);
                         }
@@ -2152,8 +2148,8 @@ public static class Identify
                                                           SettingsPreserve))
                 {
                     sb.AppendLine().
-                       Append(ATAID.EnabledSATAFeatures.HasFlag(
-                                  CommonTypes.Structs.Devices.ATA.Identify.SATAFeaturesBit.SettingsPreserve)
+                       Append(ATAID.EnabledSATAFeatures.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.
+                                                                            SATAFeaturesBit.SettingsPreserve)
                                   ? Localization.Software_Settings_Preservation_is_supported_and_enabled
                                   : Localization.Software_Settings_Preservation_is_supported);
                 }
@@ -2170,8 +2166,7 @@ public static class Identify
         if((ATAID.RemovableStatusSet & 0x03) > 0)
             sb.AppendLine().Append(Localization.Removable_Media_Status_Notification_feature_set_is_supported);
 
-        if(ATAID.FreeFallSensitivity != 0x00 &&
-           ATAID.FreeFallSensitivity != 0xFF)
+        if(ATAID.FreeFallSensitivity != 0x00 && ATAID.FreeFallSensitivity != 0xFF)
             sb.AppendLine().AppendFormat(Localization.Free_fall_sensitivity_set_to_0, ATAID.FreeFallSensitivity);
 
         if(ATAID.DataSetMgmt.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.DataSetMgmtBit.Trim))
@@ -2206,8 +2201,7 @@ public static class Identify
 
                 sb.AppendLine(ATAID.SecurityStatus.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SecurityStatusBit.
                                                                        Expired)
-                                  ? Localization.
-                                      Security_count_has_expired
+                                  ? Localization.Security_count_has_expired
                                   : Localization.Security_count_has_not_expired);
 
                 sb.AppendLine(ATAID.SecurityStatus.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SecurityStatusBit.
@@ -2226,7 +2220,8 @@ public static class Identify
             if(ATAID.SecurityStatus.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.SecurityStatusBit.Enhanced))
             {
                 sb.AppendFormat(Localization._0_minutes_to_complete_enhanced_secure_erase,
-                                ATAID.EnhancedSecurityEraseTime * 2).AppendLine();
+                                ATAID.EnhancedSecurityEraseTime * 2).
+                   AppendLine();
             }
 
             sb.AppendFormat(Localization.Master_password_revision_code_0, ATAID.MasterPasswordRevisionCode).
@@ -2294,102 +2289,81 @@ public static class Identify
     #if DEBUG
         sb.AppendLine();
 
-        if(ATAID.VendorWord9 != 0x0000 &&
-           ATAID.VendorWord9 != 0xFFFF)
+        if(ATAID.VendorWord9 != 0x0000 && ATAID.VendorWord9 != 0xFFFF)
             sb.AppendFormat(Localization.Word_nine_0, ATAID.VendorWord9).AppendLine();
 
-        if((ATAID.VendorWord47 & 0x7F) != 0x7F &&
-           (ATAID.VendorWord47 & 0x7F) != 0x00)
+        if((ATAID.VendorWord47 & 0x7F) != 0x7F && (ATAID.VendorWord47 & 0x7F) != 0x00)
             sb.AppendFormat(Localization.Word_47_bits_15_to_8_0, ATAID.VendorWord47).AppendLine();
 
-        if(ATAID.VendorWord51 != 0x00 &&
-           ATAID.VendorWord51 != 0xFF)
+        if(ATAID.VendorWord51 != 0x00 && ATAID.VendorWord51 != 0xFF)
             sb.AppendFormat(Localization.Word_51_bits_7_to_0_0, ATAID.VendorWord51).AppendLine();
 
-        if(ATAID.VendorWord52 != 0x00 &&
-           ATAID.VendorWord52 != 0xFF)
+        if(ATAID.VendorWord52 != 0x00 && ATAID.VendorWord52 != 0xFF)
             sb.AppendFormat(Localization.Word_52_bits_7_to_0_0, ATAID.VendorWord52).AppendLine();
 
-        if(ATAID.ReservedWord64 != 0x00 &&
-           ATAID.ReservedWord64 != 0xFF)
+        if(ATAID.ReservedWord64 != 0x00 && ATAID.ReservedWord64 != 0xFF)
             sb.AppendFormat(Localization.Word_64_bits_15_to_8_0, ATAID.ReservedWord64).AppendLine();
 
-        if(ATAID.ReservedWord70 != 0x0000 &&
-           ATAID.ReservedWord70 != 0xFFFF)
+        if(ATAID.ReservedWord70 != 0x0000 && ATAID.ReservedWord70 != 0xFFFF)
             sb.AppendFormat(Localization.Word_70_0, ATAID.ReservedWord70).AppendLine();
 
-        if(ATAID.ReservedWord73 != 0x0000 &&
-           ATAID.ReservedWord73 != 0xFFFF)
+        if(ATAID.ReservedWord73 != 0x0000 && ATAID.ReservedWord73 != 0xFFFF)
             sb.AppendFormat(Localization.Word_73_0, ATAID.ReservedWord73).AppendLine();
 
-        if(ATAID.ReservedWord74 != 0x0000 &&
-           ATAID.ReservedWord74 != 0xFFFF)
+        if(ATAID.ReservedWord74 != 0x0000 && ATAID.ReservedWord74 != 0xFFFF)
             sb.AppendFormat(Localization.Word_74_0, ATAID.ReservedWord74).AppendLine();
 
-        if(ATAID.ReservedWord116 != 0x0000 &&
-           ATAID.ReservedWord116 != 0xFFFF)
+        if(ATAID.ReservedWord116 != 0x0000 && ATAID.ReservedWord116 != 0xFFFF)
             sb.AppendFormat(Localization.Word_116_0, ATAID.ReservedWord116).AppendLine();
 
         for(var i = 0; i < ATAID.ReservedWords121.Length; i++)
         {
-            if(ATAID.ReservedWords121[i] != 0x0000 &&
-               ATAID.ReservedWords121[i] != 0xFFFF)
+            if(ATAID.ReservedWords121[i] != 0x0000 && ATAID.ReservedWords121[i] != 0xFFFF)
                 sb.AppendFormat(Localization.Word_1_0, ATAID.ReservedWords121[i], 121 + i).AppendLine();
         }
 
         for(var i = 0; i < ATAID.ReservedWords129.Length; i++)
         {
-            if(ATAID.ReservedWords129[i] != 0x0000 &&
-               ATAID.ReservedWords129[i] != 0xFFFF)
+            if(ATAID.ReservedWords129[i] != 0x0000 && ATAID.ReservedWords129[i] != 0xFFFF)
                 sb.AppendFormat(Localization.Word_1_0, ATAID.ReservedWords129[i], 129 + i).AppendLine();
         }
 
         for(var i = 0; i < ATAID.ReservedCFA.Length; i++)
         {
-            if(ATAID.ReservedCFA[i] != 0x0000 &&
-               ATAID.ReservedCFA[i] != 0xFFFF)
+            if(ATAID.ReservedCFA[i] != 0x0000 && ATAID.ReservedCFA[i] != 0xFFFF)
                 sb.AppendFormat(Localization.Word_1_CFA_0, ATAID.ReservedCFA[i], 161 + i).AppendLine();
         }
 
-        if(ATAID.ReservedWord174 != 0x0000 &&
-           ATAID.ReservedWord174 != 0xFFFF)
+        if(ATAID.ReservedWord174 != 0x0000 && ATAID.ReservedWord174 != 0xFFFF)
             sb.AppendFormat(Localization.Word_174_0, ATAID.ReservedWord174).AppendLine();
 
-        if(ATAID.ReservedWord175 != 0x0000 &&
-           ATAID.ReservedWord175 != 0xFFFF)
+        if(ATAID.ReservedWord175 != 0x0000 && ATAID.ReservedWord175 != 0xFFFF)
             sb.AppendFormat(Localization.Word_175_0, ATAID.ReservedWord175).AppendLine();
 
-        if(ATAID.ReservedCEATAWord207 != 0x0000 &&
-           ATAID.ReservedCEATAWord207 != 0xFFFF)
+        if(ATAID.ReservedCEATAWord207 != 0x0000 && ATAID.ReservedCEATAWord207 != 0xFFFF)
             sb.AppendFormat(Localization.Word_207_CE_ATA_0, ATAID.ReservedCEATAWord207).AppendLine();
 
-        if(ATAID.ReservedCEATAWord208 != 0x0000 &&
-           ATAID.ReservedCEATAWord208 != 0xFFFF)
+        if(ATAID.ReservedCEATAWord208 != 0x0000 && ATAID.ReservedCEATAWord208 != 0xFFFF)
             sb.AppendFormat(Localization.Word_208_CE_ATA_0, ATAID.ReservedCEATAWord208).AppendLine();
 
-        if(ATAID.NVReserved != 0x00 &&
-           ATAID.NVReserved != 0xFF)
+        if(ATAID.NVReserved != 0x00 && ATAID.NVReserved != 0xFF)
             sb.AppendFormat(Localization.Word_219_bits_15_to_8_0, ATAID.NVReserved).AppendLine();
 
-        if(ATAID.WRVReserved != 0x00 &&
-           ATAID.WRVReserved != 0xFF)
+        if(ATAID.WRVReserved != 0x00 && ATAID.WRVReserved != 0xFF)
             sb.AppendFormat(Localization.Word_220_bits_15_to_8_0, ATAID.WRVReserved).AppendLine();
 
-        if(ATAID.ReservedWord221 != 0x0000 &&
-           ATAID.ReservedWord221 != 0xFFFF)
+        if(ATAID.ReservedWord221 != 0x0000 && ATAID.ReservedWord221 != 0xFFFF)
             sb.AppendFormat(Localization.Word_221_0, ATAID.ReservedWord221).AppendLine();
 
         for(var i = 0; i < ATAID.ReservedCEATA224.Length; i++)
         {
-            if(ATAID.ReservedCEATA224[i] != 0x0000 &&
-               ATAID.ReservedCEATA224[i] != 0xFFFF)
+            if(ATAID.ReservedCEATA224[i] != 0x0000 && ATAID.ReservedCEATA224[i] != 0xFFFF)
                 sb.AppendFormat(Localization.Word_1_CE_ATA_0, ATAID.ReservedCEATA224[i], 224 + i).AppendLine();
         }
 
         for(var i = 0; i < ATAID.ReservedWords.Length; i++)
         {
-            if(ATAID.ReservedWords[i] != 0x0000 &&
-               ATAID.ReservedWords[i] != 0xFFFF)
+            if(ATAID.ReservedWords[i] != 0x0000 && ATAID.ReservedWords[i] != 0xFFFF)
                 sb.AppendFormat(Localization.Word_1_0, ATAID.ReservedWords[i], 236 + i).AppendLine();
         }
     #endif

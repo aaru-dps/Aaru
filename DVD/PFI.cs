@@ -582,12 +582,14 @@ public static class PFI
                 if(decoded.DiscSize == DVDSize.OneTwenty)
                 {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization._60mm, "UMD",
-                                    decoded.PartVersion).AppendLine();
+                                    decoded.PartVersion).
+                       AppendLine();
                 }
                 else
                 {
                     sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, Localization.invalid_size, "UMD",
-                                    decoded.PartVersion).AppendLine();
+                                    decoded.PartVersion).
+                       AppendLine();
                 }
 
                 switch(decoded.PartVersion)
@@ -695,7 +697,8 @@ public static class PFI
                 break;
             default:
                 sb.AppendFormat(Localization.Disc_is_a_0_1_version_2, sizeString, Localization.unknown_disc_type,
-                                decoded.PartVersion).AppendLine();
+                                decoded.PartVersion).
+                   AppendLine();
 
                 break;
         }
@@ -797,7 +800,8 @@ public static class PFI
                 break;
             default:
                 sb.AppendFormat(Localization.Disc_maximum_transfer_rate_is_specified_by_unknown_key_0,
-                                decoded.MaximumRate).AppendLine();
+                                decoded.MaximumRate).
+                   AppendLine();
 
                 break;
         }
@@ -925,10 +929,12 @@ public static class PFI
                 if(decoded.PartVersion == 6)
                 {
                     sb.AppendFormat(Localization.Disc_manufacturer_is_0,
-                                    ManufacturerFromDVDRAM(decoded.DiskManufacturer)).AppendLine();
+                                    ManufacturerFromDVDRAM(decoded.DiskManufacturer)).
+                       AppendLine();
 
                     sb.AppendFormat(Localization.Disc_manufacturer_supplementary_information_is_0,
-                                    decoded.DiskManufacturerSupplementary).AppendLine();
+                                    decoded.DiskManufacturerSupplementary).
+                       AppendLine();
                 }
 
                 break;
@@ -951,7 +957,8 @@ public static class PFI
                 sb.AppendFormat(Localization.Disc_application_code_0, decoded.ApplicationCode).AppendLine();
 
                 sb.AppendFormat(Localization.Disc_manufacturer_is_0,
-                                ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).AppendLine();
+                                ManufacturerFromDVDPlusID(decoded.DiskManufacturerID)).
+                   AppendLine();
 
                 sb.AppendFormat(Localization.Disc_media_type_is_0,       decoded.MediaTypeID).AppendLine();
                 sb.AppendFormat(Localization.Disc_product_revision_is_0, decoded.ProductRevision).AppendLine();
@@ -964,7 +971,8 @@ public static class PFI
             return sb.ToString();
 
         sb.AppendFormat(Localization.Current_RMD_in_extra_Border_zone_starts_at_PSN_0,
-                        decoded.CurrentRMDExtraBorderPSN).AppendLine();
+                        decoded.CurrentRMDExtraBorderPSN).
+           AppendLine();
 
         sb.AppendFormat(Localization.PFI_in_extra_Border_zone_starts_at_PSN_0, decoded.PFIExtraBorderPSN).AppendLine();
 
@@ -984,8 +992,8 @@ public static class PFI
 
     public static string ManufacturerFromDVDRAM(string manufacturerId) => manufacturerId switch
                                                                           {
-                                                                              _ => ManufacturerFromDVDPlusID(
-                                                                                  manufacturerId)
+                                                                              _ =>
+                                                                                  ManufacturerFromDVDPlusID(manufacturerId)
                                                                           };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]

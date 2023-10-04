@@ -42,8 +42,8 @@ public sealed class Sector
 {
     static readonly ushort[] _ecma267InitialValues =
     {
-        0x0001, 0x5500, 0x0002, 0x2A00, 0x0004, 0x5400, 0x0008, 0x2800, 0x0010, 0x5000, 0x0020, 0x2001, 0x0040,
-        0x4002, 0x0080, 0x0005
+        0x0001, 0x5500, 0x0002, 0x2A00, 0x0004, 0x5400, 0x0008, 0x2800, 0x0010, 0x5000, 0x0020, 0x2001, 0x0040, 0x4002,
+        0x0080, 0x0005
     };
 
     static readonly uint[] _edcTable =
@@ -228,8 +228,7 @@ public sealed class Sector
     {
         var scrambled = new byte[sector.Length];
 
-        if(sector.Length % 2064 != 0 ||
-           sector.Length / 2064 != transferLength)
+        if(sector.Length % 2064 != 0 || sector.Length / 2064 != transferLength)
             return sector;
 
         for(uint i = 0; i < transferLength; i++)

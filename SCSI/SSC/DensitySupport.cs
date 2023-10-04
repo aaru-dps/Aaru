@@ -72,8 +72,10 @@ public static class DensitySupport
                 bpmm = (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) + response[offset + 7]),
                 width = (ushort)((response[offset + 8] << 8) + response[offset + 9]),
                 tracks = (ushort)((response[offset + 10] << 8) + response[offset + 11]),
-                capacity = (uint)((response[offset + 12] << 24) + (response[offset + 13] << 16) +
-                                  (response[offset + 14] << 8)  + response[offset + 15])
+                capacity = (uint)((response[offset + 12] << 24) +
+                                  (response[offset + 13] << 16) +
+                                  (response[offset + 14] << 8)  +
+                                  response[offset + 15])
             };
 
             var tmp = new byte[8];
@@ -131,7 +133,8 @@ public static class DensitySupport
                 sb.AppendLine("\t" + Localization.This_is_the_default_density_on_the_drive);
 
             sb.AppendFormat("\t" + Localization.Density_has_0_bits_per_mm__with_1_tracks_in_a_2_mm_width_tape,
-                            descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).AppendLine();
+                            descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).
+               AppendLine();
 
             sb.AppendFormat("\t" + Localization.Density_maximum_capacity_is_0_megabytes, descriptor.capacity).
                AppendLine();
@@ -228,7 +231,8 @@ public static class DensitySupport
             }
 
             sb.AppendFormat("\t" + Localization.Medium_has_a_nominal_length_of_0_m_in_a_1_mm_width_tape,
-                            descriptor.length, descriptor.width / (double)10).AppendLine();
+                            descriptor.length, descriptor.width / (double)10).
+               AppendLine();
 
             sb.AppendFormat("\t" + Localization.Medium_description_0, descriptor.description).AppendLine();
             sb.AppendLine();

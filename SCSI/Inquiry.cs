@@ -71,7 +71,8 @@ public static class Inquiry
            AppendLine();
 
         sb.AppendFormat(Localization.Device_release_level_0,
-                        StringHandlers.CToString(response.ProductRevisionLevel).Trim()).AppendLine();
+                        StringHandlers.CToString(response.ProductRevisionLevel).Trim()).
+           AppendLine();
 
         switch((PeripheralQualifiers)response.PeripheralQualifier)
         {
@@ -93,7 +94,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Vendor_value_0_set_in_Peripheral_Qualifier_field,
-                                response.PeripheralQualifier).AppendLine();
+                                response.PeripheralQualifier).
+                   AppendLine();
 
                 break;
         }
@@ -231,7 +233,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ANSI_standard_value_0,
-                                response.ANSIVersion).AppendLine();
+                                response.ANSIVersion).
+                   AppendLine();
 
                 break;
         }
@@ -248,7 +251,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ECMA_standard_value_0,
-                                response.ECMAVersion).AppendLine();
+                                response.ECMAVersion).
+                   AppendLine();
 
                 break;
         }
@@ -265,7 +269,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ISO_IEC_standard_value_0,
-                                response.ISOVersion).AppendLine();
+                                response.ISOVersion).
+                   AppendLine();
 
                 break;
         }
@@ -2343,10 +2348,12 @@ public static class Inquiry
             sb.AppendFormat(Localization.Release_firmware_0, response.Qt_ReleasedFirmware).AppendLine();
 
             sb.AppendFormat(Localization.Firmware_version_0_1, response.Qt_FirmwareMajorVersion,
-                            response.Qt_FirmwareMinorVersion).AppendLine();
+                            response.Qt_FirmwareMinorVersion).
+               AppendLine();
 
             sb.AppendFormat(Localization.EEPROM_format_version_0_1, response.Qt_EEPROMFormatMajorVersion,
-                            response.Qt_EEPROMFormatMinorVersion).AppendLine();
+                            response.Qt_EEPROMFormatMinorVersion).
+               AppendLine();
 
             sb.AppendFormat(Localization.Firmware_personality_0,     response.Qt_FirmwarePersonality).AppendLine();
             sb.AppendFormat(Localization.Firmware_sub_personality_0, response.Qt_FirmwareSubPersonality).AppendLine();
@@ -2429,7 +2436,8 @@ public static class Inquiry
             if(response.SeagatePresent)
             {
                 sb.AppendFormat(Core.Drive_serial_number_0,
-                                StringHandlers.CToString(response.Seagate_DriveSerialNumber)).AppendLine();
+                                StringHandlers.CToString(response.Seagate_DriveSerialNumber)).
+                   AppendLine();
             }
 
             if(response.Seagate2Present)
@@ -2441,7 +2449,8 @@ public static class Inquiry
             if(response.Seagate3Present)
             {
                 sb.AppendFormat(Localization.Drive_servo_part_number_0,
-                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).AppendLine();
+                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).
+                   AppendLine();
             }
         }
 
@@ -2452,7 +2461,8 @@ public static class Inquiry
         if(response.KreonPresent)
         {
             sb.AppendFormat(Localization.Drive_is_flashed_with_Kreon_firmware_0,
-                            StringHandlers.CToString(response.KreonVersion)).AppendLine();
+                            StringHandlers.CToString(response.KreonVersion)).
+               AppendLine();
         }
 
     #endregion Kreon vendor prettifying

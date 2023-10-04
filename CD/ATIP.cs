@@ -66,8 +66,7 @@ public static class ATIP
 
         var decoded = new CDATIP();
 
-        if(CDATIPResponse.Length != 32 &&
-           CDATIPResponse.Length != 28)
+        if(CDATIPResponse.Length != 32 && CDATIPResponse.Length != 28)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.
@@ -156,12 +155,16 @@ public static class ATIP
             }
 
             sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0,
-                            (response.LeadInStartMin << 16) + (response.LeadInStartSec << 8) +
-                            response.LeadInStartFrame).AppendLine();
+                            (response.LeadInStartMin << 16) +
+                            (response.LeadInStartSec << 8)  +
+                            response.LeadInStartFrame).
+               AppendLine();
 
             sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0,
-                            (response.LeadOutStartMin << 16) + (response.LeadOutStartSec << 8) +
-                            response.LeadOutStartFrame).AppendLine();
+                            (response.LeadOutStartMin << 16) +
+                            (response.LeadOutStartSec << 8)  +
+                            response.LeadOutStartFrame).
+               AppendLine();
 
             sb.AppendFormat(Localization.S4_value_0,
                             (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).
@@ -274,10 +277,12 @@ public static class ATIP
             sb.AppendLine(response.URU ? Localization.Disc_use_is_unrestricted : Localization.Disc_use_is_restricted);
 
             sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0_1_2, response.LeadInStartMin,
-                            response.LeadInStartSec, response.LeadInStartFrame).AppendLine();
+                            response.LeadInStartSec, response.LeadInStartFrame).
+               AppendLine();
 
             sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0_1_2, response.LeadOutStartMin,
-                            response.LeadOutStartSec, response.LeadOutStartFrame).AppendLine();
+                            response.LeadOutStartSec, response.LeadOutStartFrame).
+               AppendLine();
 
             if(response.A1Valid)
             {

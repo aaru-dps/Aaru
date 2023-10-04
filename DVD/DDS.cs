@@ -120,7 +120,8 @@ public static class DDS
             for(var i = 0; i < dds.Zones; i++)
             {
                 dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) +
-                                                (response[260 + i * 4 + 2] << 8)  + response[260 + i * 4 + 3]);
+                                                (response[260 + i * 4 + 2] << 8)  +
+                                                response[260 + i * 4 + 3]);
             }
         }
 
@@ -181,7 +182,8 @@ public static class DDS
             sb.AppendFormat(Localization.Disc_has_0_zones, decoded.Zones).AppendLine();
 
             sb.AppendFormat(Localization.Primary_Spare_Area_stats_at_PSN_0_and_ends_at_PSN_1_inclusively,
-                            decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).AppendLine();
+                            decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).
+               AppendLine();
 
             sb.AppendFormat(Localization.LSN_zero_is_at_PSN_0, decoded.LSN0Location).AppendLine();
 

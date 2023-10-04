@@ -79,13 +79,17 @@ public static partial class Modes
 
         decoded.XORDIS |= (pageResponse[2] & 0x02) == 0x02;
 
-        decoded.MaxXorWrite = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
-                                     pageResponse[7]);
+        decoded.MaxXorWrite =
+            (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) + pageResponse[7]);
 
-        decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) +
+        decoded.MaxRegenSize = (uint)((pageResponse[12] << 24) +
+                                      (pageResponse[13] << 16) +
+                                      (pageResponse[14] << 8)  +
                                       pageResponse[15]);
 
-        decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+        decoded.MaxRebuildRead = (uint)((pageResponse[16] << 24) +
+                                        (pageResponse[17] << 16) +
+                                        (pageResponse[18] << 8)  +
                                         pageResponse[19]);
 
         decoded.RebuildDelay = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
@@ -116,27 +120,30 @@ public static partial class Modes
             if(page.MaxXorWrite > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_single_XOR_WRITE_command,
-                                page.MaxXorWrite).AppendLine();
+                                page.MaxXorWrite).
+                   AppendLine();
             }
 
             if(page.MaxRegenSize > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_REGENERATE_command,
-                                page.MaxRegenSize).AppendLine();
+                                page.MaxRegenSize).
+                   AppendLine();
             }
 
             if(page.MaxRebuildRead > 0)
             {
                 sb.
-                    AppendFormat(
-                        "\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
-                        page.MaxRebuildRead).AppendLine();
+                    AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
+                                 page.MaxRebuildRead).
+                    AppendLine();
             }
 
             if(page.RebuildDelay > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_needs_a_minimum_of_0_ms_between_READ_commands_during_rebuild,
-                                page.RebuildDelay).AppendLine();
+                                page.RebuildDelay).
+                   AppendLine();
             }
         }
 

@@ -88,7 +88,8 @@ public static class CPRM
             sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
     #endif
         sb.AppendFormat(Localization.Total_number_of_CPRM_Media_Key_Blocks_available_to_transfer_0,
-                        response.TotalPacks).AppendLine();
+                        response.TotalPacks).
+           AppendLine();
 
         sb.AppendFormat(Localization.CPRM_Media_Key_Blocks_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MKBPackData, 80));

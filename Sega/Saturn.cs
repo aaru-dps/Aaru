@@ -81,8 +81,7 @@ public static class Saturn
         AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_no_separator = \"{0}\"",
                                    (char)ipbin.disc_no_separator);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_total_nos = {0}",
-                                   (char)ipbin.disc_total_nos);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_total_nos = {0}", (char)ipbin.disc_total_nos);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));

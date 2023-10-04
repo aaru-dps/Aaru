@@ -45,8 +45,7 @@ public static partial class Modes
 {
     public static ModeHeader? DecodeModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
     {
-        if(modeResponse        == null ||
-           modeResponse.Length < 8)
+        if(modeResponse == null || modeResponse.Length < 8)
             return null;
 
         var modeLength      = (ushort)((modeResponse[0] << 8) + modeResponse[1]);

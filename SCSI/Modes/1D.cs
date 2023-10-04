@@ -110,7 +110,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_WORM_mode_label_restrictions_code_0,
-                                page.WormModeLabelRestrictions).AppendLine();
+                                page.WormModeLabelRestrictions).
+                   AppendLine();
 
                 break;
         }
@@ -129,7 +130,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + "Unknown WORM mode filemark restrictions code {0}",
-                                page.WormModeLabelRestrictions).AppendLine();
+                                page.WormModeLabelRestrictions).
+                   AppendLine();
 
                 break;
         }

@@ -68,31 +68,25 @@ public static class CD
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.system_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.system_name));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.volume_version = \"{0:X}\"",
-                                   ipbin.volume_version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.volume_version = \"{0:X}\"", ipbin.volume_version);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.volume_type = 0x{0:X8}", ipbin.volume_type);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.system_version = 0x{0:X8}",
-                                   ipbin.system_version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.system_version = 0x{0:X8}", ipbin.system_version);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_loadsize = {0}",     ipbin.ip_loadsize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_entry_address = 0x{0:X8}",
-                                   ipbin.ip_entry_address);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_entry_address = 0x{0:X8}", ipbin.ip_entry_address);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_work_ram_size = {0}",
-                                   ipbin.ip_work_ram_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.ip_work_ram_size = {0}", ipbin.ip_work_ram_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_loadsize = {0}",     ipbin.sp_loadsize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_entry_address = 0x{0:X8}",
-                                   ipbin.sp_entry_address);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_entry_address = 0x{0:X8}", ipbin.sp_entry_address);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_work_ram_size = {0}",
-                                   ipbin.sp_work_ram_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_work_ram_size = {0}", ipbin.sp_work_ram_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));

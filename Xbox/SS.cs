@@ -95,11 +95,15 @@ public static class SS
             {
                 Level       = response[770 + i * 11 + 0],
                 ChallengeId = response[770 + i * 11 + 1],
-                ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) +
-                                        (response[770 + i * 11 + 4] << 8)  + response[770 + i * 11 + 5]),
+                ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) +
+                                        (response[770 + i * 11 + 3] << 16) +
+                                        (response[770 + i * 11 + 4] << 8)  +
+                                        response[770 + i * 11 + 5]),
                 ResponseModifier = response[770 + i * 11 + 6],
-                ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
-                                       (response[770 + i * 11 + 9] << 8)  + response[770 + i * 11 + 10])
+                ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) +
+                                       (response[770 + i * 11 + 8] << 16) +
+                                       (response[770 + i * 11 + 9] << 8)  +
+                                       response[770 + i * 11 + 10])
             };
         }
 
@@ -113,11 +117,14 @@ public static class SS
         {
             ss.Extents[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
+                Unknown = (uint)((response[1633 + i * 9 + 0] << 16) +
+                                 (response[1633 + i * 9 + 1] << 8)  +
                                  response[1633 + i * 9 + 2]),
-                StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) +
+                StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) +
+                                  (response[1633 + i * 9 + 4] << 8)  +
                                   response[1633 + i * 9 + 5]),
-                EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
+                EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) +
+                                (response[1633 + i * 9 + 7] << 8)  +
                                 response[1633 + i * 9 + 8])
             };
         }
@@ -126,11 +133,14 @@ public static class SS
         {
             ss.ExtentsCopy[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) +
+                Unknown = (uint)((response[1840 + i * 9 + 0] << 16) +
+                                 (response[1840 + i * 9 + 1] << 8)  +
                                  response[1840 + i * 9 + 2]),
-                StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) + (response[1840 + i * 9 + 4] << 8) +
+                StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) +
+                                  (response[1840 + i * 9 + 4] << 8)  +
                                   response[1840 + i * 9 + 5]),
-                EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) +
+                EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) +
+                                (response[1840 + i * 9 + 7] << 8)  +
                                 response[1840 + i * 9 + 8])
             };
         }
@@ -202,7 +212,8 @@ public static class SS
                 break;
             default:
                 sb.AppendFormat(Localization.Disc_maximum_transfer_rate_is_specified_by_unknown_key_0,
-                                decoded.MaximumRate).AppendLine();
+                                decoded.MaximumRate).
+                   AppendLine();
 
                 break;
         }
@@ -315,7 +326,8 @@ public static class SS
         for(var i = 0; i < 16; i++)
         {
             sb.AppendFormat(Localization.Extent_starts_at_PSN_0_and_ends_at_PSN_1, decoded.Extents[i].StartPSN,
-                            decoded.Extents[i].EndPSN).AppendLine();
+                            decoded.Extents[i].EndPSN).
+               AppendLine();
         }
 
         return sb.ToString();

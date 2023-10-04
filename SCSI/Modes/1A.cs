@@ -96,10 +96,14 @@ public static partial class Modes
         decoded.Standby |= (pageResponse[3] & 0x01) == 0x01;
         decoded.Idle    |= (pageResponse[3] & 0x02) == 0x02;
 
-        decoded.IdleTimer = (uint)((pageResponse[4] << 24) + (pageResponse[5] << 16) + (pageResponse[6] << 8) +
+        decoded.IdleTimer = (uint)((pageResponse[4] << 24) +
+                                   (pageResponse[5] << 16) +
+                                   (pageResponse[6] << 8)  +
                                    pageResponse[7]);
 
-        decoded.StandbyTimer = (uint)((pageResponse[8] << 24) + (pageResponse[9] << 16) + (pageResponse[10] << 8) +
+        decoded.StandbyTimer = (uint)((pageResponse[8]  << 24) +
+                                      (pageResponse[9]  << 16) +
+                                      (pageResponse[10] << 8)  +
                                       pageResponse[11]);
 
         if(pageResponse.Length < 40)
@@ -110,13 +114,19 @@ public static partial class Modes
         decoded.Idle_B           |= (pageResponse[3] & 0x04) == 0x04;
         decoded.Idle_C           |= (pageResponse[3] & 0x08) == 0x08;
 
-        decoded.IdleTimer_B = (uint)((pageResponse[12] << 24) + (pageResponse[13] << 16) + (pageResponse[14] << 8) +
+        decoded.IdleTimer_B = (uint)((pageResponse[12] << 24) +
+                                     (pageResponse[13] << 16) +
+                                     (pageResponse[14] << 8)  +
                                      pageResponse[15]);
 
-        decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) + (pageResponse[17] << 16) + (pageResponse[18] << 8) +
+        decoded.IdleTimer_C = (uint)((pageResponse[16] << 24) +
+                                     (pageResponse[17] << 16) +
+                                     (pageResponse[18] << 8)  +
                                      pageResponse[19]);
 
-        decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
+        decoded.StandbyTimer_Y = (uint)((pageResponse[20] << 24) +
+                                        (pageResponse[21] << 16) +
+                                        (pageResponse[22] << 8)  +
                                         pageResponse[23]);
 
         decoded.CCF_Idle    = (byte)((pageResponse[39] & 0xC0) >> 6);
@@ -142,8 +152,7 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page is { Standby  : true, StandbyTimer  : > 0 } ||
-           page is { Standby_Y: true, StandbyTimer_Y: > 0 })
+        if(page is { Standby: true, StandbyTimer: > 0 } || page is { Standby_Y: true, StandbyTimer_Y: > 0 })
         {
             if(page is { Standby: true, StandbyTimer: > 0 })
                 sb.AppendFormat("\t" + "Standby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
@@ -250,10 +259,9 @@ public static partial class Modes
         {
             case 0:
                 sb.
-                    AppendFormat(
-                        "\t" + Localization.
-                            Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
-                        page.PowerConsumptionIdentifier).AppendLine();
+                    AppendFormat("\t" + Localization.Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
+                                 page.PowerConsumptionIdentifier).
+                    AppendLine();
 
                 break;
             case 1:

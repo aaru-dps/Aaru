@@ -292,12 +292,14 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.AppendFormat(Localization.Lead_out_start_position_3_0_1_2, descriptor.PMIN,
-                                                    descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).AppendLine();
+                                                    descriptor.PSEC, descriptor.PFRAME, descriptor.PHOUR).
+                                       AppendLine();
                                 }
                                 else
                                 {
                                     sb.AppendFormat(Localization.Lead_out_start_position_0_1_2, descriptor.PMIN,
-                                                    descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                                    descriptor.PSEC, descriptor.PFRAME).
+                                       AppendLine();
                                 }
 
                                 //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
@@ -330,12 +332,14 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.AppendFormat(Localization.Absolute_time_3_0_1_2, descriptor.Min, descriptor.Sec,
-                                                    descriptor.Frame, descriptor.HOUR).AppendLine();
+                                                    descriptor.Frame, descriptor.HOUR).
+                                       AppendLine();
                                 }
                                 else
                                 {
                                     sb.AppendFormat(Localization.Absolute_time_0_1_2, descriptor.Min, descriptor.Sec,
-                                                    descriptor.Frame).AppendLine();
+                                                    descriptor.Frame).
+                                       AppendLine();
                                 }
 
                                 break;
@@ -359,22 +363,16 @@ public static class FullTOC
 
                                         if(descriptor.PHOUR > 0)
                                         {
-                                            sb.AppendFormat(
-                                                data
-                                                    ? Localization.Data_track_3_starts_at_4_0_1_2_open_parenthesis
-                                                    : Localization.Audio_track_3_starts_at_4_0_1_2_open_parenthesis,
-                                                descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                descriptor.POINT, descriptor.PHOUR);
+                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_4_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_4_0_1_2_open_parenthesis,
+                                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                            descriptor.POINT, descriptor.PHOUR);
                                         }
 
                                         else
                                         {
-                                            sb.AppendFormat(
-                                                data
-                                                    ? Localization.Data_track_3_starts_at_0_1_2_open_parenthesis
-                                                    : Localization.Audio_track_3_starts_at_0_1_2_open_parenthesis,
-                                                descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                descriptor.POINT);
+                                            sb.AppendFormat(data ? Localization.Data_track_3_starts_at_0_1_2_open_parenthesis : Localization.Audio_track_3_starts_at_0_1_2_open_parenthesis,
+                                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                            descriptor.POINT);
                                         }
 
                                         switch((TocControl)(descriptor.CONTROL & 0x0D))
@@ -441,32 +439,27 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.
-                                        AppendFormat(
-                                            Localization.
-                                                Start_of_next_possible_program_in_the_recordable_area_of_the_disc_3_0_1_2,
-                                            descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
+                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_3_0_1_2,
+                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
                                         AppendLine();
 
                                     sb.
-                                        AppendFormat(
-                                            Localization.
-                                                Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2,
-                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                            descriptor.PHOUR).AppendLine();
+                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_3_0_1_2,
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                     descriptor.PHOUR).
+                                        AppendLine();
                                 }
                                 else
                                 {
                                     sb.
-                                        AppendFormat(
-                                            Localization.
-                                                Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2,
-                                            descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                        AppendFormat(Localization.Start_of_next_possible_program_in_the_recordable_area_of_the_disc_0_1_2,
+                                                     descriptor.Min, descriptor.Sec, descriptor.Frame).
+                                        AppendLine();
 
                                     sb.
-                                        AppendFormat(
-                                            Localization.
-                                                Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2,
-                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                        AppendFormat(Localization.Maximum_start_of_outermost_Lead_out_in_the_recordable_area_of_the_disc_0_1_2,
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
+                                        AppendLine();
                                 }
 
                                 break;
@@ -505,15 +498,16 @@ public static class FullTOC
                                 if(descriptor.PHOUR > 0)
                                 {
                                     sb.
-                                        AppendFormat(
-                                            Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_3_0_1_2,
-                                            descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                            descriptor.PHOUR).AppendLine();
+                                        AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_3_0_1_2,
+                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
+                                                     descriptor.PHOUR).
+                                        AppendLine();
                                 }
                                 else
                                 {
                                     sb.AppendFormat(Localization.Start_time_of_the_first_Lead_in_area_in_the_disc_0_1_2,
-                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
+                                       AppendLine();
                                 }
 
                                 break;
@@ -539,7 +533,8 @@ public static class FullTOC
                                 {
                                     sb.AppendFormat(Localization.Start_position_of_outer_part_lead_in_area_3_0_1_2,
                                                     descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME,
-                                                    descriptor.PHOUR).AppendLine();
+                                                    descriptor.PHOUR).
+                                       AppendLine();
 
                                     sb.AppendFormat(Localization.Stop_position_of_inner_part_lead_out_area_3_0_1_2,
                                                     descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).
@@ -548,10 +543,12 @@ public static class FullTOC
                                 else
                                 {
                                     sb.AppendFormat(Localization.Start_position_of_outer_part_lead_in_area_0_1_2,
-                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
+                                       AppendLine();
 
                                     sb.AppendFormat(Localization.Stop_position_of_inner_part_lead_out_area_0_1_2,
-                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).
+                                       AppendLine();
                                 }
 
                                 break;
@@ -562,10 +559,12 @@ public static class FullTOC
                                 if(descriptor.POINT is >= 0x01 and <= 0x40)
                                 {
                                     sb.AppendFormat(Localization.Start_time_for_interval_that_should_be_skipped_0_1_2,
-                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).AppendLine();
+                                                    descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME).
+                                       AppendLine();
 
                                     sb.AppendFormat(Localization.Ending_time_for_interval_that_should_be_skipped_0_1_2,
-                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).AppendLine();
+                                                    descriptor.Min, descriptor.Sec, descriptor.Frame).
+                                       AppendLine();
                                 }
                                 else
                                 {
@@ -638,9 +637,8 @@ public static class FullTOC
             toc.LastCompleteSession = (byte)track.Session;
         }
 
-        sessionEndingTrack.TryAdd(toc.LastCompleteSession, (byte)tracks.
-                                                                 Where(t => t.Session == toc.LastCompleteSession).
-                                                                 Max(t => t.Sequence));
+        sessionEndingTrack.TryAdd(toc.LastCompleteSession,
+                                  (byte)tracks.Where(t => t.Session == toc.LastCompleteSession).Max(t => t.Sequence));
 
         byte currentSession = 0;
 
@@ -648,13 +646,11 @@ public static class FullTOC
         {
             trackFlags.TryGetValue((byte)track.Sequence, out byte trackControl);
 
-            if(trackControl == 0 &&
-               track.Type   != TrackType.Audio)
+            if(trackControl == 0 && track.Type != TrackType.Audio)
                 trackControl = (byte)CdFlags.DataTrack;
 
             // Lead-Out
-            if(track.Session  > currentSession &&
-               currentSession != 0)
+            if(track.Session > currentSession && currentSession != 0)
             {
                 (byte minute, byte second, byte frame) leadoutAmsf = LbaToMsf(track.StartSector - 150);
 
