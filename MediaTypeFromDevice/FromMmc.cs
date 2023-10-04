@@ -66,15 +66,13 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.PD650_WORM;
                     }
-                    else
-                    {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650,
-                                                   mediumType, blocks, blockSize);
 
-                        return MediaType.PD650;
-                    }
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.
+                                                   SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650,
+                                               mediumType, blocks, blockSize);
+
+                    return MediaType.PD650;
                 }
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
