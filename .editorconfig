@@ -83,7 +83,7 @@ resharper_braces_for_ifelse                                                     
 resharper_braces_for_while                                                                        = required_for_multiline
 resharper_builtin_type_apply_to_native_integer                                                    = false
 resharper_constructor_or_destructor_body                                                          = expression_body
-resharper_csharp_align_first_arg_by_paren                                                         = false
+resharper_csharp_align_first_arg_by_paren                                                         = true
 resharper_csharp_empty_block_style                                                                = together_same_line
 resharper_csharp_place_comments_at_first_column                                                   = true
 resharper_csharp_prefer_qualified_reference                                                       = false
@@ -108,6 +108,7 @@ resharper_int_align_enum_initializers                                           
 resharper_int_align_eq                                                                            = true
 resharper_keep_existing_embedded_arrangement                                                      = false
 resharper_keep_existing_initializer_arrangement                                                   = false
+resharper_keep_existing_linebreaks                                                                = false
 resharper_keep_existing_list_patterns_arrangement                                                 = false
 resharper_keep_existing_property_patterns_arrangement                                             = false
 resharper_keep_existing_switch_expression_arrangement                                             = false
@@ -125,6 +126,7 @@ resharper_outdent_statement_labels                                              
 resharper_parentheses_redundancy_style                                                            = remove
 resharper_place_attribute_on_same_line                                                            = false
 resharper_place_simple_embedded_statement_on_same_line                                            = false
+resharper_place_simple_initializer_on_single_line                                                 = false
 resharper_qualified_using_at_nested_scope                                                         = true
 resharper_show_autodetect_configure_formatting_tip                                                = false
 resharper_simple_block_style                                                                      = on_single_line
@@ -146,6 +148,8 @@ resharper_use_indent_from_vs                                                    
 resharper_wrap_after_dot_in_method_calls                                                          = true
 resharper_wrap_base_clause_style                                                                  = chop_if_long
 resharper_wrap_braced_init_list_style                                                             = chop_if_long
+resharper_wrap_chained_binary_expressions                                                         = chop_if_long
+resharper_wrap_chained_method_calls                                                               = chop_if_long
 resharper_wrap_ctor_initializer_style                                                             = chop_if_long
 resharper_wrap_lines                                                                              = true
 resharper_xmldoc_attribute_indent                                                                 = align_by_first_attribute
