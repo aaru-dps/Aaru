@@ -125,7 +125,7 @@ public sealed partial class MinixFS
         if(magic is MINIX3_MAGIC or MINIX3_CIGAM or MINIX2_MAGIC or MINIX2_CIGAM or MINIX_MAGIC or MINIX_CIGAM)
         {
             filenamesize = 60;
-            littleEndian = magic is not MINIX3_CIGAM or MINIX2_CIGAM or MINIX_CIGAM;
+            littleEndian = magic is not (MINIX3_CIGAM or MINIX2_CIGAM or MINIX_CIGAM);
 
             switch(magic)
             {

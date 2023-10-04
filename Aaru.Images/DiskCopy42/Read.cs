@@ -234,15 +234,15 @@ public sealed partial class DiskCopy42
                 {
                     sectorsToCopy = i switch
                                     {
-                                        >= 0 and <= 3   => 22,
-                                        >= 4 and <= 10  => 21,
-                                        >= 11 and <= 16 => 20,
-                                        >= 17 and <= 22 => 19,
-                                        >= 23 and <= 28 => 18,
-                                        >= 29 and <= 34 => 17,
-                                        >= 35 and <= 41 => 16,
-                                        >= 42 and <= 45 => 15,
-                                        _               => sectorsToCopy
+                                        >= 0 and <= 3 => 22,
+                                        <= 10         => 21,
+                                        <= 16         => 20,
+                                        <= 22         => 19,
+                                        <= 28         => 18,
+                                        <= 34         => 17,
+                                        <= 41         => 16,
+                                        <= 45         => 15,
+                                        _             => sectorsToCopy
                                     };
 
                     Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
