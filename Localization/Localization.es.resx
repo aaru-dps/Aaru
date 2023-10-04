@@ -801,7 +801,7 @@
     <value>Página de estado de la unidad Certance:</value>
   </data>
     <data name="Certance_Head_Assembly_Serial_Number_0" xml:space="preserve">
-    <value>Número de serie del emsamblado del cabezal:</value>
+    <value>Número de serie del emsamblado del cabezal: {0}</value>
   </data>
     <data name="Certance_Interface_Control_Mode_Page" xml:space="preserve">
     <value>Página de control de modos de la interfaz Central:</value>
@@ -4581,7 +4581,7 @@
     <value>La unidad contiene un intercambiador que puede reportar el contenido exacto de las ranuras</value>
   </data>
     <data name="Drive_copyright_0" xml:space="preserve">
-    <value>Copyright de la unidad:</value>
+    <value>Copyright de la unidad: {0}</value>
   </data>
     <data name="Drive_current_reading_speed_is_0_Kbyte_sec" xml:space="preserve">
     <value>La velocidad actual de lectura de la unidad es de {0} Kbyte/seg.</value>
@@ -5559,7 +5559,7 @@
     <value>Se esperaba un tamaño de CDSessionInfo ({0} bytes) que no es el recibido ({1} bytes), no se descodificará</value>
   </data>
     <data name="Expected_CD_ATIP_size_32_bytes_is_not_received_size_0_bytes_not_decoding" xml:space="preserve">
-    <value>Se esperaba un tamaño de ATIP de CD ({0} bytes) que no es el recibido ({1} bytes), no se descodificará</value>
+    <value>Se esperaba un tamaño de ATIP de CD (32 bytes) que no es el recibido ({0} bytes), no se descodificará</value>
   </data>
     <data name="Expected_CD_PMA_size_0_bytes_is_not_received_size_1_bytes_not_decoding" xml:space="preserve">
     <value>Se esperaba un tamaño de PMA de CD ({0} bytes) que no es el recibido ({1} bytes), no se descodificará</value>
@@ -7588,7 +7588,7 @@
     <value>Descriptor específico del protocolo (UAS): Dirección USB {0} interfaz {1}</value>
   </data>
     <data name="Protocol_unknown_code_0_specific_descriptor_with_unknown_format_hex_1" xml:space="preserve">
-    <value>Descriptor específico del protocolo (código desconocido {0}) con formato desconocido (hexadecimal): {0}</value>
+    <value>Descriptor específico del protocolo (código desconocido {0}) con formato desconocido (hexadecimal): {1}</value>
   </data>
     <data name="Protocol_unknown_specific_descriptor_with_unknown_format_hex_0" xml:space="preserve">
     <value>Descriptor específico del protocolo (desconocido) con formato desconocido (hexadecimal): {0}</value>
@@ -7909,7 +7909,7 @@
     <value>Valor reservado establecido en el calificador de periférico</value>
   </data>
     <data name="Response_modifier_0" xml:space="preserve">
-    <value>Modificador de respuesta:</value>
+    <value>Modificador de respuesta: {0}</value>
   </data>
     <data name="Response_value_0" xml:space="preserve">
     <value>Valor de respuesta: 0x{0:X8}</value>
@@ -8830,7 +8830,7 @@
   </data>
     <data name="Track_0_Stereo_audio_track_with_50_15_s_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7"
           xml:space="preserve">
-    <value>Pista {0} (Audio estéreo con pre-énfasis de 50/15 µs) comienza en {1:D2}:{2:D2}:{3:D2} y termina en {4:D2}:{5:D2}:{6:D2}</value>
+    <value>Pista {0} (Audio estéreo con pre-énfasis de 50/15 µs) comienza en {4}:{1:D2}:{2:D2}:{3:D2} y termina en {8}:{5:D2}:{6:D2}:{7:D2}</value>
   </data>
     <data name="Track_0_Quadraphonic_audio_track_with_no_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6"
           xml:space="preserve">
@@ -8855,7 +8855,7 @@
   </data>
     <data name="Track_0_Stereo_audio_track_with_50_15_us_pre_emphasis_starts_at_1_2_3_and_ends_at_4_5_6"
           xml:space="preserve">
-    <value>Pista {0} (Audio estéreo con pre-énfasis de 50/15 µs) comienza en {4}:{1:D2}:{2:D2}:{3:D2} y termina en {8}:{5:D2}:{6:D2}:{7:D2}</value>
+    <value>Pista {0} (Audio estéreo con pre-énfasis de 50/15 µs) comienza en {1:D2}:{2:D2}:{3:D2} y termina en {4:D2}:{5:D2}:{6:D2}</value>
   </data>
     <data name="Track_0_Stereo_audio_track_with_no_pre_emphasis_starts_at_4_1_2_3_and_ends_at_8_5_6_7"
           xml:space="preserve">
