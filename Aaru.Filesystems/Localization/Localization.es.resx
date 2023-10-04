@@ -432,7 +432,7 @@
     <value>Creando bloques de asignación.</value>
   </data>
     <data name="Creation_date_0" xml:space="preserve">
-    <value>Fecha de creación:</value>
+    <value>Fecha de creación: {0}</value>
   </data>
     <data name="Creator_OS_code_0" xml:space="preserve">
     <value>Código del SO creador: {0}</value>
@@ -1394,7 +1394,7 @@
     <value>Nombres de archivo largos</value>
   </data>
     <data name="Lowest_structure_in_the_volume_is_Level_0_revision_1" xml:space="preserve">
-    <value>La estructura más baja en el volumen tiene nivel {0}, revisión 1}</value>
+    <value>La estructura más baja en el volumen tiene nivel {0}, revisión {1}</value>
   </data>
     <data name="Mac_OS_X_Volume_ID_0_1" xml:space="preserve">
     <value>ID de Mac OS X del volumen: {0:X8}{1:X8}</value>
@@ -2133,7 +2133,7 @@
     <value>La pila del sistema se extenderá {0} bytes y una {1} fracción de la RAM disponible</value>
   </data>
     <data name="System_identifier_0" xml:space="preserve">
-    <value>Identificador del sistema:</value>
+    <value>Identificador del sistema: {0}</value>
   </data>
     <data name="System_owner_group_world" xml:space="preserve">
     <value>Sistema, dueño, grupo, mundo</value>
@@ -3100,9 +3100,6 @@
   </data>
     <data name="WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block" xml:space="preserve">
     <value>ATENCIÓN: El sistema de ficheros describe bloques de {0} bytes pero el dispositivo lo hace de {1} bytes</value>
-  </data>
-    <data name="WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block" xml:space="preserve">
-    <value>ATENCIÓN: El sistema de ficheros describe bloques de {0} bytes pero el disdasdas</value>
   </data>
     <data name="WARNING__Filesystem_indicates_0_blocks_while_device_indicates_1_blocks" xml:space="preserve">
     <value>ATENCIÓN: El sistema de ficheros describe {0} bloques pero el dispositivo indica {1}</value>

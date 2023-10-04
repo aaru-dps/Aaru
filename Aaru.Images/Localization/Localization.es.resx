@@ -1095,7 +1095,7 @@
     <value>Encontrado REM DISC HASHES en la línea {0}</value>
   </data>
     <data name="Found_REM_Gap_Append_Method_1_2_HASHES_at_line_0" xml:space="preserve">
-    <value>Encontrado REM Gap Append Method: {1} [{2]} HASHES en la línea {0}</value>
+    <value>Encontrado REM Gap Append Method: {1} [{2}] HASHES en la línea {0}</value>
   </data>
     <data name="Found_REM_HIGH_DENSITY_AREA_at_line_0" xml:space="preserve">
     <value>Encontrado REM HIGH-DENSITY AREA en la línea {0}</value>
@@ -1224,13 +1224,13 @@
     <value>Encontrado hash desconocido para {1} {2} en la línea {0}. Por favor reporte esta imagen de disco.</value>
   </data>
     <data name="Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image" xml:space="preserve">
-    <value>Encontrado GUID de metadatos requerido y no soportado, no se procede con la imagen.</value>
+    <value>Encontrado GUID de metadatos requerido {0} y no soportado, no se procede con la imagen.</value>
   </data>
     <data name="Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image" xml:space="preserve">
     <value>Encontrado localizador parental de tipo {0} requerido y no soportado, no se procede con la imagen.</value>
   </data>
     <data name="Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image" xml:space="preserve">
-    <value>Encontrado GUID de región requerido y no soportado, no se procede con la imagen.</value>
+    <value>Encontrado GUID de región requerido {0} y no soportado, no se procede con la imagen.</value>
   </data>
     <data name="Found_unsupported_compression_algorithm_0" xml:space="preserve">
     <value>Encontrado algoritmo de compresión {0} no soportado</value>
