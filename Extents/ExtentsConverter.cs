@@ -77,8 +77,7 @@ public static class ExtentsConverter
         if(extents == null)
             return null;
 
-        var tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).
-                             ToList();
+        var tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
 
         return new ExtentsULong(tuples);
     }

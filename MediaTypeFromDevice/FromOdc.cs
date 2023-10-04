@@ -45,11 +45,7 @@ public static partial class MediaTypeFromDevice
     /// <returns>Media type</returns>
     static MediaType GetFromOdc(byte mediumType, ulong blocks, uint blockSize)
     {
-        if(mediumType != 0x01 &&
-           mediumType != 0x02 &&
-           mediumType != 0x03 &&
-           mediumType != 0x05 &&
-           mediumType != 0x07)
+        if(mediumType != 0x01 && mediumType != 0x02 && mediumType != 0x03 && mediumType != 0x05 && mediumType != 0x07)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.SCSI_medium_type_is_0_setting_media_type_to_unknown_magneto_optical,
@@ -127,9 +123,8 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.ISO_14517_512;
                     default:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UnknownMO;
                 }
@@ -197,9 +192,8 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.ECMA_260_Double;
                     default:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UnknownMO;
                 }
@@ -248,9 +242,8 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.ECMA_317;
                     default:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UnknownMO;
                 }
@@ -266,9 +259,8 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.ECMA_322;
                     default:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UnknownMO;
                 }
@@ -284,9 +276,8 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.UDO;
                     case 3668759:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_WORM_UDO2, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_WORM_UDO2,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UDO2_WORM;
                     case 3669724:
@@ -295,17 +286,16 @@ public static partial class MediaTypeFromDevice
 
                         return MediaType.UDO2;
                     default:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
-                                                   blocks, blockSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
+                                                   mediumType, blocks, blockSize);
 
                         return MediaType.UnknownMO;
                 }
             }
 
             default:
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO,
-                                           mediumType, blocks, blockSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_Unknown_MO, mediumType,
+                                           blocks, blockSize);
 
                 return MediaType.UnknownMO;
         }

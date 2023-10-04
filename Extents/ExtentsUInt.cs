@@ -75,8 +75,7 @@ public class ExtentsUInt
         for(var i = 0; i < _backend.Count; i++)
         {
             // Already contained in an extent
-            if(item >= _backend[i].Item1 &&
-               item <= _backend[i].Item2)
+            if(item >= _backend[i].Item1 && item <= _backend[i].Item2)
                 return;
 
             // Expands existing extent start
@@ -84,8 +83,7 @@ public class ExtentsUInt
             {
                 removeOne = _backend[i];
 
-                if(i    > 0 &&
-                   item == _backend[i - 1].Item2 + 1)
+                if(i > 0 && item == _backend[i - 1].Item2 + 1)
                 {
                     removeTwo = _backend[i - 1];
                     itemToAdd = new Tuple<uint, uint>(_backend[i - 1].Item1, _backend[i].Item2);
@@ -102,8 +100,7 @@ public class ExtentsUInt
 
             removeOne = _backend[i];
 
-            if(i    < _backend.Count         - 1 &&
-               item == _backend[i + 1].Item1 - 1)
+            if(i < _backend.Count - 1 && item == _backend[i + 1].Item1 - 1)
             {
                 removeTwo = _backend[i + 1];
                 itemToAdd = new Tuple<uint, uint>(_backend[i].Item1, _backend[i + 1].Item2);
@@ -168,8 +165,7 @@ public class ExtentsUInt
         foreach(Tuple<uint, uint> extent in _backend)
         {
             // Extent is contained and not a border
-            if(item > extent.Item1 &&
-               item < extent.Item2)
+            if(item > extent.Item1 && item < extent.Item2)
             {
                 toRemove = extent;
                 toAddOne = new Tuple<uint, uint>(extent.Item1, item - 1);
@@ -179,8 +175,7 @@ public class ExtentsUInt
             }
 
             // Extent is left border, but not only element
-            if(item == extent.Item1 &&
-               item != extent.Item2)
+            if(item == extent.Item1 && item != extent.Item2)
             {
                 toRemove = extent;
                 toAddOne = new Tuple<uint, uint>(item + 1, extent.Item2);
@@ -189,8 +184,7 @@ public class ExtentsUInt
             }
 
             // Extent is right border, but not only element
-            if(item != extent.Item1 &&
-               item == extent.Item2)
+            if(item != extent.Item1 && item == extent.Item2)
             {
                 toRemove = extent;
                 toAddOne = new Tuple<uint, uint>(extent.Item1, item - 1);
@@ -199,8 +193,7 @@ public class ExtentsUInt
             }
 
             // Extent is only element
-            if(item != extent.Item1 ||
-               item != extent.Item2)
+            if(item != extent.Item1 || item != extent.Item2)
                 continue;
 
             toRemove = extent;

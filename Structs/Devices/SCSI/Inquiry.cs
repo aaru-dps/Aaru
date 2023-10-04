@@ -273,8 +273,7 @@ public struct Inquiry
         if(SCSIInquiryResponse == null)
             return null;
 
-        if(SCSIInquiryResponse.Length < 36 &&
-           SCSIInquiryResponse.Length != 5)
+        if(SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes,
@@ -401,8 +400,7 @@ public struct Inquiry
             decoded.KreonVersion = new byte[5];
             Array.Copy(SCSIInquiryResponse, 42, decoded.KreonVersion, 0, 5);
 
-            if(decoded.KreonSpace == 0x20 &&
-               decoded.KreonIdentifier.SequenceEqual("KREON"u8.ToArray()))
+            if(decoded.KreonSpace == 0x20 && decoded.KreonIdentifier.SequenceEqual("KREON"u8.ToArray()))
                 decoded.KreonPresent = true;
         }
 
@@ -705,9 +703,7 @@ public struct Inquiry
             Array.Copy(decoded.KreonVersion, 0, buffer, 42, 5);
         }
 
-        if(decoded.HP_WORM            ||
-           decoded.HP_WORMVersion > 0 ||
-           decoded.HP_OBDR        != null)
+        if(decoded.HP_WORM || decoded.HP_WORMVersion > 0 || decoded.HP_OBDR != null)
         {
             length = 49;
 
@@ -733,10 +729,7 @@ public struct Inquiry
             Array.Copy(decoded.VendorSpecific, 0, buffer, 36, 20);
         }
 
-        if(decoded.Reserved3 > 0 ||
-           decoded.Clocking  > 0 ||
-           decoded.QAS           ||
-           decoded.IUS)
+        if(decoded.Reserved3 > 0 || decoded.Clocking > 0 || decoded.QAS || decoded.IUS)
         {
             length     =  57;
             buffer[56] =  (byte)(decoded.Reserved3 << 4);

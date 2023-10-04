@@ -82,8 +82,8 @@ public static partial class MediaTypeFromDevice
                 return MediaType.CD;
             case 0x01:
             case 0x05:
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CD_ROM, mediumType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CD_ROM,
+                                           mediumType);
 
                 return MediaType.CDROM;
             case 0x02:
@@ -116,8 +116,8 @@ public static partial class MediaTypeFromDevice
             case 0x16:
             case 0x17:
             case 0x18:
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CDR, mediumType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CDR,
+                                           mediumType);
 
                 return MediaType.CDR;
             case 0x20:
@@ -129,8 +129,8 @@ public static partial class MediaTypeFromDevice
             case 0x26:
             case 0x27:
             case 0x28:
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CDRW, mediumType);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CDRW,
+                                           mediumType);
 
                 return MediaType.CDRW;
             case 0x40 when isUsb && !opticalDisc:

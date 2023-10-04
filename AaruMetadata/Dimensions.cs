@@ -56,10 +56,9 @@ public class Dimensions
                                                                            ? null
                                                                            : new Dimensions
                                                                            {
-                                                                               Diameter =
-                                                                                   cicm.DiameterSpecified
-                                                                                       ? cicm.Diameter
-                                                                                       : null,
+                                                                               Diameter = cicm.DiameterSpecified
+                                                                                   ? cicm.Diameter
+                                                                                   : null,
                                                                                Height = cicm.HeightSpecified
                                                                                    ? cicm.Height
                                                                                    : null,

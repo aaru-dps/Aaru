@@ -94,20 +94,17 @@ public static partial class MediaTypeFromDevice
                 switch(blocks)
                 {
                     case 57312:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_MD60_MDDATA,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_MD60_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD60;
                     case 70464:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_MD74_MDDATA,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_MD74_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD74;
                     case 76096:
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.SCSI_Media_Type_Description_MD80_MDDATA,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_Media_Type_Description_MD80_MDDATA,
                                                    scsiPeripheralType, blocks, blockSize);
 
                         return MediaType.MD80;

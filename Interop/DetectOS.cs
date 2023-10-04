@@ -119,8 +119,7 @@ public static class DetectOS
     /// <exception cref="Exception">Unhandled exception</exception>
     public static PlatformID GetRealPlatformID()
     {
-        if((int)Environment.OSVersion.Platform < 4 ||
-           (int)Environment.OSVersion.Platform == 5)
+        if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
             return (PlatformID)(int)Environment.OSVersion.Platform;
 
         int error = uname(out utsname unixname);
@@ -270,7 +269,8 @@ public static class DetectOS
                 {
                     return FileVersionInfo.
                            GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
-                                                       "KERNEL32.DLL")).ProductVersion;
+                                                       "KERNEL32.DLL")).
+                           ProductVersion;
                 }
 
                 return environ;
@@ -319,14 +319,12 @@ public static class DetectOS
 
                 string[] pieces = version.Split('.');
 
-                if(pieces.Length < 2 ||
-                   !int.TryParse(pieces[1], out int minor))
+                if(pieces.Length < 2 || !int.TryParse(pieces[1], out int minor))
                     return "macOS";
 
                 int.TryParse(pieces[0], out int major);
 
-                if(minor >= 12 ||
-                   major >= 11)
+                if(minor >= 12 || major >= 11)
                     return "macOS";
 
                 return minor >= 8 ? "OS X" : "Mac OS X";

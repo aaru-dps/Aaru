@@ -65,8 +65,7 @@ public sealed class FiltersList
             {
                 var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
-                if(filter != null &&
-                   !Filters.ContainsKey(filter.Name.ToLower()))
+                if(filter != null && !Filters.ContainsKey(filter.Name.ToLower()))
                     Filters.Add(filter.Name.ToLower(), filter);
             }
             catch(Exception exception)
@@ -92,8 +91,8 @@ public sealed class FiltersList
                     if(!filter.Identify(path))
                         continue;
 
-                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                      Invoke(Array.Empty<object>());
+                    var foundFilter =
+                        (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
                     if(foundFilter?.Open(path) == ErrorNumber.NoError)
                         return foundFilter;

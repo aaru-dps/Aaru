@@ -133,8 +133,7 @@ public static class Geometry
                                                          geom.encoding        == geometry.encoding        &&
                                                          geom.variableSectorsPerTrack ==
                                                          geometry.variableSectorsPerTrack
-                                                   select geom.type).
-        FirstOrDefault();
+                                                   select geom.type).FirstOrDefault();
 
     /// <summary>Gets the geometry for a given media type</summary>
     /// <param name="mediaType">Media type</param>

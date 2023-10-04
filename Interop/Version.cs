@@ -55,15 +55,17 @@ public static class Version
     {
         Assembly assembly = typeof(GCSettings).Assembly;
 
-        string[] assemblyPath = assembly.CodeBase?.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] assemblyPath = assembly.CodeBase?.Split(new[]
+        {
+            '/', '\\'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(assemblyPath is null)
             return null;
 
         int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 
-        if(netCoreAppIndex > 0 &&
-           netCoreAppIndex < assemblyPath.Length - 2)
+        if(netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2)
             return assemblyPath[netCoreAppIndex + 1];
 
         return null;

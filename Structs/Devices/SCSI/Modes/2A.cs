@@ -462,10 +462,7 @@ public class ModePage_2A
                 pageResponse[17] += 0x02;
         }
 
-        if(decoded.TestWrite             ||
-           decoded.MaxWriteSpeed     > 0 ||
-           decoded.CurrentWriteSpeed > 0 ||
-           decoded.ReadBarcode)
+        if(decoded.TestWrite || decoded.MaxWriteSpeed > 0 || decoded.CurrentWriteSpeed > 0 || decoded.ReadBarcode)
         {
             length = 22;
 
@@ -518,9 +515,7 @@ public class ModePage_2A
             pageResponse[23] = (byte)(decoded.CMRSupported & 0xFF);
         }
 
-        if(decoded.BUF                           ||
-           decoded.RotationControlSelected   > 0 ||
-           decoded.CurrentWriteSpeedSelected > 0)
+        if(decoded.BUF || decoded.RotationControlSelected > 0 || decoded.CurrentWriteSpeedSelected > 0)
         {
             length = 32;
 
