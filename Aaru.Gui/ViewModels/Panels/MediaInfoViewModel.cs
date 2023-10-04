@@ -115,7 +115,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
             var sbSerial = new StringBuilder();
 
             for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
-                sbSerial.AppendFormat("{0:X2}", scsiInfo.MediaSerialNumber[i]);
+                sbSerial.Append($"{scsiInfo.MediaSerialNumber[i]:X2}");
 
             MediaSerial = sbSerial.ToString();
         }

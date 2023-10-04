@@ -457,10 +457,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((bool[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((bool[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(bool)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_BYTE:
@@ -470,30 +470,30 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((byte[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((byte[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(byte)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_DOUBLE:
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((double[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((double[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(double)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_HRTIME:
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((DateTime[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(DateTime)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_INT16:
@@ -501,10 +501,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((short[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((short[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(short)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_INT32:
@@ -512,10 +512,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((int[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((int[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(int)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_INT64:
@@ -523,10 +523,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((long[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((long[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(long)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_INT8:
@@ -534,10 +534,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((sbyte[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((sbyte[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(sbyte)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_STRING:
@@ -545,10 +545,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((string[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((string[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(string)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_UINT16:
@@ -556,10 +556,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ushort[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((ushort[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(ushort)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_UINT32:
@@ -567,10 +567,10 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((uint[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((uint[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(uint)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_UINT64:
@@ -578,16 +578,16 @@ public sealed partial class ZFS
                     if(item.elements > 1)
                     {
                         for(var i = 0; i < item.elements; i++)
-                            sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ulong[])item.value)[i]).AppendLine();
+                            sb.Append($"{item.name}[{i}] = {((ulong[])item.value)[i]}").AppendLine();
                     }
                     else
-                        sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
+                        sb.Append($"{item.name} = {(ulong)item.value}").AppendLine();
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_NVLIST:
                     if(item.elements == 1)
                     {
-                        sb.AppendFormat("{0} =\n{1}", item.name, PrintNvList((Dictionary<string, NVS_Item>)item.value)).
+                        sb.Append($"{item.name} =\n{PrintNvList((Dictionary<string, NVS_Item>)item.value)}").
                            AppendLine();
                     }
                     else
