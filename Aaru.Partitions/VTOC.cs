@@ -367,63 +367,63 @@ public sealed class VTOC : IPartition
         // This means partition starts are absolute, not relative, to the VTOC position
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag          == pTag.V_BACKUP &&
-               (ulong)parts[i].p_start == sectorOffset)
-            {
-                absolute = true;
+            if(parts[i].p_tag          != pTag.V_BACKUP ||
+               (ulong)parts[i].p_start != sectorOffset)
+                continue;
 
-                break;
-            }
+            absolute = true;
+
+            break;
         }
 
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag != pTag.V_UNUSED)
+            if(parts[i].p_tag == pTag.V_UNUSED)
+                continue;
+
+            var part = new Partition
             {
-                var part = new Partition
-                {
-                    Start    = (ulong)(parts[i].p_start * bps) / imagePlugin.Info.SectorSize,
-                    Length   = (ulong)(parts[i].p_size  * bps) / imagePlugin.Info.SectorSize,
-                    Offset   = (ulong)(parts[i].p_start * bps),
-                    Size     = (ulong)(parts[i].p_size  * bps),
-                    Sequence = (ulong)i,
-                    Type     = $"UNIX: {DecodeUnixtag(parts[i].p_tag, !useOld)}",
-                    Scheme   = Name
-                };
+                Start    = (ulong)(parts[i].p_start * bps) / imagePlugin.Info.SectorSize,
+                Length   = (ulong)(parts[i].p_size  * bps) / imagePlugin.Info.SectorSize,
+                Offset   = (ulong)(parts[i].p_start * bps),
+                Size     = (ulong)(parts[i].p_size  * bps),
+                Sequence = (ulong)i,
+                Type     = $"UNIX: {DecodeUnixtag(parts[i].p_tag, !useOld)}",
+                Scheme   = Name
+            };
 
-                var info = "";
+            var info = "";
 
-                // Apparently old ones are absolute :?
-                if(!useOld &&
-                   !absolute)
-                {
-                    part.Start  += sectorOffset;
-                    part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
-                }
-
-                if(parts[i].p_flag.HasFlag(pFlag.V_VALID))
-                    info += Localization.valid;
-
-                if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT))
-                    info += Localization._unmountable_;
-
-                if(parts[i].p_flag.HasFlag(pFlag.V_OPEN))
-                    info += Localization.open;
-
-                if(parts[i].p_flag.HasFlag(pFlag.V_REMAP))
-                    info += Localization.alternate_sector_mapping;
-
-                if(parts[i].p_flag.HasFlag(pFlag.V_RONLY))
-                    info += Localization._read_only_;
-
-                if(timestamps[i] != 0)
-                    info += string.Format(Localization.created_on_0, DateHandlers.UnixToDateTime(timestamps[i]));
-
-                part.Description = "UNIX slice" + info + ".";
-
-                if(part.End < imagePlugin.Info.Sectors)
-                    partitions.Add(part);
+            // Apparently old ones are absolute :?
+            if(!useOld &&
+               !absolute)
+            {
+                part.Start  += sectorOffset;
+                part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
             }
+
+            if(parts[i].p_flag.HasFlag(pFlag.V_VALID))
+                info += Localization.valid;
+
+            if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT))
+                info += Localization._unmountable_;
+
+            if(parts[i].p_flag.HasFlag(pFlag.V_OPEN))
+                info += Localization.open;
+
+            if(parts[i].p_flag.HasFlag(pFlag.V_REMAP))
+                info += Localization.alternate_sector_mapping;
+
+            if(parts[i].p_flag.HasFlag(pFlag.V_RONLY))
+                info += Localization._read_only_;
+
+            if(timestamps[i] != 0)
+                info += string.Format(Localization.created_on_0, DateHandlers.UnixToDateTime(timestamps[i]));
+
+            part.Description = "UNIX slice" + info + ".";
+
+            if(part.End < imagePlugin.Info.Sectors)
+                partitions.Add(part);
         }
 
         return partitions.Count > 0;
@@ -440,15 +440,15 @@ public sealed class VTOC : IPartition
                                                               pTag.V_USER   => "/usr",
                                                               pTag.V_BACKUP => Localization.Whole_disk,
                                                               pTag.V_STAND_OLD => isNew
-                                                                  ? "Stand"
-                                                                  : Localization.Alternate_sector_space,
+                                                                      ? "Stand"
+                                                                      : Localization.Alternate_sector_space,
                                                               pTag.V_VAR_OLD => isNew ? "/var" : Localization.non_UNIX,
                                                               pTag.V_HOME_OLD => isNew
-                                                                  ? "/home"
-                                                                  : Localization.Alternate_track_space,
+                                                                      ? "/home"
+                                                                      : Localization.Alternate_track_space,
                                                               pTag.V_ALTSCTR_OLD => isNew
-                                                                  ? Localization.Alternate_sector_track
-                                                                  : "Stand",
+                                                                      ? Localization.Alternate_sector_track
+                                                                      : "Stand",
                                                               pTag.V_CACHE => isNew ? Localization.Cache : "/var",
                                                               pTag.V_RESERVED =>
                                                                   isNew ? Localization.Reserved : "/home",

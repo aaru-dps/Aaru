@@ -772,19 +772,19 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress >= kvp.Value)
+            if(sectorAddress < kvp.Value)
+                continue;
+
+            foreach(Track track in _alcTracks.Values)
             {
-                foreach(Track track in _alcTracks.Values)
-                {
-                    if(track.point != kvp.Key ||
-                       !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
-                        continue;
+                if(track.point != kvp.Key ||
+                   !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
+                    continue;
 
-                    if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
-                        continue;
+                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
+                    continue;
 
-                    return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
-                }
+                return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
             }
         }
 
@@ -798,19 +798,19 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress >= kvp.Value)
+            if(sectorAddress < kvp.Value)
+                continue;
+
+            foreach(Track track in _alcTracks.Values)
             {
-                foreach(Track track in _alcTracks.Values)
-                {
-                    if(track.point != kvp.Key ||
-                       !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
-                        continue;
+                if(track.point != kvp.Key ||
+                   !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
+                    continue;
 
-                    if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
-                        continue;
+                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
+                    continue;
 
-                    return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
-                }
+                return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
             }
         }
 
@@ -1390,19 +1390,19 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress >= kvp.Value)
+            if(sectorAddress < kvp.Value)
+                continue;
+
+            foreach(Track alcTrack in _alcTracks.Values)
             {
-                foreach(Track alcTrack in _alcTracks.Values)
-                {
-                    if(alcTrack.point != kvp.Key ||
-                       !_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
-                        continue;
+                if(alcTrack.point != kvp.Key ||
+                   !_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
+                    continue;
 
-                    if(sectorAddress - kvp.Value >= alcExtra.sectors + alcExtra.pregap)
-                        continue;
+                if(sectorAddress - kvp.Value >= alcExtra.sectors + alcExtra.pregap)
+                    continue;
 
-                    return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
-                }
+                return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
             }
         }
 

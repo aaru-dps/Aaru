@@ -286,32 +286,31 @@ sealed class LsCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                                continue;
+                            if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                                continue;
+
+                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
+
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
-                                if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
-                                    continue;
+                                ctx.AddTask(UI.Mounting_filesystem).
+                                    IsIndeterminate();
 
-                                AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
+                                error = fs.Mount(imageFormat, partitions[i],
+                                                 encodingClass, parsedOptions,
+                                                 @namespace);
+                            });
 
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask(UI.Mounting_filesystem).
-                                        IsIndeterminate();
+                            if(error == ErrorNumber.NoError)
+                            {
+                                ListFilesInDir("/", fs, longFormat);
 
-                                    error = fs.Mount(imageFormat, partitions[i],
-                                                     encodingClass, parsedOptions,
-                                                     @namespace);
-                                });
-
-                                if(error == ErrorNumber.NoError)
-                                {
-                                    ListFilesInDir("/", fs, longFormat);
-
-                                    Statistics.AddFilesystem(fs.Metadata.Type);
-                                }
-                                else
-                                    AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
+                                Statistics.AddFilesystem(fs.Metadata.Type);
                             }
+                            else
+                                AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
                         }
                     }
                     else

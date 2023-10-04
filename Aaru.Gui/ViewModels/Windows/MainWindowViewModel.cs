@@ -644,55 +644,54 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                        continue;
+                                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                        continue;
+
+                                    fs.GetInformation(imageFormat, partition, null, out string information,
+                                                      out CommonTypes.AaruMetadata.FileSystem fsMetadata);
+
+                                    var rofs = fs as IReadOnlyFilesystem;
+
+                                    if(rofs != null)
                                     {
-                                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
-                                            continue;
+                                        ErrorNumber error =
+                                            rofs.Mount(imageFormat, partition, null,
+                                                       new Dictionary<string, string>(), null);
 
-                                        fs.GetInformation(imageFormat, partition, null, out string information,
-                                                          out CommonTypes.AaruMetadata.FileSystem fsMetadata);
-
-                                        var rofs = fs as IReadOnlyFilesystem;
-
-                                        if(rofs != null)
-                                        {
-                                            ErrorNumber error =
-                                                rofs.Mount(imageFormat, partition, null,
-                                                           new Dictionary<string, string>(), null);
-
-                                            if(error != ErrorNumber.NoError)
-                                                rofs = null;
-                                        }
-
-                                        var filesystemModel = new FileSystemModel
-                                        {
-                                            VolumeName = rofs?.Metadata.VolumeName is null
-                                                             ? fsMetadata.VolumeName is null
-                                                                   ? $"{fsMetadata.Type}"
-                                                                   : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
-                                                             : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
-                                            Filesystem         = fs,
-                                            ReadOnlyFilesystem = rofs,
-                                            ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata,
-                                                information)
-                                        };
-
-                                        // TODO: Trap expanding item
-                                        if(rofs != null)
-                                        {
-                                            filesystemModel.Roots.Add(new SubdirectoryModel
-                                            {
-                                                Name   = "/",
-                                                Path   = "",
-                                                Plugin = rofs
-                                            });
-
-                                            Statistics.AddCommand("ls");
-                                        }
-
-                                        Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
-                                        partitionModel.FileSystems.Add(filesystemModel);
+                                        if(error != ErrorNumber.NoError)
+                                            rofs = null;
                                     }
+
+                                    var filesystemModel = new FileSystemModel
+                                    {
+                                        VolumeName = rofs?.Metadata.VolumeName is null
+                                                         ? fsMetadata.VolumeName is null
+                                                               ? $"{fsMetadata.Type}"
+                                                               : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                         : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
+                                        Filesystem         = fs,
+                                        ReadOnlyFilesystem = rofs,
+                                        ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata,
+                                                                            information)
+                                    };
+
+                                    // TODO: Trap expanding item
+                                    if(rofs != null)
+                                    {
+                                        filesystemModel.Roots.Add(new SubdirectoryModel
+                                        {
+                                            Name   = "/",
+                                            Path   = "",
+                                            Plugin = rofs
+                                        });
+
+                                        Statistics.AddCommand("ls");
+                                    }
+
+                                    Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
+                                    partitionModel.FileSystems.Add(filesystemModel);
                                 }
                             }
 
@@ -722,53 +721,52 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                continue;
+                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                continue;
+
+                            fs.GetInformation(imageFormat, wholePart, null, out string information,
+                                              out CommonTypes.AaruMetadata.FileSystem fsMetadata);
+
+                            var rofs = fs as IReadOnlyFilesystem;
+
+                            if(rofs != null)
                             {
-                                if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
-                                    continue;
+                                ErrorNumber error = rofs.Mount(imageFormat, wholePart, null,
+                                                               new Dictionary<string, string>(), null);
 
-                                fs.GetInformation(imageFormat, wholePart, null, out string information,
-                                                  out CommonTypes.AaruMetadata.FileSystem fsMetadata);
-
-                                var rofs = fs as IReadOnlyFilesystem;
-
-                                if(rofs != null)
-                                {
-                                    ErrorNumber error = rofs.Mount(imageFormat, wholePart, null,
-                                                                   new Dictionary<string, string>(), null);
-
-                                    if(error != ErrorNumber.NoError)
-                                        rofs = null;
-                                }
-
-                                var filesystemModel = new FileSystemModel
-                                {
-                                    VolumeName = rofs?.Metadata.VolumeName is null
-                                                     ? fsMetadata.VolumeName is null
-                                                           ? $"{fsMetadata.Type}"
-                                                           : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
-                                                     : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
-                                    Filesystem = fs,
-                                    ReadOnlyFilesystem = rofs,
-                                    ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
-                                };
-
-                                // TODO: Trap expanding item
-                                if(rofs != null)
-                                {
-                                    filesystemModel.Roots.Add(new SubdirectoryModel
-                                    {
-                                        Name   = "/",
-                                        Path   = "",
-                                        Plugin = rofs
-                                    });
-
-                                    Statistics.AddCommand("ls");
-                                }
-
-                                Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
-                                imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
+                                if(error != ErrorNumber.NoError)
+                                    rofs = null;
                             }
+
+                            var filesystemModel = new FileSystemModel
+                            {
+                                VolumeName = rofs?.Metadata.VolumeName is null
+                                                 ? fsMetadata.VolumeName is null
+                                                       ? $"{fsMetadata.Type}"
+                                                       : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                 : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
+                                Filesystem         = fs,
+                                ReadOnlyFilesystem = rofs,
+                                ViewModel          = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
+                            };
+
+                            // TODO: Trap expanding item
+                            if(rofs != null)
+                            {
+                                filesystemModel.Roots.Add(new SubdirectoryModel
+                                {
+                                    Name   = "/",
+                                    Path   = "",
+                                    Plugin = rofs
+                                });
+
+                                Statistics.AddCommand("ls");
+                            }
+
+                            Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
+                            imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
                         }
                     }
                 }

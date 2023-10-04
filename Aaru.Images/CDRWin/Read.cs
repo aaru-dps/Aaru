@@ -1010,19 +1010,19 @@ public sealed partial class CdrWin
 
                 for(var i = 0; i < cueTracks.Length; i++)
                 {
-                    if(cueTracks[i].Session == s)
+                    if(cueTracks[i].Session != s)
+                        continue;
+
+                    if(!firstTrackRead)
                     {
-                        if(!firstTrackRead)
-                        {
-                            firstSessionTrk = i;
-                            firstTrackRead  = true;
-                        }
-
-                        sessionSectors += cueTracks[i].Sectors;
-
-                        if(i > lastSessionTrack)
-                            lastSessionTrack = i;
+                        firstSessionTrk = i;
+                        firstTrackRead  = true;
                     }
+
+                    sessionSectors += cueTracks[i].Sectors;
+
+                    if(i > lastSessionTrack)
+                        lastSessionTrack = i;
                 }
 
                 if(s > 1)
@@ -1691,13 +1691,13 @@ public sealed partial class CdrWin
 
                 for(var s = 0; s < sessions.Length; s++)
                 {
-                    if(sessions[s].Sequence > 1 &&
-                       track.Sequence       == sessions[s].StartTrack)
-                    {
-                        track.TrackFile.Offset  += 307200;
-                        track.Sectors           -= 150;
-                        sessions[s].StartSector =  (ulong)track.Indexes[1];
-                    }
+                    if(sessions[s].Sequence <= 1 ||
+                       track.Sequence       != sessions[s].StartTrack)
+                        continue;
+
+                    track.TrackFile.Offset  += 307200;
+                    track.Sectors           -= 150;
+                    sessions[s].StartSector =  (ulong)track.Indexes[1];
                 }
             }
 

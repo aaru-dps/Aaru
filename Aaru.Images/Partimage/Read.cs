@@ -445,12 +445,12 @@ public sealed partial class Partimage
 
         for(uint i = 0; i < length; i++)
         {
-            if((_bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) != 0)
-            {
-                allEmpty = false;
+            if((_bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0)
+                continue;
 
-                break;
-            }
+            allEmpty = false;
+
+            break;
         }
 
         if(allEmpty)

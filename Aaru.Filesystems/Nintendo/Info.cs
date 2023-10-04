@@ -126,50 +126,50 @@ public sealed partial class NintendoPlugin
 
             for(var i = 0; i < fields.FirstPartitions.Length; i++)
             {
-                if(offset1 + i * 8 + 8 < 0x50000)
-                {
-                    fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
+                if(offset1 + i * 8 + 8 >= 0x50000)
+                    continue;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
-                }
+                fields.FirstPartitions[i].Offset =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
+
+                fields.FirstPartitions[i].Type =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.SecondPartitions.Length; i++)
             {
-                if(offset1 + i * 8 + 8 < 0x50000)
-                {
-                    fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
+                if(offset1 + i * 8 + 8 >= 0x50000)
+                    continue;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
-                }
+                fields.FirstPartitions[i].Offset =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
+
+                fields.FirstPartitions[i].Type =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.ThirdPartitions.Length; i++)
             {
-                if(offset1 + i * 8 + 8 < 0x50000)
-                {
-                    fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
+                if(offset1 + i * 8 + 8 >= 0x50000)
+                    continue;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
-                }
+                fields.FirstPartitions[i].Offset =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
+
+                fields.FirstPartitions[i].Type =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.FourthPartitions.Length; i++)
             {
-                if(offset1 + i * 8 + 8 < 0x50000)
-                {
-                    fields.FirstPartitions[i].Offset =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
+                if(offset1 + i * 8 + 8 >= 0x50000)
+                    continue;
 
-                    fields.FirstPartitions[i].Type =
-                        BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
-                }
+                fields.FirstPartitions[i].Offset =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
+
+                fields.FirstPartitions[i].Type =
+                    BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
             }
 
             fields.Region       = header[0x4E000];

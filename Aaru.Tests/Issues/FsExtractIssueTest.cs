@@ -81,24 +81,24 @@ public abstract class FsExtractIssueTest
             {
                 foreach(string pluginName in idPlugins)
                 {
-                    if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
-                    {
-                        Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
+                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                        continue;
 
-                        var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
+                    Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
 
-                        Assert.IsNotNull(fs,
-                                         string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
+                    var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
-                        filesystemFound = true;
+                    Assert.IsNotNull(fs,
+                                     string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
-                        error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
+                    filesystemFound = true;
 
-                        Assert.AreEqual(ErrorNumber.NoError, error,
-                                        string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
+                    error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                        ExtractFilesInDir("/", fs, Xattrs);
-                    }
+                    Assert.AreEqual(ErrorNumber.NoError, error,
+                                    string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
+
+                    ExtractFilesInDir("/", fs, Xattrs);
                 }
             }
             else

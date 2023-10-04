@@ -929,29 +929,29 @@ public sealed partial class Gdi
 
         foreach(GdiTrack gdiTrack in _discImage.Tracks)
         {
-            if(gdiTrack.HighDensity == expectedDensity)
+            if(gdiTrack.HighDensity != expectedDensity)
+                continue;
+
+            var track = new Track
             {
-                var track = new Track
-                {
-                    Description       = null,
-                    StartSector       = gdiTrack.StartSector,
-                    Pregap            = gdiTrack.Pregap,
-                    Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                    Sequence          = gdiTrack.Sequence,
-                    Type              = gdiTrack.TrackType,
-                    Filter            = gdiTrack.TrackFilter,
-                    File              = gdiTrack.TrackFile,
-                    FileOffset        = (ulong)gdiTrack.Offset,
-                    FileType          = "BINARY",
-                    RawBytesPerSector = gdiTrack.Bps,
-                    BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
-                    SubchannelType    = TrackSubchannelType.None
-                };
+                Description       = null,
+                StartSector       = gdiTrack.StartSector,
+                Pregap            = gdiTrack.Pregap,
+                Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                Sequence          = gdiTrack.Sequence,
+                Type              = gdiTrack.TrackType,
+                Filter            = gdiTrack.TrackFilter,
+                File              = gdiTrack.TrackFile,
+                FileOffset        = (ulong)gdiTrack.Offset,
+                FileType          = "BINARY",
+                RawBytesPerSector = gdiTrack.Bps,
+                BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                SubchannelType    = TrackSubchannelType.None
+            };
 
-                track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
+            track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
 
-                tracks.Add(track);
-            }
+            tracks.Add(track);
         }
 
         return tracks;

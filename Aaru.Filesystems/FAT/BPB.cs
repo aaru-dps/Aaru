@@ -386,14 +386,14 @@ public sealed partial class FAT
             {
                 for(var c = 0; c < 11; c++)
                 {
-                    if(rootDir[c + e] < 0x20 && rootDir[c + e] != 0x00 && rootDir[c + e] != 0x05 ||
-                       rootDir[c + e] == 0xFF                                                    ||
-                       rootDir[c + e] == 0x2E)
-                    {
-                        validRootDir = false;
+                    if((rootDir[c + e] >= 0x20 || rootDir[c + e] == 0x00 || rootDir[c + e] == 0x05) &&
+                       rootDir[c + e] != 0xFF                                                       &&
+                       rootDir[c + e] != 0x2E)
+                        continue;
 
-                        break;
-                    }
+                    validRootDir = false;
+
+                    break;
                 }
 
                 if(!validRootDir)

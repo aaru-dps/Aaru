@@ -304,20 +304,19 @@ sealed class FilesystemInfoCommand : Command
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
-                                    {
-                                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
-                                            continue;
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                        continue;
+                                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                        continue;
 
-                                        AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
-                                        }[/]");
+                                    AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
+                                    }[/]");
 
-                                        fs.GetInformation(imageFormat, partitionsList[i], encodingClass,
-                                                          out information, out FileSystem fsMetadata);
+                                    fs.GetInformation(imageFormat, partitionsList[i], encodingClass,
+                                                      out information, out FileSystem fsMetadata);
 
-                                        AaruConsole.Write(information);
-                                        Statistics.AddFilesystem(fsMetadata.Type);
-                                    }
+                                    AaruConsole.Write(information);
+                                    Statistics.AddFilesystem(fsMetadata.Type);
                                 }
 
                                 break;
@@ -375,19 +374,18 @@ sealed class FilesystemInfoCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(plugins.Filesystems.TryGetValue(pluginName, out pluginType))
-                            {
-                                if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
-                                    continue;
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                continue;
+                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                continue;
 
-                                AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
+                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
 
-                                fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
-                                                  out FileSystem fsMetadata);
+                            fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
+                                              out FileSystem fsMetadata);
 
-                                AaruConsole.Write(information);
-                                Statistics.AddFilesystem(fsMetadata.Type);
-                            }
+                            AaruConsole.Write(information);
+                            Statistics.AddFilesystem(fsMetadata.Type);
                         }
 
                         break;

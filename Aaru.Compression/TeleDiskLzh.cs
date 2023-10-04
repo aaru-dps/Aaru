@@ -319,12 +319,12 @@ public class TeleDiskLzh
 
         for(i = 0; i < T; i++)
         {
-            if(_son[i] >= T)
-            {
-                _freq[j] = (ushort)((_freq[i] + 1) / 2);
-                _son[j]  = _son[i];
-                j++;
-            }
+            if(_son[i] < T)
+                continue;
+
+            _freq[j] = (ushort)((_freq[i] + 1) / 2);
+            _son[j]  = _son[i];
+            j++;
         }
 
         /* make a tree : first, connect children nodes */

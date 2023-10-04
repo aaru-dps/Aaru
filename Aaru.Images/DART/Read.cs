@@ -127,40 +127,40 @@ public sealed partial class Dart
 
         foreach(short l in bLength)
         {
-            if(l != 0)
-            {
-                var buffer = new byte[BUFFER_SIZE];
+            if(l == 0)
+                continue;
 
-                if(l == -1)
+            var buffer = new byte[BUFFER_SIZE];
+
+            if(l == -1)
+            {
+                stream.EnsureRead(buffer, 0, BUFFER_SIZE);
+                dataMs.Write(buffer, 0, DATA_SIZE);
+                tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
+            }
+            else
+            {
+                byte[] temp;
+
+                if(header.srcCmp == COMPRESS_RLE)
                 {
-                    stream.EnsureRead(buffer, 0, BUFFER_SIZE);
+                    temp = new byte[l * 2];
+                    stream.EnsureRead(temp, 0, temp.Length);
+                    buffer = new byte[BUFFER_SIZE];
+
+                    AppleRle.DecodeBuffer(temp, buffer);
+
                     dataMs.Write(buffer, 0, DATA_SIZE);
                     tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                 }
                 else
                 {
-                    byte[] temp;
+                    temp = new byte[l];
+                    stream.EnsureRead(temp, 0, temp.Length);
 
-                    if(header.srcCmp == COMPRESS_RLE)
-                    {
-                        temp = new byte[l * 2];
-                        stream.EnsureRead(temp, 0, temp.Length);
-                        buffer = new byte[BUFFER_SIZE];
+                    AaruConsole.ErrorWriteLine(Localization.LZH_Compressed_images_not_yet_supported);
 
-                        AppleRle.DecodeBuffer(temp, buffer);
-
-                        dataMs.Write(buffer, 0, DATA_SIZE);
-                        tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
-                    }
-                    else
-                    {
-                        temp = new byte[l];
-                        stream.EnsureRead(temp, 0, temp.Length);
-
-                        AaruConsole.ErrorWriteLine(Localization.LZH_Compressed_images_not_yet_supported);
-
-                        return ErrorNumber.NotImplemented;
-                    }
+                    return ErrorNumber.NotImplemented;
                 }
             }
         }

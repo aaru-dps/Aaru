@@ -194,12 +194,12 @@ public sealed partial class PartClone
 
         for(uint i = 0; i < length; i++)
         {
-            if(_byteMap[sectorAddress + i] != 0)
-            {
-                allEmpty = false;
+            if(_byteMap[sectorAddress + i] == 0)
+                continue;
 
-                break;
-            }
+            allEmpty = false;
+
+            break;
         }
 
         if(allEmpty)
