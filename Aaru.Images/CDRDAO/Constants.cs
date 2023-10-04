@@ -56,12 +56,16 @@ public sealed partial class Cdrdao
     const string REGEX_DISCTYPE = @"^\s*(?<type>(CD_DA|CD_ROM_XA|CD_ROM|CD_I))";
     const string REGEX_EMPHASIS = @"^\s*(?<no>NO)?\s*PRE_EMPHASIS";
     const string REGEX_FILE_AUDIO =
-        @"^\s*(AUDIO)?FILE\s*""(?<filename>.+)""\s*(#(?<base_offset>\d+))?\s*((?<start>[\d]+:[\d]+:[\d]+)|(?<start_num>\d+))\s*(?<length>[\d]+:[\d]+:[\d]+)?";
+        """^\s*(AUDIO)?FILE\s*"(?<filename>.+)"\s*(#(?<base_offset>\d+))?\s*((?<start>[\d]+:[\d]+:[\d]+)|(?<start_num>\d+))\s*(?<length>[\d]+:[\d]+:[\d]+)?""";
     const string REGEX_FILE_DATA =
-        @"^\s*DATAFILE\s*""(?<filename>.+)""\s*(#(?<base_offset>\d+))?\s*(?<length>[\d]+:[\d]+:[\d]+)?";
-    const string REGEX_INDEX  = @"^\s*INDEX\s*(?<address>\d+:\d+:\d+)";
-    const string REGEX_ISRC   = @"^\s*ISRC\s*""(?<isrc>[A-Z0-9]{5,5}[0-9]{7,7})""";
-    const string REGEX_MCN    = @"^\s*CATALOG\s*""(?<catalog>[\x21-\x7F]{13,13})""";
+        """^\s*DATAFILE\s*"(?<filename>.+)"\s*(#(?<base_offset>\d+))?\s*(?<length>[\d]+:[\d]+:[\d]+)?""";
+    const string REGEX_INDEX = @"^\s*INDEX\s*(?<address>\d+:\d+:\d+)";
+    const string REGEX_ISRC = """
+                              ^\s*ISRC\s*"(?<isrc>[A-Z0-9]{5,5}[0-9]{7,7})"
+                              """;
+    const string REGEX_MCN = """
+                             ^\s*CATALOG\s*"(?<catalog>[\x21-\x7F]{13,13})"
+                             """;
     const string REGEX_PREGAP = @"^\s*START\s*(?<address>\d+:\d+:\d+)?";
     const string REGEX_STEREO = @"^\s*(?<num>(TWO|FOUR))_CHANNEL_AUDIO";
     const string REGEX_TRACK =
@@ -71,14 +75,30 @@ public sealed partial class Cdrdao
     const string REGEX_ZERO_PREGAP = @"^\s*PREGAP\s*(?<length>\d+:\d+:\d+)";
 
     // CD-Text
-    const string REGEX_ARRANGER   = @"^\s*ARRANGER\s*""(?<arranger>.+)""";
-    const string REGEX_COMPOSER   = @"^\s*COMPOSER\s*""(?<composer>.+)""";
-    const string REGEX_DISC_ID    = @"^\s*DISC_ID\s*""(?<discid>.+)""";
-    const string REGEX_MESSAGE    = @"^\s*MESSAGE\s*""(?<message>.+)""";
-    const string REGEX_PERFORMER  = @"^\s*PERFORMER\s*""(?<performer>.+)""";
-    const string REGEX_SONGWRITER = @"^\s*SONGWRITER\s*""(?<songwriter>.+)""";
-    const string REGEX_TITLE      = @"^\s*TITLE\s*""(?<title>.+)""";
-    const string REGEX_UPC        = @"^\s*UPC_EAN\s*""(?<catalog>[\d]{13,13})""";
+    const string REGEX_ARRANGER = """
+                                  ^\s*ARRANGER\s*"(?<arranger>.+)"
+                                  """;
+    const string REGEX_COMPOSER = """
+                                  ^\s*COMPOSER\s*"(?<composer>.+)"
+                                  """;
+    const string REGEX_DISC_ID = """
+                                 ^\s*DISC_ID\s*"(?<discid>.+)"
+                                 """;
+    const string REGEX_MESSAGE = """
+                                 ^\s*MESSAGE\s*"(?<message>.+)"
+                                 """;
+    const string REGEX_PERFORMER = """
+                                   ^\s*PERFORMER\s*"(?<performer>.+)"
+                                   """;
+    const string REGEX_SONGWRITER = """
+                                    ^\s*SONGWRITER\s*"(?<songwriter>.+)"
+                                    """;
+    const string REGEX_TITLE = """
+                               ^\s*TITLE\s*"(?<title>.+)"
+                               """;
+    const string REGEX_UPC = """
+                             ^\s*UPC_EAN\s*"(?<catalog>[\d]{13,13})"
+                             """;
 
     // Unused
     const string REGEX_CD_TEXT          = @"^\s*CD_TEXT\s*\{";
