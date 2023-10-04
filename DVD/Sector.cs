@@ -176,11 +176,8 @@ public sealed class Sector
         }
 
         // Try the ECMA-267 keys since they are often used
-        foreach(ushort iv in _ecma267InitialValues)
+        foreach(ushort iv in _ecma267InitialValues.Where(iv => TestSeed(sector, iv)))
         {
-            if(!TestSeed(sector, iv))
-                continue;
-
             _lastSeed = iv;
 
             return AddSeed(iv);
