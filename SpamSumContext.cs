@@ -294,12 +294,10 @@ public sealed class SpamSumContext : IChecksum
         while(bi >= _self.Bhend)
             --bi;
 
-        while(bi                > _self.Bhstart &&
-              _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+        while(bi > _self.Bhstart && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
             --bi;
 
-        if(bi                > 0 &&
-           _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+        if(bi > 0 && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
             throw new Exception(Localization.Assertion_failed);
 
         sb.Append($"{SSDEEP_BS(bi)}:");

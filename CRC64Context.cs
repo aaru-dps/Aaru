@@ -332,8 +332,7 @@ public sealed class Crc64Context : IChecksum
     {
         ulong crc = _hashInt ^ _finalSeed;
 
-        if(!_useNative ||
-           !_useEcma)
+        if(!_useNative || !_useEcma)
             return BigEndianBitConverter.GetBytes(crc);
 
         crc64_final(_nativeContext, ref crc);
@@ -417,11 +416,7 @@ public sealed class Crc64Context : IChecksum
 
         var dataOff = 0;
 
-        if(useEcma               &&
-           Pclmulqdq.IsSupported &&
-           Sse41.IsSupported     &&
-           Ssse3.IsSupported     &&
-           Sse2.IsSupported)
+        if(useEcma && Pclmulqdq.IsSupported && Sse41.IsSupported && Ssse3.IsSupported && Sse2.IsSupported)
         {
             // Only works in blocks of 32 bytes
             uint blocks = len / 32;
@@ -454,7 +449,10 @@ public sealed class Crc64Context : IChecksum
                 var tmp = (uint)(crc ^ BitConverter.ToUInt32(data, dataOff));
                 dataOff += 4;
 
-                crc = table[3][tmp & 0xFF] ^ table[2][tmp >> 8 & 0xFF] ^ crc >> 32 ^ table[1][tmp >> 16 & 0xFF] ^
+                crc = table[3][tmp      & 0xFF]  ^
+                      table[2][tmp >> 8 & 0xFF]  ^
+                      crc >> 32                  ^
+                      table[1][tmp >> 16 & 0xFF] ^
                       table[0][tmp >> 24];
             }
         }

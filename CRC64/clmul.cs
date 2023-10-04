@@ -42,14 +42,13 @@ static class Clmul
     {
         uint maskPos = 16 - n;
 
-        var maskA = Vector128.Create(_shuffleMasks[maskPos], _shuffleMasks[maskPos + 1],
-                                     _shuffleMasks[maskPos                         + 2], _shuffleMasks[maskPos  + 3],
-                                     _shuffleMasks[maskPos                         + 4], _shuffleMasks[maskPos  + 5],
-                                     _shuffleMasks[maskPos                         + 6], _shuffleMasks[maskPos  + 7],
-                                     _shuffleMasks[maskPos                         + 8], _shuffleMasks[maskPos  + 9],
-                                     _shuffleMasks[maskPos                         + 10], _shuffleMasks[maskPos + 11],
-                                     _shuffleMasks[maskPos                         + 12], _shuffleMasks[maskPos + 13],
-                                     _shuffleMasks[maskPos                         + 14], _shuffleMasks[maskPos + 15]);
+        var maskA = Vector128.Create(_shuffleMasks[maskPos], _shuffleMasks[maskPos + 1], _shuffleMasks[maskPos + 2],
+                                     _shuffleMasks[maskPos + 3], _shuffleMasks[maskPos + 4], _shuffleMasks[maskPos + 5],
+                                     _shuffleMasks[maskPos + 6], _shuffleMasks[maskPos + 7], _shuffleMasks[maskPos + 8],
+                                     _shuffleMasks[maskPos + 9], _shuffleMasks[maskPos + 10],
+                                     _shuffleMasks[maskPos + 11], _shuffleMasks[maskPos + 12],
+                                     _shuffleMasks[maskPos + 13], _shuffleMasks[maskPos + 14],
+                                     _shuffleMasks[maskPos + 15]);
 
         Vector128<byte> maskB = Sse2.Xor(maskA, Sse2.CompareEqual(Vector128<byte>.Zero, Vector128<byte>.Zero));
 
@@ -78,19 +77,14 @@ static class Clmul
         ShiftRight128(initialCrc, 0, out Vector128<ulong> crc0, out Vector128<ulong> crc1);
 
         Vector128<ulong> accumulator =
-            Sse2.Xor(
-                Fold(Sse2.Xor(crc0, Vector128.Create(BitConverter.ToUInt64(data, 0), BitConverter.ToUInt64(data, 8))),
-                     foldConstants1),
-                crc1);
+            Sse2.Xor(Fold(Sse2.Xor(crc0, Vector128.Create(BitConverter.ToUInt64(data, 0), BitConverter.ToUInt64(data, 8))), foldConstants1),
+                     crc1);
 
         while(length >= 32)
         {
             accumulator =
-                Fold(
-                    Sse2.Xor(
-                        Vector128.Create(BitConverter.ToUInt64(data, bufPos), BitConverter.ToUInt64(data, bufPos + 8)),
-                        accumulator),
-                    foldConstants1);
+                Fold(Sse2.Xor(Vector128.Create(BitConverter.ToUInt64(data, bufPos), BitConverter.ToUInt64(data, bufPos + 8)), accumulator),
+                     foldConstants1);
 
             length -= 16;
             bufPos += 16;
@@ -107,9 +101,8 @@ static class Clmul
         Vector128<ulong> t1 = Pclmulqdq.CarrylessMultiply(r, foldConstants2, 0x00);
 
         Vector128<ulong> t2 =
-            Sse2.Xor(
-                Sse2.Xor(Pclmulqdq.CarrylessMultiply(t1, foldConstants2, 0x10), Sse2.ShiftLeftLogical128BitLane(t1, 8)),
-                r);
+            Sse2.Xor(Sse2.Xor(Pclmulqdq.CarrylessMultiply(t1, foldConstants2, 0x10), Sse2.ShiftLeftLogical128BitLane(t1, 8)),
+                     r);
 
         return ~((ulong)Sse41.Extract(t2.AsUInt32(), 3) << 32 | Sse41.Extract(t2.AsUInt32(), 2));
     }

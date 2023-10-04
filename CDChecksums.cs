@@ -93,8 +93,7 @@ public static class CdChecksums
                 bool? subchannelStatus = CheckCdSectorSubChannel(subchannel);
                 bool? status           = null;
 
-                if(channelStatus    == false ||
-                   subchannelStatus == false)
+                if(channelStatus == false || subchannelStatus == false)
                     status = false;
 
                 status = channelStatus switch
@@ -162,8 +161,7 @@ public static class CdChecksums
 
             eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
-            if(ecc[major]              != eccA ||
-               ecc[major + majorCount] != (eccA ^ eccB))
+            if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB))
                 return false;
         }
 
@@ -208,8 +206,7 @@ public static class CdChecksums
                     if(channel[i] == 0x00)
                         continue;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
                                                channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     return false;
@@ -222,8 +219,12 @@ public static class CdChecksums
             //AaruConsole.DebugWriteLine(MODULE_NAME, "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
             //                          channel[0x00C], channel[0x00D], channel[0x00E]);
             case 0x01 when channel[0x814] != 0x00 || // reserved (8 bytes)
-                           channel[0x815] != 0x00 || channel[0x816] != 0x00 || channel[0x817] != 0x00 ||
-                           channel[0x818] != 0x00 || channel[0x819] != 0x00 || channel[0x81A] != 0x00 ||
+                           channel[0x815] != 0x00 ||
+                           channel[0x816] != 0x00 ||
+                           channel[0x817] != 0x00 ||
+                           channel[0x818] != 0x00 ||
+                           channel[0x819] != 0x00 ||
+                           channel[0x81A] != 0x00 ||
                            channel[0x81B] != 0x00:
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
@@ -581,11 +582,10 @@ public static class CdChecksums
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
             ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
 
-            if(cdTextPack1Crc != calculatedCdtp1Crc &&
-               cdTextPack1Crc != 0)
+            if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_one_CRC_0_expected_1,
-                                           cdTextPack1Crc, calculatedCdtp1Crc);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_one_CRC_0_expected_1, cdTextPack1Crc,
+                                           calculatedCdtp1Crc);
 
                 status = false;
             }
@@ -601,11 +601,10 @@ public static class CdChecksums
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP2_0_Calc_CDTP2_1, cdTextPack2Crc,
                                        calculatedCdtp2Crc);
 
-            if(cdTextPack2Crc != calculatedCdtp2Crc &&
-               cdTextPack2Crc != 0)
+            if(cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_two_CRC_0_expected_1,
-                                           cdTextPack2Crc, calculatedCdtp2Crc);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_two_CRC_0_expected_1, cdTextPack2Crc,
+                                           calculatedCdtp2Crc);
 
                 status = false;
             }
@@ -621,8 +620,7 @@ public static class CdChecksums
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP3_0_Calc_CDTP3_1, cdTextPack3Crc,
                                        calculatedCdtp3Crc);
 
-            if(cdTextPack3Crc != calculatedCdtp3Crc &&
-               cdTextPack3Crc != 0)
+            if(cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_three_CRC_0_expected_1,
                                            cdTextPack3Crc, calculatedCdtp3Crc);
@@ -642,8 +640,7 @@ public static class CdChecksums
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP4_0_Calc_CDTP4_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);
 
-        if(cdTextPack4Crc == calculatedCdtp4Crc ||
-           cdTextPack4Crc == 0)
+        if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0)
             return status;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.CD_Text_Pack_four_CRC_0_expected_1, cdTextPack4Crc,

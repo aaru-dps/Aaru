@@ -93,21 +93,17 @@ static class Neon
                 /*
                  * Load 32 input bytes.
                  */
-                var bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos  + 2],
-                                              buf[bufPos              + 3], buf[bufPos  + 4], buf[bufPos  + 5],
-                                              buf[bufPos              + 6], buf[bufPos  + 7], buf[bufPos  + 8],
-                                              buf[bufPos              + 9], buf[bufPos  + 10], buf[bufPos + 11],
-                                              buf[bufPos              + 12], buf[bufPos + 13], buf[bufPos + 14],
-                                              buf[bufPos              + 15]);
+                var bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
+                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
+                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
+                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
 
                 bufPos += 16;
 
-                var bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos  + 2],
-                                              buf[bufPos              + 3], buf[bufPos  + 4], buf[bufPos  + 5],
-                                              buf[bufPos              + 6], buf[bufPos  + 7], buf[bufPos  + 8],
-                                              buf[bufPos              + 9], buf[bufPos  + 10], buf[bufPos + 11],
-                                              buf[bufPos              + 12], buf[bufPos + 13], buf[bufPos + 14],
-                                              buf[bufPos              + 15]);
+                var bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
+                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
+                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
+                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
 
                 bufPos += 16;
                 /*
