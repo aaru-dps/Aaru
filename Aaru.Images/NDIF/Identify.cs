@@ -45,8 +45,7 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork ||
-           imageFilter.ResourceForkLength == 0)
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0)
             return false;
 
         try

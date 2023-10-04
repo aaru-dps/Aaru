@@ -63,12 +63,14 @@ public partial class Device
 
         if((statusRegisters.Status & 0x23) == 0)
         {
-            lba = (ulong)((statusRegisters.LbaHighCurrent << 16) + (statusRegisters.LbaMidCurrent << 8) +
+            lba = (ulong)((statusRegisters.LbaHighCurrent << 16) +
+                          (statusRegisters.LbaMidCurrent  << 8)  +
                           statusRegisters.LbaLowCurrent);
 
             lba <<= 24;
 
-            lba += (ulong)((statusRegisters.LbaHighPrevious << 16) + (statusRegisters.LbaMidPrevious << 8) +
+            lba += (ulong)((statusRegisters.LbaHighPrevious << 16) +
+                           (statusRegisters.LbaMidPrevious  << 8)  +
                            statusRegisters.LbaLowPrevious);
         }
 
@@ -246,12 +248,14 @@ public partial class Device
 
         if((statusRegisters.Status & 0x23) == 0)
         {
-            lba = (ulong)((statusRegisters.LbaHighCurrent << 16) + (statusRegisters.LbaMidCurrent << 8) +
+            lba = (ulong)((statusRegisters.LbaHighCurrent << 16) +
+                          (statusRegisters.LbaMidCurrent  << 8)  +
                           statusRegisters.LbaLowCurrent);
 
             lba <<= 24;
 
-            lba += (ulong)((statusRegisters.LbaHighPrevious << 16) + (statusRegisters.LbaMidPrevious << 8) +
+            lba += (ulong)((statusRegisters.LbaHighPrevious << 16) +
+                           (statusRegisters.LbaMidPrevious  << 8)  +
                            statusRegisters.LbaLowPrevious);
         }
 

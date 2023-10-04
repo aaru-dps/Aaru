@@ -119,16 +119,14 @@ public sealed partial class KryoFlux
 
                 if(cylinder == 1)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Cannot_find_cyl_1_supposing_double_stepping);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cannot_find_cyl_1_supposing_double_stepping);
 
                     step = 2;
 
                     continue;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0,
-                                           cylinder);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0, cylinder);
 
                 break;
             }
@@ -177,7 +175,10 @@ public sealed partial class KryoFlux
                         trackStream.EnsureRead(kfinfo, 0, oobBlk.length);
                         string kfinfoStr = StringHandlers.CToString(kfinfo);
 
-                        string[] lines = kfinfoStr.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] lines = kfinfoStr.Split(new[]
+                        {
+                            ','
+                        }, StringSplitOptions.RemoveEmptyEntries);
 
                         DateTime blockDate = DateTime.Now;
                         DateTime blockTime = DateTime.Now;
@@ -218,8 +219,7 @@ public sealed partial class KryoFlux
                             var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
                                                               blockTime.Hour, blockTime.Minute, blockTime.Second);
 
-                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_timestamp_0,
-                                                       blockTimestamp);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_timestamp_0, blockTimestamp);
 
                             if(blockTimestamp < Info.CreationTime)
                                 _imageInfo.CreationTime = blockTimestamp;

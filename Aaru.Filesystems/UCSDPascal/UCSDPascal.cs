@@ -100,6 +100,8 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        { "debug", false.ToString() }
+        {
+            "debug", false.ToString()
+        }
     };
 }

@@ -85,8 +85,8 @@ public sealed partial class DriDiskCopy
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1,
-                                   _imageInfo.Application, _imageInfo.ApplicationVersion);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
+                                   _imageInfo.ApplicationVersion);
 
         // Correct some incorrect data in images of NEC 2HD disks
         if(_imageInfo is { Cylinders: 77, Heads: 2 } and { SectorsPerTrack: 16, SectorSize: 512 } &&

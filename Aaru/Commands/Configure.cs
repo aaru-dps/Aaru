@@ -144,9 +144,8 @@ sealed class ConfigureCommand : Command
                     }[/]"),
                 MediaScanStats =
                     AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_scanned_media_Q}[/]"),
-                PartitionStats =
-                    AnsiConsole.Confirm($"[italic]{UI.
-                        Do_you_want_to_gather_statistics_about_found_partitioning_schemes_Q}[/]"),
+                PartitionStats = AnsiConsole.Confirm($"[italic]{UI.
+                    Do_you_want_to_gather_statistics_about_found_partitioning_schemes_Q}[/]"),
                 MediaStats =
                     AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_media_types_Q}[/]"),
                 VerifyStats =

@@ -110,8 +110,7 @@ public sealed partial class LisaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not LisaFileNode mynode)
@@ -244,19 +243,16 @@ public sealed partial class LisaFS
         buf = null;
         ErrorNumber errno;
 
-        if(!_mounted ||
-           !_debug)
+        if(!_mounted || !_debug)
             return ErrorNumber.AccessDenied;
 
         if(fileId is > 4 or <= 0)
         {
-            if(fileId != FILEID_BOOT_SIGNED &&
-               fileId != FILEID_LOADER_SIGNED)
+            if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
                 return ErrorNumber.InvalidArgument;
         }
 
-        if(_systemFileCache.TryGetValue(fileId, out buf) &&
-           !tags)
+        if(_systemFileCache.TryGetValue(fileId, out buf) && !tags)
             return ErrorNumber.NoError;
 
         var count = 0;
@@ -349,8 +345,7 @@ public sealed partial class LisaFS
 
         if(fileId <= 4)
         {
-            if(!_debug ||
-               fileId == 0)
+            if(!_debug || fileId == 0)
                 return ErrorNumber.NoSuchFile;
             stat = new FileEntryInfo();
 
@@ -361,9 +356,7 @@ public sealed partial class LisaFS
             if(error != ErrorNumber.NoError)
                 return error;
 
-            if(fileId < 0                   &&
-               fileId != FILEID_BOOT_SIGNED &&
-               fileId != FILEID_LOADER_SIGNED)
+            if(fileId < 0 && fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
             {
                 error = ReadExtentsFile((short)(fileId * -1), out file);
 
@@ -445,12 +438,10 @@ public sealed partial class LisaFS
 
         tags &= _debug;
 
-        if(fileId < 4 ||
-           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
+        if(fileId < 4 || fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
-        if(!tags &&
-           _fileCache.TryGetValue(fileId, out buf))
+        if(!tags && _fileCache.TryGetValue(fileId, out buf))
             return ErrorNumber.NoError;
 
         ErrorNumber error = ReadExtentsFile(fileId, out ExtentFile file);
@@ -473,12 +464,14 @@ public sealed partial class LisaFS
         {
             byte[] sector;
 
-            ErrorNumber errno =
-                !tags
-                    ? _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                          (uint)file.extents[i].length, out sector)
-                    : _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                             (uint)file.extents[i].length, SectorTagType.AppleSectorTag, out sector);
+            ErrorNumber errno = !tags
+                                    ? _device.
+                                        ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                    (uint)file.extents[i].length, out sector)
+                                    : _device.
+                                        ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                       (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
+                                                       out sector);
 
             if(errno != ErrorNumber.NoError)
                 return errno;
@@ -513,7 +506,10 @@ public sealed partial class LisaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         switch(pathElements.Length)
         {
@@ -591,8 +587,7 @@ public sealed partial class LisaFS
                 isDir  = entry.fileType == 0x01;
 
                 // Not last path element, and it's not a directory
-                if(lvl != pathElements.Length - 1 &&
-                   !isDir)
+                if(lvl != pathElements.Length - 1 && !isDir)
                     return ErrorNumber.NotDirectory;
 
                 // Arrived last path element

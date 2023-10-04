@@ -49,8 +49,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
         var contents = _idToFilename.Select(kvp => kvp.Value).ToList();
@@ -147,7 +146,8 @@ public sealed partial class AppleMFS
             entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
             Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
-            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding).ToLowerInvariant().
+            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding).
+                                                  ToLowerInvariant().
                                                   Replace('/', ':');
 
             if(entry.flFlags.HasFlag(FileFlags.Used)     &&

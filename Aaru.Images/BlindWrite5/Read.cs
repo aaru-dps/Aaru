@@ -71,8 +71,7 @@ public sealed partial class BlindWrite5
         stream.EnsureRead(hdr, 0, 260);
         _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = {0}",
-                                   StringHandlers.CToString(_header.signature));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = {0}", StringHandlers.CToString(_header.signature));
 
         for(var i = 0; i < _header.unknown1.Length; i++)
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown1[{1}] = 0x{0:X8}", _header.unknown1[i], i);
@@ -108,17 +107,13 @@ public sealed partial class BlindWrite5
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.manufacturer = {0}",
                                    StringHandlers.CToString(_header.manufacturer));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.product = {0}",
-                                   StringHandlers.CToString(_header.product));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.product = {0}", StringHandlers.CToString(_header.product));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.revision = {0}",
-                                   StringHandlers.CToString(_header.revision));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.revision = {0}", StringHandlers.CToString(_header.revision));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.vendor = {0}",
-                                   StringHandlers.CToString(_header.vendor));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.vendor = {0}", StringHandlers.CToString(_header.vendor));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.volumeId = {0}",
-                                   StringHandlers.CToString(_header.volumeId));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.volumeId = {0}", StringHandlers.CToString(_header.volumeId));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.mode2ALen = {0}",   _header.mode2ALen);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.unkBlkLen = {0}",   _header.unkBlkLen);
@@ -301,16 +296,14 @@ public sealed partial class BlindWrite5
 
             for(var i = 0; i < dataFile.Unknown1.Length; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i],
-                                           i);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i], i);
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.offset = {0}", dataFile.Offset);
 
             for(var i = 0; i < dataFile.Unknown2.Length; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i],
-                                           i);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i], i);
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.startLba = {0}",    dataFile.StartLba);
@@ -364,18 +357,18 @@ public sealed partial class BlindWrite5
 
                 for(var i = 0; i < session.Tracks[tSeq].unknown1.Length; i++)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}",
-                                               ses, tSeq, i, session.Tracks[tSeq].unknown1[i]);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}", ses,
+                                               tSeq, i, session.Tracks[tSeq].unknown1[i]);
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses,
-                                           tSeq, session.Tracks[tSeq].unknown2);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses, tSeq,
+                                           session.Tracks[tSeq].unknown2);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].subchannel = {2}", ses, tSeq,
                                            session.Tracks[tSeq].subchannel);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses,
-                                           tSeq, session.Tracks[tSeq].unknown3);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses, tSeq,
+                                           session.Tracks[tSeq].unknown3);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].ctl = {2}", ses, tSeq,
                                            session.Tracks[tSeq].ctl);
@@ -386,8 +379,8 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].point = {2}", ses, tSeq,
                                            session.Tracks[tSeq].point);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
-                                           tSeq, session.Tracks[tSeq].tno);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses, tSeq,
+                                           session.Tracks[tSeq].tno);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].min = {2}", ses, tSeq,
                                            session.Tracks[tSeq].min);
@@ -410,16 +403,16 @@ public sealed partial class BlindWrite5
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].pframe = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pframe);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses,
-                                           tSeq, session.Tracks[tSeq].unknown5);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses, tSeq,
+                                           session.Tracks[tSeq].unknown5);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
                                            session.Tracks[tSeq].pregap);
 
                 for(var i = 0; i < session.Tracks[tSeq].unknown6.Length; i++)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}",
-                                               ses, tSeq, i, session.Tracks[tSeq].unknown6[i]);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}", ses,
+                                               tSeq, i, session.Tracks[tSeq].unknown6[i]);
                 }
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].startLba = {2}", ses, tSeq,
@@ -430,15 +423,15 @@ public sealed partial class BlindWrite5
 
                 for(var i = 0; i < session.Tracks[tSeq].unknown7.Length; i++)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}",
-                                               ses, tSeq, i, session.Tracks[tSeq].unknown7[i]);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}", ses,
+                                               tSeq, i, session.Tracks[tSeq].unknown7[i]);
                 }
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].session = {2}", ses, tSeq,
                                            session.Tracks[tSeq].session);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
-                                           tSeq, session.Tracks[tSeq].unknown8);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses, tSeq,
+                                           session.Tracks[tSeq].unknown8);
 
                 if(session.Tracks[tSeq].type is TrackType.Dvd or TrackType.NotData)
                     continue;
@@ -446,9 +439,8 @@ public sealed partial class BlindWrite5
                 {
                     for(var i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses, tSeq, i,
-                                                   session.Tracks[tSeq].unknown9[i]);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses,
+                                                   tSeq, i, session.Tracks[tSeq].unknown9[i]);
                     }
                 }
             }
@@ -551,7 +543,8 @@ public sealed partial class BlindWrite5
                                 }
                                 else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                            dataFile.Filename.ToLower(CultureInfo.
-                                                                               CurrentCulture))) != null)
+                                                                               CurrentCulture))) !=
+                                        null)
                                 {
                                     chars.FilePath = dataFile.Filename.ToLower(CultureInfo.CurrentCulture);
 
@@ -562,7 +555,8 @@ public sealed partial class BlindWrite5
                                 }
                                 else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                            dataFile.Filename.ToUpper(CultureInfo.
-                                                                               CurrentCulture))) != null)
+                                                                               CurrentCulture))) !=
+                                        null)
                                 {
                                     chars.FilePath = dataFile.Filename.ToUpper(CultureInfo.CurrentCulture);
 
@@ -572,7 +566,8 @@ public sealed partial class BlindWrite5
                                                                                CurrentCulture)));
                                 }
                                 else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename)) != null)
+                                                                           dataFile.Filename)) !=
+                                        null)
                                 {
                                     chars.FilePath = dataFile.Filename;
 
@@ -629,7 +624,10 @@ public sealed partial class BlindWrite5
         Partitions = new List<Partition>();
         var fullTocStream = new MemoryStream();
 
-        fullTocStream.Write(new byte[] { 0, 0 }, 0, 2);
+        fullTocStream.Write(new byte[]
+        {
+            0, 0
+        }, 0, 2);
 
         ulong offsetBytes = 0;
         _offsetMap = new Dictionary<uint, ulong>();
@@ -789,7 +787,8 @@ public sealed partial class BlindWrite5
                     string basePath;
 
                     bool version5 = string.Compare(Path.GetExtension(imageFilter.Filename), ".B5T",
-                                                   StringComparison.OrdinalIgnoreCase) == 0;
+                                                   StringComparison.OrdinalIgnoreCase) ==
+                                    0;
 
                     string firstExtension      = version5 ? "B5I" : "B6I";
                     string firstExtensionLower = version5 ? "b5i" : "b6i";
@@ -831,9 +830,8 @@ public sealed partial class BlindWrite5
                         basePath          = _dataPath;
                         lowerCaseFileName = true;
                     }
-                    else if(File.Exists(Path.Combine(_dataPath,
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
-                                                         firstExtensionLower}")))
+                    else if(File.Exists(Path.Combine(_dataPath, $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                        firstExtensionLower}")))
                     {
                         basePath           = _dataPath;
                         lowerCaseFileName  = true;
@@ -940,9 +938,8 @@ public sealed partial class BlindWrite5
                         basePath          = "";
                         lowerCaseFileName = true;
                     }
-                    else if(File.Exists(Path.Combine("",
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
-                                                         firstExtensionLower}")))
+                    else if(File.Exists(Path.Combine("", $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
+                        firstExtensionLower}")))
                     {
                         basePath           = "";
                         lowerCaseFileName  = true;
@@ -965,10 +962,7 @@ public sealed partial class BlindWrite5
                     try
                     {
                         splitStream.
-                            Add(
-                                Path.Combine(
-                                    basePath,
-                                    $"{filename}.{(lowerCaseExtension ? firstExtensionLower : firstExtension)}"),
+                            Add(Path.Combine(basePath, $"{filename}.{(lowerCaseExtension ? firstExtensionLower : firstExtension)}"),
                                 FileMode.Open, FileAccess.Read);
 
                         splitStream.AddRange(basePath, $"{filename}.{extension}");
@@ -985,8 +979,7 @@ public sealed partial class BlindWrite5
 
                     if(trk.startLba >= 0)
                     {
-                        track.FileOffset =
-                            (ulong)(trk.startLba * splitStartChars.SectorSize + splitStartChars.Offset);
+                        track.FileOffset = (ulong)(trk.startLba * splitStartChars.SectorSize + splitStartChars.Offset);
                     }
                     else
                         track.FileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
@@ -1053,8 +1046,7 @@ public sealed partial class BlindWrite5
                 track.Sequence = trk.point;
                 track.Type     = BlindWriteTrackTypeToTrackType(trk.type);
 
-                if(trk.pregap        > 0 &&
-                   track.StartSector > 0)
+                if(trk.pregap > 0 && track.StartSector > 0)
                 {
                     track.Indexes[0] = (int)track.StartSector - (int)trk.pregap;
 
@@ -1102,16 +1094,13 @@ public sealed partial class BlindWrite5
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0, track.Sequence);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_description_0,
-                                       track.Description);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_description_0, track.Description);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_type_0, track.Type);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_starting_sector_0,
-                                       track.StartSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_starting_sector_0, track.StartSector);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_ending_sector_0,
-                                       track.EndSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_ending_sector_0, track.EndSector);
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.printing_partition_map);
@@ -1121,21 +1110,17 @@ public sealed partial class BlindWrite5
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partition_sequence_0,    partition.Sequence);
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_name_0, partition.Name);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0,
-                                       partition.Description);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_description_0, partition.Description);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_type_0, partition.Type);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_sector_0,
-                                       partition.Start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_sector_0, partition.Start);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_sectors_0, partition.Length);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_offset_0,
-                                       partition.Offset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_starting_offset_0, partition.Offset);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_size_in_bytes_0,
-                                       partition.Size);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Partition_size_in_bytes_0, partition.Size);
         }
 
         if(!isDvd)
@@ -1153,8 +1138,7 @@ public sealed partial class BlindWrite5
 
         _imageInfo.MediaType = BlindWriteProfileToMediaType(_header.profile);
 
-        if(_dmi != null &&
-           _pfi != null)
+        if(_dmi != null && _pfi != null)
         {
             PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi, _imageInfo.MediaType);
 
@@ -1225,13 +1209,9 @@ public sealed partial class BlindWrite5
                 }
             }
 
-            if(!data &&
-               !firstData)
+            if(!data && !firstData)
                 _imageInfo.MediaType = MediaType.CDDA;
-            else if(firstAudio         &&
-                    data               &&
-                    Sessions.Count > 1 &&
-                    mode2)
+            else if(firstAudio && data && Sessions.Count > 1 && mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
             else if(firstData && audio || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
@@ -1479,13 +1459,11 @@ public sealed partial class BlindWrite5
         DataFileCharacteristics chars = (from characteristics in _filePaths
                                          let firstSector = characteristics.StartLba
                                          let lastSector = firstSector + characteristics.Sectors - 1
-                                         let wantedSector =
-                                             (int)(sectorAddress + aaruTrack.StartSector)
+                                         let wantedSector = (int)(sectorAddress + aaruTrack.StartSector)
                                          where wantedSector >= firstSector && wantedSector <= lastSector
                                          select characteristics).FirstOrDefault();
 
-        if(string.IsNullOrEmpty(chars.FilePath) ||
-           chars.FileFilter == null)
+        if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
             return ErrorNumber.SectorNotFound;
 
         uint sectorOffset;
@@ -1577,8 +1555,7 @@ public sealed partial class BlindWrite5
 
             buffer = mode2Ms.ToArray();
         }
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        else if(sectorOffset == 0 && sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
         {
@@ -1612,13 +1589,11 @@ public sealed partial class BlindWrite5
         DataFileCharacteristics chars = (from characteristics in _filePaths
                                          let firstSector = characteristics.StartLba
                                          let lastSector = firstSector + characteristics.Sectors - 1
-                                         let wantedSector =
-                                             (int)(sectorAddress + aaruTrack.StartSector)
+                                         let wantedSector = (int)(sectorAddress + aaruTrack.StartSector)
                                          where wantedSector >= firstSector && wantedSector <= lastSector
                                          select characteristics).FirstOrDefault();
 
-        if(string.IsNullOrEmpty(chars.FilePath) ||
-           chars.FileFilter == null)
+        if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
             return ErrorNumber.SectorNotFound;
 
         if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data)
@@ -1639,7 +1614,10 @@ public sealed partial class BlindWrite5
                 if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
                     return ErrorNumber.NoData;
 
-                buffer = new[] { flag };
+                buffer = new[]
+                {
+                    flag
+                };
 
                 return ErrorNumber.NoError;
             default:
@@ -2074,8 +2052,7 @@ public sealed partial class BlindWrite5
            Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                 SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorOffset == 0 && sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
         {
@@ -2143,13 +2120,11 @@ public sealed partial class BlindWrite5
         DataFileCharacteristics chars = (from characteristics in _filePaths
                                          let firstSector = characteristics.StartLba
                                          let lastSector = firstSector + characteristics.Sectors - 1
-                                         let wantedSector =
-                                             (int)(sectorAddress + aaruTrack.StartSector)
+                                         let wantedSector = (int)(sectorAddress + aaruTrack.StartSector)
                                          where wantedSector >= firstSector && wantedSector <= lastSector
                                          select characteristics).FirstOrDefault();
 
-        if(string.IsNullOrEmpty(chars.FilePath) ||
-           chars.FileFilter == null)
+        if(string.IsNullOrEmpty(chars.FilePath) || chars.FileFilter == null)
             return ErrorNumber.SectorNotFound;
 
         uint sectorOffset;

@@ -115,17 +115,19 @@ public sealed partial class AaruFormat
         ("md5", typeof(bool), Localization.Calculate_and_store_MD5_of_image_user_data, false),
         ("sha1", typeof(bool), Localization.Calculate_and_store_SHA1_of_image_user_data, false),
         ("sha256", typeof(bool), Localization.Calculate_and_store_SHA256_of_image_user_data, false),
-        ("spamsum", typeof(bool), Localization.Calculate_and_store_SpamSum_of_image_user_data, false), ("deduplicate",
-                    typeof(bool),
-                    Localization.
-                        Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default,
-                    true),
+        ("spamsum", typeof(bool), Localization.Calculate_and_store_SpamSum_of_image_user_data, false),
+        ("deduplicate", typeof(bool),
+         Localization.Store_only_unique_sectors_This_consumes_more_memory_and_is_slower_but_its_enabled_by_default,
+         true),
         ("compress", typeof(bool), Localization.Compress_user_data_blocks_Other_blocks_will_always_be_compressed,
          (object)true)
     };
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

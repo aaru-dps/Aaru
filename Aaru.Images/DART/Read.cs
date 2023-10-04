@@ -71,8 +71,7 @@ public sealed partial class Dart
         switch(header.srcType)
         {
             case DISK_MAC:
-                if(header.srcSize != SIZE_MAC_SS &&
-                   header.srcSize != SIZE_MAC)
+                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC)
                     return ErrorNumber.InvalidArgument;
 
                 break;
@@ -207,8 +206,7 @@ public sealed partial class Dart
                                          _                                 => null
                                      };
 
-                        if(dev                       == null &&
-                           version.PreReleaseVersion > 0)
+                        if(dev == null && version.PreReleaseVersion > 0)
                             dev = "f";
 
                         if(dev != null)
@@ -344,8 +342,7 @@ public sealed partial class Dart
         if(tag != SectorTagType.AppleSectorTag)
             return ErrorNumber.NotSupported;
 
-        if(_tagCache        == null ||
-           _tagCache.Length == 0)
+        if(_tagCache == null || _tagCache.Length == 0)
             return ErrorNumber.NoData;
 
         if(sectorAddress > _imageInfo.Sectors - 1)

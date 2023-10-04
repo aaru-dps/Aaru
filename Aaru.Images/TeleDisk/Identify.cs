@@ -54,8 +54,7 @@ public sealed partial class TeleDisk
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
 
-        if(_header.Signature != TD_MAGIC &&
-           _header.Signature != TD_ADV_COMP_MAGIC)
+        if(_header.Signature != TD_MAGIC && _header.Signature != TD_ADV_COMP_MAGIC)
             return false;
 
         _header.Sequence      = headerBytes[2];
@@ -83,8 +82,7 @@ public sealed partial class TeleDisk
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}",         _header.Sides);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}",           _header.Crc);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4,
-                                   calculatedHeaderCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4, calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.
         // This may deny legal images

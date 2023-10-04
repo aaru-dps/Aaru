@@ -64,8 +64,7 @@ public sealed partial class RayDim
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.cylinders = {0}", header.cylinders);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerTrack = {0}",
-                                   header.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
 
         var   sx = new Regex(REGEX_SIGNATURE);
         Match sm = sx.Match(signature);

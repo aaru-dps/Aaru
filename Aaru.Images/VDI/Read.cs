@@ -64,8 +64,7 @@ public sealed partial class Vdi
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.creator = {0}", _vHdr.creator);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.magic = {0}",   _vHdr.magic);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.version = {0}.{1}", _vHdr.majorVersion,
-                                   _vHdr.minorVersion);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.version = {0}.{1}", _vHdr.majorVersion, _vHdr.minorVersion);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.headerSize = {0}",        _vHdr.headerSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageType = {0}",         _vHdr.imageType);
@@ -192,8 +191,7 @@ public sealed partial class Vdi
 
             _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-            if(_imageInfo.Cylinders == 0 &&
-               _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
+            if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                 break;
         }
 

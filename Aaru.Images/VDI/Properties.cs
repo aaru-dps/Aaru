@@ -85,7 +85,10 @@ public sealed partial class Vdi
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".vdi" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".vdi"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

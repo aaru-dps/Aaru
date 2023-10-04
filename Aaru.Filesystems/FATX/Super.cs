@@ -96,7 +96,8 @@ public sealed partial class XboxFatPlugin
         Metadata = new FileSystem
         {
             Type = Localization.FATX_filesystem,
-            ClusterSize = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+            ClusterSize = (uint)(_superblock.sectorsPerCluster    *
+                                 logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,
             VolumeSerial = $"{_superblock.id:X8}"

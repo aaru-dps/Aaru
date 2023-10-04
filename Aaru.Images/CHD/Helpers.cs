@@ -96,10 +96,8 @@ public sealed partial class Chd
                     {
                         AaruConsole.
                             ErrorWriteLine(string.
-                                               Format(
-                                                   Localization.
-                                                       Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
-                                                   read, _sectorsPerHunk * _imageInfo.SectorSize));
+                                               Format(Localization.Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                      read, _sectorsPerHunk * _imageInfo.SectorSize));
 
                         return ErrorNumber.InOutError;
                     }
@@ -142,10 +140,8 @@ public sealed partial class Chd
                                     {
                                         AaruConsole.
                                             ErrorWriteLine(string.
-                                                               Format(
-                                                                   Localization.
-                                                                       Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
-                                                                   read, _bytesPerHunk));
+                                                               Format(Localization.Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                                      read, _bytesPerHunk));
 
                                         return ErrorNumber.InOutError;
                                     }

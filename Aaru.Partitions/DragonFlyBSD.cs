@@ -73,8 +73,7 @@ public sealed class DragonFlyBSD : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSectors(sectorOffset, nSectors, out byte[] sectors);
 
-        if(errno          != ErrorNumber.NoError ||
-           sectors.Length < 2048)
+        if(errno != ErrorNumber.NoError || sectors.Length < 2048)
             return false;
 
         Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);
@@ -103,8 +102,7 @@ public sealed class DragonFlyBSD : IPartition
             if(entry.p_bsize % imagePlugin.Info.SectorSize > 0)
                 part.Length++;
 
-            if(entry.p_bsize   <= 0 ||
-               entry.p_boffset <= 0)
+            if(entry.p_bsize <= 0 || entry.p_boffset <= 0)
                 continue;
 
             partitions.Add(part);

@@ -59,8 +59,7 @@ public sealed partial class BeFS
         var magic   = BitConverter.ToUInt32(sbSector, 0x20);
         var magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-        if(magic   == BEFS_MAGIC1 ||
-           magicBe == BEFS_MAGIC1)
+        if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1)
             return true;
 
         if(sbSector.Length >= 0x400)
@@ -69,8 +68,7 @@ public sealed partial class BeFS
             magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x220);
         }
 
-        if(magic   == BEFS_MAGIC1 ||
-           magicBe == BEFS_MAGIC1)
+        if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1)
             return true;
 
         errno = imagePlugin.ReadSector(1 + partition.Start, out sbSector);
@@ -167,7 +165,8 @@ public sealed partial class BeFS
             sb.AppendFormat(Localization.Indices_i_node_size_0_blocks_Should_be_one, besb.indices_len).AppendLine();
 
             sb.AppendFormat(Localization.blockshift_0_1_should_be_2, besb.block_shift, 1 << (int)besb.block_shift,
-                            besb.block_size).AppendLine();
+                            besb.block_size).
+               AppendLine();
         }
 
         switch(besb.flags)
@@ -200,28 +199,27 @@ public sealed partial class BeFS
         sb.AppendFormat(Localization._0_bytes_per_i_node, besb.inode_size).AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_per_allocation_group_1_bytes, besb.blocks_per_ag,
-                        besb.blocks_per_ag * besb.block_size).AppendLine();
+                        besb.blocks_per_ag * besb.block_size).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_allocation_groups_in_volume, besb.num_ags).AppendLine();
 
         sb.AppendFormat(Localization.Journal_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
                         besb.log_blocks_start, besb.log_blocks_ag, besb.log_blocks_len,
-                        besb.log_blocks_len * besb.block_size).AppendLine();
+                        besb.log_blocks_len * besb.block_size).
+           AppendLine();
 
         sb.AppendFormat(Localization.Journal_starts_in_byte_0_and_ends_in_byte_1, besb.log_start, besb.log_end).
            AppendLine();
 
         sb.
-            AppendFormat(
-                Localization.
-                    Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
+            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                         besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len, besb.root_dir_len * besb.block_size).
             AppendLine();
 
         sb.
-            AppendFormat(
-                Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
+            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                         besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
             AppendLine();
 
         information = sb.ToString();

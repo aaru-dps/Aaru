@@ -68,27 +68,26 @@ public sealed class DEC : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(31 + sectorOffset, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return false;
 
         Label table = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
-        if(table.pt_magic != PT_MAGIC ||
-           table.pt_valid != PT_VALID)
+        if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID)
             return false;
 
         ulong counter = 0;
 
         foreach(CommonTypes.Partition part in table.pt_part.Select(entry => new CommonTypes.Partition
-                {
-                    Start    = entry.pi_blkoff,
-                    Offset   = (ulong)(entry.pi_blkoff * sector.Length),
-                    Size     = (ulong)entry.pi_nblocks,
-                    Length   = (ulong)(entry.pi_nblocks * sector.Length),
-                    Sequence = counter,
-                    Scheme   = Name
-                }).Where(part => part.Size > 0))
+                                                    {
+                                                        Start    = entry.pi_blkoff,
+                                                        Offset   = (ulong)(entry.pi_blkoff * sector.Length),
+                                                        Size     = (ulong)entry.pi_nblocks,
+                                                        Length   = (ulong)(entry.pi_nblocks * sector.Length),
+                                                        Sequence = counter,
+                                                        Scheme   = Name
+                                                    }).
+                                                    Where(part => part.Size > 0))
         {
             partitions.Add(part);
             counter++;

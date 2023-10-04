@@ -99,8 +99,11 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         dlgSave.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "log" }),
-            Name       = UI.Dialog_Log_files
+            Extensions = new List<string>(new[]
+            {
+                "log"
+            }),
+            Name = UI.Dialog_Log_files
         });
 
         string result = await dlgSave.ShowAsync(_view);
@@ -158,10 +161,8 @@ public sealed class ConsoleViewModel : ViewModelBase
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                           string.
-                                                              Format(
-                                                                  UI.
-                                                                      Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
-                                                                  exception.Message), ButtonEnum.Ok, Icon.Error).
+                                                              Format(UI.Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
+                                                                     exception.Message), ButtonEnum.Ok, Icon.Error).
                                     ShowWindowDialogAsync(_view);
 
             AaruConsole.ErrorWriteLine("Console", exception.Message);

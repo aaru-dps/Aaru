@@ -98,8 +98,7 @@ partial class Dump
 
             // ReSharper restore IntVariableOverflowInUncheckedContext
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 firstTrackPregapMs.Write(cmdBuf, 0, (int)blockSize);
                 gotFirstTrackPregap = true;
@@ -163,8 +162,7 @@ partial class Dump
         Dictionary<uint, int> pregaps = new();
         inexactPositioning = false;
 
-        if(!supportsPqSubchannel &&
-           !supportsRwSubchannel)
+        if(!supportsPqSubchannel && !supportsRwSubchannel)
             return;
 
         // Check if subchannel is BCD
@@ -220,9 +218,7 @@ partial class Dump
                 continue;
             }
 
-            if(t                  > 0               &&
-               tracks[t - 1].Type == tracks[t].Type &&
-               dumping)
+            if(t > 0 && tracks[t - 1].Type == tracks[t].Type && dumping)
             {
                 AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Skipping_track_0, track.Sequence);
 
@@ -331,9 +327,7 @@ partial class Dump
 
                 posQ = subBuf[7] * 60 * 75 + subBuf[8] * 75 + subBuf[9] - 150;
 
-                if(subBuf[1] != track.Sequence - 1 ||
-                   subBuf[2] == 0                  ||
-                   posQ      != lba)
+                if(subBuf[1] != track.Sequence - 1 || subBuf[2] == 0 || posQ != lba)
                     break;
 
                 pregaps[track.Sequence] = 0;
@@ -347,8 +341,7 @@ partial class Dump
             // Calculate pregap
             lba = (int)track.StartSector - 150;
 
-            while(lba > (int)previousTrack.StartSector &&
-                  lba <= (int)track.StartSector)
+            while(lba > (int)previousTrack.StartSector && lba <= (int)track.StartSector)
             {
                 // Some drives crash if you try to read just before the previous read, so seek away first
                 if(!forward)
@@ -463,17 +456,13 @@ partial class Dump
                             {
                                 dumpLog?.
                                     WriteLine(string.
-                                                  Format(
-                                                      Localization.Core.
-                                                                   Could_not_read_subchannel_for_this_track_supposing_0_sectors,
-                                                      pregaps[track.Sequence]));
+                                                  Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                         pregaps[track.Sequence]));
 
                                 updateStatus?.
                                     Invoke(string.
-                                               Format(
-                                                   Localization.Core.
-                                                                Could_not_read_subchannel_for_this_track_supposing_0_sectors,
-                                                   pregaps[track.Sequence]));
+                                               Format(Localization.Core.Could_not_read_subchannel_for_this_track_supposing_0_sectors,
+                                                      pregaps[track.Sequence]));
                             }
 
                             break;
@@ -547,8 +536,7 @@ partial class Dump
                 }
 
                 // Same track, but not pregap
-                if(subBuf[1] == track.Sequence &&
-                   subBuf[2] > 0)
+                if(subBuf[1] == track.Sequence && subBuf[2] > 0)
                 {
                     lba--;
                     forward = false;
@@ -568,8 +556,8 @@ partial class Dump
 
                 if(diff != 0)
                 {
-                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
-                                               Localization.Core.Invalid_Q_position_for_LBA_0_got_1, lba, posQ);
+                    AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME, Localization.Core.Invalid_Q_position_for_LBA_0_got_1,
+                                               lba, posQ);
 
                     inexactPositioning = true;
                 }
@@ -626,8 +614,7 @@ partial class Dump
                 // Minus five, to ensure dumping will fix if there is a pregap LBA 0
                 var red = 5;
 
-                while(trk.Pregap > 0 &&
-                      red        > 0)
+                while(trk.Pregap > 0 && red > 0)
                 {
                     trk.Pregap--;
                     red--;

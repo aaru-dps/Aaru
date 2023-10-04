@@ -81,9 +81,7 @@ public sealed partial class ISO9660
         if(entry.AmigaComment != null)
             xattrs.Add("com.amiga.comments");
 
-        if(entry.Flags.HasFlag(FileFlags.Directory) ||
-           entry.Extents       == null              ||
-           entry.Extents.Count == 0)
+        if(entry.Flags.HasFlag(FileFlags.Directory) || entry.Extents == null || entry.Extents.Count == 0)
             return ErrorNumber.NoError;
 
         ErrorNumber errno = _image.ReadSectorLong(entry.Extents[0].extent * _blockSize / 2048, out byte[] sector);
@@ -116,11 +114,11 @@ public sealed partial class ISO9660
         switch(xattr)
         {
             case "org.iso.9660.ea":
-                return entry.XattrLength == 0
-                           ? ErrorNumber.NoSuchExtendedAttribute
-                           : entry.Extents is null
-                               ? ErrorNumber.InvalidArgument
-                               : ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent, out buf);
+                return entry.XattrLength == 0 ? ErrorNumber.NoSuchExtendedAttribute :
+                       entry.Extents is null  ? ErrorNumber.InvalidArgument :
+                                                ReadSingleExtent(entry.XattrLength * _blockSize,
+                                                                 entry.Extents[0].extent,
+                                                                 out buf);
 
             case "org.iso.9660.AssociatedFile":
                 if(entry.AssociatedFile is null)

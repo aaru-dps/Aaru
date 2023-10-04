@@ -51,13 +51,20 @@ sealed class EntropyCommand : Command
 
     public EntropyCommand() : base("entropy", UI.Image_Entropy_Command_Description)
     {
-        Add(new Option<bool>(new[] { "--duplicated-sectors", "-p" }, () => true,
-                             UI.Calculates_how_many_sectors_are_duplicated));
+        Add(new Option<bool>(new[]
+        {
+            "--duplicated-sectors", "-p"
+        }, () => true, UI.Calculates_how_many_sectors_are_duplicated));
 
-        Add(new Option<bool>(new[] { "--separated-tracks", "-t" }, () => true,
-                             UI.Calculates_entropy_for_each_track_separately));
+        Add(new Option<bool>(new[]
+        {
+            "--separated-tracks", "-t"
+        }, () => true, UI.Calculates_entropy_for_each_track_separately));
 
-        Add(new Option<bool>(new[] { "--whole-disc", "-w" }, () => true, UI.Calculates_entropy_for_the_whole_disc));
+        Add(new Option<bool>(new[]
+        {
+            "--whole-disc", "-w"
+        }, () => true, UI.Calculates_entropy_for_the_whole_disc));
 
         AddArgument(new Argument<string>
         {
@@ -163,39 +170,30 @@ sealed class EntropyCommand : Command
 
         var entropyCalculator = new Entropy(debug, inputFormat);
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
+        AnsiConsole.Progress().
+                    AutoClear(true).
+                    HideCompleted(true).
+                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                    Start(ctx =>
                     {
-                        entropyCalculator.InitProgressEvent += () =>
-                        {
-                            _progressTask1 =
-                                ctx.AddTask("Progress");
-                        };
+                        entropyCalculator.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                        entropyCalculator.InitProgress2Event += () =>
-                        {
-                            _progressTask2 =
-                                ctx.AddTask("Progress");
-                        };
+                        entropyCalculator.InitProgress2Event += () => { _progressTask2 = ctx.AddTask("Progress"); };
 
                         entropyCalculator.UpdateProgressEvent += (text, current, maximum) =>
                         {
-                            _progressTask1 ??=
-                                ctx.AddTask("Progress");
-                            _progressTask1.Description =
-                                Markup.Escape(text);
-                            _progressTask1.Value    = current;
-                            _progressTask1.MaxValue = maximum;
+                            _progressTask1             ??= ctx.AddTask("Progress");
+                            _progressTask1.Description =   Markup.Escape(text);
+                            _progressTask1.Value       =   current;
+                            _progressTask1.MaxValue    =   maximum;
                         };
 
                         entropyCalculator.UpdateProgress2Event += (text, current, maximum) =>
                         {
-                            _progressTask2 ??=
-                                ctx.AddTask("Progress");
-                            _progressTask2.Description =
-                                Markup.Escape(text);
-                            _progressTask2.Value    = current;
-                            _progressTask2.MaxValue = maximum;
+                            _progressTask2             ??= ctx.AddTask("Progress");
+                            _progressTask2.Description =   Markup.Escape(text);
+                            _progressTask2.Value       =   current;
+                            _progressTask2.MaxValue    =   maximum;
                         };
 
                         entropyCalculator.EndProgressEvent += () =>
@@ -236,11 +234,9 @@ sealed class EntropyCommand : Command
 
                                 if(trackEntropy.UniqueSectors != null)
                                 {
-                                    AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2,
-                                                          trackEntropy.Track,
+                                    AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2, trackEntropy.Track,
                                                           trackEntropy.UniqueSectors,
-                                                          (double)trackEntropy.UniqueSectors /
-                                                          trackEntropy.Sectors);
+                                                          (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                                 }
                             }
                         }
@@ -248,10 +244,9 @@ sealed class EntropyCommand : Command
                         if(!wholeDisc)
                             return;
 
-                        EntropyResults entropy =
-                            inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia
-                                ? entropyCalculator.CalculateLinearMediaEntropy()
-                                : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
+                        EntropyResults entropy = inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia
+                                                     ? entropyCalculator.CalculateLinearMediaEntropy()
+                                                     : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
                         AaruConsole.WriteLine(UI.Entropy_for_disk_is_0, entropy.Entropy);
 

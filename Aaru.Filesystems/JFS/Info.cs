@@ -161,7 +161,8 @@ public sealed partial class JFS
             sb.AppendLine(Localization.Volume_is_dirty);
 
         sb.AppendFormat(Localization.Volume_was_last_updated_on_0_,
-                        DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)).AppendLine();
+                        DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec)).
+           AppendLine();
 
         if(jfsSb.s_version == 1)
             sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(jfsSb.s_fpack, encoding)).AppendLine();

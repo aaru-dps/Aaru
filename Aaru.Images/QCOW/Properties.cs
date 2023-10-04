@@ -84,7 +84,10 @@ public sealed partial class Qcow
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".qcow", ".qc" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".qcow", ".qc"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

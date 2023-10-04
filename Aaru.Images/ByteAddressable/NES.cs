@@ -279,13 +279,19 @@ public class Nes : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".nes" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".nes"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.NESGamePak, MediaType.FamicomGamePak };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.NESGamePak, MediaType.FamicomGamePak
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
@@ -424,8 +430,7 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(mediaType != MediaType.FamicomGamePak &&
-           mediaType != MediaType.NESGamePak)
+        if(mediaType != MediaType.FamicomGamePak && mediaType != MediaType.NESGamePak)
         {
             ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 

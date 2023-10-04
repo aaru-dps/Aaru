@@ -36,8 +36,7 @@ public sealed partial class ISO9660
 {
     PathTableEntryInternal[] DecodePathTable(byte[] data)
     {
-        if(data is null ||
-           data.Length == 0)
+        if(data is null || data.Length == 0)
             return null;
 
         List<PathTableEntryInternal> table = new();
@@ -94,9 +93,9 @@ public sealed partial class ISO9660
         {
             HighSierraPathTableEntry entry =
                 Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                    Marshal.
-                        SizeOf<
-                            HighSierraPathTableEntry>());
+                                                                                    Marshal.
+                                                                                        SizeOf<
+                                                                                            HighSierraPathTableEntry>());
 
             if(entry.name_len == 0)
                 break;

@@ -61,8 +61,7 @@ public static class AppleRle
         var  repeatMode    = false; // true if we're repeating, false if we're just copying
         int  inPosition    = 0, outPosition = 0;
 
-        while(inPosition  <= source.Length &&
-              outPosition <= destination.Length)
+        while(inPosition <= source.Length && outPosition <= destination.Length)
         {
             switch(repeatMode)
             {
@@ -102,9 +101,7 @@ public static class AppleRle
                 byte b2 = source[inPosition++];
                 var  s  = (short)(b1 << 8 | b2);
 
-                if(s == 0          ||
-                   s >= DART_CHUNK ||
-                   s <= -DART_CHUNK)
+                if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK)
                     continue;
 
                 if(s < 0)

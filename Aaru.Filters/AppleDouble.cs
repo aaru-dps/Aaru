@@ -133,8 +133,7 @@ public sealed class AppleDouble : IFilter
 
         parentFolder ??= "";
 
-        if(filename is null ||
-           filenameNoExt is null)
+        if(filename is null || filenameNoExt is null)
             return false;
 
         // Prepend data fork name with "R."
@@ -314,8 +313,7 @@ public sealed class AppleDouble : IFilter
 
         parentFolder ??= "";
 
-        if(filename is null ||
-           filenameNoExt is null)
+        if(filename is null || filenameNoExt is null)
             return ErrorNumber.InvalidArgument;
 
         // Prepend data fork name with "R."

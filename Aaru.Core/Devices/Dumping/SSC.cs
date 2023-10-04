@@ -78,14 +78,14 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        if(decSense.HasValue &&
-           decSense.Value.SenseKey != SenseKeys.NoSense)
+        if(decSense.HasValue && decSense.Value.SenseKey != SenseKeys.NoSense)
         {
             _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey, decSense.Value.ASC,
                                decSense.Value.ASCQ);
 
             StoppingErrorMessage?.Invoke(Localization.Core.Drive_has_status_error_please_correct_Sense_follows +
-                                         Environment.NewLine + decSense.Value.Description);
+                                         Environment.NewLine                                                   +
+                                         decSense.Value.Description);
 
             return;
         }
@@ -120,7 +120,8 @@ partial class Dump
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
-                                             Environment.NewLine + decSense.Value.Description);
+                                             Environment.NewLine                                                   +
+                                             decSense.Value.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
@@ -141,12 +142,12 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ != 0x00 || decSense.Value.ASC != 0x20 &&
-                decSense.Value.SenseKey !=
-                SenseKeys.IllegalRequest))
+               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ     != 0x00 ||
+                decSense.Value.ASC != 0x20 && decSense.Value.SenseKey != SenseKeys.IllegalRequest))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Could_not_get_position_Sense_follows +
-                                             Environment.NewLine + decSense.Value.Description);
+                                             Environment.NewLine                                    +
+                                             decSense.Value.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Could_not_get_position_Sense_follows);
 
@@ -170,7 +171,8 @@ partial class Dump
                 if(sense)
                 {
                     StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
-                                                 Environment.NewLine + decSense?.Description);
+                                                 Environment.NewLine                                                   +
+                                                 decSense?.Description);
 
                     _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
@@ -196,7 +198,8 @@ partial class Dump
                     decSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
-                                                 Environment.NewLine + decSense.Value.Description);
+                                                 Environment.NewLine                                                   +
+                                                 decSense.Value.Description);
 
                     _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
@@ -213,7 +216,8 @@ partial class Dump
                     decSense = Sense.Decode(senseBuf);
 
                     StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
-                                                 Environment.NewLine + decSense?.Description);
+                                                 Environment.NewLine                                                   +
+                                                 decSense?.Description);
 
                     _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
@@ -248,8 +252,7 @@ partial class Dump
         sense = _dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF, 5,
                                  out duration);
 
-        if(!sense ||
-           _dev.Error)
+        if(!sense || _dev.Error)
         {
             sense = _dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, 5, out duration);
@@ -257,8 +260,7 @@ partial class Dump
 
         Modes.DecodedMode? decMode = null;
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                 decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
@@ -278,8 +280,7 @@ partial class Dump
         if(sense || _dev.Error)
             sense = _dev.ModeSense(out cmdBuf, out senseBuf, 5, out duration);
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                 decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
@@ -365,9 +366,10 @@ partial class Dump
 
                             if(!eom)
                             {
-                                StoppingErrorMessage?.Invoke(
-                                    Localization.Core.Drive_could_not_return_back_Sense_follows +
-                                    Environment.NewLine + decSense.Value.Description);
+                                StoppingErrorMessage?.Invoke(Localization.Core.
+                                                                          Drive_could_not_return_back_Sense_follows +
+                                                             Environment.NewLine                                    +
+                                                             decSense.Value.Description);
 
                                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_return_back_Sense_follows);
 
@@ -382,15 +384,15 @@ partial class Dump
                         transferLen = 1;
 
                         sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize,
-                                           _dev.Timeout,
-                                           out duration);
+                                           _dev.Timeout, out duration);
 
                         if(sense)
                         {
                             decSense = Sense.Decode(senseBuf);
 
                             StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
-                                                         Environment.NewLine + decSense.Value.Description);
+                                                         Environment.NewLine                                  +
+                                                         decSense.Value.Description);
 
                             _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
 
@@ -426,8 +428,8 @@ partial class Dump
 
                             transferLen = blockSize;
 
-                            UpdateStatus?.Invoke(string.Format(
-                                                     Localization.Core.Blocksize_changed_to_0_bytes_at_block_1,
+                            UpdateStatus?.
+                                Invoke(string.Format(Localization.Core.Blocksize_changed_to_0_bytes_at_block_1,
                                                      blockSize, currentBlock));
 
                             _dumpLog.WriteLine(Localization.Core.Blocksize_changed_to_0_bytes_at_block_1, blockSize,
@@ -444,7 +446,8 @@ partial class Dump
 
                                 StoppingErrorMessage?.Invoke(Localization.Core.
                                                                           Drive_could_not_go_back_one_block_Sense_follows +
-                                                             Environment.NewLine + decSense.Value.Description);
+                                                             Environment.NewLine +
+                                                             decSense.Value.Description);
 
                                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_go_back_one_block_Sense_follows);
 
@@ -458,7 +461,8 @@ partial class Dump
                         }
 
                         StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
-                                                     Environment.NewLine + decSense.Value.Description);
+                                                     Environment.NewLine                                  +
+                                                     decSense.Value.Description);
 
                         _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
 
@@ -469,7 +473,8 @@ partial class Dump
                     }
                     default:
                         StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_read_Sense_follows +
-                                                     Environment.NewLine + decSense.Value.Description);
+                                                     Environment.NewLine                                  +
+                                                     decSense.Value.Description);
 
                         _dumpLog.WriteLine(Localization.Core.Drive_could_not_read_Sense_follows);
 
@@ -503,7 +508,8 @@ partial class Dump
             if(!eom)
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_return_back_Sense_follows +
-                                             Environment.NewLine + decSense.Value.Description);
+                                             Environment.NewLine                                         +
+                                             decSense.Value.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_return_back_Sense_follows);
 
@@ -521,8 +527,7 @@ partial class Dump
                               _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
                               _private, _force, true);
 
-        if(currentTry == null ||
-           extents    == null)
+        if(currentTry == null || extents == null)
         {
             StoppingErrorMessage?.Invoke(Localization.Core.Could_not_process_resume_file_not_continuing);
 
@@ -772,7 +777,8 @@ partial class Dump
                 decSense.Value.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
-                                             Environment.NewLine + decSense.Value.Description);
+                                             Environment.NewLine                                                   +
+                                             decSense.Value.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
@@ -792,7 +798,8 @@ partial class Dump
             _dumpLog.WriteLine(outputTape.ErrorMessage);
 
             StoppingErrorMessage?.Invoke(Localization.Core.Error_setting_output_image_in_tape_mode_not_continuing +
-                                         Environment.NewLine + outputTape.ErrorMessage);
+                                         Environment.NewLine                                                      +
+                                         outputTape.ErrorMessage);
 
             return;
         }
@@ -806,7 +813,8 @@ partial class Dump
             _dumpLog.WriteLine(outputTape.ErrorMessage);
 
             StoppingErrorMessage?.Invoke(Localization.Core.Error_creating_output_image_not_continuing +
-                                         Environment.NewLine + outputTape.ErrorMessage);
+                                         Environment.NewLine                                          +
+                                         outputTape.ErrorMessage);
 
             return;
         }
@@ -828,8 +836,7 @@ partial class Dump
             FirstBlock = currentBlock
         };
 
-        if((canLocate || canLocateLong) &&
-           _resume.NextBlock > 0)
+        if((canLocate || canLocateLong) && _resume.NextBlock > 0)
         {
             currentBlock = _resume.NextBlock;
 
@@ -905,12 +912,10 @@ partial class Dump
                 continue;
             }
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed > maxSpeed && currentSpeed > 0)
                 maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed < minSpeed && currentSpeed > 0)
                 minSpeed = currentSpeed;
 
             PulseProgress?.Invoke(string.Format(Localization.Core.Reading_block_0_1, currentBlock,
@@ -921,9 +926,7 @@ partial class Dump
 
             totalDuration += duration;
 
-            if(sense                 &&
-               senseBuf?.Length != 0 &&
-               !ArrayHelpers.ArrayIsNullOrEmpty(senseBuf))
+            if(sense && senseBuf?.Length != 0 && !ArrayHelpers.ArrayIsNullOrEmpty(senseBuf))
             {
                 decSense = Sense.Decode(senseBuf);
 
@@ -945,9 +948,7 @@ partial class Dump
                         Sense.DecodeDescriptor04(desc04, out filemark, out eom, out ili);
                 }
 
-                if(decSense.Value is { ASC: 0x00, ASCQ: 0x00 } &&
-                   ili                                         &&
-                   valid)
+                if(decSense.Value is { ASC: 0x00, ASCQ: 0x00 } && ili && valid)
                 {
                     blockSize = (uint)((int)blockSize - BitConverter.ToInt32(BitConverter.GetBytes(information), 0));
 
@@ -969,7 +970,8 @@ partial class Dump
                         decSense = Sense.Decode(senseBuf);
 
                         StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_go_back_one_block_Sense_follows +
-                                                     Environment.NewLine + decSense.Value.Description);
+                                                     Environment.NewLine                                               +
+                                                     decSense.Value.Description);
 
                         outputTape.Close();
                         _dumpLog.WriteLine(Localization.Core.Drive_could_not_go_back_one_block_Sense_follows);
@@ -1042,10 +1044,8 @@ partial class Dump
                 if(decSense is null)
                 {
                     StoppingErrorMessage?.
-                        Invoke(string.Format(
-                                   Localization.Core.
-                                                Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump,
-                                   currentBlock));
+                        Invoke(string.Format(Localization.Core.Drive_could_not_read_block_0_Sense_cannot_be_decoded_look_at_log_for_dump,
+                                             currentBlock));
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Drive_could_not_read_block_0_Sense_bytes_follow,
                                                      currentBlock));
@@ -1148,10 +1148,7 @@ partial class Dump
 
     #region Error handling
 
-        if(_resume.BadBlocks.Count > 0 &&
-           !_aborted                   &&
-           _retryPasses > 0            &&
-           (canLocate || canLocateLong))
+        if(_resume.BadBlocks.Count > 0 && !_aborted && _retryPasses > 0 && (canLocate || canLocateLong))
         {
             var        pass              = 1;
             var        forward           = false;
@@ -1183,10 +1180,8 @@ partial class Dump
                 {
                     PulseProgress?.Invoke(runningPersistent
                                               ? string.
-                                                  Format(
-                                                      Localization.Core.
-                                                                   Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                      badBlock, pass)
+                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                         badBlock, pass)
                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
                                                               badBlock, pass));
                 }
@@ -1194,10 +1189,8 @@ partial class Dump
                 {
                     PulseProgress?.Invoke(runningPersistent
                                               ? string.
-                                                  Format(
-                                                      Localization.Core.
-                                                                   Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                      badBlock, pass)
+                                                  Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                         badBlock, pass)
                                               : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
                                                               badBlock, pass));
                 }
@@ -1287,8 +1280,7 @@ partial class Dump
 
                 totalDuration += duration;
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     _resume.BadBlocks.Remove(badBlock);
                     extents.Add(badBlock);
@@ -1303,9 +1295,7 @@ partial class Dump
                     outputTape.WriteSector(cmdBuf, badBlock);
             }
 
-            if(pass < _retryPasses &&
-               !_aborted           &&
-               _resume.BadBlocks.Count > 0)
+            if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
             {
                 pass++;
                 forward = !forward;
@@ -1345,7 +1335,8 @@ partial class Dump
 
         if(!outputTape.SetImageInfo(metadata))
         {
-            ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata + Environment.NewLine +
+            ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata +
+                                 Environment.NewLine                        +
                                  outputTape.ErrorMessage);
         }
 
@@ -1425,7 +1416,8 @@ partial class Dump
                                    _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
                 _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                                   ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()).
+                                   ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                            Per(totalChkDuration.Milliseconds()).
                                             Humanize());
 
                 if(_preSidecar != null)
@@ -1447,10 +1439,11 @@ partial class Dump
                 if(filesystems.Count > 0)
                 {
                     foreach(var filesystem in filesystems.Select(o => new
-                            {
-                                o.start,
-                                o.type
-                            }).Distinct())
+                                                          {
+                                                              o.start,
+                                                              o.type
+                                                          }).
+                                                          Distinct())
                     {
                         UpdateStatus?.Invoke(string.Format(Localization.Core.Found_filesystem_0_at_sector_1,
                                                            filesystem.type, filesystem.start));
@@ -1468,8 +1461,7 @@ partial class Dump
                 sidecar.BlockMedias[0].MediaSubType = xmlType.subType;
 
                 // TODO: Implement device firmware revision
-                if(!_dev.IsRemovable ||
-                   _dev.IsUsb)
+                if(!_dev.IsRemovable || _dev.IsUsb)
                 {
                     if(_dev.Type == DeviceType.ATAPI)
                         sidecar.BlockMedias[0].Interface = "ATAPI";
@@ -1509,17 +1501,17 @@ partial class Dump
         UpdateStatus?.Invoke("");
 
         UpdateStatus?.
-            Invoke(string.Format(
-                       Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                       _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                       totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                       totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                       imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                       _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                 _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds()).Humanize()));
+                                                    Per(totalDuration.Milliseconds()).
+                                                    Humanize()));
 
         if(maxSpeed > 0)
         {

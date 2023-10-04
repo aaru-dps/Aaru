@@ -93,10 +93,7 @@ sealed partial class Reader
             _read16 = !_dev.Read16(out _, out senseBuf, 0, false, false, false, lba, LogicalBlockSize, 0, 1, false,
                                    _timeout, out _);
 
-            if(_read6  ||
-               _read10 ||
-               _read12 ||
-               _read16)
+            if(_read6 || _read10 || _read12 || _read16)
                 break;
 
             lba = (uint)rnd.Next(1, (int)Blocks);
@@ -131,9 +128,8 @@ sealed partial class Reader
             }
             case true when !_read10 && !_read12 && !_read16 && Blocks > 0x001FFFFF + 1:
                 ErrorMessage =
-                    string.Format(
-                        Localization.Core.Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
-                        0x001FFFFF + 1, Blocks);
+                    string.Format(Localization.Core.Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
+                                  0x001FFFFF + 1, Blocks);
 
                 return true;
         }
@@ -144,13 +140,11 @@ sealed partial class Reader
         if(_read10)
             _read12 = false;
 
-        if(!_read16 &&
-           Blocks > 0xFFFFFFFF + (long)1)
+        if(!_read16 && Blocks > 0xFFFFFFFF + (long)1)
         {
             ErrorMessage =
-                string.Format(
-                    Localization.Core.Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
-                    0xFFFFFFFF + (long)1, Blocks);
+                string.Format(Localization.Core.Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
+                              0xFFFFFFFF + (long)1, Blocks);
 
             return true;
         }
@@ -234,21 +228,20 @@ sealed partial class Reader
                         case 512:
                         {
                             foreach(ushort testSize in new ushort[]
-                                    {
-                                        // Long sector sizes for floppies
-                                        514,
+                                {
+                                    // Long sector sizes for floppies
+                                    514,
 
-                                        // Long sector sizes for SuperDisk
-                                        536, 558,
+                                    // Long sector sizes for SuperDisk
+                                    536, 558,
 
-                                        // Long sector sizes for 512-byte magneto-opticals
-                                        600, 610, 630
-                                    })
+                                    // Long sector sizes for 512-byte magneto-opticals
+                                    600, 610, 630
+                                })
                             {
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong16   = true;
                                     LongBlockSize = testSize;
@@ -275,18 +268,17 @@ sealed partial class Reader
                         case 1024:
                         {
                             foreach(ushort testSize in new ushort[]
-                                    {
-                                        // Long sector sizes for floppies
-                                        1026,
+                                {
+                                    // Long sector sizes for floppies
+                                    1026,
 
-                                        // Long sector sizes for 1024-byte magneto-opticals
-                                        1200
-                                    })
+                                    // Long sector sizes for 1024-byte magneto-opticals
+                                    1200
+                                })
                             {
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong16   = true;
                                     LongBlockSize = testSize;
@@ -314,8 +306,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 2380, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 2380;
@@ -326,8 +317,7 @@ sealed partial class Reader
                                 testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 2380;
@@ -341,8 +331,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 4760, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 4760;
@@ -353,8 +342,7 @@ sealed partial class Reader
                                 testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 4760;
@@ -368,8 +356,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 9424, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 9424;
@@ -380,8 +367,7 @@ sealed partial class Reader
                                 testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 9424;
@@ -394,8 +380,7 @@ sealed partial class Reader
                     }
                 }
 
-                if(!CanReadRaw &&
-                   _dev.Manufacturer == "SYQUEST")
+                if(!CanReadRaw && _dev.Manufacturer == "SYQUEST")
                 {
                     testSense = _dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, _timeout, out _);
 
@@ -475,13 +460,11 @@ sealed partial class Reader
                         }
                     }
 
-                    if(!CanReadRaw &&
-                       LogicalBlockSize == 256)
+                    if(!CanReadRaw && LogicalBlockSize == 256)
                     {
                         testSense = _dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, _timeout, out _);
 
-                        if(!testSense &&
-                           !_dev.Error)
+                        if(!testSense && !_dev.Error)
                         {
                             _syqReadLong6 = true;
                             LongBlockSize = 262;
@@ -511,13 +494,11 @@ sealed partial class Reader
                 }
 
                 // READ LONG (10) for some DVD drives
-                if(!CanReadRaw &&
-                   _dev.Manufacturer == "MATSHITA")
+                if(!CanReadRaw && _dev.Manufacturer == "MATSHITA")
                 {
                     testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, _timeout, out _);
 
-                    if(!testSense &&
-                       !_dev.Error)
+                    if(!testSense && !_dev.Error)
                     {
                         _readLongDvd  = true;
                         LongBlockSize = 37856;
@@ -635,8 +616,7 @@ sealed partial class Reader
                     BlocksToRead /= 2;
             }
 
-            if(!_dev.Error ||
-               BlocksToRead == 1)
+            if(!_dev.Error || BlocksToRead == 1)
                 break;
         }
 
@@ -730,8 +710,7 @@ sealed partial class Reader
         if(sense || _dev.Error)
             _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, senseBuf);
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
             return false;
 
         recoveredError = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.RecoveredError;

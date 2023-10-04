@@ -103,7 +103,8 @@ public sealed partial class APFS
         sbInformation.AppendFormat(Localization._0_bytes_per_block, nxSb.blockSize).AppendLine();
 
         sbInformation.AppendFormat(Localization.Container_has_0_bytes_in_1_blocks,
-                                   nxSb.containerBlocks * nxSb.blockSize, nxSb.containerBlocks).AppendLine();
+                                   nxSb.containerBlocks * nxSb.blockSize, nxSb.containerBlocks).
+                      AppendLine();
 
         information = sbInformation.ToString();
 

@@ -110,8 +110,7 @@ public sealed partial class DriDiskCopy
             }
         };
 
-        Array.Copy("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"u8.ToArray(), 0, _footer.signature,
-                   0, 49);
+        Array.Copy("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"u8.ToArray(), 0, _footer.signature, 0, 49);
 
         _footer.bpbcopy = _footer.bpb;
 

@@ -118,12 +118,10 @@ public sealed partial class WCDiskImage
         }
 
         /* adjust number of cylinders */
-        if(fheader.extraTracks[0] == 1 ||
-           fheader.extraTracks[1] == 1)
+        if(fheader.extraTracks[0] == 1 || fheader.extraTracks[1] == 1)
             _imageInfo.Cylinders++;
 
-        if(fheader.extraTracks[2] == 1 ||
-           fheader.extraTracks[3] == 1)
+        if(fheader.extraTracks[2] == 1 || fheader.extraTracks[3] == 1)
             _imageInfo.Cylinders++;
 
         /* read the comment and directory data if present */
@@ -256,14 +254,11 @@ public sealed partial class WCDiskImage
             SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
             /* validate the sector header */
-            if(sheader.cylinder != cyl  ||
-               sheader.head     != head ||
-               sheader.sector   != sect)
+            if(sheader.cylinder != cyl || sheader.head != head || sheader.sector != sect)
             {
                 AaruConsole.
-                    ErrorWriteLine(string.Format(
-                                       Localization.Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5,
-                                       sheader.cylinder, sheader.head, sheader.sector, cyl, head, sect));
+                    ErrorWriteLine(string.Format(Localization.Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5,
+                                                 sheader.cylinder, sheader.head, sheader.sector, cyl, head, sect));
 
                 return ErrorNumber.InvalidArgument;
             }

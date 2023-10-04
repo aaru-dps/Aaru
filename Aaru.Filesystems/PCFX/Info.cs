@@ -50,8 +50,7 @@ public sealed partial class PCFX
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start                >= partition.End ||
-           imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
+        if(2 + partition.Start >= partition.End || imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);

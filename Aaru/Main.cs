@@ -79,8 +79,7 @@ class MainClass
 
         _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
-        if(args.Length == 1 &&
-           args[0].Equals("gui", StringComparison.InvariantCultureIgnoreCase))
+        if(args.Length == 1 && args[0].Equals("gui", StringComparison.InvariantCultureIgnoreCase))
             return Gui.Main.Start(args);
 
         AaruConsole.WriteLineEvent += (format, objects) =>
@@ -133,8 +132,7 @@ class MainClass
             ctx.Database.EnsureCreated();
 
             ctx.Database.
-                ExecuteSqlRaw(
-                    "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
             {
@@ -147,17 +145,24 @@ class MainClass
         }
 
         // Remove duplicates
-        foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
-                {
-                    a.Manufacturer,
-                    a.Model,
-                    a.Revision,
-                    a.Bus
-                }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+        foreach(var duplicate in ctx.SeenDevices.AsEnumerable().
+                                     GroupBy(a => new
+                                     {
+                                         a.Manufacturer,
+                                         a.Model,
+                                         a.Revision,
+                                         a.Bus
+                                     }).
+                                     Where(a => a.Count() > 1).
+                                     Distinct().
+                                     Select(a => a.Key))
         {
             ctx.RemoveRange(ctx.SeenDevices.
-                                Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
-                                           d.Revision     == duplicate.Revision     && d.Bus == duplicate.Bus).Skip(1));
+                                Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                           d.Model        == duplicate.Model        &&
+                                           d.Revision     == duplicate.Revision     &&
+                                           d.Bus          == duplicate.Bus).
+                                Skip(1));
         }
 
         // Remove nulls
@@ -198,7 +203,8 @@ class MainClass
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
-           (args.Length < 1 || args.Length >= 1                                       &&
+           (args.Length < 1 ||
+            args.Length >= 1                                                          &&
             !args[0].Equals("gui",       StringComparison.InvariantCultureIgnoreCase) &&
             !args[0].Equals("configure", StringComparison.InvariantCultureIgnoreCase)))
             new ConfigureCommand().DoConfigure(true);
@@ -209,13 +215,20 @@ class MainClass
 
         var rootCommand = new RootCommand();
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[] { "--verbose", "-v" }, () => false,
-                                                     UI.Shows_verbose_output));
+        rootCommand.AddGlobalOption(new Option<bool>(new[]
+        {
+            "--verbose", "-v"
+        }, () => false, UI.Shows_verbose_output));
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[] { "--debug", "-d" }, () => false,
-                                                     UI.Shows_debug_output_from_plugins));
+        rootCommand.AddGlobalOption(new Option<bool>(new[]
+        {
+            "--debug", "-d"
+        }, () => false, UI.Shows_debug_output_from_plugins));
 
-        Option<bool> pauseOption = new(new[] { "--pause" }, () => false, UI.Pauses_before_exiting);
+        Option<bool> pauseOption = new(new[]
+        {
+            "--pause"
+        }, () => false, UI.Pauses_before_exiting);
 
         rootCommand.AddGlobalOption(pauseOption);
 

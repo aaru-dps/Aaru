@@ -128,9 +128,8 @@ public sealed partial class FAT
         uint sectorsForRootDirectory = 0;
         uint rootDirectoryCluster    = 0;
 
-        _encoding = encoding ?? (bpbKind == BpbKind.Human
-                                     ? Encoding.GetEncoding("shift_jis")
-                                     : Encoding.GetEncoding("IBM437"));
+        _encoding = encoding ??
+                    (bpbKind == BpbKind.Human ? Encoding.GetEncoding("shift_jis") : Encoding.GetEncoding("IBM437"));
 
         switch(bpbKind)
         {
@@ -208,7 +207,8 @@ public sealed partial class FAT
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 Metadata.Bootable =
                     fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
-                    fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
+                    fat32Bpb.jump[0]                        == 0xE9            &&
+                    fat32Bpb.jump.Length                    >= 3               &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC;
 
@@ -294,8 +294,9 @@ public sealed partial class FAT
 
             if(bpbKind != BpbKind.Human)
             {
-                int reservedSectors = fakeBpb.rsectors + fakeBpb.fats_no * fakeBpb.spfat +
-                                      fakeBpb.root_ent * 32              / fakeBpb.bps;
+                int reservedSectors = fakeBpb.rsectors                      +
+                                      fakeBpb.fats_no       * fakeBpb.spfat +
+                                      fakeBpb.root_ent * 32 / fakeBpb.bps;
 
                 if(fakeBpb.sectors == 0)
                 {
@@ -316,8 +317,7 @@ public sealed partial class FAT
             // This will walk all the FAT entries and check if they're valid FAT12 or FAT16 entries.
             // If the whole table is valid in both senses, it considers the type entry in the BPB.
             // BeOS is known to set the type as FAT16 but treat it as FAT12.
-            if(!_fat12 &&
-               !_fat16)
+            if(!_fat12 && !_fat16)
             {
                 if(clusters < 4089)
                 {
@@ -360,8 +360,7 @@ public sealed partial class FAT
                     _fat16 = fat16Valid;
 
                     // Check BPB type
-                    if(_fat12          == _fat16 &&
-                       fakeBpb.fs_type != null)
+                    if(_fat12 == _fat16 && fakeBpb.fs_type != null)
                     {
                         _fat12 = Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT12   ";
                         _fat16 = Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT16   ";
@@ -385,9 +384,7 @@ public sealed partial class FAT
 
             if(bpbKind == BpbKind.Atari)
             {
-                if(atariBpb.serial_no[0] != 0x49 ||
-                   atariBpb.serial_no[1] != 0x48 ||
-                   atariBpb.serial_no[2] != 0x43)
+                if(atariBpb.serial_no[0] != 0x49 || atariBpb.serial_no[1] != 0x48 || atariBpb.serial_no[2] != 0x43)
                 {
                     Metadata.VolumeSerial = $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]
                         :X2}";
@@ -395,7 +392,8 @@ public sealed partial class FAT
                     _statfs.Id = new FileSystemId
                     {
                         IsInt = true,
-                        Serial32 = (uint)((atariBpb.serial_no[0] << 16) + (atariBpb.serial_no[1] << 8) +
+                        Serial32 = (uint)((atariBpb.serial_no[0] << 16) +
+                                          (atariBpb.serial_no[1] << 8)  +
                                           atariBpb.serial_no[2])
                     };
                 }
@@ -407,9 +405,7 @@ public sealed partial class FAT
             }
             else if(fakeBpb.oem_name != null)
             {
-                if(fakeBpb.oem_name[5] != 0x49 ||
-                   fakeBpb.oem_name[6] != 0x48 ||
-                   fakeBpb.oem_name[7] != 0x43)
+                if(fakeBpb.oem_name[5] != 0x49 || fakeBpb.oem_name[6] != 0x48 || fakeBpb.oem_name[7] != 0x43)
                 {
                     Metadata.SystemIdentifier = fakeBpb.oem_name[0] switch
                                                 {
@@ -443,9 +439,8 @@ public sealed partial class FAT
                                                                 fakeBpb.oem_name[6] >= 0x20 &&
                                                                 fakeBpb.oem_name[6] <= 0x7F &&
                                                                 fakeBpb.oem_name[7] >= 0x20 &&
-                                                                fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(
-                                                        fakeBpb.oem_name, _encoding,
-                                                        start: 1),
+                                                                fakeBpb.oem_name[7] <= 0x7F =>
+                                                        StringHandlers.CToString(fakeBpb.oem_name, _encoding, start: 1),
                                                     _ => Metadata.SystemIdentifier
                                                 };
                 }
@@ -489,12 +484,12 @@ public sealed partial class FAT
 
             // Check that jumps to a correct boot code position and has boot signature set.
             // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-            if(Metadata.Bootable == false &&
-               fakeBpb.jump      != null)
+            if(Metadata.Bootable == false && fakeBpb.jump != null)
             {
                 Metadata.Bootable |=
                     fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
-                    fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
+                    fakeBpb.jump[0]                        == 0xE9            &&
+                    fakeBpb.jump.Length                    >= 3               &&
                     BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
                     BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
             }
@@ -537,7 +532,10 @@ public sealed partial class FAT
             {
                 var rootMs = new MemoryStream();
 
-                foreach(ulong rootSector in new ulong[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+                foreach(ulong rootSector in new ulong[]
+                    {
+                        0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
+                    })
                 {
                     errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
 
@@ -560,8 +558,8 @@ public sealed partial class FAT
 
             foreach(uint cluster in rootDirectoryClusters)
             {
-                errno = imagePlugin.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster,
-                                                _sectorsPerCluster, out byte[] buffer);
+                errno = imagePlugin.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster, _sectorsPerCluster,
+                                                out byte[] buffer);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;
@@ -593,8 +591,7 @@ public sealed partial class FAT
 
             if(entry.attributes.HasFlag(FatAttributes.LFN))
             {
-                if(_namespace != Namespace.Lfn &&
-                   _namespace != Namespace.Ecs)
+                if(_namespace != Namespace.Lfn && _namespace != Namespace.Ecs)
                     continue;
 
                 LfnEntry lfnEntry =
@@ -627,8 +624,7 @@ public sealed partial class FAT
             }
 
             // Not a correct entry
-            if(entry.filename[0] < DIRENT_MIN &&
-               entry.filename[0] != DIRENT_E5)
+            if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5)
                 continue;
 
             // Self
@@ -680,8 +676,7 @@ public sealed partial class FAT
                 Dirent = entry
             };
 
-            if(_namespace is Namespace.Lfn or Namespace.Ecs &&
-               lastLfnName != null)
+            if(_namespace is Namespace.Lfn or Namespace.Ecs && lastLfnName != null)
             {
                 byte calculatedLfnChecksum = LfnChecksum(entry.filename, entry.extension);
 
@@ -715,13 +710,11 @@ public sealed partial class FAT
             else
                 filename = name;
 
-            if(name      == "" &&
-               extension == "")
+            if(name == "" && extension == "")
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_empty_filename_in_root_directory);
 
-                if(!_debug ||
-                   entry is { size: > 0, start_cluster: 0 })
+                if(!_debug || entry is { size: > 0, start_cluster: 0 })
                     continue; // Skip invalid name
 
                 // If debug, add it
@@ -766,8 +759,7 @@ public sealed partial class FAT
                 completeEntry.HumanName = filename;
             }
 
-            if(!_fat32 &&
-               filename == "EA DATA. SF")
+            if(!_fat32 && filename == "EA DATA. SF")
             {
                 _eaDirEntry     = entry;
                 lastLfnName     = null;
@@ -917,12 +909,9 @@ public sealed partial class FAT
             _eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
 
         // Check OS/2 .LONGNAME
-        if(_eaCache != null                             &&
-           _namespace is Namespace.Os2 or Namespace.Ecs &&
-           !_fat32)
+        if(_eaCache != null && _namespace is Namespace.Os2 or Namespace.Ecs && !_fat32)
         {
-            var rootFilesWithEas =
-                _rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
+            var rootFilesWithEas = _rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
             foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in rootFilesWithEas)
             {
@@ -963,8 +952,8 @@ public sealed partial class FAT
         // Check FAT32.IFS EAs
         if(_fat32 || _debug)
         {
-            var fat32EaSidecars =
-                _rootDirectoryCache.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
+            var fat32EaSidecars = _rootDirectoryCache.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).
+                                                      ToList();
 
             foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
             {

@@ -102,10 +102,12 @@ public sealed partial class VMfs
         sbInformation.AppendFormat(Localization.Volume_UUID_0,       volInfo.uuid).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).
+                      AppendLine();
 
         information = sbInformation.ToString();
 

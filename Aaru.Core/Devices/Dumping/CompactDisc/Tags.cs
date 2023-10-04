@@ -91,8 +91,7 @@ partial class Dump
         {
             DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
 
-            if(discInfo.HasValue &&
-               mediaType == MediaType.CD)
+            if(discInfo.HasValue && mediaType == MediaType.CD)
             {
                 mediaType = discInfo.Value.DiscType switch
                             {
@@ -107,8 +106,7 @@ partial class Dump
         UpdateStatus?.Invoke(Localization.Core.Reading_PMA);
         sense = _dev.ReadPma(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(!sense &&
-           PMA.Decode(cmdBuf).HasValue)
+        if(!sense && PMA.Decode(cmdBuf).HasValue)
         {
             tmpBuf = new byte[cmdBuf.Length - 4];
             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);

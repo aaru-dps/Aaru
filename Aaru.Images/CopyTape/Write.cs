@@ -104,17 +104,14 @@ public sealed partial class CopyTape
     {
         if(!_writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
         {
-            if(_dataStream.Length != 0 &&
-               _lastWrittenBlock  >= sectorAddress)
+            if(_dataStream.Length != 0 && _lastWrittenBlock >= sectorAddress)
             {
                 ErrorMessage = Localization.Cannot_write_unwritten_blocks;
 
                 return false;
             }
 
-            if(_lastWrittenBlock + 1 != sectorAddress &&
-               sectorAddress         != 0             &&
-               _lastWrittenBlock     != 0)
+            if(_lastWrittenBlock + 1 != sectorAddress && sectorAddress != 0 && _lastWrittenBlock != 0)
             {
                 ErrorMessage = Localization.Cannot_skip_blocks;
 

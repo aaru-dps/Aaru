@@ -82,9 +82,7 @@ public sealed partial class AcornADFS
             AaruConsole.DebugWriteLine(MODULE_NAME, "oldChk0 = {0}",          oldChk0);
 
             // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
-            if(oldMap0.checksum == oldChk0 &&
-               oldMap1.checksum != oldChk1 &&
-               sector.Length    >= 512)
+            if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
             {
                 errno = imagePlugin.ReadSector(0, out sector);
 
@@ -215,8 +213,7 @@ public sealed partial class AcornADFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}",         bootChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bBlock.checksum = {0}", bootSector[0x1FF]);
 
-        if(newChk == sector[0] &&
-           newChk != 0)
+        if(newChk == sector[0] && newChk != 0)
         {
             NewMap nmap = Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
             drSb = nmap.discRecord;
@@ -240,8 +237,7 @@ public sealed partial class AcornADFS
         if(drSb.log2secsize is < 8 or > 10)
             return false;
 
-        if(drSb.idlen < drSb.log2secsize + 3 ||
-           drSb.idlen > 19)
+        if(drSb.idlen < drSb.log2secsize + 3 || drSb.idlen > 19)
             return false;
 
         if(drSb.disc_size_high >> drSb.log2secsize != 0)
@@ -295,9 +291,7 @@ public sealed partial class AcornADFS
             OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
             // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
-            if(oldMap0.checksum == oldChk0 &&
-               oldMap1.checksum != oldChk1 &&
-               sector.Length    >= 512)
+            if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
             {
                 errno = imagePlugin.ReadSector(0, out sector);
 
@@ -355,8 +349,7 @@ public sealed partial class AcornADFS
 
                     OldDirectory oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
-                    if(oldRoot.header.magic == OLD_DIR_MAGIC &&
-                       oldRoot.tail.magic   == OLD_DIR_MAGIC)
+                    if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                         namebytes = oldRoot.tail.name;
                     else
                     {
@@ -384,8 +377,7 @@ public sealed partial class AcornADFS
 
                         oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
-                        if(oldRoot.header.magic == OLD_DIR_MAGIC &&
-                           oldRoot.tail.magic   == OLD_DIR_MAGIC)
+                        if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                             namebytes = oldRoot.tail.name;
                         else
                         {
@@ -406,8 +398,7 @@ public sealed partial class AcornADFS
 
                             NewDirectory newRoot = Marshal.ByteArrayToStructureLittleEndian<NewDirectory>(sector);
 
-                            if(newRoot.header.magic == NEW_DIR_MAGIC &&
-                               newRoot.tail.magic   == NEW_DIR_MAGIC)
+                            if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC)
                                 namebytes = newRoot.tail.title;
                         }
                     }
@@ -467,8 +458,7 @@ public sealed partial class AcornADFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "bootChk = {0}",         bootChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bBlock.checksum = {0}", bootSector[0x1FF]);
 
-        if(newChk == sector[0] &&
-           newChk != 0)
+        if(newChk == sector[0] && newChk != 0)
         {
             NewMap nmap = Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
             drSb = nmap.discRecord;
@@ -509,8 +499,7 @@ public sealed partial class AcornADFS
         if(drSb.log2secsize is < 8 or > 10)
             return;
 
-        if(drSb.idlen < drSb.log2secsize + 3 ||
-           drSb.idlen > 19)
+        if(drSb.idlen < drSb.log2secsize + 3 || drSb.idlen > 19)
             return;
 
         if(drSb.disc_size_high >> drSb.log2secsize != 0)

@@ -85,7 +85,10 @@ public sealed partial class Apple2Mg
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".2mg" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".2mg"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

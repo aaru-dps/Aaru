@@ -56,8 +56,7 @@ public sealed partial class MediaScan
 
         bool sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
 
-        if(!sense &&
-           Identify.Decode(cmdBuf).HasValue)
+        if(!sense && Identify.Decode(cmdBuf).HasValue)
         {
             // Initialize reader
             var ataReader = new Reader(_dev, timeout, cmdBuf, null);
@@ -141,19 +140,15 @@ public sealed partial class MediaScan
                     if(results.Blocks - i < blocksToRead)
                         blocksToRead = (byte)(results.Blocks - i);
 
-                    if(currentSpeed > results.MaxSpeed &&
-                       currentSpeed > 0)
+                    if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
                         results.MaxSpeed = currentSpeed;
 
-                    if(currentSpeed < results.MinSpeed &&
-                       currentSpeed > 0)
+                    if(currentSpeed < results.MinSpeed && currentSpeed > 0)
                         results.MinSpeed = currentSpeed;
 
                     UpdateProgress?.
-                        Invoke(
-                            string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
-                                          ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                            (long)i, (long)results.Blocks);
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                               (long)i, (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
@@ -241,12 +236,10 @@ public sealed partial class MediaScan
 
                         ataReader.Seek(seekPos, out seekCur);
 
-                        if(seekCur > results.SeekMax &&
-                           seekCur > 0)
+                        if(seekCur > results.SeekMax && seekCur > 0)
                             results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin &&
-                           seekCur > 0)
+                        if(seekCur < results.SeekMin && seekCur > 0)
                             results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;
@@ -278,17 +271,16 @@ public sealed partial class MediaScan
                             if(_aborted)
                                 break;
 
-                            if(currentSpeed > results.MaxSpeed &&
-                               currentSpeed > 0)
+                            if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
                                 results.MaxSpeed = currentSpeed;
 
-                            if(currentSpeed < results.MinSpeed &&
-                               currentSpeed > 0)
+                            if(currentSpeed < results.MinSpeed && currentSpeed > 0)
                                 results.MinSpeed = currentSpeed;
 
                             PulseProgress?.Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3,
                                                                 cy, hd, sc,
-                                                                ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).
+                                                                ByteSize.FromMegabytes(currentSpeed).
+                                                                         Per(_oneSecond).
                                                                          Humanize()));
 
                             bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
@@ -380,12 +372,10 @@ public sealed partial class MediaScan
 
                         ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
-                        if(seekCur > results.SeekMax &&
-                           seekCur > 0)
+                        if(seekCur > results.SeekMax && seekCur > 0)
                             results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin &&
-                           seekCur > 0)
+                        if(seekCur < results.SeekMin && seekCur > 0)
                             results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;

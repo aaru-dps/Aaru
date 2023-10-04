@@ -223,8 +223,7 @@ public sealed partial class MinixFS
                                     ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector)
                                     : Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
 
-            if(magic != MINIX3_MAGIC &&
-               magic != MINIX3_CIGAM)
+            if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM)
                 mnxSb.s_blocksize = 1024;
 
             sb.AppendLine(minixVersion);
@@ -245,10 +244,12 @@ public sealed partial class MinixFS
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
-                            mnxSb.s_imap_blocks * mnxSb.s_blocksize).AppendLine();
+                            mnxSb.s_imap_blocks * mnxSb.s_blocksize).
+               AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
-                            mnxSb.s_zmap_blocks * mnxSb.s_blocksize).AppendLine();
+                            mnxSb.s_zmap_blocks * mnxSb.s_blocksize).
+               AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 
@@ -282,10 +283,12 @@ public sealed partial class MinixFS
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
-                            mnxSb.s_imap_blocks * 1024).AppendLine();
+                            mnxSb.s_imap_blocks * 1024).
+               AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
-                            mnxSb.s_zmap_blocks * 1024).AppendLine();
+                            mnxSb.s_zmap_blocks * 1024).
+               AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 

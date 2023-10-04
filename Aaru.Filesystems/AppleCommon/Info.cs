@@ -37,8 +37,7 @@ static partial class AppleCommon
 {
     internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
     {
-        if(bbSector is null ||
-           bbSector.Length < 0x100)
+        if(bbSector is null || bbSector.Length < 0x100)
             return null;
 
         BootBlock bb = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bbSector);
@@ -60,9 +59,9 @@ static partial class AppleCommon
                 if((bb.bbVersion & 0x2000) > 0)
                 {
                     sb.
-                        AppendFormat(
-                            Localization.System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
-                            bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                        AppendFormat(Localization.System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
+                                     bb.bbSysHeapExtra, bb.bbSysHeapFract).
+                        AppendLine();
                 }
             }
         }
@@ -94,10 +93,12 @@ static partial class AppleCommon
            AppendLine();
 
         sb.AppendFormat(Localization.Startup_screen_filename_0,
-                        StringHandlers.PascalToString(bb.bbScreenName, encoding)).AppendLine();
+                        StringHandlers.PascalToString(bb.bbScreenName, encoding)).
+           AppendLine();
 
         sb.AppendFormat(Localization.First_program_to_execute_at_boot_0,
-                        StringHandlers.PascalToString(bb.bbHelloName, encoding)).AppendLine();
+                        StringHandlers.PascalToString(bb.bbHelloName, encoding)).
+           AppendLine();
 
         sb.AppendFormat(Localization.Clipboard_filename_0, StringHandlers.PascalToString(bb.bbScrapName, encoding)).
            AppendLine();

@@ -51,7 +51,10 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -90,9 +93,7 @@ public sealed partial class AppleMFS
 
         xattrs.Add("com.apple.FinderInfo");
 
-        if(_debug                                                                 &&
-           _device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
-           entry.flLgLen > 0)
+        if(_debug && _device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
             xattrs.Add("com.apple.macintosh.tags");
 
         xattrs.Sort();
@@ -106,7 +107,10 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;

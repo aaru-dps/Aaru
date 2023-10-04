@@ -74,7 +74,10 @@ public partial class Device
         buffer      = new byte[36];
         senseBuffer = new byte[64];
 
-        byte[] cdb = { (byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0 };
+        byte[] cdb =
+        {
+            (byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0
+        };
 
         LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                     out bool sense);
@@ -86,7 +89,10 @@ public partial class Device
 
         var pagesLength = (byte)(buffer[4] + 5);
 
-        cdb = new byte[] { (byte)ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0 };
+        cdb = new byte[]
+        {
+            (byte)ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0
+        };
 
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
@@ -145,7 +151,10 @@ public partial class Device
         buffer      = new byte[36];
         senseBuffer = new byte[64];
 
-        byte[] cdb = { (byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0 };
+        byte[] cdb =
+        {
+            (byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0
+        };
 
         LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                     out bool sense);
@@ -161,7 +170,10 @@ public partial class Device
 
         var pagesLength = (byte)(buffer[3] + 4);
 
-        cdb = new byte[] { (byte)ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0 };
+        cdb = new byte[]
+        {
+            (byte)ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0
+        };
 
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
@@ -185,7 +197,10 @@ public partial class Device
     {
         senseBuffer = new byte[64];
 
-        byte[] cdb = { (byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0 };
+        byte[] cdb =
+        {
+            (byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0
+        };
 
         byte[] buffer = Array.Empty<byte>();
 

@@ -99,8 +99,7 @@ public sealed class Acorn : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sbSector, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return;
 
         AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
@@ -165,8 +164,7 @@ public sealed class Acorn : IPartition
 
                     part.Offset = part.Start * (ulong)sector.Length;
 
-                    if(entry.magic != LINUX_MAGIC &&
-                       entry.magic != SWAP_MAGIC)
+                    if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC)
                         continue;
 
                     partitions.Add(part);
@@ -218,8 +216,7 @@ public sealed class Acorn : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return;
 
         uint icsSum = 0x50617274;
@@ -273,11 +270,8 @@ public sealed class Acorn : IPartition
                 Start  = entry.start,
                 Length = (ulong)(entry.size * -1),
                 Size   = (ulong)(entry.size * -1 * sector.Length),
-                Type = sector[9] == 'N'
-                           ? Localization.Linux
-                           : sector[9] == 'S'
-                               ? Localization.Linux_swap
-                               : Localization.Unknown_partition_type,
+                Type = sector[9] == 'N' ? Localization.Linux :
+                       sector[9] == 'S' ? Localization.Linux_swap : Localization.Unknown_partition_type,
                 Sequence = counter,
                 Scheme   = "ICS"
             };

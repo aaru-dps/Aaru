@@ -129,20 +129,13 @@ sealed class ListOptionsCommand : Command
         if(type == typeof(bool))
             return UI.TypeToString_boolean;
 
-        if(type == typeof(sbyte) ||
-           type == typeof(short) ||
-           type == typeof(int)   ||
-           type == typeof(long))
+        if(type == typeof(sbyte) || type == typeof(short) || type == typeof(int) || type == typeof(long))
             return UI.TypeToString_signed_number;
 
-        if(type == typeof(byte)   ||
-           type == typeof(ushort) ||
-           type == typeof(uint)   ||
-           type == typeof(ulong))
+        if(type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong))
             return UI.TypeToString_number;
 
-        if(type == typeof(float) ||
-           type == typeof(double))
+        if(type == typeof(float) || type == typeof(double))
             return UI.TypeToString_float_number;
 
         if(type == typeof(Guid))

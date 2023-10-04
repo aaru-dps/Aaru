@@ -193,8 +193,7 @@ public sealed partial class CdrWin
                 return CDRWIN_TRACK_TYPE_MODE1;
             case TrackType.CdMode1 when track.RawBytesPerSector == 2352:
                 return CDRWIN_TRACK_TYPE_MODE1_RAW;
-            case TrackType.CdMode2Formless
-                when track.RawBytesPerSector != 2352:
+            case TrackType.CdMode2Formless when track.RawBytesPerSector != 2352:
                 return CDRWIN_TRACK_TYPE_MODE2_FORMLESS;
             case TrackType.CdMode2Form1 when track.RawBytesPerSector != 2352:
                 return CDRWIN_TRACK_TYPE_MODE2_FORM1;

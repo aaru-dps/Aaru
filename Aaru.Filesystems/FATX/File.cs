@@ -73,8 +73,7 @@ public sealed partial class XboxFatPlugin
         if(err != ErrorNumber.NoError)
             return err;
 
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-           !_debug)
+        if(stat.Attributes.HasFlag(FileAttributes.Directory) && !_debug)
             return ErrorNumber.IsDirectory;
 
         uint[] clusters = GetClusters((uint)stat.Inode);
@@ -112,8 +111,7 @@ public sealed partial class XboxFatPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not FatxFileNode mynode)
@@ -249,8 +247,7 @@ public sealed partial class XboxFatPlugin
 
         if(_fat16 is null)
         {
-            while((nextCluster & FAT32_MASK) > 0 &&
-                  (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
+            while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
             {
                 clusters.Add(nextCluster);
                 nextCluster = _fat32[nextCluster];
@@ -274,7 +271,10 @@ public sealed partial class XboxFatPlugin
 
         string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;

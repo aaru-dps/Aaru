@@ -364,8 +364,7 @@ public sealed partial class ZZZRawImage
 
         _imageInfo.MediaType = CalculateDiskType();
 
-        if(_imageInfo.ImageSize % 2352 == 0 ||
-           _imageInfo.ImageSize % 2448 == 0)
+        if(_imageInfo.ImageSize % 2352 == 0 || _imageInfo.ImageSize % 2448 == 0)
         {
             var sync   = new byte[12];
             var header = new byte[4];
@@ -498,8 +497,7 @@ public sealed partial class ZZZRawImage
             // Check for Xbox
             if(_mediaTags.TryGetValue(MediaTagType.DVD_DMI, out byte[] dmi))
             {
-                if(DMI.IsXbox(dmi) ||
-                   DMI.IsXbox360(dmi))
+                if(DMI.IsXbox(dmi) || DMI.IsXbox360(dmi))
                 {
                     if(DMI.IsXbox(dmi))
                         _imageInfo.MediaType = MediaType.XGD;
@@ -522,8 +520,7 @@ public sealed partial class ZZZRawImage
         {
             _imageInfo.MediaType = MediaType.SecureDigital;
 
-            if(_mediaTags.ContainsKey(MediaTagType.MMC_ExtendedCSD) ||
-               !_mediaTags.ContainsKey(MediaTagType.SD_SCR))
+            if(_mediaTags.ContainsKey(MediaTagType.MMC_ExtendedCSD) || !_mediaTags.ContainsKey(MediaTagType.SD_SCR))
             {
                 _imageInfo.MediaType = MediaType.MMC;
 
@@ -1094,9 +1091,7 @@ public sealed partial class ZZZRawImage
                                            ? MediaType.CompactFlash
                                            : MediaType.GENERIC_HDD;
 
-                if(ataId.Value.Cylinders       == 0 ||
-                   ataId.Value.Heads           == 0 ||
-                   ataId.Value.SectorsPerTrack == 0)
+                if(ataId.Value.Cylinders == 0 || ataId.Value.Heads == 0 || ataId.Value.SectorsPerTrack == 0)
                 {
                     _imageInfo.Cylinders       = ataId.Value.CurrentCylinders;
                     _imageInfo.Heads           = ataId.Value.CurrentHeads;
@@ -1220,8 +1215,7 @@ public sealed partial class ZZZRawImage
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
         }
 
-        if(!_rawCompactDisc &&
-           !_toastXa)
+        if(!_rawCompactDisc && !_toastXa)
             return ErrorNumber.NoError;
 
         if(_hasSubchannel)
@@ -1340,8 +1334,7 @@ public sealed partial class ZZZRawImage
 
             buffer = mode2Ms.ToArray();
         }
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        else if(sectorOffset == 0 && sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
         {
@@ -1499,7 +1492,10 @@ public sealed partial class ZZZRawImage
 
         if(tag == SectorTagType.CdTrackFlags)
         {
-            buffer = new byte[] { 4 };
+            buffer = new byte[]
+            {
+                4
+            };
 
             return ErrorNumber.NoError;
         }
@@ -1514,8 +1510,7 @@ public sealed partial class ZZZRawImage
         uint sectorSize;
         uint sectorSkip = 0;
 
-        if(!_hasSubchannel &&
-           tag == SectorTagType.CdSectorSubchannel)
+        if(!_hasSubchannel && tag == SectorTagType.CdSectorSubchannel)
             return ErrorNumber.NoData;
 
         // Requires reading sector
@@ -1675,8 +1670,7 @@ public sealed partial class ZZZRawImage
         var    br     = new BinaryReader(stream);
         br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorOffset == 0 && sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
         else
         {
@@ -1701,8 +1695,7 @@ public sealed partial class ZZZRawImage
     {
         buffer = null;
 
-        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc ||
-           !_rawCompactDisc && !_toastXa && !_rawDvd)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc && !_toastXa && !_rawDvd)
             return ErrorNumber.NotSupported;
 
         if(sectorAddress > _imageInfo.Sectors - 1)
@@ -1789,7 +1782,8 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         return _imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc
-                   ? ErrorNumber.NotSupported
+                   ?
+                   ErrorNumber.NotSupported
                    : track != 1
                        ? ErrorNumber.OutOfRange
                        : ReadSectorsTag(sectorAddress, 1, track, tag, out buffer);
@@ -1802,7 +1796,8 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         return _imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc
-                   ? ErrorNumber.NotSupported
+                   ?
+                   ErrorNumber.NotSupported
                    : track != 1
                        ? ErrorNumber.OutOfRange
                        : ReadSectorsTag(sectorAddress, length, tag, out buffer);

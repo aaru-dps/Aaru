@@ -327,8 +327,11 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
         dlgDestination.Filters?.Add(new FileDialogFilter
         {
-            Name       = UI.Dialog_Aaru_Metadata,
-            Extensions = new List<string>(new[] { "*.json" })
+            Name = UI.Dialog_Aaru_Metadata,
+            Extensions = new List<string>(new[]
+            {
+                "*.json"
+            })
         });
 
         string result = await dlgDestination.ShowAsync(_view);

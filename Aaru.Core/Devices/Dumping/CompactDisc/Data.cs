@@ -159,12 +159,10 @@ partial class Dump
             {
                 if(j > (ulong)lastSector)
                 {
-                    if(!failedCrossingLeadOut &&
-                       !inData)
+                    if(!failedCrossingLeadOut && !inData)
                         blocksToRead += (uint)sectorsForOffset;
 
-                    if(sectorsForOffset > 0 &&
-                       !inData)
+                    if(sectorsForOffset > 0 && !inData)
                         crossingLeadOut = true;
 
                     break;
@@ -194,12 +192,10 @@ partial class Dump
                 }
             }
 
-            if(track.Sequence                             != 0 &&
-               i + blocksToRead - (ulong)sectorsForOffset > track.EndSector + 1)
+            if(track.Sequence != 0 && i + blocksToRead - (ulong)sectorsForOffset > track.EndSector + 1)
                 blocksToRead = (uint)(track.EndSector + 1 - i + (ulong)sectorsForOffset);
 
-            if(blocksToRead == 1 &&
-               !inData)
+            if(blocksToRead == 1 && !inData)
                 blocksToRead += (uint)sectorsForOffset;
 
             if(blocksToRead == 0)
@@ -269,23 +265,17 @@ partial class Dump
                 crossingLeadOut   = false;
             }
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed > maxSpeed && currentSpeed > 0)
                 maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed < minSpeed && currentSpeed > 0)
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(
-                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
-                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                    (long)i, (long)blocks);
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                       (long)i, (long)blocks);
 
-            if(crossingLeadOut       &&
-               failedCrossingLeadOut &&
-               blocksToRead > 1)
+            if(crossingLeadOut && failedCrossingLeadOut && blocksToRead > 1)
                 blocksToRead--;
 
             if(_supportsPlextorD8 && !inData)
@@ -396,8 +386,7 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } ||
-                           decSense?.ASC == 0x64)
+                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } || decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, firstSectorToRead, blockSize, blocksToRead,
                                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
@@ -435,19 +424,15 @@ partial class Dump
             double elapsed;
 
             // Overcome the track mode change drive error
-            if(inData    &&
-               !nextData &&
-               sense)
+            if(inData && !nextData && sense)
             {
                 _speedStopwatch.Restart();
 
                 for(uint r = 0; r < blocksToRead; r++)
                 {
                     UpdateProgress?.
-                        Invoke(
-                            string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks,
-                                          ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                            (long)i + r, (long)blocks);
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                               (long)i + r, (long)blocks);
 
                     if(_supportsPlextorD8)
                     {
@@ -504,8 +489,7 @@ partial class Dump
                                            out cmdDuration);
                     }
 
-                    if(!sense &&
-                       !_dev.Error)
+                    if(!sense && !_dev.Error)
                     {
                         mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
@@ -655,8 +639,7 @@ partial class Dump
                 continue;
             }
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 if(crossingLeadOut && failedCrossingLeadOut)
                 {
@@ -665,9 +648,7 @@ partial class Dump
                 }
 
                 // Because one block has been partially used to fix the offset
-                if(_fixOffset &&
-                   !inData    &&
-                   offsetBytes != 0)
+                if(_fixOffset && !inData && offsetBytes != 0)
                 {
                     FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
                                   subSize,     ref cmdBuf, blockSize,        failedCrossingLeadOut);

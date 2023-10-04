@@ -81,9 +81,14 @@ public sealed partial class dump
         AaruConsole.DebugWriteLine(MODULE_NAME, "aix magic = 0x{0:X8}", aixHdr.c_magic);
         AaruConsole.DebugWriteLine(MODULE_NAME, "new magic = 0x{0:X8}", newHdr.c_magic);
 
-        return oldHdr.c_magic == OFS_MAGIC || aixHdr.c_magic is XIX_MAGIC or XIX_CIGAM || newHdr.c_magic == OFS_MAGIC ||
-               newHdr.c_magic == NFS_MAGIC || newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM ||
-               newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM;
+        return oldHdr.c_magic == OFS_MAGIC              ||
+               aixHdr.c_magic is XIX_MAGIC or XIX_CIGAM ||
+               newHdr.c_magic == OFS_MAGIC              ||
+               newHdr.c_magic == NFS_MAGIC              ||
+               newHdr.c_magic == OFS_CIGAM              ||
+               newHdr.c_magic == NFS_CIGAM              ||
+               newHdr.c_magic == UFS2_MAGIC             ||
+               newHdr.c_magic == UFS2_CIGAM;
     }
 
     /// <inheritdoc />
@@ -126,9 +131,7 @@ public sealed partial class dump
            newHdr.c_magic == UFS2_MAGIC ||
            newHdr.c_magic == UFS2_CIGAM)
         {
-            if(newHdr.c_magic == OFS_CIGAM ||
-               newHdr.c_magic == NFS_CIGAM ||
-               newHdr.c_magic == UFS2_CIGAM)
+            if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_CIGAM)
                 newHdr = Marshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
         }
         else if(aixHdr.c_magic is XIX_MAGIC or XIX_CIGAM)

@@ -158,8 +158,7 @@ public static class Settings
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
                         Directory.Move(dicPath, aaruPath);
 
                     if(!Directory.Exists(aaruPath))
@@ -199,8 +198,7 @@ public static class Settings
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
                         Directory.Move(dicPath, aaruPath);
 
                     if(!Directory.Exists(aaruPath))
@@ -234,15 +232,13 @@ public static class Settings
                     string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
                     string aaruPath   = Path.Combine(xdgDataPath, "Aaru");
 
-                    if(Directory.Exists(oldDicPath) &&
-                       !Directory.Exists(aaruPath))
+                    if(Directory.Exists(oldDicPath) && !Directory.Exists(aaruPath))
                     {
                         Directory.Move(oldDicPath, aaruPath);
                         Directory.Delete(Path.Combine(homePath, ".claunia.com"));
                     }
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
                         Directory.Move(dicPath, aaruPath);
 
                     if(!Directory.Exists(aaruPath))
@@ -390,8 +386,7 @@ public static class Settings
                     RegistryKey key    = parentKey.OpenSubKey("Aaru");
                     bool        stats;
 
-                    if(dicKey != null &&
-                       key    == null)
+                    if(dicKey != null && key == null)
                     {
                         Current.SaveReportsGlobally = Convert.ToBoolean(dicKey.GetValue("SaveReportsGlobally"));
                         Current.ShareReports        = Convert.ToBoolean(dicKey.GetValue("ShareReports"));
@@ -476,8 +471,7 @@ public static class Settings
                     string xmlSettingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
                     string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.json");
 
-                    if(File.Exists(oldSettingsPath) &&
-                       !File.Exists(xmlSettingsPath))
+                    if(File.Exists(oldSettingsPath) && !File.Exists(xmlSettingsPath))
                     {
                         if(!Directory.Exists(xdgConfigPath))
                             Directory.CreateDirectory(xdgConfigPath);
@@ -485,8 +479,7 @@ public static class Settings
                         File.Move(oldSettingsPath, xmlSettingsPath);
                     }
 
-                    if(File.Exists(dicSettingsPath) &&
-                       !File.Exists(xmlSettingsPath))
+                    if(File.Exists(dicSettingsPath) && !File.Exists(xmlSettingsPath))
                         File.Move(dicSettingsPath, xmlSettingsPath);
 
                     if(File.Exists(xmlSettingsPath))
@@ -550,26 +543,54 @@ public static class Settings
                 {
                     var root = new NSDictionary
                     {
-                        { "SaveReportsGlobally", Current.SaveReportsGlobally },
-                        { "ShareReports", Current.ShareReports },
-                        { "GdprCompliance", Current.GdprCompliance },
-                        { "EnableDecryption", Current.EnableDecryption }
+                        {
+                            "SaveReportsGlobally", Current.SaveReportsGlobally
+                        },
+                        {
+                            "ShareReports", Current.ShareReports
+                        },
+                        {
+                            "GdprCompliance", Current.GdprCompliance
+                        },
+                        {
+                            "EnableDecryption", Current.EnableDecryption
+                        }
                     };
 
                     if(Current.Stats != null)
                     {
                         var stats = new NSDictionary
                         {
-                            { "ShareStats", Current.Stats.ShareStats },
-                            { "CommandStats", Current.Stats.CommandStats },
-                            { "DeviceStats", Current.Stats.DeviceStats },
-                            { "FilesystemStats", Current.Stats.FilesystemStats },
-                            { "FilterStats", Current.Stats.FilterStats },
-                            { "MediaImageStats", Current.Stats.MediaImageStats },
-                            { "MediaScanStats", Current.Stats.MediaScanStats },
-                            { "PartitionStats", Current.Stats.PartitionStats },
-                            { "MediaStats", Current.Stats.MediaStats },
-                            { "VerifyStats", Current.Stats.VerifyStats }
+                            {
+                                "ShareStats", Current.Stats.ShareStats
+                            },
+                            {
+                                "CommandStats", Current.Stats.CommandStats
+                            },
+                            {
+                                "DeviceStats", Current.Stats.DeviceStats
+                            },
+                            {
+                                "FilesystemStats", Current.Stats.FilesystemStats
+                            },
+                            {
+                                "FilterStats", Current.Stats.FilterStats
+                            },
+                            {
+                                "MediaImageStats", Current.Stats.MediaImageStats
+                            },
+                            {
+                                "MediaScanStats", Current.Stats.MediaScanStats
+                            },
+                            {
+                                "PartitionStats", Current.Stats.PartitionStats
+                            },
+                            {
+                                "MediaStats", Current.Stats.MediaStats
+                            },
+                            {
+                                "VerifyStats", Current.Stats.VerifyStats
+                            }
                         };
 
                         root.Add("Stats", stats);

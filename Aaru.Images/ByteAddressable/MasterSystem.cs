@@ -145,8 +145,10 @@ public class MasterSystem : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        int productCode = (header.ProductCode[0] & 0xF) + (header.ProductCode[0] & 0xF0) * 10 +
-                          (header.ProductCode[1] & 0xF) * 100 + (header.ProductCode[1] & 0xF0) * 1000 +
+        int productCode = (header.ProductCode[0] & 0xF)                   +
+                          (header.ProductCode[0] & 0xF0)           * 10   +
+                          (header.ProductCode[1] & 0xF)            * 100  +
+                          (header.ProductCode[1] & 0xF0)           * 1000 +
                           ((header.VersionAndProduct & 0xF0) >> 4) * 10000;
 
         sb.AppendFormat(Localization.Product_code_0, productCode).AppendLine();
@@ -229,7 +231,10 @@ public class MasterSystem : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".sms", ".gg" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".sms", ".gg"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();

@@ -188,8 +188,7 @@ public sealed partial class MediaScan
                 results.Blocks   = scsiReader.GetDeviceBlocks();
                 foundReadCommand = !scsiReader.FindReadCommand();
 
-                if(!foundReadCommand &&
-                   _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+                if(!foundReadCommand && _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_read_medium);
 
@@ -198,8 +197,7 @@ public sealed partial class MediaScan
 
                 blockSize = scsiReader.LogicalBlockSize;
 
-                if(results.Blocks != 0 &&
-                   blockSize      != 0)
+                if(results.Blocks != 0 && blockSize != 0)
                 {
                     results.Blocks++;
 
@@ -323,8 +321,7 @@ public sealed partial class MediaScan
                     if(_dev.Error || sense)
                         blocksToRead /= 2;
 
-                    if(!_dev.Error ||
-                       blocksToRead == 1)
+                    if(!_dev.Error || blocksToRead == 1)
                         break;
                 }
             }
@@ -358,19 +355,15 @@ public sealed partial class MediaScan
                 if(results.Blocks - i < blocksToRead)
                     blocksToRead = (uint)(results.Blocks - i);
 
-                if(currentSpeed > results.MaxSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
                     results.MaxSpeed = currentSpeed;
 
-                if(currentSpeed < results.MinSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed < results.MinSpeed && currentSpeed > 0)
                     results.MinSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(
-                        string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
-                                      ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                        (long)i, (long)results.Blocks);
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                           (long)i, (long)results.Blocks);
 
                 if(readcd)
                 {
@@ -522,25 +515,20 @@ public sealed partial class MediaScan
                 if(results.Blocks - i < blocksToRead)
                     blocksToRead = (uint)(results.Blocks - i);
 
-                if(currentSpeed > results.MaxSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
                     results.MaxSpeed = currentSpeed;
 
-                if(currentSpeed < results.MinSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed < results.MinSpeed && currentSpeed > 0)
                     results.MinSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(
-                        string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
-                                      ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                        (long)i, (long)results.Blocks);
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                           (long)i, (long)results.Blocks);
 
                 sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);
                 results.ProcessingTime += cmdDuration;
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     switch(cmdDuration)
                     {
@@ -642,12 +630,10 @@ public sealed partial class MediaScan
             else
                 scsiReader.ReadBlock(out _, seekPos, out seekCur, out _, out _);
 
-            if(seekCur > results.SeekMax &&
-               seekCur > 0)
+            if(seekCur > results.SeekMax && seekCur > 0)
                 results.SeekMax = seekCur;
 
-            if(seekCur < results.SeekMin &&
-               seekCur > 0)
+            if(seekCur < results.SeekMin && seekCur > 0)
                 results.SeekMin = seekCur;
 
             results.SeekTotal += seekCur;

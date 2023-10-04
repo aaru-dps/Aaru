@@ -92,7 +92,10 @@ public static class CompactDisc
                 if(dataTrack != null)
                 {
                     // Build sync
-                    sectorSync = new byte[] { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+                    sectorSync = new byte[]
+                    {
+                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+                    };
 
                     tmpBuf = new byte[sectorSync.Length];
 
@@ -107,8 +110,7 @@ public static class CompactDisc
                         sense = dev.PlextorReadCdDa(out cmdBuf, out _, wantedLba, sectorSize, 3, PlextorSubchannel.None,
                                                     dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             supportsPlextorReadCdDa = true;
 
@@ -144,7 +146,8 @@ public static class CompactDisc
                     }
 
                     if(!offsetFound &&
-                       (debug || dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled     == true) == true ||
+                       (debug                                                                                      ||
+                        dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled              == true) == true ||
                         dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled               == true) == true ||
                         dbDev?.SCSI?.MultiMediaDevice?.TestedMedia?.Any(d => d.CanReadCdScrambled == true) == true ||
                         dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase)))
@@ -153,8 +156,7 @@ public static class CompactDisc
                                            false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                            MmcSubchannel.None, dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             // Clear cache
                             for(var i = 0; i < 63; i++)
@@ -212,8 +214,7 @@ public static class CompactDisc
 
             for(var i = 1; i < tracks.Length; i++)
             {
-                if(tracks[i - 1].Type == TrackType.Audio ||
-                   tracks[i].Type     != TrackType.Audio)
+                if(tracks[i - 1].Type == TrackType.Audio || tracks[i].Type != TrackType.Audio)
                     continue;
 
                 dataTrack  = tracks[i - 1];
@@ -222,8 +223,7 @@ public static class CompactDisc
                 break;
             }
 
-            if(dataTrack is null ||
-               audioTrack is null)
+            if(dataTrack is null || audioTrack is null)
                 return;
 
             // Found them

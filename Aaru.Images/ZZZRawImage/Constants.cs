@@ -36,7 +36,10 @@ namespace Aaru.DiscImages;
 
 public sealed partial class ZZZRawImage
 {
-    readonly byte[] _cdSync = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+    readonly byte[] _cdSync =
+    {
+        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+    };
     readonly (MediaTagType tag, string name)[] _readWriteSidecars =
     {
         (MediaTagType.ATA_IDENTIFY, ".identify.bin"), (MediaTagType.BD_DI, ".di.bin"),

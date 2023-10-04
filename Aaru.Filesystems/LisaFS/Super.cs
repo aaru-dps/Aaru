@@ -87,8 +87,7 @@ public sealed partial class LisaFS
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
-                if(_volumePrefix    == _device.Info.Sectors &&
-                   searchTag.FileId == FILEID_LOADER_SIGNED)
+                if(_volumePrefix == _device.Info.Sectors && searchTag.FileId == FILEID_LOADER_SIGNED)
                     _volumePrefix = i - 1;
 
                 if(searchTag.FileId != FILEID_MDDF)
@@ -249,7 +248,9 @@ public sealed partial class LisaFS
 
                 _directoryDtcCache = new Dictionary<short, DateTime>
                 {
-                    { DIRID_ROOT, _mddf.dtcc }
+                    {
+                        DIRID_ROOT, _mddf.dtcc
+                    }
                 };
 
                 // Read the Catalog File

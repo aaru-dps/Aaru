@@ -89,7 +89,10 @@ public sealed partial class RayDim
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".dim" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dim"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

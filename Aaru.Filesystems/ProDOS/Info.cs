@@ -75,10 +75,14 @@ public sealed partial class ProDOSPlugin
             if(errno != ErrorNumber.NoError)
                 return false;
 
-            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
-                        offset => tmp.Length > offset + 0x200 && BitConverter.ToUInt16(tmp, offset) == 0 &&
+            foreach(int offset in new[]
+                {
+                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                }.Where(offset => tmp.Length                                            > offset + 0x200       &&
+                                  BitConverter.ToUInt16(tmp, offset)                    == 0                   &&
                                   (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
+                                  tmp[offset + 0x23]                                    == ENTRY_LENGTH        &&
+                                  tmp[offset + 0x24]                                    == ENTRIES_PER_BLOCK))
             {
                 Array.Copy(tmp, offset, rootDirectoryKeyBlock, 0, 0x200);
                 apmFromHddOnCd = true;
@@ -154,10 +158,13 @@ public sealed partial class ProDOSPlugin
             if(errno != ErrorNumber.NoError)
                 return;
 
-            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
-                        offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
+            foreach(int offset in new[]
+                {
+                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                }.Where(offset => BitConverter.ToUInt16(tmp, offset)                    == 0                   &&
                                   (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
+                                  tmp[offset + 0x23]                                    == ENTRY_LENGTH        &&
+                                  tmp[offset + 0x24]                                    == ENTRIES_PER_BLOCK))
             {
                 Array.Copy(tmp, offset, rootDirectoryKeyBlockBytes, 0, 0x200);
                 apmFromHddOnCd = true;
@@ -203,9 +210,8 @@ public sealed partial class ProDOSPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
             AaruConsole.DebugWriteLine(MODULE_NAME, "temp_timestamp = 0x{0:X8}",       tempTimestamp);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.Datetime_field_year_0_month_1_day_2_hour_3_minute_4, year, month,
-                                       day, hour, minute);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Datetime_field_year_0_month_1_day_2_hour_3_minute_4,
+                                       year, month, day, hour, minute);
 
             rootDirectoryKeyBlock.header.creation_time = new DateTime(year, month, day, hour, minute, 0);
             dateCorrect                                = true;
@@ -231,8 +237,7 @@ public sealed partial class ProDOSPlugin
                           AppendLine();
         }
 
-        if(rootDirectoryKeyBlock.header.version     != VERSION1 ||
-           rootDirectoryKeyBlock.header.min_version != VERSION1)
+        if(rootDirectoryKeyBlock.header.version != VERSION1 || rootDirectoryKeyBlock.header.min_version != VERSION1)
         {
             sbInformation.AppendLine(Localization.Warning_Detected_unknown_ProDOS_version_ProDOS_filesystem);
             sbInformation.AppendLine(Localization.All_of_the_following_information_may_be_incorrect);
@@ -243,7 +248,8 @@ public sealed partial class ProDOSPlugin
         else
         {
             sbInformation.AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_used_to_create_this_volume,
-                                       rootDirectoryKeyBlock.header.version).AppendLine();
+                                       rootDirectoryKeyBlock.header.version).
+                          AppendLine();
         }
 
         if(rootDirectoryKeyBlock.header.min_version == VERSION1)
@@ -251,9 +257,9 @@ public sealed partial class ProDOSPlugin
         else
         {
             sbInformation.
-                AppendFormat(
-                    Localization.Unknown_ProDOS_version_with_field_0_is_at_least_required_for_reading_this_volume,
-                    rootDirectoryKeyBlock.header.min_version).AppendLine();
+                AppendFormat(Localization.Unknown_ProDOS_version_with_field_0_is_at_least_required_for_reading_this_volume,
+                             rootDirectoryKeyBlock.header.min_version).
+                AppendLine();
         }
 
         sbInformation.AppendFormat(Localization.Volume_name_is_0, rootDirectoryKeyBlock.header.volume_name).
@@ -314,8 +320,8 @@ public sealed partial class ProDOSPlugin
             Type       = FS_TYPE
         };
 
-        metadata.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                      metadata.Clusters);
+        metadata.ClusterSize =
+            (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.Clusters);
 
         if(!dateCorrect)
             return;

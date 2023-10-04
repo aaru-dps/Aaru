@@ -325,11 +325,21 @@ public sealed partial class Udif
                         {
                             new NSDictionary
                             {
-                                { "Attributes", "0x0050" },
-                                { "CFName", "whole disk (Aaru : 0)" },
-                                { "Data", chunkMs.ToArray() },
-                                { "ID", "0" },
-                                { "Name", "whole disk (Aaru : 0)" }
+                                {
+                                    "Attributes", "0x0050"
+                                },
+                                {
+                                    "CFName", "whole disk (Aaru : 0)"
+                                },
+                                {
+                                    "Data", chunkMs.ToArray()
+                                },
+                                {
+                                    "ID", "0"
+                                },
+                                {
+                                    "Name", "whole disk (Aaru : 0)"
+                                }
                             }
                         }
                     }

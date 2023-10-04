@@ -25,11 +25,20 @@ public class CSD
         "400e00325b5900001dbf7f800a400001", "002d0032135983c9f6d9cf8016400001"
     };
 
-    readonly byte[] structure_versions = { 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0 };
+    readonly byte[] structure_versions =
+    {
+        1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0
+    };
 
-    readonly byte[] taacs = { 14, 14, 14, 38, 46, 14, 14, 127, 94, 14, 14, 14, 14, 45 };
+    readonly byte[] taacs =
+    {
+        14, 14, 14, 38, 46, 14, 14, 127, 94, 14, 14, 14, 14, 45
+    };
 
-    readonly byte[] nsacs = { 0, 0, 0, 1, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] nsacs =
+    {
+        0, 0, 0, 1, 0, 0, 0, 255, 0, 0, 0, 0, 0, 0
+    };
 
     readonly byte[] speeds =
     {
@@ -37,9 +46,15 @@ public class CSD
         50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50
     };
 
-    readonly ushort[] classes = { 1461, 1461, 1461, 1461, 1461, 1461, 1461, 1461, 1397, 1461, 1461, 1461, 1461, 309 };
+    readonly ushort[] classes =
+    {
+        1461, 1461, 1461, 1461, 1461, 1461, 1461, 1461, 1397, 1461, 1461, 1461, 1461, 309
+    };
 
-    readonly byte[] read_block_lengths = { 9, 9, 9, 10, 10, 9, 9, 10, 11, 9, 9, 9, 9, 9 };
+    readonly byte[] read_block_lengths =
+    {
+        9, 9, 9, 10, 10, 9, 9, 10, 11, 9, 9, 9, 9, 9
+    };
 
     readonly bool[] read_partial_blocks =
     {
@@ -66,31 +81,55 @@ public class CSD
         29711, 7559, 15207, 3871, 3751, 30386, 60872, 3819, 3925, 7591, 7659, 7562, 7615, 3879
     };
 
-    readonly byte[] min_read_current = { 0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6 };
+    readonly byte[] min_read_current =
+    {
+        0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6
+    };
 
-    readonly byte[] max_read_current = { 0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6 };
+    readonly byte[] max_read_current =
+    {
+        0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6
+    };
 
-    readonly byte[] min_write_current = { 0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6 };
+    readonly byte[] min_write_current =
+    {
+        0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6
+    };
 
-    readonly byte[] max_write_current = { 0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6 };
+    readonly byte[] max_write_current =
+    {
+        0, 0, 0, 6, 7, 0, 0, 6, 5, 0, 0, 0, 0, 6
+    };
 
-    readonly byte[] size_multiplier = { 0, 0, 0, 7, 7, 0, 0, 7, 7, 0, 0, 0, 0, 3 };
+    readonly byte[] size_multiplier =
+    {
+        0, 0, 0, 7, 7, 0, 0, 7, 7, 0, 0, 0, 0, 3
+    };
 
     readonly bool[] erase_block_enable =
     {
         true, true, true, true, true, true, true, true, true, true, true, true, true, true
     };
 
-    readonly byte[] erase_sector_sizes = { 127, 127, 127, 127, 127, 127, 127, 63, 127, 127, 127, 127, 127, 31 };
+    readonly byte[] erase_sector_sizes =
+    {
+        127, 127, 127, 127, 127, 127, 127, 63, 127, 127, 127, 127, 127, 31
+    };
 
-    readonly byte[] write_protect_group_size = { 0, 0, 0, 31, 0, 0, 0, 127, 127, 0, 0, 0, 0, 0 };
+    readonly byte[] write_protect_group_size =
+    {
+        0, 0, 0, 31, 0, 0, 0, 127, 127, 0, 0, 0, 0, 0
+    };
 
     readonly bool[] write_protect_group_enable =
     {
         false, false, false, false, false, false, false, false, true, false, false, false, false, false
     };
 
-    readonly byte[] r2w_factors = { 2, 2, 2, 5, 5, 2, 2, 3, 5, 2, 2, 2, 2, 5 };
+    readonly byte[] r2w_factors =
+    {
+        2, 2, 2, 5, 5, 2, 2, 3, 5, 2, 2, 2, 2, 5
+    };
 
     readonly bool[] file_format_group =
     {
@@ -112,7 +151,10 @@ public class CSD
         false, false, false, false, false, false, false, false, false, false, false, false, false, false
     };
 
-    readonly byte[] file_format = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] file_format =
+    {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
     [Test]
     public void Test()

@@ -69,7 +69,10 @@ public sealed partial class Blu
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<SectorTagType> SupportedSectorTags => new[] { SectorTagType.AppleSectorTag };
+    public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+    {
+        SectorTagType.AppleSectorTag
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
@@ -84,7 +87,10 @@ public sealed partial class Blu
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".blu" }; // Just invented
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".blu"
+    }; // Just invented
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

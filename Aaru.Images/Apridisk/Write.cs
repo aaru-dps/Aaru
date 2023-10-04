@@ -186,8 +186,7 @@ public sealed partial class Apridisk
             {
                 for(byte s = 0; s < _imageInfo.SectorsPerTrack; s++)
                 {
-                    if(_sectorsData[c][h][s]        == null ||
-                       _sectorsData[c][h][s].Length == 0)
+                    if(_sectorsData[c][h][s] == null || _sectorsData[c][h][s].Length == 0)
                         continue;
 
                     var record = new Record

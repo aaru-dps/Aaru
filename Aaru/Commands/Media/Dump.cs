@@ -71,37 +71,60 @@ sealed class DumpMediaCommand : Command
 
     public DumpMediaCommand() : base("dump", UI.Media_Dump_Command_Description)
     {
-        Add(new Option<string>(new[] { "--cicm-xml", "-x" }, () => null,
-                               UI.Take_metadata_from_existing_CICM_XML_sidecar));
+        Add(new Option<string>(new[]
+        {
+            "--cicm-xml", "-x"
+        }, () => null, UI.Take_metadata_from_existing_CICM_XML_sidecar));
 
-        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>("--first-pregap", () => false, UI.Try_to_read_first_track_pregap));
 
         Add(new Option<bool>("--fix-offset", () => true, UI.Fix_audio_tracks_offset));
 
-        Add(new Option<bool>(new[] { "--force", "-f" }, () => false, UI.Continue_dumping_whatever_happens));
+        Add(new Option<bool>(new[]
+        {
+            "--force", "-f"
+        }, () => false, UI.Continue_dumping_whatever_happens));
 
-        Add(new Option<string>(new[] { "--format", "-t" }, () => null,
-                               UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
+        Add(new Option<string>(new[]
+        {
+            "--format", "-t"
+        }, () => null, UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
 
         Add(new Option<bool>("--metadata", () => true, UI.Enables_creating_Aaru_Metadata_sidecar));
 
         Add(new Option<bool>("--trim", () => true, UI.Enables_trimming_errored_from_skipped_sectors));
 
-        Add(new Option<string>(new[] { "--options", "-O" }, () => null,
-                               UI.Comma_separated_name_value_pairs_of_image_options));
+        Add(new Option<string>(new[]
+        {
+            "--options", "-O"
+        }, () => null, UI.Comma_separated_name_value_pairs_of_image_options));
 
         Add(new Option<bool>("--persistent", () => false, UI.Try_to_recover_partial_or_incorrect_data));
 
-        Add(new Option<bool>(new[] { "--resume", "-r" }, () => true, UI.Create_or_use_resume_mapfile));
+        Add(new Option<bool>(new[]
+        {
+            "--resume", "-r"
+        }, () => true, UI.Create_or_use_resume_mapfile));
 
-        Add(new Option<ushort>(new[] { "--retry-passes", "-p" }, () => 5, UI.How_many_retry_passes_to_do));
+        Add(new Option<ushort>(new[]
+        {
+            "--retry-passes", "-p"
+        }, () => 5, UI.How_many_retry_passes_to_do));
 
-        Add(new Option<uint>(new[] { "--skip", "-k" }, () => 512,
-                             UI.When_an_unreadable_sector_is_found_skip_this_many_sectors));
+        Add(new Option<uint>(new[]
+        {
+            "--skip", "-k"
+        }, () => 512, UI.When_an_unreadable_sector_is_found_skip_this_many_sectors));
 
-        Add(new Option<bool>(new[] { "--stop-on-error", "-s" }, () => false, UI.Stop_media_dump_on_first_error));
+        Add(new Option<bool>(new[]
+        {
+            "--stop-on-error", "-s"
+        }, () => false, UI.Stop_media_dump_on_first_error));
 
         Add(new Option<string>("--subchannel", () => UI.Subchannel_name_any, UI.Subchannel_to_dump_help));
 
@@ -121,40 +144,85 @@ sealed class DumpMediaCommand : Command
             Name        = "output-path"
         });
 
-        Add(new Option<bool>(new[] { "--private" }, () => false,
-                             UI.Do_not_store_paths_and_serial_numbers_in_log_or_metadata));
+        Add(new Option<bool>(new[]
+        {
+            "--private"
+        }, () => false, UI.Do_not_store_paths_and_serial_numbers_in_log_or_metadata));
 
-        Add(new Option<bool>(new[] { "--fix-subchannel-position" }, () => true, UI.Fix_subchannel_position_help));
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel-position"
+        }, () => true, UI.Fix_subchannel_position_help));
 
-        Add(new Option<bool>(new[] { "--retry-subchannel" }, () => true, UI.Retry_subchannel_help));
+        Add(new Option<bool>(new[]
+        {
+            "--retry-subchannel"
+        }, () => true, UI.Retry_subchannel_help));
 
-        Add(new Option<bool>(new[] { "--fix-subchannel" }, () => false, UI.Fix_subchannel_help));
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel"
+        }, () => false, UI.Fix_subchannel_help));
 
-        Add(new Option<bool>(new[] { "--fix-subchannel-crc" }, () => false, UI.Fix_subchannel_crc_help));
+        Add(new Option<bool>(new[]
+        {
+            "--fix-subchannel-crc"
+        }, () => false, UI.Fix_subchannel_crc_help));
 
-        Add(new Option<bool>(new[] { "--generate-subchannels" }, () => false, UI.Generate_subchannels_dump_help));
+        Add(new Option<bool>(new[]
+        {
+            "--generate-subchannels"
+        }, () => false, UI.Generate_subchannels_dump_help));
 
-        Add(new Option<bool>(new[] { "--skip-cdiready-hole" }, () => true, UI.Skip_CDi_Ready_hole_help));
+        Add(new Option<bool>(new[]
+        {
+            "--skip-cdiready-hole"
+        }, () => true, UI.Skip_CDi_Ready_hole_help));
 
-        Add(new Option<bool>(new[] { "--eject" }, () => false, UI.Eject_media_after_dump_finishes));
+        Add(new Option<bool>(new[]
+        {
+            "--eject"
+        }, () => false, UI.Eject_media_after_dump_finishes));
 
-        Add(new Option<uint>(new[] { "--max-blocks" }, () => 64, UI.Maximum_number_of_blocks_to_read_at_once));
+        Add(new Option<uint>(new[]
+        {
+            "--max-blocks"
+        }, () => 64, UI.Maximum_number_of_blocks_to_read_at_once));
 
-        Add(new Option<bool>(new[] { "--use-buffered-reads" }, () => true, UI.OS_buffered_reads_help));
+        Add(new Option<bool>(new[]
+        {
+            "--use-buffered-reads"
+        }, () => true, UI.OS_buffered_reads_help));
 
-        Add(new Option<bool>(new[] { "--store-encrypted" }, () => true, UI.Store_encrypted_data_as_is));
+        Add(new Option<bool>(new[]
+        {
+            "--store-encrypted"
+        }, () => true, UI.Store_encrypted_data_as_is));
 
-        Add(new Option<bool>(new[] { "--title-keys" }, () => true, UI.Try_to_read_the_title_keys_from_CSS_DVDs));
+        Add(new Option<bool>(new[]
+        {
+            "--title-keys"
+        }, () => true, UI.Try_to_read_the_title_keys_from_CSS_DVDs));
 
-        Add(new Option<uint>(new[] { "--ignore-cdr-runouts" }, () => 10,
-                             UI.How_many_CDRW_run_out_sectors_to_ignore_and_regenerate));
+        Add(new Option<uint>(new[]
+        {
+            "--ignore-cdr-runouts"
+        }, () => 10, UI.How_many_CDRW_run_out_sectors_to_ignore_and_regenerate));
 
-        Add(new Option<bool>(new[] { "--create-graph", "-g" }, () => true, UI.Create_graph_of_dumped_media));
+        Add(new Option<bool>(new[]
+        {
+            "--create-graph", "-g"
+        }, () => true, UI.Create_graph_of_dumped_media));
 
-        Add(new Option<uint>(new[] { "--dimensions" }, () => 1080, UI.Dump_graph_dimensions_argument_help));
+        Add(new Option<uint>(new[]
+        {
+            "--dimensions"
+        }, () => 1080, UI.Dump_graph_dimensions_argument_help));
 
-        Add(new Option<string>(new[] { "--aaru-metadata", "-m" }, () => null,
-                               "Take metadata from existing Aaru Metadata sidecar."));
+        Add(new Option<string>(new[]
+        {
+            "--aaru-metadata", "-m"
+        }, () => null, "Take metadata from existing Aaru Metadata sidecar."));
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
@@ -271,8 +339,7 @@ sealed class DumpMediaCommand : Command
 
         DumpSubchannel wantedSubchannel = DumpSubchannel.Any;
 
-        if(subchannel?.ToLower(CultureInfo.CurrentUICulture) == UI.Subchannel_name_any ||
-           subchannel is null)
+        if(subchannel?.ToLower(CultureInfo.CurrentUICulture) == UI.Subchannel_name_any || subchannel is null)
             wantedSubchannel = DumpSubchannel.Any;
         else if(subchannel?.ToLowerInvariant() == UI.Subchannel_name_rw)
             wantedSubchannel = DumpSubchannel.Rw;
@@ -380,15 +447,17 @@ sealed class DumpMediaCommand : Command
             // Replace Windows forbidden filename characters with Japanese equivalents that are visually the same, but bigger.
             if(DetectOS.IsWindows)
             {
-                responseLine = responseLine.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
-                                            Replace('"', '\u2033').Replace('\\', '＼').Replace('|', '｜').
-                                            Replace('?', '？').Replace('*', '＊');
+                responseLine = responseLine.Replace('<', '\uFF1C').
+                                            Replace('>',  '\uFF1E').
+                                            Replace(':',  '\uFF1A').
+                                            Replace('"',  '\u2033').
+                                            Replace('\\', '＼').
+                                            Replace('|',  '｜').
+                                            Replace('?',  '？').
+                                            Replace('*',  '＊');
             }
 
-            if(devicePath.Length == 2   &&
-               devicePath[1]     == ':' &&
-               devicePath[0]     != '/' &&
-               char.IsLetter(devicePath[0]))
+            if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
             Devices.Device dev      = null;
@@ -632,22 +701,22 @@ sealed class DumpMediaCommand : Command
                                   generateSubchannels, maxBlocks, useBufferedReads, storeEncrypted, titleKeys,
                                   ignoreCdrRunOuts, createGraph, dimensions);
 
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
                             dumper.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
                             dumper.ErrorMessage += text =>
-                            {
-                                AaruConsole.
-                                    ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                            };
+                                {
+                                    AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                                };
 
                             dumper.StoppingErrorMessage += text =>
                             {
-                                AaruConsole.
-                                    ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                                AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
                             };
 
                             dumper.UpdateProgress += (text, current, maximum) =>
@@ -725,22 +794,18 @@ sealed class DumpMediaCommand : Command
                                 case PeripheralDeviceTypes.WriteOnceDevice:
                                 case PeripheralDeviceTypes.OpticalDevice:
                                 case PeripheralDeviceTypes.OCRWDevice:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout,
-                                                              out _);
+                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
                                     dev.EjectTray(out _, dev.Timeout, out _);
 
                                     break;
                                 case PeripheralDeviceTypes.MultiMediaDevice:
-                                    dev.AllowMediumRemoval(out _, dev.Timeout,
-                                                           out _);
+                                    dev.AllowMediumRemoval(out _, dev.Timeout, out _);
                                     dev.EjectTray(out _, dev.Timeout, out _);
 
                                     break;
                                 case PeripheralDeviceTypes.SequentialAccess:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout,
-                                                              out _);
-                                    dev.LoadUnload(out _, true, false, false, false,
-                                                   false, dev.Timeout, out _);
+                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                    dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
 
                                     break;
                             }

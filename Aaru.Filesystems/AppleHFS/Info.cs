@@ -60,8 +60,10 @@ public sealed partial class AppleHFS
             if(errno != ErrorNumber.NoError)
                 return false;
 
-            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 }.Where(
-                        offset => mdbSector.Length >= offset + 0x7C + 2))
+            foreach(int offset in new[]
+                {
+                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                }.Where(offset => mdbSector.Length >= offset + 0x7C + 2))
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
@@ -120,7 +122,10 @@ public sealed partial class AppleHFS
             if(errno != ErrorNumber.NoError)
                 return;
 
-            foreach(int offset in new[] { 0, 0x200, 0x400, 0x600, 0x800, 0xA00 })
+            foreach(int offset in new[]
+                {
+                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                })
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
 
@@ -239,8 +244,7 @@ public sealed partial class AppleHFS
         sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, mdb.drFndrInfo3).AppendLine();
         sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0,      mdb.drFndrInfo5).AppendLine();
 
-        if(mdb.drFndrInfo6 != 0 &&
-           mdb.drFndrInfo7 != 0)
+        if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
             sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, mdb.drFndrInfo6, mdb.drFndrInfo7).AppendLine();
 
         if(mdb.drEmbedSigWord == AppleCommon.HFSP_MAGIC)
@@ -264,9 +268,7 @@ public sealed partial class AppleHFS
             sb.AppendLine();
             sb.AppendLine(bootBlockInfo);
         }
-        else if(mdb.drFndrInfo0 != 0 ||
-                mdb.drFndrInfo3 != 0 ||
-                mdb.drFndrInfo5 != 0)
+        else if(mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0)
             sb.AppendLine(Localization.Volume_is_bootable);
         else
             sb.AppendLine(Localization.Volume_is_not_bootable);
@@ -278,8 +280,8 @@ public sealed partial class AppleHFS
         if(mdb.drVolBkUp > 0)
             metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
 
-        metadata.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
-                            mdb.drFndrInfo5 != 0;
+        metadata.Bootable =
+            bootBlockInfo != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0;
 
         metadata.Clusters    = mdb.drNmAlBlks;
         metadata.ClusterSize = mdb.drAlBlkSiz;
@@ -297,8 +299,7 @@ public sealed partial class AppleHFS
         metadata.Type       = FS_TYPE;
         metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, encoding);
 
-        if(mdb.drFndrInfo6 != 0 &&
-           mdb.drFndrInfo7 != 0)
+        if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
             metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
     }
 

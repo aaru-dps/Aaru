@@ -127,8 +127,7 @@ public sealed partial class Udif
 
         byte[] vers = null;
 
-        if(_footer.plistLen    == 0 &&
-           _footer.rsrcForkLen != 0)
+        if(_footer.plistLen == 0 && _footer.rsrcForkLen != 0)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_resource_fork);
             var rsrcB = new byte[_footer.rsrcForkLen];
@@ -299,8 +298,7 @@ public sealed partial class Udif
                              _                                 => null
                          };
 
-            if(dev                       == null &&
-               version.PreReleaseVersion > 0)
+            if(dev == null && version.PreReleaseVersion > 0)
                 dev = "f";
 
             if(dev != null)

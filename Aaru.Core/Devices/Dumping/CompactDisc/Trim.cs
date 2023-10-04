@@ -99,10 +99,7 @@ partial class Dump
                                          _                  => PlextorSubchannel.None
                                      };
 
-        if(_resume.BadBlocks.Count <= 0 ||
-           _aborted                     ||
-           !_trim                       ||
-           !newTrim)
+        if(_resume.BadBlocks.Count <= 0 || _aborted || !_trim || !newTrim)
             return;
 
         UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
@@ -133,9 +130,7 @@ partial class Dump
             byte sectorsToTrim   = 1;
             var  badSectorToRead = (uint)badSector;
 
-            if(_fixOffset                       &&
-               audioExtents.Contains(badSector) &&
-               offsetBytes != 0)
+            if(_fixOffset && audioExtents.Contains(badSector) && offsetBytes != 0)
             {
                 if(offsetBytes < 0)
                 {
@@ -166,8 +161,7 @@ partial class Dump
                         DecodedSense? decSense = Sense.Decode(senseBuf);
 
                         // Try to workaround firmware
-                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } ||
-                           decSense?.ASC == 0x64)
+                        if(decSense is { ASC: 0x11, ASCQ: 0x05 } || decSense?.ASC == 0x64)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
                                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
@@ -233,8 +227,7 @@ partial class Dump
                 continue;
             }
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
@@ -242,9 +235,7 @@ partial class Dump
             }
 
             // Because one block has been partially used to fix the offset
-            if(_fixOffset                       &&
-               audioExtents.Contains(badSector) &&
-               offsetBytes != 0)
+            if(_fixOffset && audioExtents.Contains(badSector) && offsetBytes != 0)
             {
                 uint blocksToRead = sectorsToTrim;
 
@@ -281,8 +272,7 @@ partial class Dump
 
                 outputOptical.SetTracks(tracks.ToList());
 
-                if(track.StartSector != trkStartBefore &&
-                   !_resume.BadBlocks.Contains(track.StartSector))
+                if(track.StartSector != trkStartBefore && !_resume.BadBlocks.Contains(track.StartSector))
                 {
                     _resume.BadBlocks.Add(track.StartSector);
 

@@ -59,11 +59,20 @@ sealed class CreateSidecarCommand : Command
 
     public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
-        Add(new Option<int>(new[] { "--block-size", "-b" }, () => 512, UI.Tape_block_size_argument_help));
+        Add(new Option<int>(new[]
+        {
+            "--block-size", "-b"
+        }, () => 512, UI.Tape_block_size_argument_help));
 
-        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[] { "--tape", "-t" }, () => false, UI.Tape_argument_input_help));
+        Add(new Option<bool>(new[]
+        {
+            "--tape", "-t"
+        }, () => false, UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {
@@ -216,7 +225,9 @@ sealed class CreateSidecarCommand : Command
                 var      sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
                 Metadata sidecar      = new();
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -226,22 +237,18 @@ sealed class CreateSidecarCommand : Command
 
                                 sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
                                 {
-                                    _progressTask1 ??=
-                                        ctx.AddTask("Progress");
-                                    _progressTask1.Description =
-                                        Markup.Escape(text);
-                                    _progressTask1.Value    = current;
-                                    _progressTask1.MaxValue = maximum;
+                                    _progressTask1             ??= ctx.AddTask("Progress");
+                                    _progressTask1.Description =   Markup.Escape(text);
+                                    _progressTask1.Value       =   current;
+                                    _progressTask1.MaxValue    =   maximum;
                                 };
 
                                 sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
                                 {
-                                    _progressTask2 ??=
-                                        ctx.AddTask("Progress");
-                                    _progressTask2.Description =
-                                        Markup.Escape(text);
-                                    _progressTask2.Value    = current;
-                                    _progressTask2.MaxValue = maximum;
+                                    _progressTask2             ??= ctx.AddTask("Progress");
+                                    _progressTask2.Description =   Markup.Escape(text);
+                                    _progressTask2.Value       =   current;
+                                    _progressTask2.MaxValue    =   maximum;
                                 };
 
                                 sidecarClass.EndProgressEvent += () =>
@@ -257,9 +264,9 @@ sealed class CreateSidecarCommand : Command
                                 };
 
                                 sidecarClass.UpdateStatusEvent += text =>
-                                {
-                                    AaruConsole.WriteLine(Markup.Escape(text));
-                                };
+                                    {
+                                        AaruConsole.WriteLine(Markup.Escape(text));
+                                    };
 
                                 System.Console.CancelKeyPress += (_, e) =>
                                 {
@@ -272,15 +279,12 @@ sealed class CreateSidecarCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask(Localization.Core.Writing_metadata_sidecar).
-                        IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                     var jsonFs =
                         new
-                            FileStream(
-                                Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(),
-                                             Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
-                                FileMode.Create);
+                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                       FileMode.Create);
 
                     JsonSerializer.Serialize(jsonFs, new MetadataJson
                     {
@@ -315,7 +319,9 @@ sealed class CreateSidecarCommand : Command
             var      sidecarClass = new Sidecar();
             Metadata sidecar      = new();
 
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
@@ -325,20 +331,18 @@ sealed class CreateSidecarCommand : Command
 
                             sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
                             {
-                                _progressTask1 ??= ctx.AddTask("Progress");
-                                _progressTask1.Description =
-                                    Markup.Escape(text);
-                                _progressTask1.Value    = current;
-                                _progressTask1.MaxValue = maximum;
+                                _progressTask1             ??= ctx.AddTask("Progress");
+                                _progressTask1.Description =   Markup.Escape(text);
+                                _progressTask1.Value       =   current;
+                                _progressTask1.MaxValue    =   maximum;
                             };
 
                             sidecarClass.UpdateProgressEvent2 += (text, current, maximum) =>
                             {
-                                _progressTask2 ??= ctx.AddTask("Progress");
-                                _progressTask2.Description =
-                                    Markup.Escape(text);
-                                _progressTask2.Value    = current;
-                                _progressTask2.MaxValue = maximum;
+                                _progressTask2             ??= ctx.AddTask("Progress");
+                                _progressTask2.Description =   Markup.Escape(text);
+                                _progressTask2.Value       =   current;
+                                _progressTask2.MaxValue    =   maximum;
                             };
 
                             sidecarClass.EndProgressEvent += () =>
@@ -366,15 +370,12 @@ sealed class CreateSidecarCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask(Localization.Core.Writing_metadata_sidecar).
-                    IsIndeterminate();
+                ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                 var jsonFs =
                     new
-                        FileStream(
-                            Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(),
-                                         Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
-                            FileMode.Create);
+                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                   FileMode.Create);
 
                 JsonSerializer.Serialize(jsonFs, new MetadataJson
                 {

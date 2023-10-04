@@ -61,8 +61,9 @@ public sealed partial class KryoFlux
 
         OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-        return header is { blockId  : BlockIds.Oob, blockType: OobTypes.KFInfo } && footer.blockId == BlockIds.Oob &&
-               footer is { blockType: OobTypes.EOF, length   : 0x0D0D };
+        return header is { blockId: BlockIds.Oob, blockType: OobTypes.KFInfo } &&
+               footer.blockId == BlockIds.Oob                                  &&
+               footer is { blockType: OobTypes.EOF, length: 0x0D0D };
     }
 
 #endregion

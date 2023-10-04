@@ -73,8 +73,11 @@ public sealed partial class MaxiDisk
         if(tmpHeader.bytesPerSector > 7)
             return ErrorNumber.InvalidArgument;
 
-        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                               (128 << tmpHeader.bytesPerSector) + 8;
+        int expectedFileSize = tmpHeader.heads           *
+                               tmpHeader.cylinders       *
+                               tmpHeader.sectorsPerTrack *
+                               (128 << tmpHeader.bytesPerSector) +
+                               8;
 
         if(expectedFileSize != stream.Length)
             return ErrorNumber.InvalidArgument;

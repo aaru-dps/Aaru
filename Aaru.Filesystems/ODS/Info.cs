@@ -144,21 +144,24 @@ public sealed partial class ODS
            StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             sb.AppendLine(Localization.The_following_information_may_be_incorrect_for_this_volume);
 
-        if(homeblock.resfiles < 5 ||
-           homeblock.devtype  != 0)
+        if(homeblock.resfiles < 5 || homeblock.devtype != 0)
             sb.AppendLine(Localization.This_volume_may_be_corrupted);
 
         sb.AppendFormat(Localization.Volume_format_is_0,
-                        StringHandlers.SpacePaddedToString(homeblock.format, encoding)).AppendLine();
+                        StringHandlers.SpacePaddedToString(homeblock.format, encoding)).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_is_Level_0_revision_1, (homeblock.struclev & 0xFF00) >> 8,
-                        homeblock.struclev & 0xFF).AppendLine();
+                        homeblock.struclev & 0xFF).
+           AppendLine();
 
         sb.AppendFormat(Localization.Lowest_structure_in_the_volume_is_Level_0_revision_1,
-                        (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).AppendLine();
+                        (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).
+           AppendLine();
 
         sb.AppendFormat(Localization.Highest_structure_in_the_volume_is_Level_0_revision_1,
-                        (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).AppendLine();
+                        (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
            AppendLine();
@@ -167,13 +170,15 @@ public sealed partial class ODS
            AppendLine();
 
         sb.AppendFormat(Localization.Secondary_home_block_is_on_sector_0_VBN_1, homeblock.alhomelbn,
-                        homeblock.alhomevbn).AppendLine();
+                        homeblock.alhomevbn).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_bitmap_starts_in_sector_0_VBN_1, homeblock.ibmaplbn, homeblock.ibmapvbn).
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_bitmap_runs_for_0_sectors_1_bytes, homeblock.ibmapsize,
-                        homeblock.ibmapsize * 512).AppendLine();
+                        homeblock.ibmapsize * 512).
+           AppendLine();
 
         sb.AppendFormat(Localization.Backup_INDEXF_SYS_is_in_sector_0_VBN_1, homeblock.altidxlbn, homeblock.altidxvbn).
            AppendLine();
@@ -181,11 +186,11 @@ public sealed partial class ODS
         sb.AppendFormat(Localization._0_maximum_files_on_the_volume, homeblock.maxfiles).AppendLine();
         sb.AppendFormat(Localization._0_reserved_files,              homeblock.resfiles).AppendLine();
 
-        if(homeblock is { rvn: > 0, setcount: > 0 } &&
-           StringHandlers.CToString(homeblock.strucname) != "            ")
+        if(homeblock is { rvn: > 0, setcount: > 0 } && StringHandlers.CToString(homeblock.strucname) != "            ")
         {
             sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2, homeblock.rvn, homeblock.setcount,
-                            StringHandlers.SpacePaddedToString(homeblock.strucname, encoding)).AppendLine();
+                            StringHandlers.SpacePaddedToString(homeblock.strucname, encoding)).
+               AppendLine();
         }
 
         sb.AppendFormat(Localization.Volume_owner_is_0_ID_1,

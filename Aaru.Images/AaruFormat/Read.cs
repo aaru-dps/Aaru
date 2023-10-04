@@ -68,8 +68,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         _imageStream = imageFilter.GetDataForkStream();
         _imageStream.Seek(0, SeekOrigin.Begin);
@@ -94,8 +93,7 @@ public sealed partial class AaruFormat
         _imageInfo.Version            = $"{_header.imageMajorVersion}.{_header.imageMinorVersion}";
         _imageInfo.MediaType          = _header.mediaType;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         // Read the index header
         _imageStream.Position = (long)_header.indexOffset;
@@ -103,8 +101,7 @@ public sealed partial class AaruFormat
         _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(_structureBytes);
 
-        if(idxHeader.identifier != BlockType.Index &&
-           idxHeader.identifier != BlockType.Index2)
+        if(idxHeader.identifier != BlockType.Index && idxHeader.identifier != BlockType.Index2)
         {
             AaruConsole.ErrorWriteLine(Localization.Index_not_found);
 
@@ -118,11 +115,10 @@ public sealed partial class AaruFormat
             _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
             IndexHeader2 idxHeader2 = Marshal.SpanToStructureLittleEndian<IndexHeader2>(_structureBytes);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries,
-                                       _header.indexOffset, idxHeader2.entries);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries, _header.indexOffset,
+                                       idxHeader2.entries);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             // Fill in-memory index
             _index = new List<IndexEntry>();
@@ -142,11 +138,10 @@ public sealed partial class AaruFormat
         }
         else
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries,
-                                       _header.indexOffset, idxHeader.entries);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries, _header.indexOffset,
+                                       idxHeader.entries);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             // Fill in-memory index
             _index = new List<IndexEntry>();
@@ -165,8 +160,7 @@ public sealed partial class AaruFormat
             }
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         _imageInfo.ImageSize = 0;
 
@@ -267,8 +261,7 @@ public sealed partial class AaruFormat
 
                         decompressStopwatch.Stop();
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Took_0_seconds_to_decompress_block,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds_to_decompress_block,
                                                    decompressStopwatch.Elapsed.TotalSeconds);
 
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
@@ -294,8 +287,7 @@ public sealed partial class AaruFormat
                     // Check CRC, if not correct, skip it
                     Crc64Context.Data(data, out byte[] blockCrc);
 
-                    if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64 &&
-                       blockHeader.crc64                  != 0)
+                    if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64 && blockHeader.crc64 != 0)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.
@@ -516,8 +508,7 @@ public sealed partial class AaruFormat
                                                                Localization.Took_0_seconds_to_decompress_DDT,
                                                                ddtStopwatch.Elapsed.TotalSeconds);
 
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Memory_snapshot_0_bytes,
+                                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                                GC.GetTotalMemory(false));
 
                                     break;
@@ -525,17 +516,15 @@ public sealed partial class AaruFormat
                                     _inMemoryDdt          = false;
                                     _outMemoryDdtPosition = (long)entry.offset;
 
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Memory_snapshot_0_bytes,
+                                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                                GC.GetTotalMemory(false));
 
                                     break;
                                 default:
                                     AaruConsole.
                                         ErrorWriteLine(string.
-                                                           Format(
-                                                               Localization.Found_unsupported_compression_algorithm_0,
-                                                               (ushort)ddtHeader.compression));
+                                                           Format(Localization.Found_unsupported_compression_algorithm_0,
+                                                                  (ushort)ddtHeader.compression));
 
                                     return ErrorNumber.NotSupported;
                             }
@@ -582,25 +571,22 @@ public sealed partial class AaruFormat
                                                                Localization.Took_0_seconds_to_decompress_DDT,
                                                                ddtStopwatch.Elapsed.TotalSeconds);
 
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Memory_snapshot_0_bytes,
+                                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                                GC.GetTotalMemory(false));
 
                                     break;
                                 case CompressionType.None:
                                     _imageStream.EnsureRead(decompressedDdt, 0, decompressedDdt.Length);
 
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Memory_snapshot_0_bytes,
+                                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                                GC.GetTotalMemory(false));
 
                                     break;
                                 default:
                                     AaruConsole.
                                         ErrorWriteLine(string.
-                                                           Format(
-                                                               Localization.Found_unsupported_compression_algorithm_0,
-                                                               (ushort)ddtHeader.compression));
+                                                           Format(Localization.Found_unsupported_compression_algorithm_0,
+                                                                  (ushort)ddtHeader.compression));
 
                                     return ErrorNumber.NotSupported;
                             }
@@ -691,8 +677,7 @@ public sealed partial class AaruFormat
                         _imageInfo.Creator = Encoding.Unicode.GetString(metadata, (int)metadataBlock.creatorOffset,
                                                                         (int)(metadataBlock.creatorLength - 2));
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Setting_creator_0,
-                                                   _imageInfo.Creator);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Setting_creator_0, _imageInfo.Creator);
                     }
 
                     if(metadataBlock.commentsOffset                                > 0 &&
@@ -701,8 +686,7 @@ public sealed partial class AaruFormat
                         _imageInfo.Comments = Encoding.Unicode.GetString(metadata, (int)metadataBlock.commentsOffset,
                                                                          (int)(metadataBlock.commentsLength - 2));
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Setting_comments_0,
-                                                   _imageInfo.Comments);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Setting_comments_0, _imageInfo.Comments);
                     }
 
                     if(metadataBlock.mediaTitleOffset                                  > 0 &&
@@ -888,12 +872,10 @@ public sealed partial class AaruFormat
                             _trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
                     }
 
-                    if(_trackFlags.Count > 0 &&
-                       !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                    if(_trackFlags.Count > 0 && !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-                    if(_trackIsrcs.Count > 0 &&
-                       !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                    if(_trackIsrcs.Count > 0 && !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
                     _imageInfo.HasPartitions = true;
@@ -915,8 +897,8 @@ public sealed partial class AaruFormat
                     if(cicmBlock.identifier != BlockType.CicmBlock)
                         break;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_CICM_XML_metadata_block_at_position_0, entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_CICM_XML_metadata_block_at_position_0,
+                                               entry.offset);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                GC.GetTotalMemory(false));
@@ -965,8 +947,8 @@ public sealed partial class AaruFormat
                     if(aaruMetadataBlock.identifier != BlockType.AaruMetadataJsonBlock)
                         break;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_Aaru_Metadata_block_at_position_0, entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_Aaru_Metadata_block_at_position_0,
+                                               entry.offset);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                GC.GetTotalMemory(false));
@@ -982,8 +964,8 @@ public sealed partial class AaruFormat
                     }
                     catch(JsonException ex)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Exception_0_processing_Aaru_Metadata_block, ex.Message);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Exception_0_processing_Aaru_Metadata_block,
+                                                   ex.Message);
 
                         AaruMetadata = null;
                     }
@@ -1004,8 +986,8 @@ public sealed partial class AaruFormat
                     if(dumpBlock.identifier != BlockType.DumpHardwareBlock)
                         break;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_dump_hardware_block_at_position_0, entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_dump_hardware_block_at_position_0,
+                                               entry.offset);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
                                                GC.GetTotalMemory(false));
@@ -1146,8 +1128,8 @@ public sealed partial class AaruFormat
                     if(partitionHeader.identifier != BlockType.TapePartitionBlock)
                         break;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_tape_partition_block_at_position_0, entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_tape_partition_block_at_position_0,
+                                               entry.offset);
 
                     var tapePartitionBytes = new byte[partitionHeader.length];
                     _imageStream.EnsureRead(tapePartitionBytes, 0, tapePartitionBytes.Length);
@@ -1240,8 +1222,7 @@ public sealed partial class AaruFormat
 
                     compactDiscIndexes = new List<CompactDiscIndexEntry>();
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Found_0_compact_disc_indexes_at_position_1,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_0_compact_disc_indexes_at_position_1,
                                                indexesHeader.entries, entry.offset);
 
                     for(ushort i = 0; i < indexesHeader.entries; i++)
@@ -1272,8 +1253,7 @@ public sealed partial class AaruFormat
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_created_on_0, _imageInfo.CreationTime);
         _imageInfo.LastModificationTime = DateTime.FromFileTimeUtc(_header.lastWrittenTime);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_last_written_on_0,
-                                   _imageInfo.LastModificationTime);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_last_written_on_0, _imageInfo.LastModificationTime);
 
         _imageInfo.MetadataMediaType = GetMetadataMediaType(_header.mediaType);
 
@@ -1287,8 +1267,7 @@ public sealed partial class AaruFormat
 
         _imageInfo.ReadableMediaTags.AddRange(_mediaTags.Keys);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         // Initialize caches
         _blockCache       = new Dictionary<ulong, byte[]>();
@@ -1298,8 +1277,7 @@ public sealed partial class AaruFormat
         if(!_inMemoryDdt)
             _ddtEntryCache = new Dictionary<ulong, ulong>();
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         // Initialize tracks, sessions and partitions
         if(_imageInfo.MetadataMediaType == MetadataMediaType.OpticalDisc)
@@ -1323,8 +1301,7 @@ public sealed partial class AaruFormat
                         Dictionary<int, long> leadOutStarts = new(); // Lead-out starts
 
                         foreach(FullTOC.TrackDataDescriptor trk in
-                                decodedFullToc.Value.TrackDescriptors.Where(trk => trk.ADR is 1 or 4 &&
-                                                                                trk.POINT == 0xA2))
+                            decodedFullToc.Value.TrackDescriptors.Where(trk => trk.ADR is 1 or 4 && trk.POINT == 0xA2))
                         {
                             int phour, pmin, psec, pframe;
 
@@ -1419,11 +1396,9 @@ public sealed partial class AaruFormat
                 }
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
-            if(Tracks       == null ||
-               Tracks.Count == 0)
+            if(Tracks == null || Tracks.Count == 0)
             {
                 Tracks = new List<Track>
                 {
@@ -1443,14 +1418,15 @@ public sealed partial class AaruFormat
 
                 _trackFlags = new Dictionary<byte, byte>
                 {
-                    { 1, (byte)CdFlags.DataTrack }
+                    {
+                        1, (byte)CdFlags.DataTrack
+                    }
                 };
 
                 _trackIsrcs = new Dictionary<byte, string>();
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             Sessions = new List<Session>();
 
@@ -1466,8 +1442,7 @@ public sealed partial class AaruFormat
                 });
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             foreach(Track track in Tracks.OrderBy(t => t.StartSector))
             {
@@ -1516,8 +1491,7 @@ public sealed partial class AaruFormat
                 currentTrackOffset += (track.EndSector - track.StartSector + 1) * (ulong)track.BytesPerSector;
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             Track[] tracks = Tracks.ToArray();
 
@@ -1544,18 +1518,16 @@ public sealed partial class AaruFormat
                 trk.SubchannelType   = TrackSubchannelType.Raw;
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             Tracks = tracks.ToList();
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                       GC.GetTotalMemory(false));
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             if(compactDiscIndexes != null)
             {
                 foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.OrderBy(i => i.Track).
-                            ThenBy(i => i.Index))
+                    ThenBy(i => i.Index))
                 {
                     Track track = Tracks.FirstOrDefault(t => t.Sequence == compactDiscIndex.Track);
 
@@ -1578,27 +1550,21 @@ public sealed partial class AaruFormat
         if(_sectorSuffixDdt != null)
             EccInit();
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
             return ErrorNumber.NoError;
 
         if(_imageInfo.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG or MediaType.CDI
                                 or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS or MediaType.CDMO
-                                or MediaType.CDR
-                                or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD or MediaType.PCD
-                                or MediaType.DTSCD
-                                or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY or MediaType.FMTOWNS
-                                or MediaType.PS1CD
-                                or MediaType.PS2CD or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM
-                                or MediaType.GDR
+                                or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW or MediaType.VCD or MediaType.SVCD
+                                or MediaType.PCD or MediaType.DTSCD or MediaType.CDMIDI or MediaType.CDV
+                                or MediaType.CDIREADY or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD
+                                or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
                                 or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD or MediaType.ThreeDO
-                                or MediaType.PCFX
-                                or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia
-                                or MediaType.Pippin
-                                or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
-                                or MediaType.CVD)
+                                or MediaType.PCFX or MediaType.NeoGeoCD or MediaType.CDTV or MediaType.CD32
+                                or MediaType.Playdia or MediaType.Pippin or MediaType.VideoNow
+                                or MediaType.VideoNowColor or MediaType.VideoNowXp or MediaType.CVD)
             return ErrorNumber.NoError;
 
         {
@@ -1658,8 +1624,7 @@ public sealed partial class AaruFormat
         blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
 
         // Decompress block
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         ulong decompressedLength;
 
@@ -1669,8 +1634,7 @@ public sealed partial class AaruFormat
                 block = new byte[blockHeader.length];
                 _imageStream.EnsureRead(block, 0, (int)blockHeader.length);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                           GC.GetTotalMemory(false));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
                 break;
             case CompressionType.Lzma:
@@ -1690,8 +1654,7 @@ public sealed partial class AaruFormat
                     return ErrorNumber.InOutError;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                           GC.GetTotalMemory(false));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
                 break;
             case CompressionType.Flac:
@@ -1709,8 +1672,7 @@ public sealed partial class AaruFormat
                     return ErrorNumber.InOutError;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                           GC.GetTotalMemory(false));
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
                 break;
             default:
@@ -1733,8 +1695,7 @@ public sealed partial class AaruFormat
         buffer = new byte[blockHeader.sectorSize];
         Array.Copy(block, (long)(offset * blockHeader.sectorSize), buffer, 0, blockHeader.sectorSize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes,
-                                   GC.GetTotalMemory(false));
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
         return ErrorNumber.NoError;
     }
@@ -1817,9 +1778,7 @@ public sealed partial class AaruFormat
             if(trk is null)
                 return ErrorNumber.SectorNotFound;
 
-            if(trk.Sequence    == 0 &&
-               trk.StartSector == 0 &&
-               trk.EndSector   == 0)
+            if(trk.Sequence == 0 && trk.StartSector == 0 && trk.EndSector == 0)
                 return ErrorNumber.SectorNotFound;
 
             switch(tag)
@@ -1844,7 +1803,10 @@ public sealed partial class AaruFormat
                     if(!_trackFlags.TryGetValue((byte)sectorAddress, out byte flags))
                         return ErrorNumber.NoData;
 
-                    buffer = new[] { flags };
+                    buffer = new[]
+                    {
+                        flags
+                    };
 
                     return ErrorNumber.NoError;
                 case SectorTagType.CdTrackIsrc:
@@ -2111,8 +2073,7 @@ public sealed partial class AaruFormat
 
         buffer = new byte[sectorSize * length];
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorOffset == 0 && sectorSkip == 0)
         {
             Array.Copy(dataSource, (long)(sectorAddress * sectorSize), buffer, 0, length * sectorSize);
 
@@ -2159,8 +2120,10 @@ public sealed partial class AaruFormat
 
         return trk?.Sequence != track
                    ? ErrorNumber.SectorNotFound
-                   : trk.StartSector + sectorAddress + length > trk.EndSector + 1
-                       ? ErrorNumber.OutOfRange
+                   :
+                   trk.StartSector + sectorAddress + length > trk.EndSector + 1
+                       ?
+                       ErrorNumber.OutOfRange
                        : ReadSectorsTag(trk.StartSector + sectorAddress, length, tag, out buffer);
     }
 
@@ -2177,9 +2140,7 @@ public sealed partial class AaruFormat
                 if(trk is null)
                     return ErrorNumber.SectorNotFound;
 
-                if(trk.Sequence    == 0 &&
-                   trk.StartSector == 0 &&
-                   trk.EndSector   == 0)
+                if(trk.Sequence == 0 && trk.StartSector == 0 && trk.EndSector == 0)
                     return ErrorNumber.SectorNotFound;
 
                 if((_sectorSuffix    == null || _sectorPrefix    == null) &&
@@ -2284,8 +2245,7 @@ public sealed partial class AaruFormat
                         else
                             return ErrorNumber.InvalidArgument;
 
-                        if(_mode2Subheaders != null &&
-                           _sectorSuffixDdt != null)
+                        if(_mode2Subheaders != null && _sectorSuffixDdt != null)
                         {
                             Array.Copy(_mode2Subheaders, (int)sectorAddress * 8, buffer, 16, 8);
 
@@ -2400,9 +2360,7 @@ public sealed partial class AaruFormat
                 if(trk is null)
                     return ErrorNumber.SectorNotFound;
 
-                if(trk.Sequence    == 0 &&
-                   trk.StartSector == 0 &&
-                   trk.EndSector   == 0)
+                if(trk.Sequence == 0 && trk.StartSector == 0 && trk.EndSector == 0)
                     return ErrorNumber.SectorNotFound;
 
                 if(sectorAddress + length > trk.EndSector + 1)
@@ -2417,8 +2375,7 @@ public sealed partial class AaruFormat
 
                     // Join prefix (sync, header) with user data with suffix (edc, ecc p, ecc q)
                     case TrackType.CdMode1:
-                        if(_sectorPrefix != null &&
-                           _sectorSuffix != null)
+                        if(_sectorPrefix != null && _sectorSuffix != null)
                         {
                             buffer = new byte[2352 * length];
                             errno  = ReadSectors(sectorAddress, length, out data);
@@ -2439,8 +2396,7 @@ public sealed partial class AaruFormat
                             return ErrorNumber.NoError;
                         }
 
-                        if(_sectorPrefixDdt == null ||
-                           _sectorSuffixDdt == null)
+                        if(_sectorPrefixDdt == null || _sectorSuffixDdt == null)
                             return ReadSectors(sectorAddress, length, out buffer);
 
                         buffer = new byte[2352 * length];
@@ -2461,8 +2417,7 @@ public sealed partial class AaruFormat
                     case TrackType.CdMode2Formless:
                     case TrackType.CdMode2Form1:
                     case TrackType.CdMode2Form2:
-                        if(_sectorPrefix != null &&
-                           _sectorSuffix != null)
+                        if(_sectorPrefix != null && _sectorSuffix != null)
                         {
                             buffer = new byte[2352 * length];
                             errno  = ReadSectors(sectorAddress, length, out data);
@@ -2480,8 +2435,7 @@ public sealed partial class AaruFormat
                             return ErrorNumber.NoError;
                         }
 
-                        if(_sectorPrefixDdt == null ||
-                           _sectorSuffixDdt == null)
+                        if(_sectorPrefixDdt == null || _sectorSuffixDdt == null)
                             return ReadSectors(sectorAddress, length, out buffer);
 
                         buffer = new byte[2352 * length];
@@ -2571,8 +2525,10 @@ public sealed partial class AaruFormat
 
         return trk?.Sequence != track
                    ? ErrorNumber.SectorNotFound
-                   : trk.StartSector + sectorAddress + length > trk.EndSector + 1
-                       ? ErrorNumber.OutOfRange
+                   :
+                   trk.StartSector + sectorAddress + length > trk.EndSector + 1
+                       ?
+                       ErrorNumber.OutOfRange
                        : ReadSectorsLong(trk.StartSector + sectorAddress, length, out buffer);
     }
 

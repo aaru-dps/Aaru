@@ -53,8 +53,7 @@ public sealed partial class DiskCopy42
         var tags   = false;
         var macosx = false;
 
-        if(options != null &&
-           options.TryGetValue("macosx", out string tmpOption))
+        if(options != null && options.TryGetValue("macosx", out string tmpOption))
             bool.TryParse(tmpOption, out macosx);
 
         if(sectorSize != 512)
@@ -89,8 +88,7 @@ public sealed partial class DiskCopy42
 
                 break;
             case MediaType.AppleProfile:
-                if(sectors != 9728 &&
-                   sectors != 19456)
+                if(sectors != 9728 && sectors != 19456)
                 {
                     ErrorMessage = Localization.Incorrect_number_of_sectors_for_Apple_Profile_image;
 

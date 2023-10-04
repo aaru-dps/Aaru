@@ -84,8 +84,7 @@ partial class Dump
                 continue;
             }
 
-            if((sense || _dev.Error) &&
-               !recoveredError)
+            if((sense || _dev.Error) && !recoveredError)
                 continue;
 
             _resume.BadBlocks.Remove(badSector);

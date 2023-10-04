@@ -58,8 +58,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
         _atapi = atapiIdentify;
         _view  = view;
 
-        if(ataIdentify   == null &&
-           atapiIdentify == null)
+        if(ataIdentify == null && atapiIdentify == null)
             return;
 
         if(ataIdentify != null)
@@ -83,8 +82,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 
-                var specificData =
-                    (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
+                var specificData = (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
 
                 AtaMcptSpecificDataText = string.Format(Localization.Core.Card_specific_data_0, specificData);
             }
@@ -120,8 +118,11 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -145,8 +146,11 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.txt" }),
-            Name       = UI.Dialog_Text_files
+            Extensions = new List<string>(new[]
+            {
+                "*.txt"
+            }),
+            Name = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);

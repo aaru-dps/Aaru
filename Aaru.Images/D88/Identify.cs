@@ -74,9 +74,7 @@ public sealed partial class D88
         if(hdr.disk_size != stream.Length)
             return false;
 
-        if(hdr.disk_type != DiskType.D2  &&
-           hdr.disk_type != DiskType.Dd2 &&
-           hdr.disk_type != DiskType.Hd2)
+        if(hdr.disk_type != DiskType.D2 && hdr.disk_type != DiskType.Dd2 && hdr.disk_type != DiskType.Hd2)
             return false;
 
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
@@ -89,8 +87,7 @@ public sealed partial class D88
             if(t > 0)
                 counter++;
 
-            if(t < 0 ||
-               t > stream.Length)
+            if(t < 0 || t > stream.Length)
                 return false;
         }
 

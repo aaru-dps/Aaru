@@ -246,8 +246,7 @@ public sealed partial class CloneCd
             {
                 Track firstSessionTrack = tracks.FirstOrDefault(t => t.Session == newTrack.Session);
 
-                if(firstSessionTrack?.Sequence == newTrack.Sequence &&
-                   newTrack.Pregap             >= 150)
+                if(firstSessionTrack?.Sequence == newTrack.Sequence && newTrack.Pregap >= 150)
                 {
                     newTrack.Pregap      -= 150;
                     newTrack.StartSector += 150;

@@ -60,11 +60,21 @@ public sealed partial class FAT
                                         : humanBpb.clusters     == expectedClusters;
 
         // Check OEM for Human68k is correct
-        bool humanOemCorrect = bpbSector[2]  >= 0x20 && bpbSector[3]  >= 0x20 && bpbSector[4]  >= 0x20 &&
-                               bpbSector[5]  >= 0x20 && bpbSector[6]  >= 0x20 && bpbSector[7]  >= 0x20 &&
-                               bpbSector[8]  >= 0x20 && bpbSector[9]  >= 0x20 && bpbSector[10] >= 0x20 &&
-                               bpbSector[11] >= 0x20 && bpbSector[12] >= 0x20 && bpbSector[13] >= 0x20 &&
-                               bpbSector[14] >= 0x20 && bpbSector[15] >= 0x20 && bpbSector[16] >= 0x20 &&
+        bool humanOemCorrect = bpbSector[2]  >= 0x20 &&
+                               bpbSector[3]  >= 0x20 &&
+                               bpbSector[4]  >= 0x20 &&
+                               bpbSector[5]  >= 0x20 &&
+                               bpbSector[6]  >= 0x20 &&
+                               bpbSector[7]  >= 0x20 &&
+                               bpbSector[8]  >= 0x20 &&
+                               bpbSector[9]  >= 0x20 &&
+                               bpbSector[10] >= 0x20 &&
+                               bpbSector[11] >= 0x20 &&
+                               bpbSector[12] >= 0x20 &&
+                               bpbSector[13] >= 0x20 &&
+                               bpbSector[14] >= 0x20 &&
+                               bpbSector[15] >= 0x20 &&
+                               bpbSector[16] >= 0x20 &&
                                bpbSector[17] >= 0x20;
 
         // Check correct branch for Human68k
@@ -176,10 +186,14 @@ public sealed partial class FAT
                 apricotBpb.mainBPB.sectors /= 4;
             }
 
-            andosOemCorrect = dos33Bpb.oem_name[0] < 0x20  && dos33Bpb.oem_name[1] >= 0x20 &&
-                              dos33Bpb.oem_name[2] >= 0x20 && dos33Bpb.oem_name[3] >= 0x20 &&
-                              dos33Bpb.oem_name[4] >= 0x20 && dos33Bpb.oem_name[5] >= 0x20 &&
-                              dos33Bpb.oem_name[6] >= 0x20 && dos33Bpb.oem_name[7] >= 0x20;
+            andosOemCorrect = dos33Bpb.oem_name[0] < 0x20  &&
+                              dos33Bpb.oem_name[1] >= 0x20 &&
+                              dos33Bpb.oem_name[2] >= 0x20 &&
+                              dos33Bpb.oem_name[3] >= 0x20 &&
+                              dos33Bpb.oem_name[4] >= 0x20 &&
+                              dos33Bpb.oem_name[5] >= 0x20 &&
+                              dos33Bpb.oem_name[6] >= 0x20 &&
+                              dos33Bpb.oem_name[7] >= 0x20;
 
             if(bitsInBpsFat32 == 1                       &&
                correctSpcFat32                           &&
@@ -285,7 +299,8 @@ public sealed partial class FAT
                         dos33Bpb.sectors     <= partition.End - partition.Start + 1)
                 {
                     if(atariBpb.jump[0] == 0x60 ||
-                       atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                       atariBpb.jump[0]                            == 0xE9 &&
+                       atariBpb.jump[1]                            == 0x00 &&
                        Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    " ||
                        partition.Type is "GEM" or "BGM")
                     {
@@ -308,11 +323,11 @@ public sealed partial class FAT
                         useDos32Bpb     = true;
                         minBootNearJump = 0x1E;
                     }
-                    else if(dos30Bpb.sptrk is > 0 and < 64 &&
-                            dos30Bpb.heads is > 0 and < 256)
+                    else if(dos30Bpb.sptrk is > 0 and < 64 && dos30Bpb.heads is > 0 and < 256)
                     {
                         if(atariBpb.jump[0] == 0x60 ||
-                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                           atariBpb.jump[0]                            == 0xE9 &&
+                           atariBpb.jump[1]                            == 0x00 &&
                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_Atari_BPB);
@@ -328,7 +343,8 @@ public sealed partial class FAT
                     else
                     {
                         if(atariBpb.jump[0] == 0x60 ||
-                           atariBpb.jump[0]                            == 0xE9 && atariBpb.jump[1] == 0x00 &&
+                           atariBpb.jump[0]                            == 0xE9 &&
+                           atariBpb.jump[1]                            == 0x00 &&
                            Encoding.ASCII.GetString(dos33Bpb.oem_name) != "NEXT    ")
                         {
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Using_Atari_BPB);
@@ -372,7 +388,10 @@ public sealed partial class FAT
             // Volume is software interleaved 2:1
             var rootMs = new MemoryStream();
 
-            foreach(ulong rootSector in new ulong[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+            foreach(ulong rootSector in new ulong[]
+                {
+                    0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
+                })
             {
                 imagePlugin.ReadSector(rootSector, out byte[] tmp);
                 rootMs.Write(tmp, 0, tmp.Length);
@@ -613,8 +632,9 @@ public sealed partial class FAT
             }
 
             // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-            bootable |= bpbSector[0] == 0xFA || bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F ||
-                        bpbSector[0]                         == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC;
+            bootable |= bpbSector[0] == 0xFA                                                ||
+                        bpbSector[0] == 0xEB && bpbSector[1]                        <= 0x7F ||
+                        bpbSector[0] == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC;
 
             fakeBpb.boot_code = bpbSector;
 
@@ -794,8 +814,7 @@ public sealed partial class FAT
         fakeBpb.sptrk    = apricotBpb.spt;
         bootable         = apricotBpb.bootType > 0;
 
-        if(apricotBpb.bootLocation                       > 0 &&
-           apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
+        if(apricotBpb.bootLocation > 0 && apricotBpb.bootLocation + apricotBpb.bootSize < imagePlugin.Info.Sectors)
         {
             imagePlugin.ReadSectors(apricotBpb.bootLocation,
                                     (uint)(apricotBpb.sectorSize * apricotBpb.bootSize) / imagePlugin.Info.SectorSize,

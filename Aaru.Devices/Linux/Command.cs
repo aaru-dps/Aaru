@@ -153,8 +153,7 @@ partial class Device
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)((byte)protocol << 1 & 0x1E);
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
             switch(protocol)
             {
@@ -188,8 +187,7 @@ partial class Device
         int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -226,8 +224,7 @@ partial class Device
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
         cdb[1] = (byte)((byte)protocol << 1 & 0x1E);
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
             switch(protocol)
             {
@@ -261,8 +258,7 @@ partial class Device
         int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -300,8 +296,7 @@ partial class Device
         cdb[1] =  (byte)((byte)protocol << 1 & 0x1E);
         cdb[1] |= 0x01;
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
             switch(protocol)
             {
@@ -340,8 +335,7 @@ partial class Device
         int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
                                     AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
             return error;
 
         errorRegisters.Error = senseBuffer[11];
@@ -612,8 +606,7 @@ partial class Device
 
         int error = Marshal.GetLastWin32Error();
 
-        if(error != 13 &&
-           error != 30)
+        if(error != 13 && error != 30)
         {
             LastError = Marshal.GetLastWin32Error();
             Error     = true;

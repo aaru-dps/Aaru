@@ -95,15 +95,13 @@ public partial class DeviceInfo
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}",
-                                               errorRegisters.CylinderHigh);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}", errorRegisters.CylinderHigh);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0,
-                                               dev.LastError);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0, dev.LastError);
 
                     break;
                 }
@@ -138,15 +136,13 @@ public partial class DeviceInfo
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}",
-                                               errorRegisters.CylinderHigh);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "CYLHIGH = 0x{0:X2}", errorRegisters.CylinderHigh);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "CYLLOW = 0x{0:X2}", errorRegisters.CylinderLow);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "DEVICE = 0x{0:X2}", errorRegisters.DeviceHead);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0,
-                                               dev.LastError);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Error_code_equals_0, dev.LastError);
 
                     break;
                 }
@@ -201,8 +197,7 @@ public partial class DeviceInfo
                 sense = dev.ModeSense10(out byte[] modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
                                         0x3F, 0xFF, 5, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                     ScsiModeSense10 = modeBuf;
 
                 if(sense || dev.Error)
@@ -210,13 +205,11 @@ public partial class DeviceInfo
                     sense = dev.ModeSense10(out modeBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current,
                                             0x3F, 0x00, 5, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                         ScsiModeSense10 = modeBuf;
                 }
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                     ScsiMode = Modes.DecodeMode10(modeBuf, devType);
 
                 bool useMode10 = !(sense || dev.Error || !ScsiMode.HasValue);
@@ -224,8 +217,7 @@ public partial class DeviceInfo
                 sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0xFF,
                                        5, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                     ScsiModeSense6 = modeBuf;
 
                 if(sense || dev.Error)
@@ -233,8 +225,7 @@ public partial class DeviceInfo
                     sense = dev.ModeSense6(out modeBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F,
                                            0x00, 5, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                         ScsiModeSense6 = modeBuf;
                 }
 
@@ -242,14 +233,11 @@ public partial class DeviceInfo
                 {
                     sense = dev.ModeSense(out modeBuf, out senseBuf, 5, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                         ScsiModeSense6 = modeBuf;
                 }
 
-                if(!sense     &&
-                   !dev.Error &&
-                   !useMode10)
+                if(!sense && !dev.Error && !useMode10)
                     ScsiMode = Modes.DecodeMode6(modeBuf, devType);
 
                 switch(devType)
@@ -584,8 +572,7 @@ public partial class DeviceInfo
 
                 sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
 
-                if(!sense &&
-                   !ArrayHelpers.ArrayIsNullOrEmpty(mmcBuf))
+                if(!sense && !ArrayHelpers.ArrayIsNullOrEmpty(mmcBuf))
                     ExtendedCSD = mmcBuf;
             }
 

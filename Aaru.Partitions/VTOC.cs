@@ -80,7 +80,10 @@ public sealed class VTOC : IPartition
         var         absolute   = false;
         ErrorNumber errno;
 
-        foreach(ulong i in new ulong[] { 0, 1, 8, 29 }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+        foreach(ulong i in new ulong[]
+            {
+                0, 1, 8, 29
+            }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out pdsector);
 
@@ -92,8 +95,7 @@ public sealed class VTOC : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.sanity_at_0_is_1_X8_should_be_2_X8_or_3_X8,
                                        i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
 
-            if(magic != PD_MAGIC &&
-               magic != PD_CIGAM)
+            if(magic != PD_MAGIC && magic != PD_CIGAM)
                 continue;
 
             magicFound = true;
@@ -196,8 +198,7 @@ public sealed class VTOC : IPartition
             }
         }
 
-        if(!magicFound &&
-           pd.version < XPDVERS)
+        if(!magicFound && pd.version < XPDVERS)
         {
             magic = BitConverter.ToUInt32(vtocsector, 12);
 
@@ -323,8 +324,7 @@ public sealed class VTOC : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_version = {0}", vtoc.v_version);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_volume = \"{0}\"",
-                                       StringHandlers.CToString(vtoc.v_volume));
+            AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_volume = \"{0}\"", StringHandlers.CToString(vtoc.v_volume));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_pad = {0}",    vtoc.v_pad);
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_nparts = {0}", vtoc.v_nparts);
@@ -334,8 +334,8 @@ public sealed class VTOC : IPartition
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_tag = {1} ({2})", i, vtoc.v_part[i].p_tag,
                                            (ushort)vtoc.v_part[i].p_tag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_flag = {1} ({2})", i,
-                                           vtoc.v_part[i].p_flag, (ushort)vtoc.v_part[i].p_flag);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_flag = {1} ({2})", i, vtoc.v_part[i].p_flag,
+                                           (ushort)vtoc.v_part[i].p_flag);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_start = {1}", i, vtoc.v_part[i].p_start);
 
@@ -367,8 +367,7 @@ public sealed class VTOC : IPartition
         // This means partition starts are absolute, not relative, to the VTOC position
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag          != pTag.V_BACKUP ||
-               (ulong)parts[i].p_start != sectorOffset)
+            if(parts[i].p_tag != pTag.V_BACKUP || (ulong)parts[i].p_start != sectorOffset)
                 continue;
 
             absolute = true;
@@ -395,8 +394,7 @@ public sealed class VTOC : IPartition
             var info = "";
 
             // Apparently old ones are absolute :?
-            if(!useOld &&
-               !absolute)
+            if(!useOld && !absolute)
             {
                 part.Start  += sectorOffset;
                 part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
@@ -440,15 +438,15 @@ public sealed class VTOC : IPartition
                                                               pTag.V_USER   => "/usr",
                                                               pTag.V_BACKUP => Localization.Whole_disk,
                                                               pTag.V_STAND_OLD => isNew
-                                                                      ? "Stand"
-                                                                      : Localization.Alternate_sector_space,
+                                                                  ? "Stand"
+                                                                  : Localization.Alternate_sector_space,
                                                               pTag.V_VAR_OLD => isNew ? "/var" : Localization.non_UNIX,
                                                               pTag.V_HOME_OLD => isNew
-                                                                      ? "/home"
-                                                                      : Localization.Alternate_track_space,
+                                                                  ? "/home"
+                                                                  : Localization.Alternate_track_space,
                                                               pTag.V_ALTSCTR_OLD => isNew
-                                                                      ? Localization.Alternate_sector_track
-                                                                      : "Stand",
+                                                                  ? Localization.Alternate_sector_track
+                                                                  : "Stand",
                                                               pTag.V_CACHE => isNew ? Localization.Cache : "/var",
                                                               pTag.V_RESERVED =>
                                                                   isNew ? Localization.Reserved : "/home",

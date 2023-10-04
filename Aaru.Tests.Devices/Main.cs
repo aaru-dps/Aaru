@@ -44,8 +44,7 @@ static partial class MainClass
 
         DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
 
-        if(devices        == null ||
-           devices.Length == 0)
+        if(devices == null || devices.Length == 0)
         {
             AaruConsole.WriteLine(Localization.No_known_devices_attached);
 

@@ -419,9 +419,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             ProgressMax      = 1;
             Progress2Max     = (int)(_inputFormat.Info.Sectors / SECTORS_TO_READ);
 
-            if(formatHasTracks       &&
-               ChecksumTracksChecked &&
-               opticalMediaImage != null)
+            if(formatHasTracks && ChecksumTracksChecked && opticalMediaImage != null)
                 ProgressMax += opticalMediaImage.Tracks.Count;
             else
             {
@@ -775,14 +773,10 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         }
 
         if(ChecksumTracksChecked)
-        {
             await Dispatcher.UIThread.InvokeAsync(() => { TrackChecksumsVisible = true; });
-        }
 
         if(ChecksumMediaChecked)
-        {
             await Dispatcher.UIThread.InvokeAsync(() => { MediaChecksumsVisible = true; });
-        }
 
         Statistics.AddCommand("checksum");
 

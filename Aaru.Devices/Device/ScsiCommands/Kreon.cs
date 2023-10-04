@@ -144,10 +144,7 @@ public partial class Device
         if(sense)
             return true;
 
-        if(buffer[0] != 0xA5 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x5A ||
-           buffer[3] != 0xA5)
+        if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5)
             return true;
 
         for(var i = 4; i < 26; i += 2)

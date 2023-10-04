@@ -128,14 +128,11 @@ public sealed class AppleMap : IPartition
                     Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
                     ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock, i);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
 
                     if(ddm.sbMap[i].ddSize == 0)
                         continue;
@@ -304,14 +301,12 @@ public sealed class AppleMap : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].type = \"{1}\"", i,
                                        StringHandlers.CToString(entry.type));
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_data_block = {1}", i,
-                                       entry.first_data_block);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_data_block = {1}", i, entry.first_data_block);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].flags = {1}",        i, (AppleMapFlags)entry.flags);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_boot_block = {1}", i,
-                                       entry.first_boot_block);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_boot_block = {1}", i, entry.first_boot_block);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].boot_size = {1}", i, entry.boot_size);
 
@@ -332,8 +327,7 @@ public sealed class AppleMap : IPartition
 
             // BeOS doesn't mark its partitions as valid
             //if(flags.HasFlag(AppleMapFlags.Valid) &&
-            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" ||
-               entry.sectors                        <= 0)
+            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" || entry.sectors <= 0)
                 continue;
 
             var sb = new StringBuilder();
@@ -387,8 +381,7 @@ public sealed class AppleMap : IPartition
 
             partition.Description = sb.ToString();
 
-            if(partition.Start < imagePlugin.Info.Sectors &&
-               partition.End   < imagePlugin.Info.Sectors)
+            if(partition.Start < imagePlugin.Info.Sectors && partition.End < imagePlugin.Info.Sectors)
             {
                 partitions.Add(partition);
                 sequence++;

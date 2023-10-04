@@ -86,8 +86,7 @@ public sealed partial class Sidecar
             }
         };
 
-        if(image.Info.MediaSequence     != 0 &&
-           image.Info.LastMediaSequence != 0)
+        if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
             sidecar.OpticalDiscs[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
             sidecar.OpticalDiscs[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
@@ -183,16 +182,13 @@ public sealed partial class Sidecar
                                           _                     => dskType
                                       };
 
-                            if(dskType               == MediaType.DVDR &&
-                               pfi.Value.PartVersion >= 6)
+                            if(dskType == MediaType.DVDR && pfi.Value.PartVersion >= 6)
                                 dskType = MediaType.DVDRDL;
 
-                            if(dskType               == MediaType.DVDRW &&
-                               pfi.Value.PartVersion >= 15)
+                            if(dskType == MediaType.DVDRW && pfi.Value.PartVersion >= 15)
                                 dskType = MediaType.DVDRWDL;
 
-                            if(dskType            == MediaType.GOD &&
-                               pfi.Value.DiscSize == DVDSize.OneTwenty)
+                            if(dskType == MediaType.GOD && pfi.Value.DiscSize == DVDSize.OneTwenty)
                                 dskType = MediaType.WOD;
 
                             sidecar.OpticalDiscs[0].Dimensions = new Dimensions();
@@ -246,8 +242,7 @@ public sealed partial class Sidecar
             trksLst                           = new List<CommonTypes.AaruMetadata.Track>();
         }
 
-        if(sidecar.OpticalDiscs[0].Dimensions == null &&
-           image.Info.MediaType               != MediaType.Unknown)
+        if(sidecar.OpticalDiscs[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
             sidecar.OpticalDiscs[0].Dimensions = Dimensions.FromMediaType(image.Info.MediaType);
 
         if(_aborted)
@@ -299,8 +294,7 @@ public sealed partial class Sidecar
             xmlTrk.StartSector = trk.StartSector;
             xmlTrk.EndSector   = trk.EndSector;
 
-            if(trk.Indexes?.TryGetValue(0, out int idx0) == true &&
-               idx0                                      >= 0)
+            if(trk.Indexes?.TryGetValue(0, out int idx0) == true && idx0 >= 0)
                 xmlTrk.StartSector = (ulong)idx0;
 
             switch(sidecar.OpticalDiscs[0].DiscType)
@@ -513,8 +507,7 @@ public sealed partial class Sidecar
             // For fast debugging, skip checksum
             //skipChecksum:
 
-            var trkPartitions =
-                partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
+            var trkPartitions = partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
 
             xmlTrk.FileSystemInformation = new List<CommonTypes.AaruMetadata.Partition>();
 
@@ -663,11 +656,13 @@ public sealed partial class Sidecar
 
             if(trk.Indexes?.Count > 0)
             {
-                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndex
-                {
-                    Index = i.Key,
-                    Value = i.Value
-                }).ToList();
+                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).
+                                     Select(i => new TrackIndex
+                                     {
+                                         Index = i.Key,
+                                         Value = i.Value
+                                     }).
+                                     ToList();
             }
 
             trksLst.Add(xmlTrk);
@@ -679,10 +674,10 @@ public sealed partial class Sidecar
             sidecar.OpticalDiscs[0].Track = trksLst;
 
         // All XGD3 all have the same number of blocks
-        if(dskType                             == MediaType.XGD2 &&
-           sidecar.OpticalDiscs[0].Track.Count == 1)
+        if(dskType == MediaType.XGD2 && sidecar.OpticalDiscs[0].Track.Count == 1)
         {
-            ulong blocks = sidecar.OpticalDiscs[0].Track[0].EndSector - sidecar.OpticalDiscs[0].Track[0].StartSector +
+            ulong blocks = sidecar.OpticalDiscs[0].Track[0].EndSector -
+                           sidecar.OpticalDiscs[0].Track[0].StartSector +
                            1;
 
             if(blocks is 25063 or 4229664 or 4246304) // Wxripper unlock

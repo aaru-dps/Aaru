@@ -75,10 +75,8 @@ public abstract class OpticalImageConvertIssueTest
         Assert.IsNotNull(outputOptical,       Localization.Could_not_treat_new_image_as_optical_disc);
         Assert.IsNotNull(inputOptical.Tracks, Localization.Existing_image_contains_no_tracks);
 
-        Assert.IsTrue(
-            outputOptical.Create(outputPath, inputFormat.Info.MediaType, ParsedOptions, inputFormat.Info.Sectors,
-                                 inputFormat.Info.SectorSize),
-            string.Format(Localization.Error_0_creating_output_image, outputOptical.ErrorMessage));
+        Assert.IsTrue(outputOptical.Create(outputPath, inputFormat.Info.MediaType, ParsedOptions, inputFormat.Info.Sectors, inputFormat.Info.SectorSize),
+                      string.Format(Localization.Error_0_creating_output_image, outputOptical.ErrorMessage));
 
         var metadata = new ImageInfo
         {
@@ -107,7 +105,7 @@ public abstract class OpticalImageConvertIssueTest
         List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-                    outputOptical.SupportedMediaTags.Contains(mediaTag)))
+            outputOptical.SupportedMediaTags.Contains(mediaTag)))
         {
             AaruConsole.WriteLine(Localization.Converting_media_tag_0, mediaTag);
             errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
@@ -158,8 +156,7 @@ public abstract class OpticalImageConvertIssueTest
                     else
                         result = true;
 
-                    if(!result &&
-                       sector.Length % 2352 != 0)
+                    if(!result && sector.Length % 2352 != 0)
                         useNotLong = true;
                 }
 
@@ -371,16 +368,16 @@ public abstract class OpticalImageConvertIssueTest
         if(trackFlags.Count > 0)
         {
             foreach((byte track, byte flags) in trackFlags)
-            {
-                outputOptical.WriteSectorTag(new[] { flags }, track, SectorTagType.CdTrackFlags);
-            }
+                outputOptical.WriteSectorTag(new[]
+                {
+                    flags
+                }, track, SectorTagType.CdTrackFlags);
         }
 
         if(mcn != null)
             outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
-        if(resume       != null ||
-           dumpHardware != null)
+        if(resume != null || dumpHardware != null)
         {
             if(resume != null)
                 outputOptical.SetDumpHardware(resume.Tries);
@@ -388,8 +385,7 @@ public abstract class OpticalImageConvertIssueTest
                 outputOptical.SetDumpHardware(dumpHardware);
         }
 
-        if(sidecar      != null ||
-           aaruMetadata != null)
+        if(sidecar != null || aaruMetadata != null)
         {
             if(sidecar != null)
                 outputOptical.SetMetadata(sidecar);

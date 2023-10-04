@@ -266,8 +266,7 @@ public sealed partial class Parallels
 
                 _pHdr.cylinders = (uint)(_imageInfo.Sectors / _pHdr.heads / _imageInfo.SectorsPerTrack);
 
-                if(_pHdr is { cylinders: 0, heads: 0 } &&
-                   _imageInfo.SectorsPerTrack == 0)
+                if(_pHdr is { cylinders: 0, heads: 0 } && _imageInfo.SectorsPerTrack == 0)
                     break;
             }
         }

@@ -91,29 +91,22 @@ partial class Dump
             if(blocks - i < blocksToRead)
                 blocksToRead = (uint)(blocks - i);
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed > maxSpeed && currentSpeed > 0)
                 maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed < minSpeed && currentSpeed > 0)
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(
-                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
-                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                    (long)i, (long)blocks);
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                       (long)i, (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
-                if(Settings.Settings.Current.EnableDecryption &&
-                   discKey != null                            &&
-                   _titleKeys)
+                if(Settings.Settings.Current.EnableDecryption && discKey != null && _titleKeys)
                 {
                     for(ulong j = 0; j < blocksToRead; j++)
                     {
@@ -137,8 +130,10 @@ partial class Dump
 
                         if(titleKey.HasValue)
                         {
-                            outputFormat.WriteSectorTag(new[] { titleKey.Value.CMI }, i + j,
-                                                        SectorTagType.DvdSectorCmi);
+                            outputFormat.WriteSectorTag(new[]
+                            {
+                                titleKey.Value.CMI
+                            }, i + j, SectorTagType.DvdSectorCmi);
                         }
                         else
                             continue;
@@ -147,11 +142,15 @@ partial class Dump
                         if((titleKey.Value.CMI & 0x80) >> 7 == 0)
                         {
                             // The CMI indicates this sector is not encrypted.
-                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
-                                                        SectorTagType.DvdSectorTitleKey);
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdSectorTitleKey);
 
-                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
-                                                        SectorTagType.DvdTitleKeyDecrypted);
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 
@@ -162,11 +161,15 @@ partial class Dump
                         // not encrypted even if the CMI says it is.
                         if(titleKey.Value.Key.All(k => k == 0))
                         {
-                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
-                                                        SectorTagType.DvdSectorTitleKey);
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdSectorTitleKey);
 
-                            outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, i + j,
-                                                        SectorTagType.DvdTitleKeyDecrypted);
+                            outputFormat.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 

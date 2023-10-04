@@ -83,11 +83,7 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
         if(buffer.Length <= 512)
@@ -105,11 +101,7 @@ public class BZip2 : IFilter
         stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
         if(stream.Length <= 512)
@@ -136,11 +128,7 @@ public class BZip2 : IFilter
         stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
         if(stream.Length <= 512)

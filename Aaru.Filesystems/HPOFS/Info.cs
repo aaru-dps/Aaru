@@ -170,8 +170,7 @@ public sealed partial class HPOFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown4 = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(vib.unknown4));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.owner = \"{0}\"",
-                                   StringHandlers.SpacePaddedToString(vib.owner));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.owner = \"{0}\"", StringHandlers.SpacePaddedToString(vib.owner));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown5 = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(vib.unknown5));
@@ -205,12 +204,14 @@ public sealed partial class HPOFS
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_created_on_0,
-                        DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).AppendLine();
+                        DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_uses_0_codepage_1,
                         mib.codepageType is > 0 and < 3
                             ? mib.codepageType == 2 ? Localization.EBCDIC : Localization.ASCII
-                            : Localization.Unknown_codepage, mib.codepage).AppendLine();
+                            : Localization.Unknown_codepage, mib.codepage).
+           AppendLine();
 
         sb.AppendFormat(Localization.RPS_level_0,                  mib.rps).AppendLine();
         sb.AppendFormat(Localization.Filesystem_version_0_1,       mib.major, mib.minor).AppendLine();

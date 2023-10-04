@@ -206,8 +206,10 @@ public static class Partitions
             }
         }
 
-        Partition[] childArray = childPartitions.OrderBy(part => part.Start).ThenBy(part => part.Length).
-                                                 ThenBy(part => part.Scheme).ToArray();
+        Partition[] childArray = childPartitions.OrderBy(part => part.Start).
+                                                 ThenBy(part => part.Length).
+                                                 ThenBy(part => part.Scheme).
+                                                 ToArray();
 
         for(long i = 0; i < childArray.LongLength; i++)
             childArray[i].Sequence = (ulong)i;
@@ -219,8 +221,7 @@ public static class Partitions
     /// <param name="partitions">List of partitions</param>
     public static void AddSchemesToStats(List<Partition> partitions)
     {
-        if(partitions       == null ||
-           partitions.Count == 0)
+        if(partitions == null || partitions.Count == 0)
             return;
 
         List<string> schemes = new();

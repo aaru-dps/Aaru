@@ -50,7 +50,10 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -174,8 +177,7 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not AppleMfsFileNode mynode)
@@ -201,7 +203,10 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -225,8 +230,7 @@ public sealed partial class AppleMFS
 
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 {
-                    stat.Blocks = _directoryBlocks.Length / stat.BlockSize +
-                                  _directoryBlocks.Length % stat.BlockSize;
+                    stat.Blocks = _directoryBlocks.Length / stat.BlockSize + _directoryBlocks.Length % stat.BlockSize;
 
                     stat.Length = _directoryBlocks.Length;
                 }
@@ -236,8 +240,7 @@ public sealed partial class AppleMFS
 
                     stat.Length = _blockMapBytes.Length;
                 }
-                else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                        _bootBlocks                                                      != null)
+                else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null)
                 {
                     stat.Blocks = _bootBlocks.Length / stat.BlockSize + _bootBlocks.Length % stat.BlockSize;
                     stat.Length = _bootBlocks.Length;
@@ -297,7 +300,10 @@ public sealed partial class AppleMFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -341,14 +347,14 @@ public sealed partial class AppleMFS
         {
             byte[] sectors;
 
-            ErrorNumber errno =
-                tags
-                    ? _device.
-                        ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                       (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag, out sectors)
-                    : _device.
-                        ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                    (uint)_sectorsPerBlock, out sectors);
+            ErrorNumber errno = tags
+                                    ? _device.
+                                        ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                                       (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag,
+                                                       out sectors)
+                                    : _device.
+                                        ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                                    (uint)_sectorsPerBlock, out sectors);
 
             if(errno != ErrorNumber.NoError)
                 return errno;

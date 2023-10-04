@@ -86,8 +86,7 @@ public sealed partial class DriDiskCopy
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.unknown4 = {0}", tmpFooter.bpb.unknown4);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sptrack2 = {0}", tmpFooter.bpb.sptrack2);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                   "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(tmpFooter.bpb.unknown5));
 
         var   regexSignature = new Regex(REGEX_DRI);

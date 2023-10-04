@@ -534,7 +534,8 @@ public sealed partial class AaruFormat
                                                                         DataType.CompactDiscLeadIn,
                                                                     MediaTagType.DVD_DiscKey_Decrypted => DataType.
                                                                         DvdDiscKeyDecrypted,
-                                                                    _ => throw new ArgumentOutOfRangeException(
-                                                                             nameof(tag), tag, null)
+                                                                    _ => throw new
+                                                                             ArgumentOutOfRangeException(nameof(tag),
+                                                                                 tag, null)
                                                                 };
 }

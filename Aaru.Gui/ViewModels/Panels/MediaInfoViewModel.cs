@@ -102,8 +102,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         MediaType = scsiInfo.MediaType.ToString();
 
-        if(scsiInfo.Blocks    != 0 &&
-           scsiInfo.BlockSize != 0)
+        if(scsiInfo.Blocks != 0 && scsiInfo.BlockSize != 0)
         {
             MediaSize = string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
                                       scsiInfo.Blocks, scsiInfo.BlockSize,
@@ -128,7 +127,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
         SaveRecognizedFormatLayersVisible = scsiInfo.RecognizedFormatLayers != null;
         SaveWriteProtectionStatusVisible  = scsiInfo.WriteProtectionStatus  != null;
 
-        MmcVisible = SaveGetConfigurationVisible || SaveRecognizedFormatLayersVisible ||
+        MmcVisible = SaveGetConfigurationVisible       ||
+                     SaveRecognizedFormatLayersVisible ||
                      SaveWriteProtectionStatusVisible;
 
         if(scsiInfo.DensitySupportHeader.HasValue)
@@ -362,8 +362,11 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -400,8 +403,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error,
-                                            Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
-                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            Localization.Core.GD_ROM_dump_support_is_not_yet_implemented, ButtonEnum.Ok,
+                                            Icon.Error).
+                      ShowWindowDialogAsync(_view);
 
                 return;
             case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
@@ -410,7 +414,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
                       GetMessageBoxStandard(UI.Title_Error,
                                             Localization.Core.
                                                          Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware,
-                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            ButtonEnum.Ok, Icon.Error).
+                      ShowWindowDialogAsync(_view);
 
                 return;
         }
@@ -432,8 +437,9 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.GDROM:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error,
-                                            Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
-                                            ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                            Localization.Core.GD_ROM_scan_support_is_not_yet_implemented, ButtonEnum.Ok,
+                                            Icon.Error).
+                      ShowWindowDialogAsync(_view);
 
                 return;
 
@@ -444,7 +450,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
                 await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                               Localization.Core.
                                                                            Scanning_Xbox_discs_is_not_yet_supported,
-                                                              ButtonEnum.Ok, Icon.Error).ShowWindowDialogAsync(_view);
+                                                              ButtonEnum.Ok, Icon.Error).
+                                        ShowWindowDialogAsync(_view);
 
                 return;
         }

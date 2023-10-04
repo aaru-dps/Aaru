@@ -270,8 +270,7 @@ static partial class ScsiMmc
             return;
         }
 
-        if(newLeadOutTrack.PMIN >= 0xA0 &&
-           !tocIsNotBcd)
+        if(newLeadOutTrack.PMIN >= 0xA0 && !tocIsNotBcd)
             newLeadOutTrack.PMIN -= 0x90;
 
         if(newLeadOutTrack.PMIN   != leadOutTrack.PMIN ||
@@ -342,47 +341,52 @@ static partial class ScsiMmc
         AaruConsole.WriteLine(Localization.LBA_0_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, dataResult,
                               dataBuffer is null
                                   ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(dataBuffer)
-                                      ? Localization.empty
-                                      : string.Format(Localization._0_bytes, dataBuffer.Length), dataSense is null
-                                  ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(dataSense)
-                                      ? Localization.empty
-                                      : $"{dataSense.Length}");
+                                  :
+                                  ArrayHelpers.ArrayIsNullOrEmpty(dataBuffer)
+                                      ?
+                                      Localization.empty
+                                      : string.Format(Localization._0_bytes, dataBuffer.Length),
+                              dataSense is null                          ? Localization._null :
+                              ArrayHelpers.ArrayIsNullOrEmpty(dataSense) ? Localization.empty : $"{dataSense.Length}");
 
         AaruConsole.WriteLine(Localization.LBA_0_scrambled_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5,
-                              scrambledResult, scrambledBuffer is null
-                                                   ? Localization._null
-                                                   : ArrayHelpers.ArrayIsNullOrEmpty(scrambledBuffer)
-                                                       ? Localization.empty
-                                                       : string.Format(Localization._0_bytes, scrambledBuffer.Length),
+                              scrambledResult,
+                              scrambledBuffer is null
+                                  ? Localization._null
+                                  :
+                                  ArrayHelpers.ArrayIsNullOrEmpty(scrambledBuffer)
+                                      ?
+                                      Localization.empty
+                                      : string.Format(Localization._0_bytes, scrambledBuffer.Length),
                               scrambledSense is null
                                   ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(scrambledSense)
-                                      ? Localization.empty
+                                  :
+                                  ArrayHelpers.ArrayIsNullOrEmpty(scrambledSense)
+                                      ?
+                                      Localization.empty
                                       : $"{scrambledSense.Length}");
 
         AaruConsole.WriteLine(Localization.LBA_0_PQ_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, pqResult,
                               pqBuffer is null
                                   ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(pqBuffer)
-                                      ? Localization.empty
-                                      : string.Format(Localization._0_bytes, pqBuffer.Length), pqSense is null
-                                  ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(pqSense)
-                                      ? Localization.empty
-                                      : $"{pqSense.Length}");
+                                  :
+                                  ArrayHelpers.ArrayIsNullOrEmpty(pqBuffer)
+                                      ?
+                                      Localization.empty
+                                      : string.Format(Localization._0_bytes, pqBuffer.Length),
+                              pqSense is null                          ? Localization._null :
+                              ArrayHelpers.ArrayIsNullOrEmpty(pqSense) ? Localization.empty : $"{pqSense.Length}");
 
         AaruConsole.WriteLine(Localization.LBA_0_RW_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, rwResult,
                               rwBuffer is null
                                   ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(rwBuffer)
-                                      ? Localization.empty
-                                      : string.Format(Localization._0_bytes, rwBuffer.Length), rwSense is null
-                                  ? Localization._null
-                                  : ArrayHelpers.ArrayIsNullOrEmpty(rwSense)
-                                      ? Localization.empty
-                                      : $"{rwSense.Length}");
+                                  :
+                                  ArrayHelpers.ArrayIsNullOrEmpty(rwBuffer)
+                                      ?
+                                      Localization.empty
+                                      : string.Format(Localization._0_bytes, rwBuffer.Length),
+                              rwSense is null                          ? Localization._null :
+                              ArrayHelpers.ArrayIsNullOrEmpty(rwSense) ? Localization.empty : $"{rwSense.Length}");
 
         AaruConsole.WriteLine();
         AaruConsole.WriteLine(Localization.Choose_what_to_do);

@@ -71,8 +71,7 @@ public sealed partial class OperaFS
         if(err != ErrorNumber.NoError)
             return err;
 
-        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
-           !_debug)
+        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory && !_debug)
             return ErrorNumber.IsDirectory;
 
         if(entry.Pointers.Length < 1)
@@ -109,8 +108,7 @@ public sealed partial class OperaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not OperaFileNode mynode)
@@ -204,7 +202,10 @@ public sealed partial class OperaFS
                              ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;

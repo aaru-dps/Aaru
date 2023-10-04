@@ -240,8 +240,7 @@ public sealed partial class Qed
 
         buffer = new byte[512];
 
-        if(offset != 0 &&
-           offset != 1)
+        if(offset != 0 && offset != 1)
         {
             if(!_clusterCache.TryGetValue(offset, out byte[] cluster))
             {

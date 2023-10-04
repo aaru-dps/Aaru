@@ -50,8 +50,7 @@ public sealed partial class SuperCardPro
         stream.EnsureRead(lenB, 0, 2);
         var len = BitConverter.ToUInt16(lenB, 0);
 
-        if(len                   == 0 ||
-           len + stream.Position >= stream.Length)
+        if(len == 0 || len + stream.Position >= stream.Length)
             return null;
 
         var str = new byte[len];
@@ -77,9 +76,10 @@ public sealed partial class SuperCardPro
         uint over = ticks / 255;
 
         if(over == 0)
-        {
-            return new[] { (byte)ticks };
-        }
+            return new[]
+            {
+                (byte)ticks
+            };
 
         var expanded = new byte[over + 1];
 

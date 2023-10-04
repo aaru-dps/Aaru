@@ -59,8 +59,7 @@ sealed class MhddLog
     internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private,
                      uint   mediaGraphDimensions = 0)
     {
-        if(dev == null ||
-           string.IsNullOrEmpty(outputFile))
+        if(dev == null || string.IsNullOrEmpty(outputFile))
             return;
 
         if(mediaGraphDimensions > 0)
@@ -117,10 +116,16 @@ sealed class MhddLog
         byte[] scanBlockSizeBytes = Encoding.ASCII.GetBytes(scanBlockSize);
         byte[] verBytes           = Encoding.ASCII.GetBytes(MHDD_VER);
 
-        var pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length            + snBytes.Length +
-                             sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
-                             verBytes.Length     + 2 * 9                  + // New lines
-                             4);                                            // Pointer
+        var pointer = (uint)(deviceBytes.Length        +
+                             modeBytes.Length          +
+                             fwBytes.Length            +
+                             snBytes.Length            +
+                             sectorsBytes.Length       +
+                             sectorSizeBytes.Length    +
+                             scanBlockSizeBytes.Length +
+                             verBytes.Length           +
+                             2 * 9                     + // New lines
+                             4);                         // Pointer
 
         var newLine = new byte[2];
         newLine[0] = 0x0D;

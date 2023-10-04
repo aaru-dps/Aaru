@@ -62,8 +62,7 @@ public sealed partial class PartClone
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.filesystem = {0}",
-                                   StringHandlers.CToString(_pHdr.filesystem));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.filesystem = {0}", StringHandlers.CToString(_pHdr.filesystem));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "pHdr.version = {0}", StringHandlers.CToString(_pHdr.version));
 

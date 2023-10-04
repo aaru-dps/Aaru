@@ -91,7 +91,10 @@ public sealed partial class Vhd
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".vhd" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".vhd"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

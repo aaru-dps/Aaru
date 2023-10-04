@@ -79,7 +79,8 @@ public static class Remote
                     HttpResponseMessage response = httpClient.
                                                    PostAsync("/api/uploadreportv2",
                                                              new StringContent(json, Encoding.UTF8,
-                                                                               "application/json")).GetAwaiter().
+                                                                               "application/json")).
+                                                   GetAwaiter().
                                                    GetResult();
 
                     if(!response.IsSuccessStatusCode)
@@ -121,8 +122,7 @@ public static class Remote
             mctx.Database.EnsureCreated();
 
             mctx.Database.
-                 ExecuteSqlRaw(
-                     "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in mctx.Database.GetPendingMigrations())
             {
@@ -198,7 +198,9 @@ public static class Remote
 
             if(create)
             {
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -214,7 +216,9 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, sync.UsbVendors.Count);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -232,7 +236,9 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, sync.UsbProducts.Count);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -252,7 +258,9 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, sync.Offsets.Count);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -273,7 +281,9 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, sync.Devices.Count);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -321,7 +331,9 @@ public static class Remote
                 long modifiedDevices    = 0;
                 long modifiedNesHeaders = 0;
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -352,7 +364,9 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors,    addedVendors);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_vendors, modifiedVendors);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -387,7 +401,9 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_products,    addedProducts);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_products, modifiedProducts);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -425,7 +441,9 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets,    addedOffsets);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_CompactDisc_read_offsets, modifiedOffsets);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {
@@ -469,7 +487,9 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_known_devices,    addedDevices);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_known_devices, modifiedDevices);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                AnsiConsole.Progress().
+                            AutoClear(true).
+                            HideCompleted(true).
                             Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                             Start(ctx =>
                             {

@@ -180,8 +180,7 @@ public partial class Device
                                                      ref command.buffer, out command.response, out double cmdDuration,
                                                      out bool cmdSense, timeout);
 
-            if(error       == 0 &&
-               singleError != 0)
+            if(error == 0 && singleError != 0)
                 error = singleError;
 
             duration += cmdDuration;

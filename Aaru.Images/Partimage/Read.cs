@@ -68,8 +68,7 @@ public sealed partial class Partimage
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CVolumeHeader.volumeNumber = {0}", _cVolumeHeader.volumeNumber);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CVolumeHeader.identificator = {0:X16}",
-                                   _cVolumeHeader.identificator);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CVolumeHeader.identificator = {0:X16}", _cVolumeHeader.identificator);
 
         // TODO: Support multifile volumes
         if(_cVolumeHeader.volumeNumber > 0)
@@ -110,28 +109,23 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.szUnameMachine = {0}",
                                    StringHandlers.CToString(_cMainHeader.szUnameMachine));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwCompression = {0} ({1})",
-                                   _cMainHeader.dwCompression, (uint)_cMainHeader.dwCompression);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwCompression = {0} ({1})", _cMainHeader.dwCompression,
+                                   (uint)_cMainHeader.dwCompression);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMainFlags = {0}", _cMainHeader.dwMainFlags);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_sec = {0}",
-                                   _cMainHeader.dateCreate.Second);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_sec = {0}", _cMainHeader.dateCreate.Second);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_min = {0}",
-                                   _cMainHeader.dateCreate.Minute);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_min = {0}", _cMainHeader.dateCreate.Minute);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_hour = {0}",
-                                   _cMainHeader.dateCreate.Hour);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_hour = {0}", _cMainHeader.dateCreate.Hour);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_mday = {0}",
                                    _cMainHeader.dateCreate.DayOfMonth);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_mon = {0}",
-                                   _cMainHeader.dateCreate.Month);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_mon = {0}", _cMainHeader.dateCreate.Month);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_year = {0}",
-                                   _cMainHeader.dateCreate.Year);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_year = {0}", _cMainHeader.dateCreate.Year);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_wday = {0}",
                                    _cMainHeader.dateCreate.DayOfWeek);
@@ -139,8 +133,7 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_yday = {0}",
                                    _cMainHeader.dateCreate.DayOfYear);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_isdst = {0}",
-                                   _cMainHeader.dateCreate.IsDst);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_isdst = {0}", _cMainHeader.dateCreate.IsDst);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dateCreate.tm_gmtoffsec = {0}",
                                    _cMainHeader.dateCreate.GmtOff);
@@ -165,8 +158,8 @@ public sealed partial class Partimage
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMbrCount = {0}", _cMainHeader.dwMbrCount);
         AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwMbrSize = {0}",  _cMainHeader.dwMbrSize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwEncryptAlgo = {0} ({1})",
-                                   _cMainHeader.dwEncryptAlgo, (uint)_cMainHeader.dwEncryptAlgo);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CMainHeader.dwEncryptAlgo = {0} ({1})", _cMainHeader.dwEncryptAlgo,
+                                   (uint)_cMainHeader.dwEncryptAlgo);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ArrayIsNullOrEmpty(CMainHeader.cHashTestKey) = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_cMainHeader.cHashTestKey));
@@ -258,8 +251,7 @@ public sealed partial class Partimage
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBitmapSize = {0}", localHeader.qwBitmapSize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBadBlocksCount = {0}",
-                                   localHeader.qwBadBlocksCount);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.qwBadBlocksCount = {0}", localHeader.qwBadBlocksCount);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "CLocalHeader.szLabel = {0}",
                                    StringHandlers.CToString(localHeader.szLabel));

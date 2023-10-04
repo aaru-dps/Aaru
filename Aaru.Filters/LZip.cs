@@ -82,8 +82,11 @@ public sealed class LZip : IFilter
     public bool HasResourceFork => false;
 
     /// <inheritdoc />
-    public bool Identify(byte[] buffer) => buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 &&
-                                           buffer[3] == 0x50 && buffer[4] == 0x01;
+    public bool Identify(byte[] buffer) => buffer[0] == 0x4C &&
+                                           buffer[1] == 0x5A &&
+                                           buffer[2] == 0x49 &&
+                                           buffer[3] == 0x50 &&
+                                           buffer[4] == 0x01;
 
     /// <inheritdoc />
     public bool Identify(Stream stream)

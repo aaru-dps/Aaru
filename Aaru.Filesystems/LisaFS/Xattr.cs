@@ -83,8 +83,7 @@ public sealed partial class LisaFS
         // System files
         if(fileId < 4)
         {
-            if(!_debug ||
-               fileId == 0)
+            if(!_debug || fileId == 0)
                 return ErrorNumber.InvalidArgument;
 
             xattrs = new List<string>();
@@ -146,8 +145,7 @@ public sealed partial class LisaFS
         // System files
         if(fileId < 4)
         {
-            if(!_debug ||
-               fileId == 0)
+            if(!_debug || fileId == 0)
                 return ErrorNumber.InvalidArgument;
 
             // Only MDDF contains an extended attributes
@@ -187,8 +185,7 @@ public sealed partial class LisaFS
                 return ErrorNumber.NoError;
         }
 
-        if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) &&
-           xattr == "com.apple.lisa.label")
+        if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) && xattr == "com.apple.lisa.label")
         {
             buf = new byte[128];
             Array.Copy(file.LisaInfo, 0, buf, 0, 128);

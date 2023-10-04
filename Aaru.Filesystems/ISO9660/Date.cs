@@ -36,10 +36,9 @@ public sealed partial class ISO9660
 {
     static DateTime? DecodeIsoDateTime(byte[] timestamp) => timestamp?.Length switch
                                                             {
-                                                                7 => DecodeIsoDateTime(
-                                                                    Marshal.
-                                                                        ByteArrayToStructureLittleEndian<IsoTimestamp>(
-                                                                            timestamp)),
+                                                                7 => DecodeIsoDateTime(Marshal.
+                                                                    ByteArrayToStructureLittleEndian<
+                                                                        IsoTimestamp>(timestamp)),
                                                                 17 => DateHandlers.Iso9660ToDateTime(timestamp),
                                                                 _  => null
                                                             };

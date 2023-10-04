@@ -124,10 +124,12 @@ public sealed partial class HAMMER
         if(superBlock.vol_no == superBlock.vol_rootvol)
         {
             sb.AppendFormat(Localization.Filesystem_contains_0_big_blocks_1_bytes, superBlock.vol0_stat_bigblocks,
-                            superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                            superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).
+               AppendLine();
 
             sb.AppendFormat(Localization.Filesystem_has_0_big_blocks_free_1_bytes, superBlock.vol0_stat_freebigblocks,
-                            superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                            superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).
+               AppendLine();
 
             sb.AppendFormat(Localization.Filesystem_has_0_inodes_used, superBlock.vol0_stat_inodes).AppendLine();
 

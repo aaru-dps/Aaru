@@ -90,7 +90,8 @@ public sealed partial class XboxFatPlugin
         sb.AppendLine(Localization.FATX_filesystem);
 
         sb.AppendFormat(Localization._0_logical_sectors_1_bytes_per_physical_sector, logicalSectorsPerPhysicalSectors,
-                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
+                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_sectors_1_bytes_per_cluster, fatxSb.sectorsPerCluster,
                         fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
@@ -109,7 +110,8 @@ public sealed partial class XboxFatPlugin
         metadata = new FileSystem
         {
             Type = FS_TYPE,
-            ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+            ClusterSize = (uint)(fatxSb.sectorsPerCluster         *
+                                 logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,
             VolumeSerial = $"{fatxSb.id:X8}"

@@ -66,8 +66,7 @@ public sealed partial class Nero
         AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.ChunkID = 0x{0:X8}",     footerV2.ChunkId);
         AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-        if(footerV2.ChunkId          == NERO_FOOTER_V2 &&
-           footerV2.FirstChunkOffset < (ulong)_imageStream.Length)
+        if(footerV2.ChunkId == NERO_FOOTER_V2 && footerV2.FirstChunkOffset < (ulong)_imageStream.Length)
             return true;
 
         return footerV1.ChunkId == NERO_FOOTER_V1 && footerV1.FirstChunkOffset < (ulong)_imageStream.Length;

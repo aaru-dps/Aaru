@@ -430,9 +430,7 @@ public sealed class ErrorLog
             _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_operating_system_error_1, block, errno);
             _logSw.Flush();
 
-            if(senseBuffer is null     ||
-               senseBuffer.Length == 0 ||
-               senseBuffer.All(s => s == 0))
+            if(senseBuffer is null || senseBuffer.Length == 0 || senseBuffer.All(s => s == 0))
                 return;
         }
 
@@ -517,22 +515,16 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine(
-                byteAddressed
-                    ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1
-                    : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
-                block, errno);
+            _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
+                             block, errno);
 
             _logSw.Flush();
 
             return;
         }
 
-        _logSw.WriteLine(
-            byteAddressed
-                ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1
-                : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
-            block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
+        _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
+                         block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         throw new NotImplementedException();
     }

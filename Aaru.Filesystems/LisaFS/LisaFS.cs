@@ -72,15 +72,21 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()
     {
-        { "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)" },
-        { "office", "Filenames as shown by the Lisa Office System (not yet implemented)" }
+        {
+            "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"
+        },
+        {
+            "office", "Filenames as shown by the Lisa Office System (not yet implemented)"
+        }
     };
 
 #endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        { "debug", false.ToString() }
+        {
+            "debug", false.ToString()
+        }
     };
 
 #region Caches

@@ -84,10 +84,9 @@ public sealed partial class Anex86
         MediaType.ACORN_35_DS_DD, MediaType.DOS_35_DS_DD_8, MediaType.DOS_35_DS_DD_9, MediaType.ACORN_35_DS_HD,
         MediaType.DOS_525_HD, MediaType.ACORN_525_DS_DD, MediaType.DOS_35_HD, MediaType.XDF_525, MediaType.DMF,
         MediaType.XDF_35, MediaType.DOS_35_ED, MediaType.FDFORMAT_35_DD, MediaType.FDFORMAT_525_HD,
-        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD,
-        MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI,
-        MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I,
-        MediaType.MetaFloppy_Mod_II
+        MediaType.FDFORMAT_35_HD, MediaType.NEC_35_TD, MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive,
+        MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII,
+        MediaType.PCCardTypeIII, MediaType.PCCardTypeIV, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
 
     /// <inheritdoc />
@@ -95,7 +94,10 @@ public sealed partial class Anex86
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".fdi", ".hdi" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".fdi", ".hdi"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

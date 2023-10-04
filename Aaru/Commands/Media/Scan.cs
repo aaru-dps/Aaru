@@ -52,13 +52,20 @@ sealed class MediaScanCommand : Command
 
     public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
-        Add(new Option<string>(new[] { "--mhdd-log", "-m" }, () => null,
-                               UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
+        Add(new Option<string>(new[]
+        {
+            "--mhdd-log", "-m"
+        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
-        Add(new Option<string>(new[] { "--ibg-log", "-b" }, () => null,
-                               UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
+        Add(new Option<string>(new[]
+        {
+            "--ibg-log", "-b"
+        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
-        Add(new Option<bool>(new[] { "--use-buffered-reads" }, () => true, UI.OS_buffered_reads_help));
+        Add(new Option<bool>(new[]
+        {
+            "--use-buffered-reads"
+        }, () => true, UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {
@@ -111,10 +118,7 @@ sealed class MediaScanCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--use-buffered-reads={0}", useBufferedReads);
 
-        if(devicePath.Length == 2   &&
-           devicePath[1]     == ':' &&
-           devicePath[0]     != '/' &&
-           char.IsLetter(devicePath[0]))
+        if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
         Devices.Device dev      = null;
@@ -152,16 +156,18 @@ sealed class MediaScanCommand : Command
         var         scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
         ScanResults results = new();
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
+        AnsiConsole.Progress().
+                    AutoClear(true).
+                    HideCompleted(true).
+                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
+                    Start(ctx =>
                     {
                         scanner.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
                         scanner.StoppingErrorMessage += text =>
-                        {
-                            AaruConsole.
-                                ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                        };
+                            {
+                                AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                            };
 
                         scanner.UpdateProgress += (text, current, maximum) =>
                         {
@@ -174,10 +180,7 @@ sealed class MediaScanCommand : Command
                         scanner.PulseProgress += text =>
                         {
                             if(_progressTask1 is null)
-                            {
-                                ctx.AddTask(Markup.Escape(text)).
-                                    IsIndeterminate();
-                            }
+                                ctx.AddTask(Markup.Escape(text)).IsIndeterminate();
                             else
                             {
                                 _progressTask1.Description     = Markup.Escape(text);
@@ -245,9 +248,7 @@ sealed class MediaScanCommand : Command
 
         AaruConsole.WriteLine();
 
-        if(results.SeekTotal > 0               ||
-           results.SeekMin   < double.MaxValue ||
-           results.SeekMax   > double.MinValue)
+        if(results.SeekTotal > 0 || results.SeekMin < double.MaxValue || results.SeekMax > double.MinValue)
 
         {
             AaruConsole.

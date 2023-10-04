@@ -88,8 +88,7 @@ public abstract class FsExtractIssueTest
 
                     var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
-                    Assert.IsNotNull(fs,
-                                     string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
+                    Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
                     filesystemFound = true;
 
@@ -136,8 +135,7 @@ public abstract class FsExtractIssueTest
         Assert.AreEqual(ErrorNumber.NoError, error,
                         string.Format(Localization.Error_0_reading_root_directory, error.ToString()));
 
-        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-              entry is not null)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 

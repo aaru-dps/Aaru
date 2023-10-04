@@ -150,24 +150,26 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer        == null ||
-           buffer.Length < 128)
+        if(buffer == null || buffer.Length < 128)
             return false;
 
         var hdrB = new byte[128];
         Array.Copy(buffer, 0, hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+        return _header.magic == MAGIC ||
+               _header.version     == 0             &&
+               _header.filename[0] > 0              &&
+               _header.filename[0] < 64             &&
+               _header.zero1       == 0             &&
+               _header is { zero2: 0, reserved: 0 } &&
                (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        if(stream        == null ||
-           stream.Length < 128)
+        if(stream == null || stream.Length < 128)
             return false;
 
         var hdrB = new byte[128];
@@ -175,8 +177,12 @@ public sealed class MacBinary : IFilter
         stream.EnsureRead(hdrB, 0, 128);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+        return _header.magic == MAGIC ||
+               _header.version     == 0             &&
+               _header.filename[0] > 0              &&
+               _header.filename[0] < 64             &&
+               _header.zero1       == 0             &&
+               _header is { zero2: 0, reserved: 0 } &&
                (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 
@@ -197,8 +203,12 @@ public sealed class MacBinary : IFilter
 
         fstream.Close();
 
-        return _header.magic == MAGIC || _header.version == 0 && _header.filename[0] > 0 && _header.filename[0] < 64 &&
-               _header.zero1                             == 0 && _header is { zero2: 0, reserved: 0 } &&
+        return _header.magic == MAGIC ||
+               _header.version     == 0             &&
+               _header.filename[0] > 0              &&
+               _header.filename[0] < 64             &&
+               _header.zero1       == 0             &&
+               _header is { zero2: 0, reserved: 0 } &&
                (_header.dataLength > 0 || _header.resourceLength > 0);
     }
 

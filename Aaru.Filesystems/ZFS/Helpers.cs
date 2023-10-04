@@ -76,8 +76,7 @@ public sealed partial class ZFS
     {
         decodedNvList = new Dictionary<string, NVS_Item>();
 
-        if(nvlist        == null ||
-           nvlist.Length < 16)
+        if(nvlist == null || nvlist.Length < 16)
             return false;
 
         if(!xdr)
@@ -593,7 +592,8 @@ public sealed partial class ZFS
                     else
                     {
                         sb.AppendFormat(Localization._0_equals_1_elements_nvlist_array_unable_to_print, item.name,
-                                        item.elements).AppendLine();
+                                        item.elements).
+                           AppendLine();
                     }
 
                     break;

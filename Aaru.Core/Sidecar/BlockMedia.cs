@@ -90,8 +90,7 @@ public sealed partial class Sidecar
             }
         };
 
-        if(image.Info.MediaSequence     != 0 &&
-           image.Info.LastMediaSequence != 0)
+        if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
             sidecar.BlockMedias[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
             sidecar.BlockMedias[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
@@ -570,7 +569,7 @@ public sealed partial class Sidecar
                 List<TapeFile> filesInPartition = new();
 
                 foreach(CommonTypes.Structs.TapeFile tapeFile in
-                        tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
+                    tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
                 {
                     var thisFile = new TapeFile
                     {
@@ -827,8 +826,7 @@ public sealed partial class Sidecar
 
         UpdateStatus(Localization.Core.Saving_metadata);
 
-        if(image.Info.Cylinders > 0 &&
-           image.Info is { Heads: > 0, SectorsPerTrack: > 0 })
+        if(image.Info.Cylinders > 0 && image.Info is { Heads: > 0, SectorsPerTrack: > 0 })
         {
             sidecar.BlockMedias[0].Cylinders       = image.Info.Cylinders;
             sidecar.BlockMedias[0].Heads           = (ushort)image.Info.Heads;
@@ -1005,8 +1003,7 @@ public sealed partial class Sidecar
             var scpFilter = new ZZZNoFilter();
             scpFilter.Open(scpFilePath);
 
-            if(image.Info.Heads <= 2 &&
-               scpImage.Identify(scpFilter))
+            if(image.Info.Heads <= 2 && scpImage.Identify(scpFilter))
             {
                 try
                 {
@@ -1053,8 +1050,10 @@ public sealed partial class Sidecar
                             if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                             {
                                 var trackContents =
-                                    new byte[scpTrack.Entries.Last().dataOffset + scpTrack.Entries.Last().trackLength -
-                                             scpImage.Header.offsets[t] + 1];
+                                    new byte[scpTrack.Entries.Last().dataOffset +
+                                             scpTrack.Entries.Last().trackLength -
+                                             scpImage.Header.offsets[t] +
+                                             1];
 
                                 scpStream.Position = scpImage.Header.offsets[t];
                                 scpStream.EnsureRead(trackContents, 0, trackContents.Length);
@@ -1066,14 +1065,14 @@ public sealed partial class Sidecar
                         }
 
                         sidecar.BlockMedias[0].Track = scpBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                          ThenBy(t => t.Head).ToList();
+                                                                          ThenBy(t => t.Head).
+                                                                          ToList();
                     }
                     else
                     {
                         AaruConsole.
-                            ErrorWriteLine(
-                                Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                scpImage.Header.end + 1, image.Info.Cylinders);
+                            ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                           scpImage.Header.end + 1, image.Info.Cylinders);
                     }
                 }
                 else
@@ -1121,8 +1120,7 @@ public sealed partial class Sidecar
             var kfFilter = new ZZZNoFilter();
             kfFilter.Open(kfFile);
 
-            if(image.Info.Heads <= 2 &&
-               kfImage.Identify(kfFilter))
+            if(image.Info.Heads <= 2 && kfImage.Identify(kfFilter))
             {
                 try
                 {
@@ -1180,22 +1178,21 @@ public sealed partial class Sidecar
                         }
 
                         sidecar.BlockMedias[0].Track = kfBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                         ThenBy(t => t.Head).ToList();
+                                                                         ThenBy(t => t.Head).
+                                                                         ToList();
                     }
                     else
                     {
                         AaruConsole.
-                            ErrorWriteLine(
-                                Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                kfImage.Info.Cylinders, image.Info.Cylinders);
+                            ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                           kfImage.Info.Cylinders, image.Info.Cylinders);
                     }
                 }
                 else
                 {
                     AaruConsole.
-                        ErrorWriteLine(
-                            Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
-                            kfImage.Info.Heads, image.Info.Heads);
+                        ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                       kfImage.Info.Heads, image.Info.Heads);
                 }
             }
         }

@@ -59,8 +59,7 @@ public sealed partial class TeleDisk
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
 
-        if(_header.Signature != TD_MAGIC &&
-           _header.Signature != TD_ADV_COMP_MAGIC)
+        if(_header.Signature != TD_MAGIC && _header.Signature != TD_ADV_COMP_MAGIC)
             return ErrorNumber.InvalidArgument;
 
         _header.Sequence      = headerBytes[2];
@@ -92,8 +91,7 @@ public sealed partial class TeleDisk
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}",         _header.Sides);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}",           _header.Crc);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4,
-                                   calculatedHeaderCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4, calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.
         // This may deny legal images
@@ -103,8 +101,7 @@ public sealed partial class TeleDisk
         {
             _aDiskCrcHasFailed = true;
 
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.Calculated_CRC_does_not_coincide_with_stored_one);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_CRC_does_not_coincide_with_stored_one);
         }
 
         if(_header.Sequence != 0x00)
@@ -216,8 +213,7 @@ public sealed partial class TeleDisk
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_created_on_0, _imageInfo.CreationTime);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_modified_on_0,
-                                   _imageInfo.LastModificationTime);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_modified_on_0, _imageInfo.LastModificationTime);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Parsing_image);
 
@@ -289,8 +285,7 @@ public sealed partial class TeleDisk
         totalCylinders++;
         totalHeads++;
 
-        if(totalCylinders <= 0 ||
-           totalHeads     <= 0)
+        if(totalCylinders <= 0 || totalHeads <= 0)
         {
             AaruConsole.ErrorWriteLine(Localization.No_cylinders_or_heads_found);
 
@@ -400,8 +395,7 @@ public sealed partial class TeleDisk
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_cylinder_0, teleDiskTrack.Cylinder);
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_head_0,     teleDiskTrack.Head);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Sectors_in_track_0,
-                                       teleDiskTrack.Sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Sectors_in_track_0, teleDiskTrack.Sectors);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_header_CRC_0_X2_calculated_1_X2,
                                        teleDiskTrack.Crc, tdTrackCalculatedCrc);
@@ -412,8 +406,8 @@ public sealed partial class TeleDisk
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.End_of_disk_image_arrived);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Total_of_0_data_sectors_for_1_bytes,
-                                           totalSectors, _totalDiskSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Total_of_0_data_sectors_for_1_bytes, totalSectors,
+                                           _totalDiskSize);
 
                 break;
             }
@@ -437,17 +431,14 @@ public sealed partial class TeleDisk
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.AddressMark_cylinder_0,
                                            teleDiskSector.Cylinder);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.AddressMark_head_0,
-                                           teleDiskSector.Head);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.AddressMark_head_0, teleDiskSector.Head);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.AddressMark_sector_number_0,
                                            teleDiskSector.SectorNumber);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Sector_size_0,
-                                           teleDiskSector.SectorSize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Sector_size_0, teleDiskSector.SectorSize);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Sector_flags_0_X2,
-                                           teleDiskSector.Flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Sector_flags_0_X2, teleDiskSector.Flags);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Sector_CRC_plus_headers_0_X2,
                                            teleDiskSector.Crc);
@@ -505,9 +496,11 @@ public sealed partial class TeleDisk
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) == FLAGS_SECTOR_DUPLICATE
-                                                   ? "\t\t" + Localization.
+                                                   ? "\t\t" +
+                                                     Localization.
                                                          Sector_0_on_cylinder_1_head_2_is_duplicate_and_marked_so
-                                                   : "\t\t" + Localization.
+                                                   : "\t\t" +
+                                                     Localization.
                                                          Sector_0_on_cylinder_1_head_2_is_duplicate_but_is_not_marked_so,
                                                teleDiskSector.SectorNumber, teleDiskSector.Cylinder,
                                                teleDiskSector.Head);

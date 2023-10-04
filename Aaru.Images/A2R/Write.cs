@@ -85,9 +85,8 @@ public sealed partial class A2R
         _writingStream.WriteByte(IsCaptureTypeTiming(dataResolution, dataBuffer) ? (byte)1 : (byte)3);
 
         _writingStream.
-            Write(
-                BitConverter.GetBytes((ushort)HeadTrackSubToA2rLocation(head, track, subTrack, _infoChunkV3.driveType)),
-                0, 2);
+            Write(BitConverter.GetBytes((ushort)HeadTrackSubToA2rLocation(head, track, subTrack, _infoChunkV3.driveType)),
+                  0, 2);
 
         List<uint> a2rIndices = FluxRepresentationsToUInt32List(indexBuffer);
 
@@ -268,7 +267,10 @@ public sealed partial class A2R
         _writingStream.WriteByte(1);
         _writingStream.Write(BitConverter.GetBytes(_currentResolution), 0, 4);
 
-        byte[] reserved = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        byte[] reserved =
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        };
 
         _writingStream.Write(reserved, 0, 11);
 
@@ -316,7 +318,8 @@ public sealed partial class A2R
         _writingStream.Write(_metaChunkSignature, 0, 4);
 
         byte[] metaString = Encoding.UTF8.GetBytes(Meta.Select(static m => $"{m.Key}\t{m.Value}").
-                                                        Aggregate(static (concat, str) => $"{concat}\n{str}") + '\n');
+                                                        Aggregate(static (concat, str) => $"{concat}\n{str}") +
+                                                   '\n');
 
         _writingStream.Write(BitConverter.GetBytes((uint)metaString.Length), 0, 4);
         _writingStream.Write(metaString,                                     0, metaString.Length);

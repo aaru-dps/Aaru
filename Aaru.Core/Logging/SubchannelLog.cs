@@ -188,8 +188,7 @@ public class SubchannelLog
 
             for(var i = 0; i < 12; i++)
             {
-                if(p[i] == 0 ||
-                   p[i] == 0xFF)
+                if(p[i] == 0 || p[i] == 0xFF)
                     continue;
 
                 corruptedPause = true;

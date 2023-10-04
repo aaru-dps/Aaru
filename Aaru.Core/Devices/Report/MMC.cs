@@ -602,13 +602,13 @@ public sealed partial class DeviceReport
             sense = _dev.ReadCapacity(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             mediaTest.SupportsReadCapacity = true;
 
             mediaTest.Blocks = ((ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) &
-                                0xFFFFFFFF) + 1;
+                                0xFFFFFFFF) +
+                               1;
 
             mediaTest.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
         }
@@ -619,8 +619,7 @@ public sealed partial class DeviceReport
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             mediaTest.SupportsReadCapacity16 = true;
             var temp = new byte[8];
@@ -640,8 +639,7 @@ public sealed partial class DeviceReport
                                      0x00, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode = Modes.DecodeMode10(buffer, _dev.ScsiType);
 
@@ -654,8 +652,7 @@ public sealed partial class DeviceReport
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
@@ -906,8 +903,7 @@ public sealed partial class DeviceReport
                 break;
         }
 
-        if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) &&
-           mediaType != "BD-ROM")
+        if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) && mediaType != "BD-ROM")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -984,8 +980,7 @@ public sealed partial class DeviceReport
             mediaTest.EmbossedPfiData = buffer;
         }
 
-        if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) ||
-           mediaType == "DVD+MRW")
+        if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) || mediaType == "DVD+MRW")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -1295,8 +1290,7 @@ public sealed partial class DeviceReport
                 mediaTest.ReadCdMsfFullData = buffer;
             }
 
-            if(mediaTest.SupportsReadCdRaw == true ||
-               mediaType                   == "Audio CD")
+            if(mediaTest.SupportsReadCdRaw == true || mediaType == "Audio CD")
             {
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
@@ -1339,7 +1333,10 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask(Localization.Core.Trying_to_read_CD_Lead_In).IsIndeterminate();
 
-                    foreach(int i in new[] { -5000, -4000, -3000, -2000, -1000, -500, -250 })
+                    foreach(int i in new[]
+                        {
+                            -5000, -4000, -3000, -2000, -1000, -500, -250
+                        })
                     {
                         if(mediaType == "Audio CD")
                         {
@@ -1960,14 +1957,12 @@ public sealed partial class DeviceReport
             }
         }
 
-        if(mediaTest.SupportsReadLong == true &&
-           mediaTest.LongBlockSize    == mediaTest.BlockSize)
+        if(mediaTest.SupportsReadLong == true && mediaTest.LongBlockSize == mediaTest.BlockSize)
         {
             // DVDs
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 16, 37856, _dev.Timeout, out _);
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 mediaTest.ReadLong10Data   = buffer;
                 mediaTest.SupportsReadLong = true;
@@ -2024,8 +2019,7 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask(Localization.Core.Trying_MediaTek_READ_DRAM_command).IsIndeterminate();
 
-                if(mediaType                == "Audio CD" &&
-                   mediaTest.SupportsReadCd == true)
+                if(mediaType == "Audio CD" && mediaTest.SupportsReadCd == true)
                 {
                     _dev.ReadCd(out _, out _, 0, 2352, 1, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None,
                                 true, false, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
@@ -2092,8 +2086,7 @@ public sealed partial class DeviceReport
                 if(!(mediaTest.Blocks > 0))
                     return;
 
-                if(mediaType                == "Audio CD" &&
-                   mediaTest.SupportsReadCd == true)
+                if(mediaType == "Audio CD" && mediaTest.SupportsReadCd == true)
                 {
                     _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.Cdda, false, false,
                                 false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
@@ -2207,8 +2200,7 @@ public sealed partial class DeviceReport
                     FullTOC.TrackDataDescriptor secondSessionFirstTrack =
                         decodedToc.TrackDescriptors.FirstOrDefault(t => t is { SessionNumber: > 1, POINT: <= 99 });
 
-                    if(firstSessionLeadOutTrack.SessionNumber == 0 ||
-                       secondSessionFirstTrack.SessionNumber  == 0)
+                    if(firstSessionLeadOutTrack.SessionNumber == 0 || secondSessionFirstTrack.SessionNumber == 0)
                     {
                         AaruConsole.ErrorWriteLine(Localization.Core.
                                                                 Could_not_find_second_session_Have_you_inserted_the_correct_type_of_disc);
@@ -2228,12 +2220,14 @@ public sealed partial class DeviceReport
                     // Skip Lead-Out pre-gap
                     var firstSessionLeadOutLba = (uint)(firstSessionLeadOutTrack.PMIN * 60 * 75 +
                                                         firstSessionLeadOutTrack.PSEC * 75      +
-                                                        firstSessionLeadOutTrack.PFRAME         + 150);
+                                                        firstSessionLeadOutTrack.PFRAME         +
+                                                        150);
 
                     // Skip second session track pre-gap
                     var secondSessionLeadInLba = (uint)(secondSessionFirstTrack.PMIN * 60 * 75 +
                                                         secondSessionFirstTrack.PSEC * 75      +
-                                                        secondSessionFirstTrack.PFRAME - 300);
+                                                        secondSessionFirstTrack.PFRAME -
+                                                        300);
 
                     Spectre.ProgressSingleSpinner(ctx =>
                     {

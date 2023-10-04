@@ -32,9 +32,6 @@ namespace Aaru.Tests;
 
 static class Consts
 {
-    public static string TestFilesRoot = OperatingSystem.IsWindows()
-                                             ? "D:/AaruTests"
-                                             : OperatingSystem.IsMacOS()
-                                                 ? "/Volumes/AaruTests"
-                                                 : "/mnt/AaruTests";
+    public static string TestFilesRoot = OperatingSystem.IsWindows() ? "D:/AaruTests" :
+                                         OperatingSystem.IsMacOS()   ? "/Volumes/AaruTests" : "/mnt/AaruTests";
 }

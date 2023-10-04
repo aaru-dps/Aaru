@@ -191,9 +191,7 @@ public sealed partial class CPM
                     var  sig3 = BitConverter.ToUInt32(sector, 0x7C);
 
                     // PCW16 extended boot record
-                    if(sig1 == 0x4D2F5043 &&
-                       sig2 == 0x004B5344 &&
-                       sig3 == sig1)
+                    if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1)
                         amsSbOffset = 0x80;
 
                     // Read the superblock
@@ -211,8 +209,7 @@ public sealed partial class CPM
                         sectorSize = (ulong)(128 << amsSb.psh);
 
                         // Compare device limits from superblock to real limits
-                        if(sectorSize  == imagePlugin.Info.SectorSize &&
-                           sectorCount == imagePlugin.Info.Sectors)
+                        if(sectorSize == imagePlugin.Info.SectorSize && sectorCount == imagePlugin.Info.Sectors)
                         {
                             _cpmFound            = true;
                             firstDirectorySector = (ulong)(amsSb.off * amsSb.spt);
@@ -431,11 +428,9 @@ public sealed partial class CPM
                     byte formatByte;
 
                     // Check for alternate location of format ID
-                    if(sector.Last() == 0x00 ||
-                       sector.Last() == 0xFF)
+                    if(sector.Last() == 0x00 || sector.Last() == 0xFF)
                     {
-                        if(sector[0x40] == 0x94 ||
-                           sector[0x40] == 0x26)
+                        if(sector[0x40] == 0x94 || sector[0x40] == 0x26)
                             formatByte = sector[0x40];
                         else
                             formatByte = sector.Last();
@@ -920,14 +915,12 @@ public sealed partial class CPM
                 // Load all definitions
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Trying_to_load_definitions);
 
-                if(LoadDefinitions() &&
-                   _definitions?.definitions is { Count: > 0 })
+                if(LoadDefinitions() && _definitions?.definitions is { Count: > 0 })
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Trying_all_known_definitions);
 
                     foreach(CpmDefinition def in from def in _definitions.definitions
-                                                 let sectors =
-                                                     (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
+                                                 let sectors = (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
                                                  where sectors            == imagePlugin.Info.Sectors &&
                                                        def.bytesPerSector == imagePlugin.Info.SectorSize
                                                  select def)
@@ -970,7 +963,8 @@ public sealed partial class CPM
 
                             // Head changes after whole side
                             else if(string.Compare(def.order, "CYLINDERS",
-                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                                                   StringComparison.InvariantCultureIgnoreCase) ==
+                                    0)
                             {
                                 for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                     _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
@@ -979,14 +973,17 @@ public sealed partial class CPM
                                 for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                 {
                                     _sectorMask[m + def.side1.sectorIds.Length] =
-                                        def.side1.sectorIds[m] - def.side1.sectorIds[0] + def.side1.sectorIds.Length +
+                                        def.side1.sectorIds[m] -
+                                        def.side1.sectorIds[0]     +
+                                        def.side1.sectorIds.Length +
                                         def.side2.sectorIds.Length;
                                 }
                             }
 
                             // TODO: Implement COLUMBIA ordering
                             else if(string.Compare(def.order, "COLUMBIA",
-                                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                                                   StringComparison.InvariantCultureIgnoreCase) ==
+                                    0)
                             {
                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                            Localization.
@@ -1023,11 +1020,8 @@ public sealed partial class CPM
                         {
                             errno =
                                 imagePlugin.
-                                    ReadSector(
-                                        (ulong)((int)offset                                 + (int)partition.Start +
-                                                p / _sectorMask.Length * _sectorMask.Length +
-                                                _sectorMask[p % _sectorMask.Length]),
-                                        out byte[] dirSector);
+                                    ReadSector((ulong)((int)offset + (int)partition.Start + p / _sectorMask.Length * _sectorMask.Length + _sectorMask[p % _sectorMask.Length]),
+                                               out byte[] dirSector);
 
                             if(errno != ErrorNumber.NoError)
                                 break;
@@ -1163,10 +1157,7 @@ public sealed partial class CPM
         metadata    = new FileSystem();
 
         // As the identification is so complex, just call Identify() and relay on its findings
-        if(!Identify(imagePlugin, partition) ||
-           !_cpmFound                        ||
-           _workingDefinition == null        ||
-           _dpb               == null)
+        if(!Identify(imagePlugin, partition) || !_cpmFound || _workingDefinition == null || _dpb == null)
             return;
 
         var sb = new StringBuilder();

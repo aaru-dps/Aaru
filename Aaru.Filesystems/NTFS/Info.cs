@@ -120,7 +120,8 @@ public sealed partial class NTFS
         if(ntfsBb.mft_rc_clusters > 0)
         {
             sb.AppendFormat(Localization._0_clusters_per_MFT_record_1_bytes, ntfsBb.mft_rc_clusters,
-                            ntfsBb.mft_rc_clusters * ntfsBb.bps * ntfsBb.spc).AppendLine();
+                            ntfsBb.mft_rc_clusters * ntfsBb.bps * ntfsBb.spc).
+               AppendLine();
         }
         else
             sb.AppendFormat(Localization._0_bytes_per_MFT_record, 1 << -ntfsBb.mft_rc_clusters).AppendLine();
@@ -128,7 +129,8 @@ public sealed partial class NTFS
         if(ntfsBb.index_blk_cts > 0)
         {
             sb.AppendFormat(Localization._0_clusters_per_Index_block_1_bytes, ntfsBb.index_blk_cts,
-                            ntfsBb.index_blk_cts * ntfsBb.bps * ntfsBb.spc).AppendLine();
+                            ntfsBb.index_blk_cts * ntfsBb.bps * ntfsBb.spc).
+               AppendLine();
         }
         else
             sb.AppendFormat(Localization._0_bytes_per_Index_block, 1 << -ntfsBb.index_blk_cts).AppendLine();
@@ -139,10 +141,7 @@ public sealed partial class NTFS
 
         metadata = new FileSystem();
 
-        if(ntfsBb.jump[0]    == 0xEB &&
-           ntfsBb.jump[1]    > 0x4E  &&
-           ntfsBb.jump[1]    < 0x80  &&
-           ntfsBb.signature2 == 0xAA55)
+        if(ntfsBb.jump[0] == 0xEB && ntfsBb.jump[1] > 0x4E && ntfsBb.jump[1] < 0x80 && ntfsBb.signature2 == 0xAA55)
         {
             metadata.Bootable = true;
             string bootChk = Sha1Context.Data(ntfsBb.boot_code, out _);

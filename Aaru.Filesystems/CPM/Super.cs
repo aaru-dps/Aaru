@@ -61,10 +61,7 @@ public sealed partial class CPM
         _encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
         // As the identification is so complex, just call Identify() and relay on its findings
-        if(!Identify(_device, partition) ||
-           !_cpmFound                    ||
-           _workingDefinition == null    ||
-           _dpb               == null)
+        if(!Identify(_device, partition) || !_cpmFound || _workingDefinition == null || _dpb == null)
             return ErrorNumber.InvalidArgument;
 
         // Build the software interleaving sector mask
@@ -90,14 +87,16 @@ public sealed partial class CPM
                 for(var m = 0; m < _workingDefinition.side2.sectorIds.Length; m++)
                 {
                     _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                        _workingDefinition.side2.sectorIds[m] - _workingDefinition.side2.sectorIds[0] +
+                        _workingDefinition.side2.sectorIds[m] -
+                        _workingDefinition.side2.sectorIds[0] +
                         _workingDefinition.side1.sectorIds.Length;
                 }
             }
 
             // Head changes after whole side
             else if(string.Compare(_workingDefinition.order, "CYLINDERS",
-                                   StringComparison.InvariantCultureIgnoreCase) == 0)
+                                   StringComparison.InvariantCultureIgnoreCase) ==
+                    0)
             {
                 for(var m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
                     _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
@@ -106,8 +105,10 @@ public sealed partial class CPM
                 for(var m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
                 {
                     _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
-                        _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0] +
-                        _workingDefinition.side1.sectorIds.Length + _workingDefinition.side2.sectorIds.Length;
+                        _workingDefinition.side1.sectorIds[m] -
+                        _workingDefinition.side1.sectorIds[0]     +
+                        _workingDefinition.side1.sectorIds.Length +
+                        _workingDefinition.side2.sectorIds.Length;
                 }
 
                 // TODO: Implement CYLINDERS ordering
@@ -157,10 +158,8 @@ public sealed partial class CPM
             for(var p = 0; p <= (int)(partition.End - partition.Start); p++)
             {
                 ErrorNumber errno =
-                    _device.ReadSector(
-                        (ulong)((int)partition.Start + p / _sectorMask.Length * _sectorMask.Length +
-                                _sectorMask[p % _sectorMask.Length]),
-                        out byte[] readSector);
+                    _device.ReadSector((ulong)((int)partition.Start + p / _sectorMask.Length * _sectorMask.Length + _sectorMask[p % _sectorMask.Length]),
+                                       out byte[] readSector);
 
                 if(errno != ErrorNumber.NoError)
                     return errno;

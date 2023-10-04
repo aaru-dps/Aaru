@@ -281,8 +281,7 @@ public sealed partial class Vdi
 
                 _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _vHdr.logicalHeads / _vHdr.logicalSpt);
 
-                if(_vHdr.logicalCylinders == 0 &&
-                   _vHdr is { logicalHeads: 0, logicalSpt: 0 })
+                if(_vHdr.logicalCylinders == 0 && _vHdr is { logicalHeads: 0, logicalSpt: 0 })
                     break;
             }
         }

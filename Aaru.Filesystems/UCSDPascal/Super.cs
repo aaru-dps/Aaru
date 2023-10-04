@@ -87,14 +87,13 @@ public sealed partial class PascalPlugin
         _mountedVolEntry.LastBoot = BigEndianBitConverter.ToInt16(_catalogBlocks, 0x14);
         _mountedVolEntry.Tail     = BigEndianBitConverter.ToInt32(_catalogBlocks, 0x16);
 
-        if(_mountedVolEntry.FirstBlock       != 0                                     ||
-           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock           ||
-           (ulong)_mountedVolEntry.LastBlock > _device.Info.Sectors / _multiplier - 2 ||
-           _mountedVolEntry.EntryType != PascalFileKind.Volume &&
-           _mountedVolEntry.EntryType != PascalFileKind.Secure                  ||
-           _mountedVolEntry.VolumeName[0] > 7                                   ||
-           _mountedVolEntry.Blocks        < 0                                   ||
-           (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier ||
+        if(_mountedVolEntry.FirstBlock       != 0                                                                     ||
+           _mountedVolEntry.LastBlock        <= _mountedVolEntry.FirstBlock                                           ||
+           (ulong)_mountedVolEntry.LastBlock > _device.Info.Sectors / _multiplier - 2                                 ||
+           _mountedVolEntry.EntryType != PascalFileKind.Volume && _mountedVolEntry.EntryType != PascalFileKind.Secure ||
+           _mountedVolEntry.VolumeName[0] > 7                                                                         ||
+           _mountedVolEntry.Blocks        < 0                                                                         ||
+           (ulong)_mountedVolEntry.Blocks != _device.Info.Sectors / _multiplier                                       ||
            _mountedVolEntry.Files         < 0)
             return ErrorNumber.InvalidArgument;
 
@@ -123,8 +122,7 @@ public sealed partial class PascalPlugin
 
             Array.Copy(_catalogBlocks, offset + 0x06, entry.Filename, 0, 16);
 
-            if(entry.Filename[0] <= 15 &&
-               entry.Filename[0] > 0)
+            if(entry.Filename[0] <= 15 && entry.Filename[0] > 0)
                 _fileEntries.Add(entry);
 
             offset += 26;

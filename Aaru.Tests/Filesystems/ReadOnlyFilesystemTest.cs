@@ -275,8 +275,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         if(ret != ErrorNumber.NoError)
             return children;
 
-        while(fs.ReadDir(node, out string child) == ErrorNumber.NoError &&
-              child is not null)
+        while(fs.ReadDir(node, out string child) == ErrorNumber.NoError && child is not null)
         {
             var childPath = $"{path}/{child}";
             fs.Stat(childPath, out FileEntryInfo stat);
@@ -300,8 +299,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             else
                 data.Md5 = BuildFile(fs, childPath, stat.Length);
 
-            if(fs.ListXAttr(childPath, out List<string> xattrs) == ErrorNumber.NoError &&
-               xattrs.Count                                     > 0)
+            if(fs.ListXAttr(childPath, out List<string> xattrs) == ErrorNumber.NoError && xattrs.Count > 0)
                 data.XattrsWithMd5 = BuildFileXattrs(fs, childPath);
 
             children[child] = data;
@@ -372,14 +370,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         List<string> contents = new();
 
-        while(fs.ReadDir(node, out string filename) == ErrorNumber.NoError &&
-              filename is not null)
+        while(fs.ReadDir(node, out string filename) == ErrorNumber.NoError && filename is not null)
             contents.Add(filename);
 
         fs.CloseDir(node);
 
-        if(children.Count == 0 &&
-           contents.Count == 0)
+        if(children.Count == 0 && contents.Count == 0)
             return;
 
         if(path == "/")
@@ -440,8 +436,9 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     stat.StatusChangeTimeUtc = child.Value.Info.StatusChangeTimeUtc;
             }
 
-            stat.Should().BeEquivalentTo(child.Value.Info,
-                                         string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
+            stat.Should().
+                 BeEquivalentTo(child.Value.Info,
+                                string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
 
             byte[] buffer = Array.Empty<byte>();
 
@@ -457,9 +454,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 {
                     Assert.IsNotNull(child.Value.Children,
                                      string.
-                                         Format(
-                                             Localization.Contents_for_0_in_1_must_be_defined_in_unit_test_declaration,
-                                             childPath, testFile));
+                                         Format(Localization.Contents_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                                childPath, testFile));
 
                     if(child.Value.Children != null)
                     {
@@ -495,10 +491,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             {
                 Assert.IsNull(child.Value.XattrsWithMd5,
                               string.
-                                  Format(
-                                      Localization.
-                                          Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem,
-                                      childPath, testFile));
+                                  Format(Localization.Defined_extended_attributes_for_0_in_1_are_not_supported_by_filesystem,
+                                         childPath, testFile));
 
                 continue;
             }
@@ -511,14 +505,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             {
                 Assert.IsNotNull(child.Value.XattrsWithMd5,
                                  string.
-                                     Format(
-                                         Localization.
-                                             Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration,
-                                         childPath, testFile));
+                                     Format(Localization.Extended_attributes_for_0_in_1_must_be_defined_in_unit_test_declaration,
+                                            childPath, testFile));
             }
 
-            if(xattrs.Count                     > 0 ||
-               child.Value.XattrsWithMd5?.Count > 0)
+            if(xattrs.Count > 0 || child.Value.XattrsWithMd5?.Count > 0)
                 TestFileXattrs(fs, childPath, child.Value.XattrsWithMd5, testFile);
         }
 
@@ -567,8 +558,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         fs.ListXAttr(path, out List<string> contents);
 
-        if(xattrs.Count   == 0 &&
-           contents.Count == 0)
+        if(xattrs.Count == 0 && contents.Count == 0)
             return;
 
         List<string> expectedNotFound = new();
@@ -578,8 +568,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             byte[]      buffer = Array.Empty<byte>();
             ErrorNumber ret    = fs.GetXattr(path, xattr.Key, ref buffer);
 
-            if(ret == ErrorNumber.NoSuchExtendedAttribute ||
-               !contents.Contains(xattr.Key))
+            if(ret == ErrorNumber.NoSuchExtendedAttribute || !contents.Contains(xattr.Key))
             {
                 expectedNotFound.Add(xattr.Key);
 

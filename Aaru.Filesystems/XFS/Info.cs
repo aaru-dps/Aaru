@@ -67,7 +67,10 @@ public sealed partial class XFS
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-            foreach(int location in new[] { 0, 0x200, 0x400 })
+            foreach(int location in new[]
+                {
+                    0, 0x200, 0x400
+                })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -82,7 +85,10 @@ public sealed partial class XFS
         }
         else
         {
-            foreach(int i in new[] { 0, 1, 2 })
+            foreach(int i in new[]
+                {
+                    0, 1, 2
+                })
             {
                 var location = (ulong)i;
 
@@ -135,13 +141,15 @@ public sealed partial class XFS
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-            if(errno         != ErrorNumber.NoError ||
-               sector.Length < Marshal.SizeOf<Superblock>())
+            if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-            foreach(int location in new[] { 0, 0x200, 0x400 })
+            foreach(int location in new[]
+                {
+                    0, 0x200, 0x400
+                })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
@@ -156,7 +164,10 @@ public sealed partial class XFS
         }
         else
         {
-            foreach(int i in new[] { 0, 1, 2 })
+            foreach(int i in new[]
+                {
+                    0, 1, 2
+                })
             {
                 var location = (ulong)i;
                 var sbSize   = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
@@ -166,8 +177,7 @@ public sealed partial class XFS
 
                 ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
 
-                if(errno         != ErrorNumber.NoError ||
-                   sector.Length < Marshal.SizeOf<Superblock>())
+                if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);

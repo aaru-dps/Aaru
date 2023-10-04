@@ -65,8 +65,7 @@ public sealed partial class Cpcdsk
 
         for(pos = 0; pos < 254; pos++)
         {
-            if(headerB[pos]     == 0x0D &&
-               headerB[pos + 1] == 0x0A)
+            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A)
                 break;
         }
 
@@ -92,8 +91,7 @@ public sealed partial class Cpcdsk
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.magic = \"{0}\"", StringHandlers.CToString(header.magic));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.creator = \"{0}\"",
-                                   StringHandlers.CToString(header.creator));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.creator = \"{0}\"", StringHandlers.CToString(header.creator));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.tracks = {0}", header.tracks);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = {0}",  header.sides);
@@ -137,7 +135,8 @@ public sealed partial class Cpcdsk
                 TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
                 if(string.Compare(TRACK_ID, Encoding.ASCII.GetString(trackInfo.magic),
-                                  StringComparison.InvariantCultureIgnoreCase) != 0)
+                                  StringComparison.InvariantCultureIgnoreCase) !=
+                   0)
                 {
                     AaruConsole.ErrorWriteLine(Localization.Not_the_expected_track_info);
 
@@ -147,25 +146,21 @@ public sealed partial class Cpcdsk
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].magic = \"{0}\"",
                                            StringHandlers.CToString(trackInfo.magic), i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].bps = {0}",
-                                           SizeCodeToBytes(trackInfo.bps), i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].bps = {0}", SizeCodeToBytes(trackInfo.bps),
+                                           i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate, i,
-                                           j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate, i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler, i,
-                                           j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler, i, j);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
-                                           j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i, j);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].recordingMode = {0}",
                                            trackInfo.recordingMode, i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
-                                           j);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i, j);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
 

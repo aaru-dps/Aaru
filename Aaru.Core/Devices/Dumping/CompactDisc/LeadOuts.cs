@@ -114,12 +114,10 @@ partial class Dump
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed > maxSpeed && currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed < minSpeed && currentSpeed > 0)
                     minSpeed = currentSpeed;
 
                 PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
@@ -151,8 +149,7 @@ partial class Dump
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
@@ -295,12 +292,10 @@ partial class Dump
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed > maxSpeed && currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed < minSpeed && currentSpeed > 0)
                     minSpeed = currentSpeed;
 
                 PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
@@ -332,8 +327,7 @@ partial class Dump
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration, _maximumReadable);
                     ibgLog.Write(i, currentSpeed * 1024);

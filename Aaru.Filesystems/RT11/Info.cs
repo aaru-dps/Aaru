@@ -102,7 +102,8 @@ public sealed partial class RT11
             check += BitConverter.ToUInt16(hbSector, i);
 
         sb.AppendFormat(Localization.Volume_format_is_0,
-                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).AppendLine();
+                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
            AppendLine();

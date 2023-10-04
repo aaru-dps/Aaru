@@ -210,8 +210,7 @@ public sealed partial class ISO9660
                     // Check if this is Joliet
                     if(svd.version == 1)
                     {
-                        if(svd.escape_sequences[0] == '%' &&
-                           svd.escape_sequences[1] == '/')
+                        if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
                         {
                             if(svd.escape_sequences[2] == '@' ||
                                svd.escape_sequences[2] == 'C' ||
@@ -261,9 +260,7 @@ public sealed partial class ISO9660
 
         Metadata = new FileSystem();
 
-        if(pvd  == null &&
-           hsvd == null &&
-           fsvd == null)
+        if(pvd == null && hsvd == null && fsvd == null)
         {
             AaruConsole.ErrorWriteLine(Localization.ERROR_Could_not_find_primary_volume_descriptor);
 
@@ -348,13 +345,10 @@ public sealed partial class ISO9660
         }
 
         // High Sierra and CD-i do not support Joliet or RRIP
-        if((_highSierra || _cdi)          &&
-           _namespace != Namespace.Normal &&
-           _namespace != Namespace.Vms)
+        if((_highSierra || _cdi) && _namespace != Namespace.Normal && _namespace != Namespace.Vms)
             _namespace = Namespace.Normal;
 
-        if(jolietvd is null &&
-           _namespace == Namespace.Joliet)
+        if(jolietvd is null && _namespace == Namespace.Joliet)
             _namespace = Namespace.Normal;
 
         uint rootLocation;
@@ -373,8 +367,7 @@ public sealed partial class ISO9660
 
             rootSize = _highSierra ? hsvd.Value.root_directory_record.size : pvd.Value.root_directory_record.size;
 
-            if(_pathTable?.Length > 1 &&
-               rootLocation       != _pathTable[0].Extent)
+            if(_pathTable?.Length > 1 && rootLocation != _pathTable[0].Extent)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.
@@ -521,17 +514,14 @@ public sealed partial class ISO9660
 
         if(_namespace != Namespace.Joliet)
         {
-            _rootDirectoryCache = _cdi
-                                      ? DecodeCdiDirectory(rootLocation + rootXattrLength, rootSize)
-                                      : _highSierra
-                                          ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize)
-                                          : DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
+            _rootDirectoryCache = _cdi        ? DecodeCdiDirectory(rootLocation        + rootXattrLength, rootSize) :
+                                  _highSierra ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize) :
+                                                DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
         }
 
         Metadata.Type = fsFormat;
 
-        if(jolietvd != null &&
-           _namespace is Namespace.Joliet or Namespace.Rrip)
+        if(jolietvd != null && _namespace is Namespace.Joliet or Namespace.Rrip)
         {
             rootLocation    = jolietvd.Value.root_directory_record.extent;
             rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;
@@ -794,11 +784,9 @@ public sealed partial class ISO9660
 
         if(_usePathTable)
         {
-            foreach(DecodedDirectoryEntry subDirectory in _cdi
-                                                              ? GetSubdirsFromCdiPathTable("")
-                                                              : _highSierra
-                                                                  ? GetSubdirsFromHighSierraPathTable("")
-                                                                  : GetSubdirsFromIsoPathTable(""))
+            foreach(DecodedDirectoryEntry subDirectory in _cdi        ? GetSubdirsFromCdiPathTable("") :
+                                                          _highSierra ? GetSubdirsFromHighSierraPathTable("") :
+                                                                        GetSubdirsFromIsoPathTable(""))
                 _rootDirectoryCache[subDirectory.Filename] = subDirectory;
         }
 

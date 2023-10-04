@@ -77,10 +77,10 @@ public sealed class Plan9 : IPartition
         string[] really = StringHandlers.CToString(sector).Split('\n');
 
         foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part[..5] == "part ").
-                                          Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4))
+                                          Select(part => part.Split(' ')).
+                                          TakeWhile(tokens => tokens.Length == 4))
         {
-            if(!ulong.TryParse(tokens[2], out ulong start) ||
-               !ulong.TryParse(tokens[3], out ulong end))
+            if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end))
                 break;
 
             var part = new Partition

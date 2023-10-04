@@ -69,9 +69,7 @@ public sealed class PC98 : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] bootSector);
 
-        if(errno          != ErrorNumber.NoError ||
-           bootSector[^2] != 0x55                ||
-           bootSector[^1] != 0xAA)
+        if(errno != ErrorNumber.NoError || bootSector[^2] != 0x55 || bootSector[^1] != 0xAA)
             return false;
 
         errno = imagePlugin.ReadSector(1, out byte[] sector);
@@ -129,7 +127,8 @@ public sealed class PC98 : IPartition
             part.Offset = part.Start * imagePlugin.Info.SectorSize;
 
             part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.Info.Heads,
-                                    imagePlugin.Info.SectorsPerTrack) - part.Start;
+                                    imagePlugin.Info.SectorsPerTrack) -
+                          part.Start;
 
             part.Size = part.Length * imagePlugin.Info.SectorSize;
 

@@ -42,12 +42,10 @@ public sealed partial class AppleDOS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.Sectors != 455 &&
-           imagePlugin.Info.Sectors != 560)
+        if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560)
             return false;
 
-        if(partition.Start             > 0 ||
-           imagePlugin.Info.SectorSize != 256)
+        if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256)
             return false;
 
         int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
@@ -59,8 +57,10 @@ public sealed partial class AppleDOS
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
-        return _vtoc.catalogSector < spt && _vtoc.maxTrackSectorPairsPerSector <= 122 && _vtoc.sectorsPerTrack == spt &&
-               _vtoc.bytesPerSector == 256;
+        return _vtoc.catalogSector                < spt  &&
+               _vtoc.maxTrackSectorPairsPerSector <= 122 &&
+               _vtoc.sectorsPerTrack              == spt &&
+               _vtoc.bytesPerSector               == 256;
     }
 
     /// <inheritdoc />

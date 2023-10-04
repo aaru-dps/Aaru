@@ -182,8 +182,11 @@ public class PcmciaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

@@ -57,8 +57,7 @@ public sealed partial class Anex86
             return false;
         }
 
-        if(sectors * sectorSize > int.MaxValue ||
-           sectors              > (long)int.MaxValue * 8 * 33)
+        if(sectors * sectorSize > int.MaxValue || sectors > (long)int.MaxValue * 8 * 33)
         {
             ErrorMessage = Localization.Too_many_sectors;
 
@@ -222,8 +221,7 @@ public sealed partial class Anex86
 
                 _header.cylinders = (int)_imageInfo.Sectors / _header.heads / _header.spt;
 
-                if(_header.cylinders == 0 &&
-                   _header is { heads: 0, spt: 0 })
+                if(_header.cylinders == 0 && _header is { heads: 0, spt: 0 })
                     break;
             }
         }

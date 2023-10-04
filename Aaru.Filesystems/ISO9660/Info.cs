@@ -82,7 +82,8 @@ public sealed partial class ISO9660
         AaruConsole.DebugWriteLine(MODULE_NAME, "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
 
         return Encoding.ASCII.GetString(vdMagic) == ISO_MAGIC         ||
-               Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC || Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
+               Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
+               Encoding.ASCII.GetString(vdMagic) == CDI_MAGIC;
     }
 
     /// <inheritdoc />
@@ -211,8 +212,7 @@ public sealed partial class ISO9660
                     // Check if this is Joliet
                     if(svd.version == 1)
                     {
-                        if(svd.escape_sequences[0] == '%' &&
-                           svd.escape_sequences[1] == '/')
+                        if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
                         {
                             if(svd.escape_sequences[2] == '@' ||
                                svd.escape_sequences[2] == 'C' ||
@@ -247,9 +247,7 @@ public sealed partial class ISO9660
 
         metadata = new FileSystem();
 
-        if(pvd  == null &&
-           hsvd == null &&
-           fsvd == null)
+        if(pvd == null && hsvd == null && fsvd == null)
         {
             information = Localization.ERROR_Could_not_find_primary_volume_descriptor;
 
@@ -314,8 +312,7 @@ public sealed partial class ISO9660
         }
 
         // Walk thru root directory to see system area extensions in use
-        while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length &&
-              !cdiInfo)
+        while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length && !cdiInfo)
         {
             DirectoryRecord record =
                 Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(rootDir, rootOff,
@@ -325,8 +322,7 @@ public sealed partial class ISO9660
             saOff += saOff % 2;
             int saLen = record.length - saOff;
 
-            if(saLen                   > 0 &&
-               rootOff + saOff + saLen <= rootDir.Length)
+            if(saLen > 0 && rootOff + saOff + saLen <= rootDir.Length)
             {
                 var sa = new byte[saLen];
                 Array.Copy(rootDir, rootOff + saOff, sa, 0, saLen);
@@ -406,8 +402,7 @@ public sealed partial class ISO9660
                                 switch(nextSignature)
                                 {
                                     case APPLE_MAGIC:
-                                        if(sa[saOff + 3] == 1 &&
-                                           sa[saOff + 2] == 7)
+                                        if(sa[saOff + 3] == 1 && sa[saOff + 2] == 7)
                                             apple = true;
                                         else
                                             apple |= sa[saOff + 3] != 1;
@@ -438,8 +433,8 @@ public sealed partial class ISO9660
                                 ziso  |= nextSignature == ZISO_MAGIC;
                                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD &&
-                                        sa[saOff + 3]                                == 1 && sa[saOff + 2] >= 9;
+                                aaip |= nextSignature == AAIP_MAGIC ||
+                                        nextSignature == AAIP_MAGIC_OLD && sa[saOff + 3] == 1 && sa[saOff + 2] >= 9;
 
                                 saOff += sa[saOff + 2];
 
@@ -467,7 +462,8 @@ public sealed partial class ISO9660
                          (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
 
             if((ca.ca_length_be + ca.offset_be) %
-               (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0)
+               (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) >
+               0)
                 caLen++;
 
             errno = imagePlugin.ReadSectors(ca.block_be, caLen, out byte[] caSectors);
@@ -487,8 +483,7 @@ public sealed partial class ISO9660
                 {
                     // Apple never said to include its extensions inside a continuation area, but just in case
                     case APPLE_MAGIC:
-                        if(caData[caOff + 3] == 1 &&
-                           caData[caOff + 2] == 7)
+                        if(caData[caOff + 3] == 1 && caData[caOff + 2] == 7)
                             apple = true;
                         else
                             apple |= caData[caOff + 3] != 1;
@@ -504,14 +499,13 @@ public sealed partial class ISO9660
 
                 rrip |= nextSignature is RRIP_MAGIC or RRIP_POSIX_ATTRIBUTES or RRIP_POSIX_DEV_NO or RRIP_SYMLINK
                                       or RRIP_NAME or RRIP_CHILDLINK or RRIP_PARENTLINK or RRIP_RELOCATED_DIR
-                                      or RRIP_TIMESTAMPS
-                                      or RRIP_SPARSE;
+                                      or RRIP_TIMESTAMPS or RRIP_SPARSE;
 
                 ziso  |= nextSignature == ZISO_MAGIC;
                 amiga |= nextSignature == AMIGA_MAGIC;
 
-                aaip |= nextSignature == AAIP_MAGIC || nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 &&
-                        caData[caOff                                                                   + 2] >= 9;
+                aaip |= nextSignature == AAIP_MAGIC ||
+                        nextSignature == AAIP_MAGIC_OLD && caData[caOff + 3] == 1 && caData[caOff + 2] >= 9;
 
                 caOff += caData[caOff + 2];
             }
@@ -729,8 +723,7 @@ public sealed partial class ISO9660
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "initialEntry.load_rba = {0}", initialEntry.load_rba);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "initialEntry.sector_count = {0}",
-                                       initialEntry.sector_count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "initialEntry.sector_count = {0}", initialEntry.sector_count);
 
             byte[] bootImage = null;
 
@@ -754,17 +747,20 @@ public sealed partial class ISO9660
                 isoMetadata.AppendFormat("\t" + Localization.Bootable_on_0, valentry.platform_id).AppendLine();
 
                 isoMetadata.AppendFormat("\t" + Localization.Bootable_image_starts_at_sector_0_and_runs_for_1_sectors,
-                                         initialEntry.load_rba, initialEntry.sector_count).AppendLine();
+                                         initialEntry.load_rba, initialEntry.sector_count).
+                            AppendLine();
 
                 if(valentry.platform_id == ElToritoPlatform.x86)
                 {
                     isoMetadata.AppendFormat("\t" + Localization.Bootable_image_will_be_loaded_at_segment_0,
-                                             initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg).AppendLine();
+                                             initialEntry.load_seg == 0 ? 0x7C0 : initialEntry.load_seg).
+                                AppendLine();
                 }
                 else
                 {
                     isoMetadata.AppendFormat("\t" + Localization.Bootable_image_will_be_loaded_at_0,
-                                             (uint)initialEntry.load_seg * 10).AppendLine();
+                                             (uint)initialEntry.load_seg * 10).
+                                AppendLine();
                 }
 
                 switch(initialEntry.boot_type)
@@ -787,7 +783,8 @@ public sealed partial class ISO9660
                         break;
                     default:
                         isoMetadata.AppendFormat("\t" + Localization.Image_uses_unknown_emulation_type_0,
-                                                 (byte)initialEntry.boot_type).AppendLine();
+                                                 (byte)initialEntry.boot_type).
+                                    AppendLine();
 
                         break;
                 }
@@ -851,7 +848,8 @@ public sealed partial class ISO9660
 
                         isoMetadata.
                             AppendFormat("\t\t" + Localization.Bootable_image_starts_at_sector_0_and_runs_for_1_sectors,
-                                         sectionEntry.load_rba, sectionEntry.sector_count).AppendLine();
+                                         sectionEntry.load_rba, sectionEntry.sector_count).
+                            AppendLine();
 
                         if(valentry.platform_id == ElToritoPlatform.x86)
                         {
@@ -862,7 +860,8 @@ public sealed partial class ISO9660
                         else
                         {
                             isoMetadata.AppendFormat("\t\t" + Localization.Bootable_image_will_be_loaded_at_0,
-                                                     (uint)sectionEntry.load_seg * 10).AppendLine();
+                                                     (uint)sectionEntry.load_seg * 10).
+                                        AppendLine();
                         }
 
                         switch((ElToritoEmulation)((byte)sectionEntry.boot_type & 0xF))
@@ -872,29 +871,31 @@ public sealed partial class ISO9660
 
                                 break;
                             case ElToritoEmulation.Md2Hd:
-                                isoMetadata.AppendLine("\t\t" + Localization.
-                                                           Image_emulates_a_high_density_MD2HD_floppy);
+                                isoMetadata.AppendLine("\t\t" +
+                                                       Localization.Image_emulates_a_high_density_MD2HD_floppy);
 
                                 break;
                             case ElToritoEmulation.Mf2Hd:
-                                isoMetadata.AppendLine("\t\t" + Localization.
-                                                           Image_emulates_a_high_density_MF2HD_floppy);
+                                isoMetadata.AppendLine("\t\t" +
+                                                       Localization.Image_emulates_a_high_density_MF2HD_floppy);
 
                                 break;
                             case ElToritoEmulation.Mf2Ed:
-                                isoMetadata.AppendLine("\t\t" + Localization.
-                                                           Image_emulates_a_extra_density_MF2ED_floppy);
+                                isoMetadata.AppendLine("\t\t" +
+                                                       Localization.Image_emulates_a_extra_density_MF2ED_floppy);
 
                                 break;
                             default:
                                 isoMetadata.AppendFormat("\t\t" + Localization.Image_uses_unknown_emulation_type_0,
-                                                         (byte)initialEntry.boot_type).AppendLine();
+                                                         (byte)initialEntry.boot_type).
+                                            AppendLine();
 
                                 break;
                         }
 
                         isoMetadata.AppendFormat("\t\t" + Localization.Selection_criteria_type_0,
-                                                 sectionEntry.selection_criteria_type).AppendLine();
+                                                 sectionEntry.selection_criteria_type).
+                                    AppendLine();
 
                         isoMetadata.AppendFormat("\t\t" + Localization.System_type_0, sectionEntry.system_type).
                                     AppendLine();
@@ -902,7 +903,8 @@ public sealed partial class ISO9660
                         if(bootImage != null)
                         {
                             isoMetadata.AppendFormat("\t\t" + Localization.Bootable_image_SHA1_0,
-                                                     Sha1Context.Data(bootImage, out _)).AppendLine();
+                                                     Sha1Context.Data(bootImage, out _)).
+                                        AppendLine();
                         }
                     }
                     else

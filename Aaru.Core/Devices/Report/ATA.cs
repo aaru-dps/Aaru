@@ -79,8 +79,7 @@ public sealed partial class DeviceReport
             if(ataId.UnformattedBPS != 0)
                 mediaTest.UnformattedBPS = ataId.UnformattedBPS;
 
-            if(ataId.Cylinders > 0 &&
-               ataId is { Heads: > 0, SectorsPerTrack: > 0 })
+            if(ataId.Cylinders > 0 && ataId is { Heads: > 0, SectorsPerTrack: > 0 })
             {
                 mediaTest.CHS = new Chs
                 {
@@ -92,8 +91,7 @@ public sealed partial class DeviceReport
                 mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
             }
 
-            if(ataId.CurrentCylinders > 0 &&
-               ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
+            if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
             {
                 mediaTest.CurrentCHS = new Chs
                 {
@@ -121,8 +119,7 @@ public sealed partial class DeviceReport
                 mediaTest.Blocks       = ataId.LBA48Sectors;
             }
 
-            if(ataId.NominalRotationRate != 0x0000 &&
-               ataId.NominalRotationRate != 0xFFFF)
+            if(ataId.NominalRotationRate != 0x0000 && ataId.NominalRotationRate != 0xFFFF)
             {
                 if(ataId.NominalRotationRate == 0x0001)
                     mediaTest.SolidStateDevice = true;
@@ -136,13 +133,11 @@ public sealed partial class DeviceReport
             uint logicalSectorSize;
             uint physicalSectorSize;
 
-            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-               (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
                 {
-                    if(ataId.LogicalSectorWords <= 255 ||
-                       ataId.LogicalAlignment   == 0xFFFF)
+                    if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                         logicalSectorSize = 512;
                     else
                         logicalSectorSize = ataId.LogicalSectorWords * 2;
@@ -167,13 +162,11 @@ public sealed partial class DeviceReport
             {
                 mediaTest.PhysicalBlockSize = physicalSectorSize;
 
-                if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
-                   (ataId.LogicalAlignment & 0x4000) == 0x4000)
+                if((ataId.LogicalAlignment & 0x8000) == 0x0000 && (ataId.LogicalAlignment & 0x4000) == 0x4000)
                     mediaTest.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
             }
 
-            if(ataId.EccBytes != 0x0000 &&
-               ataId.EccBytes != 0xFFFF)
+            if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                 mediaTest.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
             if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -198,8 +191,8 @@ public sealed partial class DeviceReport
                 sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                            readBuf.Length                     > 0;
+            mediaTest.SupportsReadSectors =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -212,8 +205,8 @@ public sealed partial class DeviceReport
                 sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                          readBuf.Length                     > 0;
+            mediaTest.SupportsReadRetry =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -226,8 +219,8 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDma = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                        readBuf.Length                     > 0;
+            mediaTest.SupportsReadDma =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -240,8 +233,8 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                             readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaRetry =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -257,8 +250,7 @@ public sealed partial class DeviceReport
             mediaTest.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2, sense,
-                                       errorChs.Status,
-                                       errorChs.Error);
+                                       errorChs.Status, errorChs.Error);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -266,8 +258,8 @@ public sealed partial class DeviceReport
                 sense = _dev.Read(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                        readBuf.Length                     > 0;
+            mediaTest.SupportsReadLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -280,8 +272,8 @@ public sealed partial class DeviceReport
                 sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                             readBuf.Length                     > 0;
+            mediaTest.SupportsReadRetryLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -294,8 +286,8 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                           readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -308,8 +300,8 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaRetryLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -325,8 +317,7 @@ public sealed partial class DeviceReport
             mediaTest.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2, sense,
-                                       errorChs.Status,
-                                       errorChs.Error);
+                                       errorChs.Status, errorChs.Error);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -334,8 +325,8 @@ public sealed partial class DeviceReport
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 _, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                          readBuf.Length                       > 0;
+            mediaTest.SupportsReadLba48 =
+                !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -348,8 +339,8 @@ public sealed partial class DeviceReport
                 sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                             readBuf.Length                       > 0;
+            mediaTest.SupportsReadDmaLba48 =
+                !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -367,8 +358,7 @@ public sealed partial class DeviceReport
             {
                 ataId = Identify.Decode(buffer).Value;
 
-                if(ataId.EccBytes != 0x0000 &&
-                   ataId.EccBytes != 0xFFFF)
+                if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                     mediaTest.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
                 if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -384,8 +374,11 @@ public sealed partial class DeviceReport
                                       _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                         readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+            mediaTest.SupportsReadLong = !sense                                    &&
+                                         (errorChs.Status & 0x01)          != 0x01 &&
+                                         errorChs.Error                    == 0    &&
+                                         readBuf.Length                    > 0     &&
+                                         BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -400,9 +393,11 @@ public sealed partial class DeviceReport
                                       _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                              readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                              checkCorrectRead;
+            mediaTest.SupportsReadLongRetry = !sense                                    &&
+                                              (errorChs.Status & 0x01)          != 0x01 &&
+                                              errorChs.Error                    == 0    &&
+                                              readBuf.Length                    > 0     &&
+                                              BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -417,8 +412,11 @@ public sealed partial class DeviceReport
                                       out _);
             });
 
-            mediaTest.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                            readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+            mediaTest.SupportsReadLongLba = !sense                                    &&
+                                            (errorLba.Status & 0x01)          != 0x01 &&
+                                            errorLba.Error                    == 0    &&
+                                            readBuf.Length                    > 0     &&
+                                            BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -433,9 +431,11 @@ public sealed partial class DeviceReport
                                       out _);
             });
 
-            mediaTest.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                 readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                                 checkCorrectRead;
+            mediaTest.SupportsReadLongRetryLba = !sense                                    &&
+                                                 (errorLba.Status & 0x01)          != 0x01 &&
+                                                 errorLba.Error                    == 0    &&
+                                                 readBuf.Length                    > 0     &&
+                                                 BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
             AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                        errorChs.Status, errorChs.Error, readBuf.Length);
@@ -464,8 +464,7 @@ public sealed partial class DeviceReport
         if(ataId.UnformattedBPS != 0)
             capabilities.UnformattedBPS = ataId.UnformattedBPS;
 
-        if(ataId.Cylinders > 0 &&
-           ataId is { Heads: > 0, SectorsPerTrack: > 0 })
+        if(ataId.Cylinders > 0 && ataId is { Heads: > 0, SectorsPerTrack: > 0 })
         {
             capabilities.CHS = new Chs
             {
@@ -477,8 +476,7 @@ public sealed partial class DeviceReport
             capabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
         }
 
-        if(ataId.CurrentCylinders > 0 &&
-           ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
+        if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
         {
             capabilities.CurrentCHS = new Chs
             {
@@ -502,8 +500,7 @@ public sealed partial class DeviceReport
             capabilities.Blocks       = ataId.LBA48Sectors;
         }
 
-        if(ataId.NominalRotationRate != 0x0000 &&
-           ataId.NominalRotationRate != 0xFFFF)
+        if(ataId.NominalRotationRate != 0x0000 && ataId.NominalRotationRate != 0xFFFF)
         {
             if(ataId.NominalRotationRate == 0x0001)
                 capabilities.SolidStateDevice = true;
@@ -517,13 +514,11 @@ public sealed partial class DeviceReport
         uint logicalSectorSize;
         uint physicalSectorSize;
 
-        if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-           (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+        if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
         {
             if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
             {
-                if(ataId.LogicalSectorWords <= 255 ||
-                   ataId.LogicalAlignment   == 0xFFFF)
+                if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                     logicalSectorSize = 512;
                 else
                     logicalSectorSize = ataId.LogicalSectorWords * 2;
@@ -548,13 +543,11 @@ public sealed partial class DeviceReport
         {
             capabilities.PhysicalBlockSize = physicalSectorSize;
 
-            if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
-               (ataId.LogicalAlignment & 0x4000) == 0x4000)
+            if((ataId.LogicalAlignment & 0x8000) == 0x0000 && (ataId.LogicalAlignment & 0x4000) == 0x4000)
                 capabilities.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
         }
 
-        if(ataId.EccBytes != 0x0000 &&
-           ataId.EccBytes != 0xFFFF)
+        if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
             capabilities.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
         if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -579,8 +572,8 @@ public sealed partial class DeviceReport
             sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                           readBuf.Length                     > 0;
+        capabilities.SupportsReadSectors =
+            !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorChs.Status, errorChs.Error, readBuf.Length);
@@ -621,8 +614,8 @@ public sealed partial class DeviceReport
             sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                            readBuf.Length                     > 0;
+        capabilities.SupportsReadDmaRetry =
+            !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorChs.Status, errorChs.Error, readBuf.Length);
@@ -660,8 +653,8 @@ public sealed partial class DeviceReport
             sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                            readBuf.Length                     > 0;
+        capabilities.SupportsReadRetryLba =
+            !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba.Status, errorLba.Error, readBuf.Length);
@@ -674,8 +667,8 @@ public sealed partial class DeviceReport
             sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                          readBuf.Length                     > 0;
+        capabilities.SupportsReadDmaLba =
+            !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba.Status, errorLba.Error, readBuf.Length);
@@ -713,8 +706,8 @@ public sealed partial class DeviceReport
             sense = _dev.Read(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                         readBuf.Length                       > 0;
+        capabilities.SupportsReadLba48 =
+            !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba48.Status, errorLba48.Error, readBuf.Length);
@@ -727,8 +720,8 @@ public sealed partial class DeviceReport
             sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                            readBuf.Length                       > 0;
+        capabilities.SupportsReadDmaLba48 =
+            !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba48.Status, errorLba48.Error, readBuf.Length);
@@ -746,8 +739,7 @@ public sealed partial class DeviceReport
         {
             ataId = Identify.Decode(buffer).Value;
 
-            if(ataId.EccBytes != 0x0000 &&
-               ataId.EccBytes != 0xFFFF)
+            if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                 capabilities.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
             if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -763,8 +755,11 @@ public sealed partial class DeviceReport
                                   _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                        readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+        capabilities.SupportsReadLong = !sense                                    &&
+                                        (errorChs.Status & 0x01)          != 0x01 &&
+                                        errorChs.Error                    == 0    &&
+                                        readBuf.Length                    > 0     &&
+                                        BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorChs.Status, errorChs.Error, readBuf.Length);
@@ -779,9 +774,11 @@ public sealed partial class DeviceReport
                                   _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                             readBuf.Length                     > 0     &&
-                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+        capabilities.SupportsReadLongRetry = !sense                                    &&
+                                             (errorChs.Status & 0x01)          != 0x01 &&
+                                             errorChs.Error                    == 0    &&
+                                             readBuf.Length                    > 0     &&
+                                             BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorChs.Status, errorChs.Error, readBuf.Length);
@@ -796,8 +793,11 @@ public sealed partial class DeviceReport
                                   out _);
         });
 
-        capabilities.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                           readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+        capabilities.SupportsReadLongLba = !sense                                    &&
+                                           (errorLba.Status & 0x01)          != 0x01 &&
+                                           errorLba.Error                    == 0    &&
+                                           readBuf.Length                    > 0     &&
+                                           BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba.Status, errorLba.Error, readBuf.Length);
@@ -812,9 +812,11 @@ public sealed partial class DeviceReport
                                   out _);
         });
 
-        capabilities.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                                checkCorrectRead;
+        capabilities.SupportsReadLongRetryLba = !sense                                    &&
+                                                (errorLba.Status & 0x01)          != 0x01 &&
+                                                errorLba.Error                    == 0    &&
+                                                readBuf.Length                    > 0     &&
+                                                BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.Sense_0_Status_1_Error_2_Length_3, sense,
                                    errorLba.Status, errorLba.Error, readBuf.Length);

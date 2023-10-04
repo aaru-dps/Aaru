@@ -74,8 +74,7 @@ public sealed partial class Sidecar
             }
         };
 
-        if(image.Info.MediaSequence     != 0 &&
-           image.Info.LastMediaSequence != 0)
+        if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
             sidecar.AudioMedias[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
             sidecar.AudioMedias[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;

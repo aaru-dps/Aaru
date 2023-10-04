@@ -95,10 +95,9 @@ public sealed partial class NintendoPlugin
                                                                    NintendoPlugin_RegionCodeToString_Taiwan,
                                                                "U" => Localization.
                                                                    NintendoPlugin_RegionCodeToString_Australia,
-                                                               _ => string.Format(
-                                                                   Localization.
-                                                                       NintendoPlugin_RegionCodeToString_unknown_region_code_0,
-                                                                   regionCode)
+                                                               _ => string.
+                                                                   Format(Localization.NintendoPlugin_RegionCodeToString_unknown_region_code_0,
+                                                                          regionCode)
                                                            };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -125,9 +124,9 @@ public sealed partial class NintendoPlugin
                                                                      "4Q" => "Disney Interactive",
                                                                      "GD" => "Square Enix",
                                                                      "7D" => "Sierra",
-                                                                     _ => string.Format(
-                                                                         Localization.Unknown_publisher_0,
-                                                                         publisherCode)
+                                                                     _ => string.
+                                                                         Format(Localization.Unknown_publisher_0,
+                                                                                    publisherCode)
                                                                  };
 
     static string PartitionTypeToString(uint type) => type switch
@@ -135,7 +134,7 @@ public sealed partial class NintendoPlugin
                                                           0 => Localization.data,
                                                           1 => Localization.update,
                                                           2 => Localization.channel,
-                                                          _ => string.Format(
-                                                              Localization.unknown_partition_type_0, type)
+                                                          _ => string.Format(Localization.unknown_partition_type_0,
+                                                                             type)
                                                       };
 }

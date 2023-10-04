@@ -53,8 +53,7 @@ public sealed partial class ISO9660
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
+        if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
             node = new Iso9660DirNode
             {
@@ -82,7 +81,10 @@ public sealed partial class ISO9660
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DecodedDirectoryEntry> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
@@ -99,8 +101,9 @@ public sealed partial class ISO9660
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(
-                t => t.Key.Equals(pieces[p], StringComparison.CurrentCultureIgnoreCase));
+            entry =
+                currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
+                                                                  StringComparison.CurrentCultureIgnoreCase));
 
             if(string.IsNullOrEmpty(entry.Key))
                 return ErrorNumber.NoSuchFile;
@@ -116,22 +119,25 @@ public sealed partial class ISO9660
             if(entry.Value.Extents.Count == 0)
                 return ErrorNumber.InvalidArgument;
 
-            currentDirectory = _cdi
-                                   ? DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                                        entry.Value.Extents[0].size)
-                                   : _highSierra
-                                       ? DecodeHighSierraDirectory(
-                                           entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                           entry.Value.Extents[0].size)
-                                       : DecodeIsoDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
-                                                            entry.Value.Extents[0].size);
+            currentDirectory =
+                _cdi
+                    ?
+                    DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                       entry.Value.Extents[0].size)
+                    : _highSierra
+                        ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                    entry.Value.Extents[0].size)
+                        : DecodeIsoDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                             entry.Value.Extents[0].size);
 
             if(_usePathTable)
             {
                 foreach(DecodedDirectoryEntry subDirectory in _cdi
                                                                   ? GetSubdirsFromCdiPathTable(currentPath)
-                                                                  : _highSierra
-                                                                      ? GetSubdirsFromHighSierraPathTable(currentPath)
+                                                                  :
+                                                                  _highSierra
+                                                                      ?
+                                                                      GetSubdirsFromHighSierraPathTable(currentPath)
                                                                       : GetSubdirsFromIsoPathTable(currentPath))
                     currentDirectory[subDirectory.Filename] = subDirectory;
             }
@@ -238,8 +244,7 @@ public sealed partial class ISO9660
             // Special entries for current and parent directories, skip them
             if(record.name_len == 1)
             {
-                if(data[entryOff + _directoryRecordSize] == 0 ||
-                   data[entryOff + _directoryRecordSize] == 1)
+                if(data[entryOff + _directoryRecordSize] == 0 || data[entryOff + _directoryRecordSize] == 1)
                 {
                     entryOff += record.length;
 
@@ -278,8 +283,7 @@ public sealed partial class ISO9660
             if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                 entry.Flags |= FileFlags.Directory;
 
-            if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) ||
-               !_usePathTable)
+            if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) || !_usePathTable)
                 entries[entry.Filename] = entry;
 
             entryOff += record.length;
@@ -320,8 +324,7 @@ public sealed partial class ISO9660
             // Special entries for current and parent directories, skip them
             if(record.name_len == 1)
             {
-                if(data[entryOff + _directoryRecordSize] == 0 ||
-                   data[entryOff + _directoryRecordSize] == 1)
+                if(data[entryOff + _directoryRecordSize] == 0 || data[entryOff + _directoryRecordSize] == 1)
                 {
                     entryOff += record.length;
 
@@ -393,8 +396,7 @@ public sealed partial class ISO9660
             // Special entries for current and parent directories, skip them
             if(record.name_len == 1)
             {
-                if(data[entryOff + _directoryRecordSize] == 0 ||
-                   data[entryOff + _directoryRecordSize] == 1)
+                if(data[entryOff + _directoryRecordSize] == 0 || data[entryOff + _directoryRecordSize] == 1)
                 {
                     entryOff += record.length;
 
@@ -406,11 +408,10 @@ public sealed partial class ISO9660
             {
                 Size  = record.size,
                 Flags = record.flags,
-                Filename =
-                    _joliet
-                        ? Encoding.BigEndianUnicode.GetString(data, entryOff + _directoryRecordSize,
-                                                              record.name_len)
-                        : Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
+                Filename = _joliet
+                               ? Encoding.BigEndianUnicode.GetString(data, entryOff + _directoryRecordSize,
+                                                                     record.name_len)
+                               : Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 FileUnitSize         = record.file_unit_size,
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
@@ -614,8 +615,7 @@ public sealed partial class ISO9660
                     var  appleId     = (AppleId)data[systemAreaOff + 3];
 
                     // Old AAIP
-                    if(appleId     == AppleId.ProDOS &&
-                       appleLength != 7)
+                    if(appleId == AppleId.ProDOS && appleLength != 7)
                         goto case AAIP_MAGIC;
 
                     switch(appleId)
@@ -831,8 +831,7 @@ public sealed partial class ISO9660
                             systemAreaOff + Marshal.SizeOf<SymbolicLink>(),
                             Marshal.SizeOf<SymbolicLinkComponent>());
 
-                    if(!continueSymlink ||
-                       entry.SymbolicLink is null)
+                    if(!continueSymlink || entry.SymbolicLink is null)
                         entry.SymbolicLink = "";
 
                     if(slc.flags.HasFlag(SymlinkComponentFlags.Root))
@@ -844,18 +843,20 @@ public sealed partial class ISO9660
                     if(slc.flags.HasFlag(SymlinkComponentFlags.Parent))
                         entry.SymbolicLink += "..";
 
-                    if(!continueSymlinkComponent &&
-                       !slc.flags.HasFlag(SymlinkComponentFlags.Root))
+                    if(!continueSymlinkComponent && !slc.flags.HasFlag(SymlinkComponentFlags.Root))
                         entry.SymbolicLink += "/";
 
                     entry.SymbolicLink += slc.flags.HasFlag(SymlinkComponentFlags.Networkname)
-                                              ? Environment.MachineName
+                                              ?
+                                              Environment.MachineName
                                               : _joliet
                                                   ? Encoding.BigEndianUnicode.GetString(data,
-                                                      systemAreaOff + Marshal.SizeOf<SymbolicLink>() +
+                                                      systemAreaOff                  +
+                                                      Marshal.SizeOf<SymbolicLink>() +
                                                       Marshal.SizeOf<SymbolicLinkComponent>(), slc.length)
                                                   : Encoding.GetString(data,
-                                                                       systemAreaOff + Marshal.SizeOf<SymbolicLink>() +
+                                                                       systemAreaOff                  +
+                                                                       Marshal.SizeOf<SymbolicLink>() +
                                                                        Marshal.SizeOf<SymbolicLinkComponent>(),
                                                                        slc.length);
 
@@ -877,7 +878,7 @@ public sealed partial class ISO9660
 
                     AlternateName alternateName =
                         Marshal.ByteArrayToStructureLittleEndian<AlternateName>(data, systemAreaOff,
-                            Marshal.SizeOf<AlternateName>());
+                                                                                    Marshal.SizeOf<AlternateName>());
 
                     byte[] nm;
 
@@ -1049,8 +1050,7 @@ public sealed partial class ISO9660
                     errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
 
                     // TODO: Check continuation area definition, this is not a proper fix
-                    if(errno         == ErrorNumber.NoError &&
-                       caData.Length > 0)
+                    if(errno == ErrorNumber.NoError && caData.Length > 0)
                         DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                     systemAreaOff += ceLength;
@@ -1114,7 +1114,10 @@ public sealed partial class ISO9660
                                  ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
 
-            string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] pieces = cutPath.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             var currentParent = 1;
             var currentPiece  = 0;
@@ -1122,7 +1125,10 @@ public sealed partial class ISO9660
             while(currentPiece < pieces.Length)
             {
                 PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                        p.Name.Equals(pieces[currentPiece], StringComparison.CurrentCultureIgnoreCase));
+                                                                                    p.Name.
+                                                                                        Equals(pieces[currentPiece],
+                                                                                            StringComparison.
+                                                                                                CurrentCultureIgnoreCase));
 
                 if(currentEntry is null)
                     break;

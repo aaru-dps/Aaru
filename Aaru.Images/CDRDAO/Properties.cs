@@ -181,27 +181,29 @@ public sealed partial class Cdrdao
 
     // TODO: Decode CD-Text to text
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new[] { MediaTagType.CD_MCN };
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+    {
+        MediaTagType.CD_MCN
+    };
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
-        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-        SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel,
-        SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags,
-        SectorTagType.CdTrackIsrc
+        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ, SectorTagType.CdSectorEdc,
+        SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel, SectorTagType.CdSectorSubHeader,
+        SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
     };
 
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
-        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-        MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-        MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.MEGACD, MediaType.PS1CD,
-        MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO,
-        MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32,
-        MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-        MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
+        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI, MediaType.CDMRW,
+        MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW, MediaType.CDV,
+        MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
+        MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD,
+        MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia,
+        MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor,
+        MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
     };
 
     /// <inheritdoc />
@@ -211,7 +213,10 @@ public sealed partial class Cdrdao
     };
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".toc" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".toc"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

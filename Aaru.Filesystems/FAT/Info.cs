@@ -100,11 +100,21 @@ public sealed partial class FAT
                                         : humanBpb.clusters     == expectedClusters;
 
         // Check OEM for Human68k is correct
-        bool humanOemCorrect = bpbSector[2]  >= 0x20 && bpbSector[3]  >= 0x20 && bpbSector[4]  >= 0x20 &&
-                               bpbSector[5]  >= 0x20 && bpbSector[6]  >= 0x20 && bpbSector[7]  >= 0x20 &&
-                               bpbSector[8]  >= 0x20 && bpbSector[9]  >= 0x20 && bpbSector[10] >= 0x20 &&
-                               bpbSector[11] >= 0x20 && bpbSector[12] >= 0x20 && bpbSector[13] >= 0x20 &&
-                               bpbSector[14] >= 0x20 && bpbSector[15] >= 0x20 && bpbSector[16] >= 0x20 &&
+        bool humanOemCorrect = bpbSector[2]  >= 0x20 &&
+                               bpbSector[3]  >= 0x20 &&
+                               bpbSector[4]  >= 0x20 &&
+                               bpbSector[5]  >= 0x20 &&
+                               bpbSector[6]  >= 0x20 &&
+                               bpbSector[7]  >= 0x20 &&
+                               bpbSector[8]  >= 0x20 &&
+                               bpbSector[9]  >= 0x20 &&
+                               bpbSector[10] >= 0x20 &&
+                               bpbSector[11] >= 0x20 &&
+                               bpbSector[12] >= 0x20 &&
+                               bpbSector[13] >= 0x20 &&
+                               bpbSector[14] >= 0x20 &&
+                               bpbSector[15] >= 0x20 &&
+                               bpbSector[16] >= 0x20 &&
                                bpbSector[17] >= 0x20;
 
         // Check correct branch for Human68k
@@ -115,10 +125,7 @@ public sealed partial class FAT
         AaruConsole.DebugWriteLine(MODULE_NAME, "humanBranchCorrect = {0}",   humanBranchCorrect);
 
         // If all Human68k checks are correct, it is a Human68k FAT16
-        if(humanClustersCorrect &&
-           humanOemCorrect      &&
-           humanBranchCorrect   &&
-           expectedClusters > 0)
+        if(humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0)
             return true;
 
         Array.Copy(bpbSector, 0x02, atariOem, 0, 6);
@@ -147,11 +154,21 @@ public sealed partial class FAT
         string msxString   = Encoding.ASCII.GetString(msxId);
         string fat32String = Encoding.ASCII.GetString(fat32Id);
 
-        bool atariOemCorrect = atariOem[0] >= 0x20 && atariOem[1] >= 0x20 && atariOem[2] >= 0x20 &&
-                               atariOem[3] >= 0x20 && atariOem[4] >= 0x20 && atariOem[5] >= 0x20;
+        bool atariOemCorrect = atariOem[0] >= 0x20 &&
+                               atariOem[1] >= 0x20 &&
+                               atariOem[2] >= 0x20 &&
+                               atariOem[3] >= 0x20 &&
+                               atariOem[4] >= 0x20 &&
+                               atariOem[5] >= 0x20;
 
-        bool dosOemCorrect = dosOem[0] >= 0x20 && dosOem[1] >= 0x20 && dosOem[2] >= 0x20 && dosOem[3] >= 0x20 &&
-                             dosOem[4] >= 0x20 && dosOem[5] >= 0x20 && dosOem[6] >= 0x20 && dosOem[7] >= 0x20;
+        bool dosOemCorrect = dosOem[0] >= 0x20 &&
+                             dosOem[1] >= 0x20 &&
+                             dosOem[2] >= 0x20 &&
+                             dosOem[3] >= 0x20 &&
+                             dosOem[4] >= 0x20 &&
+                             dosOem[5] >= 0x20 &&
+                             dosOem[6] >= 0x20 &&
+                             dosOem[7] >= 0x20;
 
         string oemString = Encoding.ASCII.GetString(dosOem);
 
@@ -234,16 +251,18 @@ public sealed partial class FAT
             var hpfsMagic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
             var hpfsMagic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
 
-            if(hpfsMagic1 == 0xF995E849 &&
-               hpfsMagic2 == 0xFA53E9C5)
+            if(hpfsMagic1 == 0xF995E849 && hpfsMagic2 == 0xFA53E9C5)
                 return false;
         }
 
         switch(bitsInBps)
         {
             // FAT32 for sure
-            case 1 when correctSpc && numberOfFats <= 2 && fatSectors == 0 && fat32Signature == 0x29 &&
-                        fat32String                == "FAT32   ":
+            case 1 when correctSpc             &&
+                        numberOfFats   <= 2    &&
+                        fatSectors     == 0    &&
+                        fat32Signature == 0x29 &&
+                        fat32String    == "FAT32   ":
                 return true;
 
             // short FAT32
@@ -255,21 +274,30 @@ public sealed partial class FAT
                            : sectors <= partition.End - partition.Start + 1;
 
             // MSX-DOS FAT12
-            case 1 when correctSpc && numberOfFats <= 2                                   && rootEntries > 0 &&
-                        sectors                    <= partition.End - partition.Start + 1 && fatSectors  > 0 &&
-                        msxString                  == "VOL_ID":
+            case 1 when correctSpc                                          &&
+                        numberOfFats <= 2                                   &&
+                        rootEntries  > 0                                    &&
+                        sectors      <= partition.End - partition.Start + 1 &&
+                        fatSectors   > 0                                    &&
+                        msxString    == "VOL_ID":
                 return true;
 
             // EBPB
-            case 1 when correctSpc && numberOfFats <= 2 && rootEntries > 0 && fatSectors > 0 &&
+            case 1 when correctSpc        &&
+                        numberOfFats <= 2 &&
+                        rootEntries  > 0  &&
+                        fatSectors   > 0  &&
                         bpbSignature is 0x28 or 0x29:
                 return sectors          == 0
                            ? bigSectors <= partition.End - partition.Start + 1
                            : sectors    <= partition.End - partition.Start + 1;
 
             // BPB
-            case 1 when correctSpc && reservedSecs < partition.End - partition.Start && numberOfFats <= 2 &&
-                        rootEntries                > 0                               && fatSectors   > 0:
+            case 1 when correctSpc                                     &&
+                        reservedSecs < partition.End - partition.Start &&
+                        numberOfFats <= 2                              &&
+                        rootEntries  > 0                               &&
+                        fatSectors   > 0:
                 return sectors          == 0
                            ? bigSectors <= partition.End - partition.Start + 1
                            : sectors    <= partition.End - partition.Start + 1;
@@ -313,7 +341,10 @@ public sealed partial class FAT
             // Volume is software interleaved 2:1
             var rootMs = new MemoryStream();
 
-            foreach(ulong rootSector in new ulong[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+            foreach(ulong rootSector in new ulong[]
+                {
+                    0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
+                })
             {
                 errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
 
@@ -409,8 +440,7 @@ public sealed partial class FAT
                 break;
         }
 
-        if(fat2SectorNo > partition.End ||
-           fat2SectorNo == 0)
+        if(fat2SectorNo > partition.End || fat2SectorNo == 0)
             return false;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Second_fat_starts_at_0, fat2SectorNo);
@@ -507,9 +537,7 @@ public sealed partial class FAT
 
                 if(fat32Bpb.oem_name != null)
                 {
-                    if(fat32Bpb.oem_name[5] == 0x49 &&
-                       fat32Bpb.oem_name[6] == 0x48 &&
-                       fat32Bpb.oem_name[7] == 0x43)
+                    if(fat32Bpb.oem_name[5] == 0x49 && fat32Bpb.oem_name[6] == 0x48 && fat32Bpb.oem_name[7] == 0x43)
                         sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                     else
                         metadata.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
@@ -526,21 +554,24 @@ public sealed partial class FAT
                 if(fat32Bpb is { big_sectors: 0, signature: 0x28 })
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, shortFat32Bpb.huge_sectors,
-                                    shortFat32Bpb.huge_sectors * shortFat32Bpb.bps).AppendLine();
+                                    shortFat32Bpb.huge_sectors * shortFat32Bpb.bps).
+                       AppendLine();
 
                     metadata.Clusters = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
                 }
                 else if(fat32Bpb.sectors == 0)
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fat32Bpb.big_sectors,
-                                    fat32Bpb.big_sectors * fat32Bpb.bps).AppendLine();
+                                    fat32Bpb.big_sectors * fat32Bpb.bps).
+                       AppendLine();
 
                     metadata.Clusters = fat32Bpb.big_sectors / fat32Bpb.spc;
                 }
                 else
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fat32Bpb.sectors,
-                                    fat32Bpb.sectors * fat32Bpb.bps).AppendLine();
+                                    fat32Bpb.sectors * fat32Bpb.bps).
+                       AppendLine();
 
                     metadata.Clusters = (ulong)(fat32Bpb.sectors / fat32Bpb.spc);
                 }
@@ -603,7 +634,8 @@ public sealed partial class FAT
                 // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
                 metadata.Bootable =
                     fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
-                    fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
+                    fat32Bpb.jump[0]                        == 0xE9            &&
+                    fat32Bpb.jump.Length                    >= 3               &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
                     BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC;
 
@@ -611,8 +643,10 @@ public sealed partial class FAT
 
                 // First root directory sector
                 rootDirectorySector =
-                    (ulong)((fat32Bpb.root_cluster - 2) * fat32Bpb.spc + fat32Bpb.big_spfat * fat32Bpb.fats_no +
-                            fat32Bpb.rsectors) * sectorsPerRealSector;
+                    (ulong)((fat32Bpb.root_cluster - 2) * fat32Bpb.spc     +
+                            fat32Bpb.big_spfat          * fat32Bpb.fats_no +
+                            fat32Bpb.rsectors) *
+                    sectorsPerRealSector;
 
                 sectorsForRootDirectory = 1;
 
@@ -657,7 +691,8 @@ public sealed partial class FAT
                     var atariSb = new StringBuilder();
 
                     atariSb.AppendFormat(Localization.cmdload_will_be_loaded_with_value_0,
-                                         BigEndianBitConverter.ToUInt16(bpbSector, 0x01E)).AppendLine();
+                                         BigEndianBitConverter.ToUInt16(bpbSector, 0x01E)).
+                            AppendLine();
 
                     atariSb.AppendFormat(Localization.Boot_program_will_be_loaded_at_address_0, atariBpb.ldaaddr).
                             AppendLine();
@@ -721,8 +756,9 @@ public sealed partial class FAT
 
             if(bpbKind != BpbKind.Human)
             {
-                int reservedSectors = fakeBpb.rsectors + fakeBpb.fats_no * fakeBpb.spfat +
-                                      fakeBpb.root_ent * 32              / fakeBpb.bps;
+                int reservedSectors = fakeBpb.rsectors                      +
+                                      fakeBpb.fats_no       * fakeBpb.spfat +
+                                      fakeBpb.root_ent * 32 / fakeBpb.bps;
 
                 if(fakeBpb.sectors == 0)
                 {
@@ -743,8 +779,7 @@ public sealed partial class FAT
             // This will walk all the FAT entries and check if they're valid FAT12 or FAT16 entries.
             // If the whole table is valid in both senses, it considers the type entry in the BPB.
             // BeOS is known to set the type as FAT16 but treat it as FAT12.
-            if(!isFat12 &&
-               !isFat16)
+            if(!isFat12 && !isFat16)
             {
                 if(clusters < 4089)
                 {
@@ -795,8 +830,7 @@ public sealed partial class FAT
                         isFat16 = fakeBpb.fs_type != null && Encoding.ASCII.GetString(fakeBpb.fs_type) == "FAT16   ";
                     }
 
-                    if(!isFat12 &&
-                       !isFat16)
+                    if(!isFat12 && !isFat16)
                         isFat12 = true;
                 }
                 else
@@ -841,9 +875,7 @@ public sealed partial class FAT
 
             if(bpbKind == BpbKind.Atari)
             {
-                if(atariBpb.serial_no[0] == 0x49 &&
-                   atariBpb.serial_no[1] == 0x48 &&
-                   atariBpb.serial_no[2] == 0x43)
+                if(atariBpb.serial_no[0] == 0x49 && atariBpb.serial_no[1] == 0x48 && atariBpb.serial_no[2] == 0x43)
                     sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                 else
                 {
@@ -858,9 +890,7 @@ public sealed partial class FAT
             }
             else if(fakeBpb.oem_name != null)
             {
-                if(fakeBpb.oem_name[5] == 0x49 &&
-                   fakeBpb.oem_name[6] == 0x48 &&
-                   fakeBpb.oem_name[7] == 0x43)
+                if(fakeBpb.oem_name[5] == 0x49 && fakeBpb.oem_name[6] == 0x48 && fakeBpb.oem_name[7] == 0x43)
                     sb.AppendLine(Localization.Volume_has_been_modified_by_Windows_9x_Me_Volume_Tracker);
                 else
                 {
@@ -896,9 +926,8 @@ public sealed partial class FAT
                                                                 fakeBpb.oem_name[6] >= 0x20 &&
                                                                 fakeBpb.oem_name[6] <= 0x7F &&
                                                                 fakeBpb.oem_name[7] >= 0x20 &&
-                                                                fakeBpb.oem_name[7] <= 0x7F => StringHandlers.CToString(
-                                                        fakeBpb.oem_name, encoding,
-                                                        start: 1),
+                                                                fakeBpb.oem_name[7] <= 0x7F =>
+                                                        StringHandlers.CToString(fakeBpb.oem_name, encoding, start: 1),
                                                     _ => metadata.SystemIdentifier
                                                 };
                 }
@@ -917,12 +946,14 @@ public sealed partial class FAT
                 if(fakeBpb.sectors == 0)
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fakeBpb.big_sectors,
-                                    fakeBpb.big_sectors * fakeBpb.bps).AppendLine();
+                                    fakeBpb.big_sectors * fakeBpb.bps).
+                       AppendLine();
                 }
                 else
                 {
                     sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, fakeBpb.sectors,
-                                    fakeBpb.sectors * fakeBpb.bps).AppendLine();
+                                    fakeBpb.sectors * fakeBpb.bps).
+                       AppendLine();
                 }
             }
             else
@@ -945,8 +976,7 @@ public sealed partial class FAT
 
             sb.AppendFormat(Localization._0_sectors_per_FAT, fakeBpb.spfat).AppendLine();
 
-            if(fakeBpb.sptrk is > 0 and < 64 &&
-               fakeBpb.heads is > 0 and < 256)
+            if(fakeBpb.sptrk is > 0 and < 64 && fakeBpb.heads is > 0 and < 256)
             {
                 sb.AppendFormat(Localization._0_sectors_per_track, fakeBpb.sptrk).AppendLine();
                 sb.AppendFormat(Localization._0_heads,             fakeBpb.heads).AppendLine();
@@ -983,8 +1013,7 @@ public sealed partial class FAT
                        AppendLine();
                 }
             }
-            else if(bpbKind               == BpbKind.Atari &&
-                    metadata.VolumeSerial != null)
+            else if(bpbKind == BpbKind.Atari && metadata.VolumeSerial != null)
                 sb.AppendFormat(Localization.Volume_Serial_Number_0, metadata.VolumeSerial).AppendLine();
 
             bootChk = Sha1Context.Data(fakeBpb.boot_code, out _);
@@ -995,12 +1024,12 @@ public sealed partial class FAT
 
             // Check that jumps to a correct boot code position and has boot signature set.
             // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
-            if(metadata.Bootable == false &&
-               fakeBpb.jump      != null)
+            if(metadata.Bootable == false && fakeBpb.jump != null)
             {
                 metadata.Bootable |=
                     fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
-                    fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
+                    fakeBpb.jump[0]                        == 0xE9            &&
+                    fakeBpb.jump.Length                    >= 3               &&
                     BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
                     BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
             }
@@ -1029,7 +1058,10 @@ public sealed partial class FAT
             {
                 var rootMs = new MemoryStream();
 
-                foreach(ulong rootSector in new ulong[] { 0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20 })
+                foreach(ulong rootSector in new ulong[]
+                    {
+                        0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
+                    })
                 {
                     errno = imagePlugin.ReadSector(rootSector, out byte[] tmp);
 
@@ -1045,18 +1077,15 @@ public sealed partial class FAT
             for(var i = 0; i < rootDirectory.Length; i += 32)
             {
                 // Not a correct entry
-                if(rootDirectory[i] < DIRENT_MIN &&
-                   rootDirectory[i] != DIRENT_E5)
+                if(rootDirectory[i] < DIRENT_MIN && rootDirectory[i] != DIRENT_E5)
                     continue;
 
                 // Deleted or subdirectory entry
-                if(rootDirectory[i] == DIRENT_SUBDIR ||
-                   rootDirectory[i] == DIRENT_DELETED)
+                if(rootDirectory[i] == DIRENT_SUBDIR || rootDirectory[i] == DIRENT_DELETED)
                     continue;
 
                 // Not a volume label
-                if(rootDirectory[i + 0x0B] != 0x08 &&
-                   rootDirectory[i + 0x0B] != 0x28)
+                if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28)
                     continue;
 
                 DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
@@ -1088,7 +1117,8 @@ public sealed partial class FAT
                 if(entry.adate > 0)
                 {
                     sb.AppendFormat(Localization.Volume_last_accessed_on_0_d,
-                                    DateHandlers.DosToDateTime(entry.adate, 0)).AppendLine();
+                                    DateHandlers.DosToDateTime(entry.adate, 0)).
+                       AppendLine();
                 }
 
                 break;

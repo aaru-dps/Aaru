@@ -84,7 +84,10 @@ public sealed partial class T98
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".t98" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".t98"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

@@ -76,9 +76,9 @@ public sealed class FileSystemViewModel([NotNull] FileSystem metadata, string in
     public string BackupDateText { get; } =
         string.Format(Localization.Core.Volume_last_backed_up_on_0, metadata.BackupDate);
 
-    public string ClustersText { get; } = string.Format(
-        Localization.Core.Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes,
-        metadata.Clusters, metadata.ClusterSize, metadata.Clusters * metadata.ClusterSize);
+    public string ClustersText { get; } =
+        string.Format(Localization.Core.Volume_has_0_clusters_of_1_bytes_each_total_of_2_bytes, metadata.Clusters,
+                      metadata.ClusterSize, metadata.Clusters * metadata.ClusterSize);
 
     public string FreeClustersText { get; } = string.Format(Localization.Core.Volume_has_0_clusters_free_1,
                                                             metadata.FreeClusters,

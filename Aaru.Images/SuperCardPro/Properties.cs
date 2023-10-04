@@ -100,7 +100,10 @@ public sealed partial class SuperCardPro
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".scp" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".scp"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

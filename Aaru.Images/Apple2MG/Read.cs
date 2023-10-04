@@ -99,8 +99,7 @@ public sealed partial class Apple2Mg
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
 
-        if(_imageHeader is { DataSize: 0, Blocks: 0 } &&
-           _imageHeader.ImageFormat != SectorOrder.ProDos)
+        if(_imageHeader is { DataSize: 0, Blocks: 0 } && _imageHeader.ImageFormat != SectorOrder.ProDos)
             return ErrorNumber.InvalidArgument;
 
         byte[] tmp;
@@ -131,23 +130,24 @@ public sealed partial class Apple2Mg
                 tmp = new byte[_imageHeader.DataSize];
                 stream.EnsureRead(tmp, 0, tmp.Length);
 
-                bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
-                             tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+                bool isDos = tmp[0x11001] == 17  &&
+                             tmp[0x11002] < 16   &&
+                             tmp[0x11027] <= 122 &&
+                             tmp[0x11034] == 35  &&
+                             tmp[0x11035] == 16  &&
+                             tmp[0x11036] == 0   &&
+                             tmp[0x11037] == 1;
 
                 _decodedImage = new byte[_imageHeader.DataSize];
 
-                offsets = _imageHeader.ImageFormat == SectorOrder.Dos
-                              ? isDos ? _deinterleave : _interleave
-                              : isDos
-                                  ? _interleave
-                                  : _deinterleave;
+                offsets = _imageHeader.ImageFormat == SectorOrder.Dos ? isDos ? _deinterleave : _interleave :
+                          isDos                                       ? _interleave : _deinterleave;
 
                 for(var t = 0; t < 35; t++)
                 {
                     for(var s = 0; s < 16; s++)
                     {
-                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256,
-                                   256);
+                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
                     }
                 }
 
@@ -166,8 +166,7 @@ public sealed partial class Apple2Mg
                 {
                     for(var s = 0; s < 16; s++)
                     {
-                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256,
-                                   256);
+                        Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
                     }
                 }
 
@@ -202,8 +201,7 @@ public sealed partial class Apple2Mg
 
         _imageInfo.Version = _imageHeader.Version.ToString();
 
-        if(_imageHeader.CommentOffset != 0 &&
-           _imageHeader.CommentSize   != 0)
+        if(_imageHeader.CommentOffset != 0 && _imageHeader.CommentSize != 0)
         {
             stream.Seek(_imageHeader.CommentOffset, SeekOrigin.Begin);
 

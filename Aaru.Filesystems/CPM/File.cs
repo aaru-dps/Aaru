@@ -46,7 +46,10 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -76,7 +79,10 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -117,8 +123,7 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not CpmFileNode mynode)
@@ -152,13 +157,15 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
         {
             return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
                        ? ErrorNumber.NoError

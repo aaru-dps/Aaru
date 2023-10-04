@@ -72,7 +72,10 @@ public sealed partial class Nhdr0
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.GENERIC_HDD, MediaType.Unknown };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.GENERIC_HDD, MediaType.Unknown
+    };
 
     // TODO: Support dynamic images
     /// <inheritdoc />
@@ -80,7 +83,10 @@ public sealed partial class Nhdr0
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".nhd" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".nhd"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

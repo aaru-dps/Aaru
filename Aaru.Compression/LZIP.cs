@@ -59,7 +59,7 @@ public class LZIP
     /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit) =>
         Native.IsSupported
-            ? AARU_lzip_encode_buffer(destination,    destination.Length, source, source.Length,
-                                      dictionarySize, matchLengthLimit)
+            ? AARU_lzip_encode_buffer(destination, destination.Length, source, source.Length, dictionarySize,
+                                      matchLengthLimit)
             : 0;
 }

@@ -435,6 +435,8 @@ public sealed partial class LisaFS
         public byte scavenge_flag;
     }
 
+#region Nested type: MDDF
+
 #endregion
 
 #region Nested type: SRecord

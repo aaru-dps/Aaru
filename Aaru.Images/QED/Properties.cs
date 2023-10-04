@@ -85,7 +85,10 @@ public sealed partial class Qed
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".qed" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".qed"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

@@ -73,8 +73,7 @@ public sealed partial class FAT
         if(err != ErrorNumber.NoError)
             return err;
 
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-           !_debug)
+        if(stat.Attributes.HasFlag(FileAttributes.Directory) && !_debug)
             return ErrorNumber.IsDirectory;
 
         uint[] clusters = GetClusters((uint)stat.Inode);
@@ -115,8 +114,7 @@ public sealed partial class FAT
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not FatFileNode mynode)
@@ -183,14 +181,12 @@ public sealed partial class FAT
             Links      = 1
         };
 
-        if(entry.cdate > 0 ||
-           entry.ctime > 0)
+        if(entry.cdate > 0 || entry.ctime > 0)
             stat.CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
         if(_namespace != Namespace.Human)
         {
-            if(entry.mdate > 0 ||
-               entry.mtime > 0)
+            if(entry.mdate > 0 || entry.mtime > 0)
                 stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
 
             if(entry.ctime_ms > 0)
@@ -204,8 +200,7 @@ public sealed partial class FAT
         {
             stat.Attributes |= FileAttributes.Directory;
 
-            if(_fat32 && entry.ea_handle << 16 > 0 ||
-               entry.start_cluster > 0)
+            if(_fat32 && entry.ea_handle << 16 > 0 || entry.start_cluster > 0)
             {
                 stat.Blocks = _fat32
                                   ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster))?.Length ?? 0
@@ -259,8 +254,7 @@ public sealed partial class FAT
 
         if(_fat32)
         {
-            while((nextCluster & FAT32_MASK) > 0 &&
-                  (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
+            while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_RESERVED)
             {
                 clusters.Add(nextCluster);
 
@@ -276,8 +270,7 @@ public sealed partial class FAT
 
                 nextCluster = BitConverter.ToUInt32(fatData, nextEntry * 4);
 
-                nextSector = nextCluster / _fatEntriesPerSector + _fatFirstSector +
-                             (_useFirstFat ? 0 : _sectorsPerFat);
+                nextSector = nextCluster / _fatEntriesPerSector + _fatFirstSector + (_useFirstFat ? 0 : _sectorsPerFat);
 
                 nextEntry = (int)(nextCluster % _fatEntriesPerSector);
             }
@@ -314,7 +307,10 @@ public sealed partial class FAT
 
         string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;

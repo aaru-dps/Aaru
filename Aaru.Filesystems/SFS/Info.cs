@@ -77,13 +77,16 @@ public sealed partial class SFS
         sbInformation.AppendFormat(Localization.Volume_version_0, rootBlock.version).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_starts_on_device_byte_0_and_ends_on_byte_1, rootBlock.firstbyte,
-                                   rootBlock.lastbyte).AppendLine();
+                                   rootBlock.lastbyte).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, rootBlock.totalblocks,
-                                   rootBlock.blocksize).AppendLine();
+                                   rootBlock.blocksize).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Bitmap_starts_at_block_0, rootBlock.bitmapbase).AppendLine();
 

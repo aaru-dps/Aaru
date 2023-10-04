@@ -108,8 +108,8 @@ public sealed partial class SolarFS
         Array.Copy(bpbSector, 0x1B, bpb.unk3, 0, 10);
         bpb.unk4 = BitConverter.ToUInt32(bpbSector, 0x26);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
-                                   bpb.x86_jump[1], bpb.x86_jump[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0], bpb.x86_jump[1],
+                                   bpb.x86_jump[2]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.OEMName: \"{0}\"", bpb.OEMName);
         AaruConsole.DebugWriteLine(MODULE_NAME, "BPB.bps: {0}",         bpb.bps);
@@ -141,18 +141,17 @@ public sealed partial class SolarFS
             if(bpb.bps != imagePlugin.Info.SectorSize)
             {
                 sb.
-                    AppendFormat(
-                        Localization.
-                            WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
-                        bpb.bps, 2048).AppendLine();
+                    AppendFormat(Localization.WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
+                                 bpb.bps, 2048).
+                    AppendLine();
             }
         }
         else if(bpb.bps != imagePlugin.Info.SectorSize)
         {
             sb.
-                AppendFormat(
-                    Localization.WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
-                    bpb.bps, imagePlugin.Info.SectorSize).AppendLine();
+                AppendFormat(Localization.WARNING_Filesystem_describes_a_0_bytes_sector_while_device_describes_a_1_bytes_sector,
+                             bpb.bps, imagePlugin.Info.SectorSize).
+                AppendLine();
         }
 
         sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, bpb.sectors, bpb.sectors * bpb.bps).AppendLine();

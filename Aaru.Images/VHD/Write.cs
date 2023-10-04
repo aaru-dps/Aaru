@@ -210,8 +210,7 @@ public sealed partial class Vhd
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 &&
-                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }
@@ -223,12 +222,15 @@ public sealed partial class Vhd
             Version = VERSION1,
             Timestamp = (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
             CreatorApplication = CREATOR_AARU,
-            CreatorVersion = (uint)(((thisVersion.Major & 0xFF) << 24) + ((thisVersion.Minor & 0xFF) << 16) +
-                                    ((thisVersion.Build & 0xFF) << 8)  + (thisVersion.Revision & 0xFF)),
+            CreatorVersion = (uint)(((thisVersion.Major & 0xFF) << 24) +
+                                    ((thisVersion.Minor & 0xFF) << 16) +
+                                    ((thisVersion.Build & 0xFF) << 8)  +
+                                    (thisVersion.Revision & 0xFF)),
             CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
             DiskType      = TYPE_FIXED,
             UniqueId      = Guid.NewGuid(),
-            DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) + ((_imageInfo.Heads & 0xFF) << 8) +
+            DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) +
+                           ((_imageInfo.Heads     & 0xFF)   << 8)  +
                            (_imageInfo.SectorsPerTrack & 0xFF),
             OriginalSize = _imageInfo.Sectors * 512,
             CurrentSize  = _imageInfo.Sectors * 512

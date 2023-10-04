@@ -60,8 +60,7 @@ public sealed partial class OperaFS
 
         SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        if(sb.record_type    != 1 ||
-           sb.record_version != 1)
+        if(sb.record_type != 1 || sb.record_version != 1)
             return ErrorNumber.InvalidArgument;
 
         if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)

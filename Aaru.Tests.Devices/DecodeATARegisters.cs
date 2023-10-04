@@ -121,7 +121,9 @@ static partial class MainClass
         sb.AppendFormat(Localization.Device_0, registers.DeviceHead >> 4 & 0x01).AppendLine();
 
         sb.AppendFormat(Localization.LBA_0,
-                        ((registers.DeviceHead & 0xF) << 24) + (registers.LbaHigh << 16) + (registers.LbaMid << 8) +
+                        ((registers.DeviceHead & 0xF) << 24) +
+                        (registers.LbaHigh            << 16) +
+                        (registers.LbaMid             << 8)  +
                         registers.LbaLow);
 
         sb.AppendFormat(Localization.Count_0,     registers.SectorCount).AppendLine();

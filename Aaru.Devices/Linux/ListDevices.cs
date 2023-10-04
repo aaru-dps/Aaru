@@ -91,8 +91,7 @@ static class ListDevices
 
             StreamReader sr;
 
-            if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) &&
-               string.IsNullOrEmpty(devices[i].Vendor))
+            if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].Vendor))
             {
                 sr                = new StreamReader(Path.Combine(sysdevs[i], "device/vendor"), Encoding.ASCII);
                 devices[i].Vendor = sr.ReadLine()?.Trim();
@@ -109,15 +108,13 @@ static class ListDevices
             else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                 devices[i].Model = "Linux";
 
-            if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) &&
-               string.IsNullOrEmpty(devices[i].Serial))
+            if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].Serial))
             {
                 sr                = new StreamReader(Path.Combine(sysdevs[i], "device/serial"), Encoding.ASCII);
                 devices[i].Serial = sr.ReadLine()?.Trim();
             }
 
-            if(string.IsNullOrEmpty(devices[i].Vendor) ||
-               devices[i].Vendor == "ATA")
+            if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")
             {
                 if(devices[i].Model != null)
                 {

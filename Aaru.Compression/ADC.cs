@@ -57,11 +57,7 @@ public static class ADC
     static extern int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static int GetChunkType(byte byt) => (byt & 0x80) == 0x80
-                                             ? PLAIN
-                                             : (byt & 0x40) == 0x40
-                                                 ? THREE_BYTE
-                                                 : TWO_BYTE;
+    static int GetChunkType(byte byt) => (byt & 0x80) == 0x80 ? PLAIN : (byt & 0x40) == 0x40 ? THREE_BYTE : TWO_BYTE;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkSize(byte byt) => GetChunkType(byt) switch

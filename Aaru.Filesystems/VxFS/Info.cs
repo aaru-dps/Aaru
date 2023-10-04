@@ -92,10 +92,12 @@ public sealed partial class VxFS
         sbInformation.AppendFormat(Localization.Volume_has_0_free_blocks,      vxSb.vs_free).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).
+                      AppendLine();
 
         if(vxSb.vs_clean != 0)
             sbInformation.AppendLine(Localization.Volume_is_dirty);

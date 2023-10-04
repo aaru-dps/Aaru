@@ -66,7 +66,10 @@ public sealed partial class RsIde
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new[] { MediaTagType.ATA_IDENTIFY };
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+    {
+        MediaTagType.ATA_IDENTIFY
+    };
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
@@ -84,7 +87,10 @@ public sealed partial class RsIde
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".ide" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".ide"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

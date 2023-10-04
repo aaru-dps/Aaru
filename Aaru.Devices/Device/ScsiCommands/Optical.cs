@@ -90,8 +90,7 @@ public partial class Device
         cdb[4] = (byte)((lba & 0xFF00)     >> 8);
         cdb[5] = (byte)(lba & 0xFF);
 
-        if(requested  > 0 ||
-           scanLength > 1)
+        if(requested > 0 || scanLength > 1)
         {
             buffer    = new byte[8];
             buffer[0] = (byte)((requested & 0xFF000000) >> 24);

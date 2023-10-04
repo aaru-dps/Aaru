@@ -73,10 +73,7 @@ public sealed partial class CloneCd
                 else
                     twoConsecutiveNulls = false;
 
-                if(testArray[i] < 0x20  &&
-                   testArray[i] != 0x0A &&
-                   testArray[i] != 0x0D &&
-                   testArray[i] != 0x00)
+                if(testArray[i] < 0x20 && testArray[i] != 0x0A && testArray[i] != 0x0D && testArray[i] != 0x00)
                     return false;
             }
 

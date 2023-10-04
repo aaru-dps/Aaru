@@ -91,9 +91,7 @@ public sealed partial class RsIde
             }
         }
 
-        if(_imageInfo.Cylinders       == 0 ||
-           _imageInfo.Heads           == 0 ||
-           _imageInfo.SectorsPerTrack == 0)
+        if(_imageInfo.Cylinders == 0 || _imageInfo.Heads == 0 || _imageInfo.SectorsPerTrack == 0)
         {
             _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
             _imageInfo.Heads           = 16;
@@ -135,8 +133,7 @@ public sealed partial class RsIde
     {
         buffer = null;
 
-        if(!_imageInfo.ReadableMediaTags.Contains(tag) ||
-           tag != MediaTagType.ATA_IDENTIFY)
+        if(!_imageInfo.ReadableMediaTags.Contains(tag) || tag != MediaTagType.ATA_IDENTIFY)
             return ErrorNumber.NotSupported;
 
         buffer = _identify?.Clone() as byte[];

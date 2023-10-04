@@ -82,8 +82,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         SaveEvpdPageCommand      = ReactiveCommand.Create(ExecuteSaveEvpdPageCommand);
         SaveMmcFeaturesCommand   = ReactiveCommand.Create(ExecuteSaveMmcFeaturesCommand);
 
-        if(InquiryData == null ||
-           !scsiInquiry.HasValue)
+        if(InquiryData == null || !scsiInquiry.HasValue)
             return;
 
         ScsiInquiryText = Decoders.SCSI.Inquiry.Prettify(scsiInquiry);
@@ -110,8 +109,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     {
                         case 0x00:
                         {
-                            if(scsiType     == PeripheralDeviceTypes.MultiMediaDevice &&
-                               page.Subpage == 0)
+                            if(scsiType == PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                                 decodedText = Modes.PrettifyModePage_00_SFF(page.PageResponse);
                             else
                                 decodedText = UI.Undecoded;
@@ -515,40 +513,52 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdDecodedPage = EVPD.DecodePageB4(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                                  Trim() == "quantum":
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                                  ToLowerInvariant().
+                                                  Trim() ==
+                                   "quantum":
                         evpdPageTitle   = UI.Quantum_Firmware_Build_Information_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                                  Trim() == "seagate":
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                                  ToLowerInvariant().
+                                                  Trim() ==
+                                   "seagate":
                         evpdPageTitle   = UI.Seagate_Firmware_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                                  Trim() == "ibm":
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                                  ToLowerInvariant().
+                                                  Trim() ==
+                                   "ibm":
                         evpdPageTitle   = UI.IBM_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
 
                         break;
-                    case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                                  Trim() == "ibm":
+                    case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                                  ToLowerInvariant().
+                                                  Trim() ==
+                                   "ibm":
                         evpdPageTitle   = UI.IBM_Drive_Serial_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
 
                         break;
                     case 0xC0 or 0xC1
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                            Trim() == "certance":
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                            ToLowerInvariant().
+                                            Trim() ==
+                             "certance":
                         evpdPageTitle   = UI.Certance_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
 
                         break;
                     case 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                            Trim() == "certance":
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                            ToLowerInvariant().
+                                            Trim() ==
+                             "certance":
                         evpdPageTitle = page.Key switch
                                         {
                                             0xC2 => UI.Head_Assembly_Serial_Number,
@@ -563,8 +573,10 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
                         break;
                     case 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                            Trim() == "hp":
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                            ToLowerInvariant().
+                                            Trim() ==
+                             "hp":
                         evpdPageTitle = page.Key switch
                                         {
                                             0xC0 => UI.HP_Drive_Firmware_Revision_Levels_page,
@@ -579,8 +591,10 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
 
                         break;
-                    case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
-                                                  Trim() == "certance":
+                    case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
+                                                  ToLowerInvariant().
+                                                  Trim() ==
+                                   "certance":
                         evpdPageTitle   = UI.Certance_drive_status_page;
                         evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
 
@@ -593,8 +607,8 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdPageTitle   = string.Format(UI.Page_0_h, page.Key);
                         evpdDecodedPage = UI.Undecoded;
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Core.Found_undecoded_SCSI_VPD_page_0, page.Key);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_undecoded_SCSI_VPD_page_0,
+                                                   page.Key);
 
                         break;
                     }
@@ -614,8 +628,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_length_is_0,
-                                   ftr.DataLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_length_is_0, ftr.DataLength);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                    ftr.CurrentProfile);
@@ -799,8 +812,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -820,8 +836,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.txt" }),
-            Name       = UI.Dialog_Text_files
+            Extensions = new List<string>(new[]
+            {
+                "*.txt"
+            }),
+            Name = UI.Dialog_Text_files
         });
 
         string result = await dlgSaveText.ShowAsync(_view);
@@ -841,8 +860,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -862,8 +884,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -886,8 +911,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);
@@ -907,8 +935,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

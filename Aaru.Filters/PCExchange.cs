@@ -147,14 +147,13 @@ public sealed class PcExchange : IFilter
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
             Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
-            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() +
+                             "."                                          +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName &&
-               baseFilename != dosName &&
-               baseFilename != dosNameLow)
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow)
                 continue;
 
             dataFound |=
@@ -204,14 +203,13 @@ public sealed class PcExchange : IFilter
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
             Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
-            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() +
+                             "."                                          +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName &&
-               baseFilename != dosName &&
-               baseFilename != dosNameLow)
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow)
                 continue;
 
             if(File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))

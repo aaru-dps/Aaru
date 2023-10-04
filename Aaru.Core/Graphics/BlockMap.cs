@@ -61,8 +61,7 @@ public class BlockMap : IMediaGraph
 
         _sectorsPerSquare = (int)((long)maxSectors / squares);
 
-        while(_sectorsPerSquare > 0 &&
-              _squareSize       > 4)
+        while(_sectorsPerSquare > 0 && _squareSize > 4)
         {
             _squareSize--;
 
@@ -266,8 +265,8 @@ public class BlockMap : IMediaGraph
     {
         foreach(SKRect rect in sectors.Select(sector => GetSquareRectangle(_sectorsPerSquare == 0
                                                                                ? (int)sector
-                                                                               : (int)
-                                                                               (sector / (ulong)_sectorsPerSquare))))
+                                                                               : (int)(sector /
+                                                                                           (ulong)_sectorsPerSquare))))
         {
             _canvas.DrawRect(rect, new SKPaint
             {

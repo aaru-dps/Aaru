@@ -105,7 +105,8 @@ public sealed partial class BFS
         sb.AppendLine(Localization.UNIX_Boot_Filesystem);
 
         sb.AppendFormat(Localization.Volume_goes_from_byte_0_to_byte_1_for_2_bytes, bfsSb.s_start, bfsSb.s_end,
-                        bfsSb.s_end - bfsSb.s_start).AppendLine();
+                        bfsSb.s_end - bfsSb.s_start).
+           AppendLine();
 
         sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0,     bfsSb.s_volume).AppendLine();

@@ -80,10 +80,16 @@ public static class MMC
         0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x35, 0x00, 0x00, 0x00, 0x00
     };
 
-    static readonly byte[] _operaId = { 0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01 };
+    static readonly byte[] _operaId =
+    {
+        0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
+    };
 
     // Only present on bootable CDs, but those make more than 99% of all available
-    static readonly byte[] _fmTownsBootId = { 0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06 };
+    static readonly byte[] _fmTownsBootId =
+    {
+        0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06
+    };
 
     /// <summary>Present on first two seconds of second track, says "COPYRIGHT BANDAI"</summary>
     static readonly byte[] _playdiaCopyright = "COPYRIGHT BANDAI"u8.ToArray();
@@ -125,7 +131,10 @@ public static class MMC
         if(sector?.Length != 2352)
             return false;
 
-        byte[] syncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+        byte[] syncMark =
+        {
+            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+        };
 
         var testMark = new byte[12];
         Array.Copy(sector, 0, testMark, 0, 12);
@@ -140,7 +149,10 @@ public static class MMC
         if(sector?.Length != 2352)
             return false;
 
-        byte[] syncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+        byte[] syncMark =
+        {
+            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+        };
 
         var testMark = new byte[12];
 
@@ -196,12 +208,14 @@ public static class MMC
         if(sector16?.Length != 2352)
             return false;
 
-        byte[] cdiMark = { 0x01, 0x43, 0x44, 0x2D };
+        byte[] cdiMark =
+        {
+            0x01, 0x43, 0x44, 0x2D
+        };
 
         bool isData = IsData(sector0);
 
-        if(!isData ||
-           sector0[0xF] != 2 && sector0[0xF] != 1)
+        if(!isData || sector0[0xF] != 2 && sector0[0xF] != 1)
             return false;
 
         var testMark = new byte[4];
@@ -212,8 +226,7 @@ public static class MMC
 
     static bool IsVideoNowColor(byte[] videoFrame)
     {
-        if(videoFrame is null ||
-           videoFrame.Length < _videoNowColorFrameMarker.Length)
+        if(videoFrame is null || videoFrame.Length < _videoNowColorFrameMarker.Length)
             return false;
 
         var buffer = new byte[_videoNowColorFrameMarker.Length];
@@ -447,8 +460,7 @@ public static class MMC
 
                             break;
                         case 0x20:
-                            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.Core.TOC_says_disc_type_is_CD_ROM_XA);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.TOC_says_disc_type_is_CD_ROM_XA);
 
                             mediaType = MediaType.CDROMXA;
 
@@ -457,7 +469,7 @@ public static class MMC
                 }
 
                 foreach(FullTOC.TrackDataDescriptor track in
-                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99))
+                    decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99))
                 {
                     if(track.TNO == 1 &&
                        ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -467,8 +479,11 @@ public static class MMC
                     if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
                        (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                     {
-                        var startAddress = (uint)(track.PHOUR * 3600 * 75 + track.PMIN * 60 * 75 +
-                                                  track.PSEC  * 75        + track.PFRAME - 150);
+                        var startAddress = (uint)(track.PHOUR * 3600 * 75 +
+                                                  track.PMIN  * 60   * 75 +
+                                                  track.PSEC  * 75        +
+                                                  track.PFRAME -
+                                                  150);
 
                         if(startAddress < startOfFirstDataTrack)
                             startOfFirstDataTrack = startAddress;
@@ -504,19 +519,14 @@ public static class MMC
                         break;
                 }
 
-                if(hasDataTrack   &&
-                   !hasAudioTrack &&
-                   sessions == 1)
+                if(hasDataTrack && !hasAudioTrack && sessions == 1)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Core.Disc_has_only_data_in_a_session_CD_ROM);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Disc_has_only_data_in_a_session_CD_ROM);
 
                     mediaType = MediaType.CDROM;
                 }
 
-                if(hasVideoTrack &&
-                   !hasDataTrack &&
-                   sessions == 1)
+                if(hasVideoTrack && !hasDataTrack && sessions == 1)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Disc_has_video_tracks_CD_Video);
 
@@ -534,7 +544,9 @@ public static class MMC
                                                                     TocControl.DataTrackIncremental)).
                                                         Select(track => (uint)(track.PHOUR * 3600 * 75 +
                                                                                track.PMIN  * 60   * 75 +
-                                                                               track.PSEC  * 75 + track.PFRAME - 150) +
+                                                                               track.PSEC  * 75        +
+                                                                               track.PFRAME -
+                                                                               150) +
                                                                         16))
                 {
                     sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false, false,
@@ -559,8 +571,7 @@ public static class MMC
                        cmdBuf[15] != 0x02)
                         continue;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Core.Disc_has_a_mode_two_data_track_CD_ROM_XA);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Disc_has_a_mode_two_data_track_CD_ROM_XA);
 
                     mediaType = MediaType.CDROMXA;
 
@@ -578,14 +589,14 @@ public static class MMC
             var firstSectorSecondSessionFirstTrack = (uint)(secondSessionFirstTrackTrack.PHOUR * 3600 * 75 +
                                                             secondSessionFirstTrackTrack.PMIN  * 60   * 75 +
                                                             secondSessionFirstTrackTrack.PSEC  * 75        +
-                                                            secondSessionFirstTrackTrack.PFRAME - 150);
+                                                            secondSessionFirstTrackTrack.PFRAME -
+                                                            150);
 
             sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1, MmcSectorTypes.AllTypes,
                                false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                MmcSubchannel.None, dev.Timeout, out _);
 
-            if(!sense &&
-               !dev.Error)
+            if(!sense && !dev.Error)
                 firstTrackSecondSession = cmdBuf;
             else
             {
@@ -593,8 +604,7 @@ public static class MMC
                                    false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                    MmcSubchannel.None, dev.Timeout, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                     firstTrackSecondSession = cmdBuf;
             }
 
@@ -602,8 +612,7 @@ public static class MMC
                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-            if(!sense &&
-               !dev.Error)
+            if(!sense && !dev.Error)
                 firstTrackSecondSessionAudio = cmdBuf;
             else
             {
@@ -611,8 +620,7 @@ public static class MMC
                                    MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
                                    MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                     firstTrackSecondSessionAudio = cmdBuf;
             }
         }
@@ -648,8 +656,11 @@ public static class MMC
 
         if(firstTrack?.POINT is >= 1 and < 0xA0)
         {
-            var firstTrackSector = (uint)(firstTrack.Value.PHOUR * 3600 * 75 + firstTrack.Value.PMIN * 60 * 75 +
-                                          firstTrack.Value.PSEC  * 75        + firstTrack.Value.PFRAME - 150);
+            var firstTrackSector = (uint)(firstTrack.Value.PHOUR * 3600 * 75 +
+                                          firstTrack.Value.PMIN  * 60   * 75 +
+                                          firstTrack.Value.PSEC  * 75        +
+                                          firstTrack.Value.PFRAME -
+                                          150);
 
             // Check for hidden data before start of track 1
             if(firstTrackSector > 0)
@@ -658,8 +669,7 @@ public static class MMC
                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                    dev.Timeout, out _);
 
-                if(!dev.Error &&
-                   !sense)
+                if(!dev.Error && !sense)
                 {
                     hiddenTrack = true;
 
@@ -671,8 +681,7 @@ public static class MMC
                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                            MmcSubchannel.None, dev.Timeout, out _);
 
-                        if(!sense &&
-                           IsCdi(sector0, sector16))
+                        if(!sense && IsCdi(sector0, sector16))
                         {
                             mediaType = MediaType.CDIREADY;
 
@@ -756,8 +765,7 @@ public static class MMC
                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                    dev.Timeout, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                 {
                     sector0 = new byte[2048];
                     Array.Copy(cmdBuf, 16, sector0, 0, 2048);
@@ -766,8 +774,7 @@ public static class MMC
                                        MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         sector1 = new byte[2048];
                         Array.Copy(cmdBuf, 16, sector1, 0, 2048);
@@ -777,8 +784,7 @@ public static class MMC
                                        MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         playdia1 = new byte[2048];
                         Array.Copy(cmdBuf, 24, playdia1, 0, 2048);
@@ -788,8 +794,7 @@ public static class MMC
                                        MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         playdia2 = new byte[2048];
                         Array.Copy(cmdBuf, 24, playdia2, 0, 2048);
@@ -801,8 +806,7 @@ public static class MMC
                                            false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                            MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             firstDataSectorNotZero = new byte[2048];
                             Array.Copy(cmdBuf, 16, firstDataSectorNotZero, 0, 2048);
@@ -812,8 +816,7 @@ public static class MMC
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                            true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             secondDataSectorNotZero = new byte[2048];
                             Array.Copy(cmdBuf, 16, secondDataSectorNotZero, 0, 2048);
@@ -843,8 +846,7 @@ public static class MMC
                                        MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         sector0 = new byte[2048];
                         Array.Copy(cmdBuf, 0, sector0, 0, 2048);
@@ -853,8 +855,7 @@ public static class MMC
                                            MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                            dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             sector1 = new byte[2048];
                             Array.Copy(cmdBuf, 1, sector0, 0, 2048);
@@ -864,8 +865,7 @@ public static class MMC
                                            MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                            dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             playdia1 = new byte[2048];
                             Array.Copy(cmdBuf, 0, playdia1, 0, 2048);
@@ -875,8 +875,7 @@ public static class MMC
                                            MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                            dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             playdia2 = new byte[2048];
                             Array.Copy(cmdBuf, 0, playdia2, 0, 2048);
@@ -888,8 +887,7 @@ public static class MMC
                                                false, false, false, MmcHeaderCodes.None, true, false,
                                                MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 firstDataSectorNotZero = new byte[2048];
                                 Array.Copy(cmdBuf, 0, firstDataSectorNotZero, 0, 2048);
@@ -899,8 +897,7 @@ public static class MMC
                                                MmcSectorTypes.Mode2, false, false, false, MmcHeaderCodes.None, true,
                                                false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 secondDataSectorNotZero = new byte[2048];
                                 Array.Copy(cmdBuf, 0, secondDataSectorNotZero, 0, 2048);
@@ -930,8 +927,7 @@ public static class MMC
                                            MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                            dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             sector0 = cmdBuf;
 
@@ -939,16 +935,14 @@ public static class MMC
                                                MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                                dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                                 sector1 = cmdBuf;
 
                             sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 12, MmcSectorTypes.Mode1, false, false,
                                                false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                                 ps2BootSectors = cmdBuf;
 
                             if(startOfFirstDataTrack != uint.MaxValue)
@@ -957,16 +951,14 @@ public static class MMC
                                                    MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None, true,
                                                    false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                                if(!sense &&
-                                   !dev.Error)
+                                if(!sense && !dev.Error)
                                     firstDataSectorNotZero = cmdBuf;
 
                                 sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2048, 1,
                                                    MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None, true,
                                                    false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                                if(!sense &&
-                                   !dev.Error)
+                                if(!sense && !dev.Error)
                                     secondDataSectorNotZero = cmdBuf;
                             }
                         }
@@ -997,24 +989,20 @@ public static class MMC
 
                 sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 1, false, dev.Timeout, out _);
 
-                if(!sense &&
-                   !dev.Error)
+                if(!sense && !dev.Error)
                 {
                     sector0 = cmdBuf;
 
                     sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 1, 2048, 0, 1, false, dev.Timeout,
                                        out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                         sector1 = cmdBuf;
 
                     sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 12, false, dev.Timeout,
                                        out _);
 
-                    if(!sense     &&
-                       !dev.Error &&
-                       cmdBuf.Length == 0x6000)
+                    if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
                         ps2BootSectors = cmdBuf;
                 }
                 else
@@ -1022,24 +1010,20 @@ public static class MMC
                     sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1, false,
                                        dev.Timeout, out _);
 
-                    if(!sense &&
-                       !dev.Error)
+                    if(!sense && !dev.Error)
                     {
                         sector0 = cmdBuf;
 
                         sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1, false,
                                            dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                             sector1 = cmdBuf;
 
                         sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12, false,
                                            dev.Timeout, out _);
 
-                        if(!sense     &&
-                           !dev.Error &&
-                           cmdBuf.Length == 0x6000)
+                        if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
                             ps2BootSectors = cmdBuf;
                     }
                     else
@@ -1047,46 +1031,38 @@ public static class MMC
                         sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1, dev.Timeout,
                                            out _);
 
-                        if(!sense &&
-                           !dev.Error)
+                        if(!sense && !dev.Error)
                         {
                             sector0 = cmdBuf;
 
                             sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1,
                                                dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                                 sector1 = cmdBuf;
 
                             sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12,
                                                dev.Timeout, out _);
 
-                            if(!sense     &&
-                               !dev.Error &&
-                               cmdBuf.Length == 0x6000)
+                            if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
                                 ps2BootSectors = cmdBuf;
                         }
                         else
                         {
                             sense = dev.Read6(out cmdBuf, out _, 0, 2048, 1, dev.Timeout, out _);
 
-                            if(!sense &&
-                               !dev.Error)
+                            if(!sense && !dev.Error)
                             {
                                 sector0 = cmdBuf;
 
                                 sense = dev.Read6(out cmdBuf, out _, 1, 2048, 1, dev.Timeout, out _);
 
-                                if(!sense &&
-                                   !dev.Error)
+                                if(!sense && !dev.Error)
                                     sector1 = cmdBuf;
 
                                 sense = dev.Read6(out cmdBuf, out _, 0, 2048, 12, dev.Timeout, out _);
 
-                                if(!sense     &&
-                                   !dev.Error &&
-                                   cmdBuf.Length == 0x6000)
+                                if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
                                     ps2BootSectors = cmdBuf;
                             }
                         }
@@ -1207,8 +1183,7 @@ public static class MMC
                         break;
 
                     // If it is PVD or end of descriptor chain, break
-                    if(isoSector[0] == 1 ||
-                       isoSector[0] == 255)
+                    if(isoSector[0] == 1 || isoSector[0] == 255)
                         break;
 
                     isoSectorPosition++;
@@ -1226,8 +1201,7 @@ public static class MMC
                 var rootStart  = BitConverter.ToUInt32(isoSector, 158);
                 var rootLength = BitConverter.ToUInt32(isoSector, 166);
 
-                if(rootStart  == 0 ||
-                   rootLength == 0)
+                if(rootStart == 0 || rootLength == 0)
                     return;
 
                 rootLength /= 2048;
@@ -1273,8 +1247,7 @@ public static class MMC
                     if(name.EndsWith(";1", StringComparison.InvariantCulture))
                         name = name[..^2];
 
-                    if(name                             == "PHOTO_CD" &&
-                       (isoSector[rootPos + 25] & 0x02) == 0x02)
+                    if(name == "PHOTO_CD" && (isoSector[rootPos + 25] & 0x02) == 0x02)
                     {
                         pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
                         pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
@@ -1443,8 +1416,7 @@ public static class MMC
 
                     string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
                                                ps2BootSectorsHash);
 
                     if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
@@ -1482,8 +1454,7 @@ public static class MMC
                     }
                 }
 
-                if(playdia1 != null &&
-                   playdia2 != null)
+                if(playdia1 != null && playdia2 != null)
                 {
                     var pd1 = new byte[_playdiaCopyright.Length];
                     var pd2 = new byte[_playdiaCopyright.Length];
@@ -1491,8 +1462,7 @@ public static class MMC
                     Array.Copy(playdia1, 38, pd1, 0, pd1.Length);
                     Array.Copy(playdia2, 0,  pd2, 0, pd1.Length);
 
-                    if(_playdiaCopyright.SequenceEqual(pd1) &&
-                       _playdiaCopyright.SequenceEqual(pd2))
+                    if(_playdiaCopyright.SequenceEqual(pd1) && _playdiaCopyright.SequenceEqual(pd2))
                     {
                         mediaType = MediaType.Playdia;
 
@@ -1674,8 +1644,7 @@ public static class MMC
                         break;
 
                     // If it is PVD or end of descriptor chain, break
-                    if(isoSector[0] == 1 ||
-                       isoSector[0] == 255)
+                    if(isoSector[0] == 1 || isoSector[0] == 255)
                         break;
 
                     isoSectorPosition++;
@@ -1693,8 +1662,7 @@ public static class MMC
                 var rootStart  = BitConverter.ToUInt32(isoSector, 158);
                 var rootLength = BitConverter.ToUInt32(isoSector, 166);
 
-                if(rootStart  == 0 ||
-                   rootLength == 0)
+                if(rootStart == 0 || rootLength == 0)
                     return;
 
                 rootLength /= 2048;
@@ -1851,8 +1819,7 @@ public static class MMC
                             string line = sr.ReadLine();
 
                             // End of file
-                            if(line is null ||
-                               line.Length == 0)
+                            if(line is null || line.Length == 0)
                             {
                                 if(lineNumber == 0)
                                     correctNeoGeoCd = false;
@@ -1906,8 +1873,7 @@ public static class MMC
                             }
 
                             // Second part must be a single digit
-                            if(split[1].Length != 1 ||
-                               !byte.TryParse(split[1], out _))
+                            if(split[1].Length != 1 || !byte.TryParse(split[1], out _))
                             {
                                 correctNeoGeoCd = false;
 
@@ -2173,8 +2139,7 @@ public static class MMC
                             string line = sr.ReadLine();
 
                             // End of file
-                            if(line is null ||
-                               line.Length == 0)
+                            if(line is null || line.Length == 0)
                                 break;
 
                             line = line.Replace(" ", "");
@@ -2206,8 +2171,7 @@ public static class MMC
                             break;
                         }
 
-                        if(ps1BootFile != null &&
-                           rootEntries.Contains(ps1BootFile.ToUpperInvariant()))
+                        if(ps1BootFile != null && rootEntries.Contains(ps1BootFile.ToUpperInvariant()))
                         {
                             mediaType = MediaType.PS1CD;
 
@@ -2215,8 +2179,7 @@ public static class MMC
                                                        Localization.Core.Found_correct_SYSTEM_CNF_file_in_root_PS1);
                         }
 
-                        if(ps2BootFile != null &&
-                           rootEntries.Contains(ps2BootFile.ToUpperInvariant()))
+                        if(ps2BootFile != null && rootEntries.Contains(ps2BootFile.ToUpperInvariant()))
                         {
                             mediaType = MediaType.PS2CD;
 
@@ -2248,8 +2211,7 @@ public static class MMC
 
                     string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
                                                ps2BootSectorsHash);
 
                     if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
@@ -2290,8 +2252,7 @@ public static class MMC
                     tmp = new byte[_ps4Id.Length];
                     Array.Copy(sector1, 512, tmp, 0, tmp.Length);
 
-                    if(tmp.SequenceEqual(_ps4Id) &&
-                       mediaType == MediaType.BDROM)
+                    if(tmp.SequenceEqual(_ps4Id) && mediaType == MediaType.BDROM)
                     {
                         mediaType = MediaType.PS4BD;
 
@@ -2300,8 +2261,7 @@ public static class MMC
                     }
                 }
 
-                if(blurayDi is { Units.Length: > 0 } &&
-                   blurayDi?.Units[0].DiscTypeIdentifier != null)
+                if(blurayDi is { Units.Length: > 0 } && blurayDi?.Units[0].DiscTypeIdentifier != null)
                 {
                     string blurayType = StringHandlers.CToString(blurayDi?.Units[0].DiscTypeIdentifier);
 

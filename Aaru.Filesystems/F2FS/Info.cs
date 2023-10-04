@@ -116,7 +116,8 @@ public sealed partial class F2FS
         sb.AppendFormat(Localization._0_bytes_per_sector, 1 << (int)f2fsSb.log_sectorsize).AppendLine();
 
         sb.AppendFormat(Localization._0_sectors_1_bytes_per_block, 1 << (int)f2fsSb.log_sectors_per_block,
-                        1                                            << (int)f2fsSb.log_blocksize).AppendLine();
+                        1                                            << (int)f2fsSb.log_blocksize).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_per_segment,             f2fsSb.log_blocks_per_seg).AppendLine();
         sb.AppendFormat(Localization._0_blocks_in_volume,               f2fsSb.block_count).AppendLine();
@@ -128,7 +129,8 @@ public sealed partial class F2FS
         sb.AppendFormat(Localization.Volume_UUID_0,                     f2fsSb.uuid).AppendLine();
 
         sb.AppendFormat(Localization.Volume_name_0,
-                        StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).AppendLine();
+                        StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_last_mounted_on_kernel_version_0, StringHandlers.CToString(f2fsSb.version)).
            AppendLine();

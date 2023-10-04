@@ -100,8 +100,7 @@ partial class Dump
                     continue;
             }
 
-            if(track.Type != TrackType.Audio &&
-               track.Type != TrackType.Data)
+            if(track.Type != TrackType.Audio && track.Type != TrackType.Data)
             {
                 SectorBuilder sb = new();
                 sb.ReconstructPrefix(ref sector, track.Type, (long)s);

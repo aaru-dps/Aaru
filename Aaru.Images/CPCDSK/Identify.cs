@@ -59,8 +59,7 @@ public sealed partial class Cpcdsk
 
         for(pos = 0; pos < 254; pos++)
         {
-            if(headerB[pos]     == 0x0D &&
-               headerB[pos + 1] == 0x0A)
+            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A)
                 break;
         }
 

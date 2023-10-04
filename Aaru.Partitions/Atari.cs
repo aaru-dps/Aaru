@@ -79,8 +79,7 @@ public sealed class AtariPartitions : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return false;
 
         var table = new AtariTable
@@ -121,11 +120,11 @@ public sealed class AtariPartitions : IPartition
 
         for(var i = 0; i < 8; i++)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].flag = 0x{1:X2}"),
-                                       i, (table.IcdEntries[i].Type & 0xFF000000) >> 24);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].flag = 0x{1:X2}"), i,
+                                       (table.IcdEntries[i].Type & 0xFF000000) >> 24);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].type = 0x{1:X6}"),
-                                       i, table.IcdEntries[i].Type & 0x00FFFFFF);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].type = 0x{1:X6}"), i,
+                                       table.IcdEntries[i].Type & 0x00FFFFFF);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Markup.Escape("table.icdEntries[{0}].start = {1}"), i,
                                        table.IcdEntries[i].Start);
@@ -416,8 +415,7 @@ public sealed class AtariPartitions : IPartition
 
             if(table.IcdEntries[i].Start + table.IcdEntries[i].Length > imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.WARNING_End_of_partition_goes_beyond_device_size);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.WARNING_End_of_partition_goes_beyond_device_size);
             }
 
             ulong sectorSize = imagePlugin.Info.SectorSize;

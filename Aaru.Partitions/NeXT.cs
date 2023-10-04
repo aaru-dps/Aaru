@@ -89,7 +89,10 @@ public sealed class NeXTDisklabel : IPartition
         ulong       labelPosition = 0;
         ErrorNumber errno;
 
-        foreach(ulong i in new ulong[] { 0, 4, 15, 16 }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+        foreach(ulong i in new ulong[]
+            {
+                0, 4, 15, 16
+            }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out labelSector);
 
@@ -98,9 +101,7 @@ public sealed class NeXTDisklabel : IPartition
 
             var magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
 
-            if(magic != NEXT_MAGIC1 &&
-               magic != NEXT_MAGIC2 &&
-               magic != NEXT_MAGIC3)
+            if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3)
                 continue;
 
             magicFound    = true;
@@ -225,7 +226,8 @@ public sealed class NeXTDisklabel : IPartition
                 Sequence = (ulong)i,
                 Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
                 Length   = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
-                Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize /
+                Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
+                                label.dl_dt.d_secsize /
                                 sectorSize),
                 Scheme = Name
             };

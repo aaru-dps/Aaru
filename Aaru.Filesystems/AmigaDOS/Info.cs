@@ -80,8 +80,7 @@ public sealed partial class AmigaDOSPlugin
         }
 
         // Not FFS or MuFS?
-        if((bblk.diskType & FFS_MASK)  != FFS_MASK &&
-           (bblk.diskType & MUFS_MASK) != MUFS_MASK)
+        if((bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK)
             return false;
 
         // Clear checksum on sector
@@ -158,8 +157,7 @@ public sealed partial class AmigaDOSPlugin
             rblk.sec_type = BigEndianBitConverter.ToUInt32(sector, sector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.sec_type = {0}", rblk.sec_type);
 
-            if(rblk.sec_type == SUBTYPE_ROOT &&
-               rblk.checksum == rsum)
+            if(rblk.sec_type == SUBTYPE_ROOT && rblk.checksum == rsum)
                 return true;
         }
 
@@ -256,8 +254,7 @@ public sealed partial class AmigaDOSPlugin
             rootBlk.sec_type = BigEndianBitConverter.ToUInt32(rootBlockSector, rootBlockSector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.sec_type = {0}", rootBlk.sec_type);
 
-            if(rootBlk.sec_type != SUBTYPE_ROOT ||
-               rootBlk.checksum != rsum)
+            if(rootBlk.sec_type != SUBTYPE_ROOT || rootBlk.checksum != rsum)
                 continue;
 
             errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out rootBlockSector);
@@ -339,15 +336,13 @@ public sealed partial class AmigaDOSPlugin
         if(rootBlk.bitmapFlag == 0xFFFFFFFF)
             sbInformation.AppendLine(Localization.Volume_bitmap_is_valid);
 
-        if(rootBlk.bitmapExtensionBlock != 0x00000000 &&
-           rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
+        if(rootBlk.bitmapExtensionBlock != 0x00000000 && rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
         {
             sbInformation.AppendFormat(Localization.Bitmap_extension_at_block_0, rootBlk.bitmapExtensionBlock).
                           AppendLine();
         }
 
-        if((bootBlk.diskType & 0xFF) == 4 ||
-           (bootBlk.diskType & 0xFF) == 5)
+        if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
             sbInformation.AppendFormat(Localization.Directory_cache_starts_at_block_0, rootBlk.extension).AppendLine();
 
         ulong blocks = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize;

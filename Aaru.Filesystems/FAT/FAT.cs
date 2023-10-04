@@ -88,17 +88,29 @@ public sealed partial class FAT : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => new()
     {
-        { "dos", Localization.DOS_8_3_all_uppercase },
-        { "nt", Localization.Windows_NT_8_3_mixed_case },
-        { "os2", Localization.OS2_LONGNAME_extended_attribute },
-        { "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default },
-        { "lfn", Localization.Long_file_names }
+        {
+            "dos", Localization.DOS_8_3_all_uppercase
+        },
+        {
+            "nt", Localization.Windows_NT_8_3_mixed_case
+        },
+        {
+            "os2", Localization.OS2_LONGNAME_extended_attribute
+        },
+        {
+            "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default
+        },
+        {
+            "lfn", Localization.Long_file_names
+        }
     };
 
 #endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        { "debug", false.ToString() }
+        {
+            "debug", false.ToString()
+        }
     };
 }

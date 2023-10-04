@@ -59,8 +59,7 @@ public static class PrintScsiModePages
             {
                 case 0x00:
                 {
-                    if(devType      == PeripheralDeviceTypes.MultiMediaDevice &&
-                       page.Subpage == 0)
+                    if(devType == PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                         AaruConsole.WriteLine(Modes.PrettifyModePage_00_SFF(page.PageResponse));
                     else
                     {

@@ -103,8 +103,7 @@ public sealed class Spiral : IMediaGraph
     /// <param name="lastSector">Last sector that will be drawn into the spiral</param>
     public Spiral(int width, int height, DiscParameters parameters, ulong lastSector)
     {
-        if(parameters == _gdParameters ||
-           parameters == _gdRecordableParameters)
+        if(parameters == _gdParameters || parameters == _gdRecordableParameters)
             _gdrom = true;
 
         // GD-ROM LD area ends at 29mm, HD area starts at 30mm radius
@@ -197,8 +196,7 @@ public sealed class Spiral : IMediaGraph
         });
 
         // If there's a recordable information area, get its points
-        if(recordableAreaEndDiameter   > 0 &&
-           recordableAreaStartDiameter > 0)
+        if(recordableAreaEndDiameter > 0 && recordableAreaStartDiameter > 0)
         {
             _recordableInformationPoints = GetSpiralPoints(center, recordableAreaStartDiameter / 2,
                                                            recordableAreaEndDiameter / 2, _gdrom ? a : a * 1.5f);

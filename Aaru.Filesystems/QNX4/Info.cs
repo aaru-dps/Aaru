@@ -79,7 +79,8 @@ public sealed partial class QNX4
             return false;
 
         // Check inodes are in use
-        return (qnxSb.rootDir.di_status & 0x01) == 0x01 && (qnxSb.inode.di_status & 0x01) == 0x01 &&
+        return (qnxSb.rootDir.di_status & 0x01) == 0x01 &&
+               (qnxSb.inode.di_status   & 0x01) == 0x01 &&
                (qnxSb.boot.di_status    & 0x01) == 0x01;
 
         // All hail filesystems without identification marks
@@ -176,9 +177,11 @@ public sealed partial class QNX4
         AaruConsole.DebugWriteLine(MODULE_NAME, "qnxSb.altBoot.di_status = {0}", qnxSb.altBoot.di_status);
         */
 
-        information = Localization.QNX4_filesystem + "\n" +
+        information = Localization.QNX4_filesystem +
+                      "\n"                         +
                       string.Format(Localization.Created_on_0,
-                                    DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)) + "\n";
+                                    DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime)) +
+                      "\n";
 
         metadata = new FileSystem
         {

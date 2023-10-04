@@ -52,8 +52,7 @@ public sealed partial class DiscFerret
         stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
-        if(magic != DFI_MAGIC &&
-           magic != DFI_MAGIC2)
+        if(magic != DFI_MAGIC && magic != DFI_MAGIC2)
             return ErrorNumber.InvalidArgument;
 
         TrackOffsets = new SortedDictionary<int, long>();
@@ -70,8 +69,7 @@ public sealed partial class DiscFerret
             stream.EnsureRead(blk, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.cylinder = {1}", thisOffset,
-                                       blockHeader.cylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.cylinder = {1}", thisOffset, blockHeader.cylinder);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.head = {1}", thisOffset, blockHeader.head);
 
@@ -81,16 +79,14 @@ public sealed partial class DiscFerret
 
             if(stream.Position + blockHeader.length > stream.Length)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Invalid_track_block_found_at_0,
-                                           thisOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Invalid_track_block_found_at_0, thisOffset);
 
                 break;
             }
 
             stream.Position += blockHeader.length;
 
-            if(blockHeader.cylinder > 0 &&
-               blockHeader.cylinder > lastCylinder)
+            if(blockHeader.cylinder > 0 && blockHeader.cylinder > lastCylinder)
             {
                 lastCylinder = blockHeader.cylinder;
                 lastHead     = 0;
@@ -99,8 +95,7 @@ public sealed partial class DiscFerret
                 offset = thisOffset;
                 t++;
             }
-            else if(blockHeader.head > 0 &&
-                    blockHeader.head > lastHead)
+            else if(blockHeader.head > 0 && blockHeader.head > lastHead)
             {
                 lastHead = blockHeader.head;
                 TrackOffsets.Add(t, offset);

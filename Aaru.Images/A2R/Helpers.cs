@@ -111,9 +111,10 @@ public sealed partial class A2R
         uint over = ticks / 255;
 
         if(over == 0)
-        {
-            return new[] { (byte)ticks };
-        }
+            return new[]
+            {
+                (byte)ticks
+            };
 
         var expanded = new byte[over + 1];
 

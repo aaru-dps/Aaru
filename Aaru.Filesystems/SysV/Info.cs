@@ -65,7 +65,8 @@ public sealed partial class SysVfs
             sb_size_in_sectors = 1; // If not a single sector can store it
 
         if(partition.End <=
-           partition.Start + 4 * (ulong)sb_size_in_sectors +
+           partition.Start               +
+           4 * (ulong)sb_size_in_sectors +
            sb_size_in_sectors) // Device must be bigger than SB location + SB size + offset
             return false;
 
@@ -87,8 +88,7 @@ public sealed partial class SysVfs
             ErrorNumber errno =
                 imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out byte[] sb_sector);
 
-            if(errno            != ErrorNumber.NoError ||
-               sb_sector.Length < 0x400)
+            if(errno != ErrorNumber.NoError || sb_sector.Length < 0x400)
                 continue;
 
             var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
@@ -122,31 +122,25 @@ public sealed partial class SysVfs
             var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
             var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
-            if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
-               s_nfree is <= 0 or >= 0xFFFF     ||
-               s_ninode is <= 0 or >= 0xFFFF)
+            if(s_fsize is <= 0 or >= 0xFFFFFFFF || s_nfree is <= 0 or >= 0xFFFF || s_ninode is <= 0 or >= 0xFFFF)
                 continue;
 
-            if((s_fsize  & 0xFF) == 0x00 &&
-               (s_nfree  & 0xFF) == 0x00 &&
-               (s_ninode & 0xFF) == 0x00)
+            if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
             {
                 // Byteswap
-                s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                s_fsize = ((s_fsize & 0xFF)       << 24) +
+                          ((s_fsize & 0xFF00)     << 8)  +
+                          ((s_fsize & 0xFF0000)   >> 8)  +
                           ((s_fsize & 0xFF000000) >> 24);
 
                 s_nfree  = (ushort)(s_nfree  >> 8);
                 s_ninode = (ushort)(s_ninode >> 8);
             }
 
-            if((s_fsize  & 0xFF000000) != 0x00 ||
-               (s_nfree  & 0xFF00)     != 0x00 ||
-               (s_ninode & 0xFF00)     != 0x00)
+            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00)
                 continue;
 
-            if(s_fsize  >= V7_MAXSIZE ||
-               s_nfree  >= V7_NICFREE ||
-               s_ninode >= V7_NICINOD)
+            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD)
                 continue;
 
             if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.Info.SectorSize ||
@@ -297,31 +291,25 @@ public sealed partial class SysVfs
             var s_nfree  = BitConverter.ToUInt16(sb_sector, 0x006);
             var s_ninode = BitConverter.ToUInt16(sb_sector, 0x0D0);
 
-            if(s_fsize is <= 0 or >= 0xFFFFFFFF ||
-               s_nfree is <= 0 or >= 0xFFFF     ||
-               s_ninode is <= 0 or >= 0xFFFF)
+            if(s_fsize is <= 0 or >= 0xFFFFFFFF || s_nfree is <= 0 or >= 0xFFFF || s_ninode is <= 0 or >= 0xFFFF)
                 continue;
 
-            if((s_fsize  & 0xFF) == 0x00 &&
-               (s_nfree  & 0xFF) == 0x00 &&
-               (s_ninode & 0xFF) == 0x00)
+            if((s_fsize & 0xFF) == 0x00 && (s_nfree & 0xFF) == 0x00 && (s_ninode & 0xFF) == 0x00)
             {
                 // Byteswap
-                s_fsize = ((s_fsize & 0xFF)       << 24) + ((s_fsize & 0xFF00) << 8) + ((s_fsize & 0xFF0000) >> 8) +
+                s_fsize = ((s_fsize & 0xFF)       << 24) +
+                          ((s_fsize & 0xFF00)     << 8)  +
+                          ((s_fsize & 0xFF0000)   >> 8)  +
                           ((s_fsize & 0xFF000000) >> 24);
 
                 s_nfree  = (ushort)(s_nfree  >> 8);
                 s_ninode = (ushort)(s_ninode >> 8);
             }
 
-            if((s_fsize  & 0xFF000000) != 0x00 ||
-               (s_nfree  & 0xFF00)     != 0x00 ||
-               (s_ninode & 0xFF00)     != 0x00)
+            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00)
                 continue;
 
-            if(s_fsize  >= V7_MAXSIZE ||
-               s_nfree  >= V7_NICFREE ||
-               s_ninode >= V7_NICINOD)
+            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD)
                 continue;
 
             if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.Info.SectorSize &&
@@ -334,11 +322,7 @@ public sealed partial class SysVfs
             break;
         }
 
-        if(!sys7th   &&
-           !sysv     &&
-           !coherent &&
-           !xenix    &&
-           !xenix3)
+        if(!sys7th && !sysv && !coherent && !xenix && !xenix3)
             return;
 
         metadata = new FileSystem();
@@ -454,10 +438,9 @@ public sealed partial class SysVfs
                 if(bs != 2048)
                 {
                     sb.
-                        AppendFormat(
-                            Localization.
-                                WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                            bs, 2048).AppendLine();
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                     bs, 2048).
+                        AppendLine();
                 }
             }
             else
@@ -465,10 +448,9 @@ public sealed partial class SysVfs
                 if(bs != imagePlugin.Info.SectorSize)
                 {
                     sb.
-                        AppendFormat(
-                            Localization.
-                                WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                            bs, imagePlugin.Info.SectorSize).AppendLine();
+                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                     bs, imagePlugin.Info.SectorSize).
+                        AppendLine();
                 }
             }
 
@@ -675,7 +657,8 @@ public sealed partial class SysVfs
                 sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).
+               AppendLine();
 
             if(sysv_sb.s_time != 0)
                 metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
@@ -730,9 +713,9 @@ public sealed partial class SysVfs
             if(imagePlugin.Info.SectorSize != 512)
             {
                 sb.
-                    AppendFormat(
-                        Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                        512, 2048).AppendLine();
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                 512, 2048).
+                    AppendLine();
             }
 
             sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
@@ -760,7 +743,8 @@ public sealed partial class SysVfs
                 sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).
+               AppendLine();
 
             if(coh_sb.s_time != 0)
                 metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
@@ -806,9 +790,9 @@ public sealed partial class SysVfs
             if(imagePlugin.Info.SectorSize != 512)
             {
                 sb.
-                    AppendFormat(
-                        Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                        512, 2048).AppendLine();
+                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                 512, 2048).
+                    AppendLine();
             }
 
             sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
@@ -836,7 +820,8 @@ public sealed partial class SysVfs
                 sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).
+               AppendLine();
 
             if(v7_sb.s_time != 0)
                 metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);

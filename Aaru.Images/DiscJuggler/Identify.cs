@@ -62,9 +62,7 @@ public sealed partial class DiscJuggler
         _imageStream.EnsureRead(descriptor, 0, dscLen);
 
         // Sessions
-        if(descriptor.Length < 1  ||
-           descriptor[0]     > 99 ||
-           descriptor[0]     == 0)
+        if(descriptor.Length < 1 || descriptor[0] > 99 || descriptor[0] == 0)
             return false;
 
         // Seems all sessions start with this data

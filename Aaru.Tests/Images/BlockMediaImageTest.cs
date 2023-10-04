@@ -197,17 +197,13 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                             Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
                                             string.
-                                                Format(
-                                                    Localization.
-                                                        Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
-                                                    i, expectedPartition.Start, foundPartition.Start, testFile));
+                                                Format(Localization.Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
+                                                       i, expectedPartition.Start, foundPartition.Start, testFile));
 
                             Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
                                             string.
-                                                Format(
-                                                    Localization.
-                                                        Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
-                                                    i, expectedPartition.Length, foundPartition.Length, testFile));
+                                                Format(Localization.Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
+                                                       i, expectedPartition.Length, foundPartition.Length, testFile));
 
                             var expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 

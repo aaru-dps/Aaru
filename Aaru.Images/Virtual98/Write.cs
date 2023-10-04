@@ -212,8 +212,7 @@ public sealed partial class Virtual98
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 &&
-                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }

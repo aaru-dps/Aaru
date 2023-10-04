@@ -57,14 +57,25 @@ sealed class ExtractFilesCommand : Command
 
     public ExtractFilesCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
     {
-        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<string>(new[] { "--options", "-O" }, () => null,
-                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
+        Add(new Option<string>(new[]
+        {
+            "--options", "-O"
+        }, () => null, UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<bool>(new[] { "--xattrs", "-x" }, () => false, UI.Extract_extended_attributes_if_present));
+        Add(new Option<bool>(new[]
+        {
+            "--xattrs", "-x"
+        }, () => false, UI.Extract_extended_attributes_if_present));
 
-        Add(new Option<string>(new[] { "--namespace", "-n" }, () => null, UI.Namespace_to_use_for_filenames));
+        Add(new Option<string>(new[]
+        {
+            "--namespace", "-n"
+        }, () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -208,8 +219,7 @@ sealed class ExtractFilesCommand : Command
                 return (int)ErrorNumber.MissingArgument;
             }
 
-            if(Directory.Exists(outputDir) ||
-               File.Exists(outputDir))
+            if(Directory.Exists(outputDir) || File.Exists(outputDir))
             {
                 AaruConsole.ErrorWriteLine(UI.Destination_exists_aborting);
 
@@ -294,10 +304,8 @@ sealed class ExtractFilesCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask(UI.Identifying_filesystems_on_partition).
-                        IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins,
-                                              partitions[i]);
+                    ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
                 if(idPlugins.Count == 0)
@@ -325,12 +333,9 @@ sealed class ExtractFilesCommand : Command
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
-                                ctx.AddTask(UI.Mounting_filesystem).
-                                    IsIndeterminate();
+                                ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
 
-                                error = fs.Mount(imageFormat, partitions[i],
-                                                 encodingClass, parsedOptions,
-                                                 @namespace);
+                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                             });
 
                             if(error == ErrorNumber.NoError)
@@ -351,8 +356,7 @@ sealed class ExtractFilesCommand : Command
                     {
                         plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
 
-                        if(pluginType == null ||
-                           Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                        if(pluginType == null || Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
                             continue;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, pluginType.Name)}[/]");
@@ -360,9 +364,7 @@ sealed class ExtractFilesCommand : Command
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
-                            error = fs.Mount(imageFormat, partitions[i],
-                                             encodingClass, parsedOptions,
-                                             @namespace);
+                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                         });
 
                         if(error == ErrorNumber.NoError)
@@ -407,8 +409,7 @@ sealed class ExtractFilesCommand : Command
             return;
         }
 
-        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-              entry is not null)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
             FileEntryInfo stat = new();
 
@@ -428,9 +429,14 @@ sealed class ExtractFilesCommand : Command
 
                     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
-                                                Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                                Replace('*',  '\uFF0A').Replace('/', '\\');
+                        outputPath = outputPath.Replace('<', '\uFF1C').
+                                                Replace('>',  '\uFF1E').
+                                                Replace(':',  '\uFF1A').
+                                                Replace('\"', '\uFF02').
+                                                Replace('|',  '\uFF5C').
+                                                Replace('?',  '\uFF1F').
+                                                Replace('*',  '\uFF0A').
+                                                Replace('/',  '\\');
                     }
 
                     Directory.CreateDirectory(outputPath);
@@ -484,8 +490,7 @@ sealed class ExtractFilesCommand : Command
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        ctx.AddTask(UI.Listing_extended_attributes).
-                            IsIndeterminate();
+                        ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
                         error = fs.ListXAttr(path + "/" + entry, out xattrs);
                     });
 
@@ -497,10 +502,8 @@ sealed class ExtractFilesCommand : Command
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
-                                ctx.AddTask(UI.Reading_extended_attribute).
-                                    IsIndeterminate();
-                                error = fs.GetXattr(path + "/" + entry, xattr,
-                                                    ref xattrBuf);
+                                ctx.AddTask(UI.Reading_extended_attribute).IsIndeterminate();
+                                error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
                             });
 
                             if(error != ErrorNumber.NoError)
@@ -510,10 +513,14 @@ sealed class ExtractFilesCommand : Command
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
-                                outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
-                                                        Replace(':', '\uFF1A').Replace('\"', '\uFF02').
-                                                        Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                                        Replace('*', '\uFF0A').Replace('/', '\\');
+                                outputPath = outputPath.Replace('<', '\uFF1C').
+                                                        Replace('>',  '\uFF1E').
+                                                        Replace(':',  '\uFF1A').
+                                                        Replace('\"', '\uFF02').
+                                                        Replace('|',  '\uFF5C').
+                                                        Replace('?',  '\uFF1F').
+                                                        Replace('*',  '\uFF0A').
+                                                        Replace('/',  '\\');
                             }
 
                             Directory.CreateDirectory(outputPath);
@@ -525,24 +532,24 @@ sealed class ExtractFilesCommand : Command
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
-                                outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').
-                                                        Replace(':', '\uFF1A').Replace('\"', '\uFF02').
-                                                        Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                                        Replace('*', '\uFF0A').Replace('/', '\\');
+                                outputPath = outputPath.Replace('<', '\uFF1C').
+                                                        Replace('>',  '\uFF1E').
+                                                        Replace(':',  '\uFF1A').
+                                                        Replace('\"', '\uFF02').
+                                                        Replace('|',  '\uFF5C').
+                                                        Replace('?',  '\uFF1F').
+                                                        Replace('*',  '\uFF0A').
+                                                        Replace('/',  '\\');
                             }
 
                             if(!File.Exists(outputPath))
                             {
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
-                                    ctx.AddTask(UI.Writing_extended_attribute).
-                                        IsIndeterminate();
+                                    ctx.AddTask(UI.Writing_extended_attribute).IsIndeterminate();
 
-                                    outputFile =
-                                        new FileStream(outputPath,
-                                                       FileMode.CreateNew,
-                                                       FileAccess.ReadWrite,
-                                                       FileShare.None);
+                                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                                                                FileShare.None);
 
                                     outputFile.Write(xattrBuf, 0, xattrBuf.Length);
                                     outputFile.Close();
@@ -593,9 +600,14 @@ sealed class ExtractFilesCommand : Command
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
-                                            Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                            Replace('*',  '\uFF0A').Replace('/', '\\');
+                    outputPath = outputPath.Replace('<', '\uFF1C').
+                                            Replace('>',  '\uFF1E').
+                                            Replace(':',  '\uFF1A').
+                                            Replace('\"', '\uFF02').
+                                            Replace('|',  '\uFF5C').
+                                            Replace('?',  '\uFF1F').
+                                            Replace('*',  '\uFF0A').
+                                            Replace('/',  '\\');
                 }
 
                 Directory.CreateDirectory(outputPath);
@@ -606,9 +618,14 @@ sealed class ExtractFilesCommand : Command
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    outputPath = outputPath.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
-                                            Replace('\"', '\uFF02').Replace('|', '\uFF5C').Replace('?', '\uFF1F').
-                                            Replace('*',  '\uFF0A').Replace('/', '\\');
+                    outputPath = outputPath.Replace('<', '\uFF1C').
+                                            Replace('>',  '\uFF1E').
+                                            Replace(':',  '\uFF1A').
+                                            Replace('\"', '\uFF02').
+                                            Replace('|',  '\uFF5C').
+                                            Replace('?',  '\uFF1F').
+                                            Replace('*',  '\uFF0A').
+                                            Replace('/',  '\\');
                 }
 
                 if(!File.Exists(outputPath))
@@ -617,7 +634,9 @@ sealed class ExtractFilesCommand : Command
 
                     outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 
-                    AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+                    AnsiConsole.Progress().
+                                AutoClear(true).
+                                HideCompleted(true).
                                 Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                                 Start(ctx =>
                                 {
@@ -639,15 +658,13 @@ sealed class ExtractFilesCommand : Command
                                             else
                                                 bytesToRead = stat.Length - position;
 
-                                            error = fs.ReadFile(fileNode, bytesToRead, outBuf,
-                                                                out long bytesRead);
+                                            error = fs.ReadFile(fileNode, bytesToRead, outBuf, out long bytesRead);
 
                                             if(error == ErrorNumber.NoError)
                                                 outputFile.Write(outBuf, 0, (int)bytesRead);
                                             else
                                             {
-                                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error,
-                                                                           entry);
+                                                AaruConsole.ErrorWriteLine(UI.Error_0_reading_file_1, error, entry);
 
                                                 break;
                                             }

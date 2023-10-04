@@ -50,7 +50,10 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -66,9 +69,10 @@ public sealed partial class AppleDOS
         if(_lockedFiles.Contains(filename))
             attributes |= FileAttributes.ReadOnly;
 
-        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+        if(_debug &&
+           (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             attributes |= FileAttributes.System;
 
         return ErrorNumber.NoError;
@@ -81,7 +85,10 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -92,9 +99,10 @@ public sealed partial class AppleDOS
         if(filename.Length > 30)
             return ErrorNumber.NameTooLong;
 
-        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+        if(_debug &&
+           (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
         {
             if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 file = _catalogBlocks;
@@ -150,8 +158,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not AppleDosFileNode mynode)
@@ -177,7 +184,10 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -195,9 +205,10 @@ public sealed partial class AppleDOS
         _fileSizeCache.TryGetValue(filename, out int fileSize);
         GetAttributes(path, out FileAttributes attrs);
 
-        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+        if(_debug &&
+           (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
         {
             if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                 stat.Length = _catalogBlocks.Length;
@@ -225,7 +236,10 @@ public sealed partial class AppleDOS
 
     ErrorNumber CacheFile(string path)
     {
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;

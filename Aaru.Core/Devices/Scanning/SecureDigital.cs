@@ -128,8 +128,9 @@ public sealed partial class MediaScan
 
                     if(!sense)
                     {
-                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
-                                                 HasFlag(CommandSupport.SetBlockCount) ?? false;
+                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.
+                                                 CommandSupport.HasFlag(CommandSupport.SetBlockCount) ??
+                                        false;
                     }
                 }
 
@@ -177,8 +178,7 @@ public sealed partial class MediaScan
                 if(sense)
                     blocksToRead /= 2;
 
-                if(!sense ||
-                   blocksToRead == 1)
+                if(!sense || blocksToRead == 1)
                     break;
             }
 
@@ -241,19 +241,15 @@ public sealed partial class MediaScan
             if(results.Blocks - i < blocksToRead)
                 blocksToRead = (byte)(results.Blocks - i);
 
-            if(currentSpeed > results.MaxSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
                 results.MaxSpeed = currentSpeed;
 
-            if(currentSpeed < results.MinSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed < results.MinSpeed && currentSpeed > 0)
                 results.MinSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(
-                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks,
-                                  ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
-                    (long)i, (long)results.Blocks);
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
+                       (long)i, (long)results.Blocks);
 
             bool error;
 
@@ -356,12 +352,10 @@ public sealed partial class MediaScan
 
             _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout, out double seekCur);
 
-            if(seekCur > results.SeekMax &&
-               seekCur > 0)
+            if(seekCur > results.SeekMax && seekCur > 0)
                 results.SeekMax = seekCur;
 
-            if(seekCur < results.SeekMin &&
-               seekCur > 0)
+            if(seekCur < results.SeekMin && seekCur > 0)
                 results.SeekMin = seekCur;
 
             results.SeekTotal += seekCur;

@@ -116,8 +116,7 @@ public sealed class DataFile
     /// <param name="whatWriting">What is the data about?</param>
     public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting, byte[] data)
     {
-        if(!string.IsNullOrEmpty(outputPrefix) &&
-           !string.IsNullOrEmpty(outputSuffix))
+        if(!string.IsNullOrEmpty(outputPrefix) && !string.IsNullOrEmpty(outputSuffix))
             WriteTo(who, outputPrefix + outputSuffix, data, whatWriting);
     }
 

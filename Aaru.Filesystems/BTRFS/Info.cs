@@ -120,8 +120,7 @@ public sealed partial class BTRFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.stripesize = {0}",        btrfsSb.stripesize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.n = {0}",                 btrfsSb.n);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_generation = {0}",
-                                   btrfsSb.chunk_root_generation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.chunk_root_generation = {0}", btrfsSb.chunk_root_generation);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_flags = 0x{0:X16}",    btrfsSb.compat_flags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
@@ -134,21 +133,17 @@ public sealed partial class BTRFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.bytes = {0}",        btrfsSb.dev_item.bytes);
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.used = {0}",         btrfsSb.dev_item.used);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_align = {0}",
-                                   btrfsSb.dev_item.optimal_align);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_align = {0}", btrfsSb.dev_item.optimal_align);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_width = {0}",
-                                   btrfsSb.dev_item.optimal_width);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.optimal_width = {0}", btrfsSb.dev_item.optimal_width);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.minimal_size = {0}",
-                                   btrfsSb.dev_item.minimal_size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.minimal_size = {0}", btrfsSb.dev_item.minimal_size);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.type = {0}", btrfsSb.dev_item.type);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.start_offset = {0}",
-                                   btrfsSb.dev_item.start_offset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.start_offset = {0}", btrfsSb.dev_item.start_offset);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "btrfsSb.dev_item.dev_group = {0}", btrfsSb.dev_item.dev_group);
 
@@ -169,7 +164,8 @@ public sealed partial class BTRFS
         sbInformation.AppendFormat(Localization.Log_tree_starts_at_LBA_0, btrfsSb.log_lba).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_spanned_in_1_devices, btrfsSb.total_bytes,
-                                   btrfsSb.num_devices).AppendLine();
+                                   btrfsSb.num_devices).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_used,      btrfsSb.bytes_used).AppendLine();
         sbInformation.AppendFormat(Localization._0_bytes_sector,              btrfsSb.sectorsize).AppendLine();

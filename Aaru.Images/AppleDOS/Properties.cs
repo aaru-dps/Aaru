@@ -74,14 +74,20 @@ public sealed partial class AppleDos
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.Apple33SS };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.Apple33SS
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".do", ".po" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".do", ".po"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

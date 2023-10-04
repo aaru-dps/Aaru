@@ -77,9 +77,7 @@ public sealed partial class D88
         if(hdr.disk_size != stream.Length)
             return ErrorNumber.InvalidArgument;
 
-        if(hdr.disk_type != DiskType.D2  &&
-           hdr.disk_type != DiskType.Dd2 &&
-           hdr.disk_type != DiskType.Hd2)
+        if(hdr.disk_type != DiskType.D2 && hdr.disk_type != DiskType.Dd2 && hdr.disk_type != DiskType.Hd2)
             return ErrorNumber.InvalidArgument;
 
         if(!hdr.reserved.SequenceEqual(_reservedEmpty))
@@ -92,8 +90,7 @@ public sealed partial class D88
             if(t > 0)
                 trkCounter++;
 
-            if(t < 0 ||
-               t > stream.Length)
+            if(t < 0 || t > stream.Length)
                 return ErrorNumber.InvalidArgument;
         }
 
@@ -131,8 +128,7 @@ public sealed partial class D88
 
             sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-            if(sechdr.spt != spt ||
-               sechdr.n   != bps)
+            if(sechdr.spt != spt || sechdr.n != bps)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
                                            sechdr.n, bps, i, 0);
@@ -152,8 +148,7 @@ public sealed partial class D88
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-                if(sechdr.spt == spt &&
-                   sechdr.n   == bps)
+                if(sechdr.spt == spt && sechdr.n == bps)
                     continue;
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
@@ -176,9 +171,7 @@ public sealed partial class D88
 
         if(allEqual)
         {
-            if(trkCounter == 154 &&
-               spt        == 26  &&
-               bps        == IBMSectorSizeCode.EighthKilo)
+            if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
                 _imageInfo.MediaType = MediaType.NEC_8_SD;
             else if(bps == IBMSectorSizeCode.QuarterKilo)
             {
@@ -192,9 +185,7 @@ public sealed partial class D88
                                            _                  => _imageInfo.MediaType
                                        };
             }
-            else if(trkCounter == 154 &&
-                    spt        == 8   &&
-                    bps        == IBMSectorSizeCode.Kilo)
+            else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
                 _imageInfo.MediaType = MediaType.NEC_525_HD;
             else if(bps == IBMSectorSizeCode.HalfKilo)
             {

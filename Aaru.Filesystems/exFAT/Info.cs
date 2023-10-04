@@ -102,10 +102,12 @@ public sealed partial class exFAT
         sb.AppendFormat(Localization.Partition_offset_0, vbr.offset).AppendLine();
 
         sb.AppendFormat(Localization.Volume_has_0_sectors_of_1_bytes_each_for_a_total_of_2_bytes, vbr.sectors,
-                        1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).AppendLine();
+                        1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_uses_clusters_of_0_sectors_1_bytes_each, 1 << vbr.clusterShift,
-                        (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).AppendLine();
+                        (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).
+           AppendLine();
 
         sb.AppendFormat(Localization.First_FAT_starts_at_sector_0_and_runs_for_1_sectors, vbr.fatOffset, vbr.fatLength).
            AppendLine();
@@ -113,7 +115,8 @@ public sealed partial class exFAT
         sb.AppendFormat(Localization.Volume_uses_0_FATs, vbr.fats).AppendLine();
 
         sb.AppendFormat(Localization.Cluster_heap_starts_at_sector_0_contains_1_clusters_and_is_2_used,
-                        vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
+                        vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).
+           AppendLine();
 
         sb.AppendFormat(Localization.Root_directory_starts_at_cluster_0, vbr.rootDirectoryCluster).AppendLine();
 

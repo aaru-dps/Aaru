@@ -53,12 +53,20 @@ sealed class FilesystemInfoCommand : Command
 
     public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
-        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[] { "--filesystems", "-f" }, () => true,
-                             UI.Searches_and_prints_information_about_filesystems));
+        Add(new Option<bool>(new[]
+        {
+            "--filesystems", "-f"
+        }, () => true, UI.Searches_and_prints_information_about_filesystems));
 
-        Add(new Option<bool>(new[] { "--partitions", "-p" }, () => true, UI.Searches_and_interprets_partitions));
+        Add(new Option<bool>(new[]
+        {
+            "--partitions", "-p"
+        }, () => true, UI.Searches_and_interprets_partitions));
 
         AddArgument(new Argument<string>
         {
@@ -285,10 +293,8 @@ sealed class FilesystemInfoCommand : Command
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
-                            ctx.AddTask(UI.Identifying_filesystems_on_partition).
-                                IsIndeterminate();
-                            Core.Filesystems.Identify(imageFormat, out idPlugins,
-                                                      partitionsList[i]);
+                            ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
                         });
 
                         switch(idPlugins.Count)
@@ -312,8 +318,8 @@ sealed class FilesystemInfoCommand : Command
                                     AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
                                     }[/]");
 
-                                    fs.GetInformation(imageFormat, partitionsList[i], encodingClass,
-                                                      out information, out FileSystem fsMetadata);
+                                    fs.GetInformation(imageFormat, partitionsList[i], encodingClass, out information,
+                                                      out FileSystem fsMetadata);
 
                                     AaruConsole.Write(information);
                                     Statistics.AddFilesystem(fsMetadata.Type);
@@ -325,8 +331,7 @@ sealed class FilesystemInfoCommand : Command
                             {
                                 plugins.Filesystems.TryGetValue(idPlugins[0], out pluginType);
 
-                                if(pluginType == null ||
-                                   Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                if(pluginType == null || Activator.CreateInstance(pluginType) is not IFilesystem fs)
                                     continue;
 
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
@@ -394,8 +399,7 @@ sealed class FilesystemInfoCommand : Command
                     {
                         plugins.Filesystems.TryGetValue(idPlugins[0], out pluginType);
 
-                        if(pluginType == null ||
-                           Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                        if(pluginType == null || Activator.CreateInstance(pluginType) is not IFilesystem fs)
                             break;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");

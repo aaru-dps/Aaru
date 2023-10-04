@@ -127,13 +127,19 @@ public class GameBoyAdvance : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".gba" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".gba"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.GameBoyAdvanceGamePak };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.GameBoyAdvanceGamePak
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>

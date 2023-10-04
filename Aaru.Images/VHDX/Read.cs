@@ -119,10 +119,8 @@ public sealed partial class Vhdx
             else if((_vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
             {
                 AaruConsole.
-                    ErrorWriteLine(string.Format(
-                                       Localization.
-                                           Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image,
-                                       _vRegs[i].guid));
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image,
+                                                 _vRegs[i].guid));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -172,10 +170,8 @@ public sealed partial class Vhdx
             else if((_vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
             {
                 AaruConsole.
-                    ErrorWriteLine(string.Format(
-                                       Localization.
-                                           Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image,
-                                       _vMets[i].itemId));
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image,
+                                                 _vMets[i].itemId));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -252,8 +248,7 @@ public sealed partial class Vhdx
             return ErrorNumber.InvalidArgument;
         }
 
-        if(parentOff                                   != 0 &&
-           (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
+        if(parentOff != 0 && (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
         {
             stream.Seek(parentOff + _metadataOffset, SeekOrigin.Begin);
             var vParHdrB = new byte[Marshal.SizeOf<ParentLocatorHeader>()];
@@ -263,10 +258,8 @@ public sealed partial class Vhdx
             if(_vParHdr.locatorType != _parentTypeVhdxGuid)
             {
                 AaruConsole.
-                    ErrorWriteLine(string.Format(
-                                       Localization.
-                                           Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image,
-                                       _vParHdr.locatorType));
+                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image,
+                                                 _vParHdr.locatorType));
 
                 return ErrorNumber.NotSupported;
             }
@@ -313,8 +306,7 @@ public sealed partial class Vhdx
                     {
                         parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
-                        if(parentFilter                    != null &&
-                           _parentImage.Open(parentFilter) == ErrorNumber.NoError)
+                        if(parentFilter != null && _parentImage.Open(parentFilter) == ErrorNumber.NoError)
                         {
                             parentWorks = true;
 
@@ -332,8 +324,7 @@ public sealed partial class Vhdx
                     {
                         parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
-                        if(parentFilter                    == null ||
-                           _parentImage.Open(parentFilter) != ErrorNumber.NoError)
+                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                             continue;
 
                         parentWorks = true;
@@ -357,8 +348,7 @@ public sealed partial class Vhdx
                     {
                         parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
-                        if(parentFilter                    == null ||
-                           _parentImage.Open(parentFilter) != ErrorNumber.NoError)
+                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                             continue;
 
                         parentWorks = true;
@@ -457,10 +447,8 @@ public sealed partial class Vhdx
                         {
                             AaruConsole.
                                 ErrorWriteLine(string.
-                                                   Format(
-                                                       Localization.
-                                                           Unsupported_sector_bitmap_block_flags_0_found_not_proceeding,
-                                                       pt & BAT_FLAGS_MASK));
+                                                   Format(Localization.Unsupported_sector_bitmap_block_flags_0_found_not_proceeding,
+                                                          pt & BAT_FLAGS_MASK));
 
                             return ErrorNumber.InvalidArgument;
                         }
@@ -543,9 +531,7 @@ public sealed partial class Vhdx
 
         bool partialBlock = (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_PARTIALLY_PRESENT;
 
-        if(partialBlock &&
-           _hasParent   &&
-           !CheckBitmap(sectorAddress))
+        if(partialBlock && _hasParent && !CheckBitmap(sectorAddress))
             return _parentImage.ReadSector(sectorAddress, out buffer);
 
         if(!_blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out byte[] block))

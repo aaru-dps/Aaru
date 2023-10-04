@@ -104,8 +104,7 @@ public sealed partial class PascalPlugin
             return false;
 
         // Volume record entry type must be volume or secure
-        if(volEntry.EntryType != PascalFileKind.Volume &&
-           volEntry.EntryType != PascalFileKind.Secure)
+        if(volEntry.EntryType != PascalFileKind.Volume && volEntry.EntryType != PascalFileKind.Secure)
             return false;
 
         // Volume name is max 7 characters
@@ -113,8 +112,7 @@ public sealed partial class PascalPlugin
             return false;
 
         // Volume blocks is equal to volume sectors
-        if(volEntry.Blocks        < 0 ||
-           (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
+        if(volEntry.Blocks < 0 || (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
             return false;
 
         // There can be not less than zero files
@@ -171,8 +169,7 @@ public sealed partial class PascalPlugin
             return;
 
         // Volume record entry type must be volume or secure
-        if(volEntry.EntryType != PascalFileKind.Volume &&
-           volEntry.EntryType != PascalFileKind.Secure)
+        if(volEntry.EntryType != PascalFileKind.Volume && volEntry.EntryType != PascalFileKind.Secure)
             return;
 
         // Volume name is max 7 characters
@@ -180,8 +177,7 @@ public sealed partial class PascalPlugin
             return;
 
         // Volume blocks is equal to volume sectors
-        if(volEntry.Blocks        < 0 ||
-           (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
+        if(volEntry.Blocks < 0 || (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
             return;
 
         // There can be not less than zero files
@@ -189,7 +185,8 @@ public sealed partial class PascalPlugin
             return;
 
         sbInformation.AppendFormat(Localization.Volume_record_spans_from_block_0_to_block_1, volEntry.FirstBlock,
-                                   volEntry.LastBlock).AppendLine();
+                                   volEntry.LastBlock).
+                      AppendLine();
 
         sbInformation.
             AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(volEntry.VolumeName, encoding)).

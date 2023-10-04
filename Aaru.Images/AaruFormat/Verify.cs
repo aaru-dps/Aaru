@@ -47,8 +47,7 @@ public sealed partial class AaruFormat
     public bool? VerifyMediaImage()
     {
         // This will traverse all blocks and check their CRC64 without uncompressing them
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Checking_index_integrity_at_0,
-                                   _header.indexOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Checking_index_integrity_at_0, _header.indexOffset);
 
         _imageStream.Position = (long)_header.indexOffset;
 
@@ -63,8 +62,8 @@ public sealed partial class AaruFormat
             return false;
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries,
-                                   _header.indexOffset, idxHeader.entries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries, _header.indexOffset,
+                                   idxHeader.entries);
 
         _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
         _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
@@ -88,8 +87,7 @@ public sealed partial class AaruFormat
             _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
             IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.Block_type_0_with_data_type_1_is_indexed_to_be_at_2,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_type_0_with_data_type_1_is_indexed_to_be_at_2,
                                        entry.blockType, entry.dataType, entry.offset);
 
             vrIndex.Add(entry);
@@ -115,9 +113,8 @@ public sealed partial class AaruFormat
                     crcVerify = new Crc64Context();
                     readBytes = 0;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.Verifying_data_block_type_0_at_position_1, entry.dataType,
-                                               entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Verifying_data_block_type_0_at_position_1,
+                                               entry.dataType, entry.offset);
 
                     while(readBytes + verifySize < blockHeader.cmpLength)
                     {
@@ -135,8 +132,7 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Expected_block_CRC_0_X16_but_got_1_X16,
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_block_CRC_0_X16_but_got_1_X16,
                                                    blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
@@ -192,17 +188,15 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Expected_index_CRC_0_X16_but_got_1_X16, trkHeader.crc64,
-                                                   BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_index_CRC_0_X16_but_got_1_X16,
+                                                   trkHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
 
                     break;
                 default:
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Ignored_field_type_0,
-                                               entry.blockType);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Ignored_field_type_0, entry.blockType);
 
                     break;
             }

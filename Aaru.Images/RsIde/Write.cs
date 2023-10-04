@@ -52,8 +52,7 @@ public sealed partial class RsIde
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                        uint   sectorSize)
     {
-        if(sectorSize != 256 &&
-           sectorSize != 512)
+        if(sectorSize != 256 && sectorSize != 512)
         {
             ErrorMessage = Localization.Unsupported_sector_size;
 
@@ -233,8 +232,7 @@ public sealed partial class RsIde
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 &&
-                   _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
                     break;
             }
         }

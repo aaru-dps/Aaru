@@ -70,10 +70,17 @@ public sealed class SunDisklabel : IPartition
     /// <summary>Size of padding in SunOS disk label</summary>
     const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
     /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
-    const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136    + // sizeof(dk_vtoc8)
-                                              NDKMAP * 8    + 14 * 2 + 2 * 2);
-    const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456   + // sizeof(dk_vtoc16)
-                                               4 * 4 + 12 * 2 + 2 * 2);
+    const int LEN_DKL_PAD8 = DK_LABEL_SIZE -
+                             (LEN_DKL_ASCII +
+                              136           + // sizeof(dk_vtoc8)
+                              NDKMAP * 8    +
+                              14     * 2    +
+                              2      * 2);
+    const int LEN_DKL_PAD16 = DK_LABEL_SIZE -
+                              (456    + // sizeof(dk_vtoc16)
+                               4  * 4 +
+                               12 * 2 +
+                               2  * 2);
     const string MODULE_NAME = "Sun partitions plugin";
 
 #region IPartition Members
@@ -123,9 +130,7 @@ public sealed class SunDisklabel : IPartition
                 useDkl = true;
         }
 
-        if(!useDkl  &&
-           !useDkl8 &&
-           !useDkl16)
+        if(!useDkl && !useDkl8 && !useDkl16)
         {
             errno = imagePlugin.ReadSector(sectorOffset + 1, out sunSector);
 
@@ -147,9 +152,7 @@ public sealed class SunDisklabel : IPartition
             }
         }
 
-        if(!useDkl  &&
-           !useDkl8 &&
-           !useDkl16)
+        if(!useDkl && !useDkl8 && !useDkl16)
             return false;
 
         if(useDkl16 && dkl16.dkl_magic == DKL_CIGAM)
@@ -193,8 +196,7 @@ public sealed class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP; i++)
             {
-                if(dkl.dkl_map[i].dkl_cylno <= 0 ||
-                   dkl.dkl_map[i].dkl_nblk  <= 0)
+                if(dkl.dkl_map[i].dkl_cylno <= 0 || dkl.dkl_map[i].dkl_nblk <= 0)
                     continue;
 
                 var part = new Partition
@@ -202,16 +204,15 @@ public sealed class SunDisklabel : IPartition
                     Size     = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
                     Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
                     Sequence = (ulong)i,
-                    Offset =
-                        ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
+                    Offset   = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                     Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                            DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
+                            DK_LABEL_SIZE /
+                            imagePlugin.Info.SectorSize,
                     Type   = Localization.SunOS_partition,
                     Scheme = Name
                 };
 
-                if(part.Start < imagePlugin.Info.Sectors &&
-                   part.End   <= imagePlugin.Info.Sectors)
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
                     partitions.Add(part);
             }
         }
@@ -279,26 +280,26 @@ public sealed class SunDisklabel : IPartition
                 var part = new Partition
                 {
                     Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
-                    Size        = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                    Length      = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
-                    Sequence    = (ulong)i,
-                    Offset = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                             DK_LABEL_SIZE,
+                    Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                    Length = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                    Sequence = (ulong)i,
+                    Offset = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                     Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                            DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
+                            DK_LABEL_SIZE /
+                            imagePlugin.Info.SectorSize,
                     Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
                     Scheme = Name
                 };
 
                 if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
                 {
-                    part.Description += "\n" + string.Format(Localization.Partition_timestamped_on_0,
-                                                             DateHandlers.
-                                                                 UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
+                    part.Description +=
+                        "\n" +
+                        string.Format(Localization.Partition_timestamped_on_0,
+                                      DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors &&
-                   part.End   <= imagePlugin.Info.Sectors)
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
                     partitions.Add(part);
             }
         }
@@ -366,11 +367,13 @@ public sealed class SunDisklabel : IPartition
                 {
                     Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                     Size        = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
-                    Length = (ulong)(dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz /
+                    Length = (ulong)(dkl16.dkl_vtoc.v_part[i].p_size *
+                                     dkl16.dkl_vtoc.v_sectorsz /
                                      imagePlugin.Info.SectorSize),
                     Sequence = (ulong)i,
                     Offset   = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
-                    Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz /
+                    Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
+                            dkl16.dkl_vtoc.v_sectorsz /
                             imagePlugin.Info.SectorSize,
                     Type   = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
                     Scheme = Name
@@ -378,13 +381,13 @@ public sealed class SunDisklabel : IPartition
 
                 if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
                 {
-                    part.Description += "\n" + string.Format(Localization.Partition_timestamped_on_0,
-                                                             DateHandlers.
-                                                                 UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
+                    part.Description +=
+                        "\n" +
+                        string.Format(Localization.Partition_timestamped_on_0,
+                                      DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors &&
-                   part.End   <= imagePlugin.Info.Sectors)
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
                     partitions.Add(part);
             }
         }

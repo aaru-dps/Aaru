@@ -51,8 +51,7 @@ public sealed partial class AppleDOS
         _start    = partition.Start;
         _encoding = encoding ?? new Apple2();
 
-        if(_device.Info.Sectors != 455 &&
-           _device.Info.Sectors != 560)
+        if(_device.Info.Sectors != 455 && _device.Info.Sectors != 560)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Incorrect_device_size);
 

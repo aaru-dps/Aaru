@@ -62,8 +62,7 @@ public sealed partial class Dart
         switch(header.srcType)
         {
             case DISK_MAC:
-                if(header.srcSize != SIZE_MAC_SS &&
-                   header.srcSize != SIZE_MAC)
+                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC)
                     return false;
 
                 break;

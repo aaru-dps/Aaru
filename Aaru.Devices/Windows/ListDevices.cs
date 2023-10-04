@@ -104,8 +104,7 @@ static class ListDevices
             string physId = devId;
 
             // TODO: This can be done better
-            if(devId.Length == 2 &&
-               devId[1]     == ':')
+            if(devId.Length == 2 && devId[1] == ':')
                 physId = "\\\\?\\" + devId;
 
             SafeFileHandle fd = Extern.CreateFile(physId, 0, FileShare.Read | FileShare.Write, IntPtr.Zero,
@@ -182,8 +181,7 @@ static class ListDevices
                     info.Serial = HexStringToString(info.Serial).Trim();
             }
 
-            if(string.IsNullOrEmpty(info.Vendor) ||
-               info.Vendor == "ATA")
+            if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
             {
                 string[] pieces = info.Model?.Split(' ');
 

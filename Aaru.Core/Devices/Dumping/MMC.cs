@@ -212,8 +212,7 @@ partial class Dump
             sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout,
                                     out _);
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
                 decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
         }
         else
@@ -239,8 +238,7 @@ partial class Dump
                         sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current,
                                                  0x00, 0x00, _dev.Timeout, out _);
 
-                        if(!sense &&
-                           !_dev.Error)
+                        if(!sense && !_dev.Error)
                             decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
                     }
                     else
@@ -387,8 +385,7 @@ partial class Dump
 
                 if(!sense)
                 {
-                    if(DMI.IsXbox(cmdBuf) ||
-                       DMI.IsXbox360(cmdBuf))
+                    if(DMI.IsXbox(cmdBuf) || DMI.IsXbox360(cmdBuf))
                     {
                         if(DMI.IsXbox(cmdBuf))
                             dskType = MediaType.XGD;
@@ -558,11 +555,9 @@ partial class Dump
                             {
                                 UpdateStatus?.
                                     Invoke(string.
-                                               Format(
-                                                   Localization.Core.
-                                                                Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
-                                                   (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
-                                                    CopyrightType.NoProtection).ToString()));
+                                               Format(Localization.Core.Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
+                                                      (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
+                                                       CopyrightType.NoProtection).ToString()));
                             }
                         }
                     }
@@ -889,8 +884,7 @@ partial class Dump
 
                 CSS_CPRM.LeadInCopyright? cpy = CSS_CPRM.DecodeLeadInCopyright(tmp);
 
-                if(cpy.HasValue &&
-                   cpy.Value.CopyrightType != CopyrightType.NoProtection)
+                if(cpy.HasValue && cpy.Value.CopyrightType != CopyrightType.NoProtection)
                     sidecar.OpticalDiscs[0].CopyProtection = cpy.Value.CopyrightType.ToString();
 
                 break;

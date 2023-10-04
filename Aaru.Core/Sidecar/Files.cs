@@ -55,8 +55,7 @@ public sealed partial class Sidecar
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
 
-        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
-              dirent is not null)
+        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
             ret = filesystem.Stat(dirent, out FileEntryInfo stat);
 
@@ -115,8 +114,7 @@ public sealed partial class Sidecar
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
 
-        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
-              dirent is not null)
+        while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
             ret = filesystem.Stat(path + "/" + filename + "/" + dirent, out FileEntryInfo entryStat);
 

@@ -116,8 +116,7 @@ public partial class Device
         {
             var aaruUri = new Uri(aaruRemote);
 
-            if(aaruUri.Scheme != "aaru" &&
-               aaruUri.Scheme != "dic")
+            if(aaruUri.Scheme != "aaru" && aaruUri.Scheme != "dic")
             {
                 AaruConsole.ErrorWriteLine(Localization.Invalid_remote_URI);
 

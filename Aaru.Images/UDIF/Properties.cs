@@ -84,7 +84,10 @@ public sealed partial class Udif
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".dmg" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dmg"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

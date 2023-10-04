@@ -112,15 +112,13 @@ public sealed class PluginBase
     {
         foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
         {
-            if(Activator.CreateInstance(type) is IFilesystem plugin &&
-               !Filesystems.ContainsKey(plugin.Name.ToLower()))
+            if(Activator.CreateInstance(type) is IFilesystem plugin && !Filesystems.ContainsKey(plugin.Name.ToLower()))
                 Filesystems.Add(plugin.Name.ToLower(), type);
         }
 
         foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
         {
-            if(Activator.CreateInstance(type) is IFilter plugin &&
-               !Filters.ContainsKey(plugin.Name.ToLower()))
+            if(Activator.CreateInstance(type) is IFilter plugin && !Filters.ContainsKey(plugin.Name.ToLower()))
                 Filters.Add(plugin.Name.ToLower(), type);
         }
 
@@ -133,15 +131,13 @@ public sealed class PluginBase
 
         foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
         {
-            if(Activator.CreateInstance(type) is IMediaImage plugin &&
-               !MediaImages.ContainsKey(plugin.Name.ToLower()))
+            if(Activator.CreateInstance(type) is IMediaImage plugin && !MediaImages.ContainsKey(plugin.Name.ToLower()))
                 MediaImages.Add(plugin.Name.ToLower(), type);
         }
 
         foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
         {
-            if(Activator.CreateInstance(type) is IPartition plugin &&
-               !Partitions.ContainsKey(plugin.Name.ToLower()))
+            if(Activator.CreateInstance(type) is IPartition plugin && !Partitions.ContainsKey(plugin.Name.ToLower()))
                 Partitions.Add(plugin.Name.ToLower(), type);
         }
 
@@ -168,8 +164,7 @@ public sealed class PluginBase
 
         foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
         {
-            if(Activator.CreateInstance(type) is IArchive plugin &&
-               !Archives.ContainsKey(plugin.Name.ToLower()))
+            if(Activator.CreateInstance(type) is IArchive plugin && !Archives.ContainsKey(plugin.Name.ToLower()))
                 Archives.Add(plugin.Name.ToLower(), type);
         }
 

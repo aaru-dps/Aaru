@@ -81,19 +81,23 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                         Assert.AreEqual(test.Tracks.Length, image.Tracks.Count,
                                         string.Format(Localization.Tracks_0, testFile));
 
-                        image.Tracks.Select(t => t.Session).Should().
+                        image.Tracks.Select(t => t.Session).
+                              Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Session),
                                              string.Format(Localization.Track_session_0, testFile));
 
-                        image.Tracks.Select(t => t.StartSector).Should().
+                        image.Tracks.Select(t => t.StartSector).
+                              Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Start),
                                              string.Format(Localization.Track_start_0, testFile));
 
-                        image.Tracks.Select(t => t.EndSector).Should().
+                        image.Tracks.Select(t => t.EndSector).
+                              Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.End),
                                              string.Format(Localization.Track_end_0, testFile));
 
-                        image.Tracks.Select(t => t.Pregap).Should().
+                        image.Tracks.Select(t => t.Pregap).
+                              Should().
                               BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
                                              string.Format(Localization.Track_pregap_0, testFile));
 
@@ -122,8 +126,9 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             trackNo++;
                         }
 
-                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags),
-                                                      string.Format(Localization.Track_flags_0, testFile));
+                        flags.Should().
+                              BeEquivalentTo(test.Tracks.Select(s => s.Flags),
+                                             string.Format(Localization.Track_flags_0, testFile));
 
                         Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
                                         string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
@@ -177,8 +182,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             ulong trackStart = track.Start + track.Pregap;
 
-                            if(track.Number <= 1 &&
-                               track.Pregap >= 150)
+                            if(track.Number <= 1 && track.Pregap >= 150)
                                 trackStart -= 150;
 
                             var partition = new Partition
@@ -250,10 +254,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                     {
                                         Assert.NotNull(null,
                                                        string.
-                                                           Format(
-                                                               Localization.
-                                                                   Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
-                                                               testFile, track.Number, i));
+                                                           Format(Localization.Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
+                                                                  testFile, track.Number, i));
                                     }
 
                                     continue;
@@ -375,7 +377,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                 if(image.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
                 {
-                    foreach(bool @long in new[] { false, true })
+                    foreach(bool @long in new[]
+                        {
+                            false, true
+                        })
                     {
                         ctx = new Md5Context();
 

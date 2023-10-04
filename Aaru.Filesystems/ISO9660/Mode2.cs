@@ -91,15 +91,24 @@ public sealed partial class ISO9660
                                                    data[1], (Mode2Submode)data[2], data[3]);
 
                         break;
-                    case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
-                                   data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                                   data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
+                    case 2352 when data[0]  != 0x00 ||
+                                   data[1]  != 0xFF ||
+                                   data[2]  != 0xFF ||
+                                   data[3]  != 0xFF ||
+                                   data[4]  != 0xFF ||
+                                   data[5]  != 0xFF ||
+                                   data[6]  != 0xFF ||
+                                   data[7]  != 0xFF ||
+                                   data[8]  != 0xFF ||
+                                   data[9]  != 0xFF ||
+                                   data[10] != 0xFF ||
+                                   data[11] != 0x00:
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio, realSector);
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
-                                                   realSector, data[12], data[13], data[14], data[15]);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4, realSector,
+                                                   data[12], data[13], data[14], data[15]);
 
                         break;
                     case 2352:
@@ -155,8 +164,8 @@ public sealed partial class ISO9660
 
                             break;
                         case 2324:
-                            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.tor_Sector_0_Cooked_Mode_two_Form_two, dstSector);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                                                       dstSector);
 
                             break;
                         case 2336:
@@ -168,11 +177,19 @@ public sealed partial class ISO9660
                                                        data[0], data[1], (Mode2Submode)data[2], data[3]);
 
                             break;
-                        case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
-                                       data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                                       data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio,
-                                                       dstSector);
+                        case 2352 when data[0]  != 0x00 ||
+                                       data[1]  != 0xFF ||
+                                       data[2]  != 0xFF ||
+                                       data[3]  != 0xFF ||
+                                       data[4]  != 0xFF ||
+                                       data[5]  != 0xFF ||
+                                       data[6]  != 0xFF ||
+                                       data[7]  != 0xFF ||
+                                       data[8]  != 0xFF ||
+                                       data[9]  != 0xFF ||
+                                       data[10] != 0xFF ||
+                                       data[11] != 0x00:
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio, dstSector);
 
                             break;
                         case 2352 when data[15] != 2:

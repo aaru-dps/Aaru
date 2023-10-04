@@ -50,8 +50,7 @@ public sealed partial class CPM
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
         node = new CpmDirNode
@@ -124,15 +123,13 @@ public sealed partial class CPM
                 {
                     for(var f = 0; f < 8; f++)
                     {
-                        if(entry.filename[f] < 0x20 &&
-                           entry.filename[f] != 0x00)
+                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
                             return false;
                     }
 
                     for(var e = 0; e < 3; e++)
                     {
-                        if(entry.extension[e] < 0x20 &&
-                           entry.extension[e] != 0x00)
+                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
                             return false;
                     }
 
@@ -147,15 +144,13 @@ public sealed partial class CPM
                         {
                             for(var f = 0; f < 8; f++)
                             {
-                                if(entry.filename[f] < 0x20 &&
-                                   entry.filename[f] != 0x00)
+                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
                                     return false;
                             }
 
                             for(var e = 0; e < 3; e++)
                             {
-                                if(entry.extension[e] < 0x20 &&
-                                   entry.extension[e] != 0x00)
+                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
                                     return false;
                             }
 

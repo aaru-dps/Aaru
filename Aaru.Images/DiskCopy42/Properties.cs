@@ -68,7 +68,10 @@ public sealed partial class DiskCopy42
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<SectorTagType> SupportedSectorTags => new[] { SectorTagType.AppleSectorTag };
+    public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+    {
+        SectorTagType.AppleSectorTag
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
@@ -84,7 +87,10 @@ public sealed partial class DiskCopy42
     };
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".dc42", ".diskcopy42", ".image" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dc42", ".diskcopy42", ".image"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

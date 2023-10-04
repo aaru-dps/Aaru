@@ -60,8 +60,7 @@ public sealed partial class AppleDOS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
         var contents = _catalogCache.Keys.ToList();
@@ -130,8 +129,7 @@ public sealed partial class AppleDOS
         _fileTypeCache    = new Dictionary<string, byte>();
         _lockedFiles      = new List<string>();
 
-        if(lba == 0 ||
-           lba > _device.Info.Sectors)
+        if(lba == 0 || lba > _device.Info.Sectors)
             return ErrorNumber.InvalidArgument;
 
         while(lba != 0)
@@ -167,8 +165,7 @@ public sealed partial class AppleDOS
                 _catalogCache.TryAdd(filename, ts);
                 _fileTypeCache.TryAdd(filename, (byte)(entry.typeAndFlags & 0x7F));
 
-                if((entry.typeAndFlags & 0x80) == 0x80 &&
-                   !_lockedFiles.Contains(filename))
+                if((entry.typeAndFlags & 0x80) == 0x80 && !_lockedFiles.Contains(filename))
                     _lockedFiles.Add(filename);
             }
 

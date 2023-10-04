@@ -92,26 +92,29 @@ public sealed partial class CloneCd
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new[] { MediaTagType.CD_MCN, MediaTagType.CD_FullTOC };
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+    {
+        MediaTagType.CD_MCN, MediaTagType.CD_FullTOC
+    };
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
-        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-        SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
-        SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
+        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ, SectorTagType.CdSectorEdc,
+        SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync,
+        SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
     };
 
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
-        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-        MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
-        MediaType.CDV, MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
-        MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD,
-        MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
-        MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-        MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
+        MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI, MediaType.CDMRW,
+        MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW, MediaType.CDV,
+        MediaType.DTSCD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2,
+        MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
+        MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
+        MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp,
+        MediaType.CVD, MediaType.PCD
     };
 
     /// <inheritdoc />
@@ -119,7 +122,10 @@ public sealed partial class CloneCd
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".ccd" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".ccd"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

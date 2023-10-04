@@ -376,7 +376,8 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool Read16(out byte[] buffer,  out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
                        uint       timeout, out double duration) => Read16(out buffer, out senseBuffer, false, true, 0,
-                                                                          objectId, blocks, blockSize, timeout, out duration);
+                                                                          objectId, blocks, blockSize, timeout,
+                                                                          out duration);
 
     /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition</summary>
     /// <param name="buffer">Buffer.</param>

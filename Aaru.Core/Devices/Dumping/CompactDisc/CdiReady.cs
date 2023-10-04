@@ -59,7 +59,10 @@ partial class Dump
         if(sector?.Length != 2352)
             return false;
 
-        byte[] syncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+        byte[] syncMark =
+        {
+            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+        };
 
         var testMark = new byte[12];
         Array.Copy(sector, 0, testMark, 0, 12);
@@ -79,7 +82,10 @@ partial class Dump
         if(sector?.Length != 2352)
             return false;
 
-        byte[] syncMark = { 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00 };
+        byte[] syncMark =
+        {
+            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+        };
 
         var testMark = new byte[12];
 
@@ -202,19 +208,15 @@ partial class Dump
                 }
             }
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed > maxSpeed && currentSpeed > 0)
                 maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
+            if(currentSpeed < minSpeed && currentSpeed > 0)
                 minSpeed = currentSpeed;
 
             UpdateProgress?.
-                Invoke(
-                    string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
-                                  ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                    (long)i, (long)blocks);
+                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                       (long)i, (long)blocks);
 
             sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
@@ -230,10 +232,8 @@ partial class Dump
                 for(uint r = 0; r < _maximumReadable; r++)
                 {
                     UpdateProgress?.
-                        Invoke(
-                            string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks,
-                                          ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                            (long)i + r, (long)blocks);
+                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                               (long)i + r, (long)blocks);
 
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, (uint)sectorsForOffset + 1,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
@@ -241,8 +241,7 @@ partial class Dump
 
                     totalDuration += cmdDuration;
 
-                    if(!sense &&
-                       !_dev.Error)
+                    if(!sense && !_dev.Error)
                     {
                         mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
@@ -325,8 +324,7 @@ partial class Dump
 
             _speedStopwatch.Restart();
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 if(cdiReadyReadAsAudio)
                 {

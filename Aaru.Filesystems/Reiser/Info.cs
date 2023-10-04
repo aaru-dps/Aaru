@@ -71,7 +71,8 @@ public sealed partial class Reiser : IFilesystem
 
         Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-        return _magic35.SequenceEqual(reiserSb.magic) || _magic36.SequenceEqual(reiserSb.magic) ||
+        return _magic35.SequenceEqual(reiserSb.magic) ||
+               _magic36.SequenceEqual(reiserSb.magic) ||
                _magicJr.SequenceEqual(reiserSb.magic);
     }
 
@@ -121,7 +122,8 @@ public sealed partial class Reiser : IFilesystem
             sb.AppendLine(Localization.Reiser_Jr_filesystem);
 
         sb.AppendFormat(Localization.Volume_has_0_blocks_with_1_blocks_free, reiserSb.block_count,
-                        reiserSb.free_blocks).AppendLine();
+                        reiserSb.free_blocks).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_bytes_per_block,                reiserSb.blocksize).AppendLine();
         sb.AppendFormat(Localization.Root_directory_resides_on_block_0, reiserSb.root_block).AppendLine();
@@ -130,7 +132,8 @@ public sealed partial class Reiser : IFilesystem
             sb.AppendLine(Localization.Volume_has_not_been_cleanly_umounted);
 
         sb.AppendFormat(Localization.Volume_last_checked_on_0,
-                        DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check)).AppendLine();
+                        DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check)).
+           AppendLine();
 
         if(reiserSb.version >= 2)
         {

@@ -62,8 +62,7 @@ public class Remote : IDisposable
     /// <exception cref="IOException">Network error.</exception>
     public Remote(Uri uri)
     {
-        if(uri.Scheme != "aaru" &&
-           uri.Scheme != "dic")
+        if(uri.Scheme != "aaru" && uri.Scheme != "dic")
             throw new ArgumentException(Localization.Invalid_remote_protocol, nameof(uri.Scheme));
 
         _host = uri.DnsSafeHost;
@@ -102,8 +101,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -253,8 +251,7 @@ public class Remote : IDisposable
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.REMOTE_ID ||
-               hdr.packet_id != Consts.PACKET_ID)
+            if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -347,8 +344,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -360,9 +356,8 @@ public class Remote : IDisposable
             if(hdr.packetType != AaruPacketType.Nop)
             {
                 AaruConsole.
-                    ErrorWriteLine(
-                        Localization.Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
-                        hdr.packetType);
+                    ErrorWriteLine(Localization.Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
+                                   hdr.packetType);
 
                 return Array.Empty<DeviceInfo>();
             }
@@ -470,8 +465,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
             lastError = -1;
@@ -590,8 +584,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -700,8 +693,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -809,8 +801,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -919,8 +910,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1035,8 +1025,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1117,8 +1106,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1197,8 +1185,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1327,8 +1314,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1421,8 +1407,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1504,8 +1489,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1635,17 +1619,17 @@ public class Remote : IDisposable
         int off = tmp.Length;
 
         foreach(AaruCmdSdhci cmd in commands.Select(command => new AaruCmdSdhci
-                {
-                    application = command.isApplication,
-                    argument    = command.argument,
-                    block_size  = command.blockSize,
-                    blocks      = command.blocks,
-                    buf_len     = (uint)(command.buffer?.Length ?? 0),
-                    command     = command.command,
-                    flags       = command.flags,
-                    timeout     = timeout,
-                    write       = command.write
-                }))
+            {
+                application = command.isApplication,
+                argument    = command.argument,
+                block_size  = command.blockSize,
+                blocks      = command.blocks,
+                buf_len     = (uint)(command.buffer?.Length ?? 0),
+                command     = command.command,
+                flags       = command.flags,
+                timeout     = timeout,
+                write       = command.write
+            }))
         {
             tmp = Marshal.StructureToByteArrayLittleEndian(cmd);
             Array.Copy(tmp, 0, buf, off, tmp.Length);
@@ -1654,7 +1638,7 @@ public class Remote : IDisposable
         }
 
         foreach(Devices.Device.MmcSingleCommand command in
-                commands.Where(command => (command.buffer?.Length ?? 0) != 0))
+            commands.Where(command => (command.buffer?.Length ?? 0) != 0))
         {
             Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
 
@@ -1683,8 +1667,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1731,8 +1714,7 @@ public class Remote : IDisposable
             command.response =  cmdRes.response;
             duration         += cmdRes.duration;
 
-            if(cmdRes.error_no != 0 &&
-               error           == 0)
+            if(cmdRes.error_no != 0 && error == 0)
                 error = (int)cmdRes.error_no;
 
             if(cmdRes.sense != 0)
@@ -1827,8 +1809,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
@@ -1931,8 +1912,7 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 

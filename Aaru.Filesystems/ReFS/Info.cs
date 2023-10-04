@@ -65,7 +65,8 @@ public sealed partial class ReFS : IFilesystem
 
         VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
-        return vhdr.identifier == FSRS && ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero) &&
+        return vhdr.identifier == FSRS                          &&
+               ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero) &&
                vhdr.signature.SequenceEqual(_signature);
     }
 
@@ -132,7 +133,8 @@ public sealed partial class ReFS : IFilesystem
         sb.AppendFormat(Localization.Volume_uses_0_bytes_per_sector, vhdr.bytesPerSector).AppendLine();
 
         sb.AppendFormat(Localization.Volume_uses_0_sectors_per_cluster_1_bytes, vhdr.sectorsPerCluster,
-                        vhdr.sectorsPerCluster * vhdr.bytesPerSector).AppendLine();
+                        vhdr.sectorsPerCluster * vhdr.bytesPerSector).
+           AppendLine();
 
         sb.AppendFormat(Localization.Volume_has_0_sectors_1_bytes, vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector).
            AppendLine();

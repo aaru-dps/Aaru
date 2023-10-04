@@ -230,7 +230,8 @@ public partial class Dump
         _ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
         // Search for device in main database
-        _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
+        _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer &&
+                                                  d.Model        == _dev.Model        &&
                                                   d.Revision     == _dev.FirmwareRevision);
 
         if(_dbDev is null)
@@ -293,8 +294,7 @@ public partial class Dump
         _errorLog.Close();
         _dumpLog.Close();
 
-        if(_resume == null ||
-           !_doResume)
+        if(_resume == null || !_doResume)
             return;
 
         _resume.LastWriteDate = DateTime.UtcNow;

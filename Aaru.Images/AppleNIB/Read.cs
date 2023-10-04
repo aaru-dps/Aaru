@@ -80,12 +80,19 @@ public sealed partial class AppleNib
         if(skewed)
         {
             foreach(bool isDos in from sector in tracks[17].sectors
-                                  where sector.addressField.sector.SequenceEqual(new byte[] { 170, 170 })
+                                  where sector.addressField.sector.SequenceEqual(new byte[]
+                                  {
+                                      170, 170
+                                  })
                                   select Apple2.DecodeSector(sector)
                                   into sector0
                                   where sector0 != null
-                                  select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
-                                         sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
+                                  select sector0[0x01] == 17  &&
+                                         sector0[0x02] < 16   &&
+                                         sector0[0x27] <= 122 &&
+                                         sector0[0x34] == 35  &&
+                                         sector0[0x35] == 16  &&
+                                         sector0[0x36] == 0   &&
                                          sector0[0x37] == 1)
             {
                 if(isDos)
@@ -105,7 +112,8 @@ public sealed partial class AppleNib
                 if(skewed && spt != 0)
                 {
                     var sectorNo = (ulong)(((sector.addressField.sector[0] & 0x55) << 1 |
-                                            sector.addressField.sector[1] & 0x55) & 0xFF);
+                                            sector.addressField.sector[1] & 0x55) &
+                                           0xFF);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,

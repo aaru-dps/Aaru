@@ -230,10 +230,7 @@ public sealed partial class HPFS
         metadata = new FileSystem();
 
         // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
-        if(bpb.jump[0]    == 0xEB &&
-           bpb.jump[1]    > 0x3C  &&
-           bpb.jump[1]    < 0x80  &&
-           bpb.signature2 == 0xAA55)
+        if(bpb.jump[0] == 0xEB && bpb.jump[1] > 0x3C && bpb.jump[1] < 0x80 && bpb.signature2 == 0xAA55)
         {
             metadata.Bootable = true;
             string bootChk = Sha1Context.Data(bpb.boot_code, out byte[] _);

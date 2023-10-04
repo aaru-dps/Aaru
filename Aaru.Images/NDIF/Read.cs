@@ -53,8 +53,7 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork ||
-           imageFilter.ResourceForkLength == 0)
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0)
             return ErrorNumber.InvalidArgument;
 
         ResourceFork rsrcFork;
@@ -72,8 +71,7 @@ public sealed partial class Ndif
 
             bcems = rsrc.GetIds();
 
-            if(bcems        == null ||
-               bcems.Length == 0)
+            if(bcems == null || bcems.Length == 0)
                 return ErrorNumber.InvalidArgument;
         }
         catch(InvalidCastException ex)
@@ -226,8 +224,7 @@ public sealed partial class Ndif
                                  _                                 => null
                              };
 
-                if(dev                       == null &&
-                   version.PreReleaseVersion > 0)
+                if(dev == null && version.PreReleaseVersion > 0)
                     dev = "f";
 
                 if(dev != null)

@@ -683,11 +683,10 @@ public partial class Device
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
-                                   Localization.READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms,
-                                   duration, sense, LastError);
+                                   Localization.READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms, duration,
+                                   sense, LastError);
 
-        if(!sense &&
-           (buffer[8] & 0x80) == 0x80)
+        if(!sense && (buffer[8] & 0x80) == 0x80)
             mcn = Encoding.ASCII.GetString(buffer, 9, 13);
 
         return sense;
@@ -729,8 +728,7 @@ public partial class Device
                                        READ_READ_SUB_CHANNEL_ISRC_Track_Number_1_Sense_2_Last_Error_3_took_0_ms,
                                    duration, trackNumber, sense, LastError);
 
-        if(!sense &&
-           (buffer[8] & 0x80) == 0x80)
+        if(!sense && (buffer[8] & 0x80) == 0x80)
             isrc = Encoding.ASCII.GetString(buffer, 9, 12);
 
         return sense;

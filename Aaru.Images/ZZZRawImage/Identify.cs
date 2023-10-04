@@ -93,8 +93,7 @@ public sealed partial class ZZZRawImage
         if(imageFilter.DataForkLength % 512 == 0)
             return true;
 
-        if(_extension                       == ".hdf" &&
-           imageFilter.DataForkLength % 256 == 0)
+        if(_extension == ".hdf" && imageFilter.DataForkLength % 256 == 0)
             return true;
 
         // Only for single track data CDs

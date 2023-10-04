@@ -72,8 +72,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((header.Mode & 0xF) == 0x5 ||
-                   (header.Mode & 0xF) == 0xA)
+                if((header.Mode & 0xF) == 0x5 || (header.Mode & 0xF) == 0xA)
                     return true;
 
                 break;
@@ -85,8 +84,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((header.Mode & 0xF) == 0x1 ||
-                   (header.Mode & 0xF) == 0xA)
+                if((header.Mode & 0xF) == 0x1 || (header.Mode & 0xF) == 0xA)
                     return true;
 
                 break;
@@ -127,8 +125,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((_header.Mode & 0xF) == 0x5 ||
-                   (_header.Mode & 0xF) == 0xA)
+                if((_header.Mode & 0xF) == 0x5 || (_header.Mode & 0xF) == 0xA)
                     found = true;
 
                 break;
@@ -140,8 +137,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((_header.Mode & 0xF) == 0x1 ||
-                   (_header.Mode & 0xF) == 0xA)
+                if((_header.Mode & 0xF) == 0x1 || (_header.Mode & 0xF) == 0xA)
                     found = true;
 
                 break;
@@ -153,9 +149,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((_header.Mode & 0xF) == 0x0 ||
-                   (_header.Mode & 0xF) == 0x2 ||
-                   (_header.Mode & 0xF) == 0x3)
+                if((_header.Mode & 0xF) == 0x0 || (_header.Mode & 0xF) == 0x2 || (_header.Mode & 0xF) == 0x3)
                     found = true;
 
                 break;
@@ -261,13 +255,19 @@ public class SuperNintendo : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".sfc" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".sfc"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.SNESGamePak, MediaType.SNESGamePakUS };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.SNESGamePak, MediaType.SNESGamePakUS
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
@@ -329,8 +329,7 @@ public class SuperNintendo : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(mediaType != MediaType.SNESGamePak &&
-           mediaType != MediaType.SNESGamePakUS)
+        if(mediaType != MediaType.SNESGamePak && mediaType != MediaType.SNESGamePakUS)
         {
             ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 

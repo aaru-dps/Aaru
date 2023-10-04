@@ -75,8 +75,7 @@ public sealed class AboutViewModel : ViewModelBase
                     (Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute)) as
                          AssemblyInformationalVersionAttribute)?.InformationalVersion;
 
-                if(name is null ||
-                   version is null)
+                if(name is null || version is null)
                     continue;
 
                 Assemblies.Add(new AssemblyModel

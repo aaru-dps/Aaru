@@ -344,7 +344,7 @@ sealed class CompareCommand : Command
                          image2Info.DriveSerialNumber                               ?? "");
 
             foreach(MediaTagType diskTag in
-                    (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
+                (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
             {
                 table.AddRow(string.Format(UI.Has_tag_0_Question, diskTag),
                              image1DiskTags.ContainsKey(diskTag).ToString(),
@@ -421,26 +421,23 @@ sealed class CompareCommand : Command
         var input1ByteAddressable = input1Format as IByteAddressableImage;
         var input2ByteAddressable = input2Format as IByteAddressableImage;
 
-        if(input1ByteAddressable is null &&
-           input2ByteAddressable is not null)
+        if(input1ByteAddressable is null && input2ByteAddressable is not null)
             imagesDiffer = true;
 
-        if(input1ByteAddressable is not null &&
-           input2ByteAddressable is null)
+        if(input1ByteAddressable is not null && input2ByteAddressable is null)
             imagesDiffer = true;
 
-        if(input1MediaImage is null &&
-           input2MediaImage is not null)
+        if(input1MediaImage is null && input2MediaImage is not null)
             imagesDiffer = true;
 
-        if(input1MediaImage is not null &&
-           input2MediaImage is null)
+        if(input1MediaImage is not null && input2MediaImage is null)
             imagesDiffer = true;
 
-        if(input1MediaImage is not null &&
-           input2MediaImage is not null)
+        if(input1MediaImage is not null && input2MediaImage is not null)
         {
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
@@ -449,9 +446,8 @@ sealed class CompareCommand : Command
 
                             for(ulong sector = 0; sector < leastSectors; sector++)
                             {
-                                task.Value = sector;
-                                task.Description =
-                                    string.Format(UI.Comparing_sector_0_of_1, sector + 1, leastSectors);
+                                task.Value       = sector;
+                                task.Description = string.Format(UI.Comparing_sector_0_of_1, sector + 1, leastSectors);
 
                                 try
                                 {
@@ -460,9 +456,8 @@ sealed class CompareCommand : Command
                                     if(errno != ErrorNumber.NoError)
                                     {
                                         AaruConsole.
-                                            ErrorWriteLine(string.
-                                                               Format(UI.Error_0_reading_sector_1_from_first_image,
-                                                                      errno, sector));
+                                            ErrorWriteLine(string.Format(UI.Error_0_reading_sector_1_from_first_image,
+                                                                         errno, sector));
                                     }
 
                                     errno = input2MediaImage.ReadSector(sector, out byte[] image2Sector);
@@ -470,9 +465,8 @@ sealed class CompareCommand : Command
                                     if(errno != ErrorNumber.NoError)
                                     {
                                         AaruConsole.
-                                            ErrorWriteLine(string.
-                                                               Format(UI.Error_0_reading_sector_1_from_second_image,
-                                                                      errno, sector));
+                                            ErrorWriteLine(string.Format(UI.Error_0_reading_sector_1_from_second_image,
+                                                                         errno, sector));
                                     }
 
                                     ArrayHelpers.CompareBytes(out bool different, out bool sameSize, image1Sector,
@@ -498,10 +492,11 @@ sealed class CompareCommand : Command
                         });
         }
 
-        if(input1ByteAddressable is not null &&
-           input2ByteAddressable is not null)
+        if(input1ByteAddressable is not null && input2ByteAddressable is not null)
         {
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {

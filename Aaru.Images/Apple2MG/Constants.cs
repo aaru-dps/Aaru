@@ -58,9 +58,15 @@ public sealed partial class Apple2Mg
     /// <summary>Disk image created by Aaru, "aaru"</summary>
     const uint CREATOR_AARU = 0x75726161;
 
-    const    uint  LOCKED_DISK         = 0x80000000;
-    const    uint  VALID_VOLUME_NUMBER = 0x00000100;
-    const    uint  VOLUME_NUMBER_MASK  = 0x000000FF;
-    readonly int[] _deinterleave       = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    readonly int[] _interleave         = { 0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 15 };
+    const uint LOCKED_DISK         = 0x80000000;
+    const uint VALID_VOLUME_NUMBER = 0x00000100;
+    const uint VOLUME_NUMBER_MASK  = 0x000000FF;
+    readonly int[] _deinterleave =
+    {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    };
+    readonly int[] _interleave =
+    {
+        0, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 15
+    };
 }

@@ -199,8 +199,7 @@ public sealed class GuidPartitionTable : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.attributes = 0x{0:X16}", entry.attributes);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.name = {0}",             entry.name);
 
-            if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
-               entry.endLBA   / divisor > imagePlugin.Info.Sectors)
+            if(entry.startLBA / divisor > imagePlugin.Info.Sectors || entry.endLBA / divisor > imagePlugin.Info.Sectors)
                 return false;
 
             var part = new Partition

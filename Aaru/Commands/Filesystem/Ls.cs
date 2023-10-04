@@ -56,14 +56,25 @@ sealed class LsCommand : Command
     {
         AddAlias("ls");
 
-        Add(new Option<string>(new[] { "--encoding", "-e" }, () => null, UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[] { "--long-format", "-l" }, () => true, UI.Use_long_format));
+        Add(new Option<bool>(new[]
+        {
+            "--long-format", "-l"
+        }, () => true, UI.Use_long_format));
 
-        Add(new Option<string>(new[] { "--options", "-O" }, () => null,
-                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
+        Add(new Option<string>(new[]
+        {
+            "--options", "-O"
+        }, () => null, UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<string>(new[] { "--namespace", "-n" }, () => null, UI.Namespace_to_use_for_filenames));
+        Add(new Option<string>(new[]
+        {
+            "--namespace", "-n"
+        }, () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -266,10 +277,8 @@ sealed class LsCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask(UI.Identifying_filesystems_on_partition).
-                        IsIndeterminate();
-                    Core.Filesystems.Identify(imageFormat, out idPlugins,
-                                              partitions[i]);
+                    ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
                 if(idPlugins.Count == 0)
@@ -295,12 +304,9 @@ sealed class LsCommand : Command
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
-                                ctx.AddTask(UI.Mounting_filesystem).
-                                    IsIndeterminate();
+                                ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
 
-                                error = fs.Mount(imageFormat, partitions[i],
-                                                 encodingClass, parsedOptions,
-                                                 @namespace);
+                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                             });
 
                             if(error == ErrorNumber.NoError)
@@ -325,9 +331,7 @@ sealed class LsCommand : Command
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
                             ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
-                            error = fs.Mount(imageFormat, partitions[i],
-                                             encodingClass, parsedOptions,
-                                             @namespace);
+                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                         });
 
                         if(error == ErrorNumber.NoError)
@@ -384,8 +388,7 @@ sealed class LsCommand : Command
         {
             ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
 
-            while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-                  entry is not null)
+            while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
             {
                 fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
@@ -396,7 +399,7 @@ sealed class LsCommand : Command
         });
 
         foreach(KeyValuePair<string, FileEntryInfo> entry in
-                stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
+            stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
         {
             if(longFormat)
             {
@@ -441,7 +444,7 @@ sealed class LsCommand : Command
         AaruConsole.WriteLine();
 
         foreach(KeyValuePair<string, FileEntryInfo> subdirectory in
-                stats.Where(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == true))
+            stats.Where(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == true))
             ListFilesInDir(path + "/" + subdirectory.Key, fs, longFormat);
     }
 }

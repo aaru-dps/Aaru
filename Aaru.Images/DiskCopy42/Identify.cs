@@ -80,8 +80,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.valid = {0}",             tmpHeader.Valid);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.reserved = {0}",          tmpHeader.Reserved);
 
-        if(tmpHeader.Valid    != 1 ||
-           tmpHeader.Reserved != 0)
+        if(tmpHeader.Valid != 1 || tmpHeader.Reserved != 0)
             return false;
 
         // Some versions seem to incorrectly create little endian fields

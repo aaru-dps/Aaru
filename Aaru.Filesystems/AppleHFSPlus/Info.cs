@@ -158,8 +158,7 @@ public sealed partial class AppleHFSPlus
 
         vh.signature = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-        if(vh.signature != AppleCommon.HFSP_MAGIC &&
-           vh.signature != AppleCommon.HFSX_MAGIC)
+        if(vh.signature != AppleCommon.HFSP_MAGIC && vh.signature != AppleCommon.HFSX_MAGIC)
             return;
 
         var sb = new StringBuilder();
@@ -214,7 +213,8 @@ public sealed partial class AppleHFSPlus
                 sb.AppendLine(Localization.Volume_is_locked_by_software);
 
             sb.AppendFormat(Localization.Implementation_that_last_mounted_the_volume_0,
-                            Encoding.ASCII.GetString(vh.lastMountedVersion)).AppendLine();
+                            Encoding.ASCII.GetString(vh.lastMountedVersion)).
+               AppendLine();
 
             if((vh.attributes & 0x2000) == 0x2000)
                 sb.AppendFormat(Localization.Journal_starts_at_allocation_block_0, vh.journalInfoBlock).AppendLine();
@@ -262,8 +262,7 @@ public sealed partial class AppleHFSPlus
             sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, vh.drFndrInfo3).AppendLine();
             sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0,      vh.drFndrInfo5).AppendLine();
 
-            if(vh.drFndrInfo6 != 0 &&
-               vh.drFndrInfo7 != 0)
+            if(vh.drFndrInfo6 != 0 && vh.drFndrInfo7 != 0)
                 sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, vh.drFndrInfo6, vh.drFndrInfo7).AppendLine();
 
             metadata = new FileSystem();
@@ -292,8 +291,7 @@ public sealed partial class AppleHFSPlus
                                 _      => metadata.Type
                             };
 
-            if(vh.drFndrInfo6 != 0 &&
-               vh.drFndrInfo7 != 0)
+            if(vh.drFndrInfo6 != 0 && vh.drFndrInfo7 != 0)
                 metadata.VolumeSerial = $"{vh.drFndrInfo6:X8}{vh.drFndrInfo7:X8}";
 
             metadata.SystemIdentifier = Encoding.ASCII.GetString(vh.lastMountedVersion);

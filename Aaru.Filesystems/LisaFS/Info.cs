@@ -68,8 +68,7 @@ public sealed partial class LisaFS
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
-            if(beforeMddf       == -1 &&
-               searchTag.FileId == FILEID_LOADER_SIGNED)
+            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED)
                 beforeMddf = i - 1;
 
             if(searchTag.FileId != FILEID_MDDF)
@@ -157,8 +156,7 @@ public sealed partial class LisaFS
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
-            if(beforeMddf       == -1 &&
-               searchTag.FileId == FILEID_LOADER_SIGNED)
+            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED)
                 beforeMddf = i - 1;
 
             if(searchTag.FileId != FILEID_MDDF)
@@ -345,10 +343,12 @@ public sealed partial class LisaFS
             sb.AppendFormat(Localization.Volume_is_number_0_of_1, infoMddf.volnum, infoMddf.vol_sequence).AppendLine();
 
             sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_created_this_volume_0,
-                            infoMddf.machine_id).AppendLine();
+                            infoMddf.machine_id).
+               AppendLine();
 
             sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_can_use_this_volume_software_0,
-                            infoMddf.serialization).AppendLine();
+                            infoMddf.serialization).
+               AppendLine();
 
             sb.AppendFormat(Localization.Volume_created_on_0, infoMddf.dtvc).AppendLine();
             sb.AppendFormat(Localization.Volume_catalog_created_on_0, infoMddf.dtcc).AppendLine();
@@ -376,7 +376,8 @@ public sealed partial class LisaFS
             sb.AppendFormat(Localization.Overmount_stamp_0,            infoMddf.overmount_stamp).AppendLine();
 
             sb.AppendFormat(Localization.S_Records_start_at_0_and_spans_for_1_blocks,
-                            infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf, infoMddf.srec_len).AppendLine();
+                            infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf, infoMddf.srec_len).
+               AppendLine();
 
             sb.AppendLine(infoMddf.vol_left_mounted == 0 ? Localization.Volume_is_clean : Localization.Volume_is_dirty);
 

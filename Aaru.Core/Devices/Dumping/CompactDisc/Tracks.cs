@@ -114,8 +114,7 @@ partial class Dump
                                        ? TrackType.Data
                                        : TrackType.Audio,
                             StartSector =
-                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME -
-                                        150),
+                                (ulong)(trk.PHOUR * 3600 * 75 + trk.PMIN * 60 * 75 + trk.PSEC * 75 + trk.PFRAME - 150),
                             BytesPerSector    = (int)sectorSize,
                             RawBytesPerSector = (int)sectorSize
                         });
@@ -185,8 +184,7 @@ partial class Dump
 
             TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
 
-            if((sense || !oldToc.HasValue) &&
-               !force)
+            if((sense || !oldToc.HasValue) && !force)
             {
                 dumpLog?.WriteLine(Localization.Core.
                                                 Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);

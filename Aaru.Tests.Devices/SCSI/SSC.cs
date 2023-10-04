@@ -781,11 +781,8 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(
-                                fixedLen
-                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
-                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                0xFFFFFF);
+                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                      0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -999,11 +996,8 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(
-                                fixedLen
-                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
-                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                0xFFFFFF);
+                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                      0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1484,11 +1478,8 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(
-                                fixedLen
-                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
-                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                0xFFFFFF);
+                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                      0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1716,11 +1707,8 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(
-                                fixedLen
-                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
-                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                0xFFFFFF);
+                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                      0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1967,11 +1955,8 @@ static class Ssc
                     if(length > 0xFFFFFF)
                     {
                         AaruConsole.
-                            WriteLine(
-                                fixedLen
-                                    ? Localization.Max_number_of_blocks_is_0_setting_to_0
-                                    : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                0xFFFFFF);
+                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                      0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }

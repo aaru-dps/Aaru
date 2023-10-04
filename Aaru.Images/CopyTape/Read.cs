@@ -141,8 +141,7 @@ public sealed partial class CopyTape
                 return ErrorNumber.InvalidArgument;
             }
 
-            if(blockSize      == 0 ||
-               blockSize + 17 > imageFilter.DataForkLength)
+            if(blockSize == 0 || blockSize + 17 > imageFilter.DataForkLength)
             {
                 AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
@@ -219,8 +218,7 @@ public sealed partial class CopyTape
         if(!uint.TryParse(blkSize, out uint blockSize))
             return ErrorNumber.InvalidArgument;
 
-        if(blockSize      == 0 ||
-           blockSize + 17 > _imageStream.Length)
+        if(blockSize == 0 || blockSize + 17 > _imageStream.Length)
             return ErrorNumber.InvalidArgument;
 
         buffer = new byte[blockSize];

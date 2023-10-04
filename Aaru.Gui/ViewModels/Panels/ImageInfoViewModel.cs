@@ -106,10 +106,13 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         MediaLogo = AssetLoader.Exists(mediaResource)
                         ? new Bitmap(AssetLoader.Open(mediaResource))
-                        : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
+                        :
+                        imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                             ? genericHddIcon
-                            : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
-                                ? genericOpticalIcon
+                            :
+                            imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
+                                ?
+                                genericOpticalIcon
                                 : genericFolderIcon;
 
         ImagePathText       = string.Format(UI.Path_0,                         imagePath);
@@ -154,8 +157,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
                 string.Format(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
         }
 
-        if(imageFormat.Info.MediaSequence     != 0 &&
-           imageFormat.Info.LastMediaSequence != 0)
+        if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
         {
             MediaSequenceText = string.Format(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
                                               imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
@@ -297,8 +299,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_TOC, out toc);
 
-            if(errno      == ErrorNumber.NoError &&
-               toc.Length > 0)
+            if(errno == ErrorNumber.NoError && toc.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
 
@@ -319,8 +320,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out fullToc);
 
-            if(errno          == ErrorNumber.NoError &&
-               fullToc.Length > 0)
+            if(errno == ErrorNumber.NoError && fullToc.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(fullToc, 0));
 
@@ -341,8 +341,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_PMA, out pma);
 
-            if(errno      == ErrorNumber.NoError &&
-               pma.Length > 0)
+            if(errno == ErrorNumber.NoError && pma.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
 
@@ -748,13 +747,18 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>             ViewSectorsCommand        { get; }
     public ReactiveCommand<Unit, Unit>             DecodeMediaTagCommand     { get; }
 
-    public bool DriveInformationVisible => DriveManufacturerText != null || DriveModelText            != null ||
-                                           DriveSerialNumberText != null || DriveFirmwareRevisionText != null ||
-                                           MediaGeometryText     != null;
+    public bool DriveInformationVisible => DriveManufacturerText     != null ||
+                                           DriveModelText            != null ||
+                                           DriveSerialNumberText     != null ||
+                                           DriveFirmwareRevisionText != null ||
+                                           MediaGeometryText         != null;
 
-    public bool MediaInformationVisible => MediaSequenceText     != null || MediaTitleText   != null ||
-                                           MediaManufacturerText != null || MediaModelText   != null ||
-                                           MediaSerialNumberText != null || MediaBarcodeText != null ||
+    public bool MediaInformationVisible => MediaSequenceText     != null ||
+                                           MediaTitleText        != null ||
+                                           MediaManufacturerText != null ||
+                                           MediaModelText        != null ||
+                                           MediaSerialNumberText != null ||
+                                           MediaBarcodeText      != null ||
                                            MediaPartNumberText   != null;
 
     public string ImageInformationLabel   => UI.Title_Image_information;

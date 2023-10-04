@@ -67,8 +67,7 @@ partial class Dump
 
             DecodedSense? decodedSense = Sense.Decode(buffer);
 
-            if(_dev.LastError         != 0 ||
-               decodedSense?.SenseKey == SenseKeys.IllegalRequest)
+            if(_dev.LastError != 0 || decodedSense?.SenseKey == SenseKeys.IllegalRequest)
             {
                 UpdateStatus?.Invoke(Localization.Core.The_current_environment_doesn_t_support_the_medium_scan_command);
 
@@ -77,8 +76,7 @@ partial class Dump
             }
 
             // TODO: Find a place where MEDIUM SCAN works properly
-            else if(buffer?.Length > 0 &&
-                    !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
+            else if(buffer?.Length > 0 && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                 AaruConsole.WriteLine(Localization.Core.MEDIUM_SCAN_github_plead_message);
 
             changingCounter = false;
@@ -115,11 +113,8 @@ partial class Dump
                     c = (uint)(blocks - b);
 
                 UpdateProgress?.
-                    Invoke(
-                        written
-                            ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b)
-                            : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1,   c, b),
-                        b, (long)blocks);
+                    Invoke(written ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b) : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1, c, b),
+                           b, (long)blocks);
 
                 conditionMet = _dev.MediumScan(out _, written, false, false, false, false, b, c, c, out _, out _,
                                                uint.MaxValue, out _);
@@ -205,25 +200,20 @@ partial class Dump
                 if(extent.Item2 + 1 - i < blocksToRead)
                     blocksToRead = (uint)(extent.Item2 + 1 - i);
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed > maxSpeed && currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
+                if(currentSpeed < minSpeed && currentSpeed > 0)
                     minSpeed = currentSpeed;
 
                 UpdateProgress?.
-                    Invoke(
-                        string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks,
-                                      ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                        (long)i, (long)blocks);
+                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                           (long)i, (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration, blocksToRead);
                     ibgLog.Write(i, currentSpeed * 1024);

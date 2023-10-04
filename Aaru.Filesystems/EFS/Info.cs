@@ -159,12 +159,11 @@ public sealed partial class EFS
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1,
-                                       efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1, efsSb.sb_magic,
+                                       EFS_MAGIC, EFS_MAGIC_NEW);
         }
 
-        if(efsSb.sb_magic != EFS_MAGIC &&
-           efsSb.sb_magic != EFS_MAGIC_NEW)
+        if(efsSb.sb_magic != EFS_MAGIC && efsSb.sb_magic != EFS_MAGIC_NEW)
             return;
 
         var sb = new StringBuilder();

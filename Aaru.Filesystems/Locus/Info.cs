@@ -190,7 +190,8 @@ public sealed partial class Locus
            AppendLine();
 
         sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each_total_2_bytes, locusSb.s_fsize, blockSize,
-                        locusSb.s_fsize * blockSize).AppendLine();
+                        locusSb.s_fsize * blockSize).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_free_1_bytes, locusSb.s_tfree, locusSb.s_tfree * blockSize).AppendLine();
         sb.AppendFormat(Localization.Inode_list_uses_0_blocks, locusSb.s_isize).AppendLine();
@@ -198,7 +199,8 @@ public sealed partial class Locus
         sb.AppendFormat(Localization.Next_free_inode_search_will_start_at_inode_0, locusSb.s_lasti).AppendLine();
 
         sb.AppendFormat(Localization.There_are_an_estimate_of_0_free_inodes_before_next_search_start,
-                        locusSb.s_nbehind).AppendLine();
+                        locusSb.s_nbehind).
+           AppendLine();
 
         if(locusSb.s_flags.HasFlag(Flags.SB_RDONLY))
             sb.AppendLine(Localization.Read_only_volume);

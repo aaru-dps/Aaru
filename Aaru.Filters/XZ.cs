@@ -81,9 +81,14 @@ public sealed class XZ : IFilter
     public bool HasResourceFork => false;
 
     /// <inheritdoc />
-    public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
-                                           buffer[3]  == 0x58 && buffer[4]  == 0x5A && buffer[5] == 0x00 &&
-                                           buffer[^2] == 0x59 && buffer[^1] == 0x5A;
+    public bool Identify(byte[] buffer) => buffer[0]  == 0xFD &&
+                                           buffer[1]  == 0x37 &&
+                                           buffer[2]  == 0x7A &&
+                                           buffer[3]  == 0x58 &&
+                                           buffer[4]  == 0x5A &&
+                                           buffer[5]  == 0x00 &&
+                                           buffer[^2] == 0x59 &&
+                                           buffer[^1] == 0x5A;
 
     /// <inheritdoc />
     public bool Identify(Stream stream)
@@ -100,8 +105,14 @@ public sealed class XZ : IFilter
         stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
-               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD &&
+               buffer[1] == 0x37 &&
+               buffer[2] == 0x7A &&
+               buffer[3] == 0x58 &&
+               buffer[4] == 0x5A &&
+               buffer[5] == 0x00 &&
+               footer[0] == 0x59 &&
+               footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
@@ -123,8 +134,14 @@ public sealed class XZ : IFilter
         stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
-               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD &&
+               buffer[1] == 0x37 &&
+               buffer[2] == 0x7A &&
+               buffer[3] == 0x58 &&
+               buffer[4] == 0x5A &&
+               buffer[5] == 0x00 &&
+               footer[0] == 0x59 &&
+               footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
@@ -248,8 +265,7 @@ public sealed class XZ : IFilter
 
         while((buf[i++] & 0x80) == 0x80)
         {
-            if(i      >= sizeMax ||
-               buf[i] == 0x00)
+            if(i >= sizeMax || buf[i] == 0x00)
                 return 0;
 
             num |= (ulong)(buf[i] & 0x7F) << i * 7;

@@ -262,8 +262,10 @@ public sealed partial class ZZZRawImage
 
         foreach(KeyValuePair<MediaTagType, byte[]> tag in _mediaTags)
         {
-            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars).Where(t => t.tag == tag.Key).
-                                               Select(t => t.name).FirstOrDefault();
+            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars).
+                                               Where(t => t.tag == tag.Key).
+                                               Select(t => t.name).
+                                               FirstOrDefault();
 
             if(suffix == null)
                 continue;

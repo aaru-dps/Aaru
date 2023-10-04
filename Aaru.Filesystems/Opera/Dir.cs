@@ -48,8 +48,7 @@ public sealed partial class OperaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
+        if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
             node = new OperaDirNode
             {
@@ -77,7 +76,10 @@ public sealed partial class OperaFS
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntryWithPointers> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
@@ -94,8 +96,9 @@ public sealed partial class OperaFS
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(
-                t => t.Key.Equals(pieces[p], StringComparison.CurrentCultureIgnoreCase));
+            entry =
+                currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
+                                                                  StringComparison.CurrentCultureIgnoreCase));
 
             if(string.IsNullOrEmpty(entry.Key))
                 return ErrorNumber.NoSuchFile;

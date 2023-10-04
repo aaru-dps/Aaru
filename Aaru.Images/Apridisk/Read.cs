@@ -69,15 +69,13 @@ public sealed partial class Apridisk
             {
                 // Deleted record, just skip it
                 case RecordType.Deleted:
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_deleted_record_at_0,
-                                               stream.Position);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_deleted_record_at_0, stream.Position);
 
                     stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
 
                     break;
                 case RecordType.Comment:
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_comment_record_at_0,
-                                               stream.Position);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_comment_record_at_0, stream.Position);
 
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                     var commentB = new byte[record.dataSize];
@@ -87,8 +85,7 @@ public sealed partial class Apridisk
 
                     break;
                 case RecordType.Creator:
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_creator_record_at_0,
-                                               stream.Position);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_creator_record_at_0, stream.Position);
 
                     stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                     var creatorB = new byte[record.dataSize];
@@ -98,8 +95,7 @@ public sealed partial class Apridisk
 
                     break;
                 case RecordType.Sector:
-                    if(record.compression != CompressType.Compressed &&
-                       record.compression != CompressType.Uncompresed)
+                    if(record.compression != CompressType.Compressed && record.compression != CompressType.Uncompresed)
                         return ErrorNumber.NotSupported;
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
@@ -130,8 +126,7 @@ public sealed partial class Apridisk
         totalCylinders++;
         totalHeads++;
 
-        if(totalCylinders <= 0 ||
-           totalHeads     <= 0)
+        if(totalCylinders <= 0 || totalHeads <= 0)
             return ErrorNumber.NotSupported;
 
         _sectorsData = new byte[totalCylinders][][][];

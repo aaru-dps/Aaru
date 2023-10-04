@@ -84,7 +84,10 @@ public sealed partial class CisCopy
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".dcf" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".dcf"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

@@ -78,7 +78,9 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        { "debug", false.ToString() }
+        {
+            "debug", false.ToString()
+        }
     };
 
 #region Caches

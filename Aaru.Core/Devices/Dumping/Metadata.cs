@@ -103,7 +103,8 @@ partial class Dump
                            _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                           ByteSize.FromBytes(blockSize * (blocks + 1)).Per(totalChkDuration.Milliseconds()).
+                           ByteSize.FromBytes(blockSize * (blocks + 1)).
+                                    Per(totalChkDuration.Milliseconds()).
                                     Humanize());
 
         if(_preSidecar != null)
@@ -127,10 +128,11 @@ partial class Dump
         if(filesystems.Count > 0)
         {
             foreach(var filesystem in filesystems.Select(o => new
-                    {
-                        o.start,
-                        o.type
-                    }).Distinct())
+                                                  {
+                                                      o.start,
+                                                      o.type
+                                                  }).
+                                                  Distinct())
                 _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
         }
 

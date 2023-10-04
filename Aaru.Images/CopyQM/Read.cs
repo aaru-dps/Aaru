@@ -126,10 +126,7 @@ public sealed partial class CopyQm
                     _decodedImage.Write(nonRepeated, 0, runLength);
 
                     foreach(byte c in nonRepeated)
-                    {
-                        _calculatedDataCrc =
-                            _copyQmCrcTable[(c ^ _calculatedDataCrc) & 0x3F] ^ _calculatedDataCrc >> 8;
-                    }
+                        _calculatedDataCrc = _copyQmCrcTable[(c ^ _calculatedDataCrc) & 0x3F] ^ _calculatedDataCrc >> 8;
 
                     break;
                 }
@@ -155,8 +152,8 @@ public sealed partial class CopyQm
 
         _headerChecksumOk = (-1 * sum & 0xFF) == _header.headerChecksum;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_header_checksum_equals_0_X2_1,
-                                   -1 * sum & 0xFF, _headerChecksumOk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_header_checksum_equals_0_X2_1, -1 * sum & 0xFF,
+                                   _headerChecksumOk);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_CRC_equals_0_X8_1, _calculatedDataCrc,
                                    _calculatedDataCrc == _header.crc);

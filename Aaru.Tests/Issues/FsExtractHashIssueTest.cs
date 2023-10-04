@@ -139,10 +139,9 @@ public abstract class FsExtractHashIssueTest
 
                 Assert.AreEqual(expectedData.Partitions[i].Volumes[j].VolumeName, fs.Metadata.VolumeName,
                                 string.
-                                    Format(
-                                        Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
-                                        expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
-                                        fs.Metadata.VolumeName));
+                                    Format(Localization.Excepted_volume_name_0_for_filesystem_1_in_partition_2_but_found_3,
+                                           expectedData.Partitions[i].Volumes[j].VolumeName, j, i,
+                                           fs.Metadata.VolumeName));
 
                 VolumeData volumeData = expectedData.Partitions[i].Volumes[j];
 
@@ -168,8 +167,7 @@ public abstract class FsExtractHashIssueTest
         Assert.AreEqual(ErrorNumber.NoError, error,
                         string.Format(Localization.Error_0_reading_root_directory, error.ToString()));
 
-        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError &&
-              entry is not null)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
@@ -251,10 +249,8 @@ public abstract class FsExtractHashIssueTest
                 }
 
                 expectedXattrs.Should().
-                               BeEmpty(
-                                   string.Format(Localization.Expected_extended_attributes_not_found_for_file_0,
-                                                 path + "/" + entry),
-                                   expectedXattrs);
+                               BeEmpty(string.Format(Localization.Expected_extended_attributes_not_found_for_file_0, path + "/" + entry),
+                                       expectedXattrs);
             }
 
             var         buffer = new byte[stat.Length];

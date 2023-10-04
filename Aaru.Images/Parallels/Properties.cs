@@ -85,7 +85,10 @@ public sealed partial class Parallels
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".hdd" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".hdd"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

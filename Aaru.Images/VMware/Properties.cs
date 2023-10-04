@@ -89,7 +89,10 @@ public sealed partial class VMware
     };
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".vmdk" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".vmdk"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

@@ -88,8 +88,7 @@ static class ConsoleHandler
 
     static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
+        if(format == null || arg == null)
             return;
 
         Entries.Add(new LogEntry
@@ -103,8 +102,7 @@ static class ConsoleHandler
 
     static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
+        if(format == null || arg == null)
             return;
 
         Entries.Add(new LogEntry
@@ -118,8 +116,7 @@ static class ConsoleHandler
 
     static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
+        if(format == null || arg == null)
             return;
 
         Entries.Add(new LogEntry
@@ -133,8 +130,7 @@ static class ConsoleHandler
 
     static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
+        if(format == null || arg == null)
             return;
 
         Entries.Add(new LogEntry

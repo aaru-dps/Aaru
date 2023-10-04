@@ -51,12 +51,10 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        var contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).
-                                    ToList();
+        var contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).ToList();
 
         if(_debug)
         {

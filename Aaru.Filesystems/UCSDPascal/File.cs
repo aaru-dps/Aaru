@@ -48,7 +48,10 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -71,15 +74,19 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
 
         byte[] file;
 
-        if(_debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+        if(_debug &&
+           (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
             file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
         else
         {
@@ -133,8 +140,7 @@ public sealed partial class PascalPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not PascalFileNode mynode)
@@ -156,7 +162,10 @@ public sealed partial class PascalPlugin
     {
         stat = null;
 
-        string[] pathElements = path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pathElements = path.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pathElements.Length != 1)
             return ErrorNumber.NotSupported;
@@ -218,7 +227,8 @@ public sealed partial class PascalPlugin
                                                                              StringHandlers.PascalToString(ent.Filename,
                                                                                  _encoding),
                                                                              StringComparison.
-                                                                                 InvariantCultureIgnoreCase) == 0))
+                                                                                 InvariantCultureIgnoreCase) ==
+                                                              0))
         {
             entry = ent;
 

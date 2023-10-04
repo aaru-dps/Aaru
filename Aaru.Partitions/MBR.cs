@@ -409,8 +409,7 @@ public sealed class MBR : IPartition
             var extended = false;
             var minix    = false;
 
-            if(entry.status != 0x00 &&
-               entry.status != 0x80)
+            if(entry.status != 0x00 && entry.status != 0x80)
                 return false; // Maybe a FAT filesystem
 
             valid &= entry.type != 0x00;
@@ -423,9 +422,14 @@ public sealed class MBR : IPartition
 
             minix |= entry.type is 0x81 or 0x80; // MINIX partition
 
-            valid &= entry.lba_start  != 0 || entry.lba_sectors  != 0 || entry.start_cylinder != 0 ||
-                     entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder   != 0 ||
-                     entry.end_head   != 0 || entry.end_sector   != 0;
+            valid &= entry.lba_start      != 0 ||
+                     entry.lba_sectors    != 0 ||
+                     entry.start_cylinder != 0 ||
+                     entry.start_head     != 0 ||
+                     entry.start_sector   != 0 ||
+                     entry.end_cylinder   != 0 ||
+                     entry.end_head       != 0 ||
+                     entry.end_sector     != 0;
 
             if(entry is { lba_start: 0, lba_sectors: 0 } && valid)
             {
@@ -433,7 +437,8 @@ public sealed class MBR : IPartition
                                      imagePlugin.Info.SectorsPerTrack);
 
                 lbaSectors = CHS.ToLBA(endCylinder, entry.end_head, entry.end_sector, imagePlugin.Info.Heads,
-                                       imagePlugin.Info.SectorsPerTrack) - lbaStart;
+                                       imagePlugin.Info.SectorsPerTrack) -
+                             lbaStart;
             }
 
             // For optical media
@@ -556,9 +561,14 @@ public sealed class MBR : IPartition
                     extValid &= ebrEntry.status is 0x00 or 0x80;
                     extValid &= ebrEntry.type != 0x00;
 
-                    extValid &= ebrEntry.lba_start  != 0 || ebrEntry.lba_sectors != 0 || ebrEntry.start_cylinder != 0 ||
-                                ebrEntry.start_head != 0 || ebrEntry.start_sector != 0 || ebrEntry.end_cylinder != 0 ||
-                                ebrEntry.end_head   != 0 || ebrEntry.end_sector != 0;
+                    extValid &= ebrEntry.lba_start      != 0 ||
+                                ebrEntry.lba_sectors    != 0 ||
+                                ebrEntry.start_cylinder != 0 ||
+                                ebrEntry.start_head     != 0 ||
+                                ebrEntry.start_sector   != 0 ||
+                                ebrEntry.end_cylinder   != 0 ||
+                                ebrEntry.end_head       != 0 ||
+                                ebrEntry.end_sector     != 0;
 
                     if(ebrEntry is { lba_start: 0, lba_sectors: 0 } && extValid)
                     {
@@ -566,7 +576,8 @@ public sealed class MBR : IPartition
                                              imagePlugin.Info.SectorsPerTrack);
 
                         extSectors = CHS.ToLBA(endCylinder, ebrEntry.end_head, ebrEntry.end_sector,
-                                               imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) - extStart;
+                                               imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) -
+                                     extStart;
                     }
 
                     extMinix |= ebrEntry.type is 0x81 or 0x80;
@@ -605,8 +616,7 @@ public sealed class MBR : IPartition
 
                     var part = new Partition();
 
-                    if(extStart   > 0 &&
-                       extSectors > 0)
+                    if(extStart > 0 && extSectors > 0)
                     {
                         part.Start  = extStart + sectorOffset;
                         part.Length = extSectors;
@@ -685,9 +695,14 @@ public sealed class MBR : IPartition
             mnxValid &= mnxEntry.status is 0x00 or 0x80;
             mnxValid &= mnxEntry.type is 0x81 or 0x80;
 
-            mnxValid &= mnxEntry.lba_start  != 0 || mnxEntry.lba_sectors  != 0 || mnxEntry.start_cylinder != 0 ||
-                        mnxEntry.start_head != 0 || mnxEntry.start_sector != 0 || mnxEntry.end_cylinder   != 0 ||
-                        mnxEntry.end_head   != 0 || mnxEntry.end_sector   != 0;
+            mnxValid &= mnxEntry.lba_start      != 0 ||
+                        mnxEntry.lba_sectors    != 0 ||
+                        mnxEntry.start_cylinder != 0 ||
+                        mnxEntry.start_head     != 0 ||
+                        mnxEntry.start_sector   != 0 ||
+                        mnxEntry.end_cylinder   != 0 ||
+                        mnxEntry.end_head       != 0 ||
+                        mnxEntry.end_sector     != 0;
 
             if(mnxEntry is { lba_start: 0, lba_sectors: 0 } && mnxValid)
             {
@@ -695,7 +710,8 @@ public sealed class MBR : IPartition
                                      imagePlugin.Info.SectorsPerTrack);
 
                 mnxSectors = CHS.ToLBA(endCylinder, mnxEntry.end_head, mnxEntry.end_sector, imagePlugin.Info.Heads,
-                                       imagePlugin.Info.SectorsPerTrack) - mnxStart;
+                                       imagePlugin.Info.SectorsPerTrack) -
+                             mnxStart;
             }
 
             // For optical media
@@ -710,8 +726,7 @@ public sealed class MBR : IPartition
 
             var part = new Partition();
 
-            if(mnxStart   > 0 &&
-               mnxSectors > 0)
+            if(mnxStart > 0 && mnxSectors > 0)
             {
                 part.Start  = mnxStart + sectorOffset;
                 part.Length = mnxSectors;

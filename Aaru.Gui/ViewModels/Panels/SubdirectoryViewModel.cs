@@ -79,8 +79,7 @@ public sealed class SubdirectoryViewModel
             return;
         }
 
-        while(model.Plugin.ReadDir(node, out string dirent) == ErrorNumber.NoError &&
-              dirent is not null)
+        while(model.Plugin.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
             errno = model.Plugin.Stat(model.Path + "/" + dirent, out FileEntryInfo stat);
 
@@ -93,8 +92,7 @@ public sealed class SubdirectoryViewModel
                 continue;
             }
 
-            if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !model.Listed)
+            if(stat.Attributes.HasFlag(FileAttributes.Directory) && !model.Listed)
             {
                 model.Subdirectories.Add(new SubdirectoryModel
                 {
@@ -197,8 +195,7 @@ public sealed class SubdirectoryViewModel
                 {
                     char[] chars;
 
-                    if(filename.Last() == '.' ||
-                       filename.Last() == ' ')
+                    if(filename.Last() == '.' || filename.Last() == ' ')
                         chars = new char[filename.Length - 1];
                     else
                         chars = new char[filename.Length];
@@ -272,9 +269,7 @@ public sealed class SubdirectoryViewModel
 
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Unsupported_filename,
                                                                                string.
-                                                                                   Format(
-                                                                                       UI.
-                                                                                           Filename_0_not_supported_want_to_rename_to_1,
+                                                                                   Format(UI.Filename_0_not_supported_want_to_rename_to_1,
                                                                                        filename, corrected),
                                                                                ButtonEnum.YesNoCancel, Icon.Warning).
                                                          ShowWindowDialogAsync(_view);
@@ -298,9 +293,9 @@ public sealed class SubdirectoryViewModel
             if(File.Exists(outputPath))
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Existing_file,
-                                                                           string.Format(
-                                                                               UI.File_named_0_exists_overwrite_Q,
-                                                                               filename),
+                                                                           string.
+                                                                               Format(UI.File_named_0_exists_overwrite_Q,
+                                                                                   filename),
                                                                            ButtonEnum.YesNoCancel, Icon.Warning).
                                                      ShowWindowDialogAsync(_view);
 
@@ -318,8 +313,10 @@ public sealed class SubdirectoryViewModel
                         catch(IOException)
                         {
                             mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Cannot_delete,
-                                             UI.Could_note_delete_existe_file_continue_Q, ButtonEnum.YesNo,
-                                             Icon.Error).ShowWindowDialogAsync(_view);
+                                                                     UI.Could_note_delete_existe_file_continue_Q,
+                                                                     ButtonEnum.YesNo,
+                                                                     Icon.Error).
+                                                                 ShowWindowDialogAsync(_view);
 
                             if(mboxResult == ButtonResult.No)
                                 return;
@@ -344,10 +341,11 @@ public sealed class SubdirectoryViewModel
                 if(error != ErrorNumber.NoError)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Error_reading_file,
-                                                                               string.Format(
-                                                                                   UI.Error_0_reading_file_continue_Q,
-                                                                                   error), ButtonEnum.YesNo,
-                                                                               Icon.Error).ShowWindowDialogAsync(_view);
+                                                                               string.
+                                                                                   Format(UI.Error_0_reading_file_continue_Q,
+                                                                                       error), ButtonEnum.YesNo,
+                                                                               Icon.Error).
+                                                         ShowWindowDialogAsync(_view);
 
                     if(mboxResult == ButtonResult.No)
                         return;

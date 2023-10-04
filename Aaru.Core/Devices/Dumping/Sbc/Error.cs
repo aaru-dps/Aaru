@@ -89,7 +89,7 @@ partial class Dump
                     if(dcMode10?.Pages != null)
                     {
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                    modePage is { Page: 0x01, Subpage: 0x00 }))
+                            modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
                     }
                 }
@@ -100,8 +100,10 @@ partial class Dump
 
                 if(dcMode6?.Pages != null)
                 {
-                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                modePage is { Page: 0x01, Subpage: 0x00 }))
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage is
+                        {
+                            Page: 0x01, Subpage: 0x00
+                        }))
                         currentModePage = modePage;
                 }
             }
@@ -249,10 +251,8 @@ partial class Dump
             {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(
-                                                  Localization.Core.
-                                                               Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                  badSector, pass)
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                     badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
                                                           pass));
             }
@@ -260,10 +260,8 @@ partial class Dump
             {
                 PulseProgress?.Invoke(runningPersistent
                                           ? string.
-                                              Format(
-                                                  Localization.Core.
-                                                               Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                  badSector, pass)
+                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                     badSector, pass)
                                           : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
                                                           pass));
             }
@@ -301,9 +299,7 @@ partial class Dump
                 outputFormat.WriteSector(buffer, badSector);
         }
 
-        if(pass < _retryPasses &&
-           !_aborted           &&
-           _resume.BadBlocks.Count > 0)
+        if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
         {
             pass++;
             forward = !forward;
@@ -320,7 +316,10 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages  = new[] { currentModePage.Value }
+                Pages = new[]
+                {
+                    currentModePage.Value
+                }
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -384,17 +383,24 @@ partial class Dump
             if(!titleKey.HasValue)
                 continue;
 
-            outputFormat.WriteSectorTag(new[] { titleKey.Value.CMI }, missingKey, SectorTagType.DvdSectorCmi);
+            outputFormat.WriteSectorTag(new[]
+            {
+                titleKey.Value.CMI
+            }, missingKey, SectorTagType.DvdSectorCmi);
 
             // If the CMI bit is 1, the sector is using copy protection, else it is not
             // If the decoded title key is zeroed, there should be no copy protection
-            if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
-               titleKey.Value.Key.All(k => k == 0))
+            if((titleKey.Value.CMI & 0x80) >> 7 == 0 || titleKey.Value.Key.All(k => k == 0))
             {
-                outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, missingKey, SectorTagType.DvdSectorTitleKey);
+                outputFormat.WriteSectorTag(new byte[]
+                {
+                    0, 0, 0, 0, 0
+                }, missingKey, SectorTagType.DvdSectorTitleKey);
 
-                outputFormat.WriteSectorTag(new byte[] { 0, 0, 0, 0, 0 }, missingKey,
-                                            SectorTagType.DvdTitleKeyDecrypted);
+                outputFormat.WriteSectorTag(new byte[]
+                {
+                    0, 0, 0, 0, 0
+                }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
 
                 _resume.MissingTitleKeys.Remove(missingKey);
 
@@ -421,9 +427,7 @@ partial class Dump
             }
         }
 
-        if(pass < _retryPasses &&
-           !_aborted           &&
-           _resume.MissingTitleKeys.Count > 0)
+        if(pass < _retryPasses && !_aborted && _resume.MissingTitleKeys.Count > 0)
         {
             pass++;
             forward = !forward;

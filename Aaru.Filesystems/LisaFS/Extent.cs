@@ -48,8 +48,7 @@ public sealed partial class LisaFS
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(fileId < 4 ||
-           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
+        if(fileId < 4 || fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
         if(_extentCache.TryGetValue(fileId, out file))
@@ -120,8 +119,7 @@ public sealed partial class LisaFS
         if(errno != ErrorNumber.NoError)
             return errno;
 
-        if(sector[0] >= 32 ||
-           sector[0] == 0)
+        if(sector[0] >= 32 || sector[0] == 0)
             return ErrorNumber.InvalidArgument;
 
         file.filenameLen = sector[0];

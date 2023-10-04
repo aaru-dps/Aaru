@@ -99,13 +99,16 @@ public sealed partial class Xia
         sb.AppendFormat(Localization._0_inodes, supblk.s_ninodes).AppendLine();
 
         sb.AppendFormat(Localization._0_data_zones_1_bytes, supblk.s_ndatazones,
-                        supblk.s_ndatazones * supblk.s_zone_size).AppendLine();
+                        supblk.s_ndatazones * supblk.s_zone_size).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_imap_zones_1_bytes, supblk.s_imap_zones,
-                        supblk.s_imap_zones * supblk.s_zone_size).AppendLine();
+                        supblk.s_imap_zones * supblk.s_zone_size).
+           AppendLine();
 
         sb.AppendFormat(Localization._0_zmap_zones_1_bytes, supblk.s_zmap_zones,
-                        supblk.s_zmap_zones * supblk.s_zone_size).AppendLine();
+                        supblk.s_zmap_zones * supblk.s_zone_size).
+           AppendLine();
 
         sb.AppendFormat(Localization.First_data_zone_0, supblk.s_firstdatazone).AppendLine();
 
@@ -113,7 +116,8 @@ public sealed partial class Xia
            AppendLine();
 
         sb.AppendFormat(Localization._0_zones_reserved_for_kernel_images_1_bytes, supblk.s_kernzones,
-                        supblk.s_kernzones * supblk.s_zone_size).AppendLine();
+                        supblk.s_kernzones * supblk.s_zone_size).
+           AppendLine();
 
         sb.AppendFormat(Localization.First_kernel_zone_0, supblk.s_firstkernzone).AppendLine();
 

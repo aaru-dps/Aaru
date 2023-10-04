@@ -61,8 +61,7 @@ public sealed partial class FAT
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
+        if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
             node = new FatDirNode
             {
@@ -90,7 +89,10 @@ public sealed partial class FAT
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, CompleteDirectoryEntry> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
@@ -172,8 +174,7 @@ public sealed partial class FAT
 
                 if(dirent.attributes.HasFlag(FatAttributes.LFN))
                 {
-                    if(_namespace != Namespace.Lfn &&
-                       _namespace != Namespace.Ecs)
+                    if(_namespace != Namespace.Lfn && _namespace != Namespace.Ecs)
                         continue;
 
                     LfnEntry lfnEntry =
@@ -207,8 +208,7 @@ public sealed partial class FAT
                 }
 
                 // Not a correct entry
-                if(dirent.filename[0] < DIRENT_MIN &&
-                   dirent.filename[0] != DIRENT_E5)
+                if(dirent.filename[0] < DIRENT_MIN && dirent.filename[0] != DIRENT_E5)
                     continue;
 
                 // Self
@@ -233,8 +233,7 @@ public sealed partial class FAT
                     Dirent = dirent
                 };
 
-                if(_namespace is Namespace.Lfn or Namespace.Ecs &&
-                   lastLfnName != null)
+                if(_namespace is Namespace.Lfn or Namespace.Ecs && lastLfnName != null)
                 {
                     byte calculatedLfnChecksum = LfnChecksum(dirent.filename, dirent.extension);
 
@@ -254,13 +253,11 @@ public sealed partial class FAT
                 string name      = _encoding.GetString(dirent.filename).TrimEnd();
                 string extension = _encoding.GetString(dirent.extension).TrimEnd();
 
-                if(name      == "" &&
-                   extension == "")
+                if(name == "" && extension == "")
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_empty_filename_in_0, path);
 
-                    if(!_debug ||
-                       dirent is { size: > 0, start_cluster: 0 })
+                    if(!_debug || dirent is { size: > 0, start_cluster: 0 })
                         continue; // Skip invalid name
 
                     // If debug, add it
@@ -325,12 +322,9 @@ public sealed partial class FAT
             }
 
             // Check OS/2 .LONGNAME
-            if(_eaCache != null                             &&
-               _namespace is Namespace.Os2 or Namespace.Ecs &&
-               !_fat32)
+            if(_eaCache != null && _namespace is Namespace.Os2 or Namespace.Ecs && !_fat32)
             {
-                var filesWithEas =
-                    currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
+                var filesWithEas = currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in filesWithEas)
                 {
@@ -371,8 +365,8 @@ public sealed partial class FAT
             // Check FAT32.IFS EAs
             if(_fat32 || _debug)
             {
-                var fat32EaSidecars =
-                    currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
+                var fat32EaSidecars = currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).
+                                                       ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {

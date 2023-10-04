@@ -112,7 +112,8 @@ public sealed partial class PFS
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
                                    DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute,
-                                                                rootBlock.creationtick)).AppendLine();
+                                                                rootBlock.creationtick)).
+                      AppendLine();
 
         if(rootBlock.extension > 0)
         {

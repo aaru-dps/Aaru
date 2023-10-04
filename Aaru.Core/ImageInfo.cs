@@ -124,8 +124,7 @@ public static class ImageInfo
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Comments))
             AaruConsole.WriteLine(Localization.Core.Comments_0_WithMarkup, Markup.Escape(imageFormat.Info.Comments));
 
-        if(imageFormat.Info.MediaSequence     != 0 &&
-           imageFormat.Info.LastMediaSequence != 0)
+        if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
         {
             AaruConsole.WriteLine(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
                                   imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
@@ -419,8 +418,7 @@ public static class ImageInfo
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out byte[] toc);
 
-            if(errno      == ErrorNumber.NoError &&
-               toc.Length > 0)
+            if(errno == ErrorNumber.NoError && toc.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
 
@@ -443,8 +441,7 @@ public static class ImageInfo
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_PMA, out byte[] pma);
 
-            if(errno      == ErrorNumber.NoError &&
-               pma.Length > 0)
+            if(errno == ErrorNumber.NoError && pma.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
 
@@ -678,8 +675,7 @@ public static class ImageInfo
 
                                 break;
                             default:
-                                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                           Localization.Core.Found_unknown_tuple_ID_0,
+                                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_unknown_tuple_ID_0,
                                                            (byte)tuple.Code);
 
                                 break;

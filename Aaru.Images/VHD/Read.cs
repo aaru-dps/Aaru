@@ -97,14 +97,12 @@ public sealed partial class Vhd
         byte[] usableHeader;
         uint   usableChecksum;
 
-        if(headerCookie   == IMAGE_COOKIE &&
-           headerChecksum == headerCalculatedChecksum)
+        if(headerCookie == IMAGE_COOKIE && headerChecksum == headerCalculatedChecksum)
         {
             usableHeader   = header;
             usableChecksum = headerChecksum;
         }
-        else if(footerCookie   == IMAGE_COOKIE &&
-                footerChecksum == footerCalculatedChecksum)
+        else if(footerCookie == IMAGE_COOKIE && footerChecksum == footerCalculatedChecksum)
         {
             usableHeader   = footer;
             usableChecksum = footerChecksum;
@@ -160,8 +158,7 @@ public sealed partial class Vhd
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorVersion = 0x{0:X8}", _thisFooter.CreatorVersion);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
-                                   _thisFooter.CreatorHostOs,
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorHostOS = 0x{0:X8} (\"{1}\")", _thisFooter.CreatorHostOs,
                                    Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs)));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.originalSize = {0}", _thisFooter.OriginalSize);
@@ -331,8 +328,8 @@ public sealed partial class Vhd
             {
                 _imageInfo.Application = string.Format(Localization.Unknown_application_0,
                                                        Encoding.ASCII.GetString(BigEndianBitConverter.
-                                                           GetBytes(_thisFooter.
-                                                                        CreatorHostOs)));
+                                                                                    GetBytes(_thisFooter.
+                                                                                        CreatorHostOs)));
 
                 _imageInfo.ApplicationVersion =
                     string.Format(Localization.Unknown_version_0_X8, _thisFooter.CreatorVersion);
@@ -369,8 +366,7 @@ public sealed partial class Vhd
 
             uint dynamicChecksumCalculated = VhdChecksum(dynamicBytes);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.Dynamic_header_checksum_equals_0_X8_calculated_1_X8,
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Dynamic_header_checksum_equals_0_X8_calculated_1_X8,
                                        dynamicChecksum, dynamicChecksumCalculated);
 
             if(dynamicChecksum != dynamicChecksumCalculated)
@@ -432,11 +428,9 @@ public sealed partial class Vhd
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.dataOffset = {0}",  _thisDynamic.DataOffset);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.tableOffset = {0}", _thisDynamic.TableOffset);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.headerVersion = 0x{0:X8}",
-                                       _thisDynamic.HeaderVersion);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.headerVersion = 0x{0:X8}", _thisDynamic.HeaderVersion);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.maxTableEntries = {0}",
-                                       _thisDynamic.MaxTableEntries);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.maxTableEntries = {0}", _thisDynamic.MaxTableEntries);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.blockSize = {0}",     _thisDynamic.BlockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.checksum = 0x{0:X8}", _thisDynamic.Checksum);
@@ -449,24 +443,22 @@ public sealed partial class Vhd
 
             for(var i = 0; i < 8; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
-                                           _thisDynamic.LocatorEntries[i].PlatformCode,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")",
+                                           i, _thisDynamic.LocatorEntries[i].PlatformCode,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisDynamic.
                                                                         LocatorEntries[i].PlatformCode)));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
-                                           i,
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataSpace = {1}", i,
                                            _thisDynamic.LocatorEntries[i].PlatformDataSpace);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataLength = {1}",
-                                           i, _thisDynamic.LocatorEntries[i].PlatformDataLength);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataLength = {1}", i,
+                                           _thisDynamic.LocatorEntries[i].PlatformDataLength);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
                                            _thisDynamic.LocatorEntries[i].Reserved);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataOffset = {1}",
-                                           i, _thisDynamic.LocatorEntries[i].PlatformDataOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}].platformDataOffset = {1}", i,
+                                           _thisDynamic.LocatorEntries[i].PlatformDataOffset);
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.parentName = \"{0}\"",     _thisDynamic.ParentName);
@@ -501,13 +493,16 @@ public sealed partial class Vhd
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Filling_the_BAT_took_0_seconds,
                                        batStopwatch.Elapsed.TotalSeconds);
 
-            _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize / 512
+            _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize /
+                                             512
 
-                                                                              // 1 bit per sector on the bitmap
-                                                                            / 8
+                                             // 1 bit per sector on the bitmap
+                                            /
+                                             8
 
-                                                                              // and aligned to 512 byte boundary
-                                                                            / 512);
+                                             // and aligned to 512 byte boundary
+                                            /
+                                             512);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Bitmap_is_0_sectors, _bitmapSize);
         }
@@ -541,20 +536,19 @@ public sealed partial class Vhd
                         {
                             case PLATFORM_CODE_WINDOWS_ABSOLUTE:
                             case PLATFORM_CODE_WINDOWS_RELATIVE:
-                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"",
-                                                           i, Encoding.ASCII.GetString(_locatorEntriesData[i]));
+                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"", i,
+                                                           Encoding.ASCII.GetString(_locatorEntriesData[i]));
 
                                 break;
                             case PLATFORM_CODE_WINDOWS_ABSOLUTE_U:
                             case PLATFORM_CODE_WINDOWS_RELATIVE_U:
-                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"",
-                                                           i,
+                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"", i,
                                                            Encoding.BigEndianUnicode.GetString(_locatorEntriesData[i]));
 
                                 break;
                             case PLATFORM_CODE_MACINTOSH_URI:
-                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"",
-                                                           i, Encoding.UTF8.GetString(_locatorEntriesData[i]));
+                                AaruConsole.DebugWriteLine(MODULE_NAME, "dynamic.locatorEntries[{0}] = \"{1}\"", i,
+                                                           Encoding.UTF8.GetString(_locatorEntriesData[i]));
 
                                 break;
                             default:
@@ -570,8 +564,7 @@ public sealed partial class Vhd
                 var    locatorFound   = false;
                 string parentPath     = null;
 
-                while(!locatorFound &&
-                      currentLocator < 8)
+                while(!locatorFound && currentLocator < 8)
                 {
                     switch(_thisDynamic.LocatorEntries[currentLocator].PlatformCode)
                     {
@@ -606,8 +599,7 @@ public sealed partial class Vhd
 
                     if(parentPath != null)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Possible_parent_path_0,
-                                                   parentPath);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Possible_parent_path_0, parentPath);
 
                         IFilter parentFilter =
                             new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));

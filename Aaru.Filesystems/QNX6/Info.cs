@@ -109,7 +109,8 @@ public sealed partial class QNX6
 
             sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, audiSb.freeBlocks,
                             audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
-                            audiSb.numBlocks  * audiSb.blockSize).AppendLine();
+                            audiSb.numBlocks  * audiSb.blockSize).
+               AppendLine();
 
             metadata = new FileSystem
             {

@@ -69,11 +69,7 @@ public class Nintendo64 : IByteAddressableImage
     public List<DumpHardware> DumpHardware => null;
 
     /// <inheritdoc />
-    public string Format => !_opened
-                                ? "Nintendo 64 cartridge dump"
-                                : _interleaved
-                                    ? "Doctor V64"
-                                    : "Mr. Backup Z64";
+    public string Format => !_opened ? "Nintendo 64 cartridge dump" : _interleaved ? "Doctor V64" : "Mr. Backup Z64";
 
     /// <inheritdoc />
     public Guid Id => new("EF1B4319-48A0-4EEC-B8E8-D0EA36F8CC92");
@@ -806,13 +802,19 @@ public class Nintendo64 : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".n64", ".v64", ".z64" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".n64", ".v64", ".z64"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.N64GamePak };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.N64GamePak
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>

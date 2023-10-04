@@ -114,8 +114,7 @@ public sealed partial class CdrWin
                     aaruTrack.Indexes[0] = -150;
                 }
 
-                if(previousTrackFile == aaruTrack.File ||
-                   previousTrackFile == "")
+                if(previousTrackFile == aaruTrack.File || previousTrackFile == "")
                 {
                     if(cdrTrack.Indexes.TryGetValue(0, out int idx0))
                     {
@@ -139,9 +138,7 @@ public sealed partial class CdrWin
 
                 aaruTrack.EndSector = aaruTrack.StartSector + cdrTrack.Sectors - 1;
 
-                if(_discImage.IsRedumpGigadisc &&
-                   cdrTrack.Session    == 2    &&
-                   previousStartSector < gdRomSession2Offset)
+                if(_discImage.IsRedumpGigadisc && cdrTrack.Session == 2 && previousStartSector < gdRomSession2Offset)
                 {
                     aaruTrack.StartSector = (ulong)cdrTrack.Indexes[0];
                     aaruTrack.EndSector   = gdRomSession2Offset + cdrTrack.Sectors - (uint)cdrTrack.Pregap - 1;
@@ -181,33 +178,36 @@ public sealed partial class CdrWin
     public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => new[] { MediaTagType.CD_MCN, MediaTagType.CD_TEXT };
+    public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+    {
+        MediaTagType.CD_MCN, MediaTagType.CD_TEXT
+    };
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
-        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-        SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
-        SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
+        SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ, SectorTagType.CdSectorEdc,
+        SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync,
+        SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
     };
 
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.UHDBD, MediaType.BDRXL,
-        MediaType.CBHD, MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI,
-        MediaType.CDMIDI, MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
-        MediaType.CDRW, MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DVDDownload,
-        MediaType.DVDPR, MediaType.DVDPRDL, MediaType.DVDPRW, MediaType.DVDPRWDL, MediaType.DVDR, MediaType.DVDRAM,
-        MediaType.DVDRDL, MediaType.DVDROM, MediaType.DVDRW, MediaType.DVDRWDL, MediaType.EVD, MediaType.FDDVD,
-        MediaType.DTSCD, MediaType.FVD, MediaType.HDDVDR, MediaType.HDDVDRAM, MediaType.HDDVDRDL,
-        MediaType.HDDVDROM, MediaType.HDDVDRW, MediaType.HDDVDRWDL, MediaType.HDVMD, MediaType.HVD,
-        MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.PS2DVD, MediaType.PS3BD,
-        MediaType.PS3DVD, MediaType.PS4BD, MediaType.PS5BD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SVOD,
-        MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM, MediaType.UMD,
-        MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32,
-        MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-        MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
+        MediaType.CBHD, MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+        MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+        MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.DVDDownload, MediaType.DVDPR,
+        MediaType.DVDPRDL, MediaType.DVDPRW, MediaType.DVDPRWDL, MediaType.DVDR, MediaType.DVDRAM, MediaType.DVDRDL,
+        MediaType.DVDROM, MediaType.DVDRW, MediaType.DVDRWDL, MediaType.EVD, MediaType.FDDVD, MediaType.DTSCD,
+        MediaType.FVD, MediaType.HDDVDR, MediaType.HDDVDRAM, MediaType.HDDVDRDL, MediaType.HDDVDROM, MediaType.HDDVDRW,
+        MediaType.HDDVDRWDL, MediaType.HDVMD, MediaType.HVD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD,
+        MediaType.PS2CD, MediaType.PS2DVD, MediaType.PS3BD, MediaType.PS3DVD, MediaType.PS4BD, MediaType.PS5BD,
+        MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO,
+        MediaType.UDO2, MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
+        MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
+        MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp,
+        MediaType.CVD, MediaType.PCD
     };
 
     /// <inheritdoc />
@@ -217,7 +217,10 @@ public sealed partial class CdrWin
     };
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".cue" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".cue"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

@@ -43,8 +43,7 @@ public sealed class PartitionViewModel(Partition partition)
         string.Format(Localization.Core.Partition_start_sector_0_byte_1, partition.Start, partition.Offset);
 
     public string LengthText { get; } = string.Format(Localization.Core.Partition_length_0_sectors_1_bytes,
-                                                      partition.Length,
-                                                      partition.Size);
+                                                      partition.Length, partition.Size);
 
     public string DescriptionLabelText { get; } = Localization.Core.Title_Partition_description;
     public string DescriptionText      { get; } = partition.Description;

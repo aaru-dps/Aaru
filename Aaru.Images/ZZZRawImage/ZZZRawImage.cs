@@ -45,9 +45,9 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class ZZZRawImage : IWritableOpticalImage
 {
-    const string                     MODULE_NAME = "ZZZRawImage Plugin";
+    const    string                  MODULE_NAME = "ZZZRawImage Plugin";
+    readonly Sector                  _decoding   = new();
     string                           _basePath;
-    readonly Sector                  _decoding = new();
     bool                             _differentTrackZeroSize;
     string                           _extension;
     bool                             _hasSubchannel;

@@ -51,8 +51,7 @@ public sealed partial class FAT
             return ErrorNumber.AccessDenied;
 
         // No other xattr recognized yet
-        if(_cachedEaData is null &&
-           !_fat32)
+        if(_cachedEaData is null && !_fat32)
             return ErrorNumber.NotSupported;
 
         if(path[0] == '/')
@@ -67,8 +66,7 @@ public sealed partial class FAT
 
         ErrorNumber err = GetFileEntry(path, out CompleteDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError ||
-           entry is null)
+        if(err != ErrorNumber.NoError || entry is null)
             return err;
 
         xattrs = new List<string>();
@@ -187,8 +185,7 @@ public sealed partial class FAT
 
     Dictionary<string, byte[]> GetEas(byte[] eaData)
     {
-        if(eaData is null ||
-           eaData.Length < 4)
+        if(eaData is null || eaData.Length < 4)
             return null;
 
         Dictionary<string, byte[]> eas = new();

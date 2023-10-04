@@ -86,8 +86,7 @@ public sealed class Xbox : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return false;
 
         Xbox360DevKitPartitionTable table = Marshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);

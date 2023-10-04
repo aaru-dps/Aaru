@@ -81,8 +81,7 @@ public sealed partial class HdCopy
             return false;
 
         // Validate the trackmap. First two tracks need to be present
-        if(fheader.trackMap[0] != 1 ||
-           fheader.trackMap[1] != 1)
+        if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1)
             return false;
 
         // all other tracks must be either present (=1) or absent (=0)

@@ -164,8 +164,7 @@ public sealed partial class AaruFormat
 
             eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
-            if(ecc[major + eccOffset]              != eccA ||
-               ecc[major + majorCount + eccOffset] != (eccA ^ eccB))
+            if(ecc[major + eccOffset] != eccA || ecc[major + majorCount + eccOffset] != (eccA ^ eccB))
                 return false;
         }
 

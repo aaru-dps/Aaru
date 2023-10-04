@@ -186,8 +186,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
             };
         }
 
-        if(devInfo.AtaIdentify   != null ||
-           devInfo.AtapiIdentify != null)
+        if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
         {
             AtaInfo = new AtaInfo
             {
@@ -365,8 +364,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                         MaxBlockSize = blockLimits.Value.maxBlockLen > 0
                                            ? string.Format(Localization.Core.Device_maximum_block_size_is_0_bytes,
                                                            blockLimits.Value.maxBlockLen)
-                                           : Localization.Core.
-                                                          Device_does_not_specify_a_maximum_block_size;
+                                           : Localization.Core.Device_does_not_specify_a_maximum_block_size;
 
                         MinBlockSize = string.Format(Localization.Core.Device_minimum_block_size_is_0_bytes,
                                                      blockLimits.Value.minBlockLen);
@@ -1016,8 +1014,11 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[] { "*.bin" }),
-            Name       = UI.Dialog_Binary_files
+            Extensions = new List<string>(new[]
+            {
+                "*.bin"
+            }),
+            Name = UI.Dialog_Binary_files
         });
 
         string result = await dlgSaveBinary.ShowAsync(_view);

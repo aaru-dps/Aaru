@@ -81,9 +81,7 @@ public sealed partial class CisCopy
 
         var cmpr = (Compression)stream.ReadByte();
 
-        if(cmpr != Compression.None   &&
-           cmpr != Compression.Normal &&
-           cmpr != Compression.High)
+        if(cmpr != Compression.None && cmpr != Compression.Normal && cmpr != Compression.High)
             return false;
 
         switch(type)

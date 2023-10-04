@@ -60,8 +60,7 @@ public sealed partial class AODOS
             return false;
 
         // Does AO-DOS support any other kind of disk?
-        if(imagePlugin.Info.Sectors != 800 &&
-           imagePlugin.Info.Sectors != 1600)
+        if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600)
             return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);

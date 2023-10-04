@@ -47,8 +47,7 @@ public sealed partial class XboxFatPlugin
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
+        if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
             node = new FatxDirNode
             {
@@ -74,7 +73,10 @@ public sealed partial class XboxFatPlugin
             return ErrorNumber.NoError;
         }
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntry> entry =
             _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);

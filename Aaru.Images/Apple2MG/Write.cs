@@ -52,8 +52,7 @@ public sealed partial class Apple2Mg
     {
         if(sectorSize != 512)
         {
-            if(sectorSize != 256 ||
-               mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS)
+            if(sectorSize != 256 || mediaType != MediaType.Apple32SS && mediaType != MediaType.Apple33SS)
             {
                 ErrorMessage = Localization.Unsupported_sector_size;
 
@@ -201,8 +200,13 @@ public sealed partial class Apple2Mg
         var tmp = new byte[256];
         _writingStream.EnsureRead(tmp, 0, tmp.Length);
 
-        bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
-                     tmp[0x36] == 0  && tmp[0x37] == 1;
+        bool isDos = tmp[0x01] == 17  &&
+                     tmp[0x02] < 16   &&
+                     tmp[0x27] <= 122 &&
+                     tmp[0x34] == 35  &&
+                     tmp[0x35] == 16  &&
+                     tmp[0x36] == 0   &&
+                     tmp[0x37] == 1;
 
         _imageHeader = new Header
         {

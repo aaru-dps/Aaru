@@ -40,13 +40,25 @@ namespace Aaru.Tests.Devices;
 [TestFixture]
 public class IomegaJaz
 {
-    readonly string[] _testFiles = { "jaz1.bin.lz" };
+    readonly string[] _testFiles =
+    {
+        "jaz1.bin.lz"
+    };
 
-    readonly MediaType[] _mediaTypes = { MediaType.Jaz };
+    readonly MediaType[] _mediaTypes =
+    {
+        MediaType.Jaz
+    };
 
-    readonly ulong[] _sectors = { 2091050 };
+    readonly ulong[] _sectors =
+    {
+        2091050
+    };
 
-    readonly uint[] _sectorSize = { 512 };
+    readonly uint[] _sectorSize =
+    {
+        512
+    };
 
     readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "JAZ");
 

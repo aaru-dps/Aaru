@@ -57,7 +57,9 @@ public sealed partial class CdrWin
         long      readBytes;
         byte[]    verifyBytes;
 
-        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).Select(t => t.TrackFile.DataFilter).Distinct().
+        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).
+                                       Select(t => t.TrackFile.DataFilter).
+                                       Distinct().
                                        ToArray();
 
         if(_discImage.DiscHashes.TryGetValue("sha1", out string sha1))

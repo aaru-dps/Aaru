@@ -70,8 +70,7 @@ public sealed partial class CopyTape
         if(!uint.TryParse(blkSize, out uint blockSize))
             return false;
 
-        if(blockSize      == 0 ||
-           blockSize + 17 >= imageFilter.DataForkLength)
+        if(blockSize == 0 || blockSize + 17 >= imageFilter.DataForkLength)
             return false;
 
         strm.Position += blockSize;

@@ -87,11 +87,8 @@ public sealed partial class ZZZRawImage
                 Sequence          = 1,
                 StartSector       = 0,
                 SubchannelType    = _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
-                Type = _toastXa
-                           ? TrackType.CdMode2Form1
-                           : _rawCompactDisc
-                               ? _mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1
-                               : TrackType.Data,
+                Type = _toastXa        ? TrackType.CdMode2Form1 :
+                       _rawCompactDisc ? _mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1 : TrackType.Data,
                 Session = 1
             };
 
@@ -152,15 +149,12 @@ public sealed partial class ZZZRawImage
 
             var part = new Partition
             {
-                Start    = 0,
-                Length   = _imageInfo.Sectors,
-                Offset   = 0,
+                Start = 0,
+                Length = _imageInfo.Sectors,
+                Offset = 0,
                 Sequence = 0,
-                Type = _rawCompactDisc
-                           ? _mode2 || _toastXa ? "MODE2/2352" : "MODE1/2352"
-                           : _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM
-                               ? "DATA/512"
-                               : "MODE1/2048",
+                Type = _rawCompactDisc ? _mode2 || _toastXa ? "MODE2/2352" : "MODE1/2352" :
+                       _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM ? "DATA/512" : "MODE1/2048",
                 Size = _imageInfo.Sectors * _imageInfo.SectorSize
             };
 
@@ -178,7 +172,8 @@ public sealed partial class ZZZRawImage
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
-                                                                              OrderBy(t => t.tag).Select(t => t.tag).
+                                                                              OrderBy(t => t.tag).
+                                                                              Select(t => t.tag).
                                                                               ToArray();
 
     /// <inheritdoc />
@@ -231,8 +226,8 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
-        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn",
-        ".8kn", ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
+        ".adf", ".adl", ".d81", ".dsk", ".hdf", ".ima", ".img", ".iso", ".ssd", ".st", ".1kn", ".2kn", ".4kn", ".8kn",
+        ".16kn", ".32kn", ".64kn", ".512e", ".512", ".128", ".256"
     };
 
     /// <inheritdoc />

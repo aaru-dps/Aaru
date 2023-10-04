@@ -132,8 +132,7 @@ public sealed partial class NintendoPlugin
                 fields.FirstPartitions[i].Offset =
                     BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
 
-                fields.FirstPartitions[i].Type =
-                    BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
+                fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.SecondPartitions.Length; i++)
@@ -144,8 +143,7 @@ public sealed partial class NintendoPlugin
                 fields.FirstPartitions[i].Offset =
                     BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
 
-                fields.FirstPartitions[i].Type =
-                    BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
+                fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.ThirdPartitions.Length; i++)
@@ -156,8 +154,7 @@ public sealed partial class NintendoPlugin
                 fields.FirstPartitions[i].Offset =
                     BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
 
-                fields.FirstPartitions[i].Type =
-                    BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
+                fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
             }
 
             for(var i = 0; i < fields.FourthPartitions.Length; i++)
@@ -168,8 +165,7 @@ public sealed partial class NintendoPlugin
                 fields.FirstPartitions[i].Offset =
                     BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
 
-                fields.FirstPartitions[i].Type =
-                    BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
+                fields.FirstPartitions[i].Type = BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
             }
 
             fields.Region       = header[0x4E000];
@@ -213,8 +209,8 @@ public sealed partial class NintendoPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "firstPartitions[{1}].offset = {0}",
                                        fields.FirstPartitions[i].Offset, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "firstPartitions[{1}].type = {0}",
-                                       fields.FirstPartitions[i].Type, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "firstPartitions[{1}].type = {0}", fields.FirstPartitions[i].Type,
+                                       i);
         }
 
         for(var i = 0; i < fields.SecondPartitions.Length; i++)
@@ -222,8 +218,8 @@ public sealed partial class NintendoPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "secondPartitions[{1}].offset = {0}",
                                        fields.SecondPartitions[i].Offset, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "secondPartitions[{1}].type = {0}",
-                                       fields.SecondPartitions[i].Type, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "secondPartitions[{1}].type = {0}", fields.SecondPartitions[i].Type,
+                                       i);
         }
 
         for(var i = 0; i < fields.ThirdPartitions.Length; i++)
@@ -231,8 +227,8 @@ public sealed partial class NintendoPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "thirdPartitions[{1}].offset = {0}",
                                        fields.ThirdPartitions[i].Offset, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "thirdPartitions[{1}].type = {0}",
-                                       fields.ThirdPartitions[i].Type, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "thirdPartitions[{1}].type = {0}", fields.ThirdPartitions[i].Type,
+                                       i);
         }
 
         for(var i = 0; i < fields.FourthPartitions.Length; i++)
@@ -240,8 +236,8 @@ public sealed partial class NintendoPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "fourthPartitions[{1}].offset = {0}",
                                        fields.FourthPartitions[i].Offset, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "fourthPartitions[{1}].type = {0}",
-                                       fields.FourthPartitions[i].Type, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "fourthPartitions[{1}].type = {0}", fields.FourthPartitions[i].Type,
+                                       i);
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "region = {0}",       fields.Region);
@@ -291,28 +287,32 @@ public sealed partial class NintendoPlugin
             {
                 sbInformation.AppendFormat(Localization.First_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.FirstPartitions[i].Type),
-                                           fields.FirstPartitions[i].Offset / 2048).AppendLine();
+                                           fields.FirstPartitions[i].Offset / 2048).
+                              AppendLine();
             }
 
             for(var i = 0; i < fields.SecondPartitions.Length; i++)
             {
                 sbInformation.AppendFormat(Localization.Second_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.SecondPartitions[i].Type),
-                                           fields.SecondPartitions[i].Offset / 2048).AppendLine();
+                                           fields.SecondPartitions[i].Offset / 2048).
+                              AppendLine();
             }
 
             for(var i = 0; i < fields.ThirdPartitions.Length; i++)
             {
                 sbInformation.AppendFormat(Localization.Third_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.ThirdPartitions[i].Type),
-                                           fields.ThirdPartitions[i].Offset / 2048).AppendLine();
+                                           fields.ThirdPartitions[i].Offset / 2048).
+                              AppendLine();
             }
 
             for(var i = 0; i < fields.FourthPartitions.Length; i++)
             {
                 sbInformation.AppendFormat(Localization.Fourth_0_partition_starts_at_sector_1,
                                            PartitionTypeToString(fields.FourthPartitions[i].Type),
-                                           fields.FourthPartitions[i].Offset / 2048).AppendLine();
+                                           fields.FourthPartitions[i].Offset / 2048).
+                              AppendLine();
             }
 
             //                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();

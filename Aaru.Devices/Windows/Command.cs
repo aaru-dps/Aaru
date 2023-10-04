@@ -525,35 +525,28 @@ partial class Device
 
         commandDescriptor.responseType = 0;
 
-        if(flags.HasFlag(MmcFlags.ResponseR1) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR1))
+        if(flags.HasFlag(MmcFlags.ResponseR1) || flags.HasFlag(MmcFlags.ResponseSpiR1))
             commandDescriptor.responseType = SdResponseType.R1;
 
-        if(flags.HasFlag(MmcFlags.ResponseR1B) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR1B))
+        if(flags.HasFlag(MmcFlags.ResponseR1B) || flags.HasFlag(MmcFlags.ResponseSpiR1B))
             commandDescriptor.responseType = SdResponseType.R1b;
 
-        if(flags.HasFlag(MmcFlags.ResponseR2) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR2))
+        if(flags.HasFlag(MmcFlags.ResponseR2) || flags.HasFlag(MmcFlags.ResponseSpiR2))
             commandDescriptor.responseType = SdResponseType.R2;
 
-        if(flags.HasFlag(MmcFlags.ResponseR3) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR3))
+        if(flags.HasFlag(MmcFlags.ResponseR3) || flags.HasFlag(MmcFlags.ResponseSpiR3))
             commandDescriptor.responseType = SdResponseType.R3;
 
-        if(flags.HasFlag(MmcFlags.ResponseR4) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR4))
+        if(flags.HasFlag(MmcFlags.ResponseR4) || flags.HasFlag(MmcFlags.ResponseSpiR4))
             commandDescriptor.responseType = SdResponseType.R4;
 
-        if(flags.HasFlag(MmcFlags.ResponseR5) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR5))
+        if(flags.HasFlag(MmcFlags.ResponseR5) || flags.HasFlag(MmcFlags.ResponseSpiR5))
             commandDescriptor.responseType = SdResponseType.R5;
 
         if(flags.HasFlag(MmcFlags.ResponseR6))
             commandDescriptor.responseType = SdResponseType.R6;
 
-        var commandB =
-            new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
+        var commandB = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
         Array.Copy(buffer, 0, commandB, commandData.size + commandData.protocolArgumentSize, buffer.Length);
         IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
@@ -611,8 +604,7 @@ partial class Device
                                              command.argument, command.blockSize, command.blocks, ref command.buffer,
                                              out command.response, out double cmdDuration, out bool cmdSense, timeout);
 
-            if(error       == 0 &&
-               singleError != 0)
+            if(error == 0 && singleError != 0)
                 error = singleError;
 
             duration += cmdDuration;

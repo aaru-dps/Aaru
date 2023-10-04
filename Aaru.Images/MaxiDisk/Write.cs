@@ -49,8 +49,7 @@ public sealed partial class MaxiDisk
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                        uint   sectorSize)
     {
-        if(CountBits.Count(sectorSize) != 1 ||
-           sectorSize                  > 16384)
+        if(CountBits.Count(sectorSize) != 1 || sectorSize > 16384)
         {
             ErrorMessage = Localization.Unsupported_sector_size;
 

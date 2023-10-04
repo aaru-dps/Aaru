@@ -89,7 +89,10 @@ public sealed partial class MaxiDisk
         Array.Empty<(string name, Type type, string description, object @default)>();
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".hdk" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".hdk"
+    };
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }

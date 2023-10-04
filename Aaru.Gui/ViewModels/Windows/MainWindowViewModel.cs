@@ -147,13 +147,12 @@ public sealed class MainWindowViewModel : ViewModelBase
             new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         _usbIcon =
-            new
-                Bitmap(AssetLoader.Open(
-                           new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+            new Bitmap(AssetLoader.
+                           Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new Bitmap(AssetLoader.Open(
-                           new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new Bitmap(AssetLoader.
+                           Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
             new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
@@ -194,8 +193,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         get
         {
-            Window mainWindow = (Application.Current?.ApplicationLifetime as
-                                     IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            Window mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.
+                MainWindow;
             return mainWindow is not null && NativeMenu.GetIsNativeMenuExported(mainWindow);
         }
     }
@@ -559,8 +558,8 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
-                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Image_format_not_identified,
-                                                        ButtonEnum.Ok, Icon.Error);
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Image_format_not_identified, ButtonEnum.Ok,
+                                                        Icon.Error);
 
                 return;
             }
@@ -574,8 +573,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                 if(opened != ErrorNumber.NoError)
                 {
                     MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
-                                                            string.Format(UI.Error_0_opening_image_format,
-                                                                          opened), ButtonEnum.Ok, Icon.Error);
+                                                            string.Format(UI.Error_0_opening_image_format, opened),
+                                                            ButtonEnum.Ok, Icon.Error);
 
                     AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                     AaruConsole.ErrorWriteLine(UI.No_error_given);
@@ -590,10 +589,13 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Path = result[0],
                     Icon = AssetLoader.Exists(mediaResource)
                                ? new Bitmap(AssetLoader.Open(mediaResource))
-                               : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
+                               :
+                               imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                                    ? _genericHddIcon
-                                   : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
-                                       ? _genericOpticalIcon
+                                   :
+                                   imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
+                                       ?
+                                       _genericOpticalIcon
                                        : _genericFolderIcon,
                     FileName  = Path.GetFileName(result[0]),
                     Image     = imageFormat,
@@ -662,9 +664,8 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                     if(rofs != null)
                                     {
-                                        ErrorNumber error =
-                                            rofs.Mount(imageFormat, partition, null,
-                                                       new Dictionary<string, string>(), null);
+                                        ErrorNumber error = rofs.Mount(imageFormat, partition, null,
+                                                                       new Dictionary<string, string>(), null);
 
                                         if(error != ErrorNumber.NoError)
                                             rofs = null;
@@ -677,10 +678,9 @@ public sealed class MainWindowViewModel : ViewModelBase
                                                                ? $"{fsMetadata.Type}"
                                                                : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
                                                          : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
-                                        Filesystem         = fs,
+                                        Filesystem = fs,
                                         ReadOnlyFilesystem = rofs,
-                                        ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata,
-                                                                            information)
+                                        ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
                                     };
 
                                     // TODO: Trap expanding item
@@ -785,8 +785,8 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Unable_to_open_image_format,
-                                                        ButtonEnum.Ok, Icon.Error);
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Unable_to_open_image_format, ButtonEnum.Ok,
+                                                        Icon.Error);
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
@@ -819,7 +819,9 @@ public sealed class MainWindowViewModel : ViewModelBase
             AaruConsole.WriteLine(UI.Refreshing_devices);
             _devicesRoot.Devices.Clear();
 
-            foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
+            foreach(Devices.DeviceInfo device in Device.ListDevices().
+                                                        Where(d => d.Supported).
+                                                        OrderBy(d => d.Vendor).
                                                         ThenBy(d => d.Model))
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,

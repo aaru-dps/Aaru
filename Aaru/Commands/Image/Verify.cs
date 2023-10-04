@@ -56,13 +56,25 @@ sealed class VerifyCommand : Command
 
     public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
-        Add(new Option<bool>(new[] { "--verify-disc", "-w" }, () => true, UI.Verify_media_image_if_supported));
+        Add(new Option<bool>(new[]
+        {
+            "--verify-disc", "-w"
+        }, () => true, UI.Verify_media_image_if_supported));
 
-        Add(new Option<bool>(new[] { "--verify-sectors", "-s" }, () => true, UI.Verify_all_sectors_if_supported));
+        Add(new Option<bool>(new[]
+        {
+            "--verify-sectors", "-s"
+        }, () => true, UI.Verify_all_sectors_if_supported));
 
-        Add(new Option<bool>(new[] { "--create-graph", "-g" }, () => true, UI.Create_graph_of_verified_disc));
+        Add(new Option<bool>(new[]
+        {
+            "--create-graph", "-g"
+        }, () => true, UI.Create_graph_of_verified_disc));
 
-        Add(new Option<uint>(new[] { "--dimensions" }, () => 1080, UI.Verify_dimensions_paramater_help));
+        Add(new Option<uint>(new[]
+        {
+            "--dimensions"
+        }, () => 1080, UI.Verify_dimensions_paramater_help));
 
         AddArgument(new Argument<string>
         {
@@ -173,8 +185,7 @@ sealed class VerifyCommand : Command
         var verifiableImage        = inputFormat as IVerifiableImage;
         var verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
 
-        if(verifiableImage is null &&
-           verifiableSectorsImage is null)
+        if(verifiableImage is null && verifiableSectorsImage is null)
         {
             AaruConsole.ErrorWriteLine(UI.The_specified_image_does_not_support_any_kind_of_verification);
 
@@ -253,7 +264,9 @@ sealed class VerifyCommand : Command
 
             stopwatch.Start();
 
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
@@ -263,8 +276,7 @@ sealed class VerifyCommand : Command
                             foreach(Track currentTrack in inputTracks)
                             {
                                 discTask.Description =
-                                    string.Format(UI.Checking_track_0_of_1, discTask.Value + 1,
-                                                  inputTracks.Count);
+                                    string.Format(UI.Checking_track_0_of_1, discTask.Value + 1, inputTracks.Count);
 
                                 ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
@@ -275,9 +287,10 @@ sealed class VerifyCommand : Command
 
                                 while(remainingSectors > 0)
                                 {
-                                    trackTask.Description =
-                                        string.Format(UI.Checking_sector_0_of_1_on_track_2, currentSectorAll,
-                                                      inputFormat.Info.Sectors, currentTrack.Sequence);
+                                    trackTask.Description = string.Format(UI.Checking_sector_0_of_1_on_track_2,
+                                                                          currentSectorAll,
+                                                                          inputFormat.Info.Sectors,
+                                                                          currentTrack.Sequence);
 
                                     List<ulong> tempFailingLbas;
                                     List<ulong> tempUnknownLbas;
@@ -285,8 +298,7 @@ sealed class VerifyCommand : Command
                                     if(remainingSectors < 512)
                                     {
                                         opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                        currentTrack.Sequence,
-                                                                        out tempFailingLbas,
+                                                                        currentTrack.Sequence, out tempFailingLbas,
                                                                         out tempUnknownLbas);
                                     }
                                     else
@@ -299,9 +311,7 @@ sealed class VerifyCommand : Command
                                     {
                                         List<ulong> tempCorrectLbas = new();
 
-                                        for(ulong l = 0;
-                                            l < (remainingSectors < 512 ? remainingSectors : 512);
-                                            l++)
+                                        for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
                                             tempCorrectLbas.Add(currentSector + l);
 
                                         foreach(ulong f in tempFailingLbas)
@@ -352,7 +362,9 @@ sealed class VerifyCommand : Command
             ulong remainingSectors = inputFormat.Info.Sectors;
             ulong currentSector    = 0;
 
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
+            AnsiConsole.Progress().
+                        AutoClear(true).
+                        HideCompleted(true).
                         Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
                         Start(ctx =>
                         {
@@ -364,8 +376,7 @@ sealed class VerifyCommand : Command
                             while(remainingSectors > 0)
                             {
                                 diskTask.Description =
-                                    string.Format(UI.Checking_sector_0_of_1, currentSector,
-                                                  inputFormat.Info.Sectors);
+                                    string.Format(UI.Checking_sector_0_of_1, currentSector, inputFormat.Info.Sectors);
 
                                 List<ulong> tempFailingLbas;
                                 List<ulong> tempUnknownLbas;
@@ -428,8 +439,7 @@ sealed class VerifyCommand : Command
         if(failingLbas.Count > 0)
             AaruConsole.WriteLine(UI.There_is_at_least_one_sector_with_incorrect_checksum_or_errors);
 
-        if(unknownLbas.Count == 0 &&
-           failingLbas.Count == 0)
+        if(unknownLbas.Count == 0 && failingLbas.Count == 0)
             AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
 
         AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,

@@ -112,8 +112,7 @@ partial class Device : Devices.Device
 
         Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
-        if(!hasError &&
-           error == 0)
+        if(!hasError && error == 0)
         {
             var descriptor = new StorageDeviceDescriptor
             {
@@ -235,12 +234,9 @@ partial class Device : Devices.Device
             sdBuffer = new byte[4];
 
             dev.LastError =
-                dev.SendMmcCommand(
-                    dev._cachedScr != null
-                        ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition
-                        : MmcCommands.SendOpCond,
-                    false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
-                    4, 1, ref sdBuffer, out _, out _, out sense);
+                dev.SendMmcCommand(dev._cachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
+                                   false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
+                                   4, 1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
@@ -292,10 +288,10 @@ partial class Device : Devices.Device
 
         // I have to search for USB disks, floppies and CD-ROMs as separate device types
         foreach(string devGuid in new[]
-                {
-                    Usb.GUID_DEVINTERFACE_FLOPPY, Usb.GUID_DEVINTERFACE_CDROM, Usb.GUID_DEVINTERFACE_DISK,
-                    Usb.GUID_DEVINTERFACE_TAPE
-                })
+            {
+                Usb.GUID_DEVINTERFACE_FLOPPY, Usb.GUID_DEVINTERFACE_CDROM, Usb.GUID_DEVINTERFACE_DISK,
+                Usb.GUID_DEVINTERFACE_TAPE
+            })
         {
             usbDevice = Usb.FindDrivePath(devicePath, devGuid);
 

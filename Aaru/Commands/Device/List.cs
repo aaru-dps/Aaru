@@ -107,8 +107,7 @@ sealed class ListDevicesCommand : Command
                                  serverArchitecture);
         }
 
-        if(devices        == null ||
-           devices.Length == 0)
+        if(devices == null || devices.Length == 0)
             AaruConsole.WriteLine(UI.No_known_devices_attached);
         else
         {

@@ -71,8 +71,7 @@ public sealed class SGI : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
+        if(errno != ErrorNumber.NoError || sector.Length < 512)
             return false;
 
         Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
@@ -105,26 +104,22 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_shd0 = {0}",  dvh.device_params.dp_shd0);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_trks0 = {0}", dvh.device_params.dp_trks0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_ctq_depth = {0}",
-                                   dvh.device_params.dp_ctq_depth);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_ctq_depth = {0}", dvh.device_params.dp_ctq_depth);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_cylshi = {0}", dvh.device_params.dp_cylshi);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_secs = {0}", dvh.device_params.dp_secs);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_secbytes = {0}",
-                                   dvh.device_params.dp_secbytes);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_secbytes = {0}", dvh.device_params.dp_secbytes);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_interleave = {0}",
                                    dvh.device_params.dp_interleave);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_flags = {0}", dvh.device_params.dp_flags);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_datarate = {0}",
-                                   dvh.device_params.dp_datarate);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_datarate = {0}", dvh.device_params.dp_datarate);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_nretries = {0}",
-                                   dvh.device_params.dp_nretries);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_nretries = {0}", dvh.device_params.dp_nretries);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_mspw = {0}",  dvh.device_params.dp_mspw);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_xgap1 = {0}", dvh.device_params.dp_xgap1);
@@ -159,8 +154,7 @@ public sealed class SGI : IPartition
                 Scheme   = Name
             };
 
-            if(part.Size <= 0 ||
-               dvh.partitions[i].type is SGIType.Header or SGIType.Volume)
+            if(part.Size <= 0 || dvh.partitions[i].type is SGIType.Header or SGIType.Volume)
                 continue;
 
             partitions.Add(part);

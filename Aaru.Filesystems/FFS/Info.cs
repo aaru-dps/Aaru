@@ -297,8 +297,7 @@ public sealed partial class FFSPlugin
             }
 
             // This is for sure, as it is shared with a sectors/track with non-x86 SunOS, Epoch is absurdly high for that
-            if(sb.fs_old_npsect                              > SunOSEpoch &&
-               DateHandlers.UnixToDateTime(sb.fs_old_npsect) < DateTime.Now)
+            if(sb.fs_old_npsect > SunOSEpoch && DateHandlers.UnixToDateTime(sb.fs_old_npsect) < DateTime.Now)
             {
                 fs_type_42bsd = false;
                 fs_type_sun86 = true;
@@ -306,8 +305,7 @@ public sealed partial class FFSPlugin
                 fs_type_43bsd = false;
             }
 
-            if(sb.fs_cgrotor       > 0x00000000 &&
-               (uint)sb.fs_cgrotor < 0xFFFFFFFF)
+            if(sb.fs_cgrotor > 0x00000000 && (uint)sb.fs_cgrotor < 0xFFFFFFFF)
             {
                 fs_type_42bsd = false;
                 fs_type_sun   = false;
@@ -365,13 +363,15 @@ public sealed partial class FFSPlugin
         metadata.ModificationDate = DateHandlers.UnixToDateTime(sb.fs_old_time);
 
         sbInformation.AppendFormat(Localization._0_blocks_in_volume_1_bytes, sb.fs_old_size,
-                                   (long)sb.fs_old_size * sb.fs_fsize).AppendLine();
+                                   (long)sb.fs_old_size * sb.fs_fsize).
+                      AppendLine();
 
         metadata.Clusters    = (ulong)sb.fs_old_size;
         metadata.ClusterSize = (uint)sb.fs_fsize;
 
         sbInformation.AppendFormat(Localization._0_data_blocks_in_volume_1_bytes, sb.fs_old_dsize,
-                                   (long)sb.fs_old_dsize * sb.fs_fsize).AppendLine();
+                                   (long)sb.fs_old_dsize * sb.fs_fsize).
+                      AppendLine();
 
         sbInformation.AppendFormat(Localization._0_cylinder_groups_in_volume, sb.fs_ncg).AppendLine();
         sbInformation.AppendFormat(Localization._0_bytes_in_a_basic_block,    sb.fs_bsize).AppendLine();
@@ -448,7 +448,8 @@ public sealed partial class FFSPlugin
         sbInformation.AppendFormat(Localization._0_directories, sb.fs_old_cstotal.cs_ndir).AppendLine();
 
         sbInformation.AppendFormat(Localization._0_free_blocks_1_bytes, sb.fs_old_cstotal.cs_nbfree,
-                                   (long)sb.fs_old_cstotal.cs_nbfree * sb.fs_fsize).AppendLine();
+                                   (long)sb.fs_old_cstotal.cs_nbfree * sb.fs_fsize).
+                      AppendLine();
 
         metadata.FreeClusters = (ulong)sb.fs_old_cstotal.cs_nbfree;
         sbInformation.AppendFormat(Localization._0_free_inodes, sb.fs_old_cstotal.cs_nifree).AppendLine();
@@ -494,7 +495,8 @@ public sealed partial class FFSPlugin
             sbInformation.AppendFormat(Localization._0_directories,            sb.fs_cstotal.cs_ndir).AppendLine();
 
             sbInformation.AppendFormat(Localization._0_free_blocks_1_bytes, sb.fs_cstotal.cs_nbfree,
-                                       sb.fs_cstotal.cs_nbfree * sb.fs_fsize).AppendLine();
+                                       sb.fs_cstotal.cs_nbfree * sb.fs_fsize).
+                          AppendLine();
 
             metadata.FreeClusters = (ulong)sb.fs_cstotal.cs_nbfree;
             sbInformation.AppendFormat(Localization._0_free_inodes,   sb.fs_cstotal.cs_nifree).AppendLine();

@@ -72,7 +72,10 @@ public sealed partial class A2R
 #region IWritableImage Members
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".a2r" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".a2r"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => null;

@@ -88,8 +88,7 @@ public static class Options
                     sb      = new StringBuilder();
                     inValue = false;
 
-                    if(string.IsNullOrEmpty(name) ||
-                       string.IsNullOrEmpty(value))
+                    if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
                         continue;
 
                     if(parsed.ContainsKey(name))
@@ -191,8 +190,7 @@ public static class Options
 
         value = sb.ToString();
 
-        if(string.IsNullOrEmpty(name) ||
-           string.IsNullOrEmpty(value))
+        if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
             return parsed;
 
         if(parsed.ContainsKey(name))

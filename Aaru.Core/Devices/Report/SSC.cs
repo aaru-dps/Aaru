@@ -174,8 +174,7 @@ public sealed partial class DeviceReport
                                      _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode                 = Modes.DecodeMode10(buffer, _dev.ScsiType);
             seqTest.ModeSense10Data = buffer;
@@ -187,8 +186,7 @@ public sealed partial class DeviceReport
             sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 

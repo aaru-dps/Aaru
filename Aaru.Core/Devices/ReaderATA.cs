@@ -64,8 +64,7 @@ sealed partial class Reader
         if(_dev.Type != DeviceType.ATA)
             return;
 
-        if(_ataId.CurrentCylinders > 0 &&
-           _ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
+        if(_ataId.CurrentCylinders > 0 && _ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
         {
             Cylinders = _ataId.CurrentCylinders;
             Heads     = (byte)_ataId.CurrentHeads;
@@ -172,19 +171,14 @@ sealed partial class Reader
 
         if(IsLba)
         {
-            if(Blocks > 0xFFFFFFF &&
-               !_ataReadLba48     &&
-               !_ataReadDmaLba48)
+            if(Blocks > 0xFFFFFFF && !_ataReadLba48 && !_ataReadDmaLba48)
             {
                 ErrorMessage = Localization.Core.Device_needs_48_bit_LBA_commands_but_I_cant_issue_them_Aborting;
 
                 return true;
             }
 
-            if(!_ataReadLba      &&
-               !_ataReadRetryLba &&
-               !_ataReadDmaLba   &&
-               !_ataReadDmaRetryLba)
+            if(!_ataReadLba && !_ataReadRetryLba && !_ataReadDmaLba && !_ataReadDmaRetryLba)
             {
                 ErrorMessage = Localization.Core.Device_needs_28_bit_LBA_commands_but_I_cant_issue_them_Aborting;
 
@@ -193,10 +187,7 @@ sealed partial class Reader
         }
         else
         {
-            if(!_ataRead      &&
-               !_ataReadRetry &&
-               !_ataReadDma   &&
-               !_ataReadDmaRetry)
+            if(!_ataRead && !_ataReadRetry && !_ataReadDma && !_ataReadDmaRetry)
             {
                 ErrorMessage = Localization.Core.Device_needs_CHS_commands_but_I_cant_issue_them_Aborting;
 
@@ -236,13 +227,11 @@ sealed partial class Reader
 
     bool AtaGetBlockSize()
     {
-        if((_ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-           (_ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+        if((_ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (_ataId.PhysLogSectorSize & 0x4000) == 0x4000)
         {
             if((_ataId.PhysLogSectorSize & 0x1000) == 0x1000)
             {
-                if(_ataId.LogicalSectorWords <= 255 ||
-                   _ataId.LogicalAlignment   == 0xFFFF)
+                if(_ataId.LogicalSectorWords <= 255 || _ataId.LogicalAlignment == 0xFFFF)
                     LogicalBlockSize = 512;
                 else
                     LogicalBlockSize = _ataId.LogicalSectorWords * 2;
@@ -325,13 +314,11 @@ sealed partial class Reader
             if(error)
                 BlocksToRead /= 2;
 
-            if(!error ||
-               BlocksToRead == 1)
+            if(!error || BlocksToRead == 1)
                 break;
         }
 
-        if(!error ||
-           !IsLba)
+        if(!error || !IsLba)
             return false;
 
         BlocksToRead = 1;

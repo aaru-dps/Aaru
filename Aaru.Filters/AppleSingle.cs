@@ -159,8 +159,7 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer        == null ||
-           buffer.Length < 26)
+        if(buffer == null || buffer.Length < 26)
             return false;
 
         var hdrB = new byte[26];
@@ -173,8 +172,7 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        if(stream        == null ||
-           stream.Length < 26)
+        if(stream == null || stream.Length < 26)
             return false;
 
         var hdrB = new byte[26];

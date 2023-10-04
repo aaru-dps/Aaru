@@ -103,6 +103,8 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
-        { "debug", false.ToString() }
+        {
+            "debug", false.ToString()
+        }
     };
 }

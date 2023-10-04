@@ -148,8 +148,8 @@ sealed partial class Reader
         ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
 
     internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                             out bool   blankCheck) => ReadBlocks(out buffer,       block, BlocksToRead, out duration,
-                                                                out recoveredError, out blankCheck);
+                             out bool   blankCheck) => ReadBlocks(out buffer,         block, BlocksToRead, out duration,
+                                                                  out recoveredError, out blankCheck);
 
     internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
                              out bool   blankCheck)

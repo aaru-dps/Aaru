@@ -382,8 +382,7 @@ partial class Device : Devices.Device
 
             string possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
 
-            if(!File.Exists(possibleDir + "/card_type") ||
-               !File.Exists(possibleDir + "/cis"))
+            if(!File.Exists(possibleDir + "/card_type") || !File.Exists(possibleDir + "/cis"))
                 continue;
 
             var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);

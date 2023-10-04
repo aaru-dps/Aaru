@@ -183,17 +183,19 @@ public sealed class MediaDumpViewModel : ViewModelBase
             }
         }
 
-        Encodings.AddRange(Encoding.GetEncodings().Select(info => new EncodingModel
-        {
-            Name        = info.Name,
-            DisplayName = info.GetEncoding().EncodingName
-        }));
+        Encodings.AddRange(Encoding.GetEncodings().
+                                    Select(info => new EncodingModel
+                                    {
+                                        Name        = info.Name,
+                                        DisplayName = info.GetEncoding().EncodingName
+                                    }));
 
-        Encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new EncodingModel
-        {
-            Name        = info.Name,
-            DisplayName = info.DisplayName
-        }));
+        Encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().
+                                   Select(info => new EncodingModel
+                                   {
+                                       Name        = info.Name,
+                                       DisplayName = info.DisplayName
+                                   }));
 
         switch(mediaType)
         {
@@ -518,8 +520,11 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
             dlgMetadata.Filters?.Add(new FileDialogFilter
             {
-                Name       = UI.Dialog_Aaru_Metadata,
-                Extensions = new List<string>(new[] { ".json" })
+                Name = UI.Dialog_Aaru_Metadata,
+                Extensions = new List<string>(new[]
+                {
+                    ".json"
+                })
             });
 
             string[] result = dlgMetadata.ShowAsync(_view).Result;
@@ -548,7 +553,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
                     // ReSharper restore AssignmentIsFullyDiscarded
                     GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_metadata_sidecar_file, ButtonEnum.Ok,
-                                          Icon.Error).ShowWindowDialogAsync(_view).Result;
+                                          Icon.Error).
+                    ShowWindowDialogAsync(_view).
+                    Result;
 
                 ExistingMetadata = false;
             }
@@ -738,22 +745,22 @@ public sealed class MediaDumpViewModel : ViewModelBase
         {
             await MessageBoxManager.
                   GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_resume_file_cannot_use_it, ButtonEnum.Ok,
-                                        Icon.Error).ShowWindowDialogAsync(_view);
+                                        Icon.Error).
+                  ShowWindowDialogAsync(_view);
 
             Resume = false;
 
             return;
         }
 
-        if(_resume           == null              ||
-           _resume.NextBlock <= _resume.LastBlock ||
-           _resume.BadBlocks.Count != 0 && !_resume.Tape)
+        if(_resume == null || _resume.NextBlock <= _resume.LastBlock || _resume.BadBlocks.Count != 0 && !_resume.Tape)
             return;
 
         await MessageBoxManager.
               GetMessageBoxStandard(UI.Title_Warning,
-                                    UI.Media_already_dumped_correctly_please_choose_another_destination,
-                                    ButtonEnum.Ok, Icon.Warning).ShowWindowDialogAsync(_view);
+                                    UI.Media_already_dumped_correctly_please_choose_another_destination, ButtonEnum.Ok,
+                                    Icon.Warning).
+              ShowWindowDialogAsync(_view);
 
         Resume = false;
     }

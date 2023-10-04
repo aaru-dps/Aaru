@@ -597,7 +597,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         if(SelectedPlugin is null)
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Error_trying_to_find_selected_plugin,
-                                                          icon: Icon.Error).ShowWindowDialogAsync(_view);
+                                                          icon: Icon.Error).
+                                    ShowWindowDialogAsync(_view);
 
             return;
         }
@@ -613,7 +614,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         if(plugin is not IWritableImage outputFormat)
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Error_trying_to_find_selected_plugin,
-                                                          icon: Icon.Error).ShowWindowDialogAsync(_view);
+                                                          icon: Icon.Error).
+                                    ShowWindowDialogAsync(_view);
 
             return;
         }
@@ -714,16 +716,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
         });
 
         foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-                    !outputFormat.SupportedMediaTags.Contains(mediaTag) && !ForceChecked))
+            !outputFormat.SupportedMediaTags.Contains(mediaTag) && !ForceChecked))
         {
             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                     GetMessageBoxStandard(UI.Title_Error,
                                                                         string.
-                                                                            Format(
-                                                                                UI.
-                                                                                    Converting_image_will_lose_media_tag_0,
-                                                                                mediaTag),
-                                                                        icon: Icon.Error).
+                                                                            Format(UI.Converting_image_will_lose_media_tag_0,
+                                                                                mediaTag), icon: Icon.Error).
                                                                     ShowWindowDialogAsync(_view));
 
             return;
@@ -732,7 +731,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
         bool useLong = _inputFormat.Info.ReadableSectorTags.Count != 0;
 
         foreach(SectorTagType sectorTag in _inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
-                    !outputFormat.SupportedSectorTags.Contains(sectorTag)))
+            !outputFormat.SupportedSectorTags.Contains(sectorTag)))
         {
             if(ForceChecked)
             {
@@ -747,11 +746,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                     GetMessageBoxStandard(UI.Title_Error,
                                                                         string.
-                                                                            Format(
-                                                                                UI.
-                                                                                    Converting_image_will_lose_sector_tag_0,
-                                                                                sectorTag),
-                                                                        icon: Icon.Error).
+                                                                            Format(UI.Converting_image_will_lose_sector_tag_0,
+                                                                                sectorTag), icon: Icon.Error).
                                                                     ShowWindowDialogAsync(_view));
 
             return;
@@ -805,8 +801,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                                                     GetMessageBoxStandard(UI.Title_Error,
                                                                         string.
                                                                             Format(UI.Error_0_creating_output_image,
-                                                                                outputFormat.
-                                                                                    ErrorMessage),
+                                                                                outputFormat.ErrorMessage),
                                                                         icon: Icon.Error).
                                                                     ShowWindowDialogAsync(_view));
 
@@ -852,9 +847,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                             GetMessageBoxStandard(UI.Title_Error,
                                                                                 string.
-                                                                                    Format(
-                                                                                        UI.
-                                                                                            Error_0_setting_metadata_not_continuing,
+                                                                                    Format(UI.Error_0_setting_metadata_not_continuing,
                                                                                         outputFormat.
                                                                                             ErrorMessage),
                                                                                 icon: Icon.Error).
@@ -870,9 +863,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             }
         }
 
-        if(tracks != null &&
-           !_cancel       &&
-           outputOptical != null)
+        if(tracks != null && !_cancel && outputOptical != null)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -887,9 +878,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                         GetMessageBoxStandard(UI.Title_Error,
                                                                             string.
-                                                                                Format(
-                                                                                    UI.
-                                                                                        Error_0_sending_tracks_list_to_output_image,
+                                                                                Format(UI.Error_0_sending_tracks_list_to_output_image,
                                                                                     outputFormat.
                                                                                         ErrorMessage),
                                                                             icon: Icon.Error).
@@ -918,8 +907,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
             errno = _inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
 
-            if(errno == ErrorNumber.NoError &&
-               outputFormat.WriteMediaTag(tag, mediaTag))
+            if(errno == ErrorNumber.NoError && outputFormat.WriteMediaTag(tag, mediaTag))
                 continue;
 
             if(ForceChecked)
@@ -935,29 +923,26 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 if(errno == ErrorNumber.NoError)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(async () =>
-                                                              await MessageBoxManager.
-                                                                    GetMessageBoxStandard(UI.Title_Error,
-                                                                        string.
-                                                                            Format(
-                                                                                UI.
-                                                                                    Error_0_writing_media_tag_not_continuing,
-                                                                                outputFormat.ErrorMessage),
-                                                                        icon: Icon.Error).ShowWindowDialogAsync(_view));
+                    await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
+                                                                            GetMessageBoxStandard(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Error_0_writing_media_tag_not_continuing,
+                                                                                        outputFormat.
+                                                                                            ErrorMessage),
+                                                                                icon: Icon.Error).
+                                                                            ShowWindowDialogAsync(_view));
 
                     AaruConsole.ErrorWriteLine(UI.Error_0_writing_media_tag_not_continuing, outputFormat.ErrorMessage);
                 }
                 else
                 {
-                    await Dispatcher.UIThread.InvokeAsync(async () =>
-                                                              await MessageBoxManager.
-                                                                    GetMessageBoxStandard(UI.Title_Error,
-                                                                        string.
-                                                                            Format(
-                                                                                UI.
-                                                                                    Error_0_reading_media_tag_not_continuing,
-                                                                                errno), icon: Icon.Error).
-                                                                    ShowWindowDialogAsync(_view));
+                    await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
+                                                                            GetMessageBoxStandard(UI.Title_Error,
+                                                                                string.
+                                                                                    Format(UI.Error_0_reading_media_tag_not_continuing,
+                                                                                        errno),
+                                                                                icon: Icon.Error).
+                                                                            ShowWindowDialogAsync(_view));
 
                     AaruConsole.ErrorWriteLine(UI.Error_0_reading_media_tag_not_continuing, errno);
                 }
@@ -968,8 +953,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         ulong doneSectors = 0;
 
-        if(tracks == null &&
-           !_cancel)
+        if(tracks == null && !_cancel)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -1053,10 +1037,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandard(UI.Title_Error,
                                                                                       string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_reading_sector_1_not_continuing,
-                                                                                              errno, doneSectors),
+                                                                                          Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                              errno,
+                                                                                              doneSectors),
                                                                                       icon: Icon.Error).
                                                                                   ShowWindowDialogAsync(_view));
 
@@ -1093,10 +1076,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandard(UI.Title_Error,
                                                                                       string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_reading_sector_1_not_continuing,
-                                                                                              errno, doneSectors),
+                                                                                          Format(UI.Error_0_reading_sector_1_not_continuing,
+                                                                                              errno,
+                                                                                              doneSectors),
                                                                                       icon: Icon.Error).
                                                                                   ShowWindowDialogAsync(_view));
 
@@ -1121,10 +1103,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                               GetMessageBoxStandard(UI.Title_Error,
                                                                                   string.
-                                                                                      Format(
-                                                                                          UI.
-                                                                                              Error_0_writing_sector_1_not_continuing,
-                                                                                          outputFormat.ErrorMessage,
+                                                                                      Format(UI.Error_0_writing_sector_1_not_continuing,
+                                                                                          outputFormat.
+                                                                                              ErrorMessage,
                                                                                           doneSectors),
                                                                                   icon: Icon.Error).
                                                                               ShowWindowDialogAsync(_view));
@@ -1154,7 +1135,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
 
             foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.
-                                                      Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
+                                                      Where(t => t == SectorTagType.CdTrackIsrc).
+                                                      OrderBy(t => t))
             {
                 foreach(Track track in inputOptical.Tracks)
                 {
@@ -1168,7 +1150,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             }
 
             foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.
-                                                      Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+                                                      Where(t => t == SectorTagType.CdTrackFlags).
+                                                      OrderBy(t => t))
             {
                 foreach(Track track in inputOptical.Tracks)
                 {
@@ -1255,8 +1238,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
-                            if(tag   == SectorTagType.CdSectorSubchannel &&
-                               track != null)
+                            if(tag == SectorTagType.CdSectorSubchannel && track != null)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                     MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs, (byte)track.Sequence,
@@ -1287,9 +1269,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_reading_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
                                                                                       errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowWindowDialogAsync(_view));
@@ -1309,8 +1289,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                         {
                             Track track = tracks.LastOrDefault(t => t.StartSector >= doneSectors);
 
-                            if(tag   == SectorTagType.CdSectorSubchannel &&
-                               track != null)
+                            if(tag == SectorTagType.CdSectorSubchannel && track != null)
 
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
@@ -1342,9 +1321,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_reading_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
                                                                                       errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowWindowDialogAsync(_view));
@@ -1371,9 +1348,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandard(UI.Title_Error,
                                                                                       string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_writing_sector_1_not_continuing,
+                                                                                          Format(UI.Error_0_writing_sector_1_not_continuing,
                                                                                               outputFormat.
                                                                                                   ErrorMessage,
                                                                                               doneSectors),
@@ -1410,9 +1385,10 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 if(trackFlags.Count > 0)
                 {
                     foreach(KeyValuePair<byte, byte> flags in trackFlags)
-                    {
-                        outputOptical.WriteSectorTag(new[] { flags.Value }, flags.Key, SectorTagType.CdTrackFlags);
-                    }
+                        outputOptical.WriteSectorTag(new[]
+                        {
+                            flags.Value
+                        }, flags.Key, SectorTagType.CdTrackFlags);
                 }
 
                 if(mcn != null)
@@ -1493,9 +1469,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_reading_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
                                                                                       errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowWindowDialogAsync(_view));
@@ -1533,9 +1507,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_reading_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_reading_sector_1_not_continuing,
                                                                                       errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowWindowDialogAsync(_view));
@@ -1559,9 +1531,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                                   GetMessageBoxStandard(UI.Title_Error,
                                                                                       string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_writing_sector_1_not_continuing,
+                                                                                          Format(UI.Error_0_writing_sector_1_not_continuing,
                                                                                               outputFormat.
                                                                                                   ErrorMessage,
                                                                                               doneSectors),
@@ -1639,16 +1609,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 }
                                 else
                                 {
-                                    await Dispatcher.UIThread.InvokeAsync(async () =>
-                                                                              await MessageBoxManager.
-                                                                                  GetMessageBoxStandard(UI.Title_Error,
-                                                                                      string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_reading_media_tag_not_continuing,
-                                                                                              errno),
-                                                                                      icon: Icon.Error).
-                                                                                  ShowWindowDialogAsync(_view));
+                                    await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandard(UI.Title_Error,
+                                                                                  string.
+                                                                                      Format(UI.Error_0_reading_media_tag_not_continuing,
+                                                                                          errno),
+                                                                                  icon: Icon.Error).
+                                                                              ShowWindowDialogAsync(_view));
 
                                     return;
                                 }
@@ -1667,17 +1634,14 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 }
                                 else
                                 {
-                                    await Dispatcher.UIThread.InvokeAsync(async () =>
-                                                                              await MessageBoxManager.
-                                                                                  GetMessageBoxStandard(UI.Title_Error,
-                                                                                      string.
-                                                                                          Format(
-                                                                                              UI.
-                                                                                                  Error_0_writing_tag_not_continuing,
-                                                                                              outputFormat.
-                                                                                                  ErrorMessage),
-                                                                                      icon: Icon.Error).
-                                                                                  ShowWindowDialogAsync(_view));
+                                    await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
+                                                                              GetMessageBoxStandard(UI.Title_Error,
+                                                                                  string.
+                                                                                      Format(UI.Error_0_writing_tag_not_continuing,
+                                                                                          outputFormat.
+                                                                                              ErrorMessage),
+                                                                                  icon: Icon.Error).
+                                                                              ShowWindowDialogAsync(_view));
 
                                     return;
                                 }
@@ -1739,9 +1703,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_reading_tag_for_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_reading_tag_for_sector_1_not_continuing,
                                                                                       errno, doneSectors),
                                                                               icon: Icon.Error).
                                                                           ShowWindowDialogAsync(_view));
@@ -1764,9 +1726,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                                 await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                           GetMessageBoxStandard(UI.Title_Error,
                                                                               string.
-                                                                                  Format(
-                                                                                      UI.
-                                                                                          Error_0_writing_tag_for_sector_1_not_continuing,
+                                                                                  Format(UI.Error_0_writing_tag_for_sector_1_not_continuing,
                                                                                       outputFormat.
                                                                                           ErrorMessage,
                                                                                       doneSectors),
@@ -1791,8 +1751,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         bool ret;
 
-        if(_dumpHardware != null &&
-           !_cancel)
+        if(_dumpHardware != null && !_cancel)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -1808,8 +1767,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         ret = false;
 
-        if(_aaruMetadata != null &&
-           !_cancel)
+        if(_aaruMetadata != null && !_cancel)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -1835,7 +1793,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error, UI.Operation_canceled_the_output_file_is_not_correct,
-                                            icon: Icon.Error).ShowWindowDialogAsync(_view);
+                                            icon: Icon.Error).
+                      ShowWindowDialogAsync(_view);
 
                 CloseVisible    = true;
                 StopVisible     = false;
@@ -1850,11 +1809,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             await Dispatcher.UIThread.InvokeAsync(async () => await MessageBoxManager.
                                                                     GetMessageBoxStandard(UI.Title_Error,
                                                                         string.
-                                                                            Format(
-                                                                                UI.
-                                                                                    Error_0_closing_output_image_Contents_are_not_correct,
-                                                                                outputFormat.
-                                                                                    ErrorMessage),
+                                                                            Format(UI.Error_0_closing_output_image_Contents_are_not_correct,
+                                                                                outputFormat.ErrorMessage),
                                                                         icon: Icon.Error).
                                                                     ShowWindowDialogAsync(_view));
 
@@ -1863,12 +1819,12 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandard(warning ? UI.Title_Warning : UI.Title_Conversion_success,
-                                        warning
-                                            ? UI.Some_warnings_happened_Check_console
-                                            : UI.Image_converted_successfully,
-                                        icon: warning ? Icon.Warning : Icon.Info).ShowWindowDialogAsync(_view);
+            await MessageBoxManager.GetMessageBoxStandard(warning ? UI.Title_Warning : UI.Title_Conversion_success,
+                                                          warning
+                                                              ? UI.Some_warnings_happened_Check_console
+                                                              : UI.Image_converted_successfully,
+                                                          icon: warning ? Icon.Warning : Icon.Info).
+                                    ShowWindowDialogAsync(_view);
 
             CloseVisible    = true;
             StopVisible     = false;
@@ -2038,8 +1994,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         string result = await dlgDestination.ShowAsync(_view);
 
-        if(result is null ||
-           result.Length != 1)
+        if(result is null || result.Length != 1)
         {
             DestinationText = "";
 
@@ -2098,14 +2053,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name       = UI.Dialog_Aaru_Metadata,
-            Extensions = new List<string>(new[] { ".json" })
+            Name = UI.Dialog_Aaru_Metadata,
+            Extensions = new List<string>(new[]
+            {
+                ".json"
+            })
         });
 
         string[] result = await dlgMetadata.ShowAsync(_view);
 
-        if(result is null ||
-           result.Length != 1)
+        if(result is null || result.Length != 1)
             return;
 
         try
@@ -2122,7 +2079,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         catch
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_metadata_sidecar_file,
-                                                          icon: Icon.Error).ShowWindowDialogAsync(_view);
+                                                          icon: Icon.Error).
+                                    ShowWindowDialogAsync(_view);
         }
     }
 
@@ -2144,14 +2102,16 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
-            Name       = UI.Dialog_Choose_existing_resume_file,
-            Extensions = new List<string>(new[] { ".json" })
+            Name = UI.Dialog_Choose_existing_resume_file,
+            Extensions = new List<string>(new[]
+            {
+                ".json"
+            })
         });
 
         string[] result = await dlgMetadata.ShowAsync(_view);
 
-        if(result is null ||
-           result.Length != 1)
+        if(result is null || result.Length != 1)
             return;
 
         try
@@ -2173,7 +2133,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
             {
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error, UI.Resume_file_does_not_contain_dump_hardware_information,
-                                            icon: Icon.Error).ShowWindowDialogAsync(_view);
+                                            icon: Icon.Error).
+                      ShowWindowDialogAsync(_view);
             }
         }
         catch

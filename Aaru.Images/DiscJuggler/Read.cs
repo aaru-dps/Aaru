@@ -69,8 +69,7 @@ public sealed partial class DiscJuggler
         _imageStream.EnsureRead(descriptor, 0, dscLen);
 
         // Sessions
-        if(descriptor[0] > 99 ||
-           descriptor[0] == 0)
+        if(descriptor[0] > 99 || descriptor[0] == 0)
             return ErrorNumber.InvalidArgument;
 
         var position = 1;
@@ -230,8 +229,7 @@ public sealed partial class DiscJuggler
 
                         track.Description = Encoding.Default.GetString(textBlk, 0, bLen);
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_title_0,
-                                                   track.Description);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Track_title_0, track.Description);
                     }
                 }
 
@@ -280,8 +278,7 @@ public sealed partial class DiscJuggler
                 {
                     leftLen -= idx.Value;
 
-                    if(idx.Key        == 0 &&
-                       track.Sequence == 1)
+                    if(idx.Key == 0 && track.Sequence == 1)
                         continue;
 
                     track.Indexes[idx.Key] = (int)track.StartSector + leftLen;
@@ -633,8 +630,7 @@ public sealed partial class DiscJuggler
                     Type        = track.Type.ToString()
                 };
 
-                if(track.Sequence > 1 &&
-                   track.Pregap   > 0)
+                if(track.Sequence > 1 && track.Pregap > 0)
                 {
                     partition.Start  += track.Pregap;
                     partition.Length -= track.Pregap;
@@ -757,13 +753,9 @@ public sealed partial class DiscJuggler
                 }
             }
 
-            if(!data &&
-               !firstdata)
+            if(!data && !firstdata)
                 _imageInfo.MediaType = MediaType.CDDA;
-            else if(firstaudio         &&
-                    data               &&
-                    Sessions.Count > 1 &&
-                    mode2)
+            else if(firstaudio && data && Sessions.Count > 1 && mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
             else if(firstdata && audio || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
@@ -773,8 +765,7 @@ public sealed partial class DiscJuggler
                 _imageInfo.MediaType = MediaType.CD;
         }
 
-        if(_trackFlags.Count > 0 &&
-           !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+        if(_trackFlags.Count > 0 && !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
         _imageInfo.Application          = "DiscJuggler";
@@ -976,8 +967,7 @@ public sealed partial class DiscJuggler
 
             buffer = mode2Ms.ToArray();
         }
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        else if(sectorOffset == 0 && sectorSkip == 0)
             _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
         {
@@ -1029,7 +1019,10 @@ public sealed partial class DiscJuggler
                 if(!_trackFlags.TryGetValue(track, out byte flag))
                     return ErrorNumber.NoData;
 
-                buffer = new[] { flag };
+                buffer = new[]
+                {
+                    flag
+                };
 
                 return ErrorNumber.NoError;
             default:
@@ -1233,8 +1226,7 @@ public sealed partial class DiscJuggler
         _imageStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                           SeekOrigin.Begin);
 
-        if(sectorOffset == 0 &&
-           sectorSkip   == 0)
+        if(sectorOffset == 0 && sectorSkip == 0)
             _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
         {
@@ -1248,8 +1240,7 @@ public sealed partial class DiscJuggler
             }
         }
 
-        if(aaruTrack.SubchannelType == TrackSubchannelType.Q16Interleaved &&
-           tag                      == SectorTagType.CdSectorSubchannel)
+        if(aaruTrack.SubchannelType == TrackSubchannelType.Q16Interleaved && tag == SectorTagType.CdSectorSubchannel)
             buffer = Subchannel.ConvertQToRaw(buffer);
 
         return ErrorNumber.NoError;

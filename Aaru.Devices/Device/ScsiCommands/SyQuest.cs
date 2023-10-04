@@ -91,8 +91,7 @@ public partial class Device
         if(readLong)
             cdb[5] += 0x40;
 
-        if(!inhibitDma &&
-           !readLong)
+        if(!inhibitDma && !readLong)
             buffer = transferLength == 0 ? new byte[256 * blockSize] : new byte[transferLength * blockSize];
         else if(readLong)
         {
@@ -172,8 +171,7 @@ public partial class Device
         if(readLong)
             cdb[9] += 0x40;
 
-        if(!inhibitDma &&
-           !readLong)
+        if(!inhibitDma && !readLong)
             buffer = new byte[transferLength * blockSize];
         else if(readLong)
         {

@@ -182,10 +182,7 @@ public sealed partial class LisaFS
                 offset += 54;
 
                 // Check that the entry is correct, not empty or garbage
-                if(entV2.filenameLen != 0      &&
-                   entV2.filenameLen <= E_NAME &&
-                   entV2.fileType    != 0      &&
-                   entV2.fileID      > 0)
+                if(entV2.filenameLen != 0 && entV2.filenameLen <= E_NAME && entV2.fileType != 0 && entV2.fileID > 0)
                     catalogV2.Add(entV2);
             }
 
@@ -229,8 +226,7 @@ public sealed partial class LisaFS
 
             DecodeTag(tag, out LisaTag.PriamTag catTag);
 
-            if(catTag.FileId  != FILEID_CATALOG ||
-               catTag.RelPage != 0)
+            if(catTag.FileId != FILEID_CATALOG || catTag.RelPage != 0)
                 continue;
 
             errno = _device.ReadSectors(i, 4, out firstCatalogBlock);
@@ -323,8 +319,7 @@ public sealed partial class LisaFS
                     break;
 
                 // Normal entry
-                else if(buf[offset + 0x24] == 0x03 &&
-                        buf[offset]        == 0x24)
+                else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                 {
                     var entry = new CatalogEntry
                     {
@@ -358,8 +353,7 @@ public sealed partial class LisaFS
                 }
 
                 // Subdirectory entry
-                else if(buf[offset + 0x24] == 0x01 &&
-                        buf[offset]        == 0x24)
+                else if(buf[offset + 0x24] == 0x01 && buf[offset] == 0x24)
                 {
                     var entry = new CatalogEntry
                     {

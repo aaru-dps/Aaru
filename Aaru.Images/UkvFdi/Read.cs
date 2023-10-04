@@ -103,8 +103,7 @@ public sealed partial class UkvFdi
                 sectorsOff[cyl][head]   = new uint[sectors];
                 _sectorsData[cyl][head] = new byte[sectors][];
 
-                if(sectors < spt &&
-                   sectors > 0)
+                if(sectors < spt && sectors > 0)
                     spt = sectors;
 
                 for(ushort sec = 0; sec < sectors; sec++)

@@ -144,8 +144,7 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
                 ctx.Database.EnsureCreated();
 
                 ctx.Database.
-                    ExecuteSqlRaw(
-                        "CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                    ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
                 {
@@ -158,21 +157,29 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
             }
 
             // Remove duplicates
-            foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
-                    {
-                        a.Manufacturer,
-                        a.Model,
-                        a.Revision,
-                        a.Bus
-                    }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+            foreach(var duplicate in ctx.SeenDevices.AsEnumerable().
+                                         GroupBy(a => new
+                                         {
+                                             a.Manufacturer,
+                                             a.Model,
+                                             a.Revision,
+                                             a.Bus
+                                         }).
+                                         Where(a => a.Count() > 1).
+                                         Distinct().
+                                         Select(a => a.Key))
             {
                 ctx.RemoveRange(ctx.SeenDevices.
-                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
-                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
+                                    Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                               d.Model        == duplicate.Model        &&
+                                               d.Revision     == duplicate.Revision     &&
+                                               d.Bus          == duplicate.Bus).
+                                    Skip(1));
             }
 
             // Remove nulls
-            ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&
+            ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null &&
+                                                       d.Model        == null &&
                                                        d.Revision     == null));
 
             ctx.SaveChanges();

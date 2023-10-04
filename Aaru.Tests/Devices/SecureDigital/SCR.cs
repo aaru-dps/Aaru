@@ -24,44 +24,114 @@ public class SCR
         "0235000000000000", "0235000000000000", "02b5800000000000", "00a5000008070302"
     };
 
-    readonly byte[] structure_version = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] structure_version =
+    {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
-    readonly byte[] specification_version = { 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 0 };
+    readonly byte[] specification_version =
+    {
+        2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 0
+    };
 
     readonly bool[] data_stat_after_erase =
     {
         false, true, false, true, true, false, false, false, false, false, false, false, true, true
     };
 
-    readonly byte[] sd_security = { 0, 3, 3, 2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 2 };
+    readonly byte[] sd_security =
+    {
+        0, 3, 3, 2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 2
+    };
 
-    readonly byte[] sd_bus_widths = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+    readonly byte[] sd_bus_widths =
+    {
+        5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5
+    };
 
     readonly bool[] sd_spec3 =
     {
         true, false, true, false, false, true, true, true, false, true, false, false, true, false
     };
 
-    readonly byte[] ex_security = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] ex_security =
+    {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
 
     readonly bool[] sd_spec4 =
     {
         false, false, false, false, false, false, false, false, false, false, false, false, false, false
     };
 
-    readonly byte[] sd_specx = { 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] sd_specx =
+    {
+        2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+    };
 
-    readonly byte[] cmd_support = { 3, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0 };
+    readonly byte[] cmd_support =
+    {
+        3, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0
+    };
 
     readonly byte[][] mfg =
     {
-        new byte[] { 0x01, 0x00, 0x00, 0x00 }, new byte[] { 0x1c, 0x02, 0x21, 0x02 },
-        new byte[] { 0x01, 0x00, 0x00, 0x00 }, new byte[] { 0x00, 0x00, 0x00, 0x00 },
-        new byte[] { 0x1c, 0x02, 0x14, 0x02 }, new byte[] { 0x00, 0x00, 0x00, 0x00 },
-        new byte[] { 0x00, 0x00, 0x00, 0x00 }, new byte[] { 0x00, 0x00, 0x00, 0x00 },
-        new byte[] { 0x00, 0x00, 0x00, 0x00 }, new byte[] { 0x01, 0x00, 0x00, 0x00 },
-        new byte[] { 0x00, 0x00, 0x00, 0x00 }, new byte[] { 0x00, 0x00, 0x00, 0x00 },
-        new byte[] { 0x00, 0x00, 0x00, 0x00 }, new byte[] { 0x08, 0x07, 0x03, 0x02 }
+        new byte[]
+        {
+            0x01, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x1c, 0x02, 0x21, 0x02
+        },
+        new byte[]
+        {
+            0x01, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x1c, 0x02, 0x14, 0x02
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x01, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x00, 0x00, 0x00, 0x00
+        },
+        new byte[]
+        {
+            0x08, 0x07, 0x03, 0x02
+        }
     };
 
     [Test]

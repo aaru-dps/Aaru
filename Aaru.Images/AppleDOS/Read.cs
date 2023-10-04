@@ -54,31 +54,31 @@ public sealed partial class AppleDos
 
         _extension = Path.GetExtension(imageFilter.Filename)?.ToLower();
 
-        if(_extension is ".d13" or ".do" &&
-           tmp.Length == 116480)
+        if(_extension is ".d13" or ".do" && tmp.Length == 116480)
         {
             _dos32         = true;
             _deinterleaved = tmp;
         }
         else
         {
-            bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
-                         tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+            bool isDos = tmp[0x11001] == 17  &&
+                         tmp[0x11002] < 16   &&
+                         tmp[0x11027] <= 122 &&
+                         tmp[0x11034] == 35  &&
+                         tmp[0x11035] == 16  &&
+                         tmp[0x11036] == 0   &&
+                         tmp[0x11037] == 1;
 
             _deinterleaved = new byte[tmp.Length];
 
-            int[] offsets = _extension == ".do"
-                                ? isDos ? _deinterleave : _interleave
-                                : isDos
-                                    ? _interleave
-                                    : _deinterleave;
+            int[] offsets = _extension == ".do" ? isDos ? _deinterleave : _interleave :
+                            isDos               ? _interleave : _deinterleave;
 
             for(var t = 0; t < 35; t++)
             {
                 for(var s = 0; s < 16; s++)
                 {
-                    Array.Copy(tmp, t * 16 * 256 + s * 256, _deinterleaved, t * 16 * 256 + offsets[s] * 256,
-                               256);
+                    Array.Copy(tmp, t * 16 * 256 + s * 256, _deinterleaved, t * 16 * 256 + offsets[s] * 256, 256);
                 }
             }
         }

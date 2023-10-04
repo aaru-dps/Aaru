@@ -249,8 +249,7 @@ sealed class IbgLog
         if(_ibgSampleRate < 100)
             return;
 
-        if(_ibgIntSpeed > 0 &&
-           !_ibgStartSet)
+        if(_ibgIntSpeed > 0 && !_ibgStartSet)
         {
             _ibgStartSpeed = _ibgIntSpeed / _ibgSnaps / _ibgDivider;
             _ibgStartSet   = true;

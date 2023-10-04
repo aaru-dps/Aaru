@@ -48,14 +48,12 @@ public sealed partial class ISO9660
             ApplicationIdentifier  = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0')
         };
 
-        if(pvd.creation_date[0] == '0' ||
-           pvd.creation_date[0] == 0x00)
+        if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
             decodedVd.CreationTime = DateTime.MinValue;
         else
             decodedVd.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
-        if(pvd.modification_date[0] == '0' ||
-           pvd.modification_date[0] == 0x00)
+        if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
             decodedVd.HasModificationTime = false;
         else
         {
@@ -63,8 +61,7 @@ public sealed partial class ISO9660
             decodedVd.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
         }
 
-        if(pvd.expiration_date[0] == '0' ||
-           pvd.expiration_date[0] == 0x00)
+        if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00)
             decodedVd.HasExpirationTime = false;
         else
         {
@@ -72,8 +69,7 @@ public sealed partial class ISO9660
             decodedVd.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
         }
 
-        if(pvd.effective_date[0] == '0' ||
-           pvd.effective_date[0] == 0x00)
+        if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00)
             decodedVd.HasEffectiveTime = false;
         else
         {

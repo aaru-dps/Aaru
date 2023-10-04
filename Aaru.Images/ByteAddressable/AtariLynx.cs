@@ -138,13 +138,19 @@ public class AtariLynx : IByteAddressableImage
     public bool IsWriting { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<string> KnownExtensions => new[] { ".lnx" };
+    public IEnumerable<string> KnownExtensions => new[]
+    {
+        ".lnx"
+    };
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
 
     /// <inheritdoc />
-    public IEnumerable<MediaType> SupportedMediaTypes => new[] { MediaType.AtariLynxCard };
+    public IEnumerable<MediaType> SupportedMediaTypes => new[]
+    {
+        MediaType.AtariLynxCard
+    };
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>

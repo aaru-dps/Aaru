@@ -85,13 +85,11 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.valid = {0}",             header.Valid);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.reserved = {0}",          header.Reserved);
 
-        if(header.Valid    != 1 ||
-           header.Reserved != 0)
+        if(header.Valid != 1 || header.Reserved != 0)
             return ErrorNumber.InvalidArgument;
 
         // Some versions seem to incorrectly create little endian fields
-        if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength &&
-           header.Format                           != kSigmaFormatTwiggy)
+        if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength && header.Format != kSigmaFormatTwiggy)
         {
             header.DataSize     = BitConverter.ToUInt32(buffer, 0x40);
             header.TagSize      = BitConverter.ToUInt32(buffer, 0x44);
@@ -151,9 +149,7 @@ public sealed partial class DiskCopy42
             bptag = (uint)(header.TagSize / imageInfo.Sectors);
             AaruConsole.DebugWriteLine(MODULE_NAME, "bptag = {0} bytes", bptag);
 
-            if(bptag != 12 &&
-               bptag != 20 &&
-               bptag != 24)
+            if(bptag != 12 && bptag != 20 && bptag != 24)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unknown_tag_size);
 
@@ -210,8 +206,7 @@ public sealed partial class DiskCopy42
             var mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
 
             // Detect a Macintosh Twiggy
-            if(mfsMagic     == 0xD2D7 &&
-               mfsAllBlocks == 422)
+            if(mfsMagic == 0xD2D7 && mfsAllBlocks == 422)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Macintosh_Twiggy_detected_reversing_disk_sides);
                 Array.Copy(data, header.DataSize / 2, twiggyCache,     0, header.DataSize / 2);
@@ -290,8 +285,7 @@ public sealed partial class DiskCopy42
                                          _                                 => null
                                      };
 
-                        if(dev                       == null &&
-                           version.PreReleaseVersion > 0)
+                        if(dev == null && version.PreReleaseVersion > 0)
                             dev = "f";
 
                         if(dev != null)

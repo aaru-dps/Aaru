@@ -337,10 +337,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
-        if(_devicePath.Length == 2   &&
-           _devicePath[1]     == ':' &&
-           _devicePath[0]     != '/' &&
-           char.IsLetter(_devicePath[0]))
+        if(_devicePath.Length == 2 && _devicePath[1] == ':' && _devicePath[0] != '/' && char.IsLetter(_devicePath[0]))
             _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
 
         var dev = Device.Create(_devicePath, out ErrorNumber devErrno);
@@ -350,7 +347,8 @@ public sealed class MediaScanViewModel : ViewModelBase
             case null:
                 await MessageBoxManager.
                       GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
-                                            ButtonEnum.Ok,  Icon.Error).ShowWindowDialogAsync(_view);
+                                            ButtonEnum.Ok,  Icon.Error).
+                      ShowWindowDialogAsync(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -370,7 +368,8 @@ public sealed class MediaScanViewModel : ViewModelBase
         {
             await MessageBoxManager.
                   GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
-                                        ButtonEnum.Ok,  Icon.Error).ShowWindowDialogAsync(_view);
+                                        ButtonEnum.Ok,  Icon.Error).
+                  ShowWindowDialogAsync(_view);
 
             StopVisible     = false;
             StartVisible    = true;

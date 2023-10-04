@@ -205,8 +205,7 @@ public sealed class OffsetStream : Stream
     /// <param name="start">Start position</param>
     /// <param name="end">Last readable position</param>
     /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
-    public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start,
-                        long           end)
+    public OffsetStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync, long start, long end)
     {
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
@@ -248,8 +247,8 @@ public sealed class OffsetStream : Stream
     /// <param name="start">Start position</param>
     /// <param name="end">Last readable position</param>
     /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
-    public OffsetStream(string path,     FileMode mode,  FileAccess access, FileShare share, int bufferSize,
-                        bool   useAsync, long     start, long       end)
+    public OffsetStream(string path,  FileMode mode, FileAccess access, FileShare share, int bufferSize, bool useAsync,
+                        long   start, long     end)
     {
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
@@ -422,8 +421,7 @@ public sealed class OffsetStream : Stream
     /// <param name="start">Start position</param>
     /// <param name="end">Last readable position</param>
     /// <exception cref="T:System.ArgumentOutOfRangeException">Invalid range</exception>
-    public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start,
-                        long   end)
+    public OffsetStream(byte[] buffer, int index, int count, bool writable, bool publiclyVisible, long start, long end)
     {
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
@@ -593,8 +591,7 @@ public sealed class OffsetStream : Stream
     }
 
     /// <inheritdoc />
-    public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback,
-                                           object state)
+    public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
         if(_baseStream.Position + count > _streamEnd)
             throw new IOException(Localization.Cannot_read_past_stream_end);
@@ -603,8 +600,7 @@ public sealed class OffsetStream : Stream
     }
 
     /// <inheritdoc />
-    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback,
-                                            object state)
+    public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
         if(_baseStream.Position + count > _streamEnd)
             throw new IOException(Localization.Cannot_write_past_stream_end);

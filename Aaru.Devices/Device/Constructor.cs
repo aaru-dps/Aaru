@@ -225,8 +225,7 @@ public partial class Device
 
         Features.SeparatedFeatures features = Features.Separate(featureBuffer);
 
-        if(features.Descriptors?.Length != 1 ||
-           features.Descriptors[0].Code != 0x0108)
+        if(features.Descriptors?.Length != 1 || features.Descriptors[0].Code != 0x0108)
             return dev;
 
         Feature_0108? serialFeature = Features.Decode_0108(features.Descriptors[0].Data);

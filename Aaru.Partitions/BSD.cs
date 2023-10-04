@@ -55,9 +55,15 @@ public sealed class BSD : IPartition
     const uint MAX_LABEL_SIZE = 500;
     const string MODULE_NAME = "BSD disklabel plugin";
     /// <summary>Known sector locations for BSD disklabel</summary>
-    readonly ulong[] _labelLocations = { 0, 1, 2, 9 };
+    readonly ulong[] _labelLocations =
+    {
+        0, 1, 2, 9
+    };
     /// <summary>Known byte offsets for BSD disklabel</summary>
-    readonly uint[] _labelOffsets = { 0, 9, 64, 128, 516 };
+    readonly uint[] _labelOffsets =
+    {
+        0, 9, 64, 128, 516
+    };
 
 #region IPartition Members
 
@@ -189,8 +195,7 @@ public sealed class BSD : IPartition
                 continue;
 
             // Crude and dirty way to know if the disklabel is relative to its parent partition...
-            if(dl.d_partitions[i].p_offset < sectorOffset &&
-               !addSectorOffset)
+            if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset)
                 addSectorOffset = true;
 
             if(addSectorOffset)

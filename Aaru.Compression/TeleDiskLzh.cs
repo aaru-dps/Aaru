@@ -202,8 +202,7 @@ public class TeleDiskLzh
             else
             {
                 // still chars from last string
-                while(_tdctl.Bufndx < _tdctl.Bufcnt &&
-                      count         < len)
+                while(_tdctl.Bufndx < _tdctl.Bufcnt && count < len)
                 {
                     c          = _textBuf[_tdctl.Bufpos + _tdctl.Bufndx & N - 1];
                     buf[count] = (byte)c;

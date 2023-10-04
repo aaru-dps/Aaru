@@ -136,19 +136,17 @@ public sealed partial class TeleDisk
                     outs += decodedPiece.Length;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.Block_pattern_decoder_Input_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Input_data_size_0_bytes,
                                            encodedData.Length);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.Block_pattern_decoder_Processed_input_0_bytes, ins);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Processed_input_0_bytes,
+                                           ins);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.Block_pattern_decoder_Output_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Output_data_size_0_bytes,
                                            decodedData.Length);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.Block_pattern_decoder_Processed_Output_0_bytes, outs);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Processed_Output_0_bytes,
+                                           outs);
 
                 break;
             }
@@ -276,8 +274,7 @@ public sealed partial class TeleDisk
                         return MediaType.ECMA_78_2;
                     default:
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 5,25\" disk with {0} bytes",
-                                                   _totalDiskSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 5,25\" disk with {0} bytes", _totalDiskSize);
 
                         return MediaType.Unknown;
                     }
@@ -324,8 +321,7 @@ public sealed partial class TeleDisk
                         return MediaType.SHARP_35;
                     default:
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 3,5\" disk with {0} bytes",
-                                                   _totalDiskSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 3,5\" disk with {0} bytes", _totalDiskSize);
 
                         return MediaType.Unknown;
                     }
@@ -373,8 +369,7 @@ public sealed partial class TeleDisk
                         return MediaType.ECMA_69_26;
                     default:
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 8\" disk with {0} bytes",
-                                                   _totalDiskSize);
+                        AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown 8\" disk with {0} bytes", _totalDiskSize);
 
                         return MediaType.Unknown;
                     }

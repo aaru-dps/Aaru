@@ -77,8 +77,7 @@ public sealed partial class ISO9660
         if(err != ErrorNumber.NoError)
             return err;
 
-        if(entry.Flags.HasFlag(FileFlags.Directory) &&
-           !_debug)
+        if(entry.Flags.HasFlag(FileFlags.Directory) && !_debug)
             return ErrorNumber.IsDirectory;
 
         if(entry.Extents is null)
@@ -118,8 +117,7 @@ public sealed partial class ISO9660
         if(!_mounted)
             return ErrorNumber.AccessDenied;
 
-        if(buffer is null ||
-           buffer.Length < length)
+        if(buffer is null || buffer.Length < length)
             return ErrorNumber.InvalidArgument;
 
         if(node is not Iso9660FileNode mynode)
@@ -382,9 +380,7 @@ public sealed partial class ISO9660
         if(entry.SymbolicLink != null)
             stat.Attributes |= FileAttributes.Symlink;
 
-        if(entry.XattrLength == 0 ||
-           _cdi                   ||
-           _highSierra)
+        if(entry.XattrLength == 0 || _cdi || _highSierra)
             return ErrorNumber.NoError;
 
         if(entry.CdiSystemArea != null)
@@ -475,7 +471,10 @@ public sealed partial class ISO9660
                              ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
-        string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] pieces = cutPath.Split(new[]
+        {
+            '/'
+        }, StringSplitOptions.RemoveEmptyEntries);
 
         if(pieces.Length == 0)
             return ErrorNumber.InvalidArgument;
@@ -504,11 +503,10 @@ public sealed partial class ISO9660
 
         if(string.IsNullOrEmpty(dirent.Key))
         {
-            if(!_joliet &&
-               !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
+            if(!_joliet && !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
             {
-                dirent = parent.FirstOrDefault(
-                    t => t.Key.Equals(pieces[^1] + ";1", StringComparison.CurrentCultureIgnoreCase));
+                dirent = parent.FirstOrDefault(t => t.Key.Equals(pieces[^1] + ";1",
+                                                                 StringComparison.CurrentCultureIgnoreCase));
 
                 if(string.IsNullOrEmpty(dirent.Key))
                     return ErrorNumber.NoSuchFile;
