@@ -302,7 +302,7 @@ public sealed class SpamSumContext : IChecksum
            _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
             throw new Exception(Localization.Assertion_failed);
 
-        sb.AppendFormat("{0}:", SSDEEP_BS(bi));
+        sb.Append($"{SSDEEP_BS(bi)}:");
         int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
 
         if(i <= 0)
