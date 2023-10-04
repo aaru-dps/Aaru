@@ -32,13 +32,13 @@
     <value>CRC del paquete 4 de CD-Text es 0x{0:X4} se esperaba 0x{1:X4}</value>
   </data>
     <data name="Cyclic_CDTP2_0_Calc_CDTP2_1" xml:space="preserve">
-    <value>CDTP2 cíclico 0x{0:X4}, CDTP2 calculado {0x1:X4}</value>
+    <value>CDTP2 cíclico 0x{0:X4}, CDTP2 calculado 0x{1:X4}</value>
   </data>
     <data name="Cyclic_CDTP3_0_Calc_CDTP3_1" xml:space="preserve">
-    <value>CDTP3 cíclico 0x{0:X4}, CDTP3 calculado {0x1:X4}</value>
+    <value>CDTP3 cíclico 0x{0:X4}, CDTP3 calculado 0x{1:X4}</value>
   </data>
     <data name="Cyclic_CDTP4_0_Calc_CDTP4_1" xml:space="preserve">
-    <value>CDTP4 cíclico 0x{0:X4}, CDTP4 calculado {0x1:X4}</value>
+    <value>CDTP4 cíclico 0x{0:X4}, CDTP4 calculado 0x{1:X4}</value>
   </data>
     <data name="Detected_CD_EG_Pack_in_subchannel" xml:space="preserve">
     <value>Detectado paquete CD+EG en el subcanal</value>
