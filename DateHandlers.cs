@@ -215,9 +215,8 @@ public static class DateHandlers
         int day   = (dateRecord & 0x01F0) >> 4;
         int month = dateRecord & 0x000F;
 
-        AaruConsole.DebugWriteLine(PASCAL_MODULE_NAME,
-                                   "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year, month,
-                                   day);
+        AaruConsole.DebugWriteLine(PASCAL_MODULE_NAME, "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
+                                   dateRecord, year, month, day);
 
         return new DateTime(year, month, day);
     }
@@ -235,11 +234,11 @@ public static class DateHandlers
         int minute = (time & 0x7E0)  >> 5;
         int second = (time & 0x1F) * 2;
 
-        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date,
-                                   year, month, day);
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date, year,
+                                   month, day);
 
-        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}",
-                                   time, hour, minute, second);
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time,
+                                   hour, minute, second);
 
         DateTime dosDate;
 
@@ -326,8 +325,7 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime Os9ToDateTime(byte[] date)
     {
-        if(date == null ||
-           date.Length != 3 && date.Length != 5)
+        if(date == null || date.Length != 3 && date.Length != 5)
             return DateTime.MinValue;
 
         DateTime os9Date;

@@ -326,20 +326,22 @@ public static class Marshal
                 var    flt   = (float)(fi.GetValue(str) ?? default(float));
                 byte[] flt_b = BitConverter.GetBytes(flt);
 
-                fi.SetValue(str, BitConverter.ToSingle(new[] { flt_b[3], flt_b[2], flt_b[1], flt_b[0] }, 0));
+                fi.SetValue(str, BitConverter.ToSingle(new[]
+                {
+                    flt_b[3], flt_b[2], flt_b[1], flt_b[0]
+                }, 0));
             }
             else if(fi.FieldType == typeof(double))
             {
                 var    dbl   = (double)(fi.GetValue(str) ?? default(double));
                 byte[] dbl_b = BitConverter.GetBytes(dbl);
 
-                fi.SetValue(
-                    str,
-                    BitConverter.ToDouble(
-                        new[] { dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2], dbl_b[1], dbl_b[0] }, 0));
+                fi.SetValue(str, BitConverter.ToDouble(new[]
+                {
+                    dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2], dbl_b[1], dbl_b[0]
+                }, 0));
             }
-            else if(fi.FieldType == typeof(byte) ||
-                    fi.FieldType == typeof(sbyte))
+            else if(fi.FieldType == typeof(byte) || fi.FieldType == typeof(sbyte))
             {
                 // Do nothing, can't byteswap them!
             }
@@ -349,8 +351,7 @@ public static class Marshal
             }
 
             // TODO: Swap arrays
-            else if(fi.FieldType.IsValueType &&
-                    fi.FieldType is { IsEnum: false, IsArray: false })
+            else if(fi.FieldType.IsValueType && fi.FieldType is { IsEnum: false, IsArray: false })
             {
                 object obj  = fi.GetValue(str);
                 object strc = SwapStructureMembersEndian(obj);
@@ -398,8 +399,7 @@ public static class Marshal
             }
 
             // TODO: Swap arrays
-            else if(fi.FieldType.IsValueType &&
-                    fi.FieldType is { IsEnum: false, IsArray: false })
+            else if(fi.FieldType.IsValueType && fi.FieldType is { IsEnum: false, IsArray: false })
             {
                 object obj  = fi.GetValue(str);
                 object strc = SwapStructureMembersEndianPdp(obj);
@@ -446,8 +446,7 @@ public static class Marshal
 
         var off = 0;
 
-        if(hex[0] == '0' &&
-           (hex[1] == 'x' || hex[1] == 'X'))
+        if(hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
             off = 2;
 
         outBuf = new byte[(hex.Length - off) / 2];

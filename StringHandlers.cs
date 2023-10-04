@@ -62,8 +62,7 @@ public static class StringHandlers
             {
                 if(twoBytes)
                 {
-                    if(i + 1          < cString.Length &&
-                       cString[i + 1] == 0)
+                    if(i + 1 < cString.Length && cString[i + 1] == 0)
                     {
                         len++;
 
@@ -160,8 +159,7 @@ public static class StringHandlers
         byte compId = dstring[0];
         var  temp   = "";
 
-        if(compId != 8 &&
-           compId != 16)
+        if(compId != 8 && compId != 16)
             return null;
 
         for(var byteIndex = 1; byteIndex < dstring.Length;)
