@@ -229,7 +229,7 @@ public sealed partial class OperaFS
             return ErrorNumber.InvalidArgument;
 
         KeyValuePair<string, DirectoryEntryWithPointers> dirent =
-            parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
+            parent.FirstOrDefault(t => t.Key.Equals(pieces[^1], StringComparison.CurrentCultureIgnoreCase));
 
         if(string.IsNullOrEmpty(dirent.Key))
             return ErrorNumber.NoSuchFile;

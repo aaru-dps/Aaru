@@ -102,7 +102,7 @@ public static class CompactDisc
                     // Plextor READ CDDA
                     if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
                        dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
-                       dev.Manufacturer.ToLowerInvariant()                                        == "plextor")
+                       dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase))
                     {
                         sense = dev.PlextorReadCdDa(out cmdBuf, out _, wantedLba, sectorSize, 3, PlextorSubchannel.None,
                                                     dev.Timeout, out _);
@@ -147,7 +147,7 @@ public static class CompactDisc
                        (debug || dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled     == true) == true ||
                         dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled               == true) == true ||
                         dbDev?.SCSI?.MultiMediaDevice?.TestedMedia?.Any(d => d.CanReadCdScrambled == true) == true ||
-                        dev.Manufacturer.ToLowerInvariant() == "hl-dt-st"))
+                        dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase)))
                     {
                         sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
                                            false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,

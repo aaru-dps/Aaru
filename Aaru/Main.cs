@@ -79,8 +79,8 @@ class MainClass
 
         _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
-        if(args.Length                == 1 &&
-           args[0].ToLowerInvariant() == "gui")
+        if(args.Length == 1 &&
+           args[0].Equals("gui", StringComparison.InvariantCultureIgnoreCase))
             return Gui.Main.Start(args);
 
         AaruConsole.WriteLineEvent += (format, objects) =>
@@ -198,8 +198,9 @@ class MainClass
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.
         if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL &&
-           (args.Length < 1 || args.Length >= 1 && args[0].ToLowerInvariant() != "gui" &&
-            args[0].ToLowerInvariant()     != "configure"))
+           (args.Length < 1 || args.Length >= 1                                       &&
+            !args[0].Equals("gui",       StringComparison.InvariantCultureIgnoreCase) &&
+            !args[0].Equals("configure", StringComparison.InvariantCultureIgnoreCase)))
             new ConfigureCommand().DoConfigure(true);
 
         Statistics.LoadStats();

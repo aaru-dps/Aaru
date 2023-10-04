@@ -329,9 +329,9 @@ public sealed partial class Alcohol120
 
         if(_alcFooter.filenameOffset == 0)
         {
-            if(Path.GetExtension(imageFilter.BasePath).ToLowerInvariant() == ".mds")
+            if(Path.GetExtension(imageFilter.BasePath).Equals(".mds", StringComparison.InvariantCultureIgnoreCase))
                 alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".mdf";
-            else if(Path.GetExtension(imageFilter.BasePath).ToLowerInvariant() == ".xmd")
+            else if(Path.GetExtension(imageFilter.BasePath).Equals(".xmd", StringComparison.InvariantCultureIgnoreCase))
                 alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
         }
         else if(string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)

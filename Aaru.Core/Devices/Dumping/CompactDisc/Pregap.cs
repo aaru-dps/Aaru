@@ -709,7 +709,7 @@ partial class Dump
                 subBuf = DeinterleaveQ(cmdBuf);
             else if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
                     dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
-                    dev.Manufacturer.ToLowerInvariant()                                        == "plextor")
+                    dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase))
                 sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 96, 1, PlextorSubchannel.All, dev.Timeout, out _);
 
             {

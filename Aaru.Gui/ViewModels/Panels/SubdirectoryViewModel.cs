@@ -162,38 +162,38 @@ public sealed class SubdirectoryViewModel
 
             if(DetectOS.IsWindows)
             {
-                if(filename.Contains('<')                ||
-                   filename.Contains('>')                ||
-                   filename.Contains(':')                ||
-                   filename.Contains('\\')               ||
-                   filename.Contains('/')                ||
-                   filename.Contains('|')                ||
-                   filename.Contains('?')                ||
-                   filename.Contains('*')                ||
-                   filename.Any(c => c < 32)             ||
-                   filename.ToUpperInvariant() == "CON"  ||
-                   filename.ToUpperInvariant() == "PRN"  ||
-                   filename.ToUpperInvariant() == "AUX"  ||
-                   filename.ToUpperInvariant() == "COM1" ||
-                   filename.ToUpperInvariant() == "COM2" ||
-                   filename.ToUpperInvariant() == "COM3" ||
-                   filename.ToUpperInvariant() == "COM4" ||
-                   filename.ToUpperInvariant() == "COM5" ||
-                   filename.ToUpperInvariant() == "COM6" ||
-                   filename.ToUpperInvariant() == "COM7" ||
-                   filename.ToUpperInvariant() == "COM8" ||
-                   filename.ToUpperInvariant() == "COM9" ||
-                   filename.ToUpperInvariant() == "LPT1" ||
-                   filename.ToUpperInvariant() == "LPT2" ||
-                   filename.ToUpperInvariant() == "LPT3" ||
-                   filename.ToUpperInvariant() == "LPT4" ||
-                   filename.ToUpperInvariant() == "LPT5" ||
-                   filename.ToUpperInvariant() == "LPT6" ||
-                   filename.ToUpperInvariant() == "LPT7" ||
-                   filename.ToUpperInvariant() == "LPT8" ||
-                   filename.ToUpperInvariant() == "LPT9" ||
-                   filename.Last()             == '.'    ||
-                   filename.Last()             == ' ')
+                if(filename.Contains('<')                                               ||
+                   filename.Contains('>')                                               ||
+                   filename.Contains(':')                                               ||
+                   filename.Contains('\\')                                              ||
+                   filename.Contains('/')                                               ||
+                   filename.Contains('|')                                               ||
+                   filename.Contains('?')                                               ||
+                   filename.Contains('*')                                               ||
+                   filename.Any(c => c < 32)                                            ||
+                   filename.Equals("CON",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("PRN",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("AUX",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM1", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM2", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM3", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM4", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM5", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM6", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM7", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM8", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM9", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT1", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT2", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT3", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT4", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT5", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT6", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT7", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT8", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT9", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Last() == '.'                                               ||
+                   filename.Last() == ' ')
                 {
                     char[] chars;
 

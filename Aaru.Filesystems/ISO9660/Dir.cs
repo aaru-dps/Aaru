@@ -85,7 +85,7 @@ public sealed partial class ISO9660
         string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DecodedDirectoryEntry> entry =
-            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+            _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
 
         if(string.IsNullOrEmpty(entry.Key))
             return ErrorNumber.NoSuchFile;
@@ -99,7 +99,8 @@ public sealed partial class ISO9660
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
+            entry = currentDirectory.FirstOrDefault(
+                t => t.Key.Equals(pieces[p], StringComparison.CurrentCultureIgnoreCase));
 
             if(string.IsNullOrEmpty(entry.Key))
                 return ErrorNumber.NoSuchFile;
@@ -532,8 +533,10 @@ public sealed partial class ISO9660
     {
         KeyValuePair<string, DecodedDirectoryEntry> transTblEntry =
             entries.FirstOrDefault(e => !e.Value.Flags.HasFlag(FileFlags.Directory) &&
-                                        (e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl" ||
-                                         e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl;1"));
+                                        (e.Value.Filename.Equals("trans.tbl",
+                                                                 StringComparison.CurrentCultureIgnoreCase) ||
+                                         e.Value.Filename.Equals("trans.tbl;1",
+                                                                 StringComparison.CurrentCultureIgnoreCase)));
 
         if(transTblEntry.Value == null)
             return;
@@ -576,9 +579,10 @@ public sealed partial class ISO9660
 
             KeyValuePair<string, DecodedDirectoryEntry> originalEntry =
                 entries.FirstOrDefault(e => !e.Value.Flags.HasFlag(FileFlags.Directory) &&
-                                            (e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == originalName ||
-                                             e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) ==
-                                             originalNameWithVersion));
+                                            (e.Value.Filename.Equals(originalName,
+                                                                     StringComparison.CurrentCultureIgnoreCase) ||
+                                             e.Value.Filename.Equals(originalNameWithVersion,
+                                                                     StringComparison.CurrentCultureIgnoreCase)));
 
             originalEntry.Value.Filename = newName;
             entries.Remove(originalEntry.Key);
@@ -1119,9 +1123,7 @@ public sealed partial class ISO9660
             while(currentPiece < pieces.Length)
             {
                 PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                    p.Name.ToLower(CultureInfo.
-                                       CurrentUICulture) ==
-                    pieces[currentPiece]);
+                    p.Name.Equals(pieces[currentPiece], StringComparison.CurrentCultureIgnoreCase));
 
                 if(currentEntry is null)
                     break;

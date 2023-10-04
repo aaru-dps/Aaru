@@ -80,7 +80,7 @@ public sealed partial class OperaFS
         string[] pieces = cutPath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntryWithPointers> entry =
-            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+            _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
 
         if(string.IsNullOrEmpty(entry.Key))
             return ErrorNumber.NoSuchFile;
@@ -94,7 +94,8 @@ public sealed partial class OperaFS
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
+            entry = currentDirectory.FirstOrDefault(
+                t => t.Key.Equals(pieces[p], StringComparison.CurrentCultureIgnoreCase));
 
             if(string.IsNullOrEmpty(entry.Key))
                 return ErrorNumber.NoSuchFile;

@@ -1546,8 +1546,8 @@ public sealed partial class CdrWin
                     _imageInfo.Application = "Redump.org";
 
                 // Detect ISOBuster extensions
-                else if(_discImage.OriginalMediaType != null               ||
-                        _discImage.Comment.ToLower().Contains("isobuster") ||
+                else if(_discImage.OriginalMediaType != null                                                  ||
+                        _discImage.Comment.Contains("isobuster", StringComparison.InvariantCultureIgnoreCase) ||
                         sessions.Length > 1)
                     _imageInfo.Application = "ISOBuster";
                 else

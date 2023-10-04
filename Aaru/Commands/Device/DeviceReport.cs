@@ -274,7 +274,7 @@ sealed class DeviceReportCommand : Command
                 }
                 else if(!removable &&
                         report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.
-                                Removable) == true)
+                            Removable) == true)
                     removable = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
 
                 if(removable)
@@ -426,8 +426,9 @@ sealed class DeviceReportCommand : Command
                                                                         or MediumTypes.ReadWriteBlockDevice)
                             goto default;
 
-                        bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" && dev.Model.
-                                             ToLowerInvariant().StartsWith("rrd", StringComparison.OrdinalIgnoreCase);
+                        bool iomegaRev =
+                            dev.Manufacturer.Equals("iomega", StringComparison.InvariantCultureIgnoreCase) && dev.Model.
+                                StartsWith("rrd", StringComparison.InvariantCultureIgnoreCase);
 
                         if(trapDisc)
                         {
@@ -709,10 +710,13 @@ sealed class DeviceReportCommand : Command
                                  tryNec          = false,
                                  tryMediaTekF106 = false;
 
-                            tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
-                            tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
-                            tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
-                            tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
+                            tryPlextor |=
+                                dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase);
+                            tryHldtst |=
+                                dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase);
+                            tryPioneer |=
+                                dev.Manufacturer.Equals("pioneer", StringComparison.InvariantCultureIgnoreCase);
+                            tryNec |= dev.Manufacturer.Equals("nec", StringComparison.InvariantCultureIgnoreCase);
 
                             if(!iomegaRev)
                             {

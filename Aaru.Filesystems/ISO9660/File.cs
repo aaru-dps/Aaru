@@ -500,14 +500,15 @@ public sealed partial class ISO9660
             return ErrorNumber.InvalidArgument;
 
         KeyValuePair<string, DecodedDirectoryEntry> dirent =
-            parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
+            parent.FirstOrDefault(t => t.Key.Equals(pieces[^1], StringComparison.CurrentCultureIgnoreCase));
 
         if(string.IsNullOrEmpty(dirent.Key))
         {
             if(!_joliet &&
                !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
             {
-                dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1] + ";1");
+                dirent = parent.FirstOrDefault(
+                    t => t.Key.Equals(pieces[^1] + ";1", StringComparison.CurrentCultureIgnoreCase));
 
                 if(string.IsNullOrEmpty(dirent.Key))
                     return ErrorNumber.NoSuchFile;

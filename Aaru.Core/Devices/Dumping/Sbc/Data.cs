@@ -25,6 +25,7 @@
 // Copyright © 2020-2023 Rebecca Wallander
 // ****************************************************************************/
 
+using System;
 using System.Linq;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -214,7 +215,7 @@ partial class Dump
             }
             else
             {
-                if(_dev.Manufacturer.ToLowerInvariant() == "insite")
+                if(_dev.Manufacturer.Equals("insite", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _resume.BadBlocks.Add(i);
                     _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
