@@ -69,7 +69,7 @@ public static partial class ArrayHelpers
         var sb = new StringBuilder();
 
         for(long i = 0; i < array.LongLength; i++)
-            sb.AppendFormat("{0:x2}", array[i]);
+            sb.Append($"{array[i]:x2}");
 
         return upper ? sb.ToString().ToUpper() : sb.ToString();
     }

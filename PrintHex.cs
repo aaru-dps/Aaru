@@ -87,7 +87,7 @@ public static class PrintHex
         sb.Append("  ");
 
         for(var i = 0; i < width; i++)
-            sb.AppendFormat(" {0:X2}", i);
+            sb.Append($" {i:X2}");
 
         if(color)
             sb.Append("\u001b[0m");
@@ -114,7 +114,7 @@ public static class PrintHex
 
             for(var j = 0; j < lastBytes; j++)
             {
-                sb.AppendFormat(" {0:X2}", array[b]);
+                sb.Append($" {array[b]:X2}");
                 b++;
             }
 
