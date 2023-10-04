@@ -206,13 +206,13 @@ public class Metadata
                 metadata.BlockMedias.Add(media);
         }
 
-        if(cicm.AudioMedia is not null)
-        {
-            metadata.AudioMedias = new List<AudioMedia>();
+        if(cicm.AudioMedia is null)
+            return metadata;
 
-            foreach(AudioMediaType media in cicm.AudioMedia)
-                metadata.AudioMedias.Add(media);
-        }
+        metadata.AudioMedias = new List<AudioMedia>();
+
+        foreach(AudioMediaType media in cicm.AudioMedia)
+            metadata.AudioMedias.Add(media);
 
         return metadata;
     }
