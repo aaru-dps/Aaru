@@ -393,12 +393,12 @@ public static class Sector
 
                 for(var i = 16; i < 2352; i++)
                 {
-                    if(buffer[i] != 0x00)
-                    {
-                        empty = false;
+                    if(buffer[i] == 0x00)
+                        continue;
 
-                        break;
-                    }
+                    empty = false;
+
+                    break;
                 }
 
                 sb.AppendLine(empty ? Localization.Correct_sector_contents : Localization.Incorrect_sector_contents);
@@ -411,12 +411,12 @@ public static class Sector
 
                 for(var i = 2068; i < 2076; i++)
                 {
-                    if(buffer[i] != 0x00)
-                    {
-                        empty = false;
+                    if(buffer[i] == 0x00)
+                        continue;
 
-                        break;
-                    }
+                    empty = false;
+
+                    break;
                 }
 
                 sb.AppendLine(empty ? Localization.Correct_zero_fill : Localization.Incorrect_zero_fill);
