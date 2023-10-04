@@ -553,8 +553,7 @@ public sealed partial class CloneCd
                                     else
                                         currentTrack.Type = TrackType.Audio;
 
-                                    if(!_trackFlags.ContainsKey(descriptor.POINT))
-                                        _trackFlags.Add(descriptor.POINT, descriptor.CONTROL);
+                                    _trackFlags.TryAdd(descriptor.POINT, descriptor.CONTROL);
 
                                     if(_subFilter != null)
                                     {

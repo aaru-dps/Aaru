@@ -509,14 +509,14 @@ public sealed partial class BlindWrite4
 
                         track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                           bwTrack.filename.ToLower(CultureInfo.
-                                                                              CurrentCulture)));
+                                                                                  CurrentCulture)));
 
                         if(track.Filter != null)
                             break;
 
                         track.Filter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                           bwTrack.filename.ToUpper(CultureInfo.
-                                                                              CurrentCulture)));
+                                                                                  CurrentCulture)));
 
                         if(track.Filter != null)
                             break;
@@ -535,7 +535,7 @@ public sealed partial class BlindWrite4
                                                                                   StringSplitOptions.
                                                                                       RemoveEmptyEntries).
                                                                               Last().ToLower(CultureInfo.
-                                                                                  CurrentCulture)));
+                                                                                      CurrentCulture)));
 
                         if(track.Filter != null)
                             break;
@@ -545,7 +545,7 @@ public sealed partial class BlindWrite4
                                                                                   StringSplitOptions.
                                                                                       RemoveEmptyEntries).
                                                                               Last().ToUpper(CultureInfo.
-                                                                                  CurrentCulture)));
+                                                                                      CurrentCulture)));
 
                         track.Filter = _dataFilter;
                     } while(true);
@@ -685,11 +685,9 @@ public sealed partial class BlindWrite4
                 else
                     _offsetMap[track.Sequence] = 0;
 
-                if(!_offsetMap.ContainsKey(track.Sequence))
-                    _offsetMap.Add(track.Sequence, track.StartSector);
+                _offsetMap.TryAdd(track.Sequence, track.StartSector);
 
-                if(!_trackFlags.ContainsKey(track.Sequence))
-                    _trackFlags.Add(track.Sequence, (byte)(bwTrack.adrCtl & 0x0F));
+                _trackFlags.TryAdd(track.Sequence, (byte)(bwTrack.adrCtl & 0x0F));
 
                 if(bwTrack.lastSector > _imageInfo.Sectors)
                     _imageInfo.Sectors = bwTrack.lastSector + 1;

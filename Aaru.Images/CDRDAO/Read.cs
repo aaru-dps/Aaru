@@ -232,9 +232,8 @@ public sealed partial class Cdrdao
                     {
                         currentSector += currentTrack.Sectors;
 
-                        if(currentTrack.Pregap != currentTrack.Sectors &&
-                           !currentTrack.Indexes.ContainsKey(1))
-                            currentTrack.Indexes.Add(1, currentTrack.StartSector + currentTrack.Pregap);
+                        if(currentTrack.Pregap != currentTrack.Sectors)
+                            currentTrack.Indexes.TryAdd(1, currentTrack.StartSector + currentTrack.Pregap);
 
                         _discimage.Tracks.Add(currentTrack);
 
@@ -569,9 +568,8 @@ public sealed partial class Cdrdao
 
             if(currentTrack.Sequence != 0)
             {
-                if(currentTrack.Pregap != currentTrack.Sectors &&
-                   !currentTrack.Indexes.ContainsKey(1))
-                    currentTrack.Indexes.Add(1, currentTrack.StartSector + currentTrack.Pregap);
+                if(currentTrack.Pregap != currentTrack.Sectors)
+                    currentTrack.Indexes.TryAdd(1, currentTrack.StartSector + currentTrack.Pregap);
 
                 _discimage.Tracks.Add(currentTrack);
             }

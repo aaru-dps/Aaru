@@ -351,8 +351,7 @@ public sealed partial class ISO9660
                 continue;
             }
 
-            if(!entries.ContainsKey(entry.Filename))
-                entries.Add(entry.Filename, entry);
+            entries.TryAdd(entry.Filename, entry);
 
             entryOff += record.length;
         }
@@ -1123,7 +1122,7 @@ public sealed partial class ISO9660
             while(currentPiece < pieces.Length)
             {
                 PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                    p.Name.Equals(pieces[currentPiece], StringComparison.CurrentCultureIgnoreCase));
+                        p.Name.Equals(pieces[currentPiece], StringComparison.CurrentCultureIgnoreCase));
 
                 if(currentEntry is null)
                     break;

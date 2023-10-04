@@ -164,11 +164,8 @@ public sealed partial class AppleDOS
 
                 string filename = StringHandlers.SpacePaddedToString(filenameB, _encoding);
 
-                if(!_catalogCache.ContainsKey(filename))
-                    _catalogCache.Add(filename, ts);
-
-                if(!_fileTypeCache.ContainsKey(filename))
-                    _fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
+                _catalogCache.TryAdd(filename, ts);
+                _fileTypeCache.TryAdd(filename, (byte)(entry.typeAndFlags & 0x7F));
 
                 if((entry.typeAndFlags & 0x80) == 0x80 &&
                    !_lockedFiles.Contains(filename))

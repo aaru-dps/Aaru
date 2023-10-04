@@ -242,8 +242,7 @@ public sealed partial class Alcohol120
                     track.startLba = 0;
                 }
 
-                if(!sesToc.ContainsKey(track.point))
-                    sesToc.Add(track.point, track);
+                sesToc.TryAdd(track.point, track);
 
                 if(track.point < 0xA0)
                     _alcTracks.Add(track.point, track);

@@ -786,8 +786,8 @@ partial class Dump
             ReadSbcData(blocks,       blocksToRead,      blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                         ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
                         ref newTrim,  ref dvdDecrypt,
-                        mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted)
-                            ? mediaTags[MediaTagType.DVD_DiscKey_Decrypted]
+                        mediaTags.TryGetValue(MediaTagType.DVD_DiscKey_Decrypted, out byte[] tag)
+                            ? tag
                             : null);
         }
 
@@ -860,8 +860,8 @@ partial class Dump
            _retryPasses > 0                           &&
            Settings.Settings.Current.EnableDecryption &&
            _titleKeys                                 &&
-           mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted))
-            RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
+           mediaTags.TryGetValue(MediaTagType.DVD_DiscKey_Decrypted, out byte[] mediaTag))
+            RetryTitleKeys(dvdDecrypt, mediaTag, ref totalDuration);
 
     #endregion Error handling
 

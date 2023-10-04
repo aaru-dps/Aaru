@@ -427,8 +427,7 @@ public static class CompactDisc
 
                             // When we are dumping we calculate the pregap in reverse from index 1 back.
                             // When we are not, we go from index 0.
-                            if(!smallestPregapLbaPerTrack.ContainsKey(trackNo))
-                                smallestPregapLbaPerTrack[trackNo] = dumping ? 1 : 0;
+                            smallestPregapLbaPerTrack.TryAdd(trackNo, dumping ? 1 : 0);
 
                             uint firstTrackNumberInSameSession = tracks.
                                                                  Where(t => t.Session == tracks[i].Session).
