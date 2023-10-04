@@ -65,32 +65,32 @@ static partial class MainClass
         return ret;
     }
 
-    static string DecodeAtaError(byte status)
+    static string DecodeAtaError(byte error)
     {
         var ret = "";
 
-        if((status & 0x80) == 0x80)
+        if((error & 0x80) == 0x80)
             ret += "BBK ";
 
-        if((status & 0x40) == 0x40)
+        if((error & 0x40) == 0x40)
             ret += "UNC ";
 
-        if((status & 0x20) == 0x20)
+        if((error & 0x20) == 0x20)
             ret += "MC ";
 
-        if((status & 0x10) == 0x10)
+        if((error & 0x10) == 0x10)
             ret += "IDNF ";
 
-        if((status & 0x8) == 0x8)
+        if((error & 0x8) == 0x8)
             ret += "MCR ";
 
-        if((status & 0x4) == 0x4)
+        if((error & 0x4) == 0x4)
             ret += "ABRT ";
 
-        if((status & 0x2) == 0x2)
+        if((error & 0x2) == 0x2)
             ret += "TK0NF ";
 
-        if((status & 0x1) == 0x1)
+        if((error & 0x1) == 0x1)
             ret += "AMNF ";
 
         return ret;
@@ -100,7 +100,7 @@ static partial class MainClass
     {
         var sb = new StringBuilder();
         sb.AppendFormat(Localization.Status_0,    DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0,     DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Error_0,     DecodeAtaError(registers.Error)).AppendLine();
         sb.AppendFormat(Localization.Device_0,    registers.DeviceHead >> 4 & 0x01).AppendLine();
         sb.AppendFormat(Localization.Cylinder_0,  registers.CylinderHigh << 8 + registers.CylinderLow).AppendLine();
         sb.AppendFormat(Localization.Head_0,      registers.DeviceHead & 0xF).AppendLine();
@@ -117,7 +117,7 @@ static partial class MainClass
     {
         var sb = new StringBuilder();
         sb.AppendFormat(Localization.Status_0, DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0,  DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Error_0,  DecodeAtaError(registers.Error)).AppendLine();
         sb.AppendFormat(Localization.Device_0, registers.DeviceHead >> 4 & 0x01).AppendLine();
 
         sb.AppendFormat(Localization.LBA_0,
@@ -138,7 +138,7 @@ static partial class MainClass
     {
         var sb = new StringBuilder();
         sb.AppendFormat(Localization.Status_0, DecodeAtaStatus(registers.Status)).AppendLine();
-        sb.AppendFormat(Localization.Error_0,  DecodeAtaStatus(registers.Error)).AppendLine();
+        sb.AppendFormat(Localization.Error_0,  DecodeAtaError(registers.Error)).AppendLine();
         sb.AppendFormat(Localization.Device_0, registers.DeviceHead >> 4 & 0x01).AppendLine();
 
         ulong lba = registers.LbaHighPrevious * 0x10000000000UL;
