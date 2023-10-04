@@ -116,7 +116,8 @@ public sealed partial class KryoFlux
 
                     continue;
                 }
-                else if(cylinder == 1)
+
+                if(cylinder == 1)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Cannot_find_cyl_1_supposing_double_stepping);
@@ -125,13 +126,11 @@ public sealed partial class KryoFlux
 
                     continue;
                 }
-                else
-                {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0,
-                                               cylinder);
 
-                    break;
-                }
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0,
+                                           cylinder);
+
+                break;
             }
 
             var         trackFilter = new ZZZNoFilter();

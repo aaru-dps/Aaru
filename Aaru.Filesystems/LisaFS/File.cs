@@ -274,13 +274,11 @@ public sealed partial class LisaFS
 
                 return ErrorNumber.NoError;
             }
-            else
-            {
-                errno = _device.ReadSectorsTag(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
-                                               SectorTagType.AppleSectorTag, out buf);
 
-                return errno != ErrorNumber.NoError ? errno : ErrorNumber.NoError;
-            }
+            errno = _device.ReadSectorsTag(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
+                                           SectorTagType.AppleSectorTag, out buf);
+
+            return errno != ErrorNumber.NoError ? errno : ErrorNumber.NoError;
         }
 
         LisaTag.PriamTag sysTag;
@@ -354,57 +352,54 @@ public sealed partial class LisaFS
             if(!_debug ||
                fileId == 0)
                 return ErrorNumber.NoSuchFile;
-            else
+            stat = new FileEntryInfo();
+
+            error = GetAttributes(fileId, out FileAttributes attrs);
+
+            stat.Attributes = attrs;
+
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            if(fileId < 0                   &&
+               fileId != FILEID_BOOT_SIGNED &&
+               fileId != FILEID_LOADER_SIGNED)
             {
-                stat = new FileEntryInfo();
-
-                error = GetAttributes(fileId, out FileAttributes attrs);
-
-                stat.Attributes = attrs;
+                error = ReadExtentsFile((short)(fileId * -1), out file);
 
                 if(error != ErrorNumber.NoError)
                     return error;
 
-                if(fileId < 0                   &&
-                   fileId != FILEID_BOOT_SIGNED &&
-                   fileId != FILEID_LOADER_SIGNED)
-                {
-                    error = ReadExtentsFile((short)(fileId * -1), out file);
+                stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
+                stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
+                stat.BackupTime    = DateHandlers.LisaToDateTime(file.dtb);
+                stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
-                    if(error != ErrorNumber.NoError)
-                        return error;
-
-                    stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
-                    stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
-                    stat.BackupTime    = DateHandlers.LisaToDateTime(file.dtb);
-                    stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
-
-                    stat.Inode     = (ulong)fileId;
-                    stat.Links     = 0;
-                    stat.Length    = _mddf.datasize;
-                    stat.BlockSize = _mddf.datasize;
-                    stat.Blocks    = 1;
-                }
-                else
-                {
-                    error = ReadSystemFile(fileId, out byte[] buf);
-
-                    if(error != ErrorNumber.NoError)
-                        return error;
-
-                    stat.CreationTime = fileId != 4 ? _mddf.dtvc : _mddf.dtcc;
-
-                    stat.BackupTime = _mddf.dtvb;
-
-                    stat.Inode     = (ulong)fileId;
-                    stat.Links     = 0;
-                    stat.Length    = buf.Length;
-                    stat.BlockSize = _mddf.datasize;
-                    stat.Blocks    = buf.Length / _mddf.datasize;
-                }
-
-                return ErrorNumber.NoError;
+                stat.Inode     = (ulong)fileId;
+                stat.Links     = 0;
+                stat.Length    = _mddf.datasize;
+                stat.BlockSize = _mddf.datasize;
+                stat.Blocks    = 1;
             }
+            else
+            {
+                error = ReadSystemFile(fileId, out byte[] buf);
+
+                if(error != ErrorNumber.NoError)
+                    return error;
+
+                stat.CreationTime = fileId != 4 ? _mddf.dtvc : _mddf.dtcc;
+
+                stat.BackupTime = _mddf.dtvb;
+
+                stat.Inode     = (ulong)fileId;
+                stat.Links     = 0;
+                stat.Length    = buf.Length;
+                stat.BlockSize = _mddf.datasize;
+                stat.Blocks    = buf.Length / _mddf.datasize;
+            }
+
+            return ErrorNumber.NoError;
         }
 
         stat = new FileEntryInfo();
