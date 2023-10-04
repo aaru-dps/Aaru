@@ -340,11 +340,10 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         {
             byte[]      buffer = Array.Empty<byte>();
             ErrorNumber ret    = fs.GetXattr(path, xattr, ref buffer);
-            string      data;
 
-            data = ret != ErrorNumber.NoError && ret != ErrorNumber.OutOfRange
-                       ? Md5Context.Data(Array.Empty<byte>(), out _)
-                       : Md5Context.Data(buffer,              out _);
+            string data = ret != ErrorNumber.NoError && ret != ErrorNumber.OutOfRange
+                              ? Md5Context.Data(Array.Empty<byte>(), out _)
+                              : Md5Context.Data(buffer,              out _);
 
             xattrs[xattr] = data;
         }

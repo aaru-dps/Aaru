@@ -58,7 +58,6 @@ public sealed partial class UDF
         if(imagePlugin.Info.SectorSize < 512)
             return false;
 
-        byte[] sector;
         var    anchor = new AnchorVolumeDescriptorPointer();
 
         // All positions where anchor may reside, with the ratio between 512 and 2048bps
@@ -69,9 +68,9 @@ public sealed partial class UDF
             new ulong[] { partition.End - 1024, 4 }, new ulong[] { partition.End - 4, 4 }
         };
 
-        var  anchorFound = false;
-        uint ratio       = 1;
-        sector = null;
+        var    anchorFound = false;
+        uint   ratio       = 1;
+        byte[] sector      = null;
 
         foreach(ulong[] position in from position in
                                         positions.Where(position =>
