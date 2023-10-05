@@ -32,7 +32,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,8 +49,7 @@ public class PluginRegister
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
     /// <summary>List of all filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> Filesystems;
-    /// <summary>List of filter plugins</summary>
-    public readonly SortedDictionary<string, Type> Filters;
+
     /// <summary>List of floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> FloppyImages;
     /// <summary>List of all media image plugins</summary>
@@ -66,7 +67,6 @@ public class PluginRegister
 
     PluginRegister()
     {
-        Filters               = new SortedDictionary<string, Type>();
         Filesystems           = new SortedDictionary<string, Type>();
         ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
         Partitions            = new SortedDictionary<string, Type>();
@@ -76,6 +76,19 @@ public class PluginRegister
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         Archives              = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of filter plugins</summary>
+    public SortedDictionary<string, IFilter> Filters
+    {
+        get
+        {
+            SortedDictionary<string, IFilter> filters = new();
+            foreach(IFilter plugin in _serviceProvider.GetServices<IFilter>())
+                filters.Add(plugin.Name.ToLower(), plugin);
+
+            return filters;
+        }
     }
 
     /// <summary>List of checksum plugins</summary>
@@ -137,11 +150,7 @@ public class PluginRegister
                 Filesystems.Add(plugin.Name.ToLower(), type);
         }
 
-        foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IFilter plugin && !Filters.ContainsKey(plugin.Name.ToLower()))
-                Filters.Add(plugin.Name.ToLower(), type);
-        }
+        pluginRegister.RegisterFilterPlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
         {
@@ -195,5 +204,44 @@ public class PluginRegister
                !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
                 ByteAddressableImages.Add(plugin.Name.ToLower(), type);
         }
+    }
+
+    /// <summary>Gets the filter that allows to read the specified path</summary>
+    /// <param name="path">Path</param>
+    /// <returns>The filter that allows reading the specified path</returns>
+    public IFilter GetFilter(string path)
+    {
+        IFilter noFilter = null;
+
+        foreach(IFilter filter in Filters.Values)
+        {
+            try
+            {
+                if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+                {
+                    if(!filter.Identify(path))
+                        continue;
+
+                    var foundFilter =
+                        (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
+
+                    if(foundFilter?.Open(path) == ErrorNumber.NoError)
+                        return foundFilter;
+                }
+                else
+                    noFilter = filter;
+            }
+            catch(IOException)
+            {
+                // Ignore and continue
+            }
+        }
+
+        if(!noFilter?.Identify(path) == true)
+            return null;
+
+        noFilter?.Open(path);
+
+        return noFilter;
     }
 }

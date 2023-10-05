@@ -57,9 +57,11 @@ public interface IPluginRegister
     /// <returns>List of filesystem plugins</returns>
     List<Type> GetAllFilesystemPlugins();
 
-    /// <summary>Gets all filter plugins</summary>
-    /// <returns>List of filter plugins</returns>
-    List<Type> GetAllFilterPlugins();
+    /// <summary>
+    ///     Registers all filter plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterFilterPlugins(IServiceCollection services);
 
     /// <summary>Gets all floppy image plugins</summary>
     /// <returns>List of floppy image plugins</returns>
