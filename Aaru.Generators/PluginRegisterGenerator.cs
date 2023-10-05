@@ -161,16 +161,16 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(floppyImagePlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllFloppyImagePlugins() => new()");
+            sb.AppendLine("    public void RegisterFloppyImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
             foreach(string plugin in floppyImagePlugins)
-                sb.AppendLine($"        typeof({plugin}),");
+                sb.AppendLine($"        services.AddTransient<IFloppyImage, {plugin}>();");
 
-            sb.AppendLine("    };");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllFloppyImagePlugins() => null;");
+            sb.AppendLine("    public void RegisterFloppyImagePlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

@@ -76,16 +76,16 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in PluginRegister.Singleton.FloppyImages.Values)
+        foreach(IFloppyImage floppyImage in PluginRegister.Singleton.FloppyImages.Values)
         {
-            if(Activator.CreateInstance(imageType) is not IFloppyImage floppyImage)
+            if(floppyImage is null)
                 continue;
 
             FloppyImages.Add(new PluginModel
             {
                 Name    = floppyImage.Name,
                 Uuid    = floppyImage.Id,
-                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version?.ToString(),
                 Author  = floppyImage.Author
             });
         }
