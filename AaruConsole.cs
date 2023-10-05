@@ -30,6 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Console;
 
 /// <summary>
@@ -109,6 +111,7 @@ public delegate void DebugWithModuleWriteLineHandler(string module, string forma
 ///     Implements a console abstraction that defines four level of messages that can be routed to different consoles:
 ///     standard, error, verbose and debug.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class AaruConsole
 {
     /// <summary>Event to receive writings to the standard output console that should be followed by a line termination.</summary>
