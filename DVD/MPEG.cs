@@ -37,11 +37,15 @@
 // http://www.mpucoder.com/DVD/vobov.html
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Decryption.DVD;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class MPEG
 {
 #region Mpeg2StreamId enum

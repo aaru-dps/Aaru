@@ -1,3 +1,5 @@
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Decryption;
 
 public enum DvdCssKeyClass : byte
