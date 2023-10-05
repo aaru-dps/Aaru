@@ -163,7 +163,7 @@ public partial class Dump
             break;
         }
 
-        if(!sfcFound && !genesisFound && !smsFound && !n64Found)
+        if(!sfcFound && !genesisFound && !smsFound && !n64Found && !gbaFound && !gbFound && !gbcFound)
         {
             StoppingErrorMessage?.Invoke(Localization.Core.No_cartridge_found_not_dumping);
             _dumpLog.WriteLine(Localization.Core.No_cartridge_found_not_dumping);
