@@ -46,7 +46,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Decryption.DVD;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class MPEG
+public class Mpeg
 {
 #region Mpeg2StreamId enum
 
@@ -61,7 +61,7 @@ public class MPEG
         PrivateStream2                                                   = 0xBF,
         EcmStream                                                        = 0xF0,
         EmmStream                                                        = 0xF1,
-        ItuTRecH222_0_or_IsoIec13818_1AnnexA_or_IsoIec13818_6DsmccStream = 0xF2,
+        ItuTRecH222_0_Or_IsoIec13818_1AnnexA_Or_IsoIec13818_6DsmccStream = 0xF2,
         IsoIec13522Stream                                                = 0xF3,
         ItuTRecH222_1TypeA                                               = 0xF4,
         ItuTRecH222_1TypeB                                               = 0xF5,
@@ -155,13 +155,13 @@ public class MPEG
     public struct MpegHeader
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] startCode;
-        public byte packIdentifier;
+        public byte[] StartCode;
+        public byte PackIdentifier;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public byte[] scrBlock;
+        public byte[] SCRBlock;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] programMuxRateBlock;
-        byte packStuffingLengthBlock;
+        public byte[] ProgramMuxRateBlock;
+        byte _packStuffingLengthBlock;
     }
 
 #endregion

@@ -721,7 +721,7 @@ public class CSS
     static bool IsEncrypted(byte? cmi, byte[]? key, IReadOnlyList<byte> sector)
     {
         // Only MPEG packets can be encrypted.
-        if(!MPEG.IsMpegPacket(sector))
+        if(!Mpeg.IsMpegPacket(sector))
             return false;
 
         // The CMI tells us the sector is not encrypted.
@@ -733,9 +733,9 @@ public class CSS
             return false;
 
         // These packet types cannot be encrypted
-        if(sector[17] == (byte)MPEG.Mpeg2StreamId.SystemHeader  ||
-           sector[17] == (byte)MPEG.Mpeg2StreamId.PaddingStream ||
-           sector[17] == (byte)MPEG.Mpeg2StreamId.PrivateStream2)
+        if(sector[17] == (byte)Mpeg.Mpeg2StreamId.SystemHeader  ||
+           sector[17] == (byte)Mpeg.Mpeg2StreamId.PaddingStream ||
+           sector[17] == (byte)Mpeg.Mpeg2StreamId.PrivateStream2)
             return false;
 
         // MPEG Packetized Elementary Stream scrambling control value
