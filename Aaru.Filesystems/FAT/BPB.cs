@@ -124,10 +124,7 @@ public sealed partial class FAT
         var useDos33Bpb          = false;
         var userShortExtendedBpb = false;
         var useExtendedBpb       = false;
-        var useShortFat32        = false;
-        var useLongFat32         = false;
         var useApricotBpb        = false;
-        var useDecRainbowBpb     = false;
 
         if(imagePlugin.Info.SectorSize >= 256)
         {
@@ -371,8 +368,6 @@ public sealed partial class FAT
            !useDos33Bpb                                          &&
            !userShortExtendedBpb                                 &&
            !useExtendedBpb                                       &&
-           !useShortFat32                                        &&
-           !useLongFat32                                         &&
            !useApricotBpb)
         {
             // DEC Rainbow boots up with a Z80, first byte should be DI (disable interrupts)
@@ -453,10 +448,7 @@ public sealed partial class FAT
            !useHumanBpb          &&
            !userShortExtendedBpb &&
            !useExtendedBpb       &&
-           !useShortFat32        &&
-           !useLongFat32         &&
-           !useApricotBpb        &&
-           !useDecRainbowBpb)
+           !useApricotBpb)
         {
             imagePlugin.ReadSector(1 + partition.Start, out byte[] fatSector);
 
