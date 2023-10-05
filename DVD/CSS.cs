@@ -956,16 +956,16 @@ public class CSS
     /// <param name="input"><c>IOpticalMediaImage</c> to generate keys for.</param>
     /// <param name="partitions">List of <c>Partition</c> to analyze.</param>
     /// <param name="trackSectors">Total number of sectors for track.</param>
-    /// <param name="pluginType"></param>
+    /// <param name="fs"></param>
     /// <returns>A byte array with keys for every sector in the track. One key is 5 bytes.</returns>
-    public static byte[] GenerateTitleKeys(IOpticalMediaImage input, List<Partition> partitions, ulong trackSectors,
-                                           Type               pluginType)
+    public static byte[] GenerateTitleKeys(IOpticalMediaImage  input, List<Partition> partitions, ulong trackSectors,
+                                           IReadOnlyFilesystem fs)
     {
         var keys = new byte[trackSectors * 5];
 
         foreach(Partition partition in partitions)
         {
-            if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+            if(fs is null)
                 continue;
 
             if(!HasVideoTsFolder(input, fs, partition))
