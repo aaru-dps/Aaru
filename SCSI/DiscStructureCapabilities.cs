@@ -39,6 +39,8 @@ namespace Aaru.Decoders.SCSI;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static class DiscStructureCapabilities
 {
     public static Capability[] Decode(byte[] response)

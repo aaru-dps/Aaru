@@ -45,6 +45,8 @@ namespace Aaru.Decoders.Floppy;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "ClassCanBeSealed.Global")]
 public static class Apple2
 {
     const string MODULE_NAME = "Apple ][ GCR Decoder";
@@ -559,6 +561,7 @@ public static class Apple2
 
     public static List<RawTrack> MarshalDisk(byte[] data, int offset = 0) => MarshalDisk(data, out _, offset);
 
+    [SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
     public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
     {
         endOffset = offset;

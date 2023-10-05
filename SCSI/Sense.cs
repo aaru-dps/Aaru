@@ -36,6 +36,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Decoders.ATA;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Decoders.SCSI;
 
 public enum SenseType
@@ -574,8 +576,7 @@ public static class Sense
         filemark = (descriptor[3] & 0x80) > 0;
         eom      = (descriptor[3] & 0x40) > 0;
         ili      = (descriptor[3] & 0x20) > 0;
-    }
-
+    } // ReSharper disable UnusedParameter.Global
     public static void DecodeDescriptor05(byte[] descriptor) => throw new NotImplementedException("Check SBC-3");
 
     public static void DecodeDescriptor06(byte[] descriptor) => throw new NotImplementedException("Check OSD");

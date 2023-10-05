@@ -42,6 +42,7 @@ namespace Aaru.Decoders.PCMCIA;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class CIS
 {
     // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?

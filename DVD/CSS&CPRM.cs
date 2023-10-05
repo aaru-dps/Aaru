@@ -54,6 +54,8 @@ namespace Aaru.Decoders.DVD;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static class CSS_CPRM
 {
     public static LeadInCopyright? DecodeLeadInCopyright(byte[] response)

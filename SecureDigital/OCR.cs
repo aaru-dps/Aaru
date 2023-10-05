@@ -62,6 +62,7 @@ public class OCR
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Decoders
 {
     public static OCR DecodeOCR(uint response)

@@ -43,6 +43,7 @@ public static partial class Modes
 {
 #region Certance Mode Page 0x22: Interface Control Mode Page
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public struct Certance_ModePage_22
     {
         /// <summary>Parameters can be saved</summary>

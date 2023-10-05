@@ -45,6 +45,7 @@ public static partial class Modes
 {
 #region Fujitsu Mode Page 0x3E: Verify Control page
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum Fujitsu_VerifyModes : byte
     {
         /// <summary>Always verify after writing</summary>

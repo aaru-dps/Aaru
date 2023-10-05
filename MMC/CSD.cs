@@ -80,6 +80,7 @@ public class CSD
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Decoders
 {
     public static CSD DecodeCSD(uint[] response)

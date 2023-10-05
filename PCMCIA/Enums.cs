@@ -121,6 +121,7 @@ public enum TupleCodes : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum DeviceTypeCodes : byte
 {
     /// <summary>No device, used to designate a hole</summary>
@@ -146,6 +147,7 @@ public enum DeviceTypeCodes : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum DeviceSpeedCodes : byte
 {
     /// <summary>No device</summary>
@@ -163,6 +165,7 @@ public enum DeviceSpeedCodes : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum FunctionCodes : byte
 {
     MultiFunction   = 0x00,

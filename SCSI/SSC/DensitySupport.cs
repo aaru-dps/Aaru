@@ -279,6 +279,7 @@ public static class DensitySupport
 
 #region Nested type: MediaTypeSupportDescriptor
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public struct MediaTypeSupportDescriptor
     {
         public byte   mediumType;

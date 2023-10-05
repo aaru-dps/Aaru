@@ -43,6 +43,8 @@ namespace Aaru.Decoders.MMC;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnassignedField.Global")]
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ExtendedCSD
 {
     public byte                            AccessSize;

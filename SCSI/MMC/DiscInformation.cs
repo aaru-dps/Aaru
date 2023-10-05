@@ -389,6 +389,7 @@ public static class DiscInformation
 
 #region Nested type: POWResourcesInformation
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public struct POWResourcesInformation
     {
         /// <summary>Bytes 0 to 1 14</summary>
@@ -467,6 +468,7 @@ public static class DiscInformation
 
 #region Nested type: TrackResourcesInformation
 
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public struct TrackResourcesInformation
     {
         /// <summary>Bytes 0 to 1 10</summary>

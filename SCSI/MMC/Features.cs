@@ -30,20 +30,24 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-// ReSharper disable MemberCanBePrivate.Global
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Helpers;
 using Aaru.Localization;
 
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedType.Global
+// ReSharper disable NotAccessedField.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBeInternal
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Decoders.SCSI.MMC;
 
 /// <summary>MMC Feature enumeration</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum FeatureNumber : ushort
 {
     /// <summary>Lists all profiles</summary>
@@ -168,7 +172,6 @@ public enum FeatureNumber : ushort
 }
 
 /// <summary>MMC Profile enumeration</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum ProfileNumber : ushort
 {
     /// <summary>Not to use</summary>
@@ -251,9 +254,6 @@ public enum ProfileNumber : ushort
     Unconforming = 0xFFFF
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Profile
 {
     public ProfileNumber Number;
@@ -261,9 +261,6 @@ public struct Profile
 }
 
 /// <summary>Profile List Feature (0000h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0000
 {
     /// <summary>Feature version</summary>
@@ -277,9 +274,6 @@ public struct Feature_0000
 }
 
 /// <summary>Core Feature (0001h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0001
 {
     /// <summary>Feature version</summary>
@@ -297,9 +291,6 @@ public struct Feature_0001
 }
 
 /// <summary>Morphing Feature (0002h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0002
 {
     /// <summary>Feature version</summary>
@@ -315,9 +306,6 @@ public struct Feature_0002
 }
 
 /// <summary>Removable Medium Feature (0003h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0003
 {
     /// <summary>Feature version</summary>
@@ -341,9 +329,6 @@ public struct Feature_0003
 }
 
 /// <summary>Write Protect Feature (0004h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0004
 {
     /// <summary>Feature version</summary>
@@ -363,9 +348,6 @@ public struct Feature_0004
 }
 
 /// <summary>Random Readable Feature (0010h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0010
 {
     /// <summary>Feature version</summary>
@@ -383,9 +365,6 @@ public struct Feature_0010
 }
 
 /// <summary>Multi-Read Feature (001Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001D
 {
     /// <summary>Feature version</summary>
@@ -397,9 +376,6 @@ public struct Feature_001D
 }
 
 /// <summary>CD Read Feature (001Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001E
 {
     /// <summary>Feature version</summary>
@@ -417,9 +393,6 @@ public struct Feature_001E
 }
 
 /// <summary>DVD Read Feature (001Fh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_001F
 {
     /// <summary>Feature version</summary>
@@ -437,9 +410,6 @@ public struct Feature_001F
 }
 
 /// <summary>Random Writable Feature (0020h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0020
 {
     /// <summary>Feature version</summary>
@@ -459,9 +429,6 @@ public struct Feature_0020
 }
 
 /// <summary>Incremental Streaming Writable Feature (0021h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0021
 {
     /// <summary>Feature version</summary>
@@ -483,9 +450,6 @@ public struct Feature_0021
 }
 
 /// <summary>Sector Erasable Feature (0022h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0022
 {
     /// <summary>Feature version</summary>
@@ -497,9 +461,6 @@ public struct Feature_0022
 }
 
 /// <summary>Formattable Feature (0023h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0023
 {
     /// <summary>Feature version</summary>
@@ -523,9 +484,6 @@ public struct Feature_0023
 }
 
 /// <summary>Hardware Defect Management Feature (0024h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0024
 {
     /// <summary>Feature version</summary>
@@ -539,9 +497,6 @@ public struct Feature_0024
 }
 
 /// <summary>Write Once Feature (0025h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0025
 {
     /// <summary>Feature version</summary>
@@ -559,9 +514,6 @@ public struct Feature_0025
 }
 
 /// <summary>Restricted Overwrite Feature (0026h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0026
 {
     /// <summary>Feature version</summary>
@@ -573,9 +525,6 @@ public struct Feature_0026
 }
 
 /// <summary>CD-RW CAV Write Feature (0027h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0027
 {
     /// <summary>Feature version</summary>
@@ -587,9 +536,6 @@ public struct Feature_0027
 }
 
 /// <summary>MRW Feature (0028h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0028
 {
     /// <summary>Feature version</summary>
@@ -607,9 +553,6 @@ public struct Feature_0028
 }
 
 /// <summary>Enhanced Defect Reporting Feature (0029h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0029
 {
     /// <summary>Feature version</summary>
@@ -627,9 +570,6 @@ public struct Feature_0029
 }
 
 /// <summary>DVD+RW Feature (002Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002A
 {
     /// <summary>Feature version</summary>
@@ -647,9 +587,6 @@ public struct Feature_002A
 }
 
 /// <summary>DVD+R Feature (002Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002B
 {
     /// <summary>Feature version</summary>
@@ -663,9 +600,6 @@ public struct Feature_002B
 }
 
 /// <summary>Rigid Restricted Overwrite Feature (002Ch)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002C
 {
     /// <summary>Feature version</summary>
@@ -685,9 +619,6 @@ public struct Feature_002C
 }
 
 /// <summary>CD Track at Once Feature (002Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002D
 {
     /// <summary>Feature version</summary>
@@ -713,9 +644,6 @@ public struct Feature_002D
 }
 
 /// <summary>CD Mastering (Session at Once) Feature (002Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002E
 {
     /// <summary>Feature version</summary>
@@ -743,9 +671,6 @@ public struct Feature_002E
 }
 
 /// <summary>DVD-R/-RW Write Feature (002Fh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_002F
 {
     /// <summary>Feature version</summary>
@@ -765,9 +690,6 @@ public struct Feature_002F
 }
 
 /// <summary>Double Density CD Read Feature (0030h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0030
 {
     /// <summary>Feature version</summary>
@@ -779,9 +701,6 @@ public struct Feature_0030
 }
 
 /// <summary>Double Density CD-R Write Feature (0031h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0031
 {
     /// <summary>Feature version</summary>
@@ -795,9 +714,6 @@ public struct Feature_0031
 }
 
 /// <summary>Double Density CD-RW Write Feature (0032h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0032
 {
     /// <summary>Feature version</summary>
@@ -813,9 +729,6 @@ public struct Feature_0032
 }
 
 /// <summary>Layer Jump Recording Feature (0033h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0033
 {
     /// <summary>Feature version</summary>
@@ -828,9 +741,6 @@ public struct Feature_0033
 }
 
 /// <summary>Stop Long Operation Feature (0035h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0035
 {
     /// <summary>Feature version</summary>
@@ -842,9 +752,6 @@ public struct Feature_0035
 }
 
 /// <summary>CD-RW Media Write Support Feature (0037h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0037
 {
     /// <summary>Feature version</summary>
@@ -858,9 +765,6 @@ public struct Feature_0037
 }
 
 /// <summary>BD-R Pseudo-Overwrite (POW) Feature (0038h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0038
 {
     /// <summary>Feature version</summary>
@@ -872,9 +776,6 @@ public struct Feature_0038
 }
 
 /// <summary>DVD+RW Dual Layer Feature (003Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_003A
 {
     /// <summary>Feature version</summary>
@@ -892,9 +793,6 @@ public struct Feature_003A
 }
 
 /// <summary>DVD+R Dual Layer Feature (003Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_003B
 {
     /// <summary>Feature version</summary>
@@ -912,9 +810,6 @@ public struct Feature_003B
 }
 
 /// <summary>BD Read Feature (0040h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0040
 {
     /// <summary>Feature version</summary>
@@ -942,9 +837,6 @@ public struct Feature_0040
 }
 
 /// <summary>BD Write Feature (0041h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0041
 {
     /// <summary>Feature version</summary>
@@ -968,9 +860,6 @@ public struct Feature_0041
 }
 
 /// <summary>TSR Feature (0042h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0042
 {
     /// <summary>Feature version</summary>
@@ -982,9 +871,6 @@ public struct Feature_0042
 }
 
 /// <summary>HD DVD Read Feature (0050h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0050
 {
     /// <summary>Feature version</summary>
@@ -1000,9 +886,6 @@ public struct Feature_0050
 }
 
 /// <summary>HD DVD Write Feature (0051h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0051
 {
     /// <summary>Feature version</summary>
@@ -1018,9 +901,6 @@ public struct Feature_0051
 }
 
 /// <summary>Hybrid Disc Feature (0080h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0080
 {
     /// <summary>Feature version</summary>
@@ -1034,9 +914,6 @@ public struct Feature_0080
 }
 
 /// <summary>Power Management Feature (0100h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0100
 {
     /// <summary>Feature version</summary>
@@ -1048,9 +925,6 @@ public struct Feature_0100
 }
 
 /// <summary>S.M.A.R.T. Feature (0101h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0101
 {
     /// <summary>Feature version</summary>
@@ -1064,9 +938,6 @@ public struct Feature_0101
 }
 
 /// <summary>Embedded Changer Feature (0102h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0102
 {
     /// <summary>Feature version</summary>
@@ -1084,9 +955,6 @@ public struct Feature_0102
 }
 
 /// <summary>CD Audio External Play Feature (0103h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0103
 {
     /// <summary>Feature version</summary>
@@ -1106,9 +974,6 @@ public struct Feature_0103
 }
 
 /// <summary>Microcode Upgrade Feature (0104h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0104
 {
     /// <summary>Feature version</summary>
@@ -1122,9 +987,6 @@ public struct Feature_0104
 }
 
 /// <summary>Time-Out Feature (0105h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0105
 {
     /// <summary>Feature version</summary>
@@ -1140,9 +1002,6 @@ public struct Feature_0105
 }
 
 /// <summary>DVD-CSS Feature (0106h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0106
 {
     /// <summary>Feature version</summary>
@@ -1156,9 +1015,6 @@ public struct Feature_0106
 }
 
 /// <summary>Real Time Streaming Feature (0107h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0107
 {
     /// <summary>Feature version</summary>
@@ -1182,9 +1038,6 @@ public struct Feature_0107
 }
 
 /// <summary>Drive serial number (0108h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0108
 {
     /// <summary>Feature version</summary>
@@ -1198,9 +1051,6 @@ public struct Feature_0108
 }
 
 /// <summary>Media Serial Number Feature (0109h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0109
 {
     /// <summary>Feature version</summary>
@@ -1212,9 +1062,6 @@ public struct Feature_0109
 }
 
 /// <summary>Disc Control Blocks Feature (010Ah)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010A
 {
     /// <summary>Feature version</summary>
@@ -1227,9 +1074,6 @@ public struct Feature_010A
 }
 
 /// <summary>DVD CPRM Feature (010Bh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010B
 {
     /// <summary>Feature version</summary>
@@ -1243,9 +1087,6 @@ public struct Feature_010B
 }
 
 /// <summary>Firmware Information Feature (010Ch)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010C
 {
     /// <summary>Feature version</summary>
@@ -1264,9 +1105,6 @@ public struct Feature_010C
 }
 
 /// <summary>AACS Feature (010Dh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010D
 {
     /// <summary>Feature version</summary>
@@ -1294,9 +1132,6 @@ public struct Feature_010D
 }
 
 /// <summary>DVD CSS Managed Recording Feature (010Eh)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_010E
 {
     /// <summary>Feature version</summary>
@@ -1310,9 +1145,6 @@ public struct Feature_010E
 }
 
 /// <summary>SecurDisc Feature (0113h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0113
 {
     /// <summary>Feature version</summary>
@@ -1324,9 +1156,6 @@ public struct Feature_0113
 }
 
 /// <summary>OSSC Feature (0142h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0142
 {
     /// <summary>Feature version</summary>
@@ -1345,9 +1174,6 @@ public struct Feature_0142
 }
 
 /// <summary>VCPS Feature (0110h)</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public struct Feature_0110
 {
     /// <summary>Feature version</summary>
@@ -5024,9 +4850,6 @@ public static class Features
 
 #region Nested type: FeatureDescriptor
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct FeatureDescriptor
     {
         public ushort Code;
@@ -5037,9 +4860,6 @@ public static class Features
 
 #region Nested type: SeparatedFeatures
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public struct SeparatedFeatures
     {
         public uint                DataLength;

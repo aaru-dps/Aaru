@@ -47,6 +47,9 @@ namespace Aaru.Decoders.Floppy;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
 public static class AppleSony
 {
     public static byte[] DecodeSector(RawSector sector)
@@ -444,7 +447,7 @@ public static class AppleSony
 #region Nested type: RawAddressField
 
     /// <summary>GCR-encoded Apple Sony GCR floppy sector address field</summary>
-    public class RawAddressField
+    public sealed class RawAddressField
     {
         /// <summary>Checksum</summary>
         public byte checksum;
@@ -469,7 +472,7 @@ public static class AppleSony
 #region Nested type: RawDataField
 
     /// <summary>GCR-encoded Apple ][ GCR floppy sector data field</summary>
-    public class RawDataField
+    public sealed class RawDataField
     {
         /// <summary>Checksum</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -492,7 +495,7 @@ public static class AppleSony
 #region Nested type: RawSector
 
     /// <summary>GCR-encoded Apple Sony GCR floppy sector</summary>
-    public class RawSector
+    public sealed class RawSector
     {
         /// <summary>Address field</summary>
         public RawAddressField addressField;
@@ -509,7 +512,7 @@ public static class AppleSony
 #region Nested type: RawTrack
 
     /// <summary>GCR-encoded Apple Sony GCR floppy track</summary>
-    public class RawTrack
+    public sealed class RawTrack
     {
         /// <summary>Track preamble, set to self-sync 0xFF, 36 bytes</summary>
         public byte[] gap;

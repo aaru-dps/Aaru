@@ -57,6 +57,7 @@ public enum IBMSectorSizeCode : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum IBMIdType : byte
 {
     IndexMark       = 0xFC,
@@ -66,6 +67,7 @@ public enum IBMIdType : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum AppleEncodedFormat : byte
 {
     /// <summary>Disk is an Apple II 3.5" disk</summary>

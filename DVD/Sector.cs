@@ -33,11 +33,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.Helpers;
 
 namespace Aaru.Decoders.DVD;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class Sector
 {
     static readonly ushort[] _ecma267InitialValues =

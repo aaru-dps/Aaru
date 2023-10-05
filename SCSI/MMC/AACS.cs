@@ -54,6 +54,8 @@ namespace Aaru.Decoders.SCSI.MMC;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public static class AACS
 {
     public static AACSVolumeIdentifier? DecodeAACSVolumeIdentifier(byte[] AACSVIResponse)

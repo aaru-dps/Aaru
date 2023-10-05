@@ -30,13 +30,15 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable UnusedMember.Global
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedType.Global
 
 namespace Aaru.Decoders.DVD;
 
 #region Public enumerations
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DiskCategory : byte
 {
     /// <summary>DVD-ROM. Version 1 is ECMA-267 and ECMA-268.</summary>
@@ -69,7 +71,6 @@ public enum DiskCategory : byte
     Nintendo = 15
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum MaximumRateField : byte
 {
     /// <summary>2.52 Mbps</summary>
@@ -85,7 +86,6 @@ public enum MaximumRateField : byte
     Unspecified = 0x0F
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum LayerTypeFieldMask : byte
 {
     Embossed   = 0x01,
@@ -94,7 +94,6 @@ public enum LayerTypeFieldMask : byte
     Reserved   = 0x08
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum LinearDensityField : byte
 {
     /// <summary>0.267 μm/bit</summary>
@@ -113,7 +112,6 @@ public enum LinearDensityField : byte
     ThreeFive = 0x08
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum TrackDensityField : byte
 {
     /// <summary>0.74 μm/track</summary>
@@ -128,7 +126,6 @@ public enum TrackDensityField : byte
     Three = 0x04
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum CopyrightType : byte
 {
     /// <summary>There is no copy protection</summary>
@@ -141,7 +138,6 @@ public enum CopyrightType : byte
     AACS = 0x10
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum WPDiscTypes : byte
 {
     /// <summary>Should not write without a cartridge</summary>
@@ -152,7 +148,6 @@ public enum WPDiscTypes : byte
     Reserved2 = 0x03
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDSize
 {
     /// <summary>120 mm</summary>
@@ -161,7 +156,6 @@ public enum DVDSize
     Eighty = 1
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDRAMDiscType
 {
     /// <summary>Shall not be recorded without a case</summary>
@@ -170,7 +164,6 @@ public enum DVDRAMDiscType
     Uncased = 1
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDLayerStructure
 {
     Unspecified   = 0,
@@ -179,7 +172,6 @@ public enum DVDLayerStructure
     Reserved      = 3
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum DVDRecordingSpeed
 {
     None   = 0,

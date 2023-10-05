@@ -56,6 +56,7 @@ namespace Aaru.Decoders.Bluray;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class DI
 {
 #region BluSize enum

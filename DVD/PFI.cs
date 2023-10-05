@@ -71,6 +71,7 @@ namespace Aaru.Decoders.DVD;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class PFI
 {
     public static PhysicalFormatInformation? Decode(byte[] response, MediaType mediaType)

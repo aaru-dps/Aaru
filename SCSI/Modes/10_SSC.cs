@@ -43,6 +43,7 @@ public static partial class Modes
 #region Mode Page 0x10: Device configuration page
 
     /// <summary>Device configuration page Page code 0x10 16 bytes in SCSI-2, SSC-1, SSC-2, SSC-3</summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public struct ModePage_10_SSC
     {
         /// <summary>Parameters can be saved</summary>

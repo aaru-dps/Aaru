@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Decoders.SCSI;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum MediumTypes : byte
 {
     Default = 0x00,
@@ -365,6 +366,7 @@ public enum MediumTypes : byte
 }
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum DensityType : byte
 {
     Default = 0x00,

@@ -47,6 +47,7 @@ namespace Aaru.Decoders.SCSI;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
 [SuppressMessage("ReSharper", "UnassignedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class EVPD
 {
     /// <summary>Decodes VPD page 0x00: Supported VPD pages</summary>

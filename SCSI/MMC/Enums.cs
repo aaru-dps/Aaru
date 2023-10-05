@@ -30,12 +30,13 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
 
 namespace Aaru.Decoders.SCSI.MMC;
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum FormatLayerTypeCodes : ushort
 {
     CDLayer    = 0x0008,
@@ -44,8 +45,6 @@ public enum FormatLayerTypeCodes : ushort
     HDDVDLayer = 0x0050
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum SessionStatusCodes : byte
 {
     Empty             = 0x00,
@@ -54,8 +53,6 @@ public enum SessionStatusCodes : byte
     Complete          = 0x03
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum DiscStatusCodes : byte
 {
     Empty      = 0x00,
@@ -64,8 +61,6 @@ public enum DiscStatusCodes : byte
     Others     = 0x03
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum BGFormatStatusCodes : byte
 {
     NoFormattable              = 0x00,
@@ -74,8 +69,6 @@ public enum BGFormatStatusCodes : byte
     FormatComplete             = 0x03
 }
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public enum DiscTypeCodes : byte
 {
     /// <summary>Also valid for CD-DA, DVD and BD</summary>

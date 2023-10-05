@@ -73,6 +73,7 @@ public enum CommandSupport : byte
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static partial class Decoders
 {
     public static SCR DecodeSCR(uint[] response)

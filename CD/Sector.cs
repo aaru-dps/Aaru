@@ -42,6 +42,7 @@ namespace Aaru.Decoders.CD;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class Sector
 {
     public static readonly byte[] ScrambleTable =
