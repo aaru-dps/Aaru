@@ -169,12 +169,12 @@ public class TeleDiskLzh
     /// <returns>Number of decompressed bytes</returns>
     public int Decode(out byte[] buf, int len) /* Decoding/Uncompressing */
     {
-        short c;
         buf = new byte[len];
         int count; // was an unsigned long, seems unnecessary
 
         for(count = 0; count < len;)
         {
+            short c;
             if(_tdctl.Bufcnt == 0)
             {
                 if((c = DecodeChar()) < 0)

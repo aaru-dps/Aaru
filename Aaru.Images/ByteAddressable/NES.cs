@@ -712,12 +712,11 @@ public class Nes : IByteAddressableImage
         var foundMapper    = false;
         var foundSubMapper = false;
 
-        Regex regex;
-        Match match;
-
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
         {
+            Regex regex;
+            Match match;
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:

@@ -184,7 +184,6 @@ sealed class DecodeCommand : Command
         Statistics.AddMediaFormat(inputFormat.Format);
         Statistics.AddMedia(inputFormat.Info.MediaType, false);
         Statistics.AddFilter(inputFilter.Name);
-        ErrorNumber errno;
 
         if(diskTags)
         {
@@ -194,6 +193,7 @@ sealed class DecodeCommand : Command
             {
                 foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
                 {
+                    ErrorNumber errno;
                     switch(tag)
                     {
                         case MediaTagType.SCSI_INQUIRY:
