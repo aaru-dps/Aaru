@@ -109,16 +109,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(archives?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllArchivePlugins() => new()");
+            sb.AppendLine("    public void RegisterArchivePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in archives)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IArchive, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllArchivePlugins() => null;");
+            sb.AppendLine("    public void RegisterArchivePlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

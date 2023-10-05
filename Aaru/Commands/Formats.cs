@@ -100,12 +100,12 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filter);
 
-        foreach(KeyValuePair<string, IFilter> kvp in PluginRegister.Singleton.Filters)
+        foreach(IFilter filter in PluginRegister.Singleton.Filters.Values)
         {
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(filter.Id.ToString(), Markup.Escape(filter.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(filter.Name));
         }
 
         AnsiConsole.Write(table);
@@ -256,9 +256,9 @@ sealed class FormatsCommand : Command
 
         table.AddColumn("Archive format");
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.Archives)
+        foreach(IArchive archive in plugins.Archives.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IArchive archive)
+            if(archive is null)
                 continue;
 
             if(verbose)
