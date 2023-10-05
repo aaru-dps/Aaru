@@ -941,7 +941,9 @@ public class Dimensions
                 dmns.Thickness = 16.6;
 
                 return dmns;
+        #pragma warning disable CS0612 // Type or member is obsolete
             case MediaType.Bernoulli:
+        #pragma warning restore CS0612 // Type or member is obsolete
             case MediaType.Bernoulli10:
             case MediaType.Bernoulli20:
                 dmns.Height = 280;
@@ -951,7 +953,9 @@ public class Dimensions
                 dmns.Thickness = 18;
 
                 return dmns;
+        #pragma warning disable CS0612 // Type or member is obsolete
             case MediaType.Bernoulli2:
+        #pragma warning restore CS0612 // Type or member is obsolete
             case MediaType.BernoulliBox2_20:
             case MediaType.Bernoulli35:
             case MediaType.Bernoulli44:
