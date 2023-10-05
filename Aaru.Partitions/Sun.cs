@@ -92,7 +92,7 @@ public sealed class SunDisklabel : IPartition
     public Guid Id => new("50F35CC4-8375-4445-8DCB-1BA550C931A3");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

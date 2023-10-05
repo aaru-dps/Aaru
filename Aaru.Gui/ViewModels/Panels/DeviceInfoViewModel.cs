@@ -948,14 +948,14 @@ public sealed class DeviceInfoViewModel : ViewModelBase
     public string ScsiTypeLabel => UI.Title_Peripheral_device_type;
     public string RemovableMediaLabel => UI.Title_Removable_media;
     public string UsbConnectedLabel => UI.Title_Connected_by_USB;
-    public string USBLabel => UI.Title_USB;
+    public string UsbLabel => UI.Title_USB;
     public string VendorIDLabel => UI.Title_Vendor_ID;
     public string ProductIDLabel => UI.Title_Product_ID;
     public string ProductLabel => UI.Title_Product;
     public string SaveUsbDescriptorsLabel => UI.Save_descriptors_to_file;
     public string FireWireLabel => UI.Title_FireWire;
     public string ModelIDLabel => UI.Title_Model_ID;
-    public string GUIDLabel => UI.Title_GUID;
+    public string GuidLabel => UI.Title_GUID;
     public string PlextorLabel => UI.Title_Plextor;
     public string PlextorDiscsLabel => UI.Total_loaded_discs;
     public string PlextorCdReadTimeLabel => UI.Time_spent_reading_CDs;
@@ -1003,10 +1003,10 @@ public sealed class DeviceInfoViewModel : ViewModelBase
     public string OCRLabel => UI.Title_OCR;
     public string ExtendedCSDLabel => UI.Title_Extended_CSD;
     public string SCRLabel => UI.Title_SCR;
-    public string PCMCIALabel => UI.Title_PCMCIA;
+    public string PcmciaLabel => UI.Title_PCMCIA;
     public string ATA_ATAPILabel => UI.Title_ATA_ATAPI;
     public string SCSILabel => UI.Title_SCSI;
-    public string SD_MMCLabel => UI.Title_SD_MMC;
+    public string Sd_MMCLabel => UI.Title_SD_MMC;
 
     async Task ExecuteSaveUsbDescriptorsCommand()
     {

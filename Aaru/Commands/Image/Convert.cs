@@ -913,7 +913,7 @@ sealed class ConvertImageCommand : Command
                                            decrypt)
                                         {
                                             // Only sectors which are MPEG packets can be encrypted.
-                                            if(MPEG.ContainsMpegPackets(sector, sectorsToDo))
+                                            if(Mpeg.ContainsMpegPackets(sector, sectorsToDo))
                                             {
                                                 byte[] cmi, titleKey;
 

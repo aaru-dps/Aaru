@@ -37,9 +37,9 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
-#region A2rDiskType enum
+#region A2RDiskType enum
 
-    public enum A2rDiskType : byte
+    public enum A2RDiskType : byte
     {
         _525 = 0x01,
         _35  = 0x2

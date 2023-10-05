@@ -70,7 +70,7 @@ public sealed class AtariPartitions : IPartition
     public Guid Id => new("d1dd0f24-ec39-4c4d-9072-be31919a3b5e");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -414,9 +414,7 @@ public sealed class AtariPartitions : IPartition
                 continue;
 
             if(table.IcdEntries[i].Start + table.IcdEntries[i].Length > imagePlugin.Info.Sectors)
-            {
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.WARNING_End_of_partition_goes_beyond_device_size);
-            }
 
             ulong sectorSize = imagePlugin.Info.SectorSize;
 

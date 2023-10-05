@@ -76,9 +76,9 @@ public sealed partial class AppleDOS
 
         node = new AppleDosDirNode
         {
-            Path      = path,
-            _position = 0,
-            _contents = contents.ToArray()
+            Path     = path,
+            Position = 0,
+            Contents = contents.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -95,13 +95,13 @@ public sealed partial class AppleDOS
         if(node is not AppleDosDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._contents.Length)
+        if(mynode.Position >= mynode.Contents.Length)
             return ErrorNumber.NoError;
 
-        filename = mynode._contents[mynode._position++];
+        filename = mynode.Contents[mynode.Position++];
 
         return ErrorNumber.NoError;
     }
@@ -112,8 +112,8 @@ public sealed partial class AppleDOS
         if(node is not AppleDosDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._contents = null;
+        mynode.Position = -1;
+        mynode.Contents = null;
 
         return ErrorNumber.NoError;
     }

@@ -91,7 +91,7 @@
             </TabItem>
             <TabItem IsVisible="{Binding SscVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding SSCLabel}" />
+                    <TextBlock Text="{Binding SscLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <TextBlock IsVisible="{Binding !!DensitySupport}" Text="{Binding DensitySupportLabel}" />
@@ -115,13 +115,13 @@
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding DVDLabel}" />
+                    <TextBlock Text="{Binding DvdLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdWritableInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding DVD_R_WLabel}" />
+                    <TextBlock Text="{Binding Dvd_R_WLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdWritableInfo}" />
             </TabItem>

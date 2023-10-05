@@ -60,7 +60,7 @@ public sealed class Human68K : IPartition
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

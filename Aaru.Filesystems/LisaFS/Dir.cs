@@ -89,9 +89,9 @@ public sealed partial class LisaFS
 
         node = new LisaDirNode
         {
-            Path      = path,
-            _contents = contents.ToArray(),
-            _position = 0
+            Path     = path,
+            Contents = contents.ToArray(),
+            Position = 0
         };
 
         return ErrorNumber.NoError;
@@ -108,13 +108,13 @@ public sealed partial class LisaFS
         if(node is not LisaDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._contents.Length)
+        if(mynode.Position >= mynode.Contents.Length)
             return ErrorNumber.NoError;
 
-        filename = mynode._contents[mynode._position++];
+        filename = mynode.Contents[mynode.Position++];
 
         return ErrorNumber.NoError;
     }
@@ -125,8 +125,8 @@ public sealed partial class LisaFS
         if(node is not LisaDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._contents = null;
+        mynode.Position = -1;
+        mynode.Contents = null;
 
         return ErrorNumber.NoError;
     }

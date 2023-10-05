@@ -115,7 +115,7 @@
                     <TextBlock Text="{Binding McnLabel}" /> <TextBox IsReadOnly="True" Text="{Binding McnText}" />
                 </StackPanel>
                 <StackPanel IsVisible="{Binding !!IsrcList.Count}">
-                    <TextBlock Text="{Binding ISRCsLabel}" />
+                    <TextBlock Text="{Binding IsrCsLabel}" />
                     <DataGrid ItemsSource="{Binding IsrcList}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Binding="{Binding Track}" Header="{Binding TrackLabel}" />

@@ -53,7 +53,7 @@ public sealed partial class ISO9660
     public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options,     string    @namespace)
     {
-        Encoding = encoding ?? Encoding.GetEncoding(1252);
+        _encoding = encoding ?? Encoding.GetEncoding(1252);
         var vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
         var hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
 
@@ -123,7 +123,7 @@ public sealed partial class ISO9660
 
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-        _highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+        _highSierra = _encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
         var hsOff = 0;
 
         if(_highSierra)
@@ -164,9 +164,9 @@ public sealed partial class ISO9660
             Array.Copy(vdSector, 0x001, vdMagic, 0, 5);
             Array.Copy(vdSector, 0x009, hsMagic, 0, 5);
 
-            if(Encoding.GetString(vdMagic) != ISO_MAGIC         &&
-               Encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
-               Encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
+            if(_encoding.GetString(vdMagic) != ISO_MAGIC         &&
+               _encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
+               _encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
             {
                 if(counter == 0)
                     return ErrorNumber.InvalidArgument;
@@ -174,7 +174,7 @@ public sealed partial class ISO9660
                 break;
             }
 
-            _cdi |= Encoding.GetString(vdMagic) == CDI_MAGIC;
+            _cdi |= _encoding.GetString(vdMagic) == CDI_MAGIC;
 
             switch(vdType)
             {
@@ -272,13 +272,13 @@ public sealed partial class ISO9660
         else if(_cdi)
             decodedVd = DecodeVolumeDescriptor(fsvd.Value);
         else
-            decodedVd = DecodeVolumeDescriptor(pvd.Value, _namespace == Namespace.Romeo ? Encoding : Encoding.ASCII);
+            decodedVd = DecodeVolumeDescriptor(pvd.Value, _namespace == Namespace.Romeo ? _encoding : Encoding.ASCII);
 
         if(jolietvd != null)
             decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
         if(_namespace != Namespace.Romeo)
-            Encoding = Encoding.ASCII;
+            _encoding = Encoding.ASCII;
 
         string fsFormat;
         byte[] pathTableData;
@@ -317,7 +317,7 @@ public sealed partial class ISO9660
             pathTableMsbLocation = fsvd.Value.path_table_addr;
 
             // TODO: Until escape sequences are implemented this is the default CD-i encoding.
-            Encoding = Encoding.GetEncoding("iso8859-1");
+            _encoding = Encoding.GetEncoding("iso8859-1");
         }
         else
         {

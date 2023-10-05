@@ -80,7 +80,7 @@
             </TabItem>
             <TabItem IsVisible="{Binding UsbVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding USBLabel}" />
+                    <TextBlock Text="{Binding UsbLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
@@ -131,7 +131,7 @@
                         <TextBox Text="{Binding FirewireModel}" IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding GUIDLabel}" />
+                        <TextBlock Text="{Binding GuidLabel}" />
                         <TextBox Text="{Binding FirewireGuid}" IsReadOnly="True" />
                     </StackPanel>
                 </StackPanel>
@@ -362,7 +362,7 @@
             </TabItem>
             <TabItem IsVisible="{Binding !!PcmciaInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding PCMCIALabel}" />
+                    <TextBlock Text="{Binding PcmciaLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding PcmciaInfo}" />
             </TabItem>
@@ -380,7 +380,7 @@
             </TabItem>
             <TabItem IsVisible="{Binding !!SdMmcInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding SD_MMCLabel}" />
+                    <TextBlock Text="{Binding Sd_MMCLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding SdMmcInfo}" />
             </TabItem>

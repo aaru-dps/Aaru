@@ -130,7 +130,7 @@ public sealed partial class AppleDOS
             Path   = path,
             Length = file.Length,
             Offset = 0,
-            _cache = file
+            Cache  = file
         };
 
         return ErrorNumber.NoError;
@@ -145,7 +145,7 @@ public sealed partial class AppleDOS
         if(node is not AppleDosFileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._cache = null;
+        mynode.Cache = null;
 
         return ErrorNumber.NoError;
     }
@@ -169,7 +169,7 @@ public sealed partial class AppleDOS
         if(length + mynode.Offset >= mynode.Length)
             read = mynode.Length - mynode.Offset;
 
-        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
+        Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
 
         mynode.Offset += read;
 

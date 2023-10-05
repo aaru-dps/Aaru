@@ -107,7 +107,7 @@ public sealed partial class Device : Devices.Device
         if(devicePath.StartsWith("dev", StringComparison.Ordinal))
             devicePath = $"/{devicePath}";
 
-        dev._devicePath = devicePath;
+        dev.DevicePath = devicePath;
 
         try
         {
@@ -153,8 +153,8 @@ public sealed partial class Device : Devices.Device
         {
             case DeviceType.SecureDigital:
             case DeviceType.MMC:
-                if(!dev._remote.GetSdhciRegisters(out dev._cachedCsd, out dev._cachedCid, out dev._cachedOcr,
-                                                  out dev._cachedScr))
+                if(!dev._remote.GetSdhciRegisters(out dev.CachedCsd, out dev.CachedCid, out dev.CachedOcr,
+                                                  out dev.CachedScr))
                 {
                     dev.Type     = DeviceType.SCSI;
                     dev.ScsiType = PeripheralDeviceTypes.DirectAccess;
@@ -165,15 +165,15 @@ public sealed partial class Device : Devices.Device
 
     #region SecureDigital / MultiMediaCard
 
-        if(dev._cachedCid != null)
+        if(dev.CachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
             dev.IsRemovable = false;
 
-            if(dev._cachedScr != null)
+            if(dev.CachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -185,7 +185,7 @@ public sealed partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -208,8 +208,8 @@ public sealed partial class Device : Devices.Device
         {
             dev.IsUsb                 = true;
             dev.UsbDescriptors        = remoteUsbDescriptors;
-            dev._usbVendor            = remoteUsbVendor;
-            dev._usbProduct           = remoteUsbProduct;
+            dev.UsbVendor             = remoteUsbVendor;
+            dev.UsbProduct            = remoteUsbProduct;
             dev.UsbManufacturerString = remoteUsbManufacturer;
             dev.UsbProductString      = remoteUsbProductString;
             dev.UsbSerialString       = remoteUsbSerial;
@@ -219,7 +219,7 @@ public sealed partial class Device : Devices.Device
 
     #region FireWire
 
-        if(dev._remote.GetFireWireData(out dev._firewireVendor, out dev._firewireModel, out dev._firewireGuid,
+        if(dev._remote.GetFireWireData(out dev.FirewireVendor, out dev.FirewireModel, out dev.FirewireGuid,
                                        out string remoteFireWireVendorName, out string remoteFireWireModelName))
         {
             dev.IsFireWire         = true;

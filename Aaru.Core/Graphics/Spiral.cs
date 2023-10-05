@@ -620,9 +620,9 @@ public sealed class Spiral : IMediaGraph
     /// <param name="center">Center of the spiral start</param>
     /// <param name="minRadius">Minimum radius before which the spiral must have no points</param>
     /// <param name="maxRadius">Radius at which the spiral will end</param>
-    /// <param name="A">TODO: Something trigonometry something something...</param>
+    /// <param name="a">TODO: Something trigonometry something something...</param>
     /// <returns>List of points to draw the specified spiral</returns>
-    static List<SKPoint> GetSpiralPoints(SKPoint center, float minRadius, float maxRadius, float A)
+    static List<SKPoint> GetSpiralPoints(SKPoint center, float minRadius, float maxRadius, float a)
     {
         // Get the points.
         List<SKPoint> points = new();
@@ -631,7 +631,7 @@ public sealed class Spiral : IMediaGraph
         for(float theta = 0;; theta += dtheta)
         {
             // Calculate r.
-            float r = A * theta;
+            float r = a * theta;
 
             if(r < minRadius)
                 continue;

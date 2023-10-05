@@ -148,7 +148,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
     public string SaveCdAtipLabel        => UI.ButtonLabel_Save_READ_ATIP_response;
     public string MiscellaneousLabel     => UI.Title_Miscellaneous;
     public string McnLabel               => UI.Title_Media_catalog_number;
-    public string ISRCsLabel             => UI.Title_ISRCs;
+    public string IsrCsLabel             => UI.Title_ISRCs;
     public string TrackLabel             => Localization.Core.Title_Track;
     public string ISRCLabel              => UI.Title_ISRC;
     public string SaveCdPmaLabel         => UI.ButtonLabel_Save_READ_PMA_response;

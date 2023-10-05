@@ -38,10 +38,10 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
-#region Nested type: A2rHeader
+#region Nested type: A2RHeader
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct A2rHeader
+    public struct A2RHeader
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public byte[] signature;
@@ -74,7 +74,7 @@ public sealed partial class A2R
         public byte        version;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
         public byte[] creator;
-        public A2rDiskType diskType;
+        public A2RDiskType diskType;
         public byte        writeProtected;
         public byte        synchronized;
     }

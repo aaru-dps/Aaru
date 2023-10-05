@@ -1382,7 +1382,7 @@ public sealed class UNIX : IPartition
     public Guid Id => new("9ED7E30B-53BF-4619-87A0-5D2002155617");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

@@ -57,9 +57,9 @@ public sealed partial class ISO9660
         {
             node = new Iso9660DirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = _rootDirectoryCache.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = _rootDirectoryCache.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -73,9 +73,9 @@ public sealed partial class ISO9660
         {
             node = new Iso9660DirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = currentDirectory.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = currentDirectory.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -150,9 +150,9 @@ public sealed partial class ISO9660
 
         node = new Iso9660DirNode
         {
-            Path      = path,
-            _position = 0,
-            _entries  = currentDirectory.Values.ToArray()
+            Path     = path,
+            Position = 0,
+            Entries  = currentDirectory.Values.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -169,32 +169,32 @@ public sealed partial class ISO9660
         if(node is not Iso9660DirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._entries.Length)
+        if(mynode.Position >= mynode.Entries.Length)
             return ErrorNumber.NoError;
 
         switch(_namespace)
         {
             case Namespace.Normal:
-                filename = mynode._entries[mynode._position].Filename.EndsWith(";1", StringComparison.Ordinal)
-                               ? mynode._entries[mynode._position].Filename[..^2]
-                               : mynode._entries[mynode._position].Filename;
+                filename = mynode.Entries[mynode.Position].Filename.EndsWith(";1", StringComparison.Ordinal)
+                               ? mynode.Entries[mynode.Position].Filename[..^2]
+                               : mynode.Entries[mynode.Position].Filename;
 
                 break;
             case Namespace.Vms:
             case Namespace.Joliet:
             case Namespace.Rrip:
             case Namespace.Romeo:
-                filename = mynode._entries[mynode._position].Filename;
+                filename = mynode.Entries[mynode.Position].Filename;
 
                 break;
             default:
                 return ErrorNumber.InvalidArgument;
         }
 
-        mynode._position++;
+        mynode.Position++;
 
         return ErrorNumber.NoError;
     }
@@ -205,8 +205,8 @@ public sealed partial class ISO9660
         if(node is not Iso9660DirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._entries  = null;
+        mynode.Position = -1;
+        mynode.Entries  = null;
 
         return ErrorNumber.NoError;
     }
@@ -255,7 +255,7 @@ public sealed partial class ISO9660
             var entry = new DecodedDirectoryEntry
             {
                 Size                 = record.size,
-                Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
+                Filename             = _encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = record.xattr_len,
@@ -338,7 +338,7 @@ public sealed partial class ISO9660
                 Flags                = record.flags,
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
-                Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
+                Filename             = _encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = record.xattr_len,
                 Extents              = new List<(uint extent, uint size)>()
@@ -411,7 +411,7 @@ public sealed partial class ISO9660
                 Filename = _joliet
                                ? Encoding.BigEndianUnicode.GetString(data, entryOff + _directoryRecordSize,
                                                                      record.name_len)
-                               : Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
+                               : _encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 FileUnitSize         = record.file_unit_size,
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
@@ -550,7 +550,7 @@ public sealed partial class ISO9660
             return;
 
         var mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
-        var sr = new StreamReader(mr, Encoding);
+        var sr = new StreamReader(mr, _encoding);
 
         string line = sr.ReadLine();
 
@@ -854,11 +854,11 @@ public sealed partial class ISO9660
                                                       systemAreaOff                  +
                                                       Marshal.SizeOf<SymbolicLink>() +
                                                       Marshal.SizeOf<SymbolicLinkComponent>(), slc.length)
-                                                  : Encoding.GetString(data,
-                                                                       systemAreaOff                  +
-                                                                       Marshal.SizeOf<SymbolicLink>() +
-                                                                       Marshal.SizeOf<SymbolicLinkComponent>(),
-                                                                       slc.length);
+                                                  : _encoding.GetString(data,
+                                                                        systemAreaOff                  +
+                                                                        Marshal.SizeOf<SymbolicLink>() +
+                                                                        Marshal.SizeOf<SymbolicLinkComponent>(),
+                                                                        slc.length);
 
                     continueSymlink          = sl.flags.HasFlag(SymlinkFlags.Continue);
                     continueSymlinkComponent = slc.flags.HasFlag(SymlinkComponentFlags.Continue);
@@ -886,7 +886,7 @@ public sealed partial class ISO9660
                     {
                         nm = _joliet
                                  ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
-                                 : Encoding.GetBytes(Environment.MachineName);
+                                 : _encoding.GetBytes(Environment.MachineName);
                     }
                     else
                     {
@@ -907,7 +907,7 @@ public sealed partial class ISO9660
                     {
                         entry.Filename = _joliet
                                              ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
-                                             : Encoding.GetString(entry.RockRidgeAlternateName);
+                                             : _encoding.GetString(entry.RockRidgeAlternateName);
 
                         entry.RockRidgeAlternateName = null;
                     }

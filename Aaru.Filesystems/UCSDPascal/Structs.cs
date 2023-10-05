@@ -43,8 +43,8 @@ public sealed partial class PascalPlugin
 
     sealed class PascalDirNode : IDirNode
     {
-        internal string[] _contents;
-        internal int      _position;
+        internal string[] Contents;
+        internal int      Position;
 
     #region IDirNode Members
 
@@ -80,7 +80,7 @@ public sealed partial class PascalPlugin
 
     sealed class PascalFileNode : IFileNode
     {
-        internal byte[] _cache;
+        internal byte[] Cache;
 
     #region IFileNode Members
 

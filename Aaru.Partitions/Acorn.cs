@@ -66,7 +66,7 @@ public sealed class Acorn : IPartition
     public Guid Id => new("A7C8FEBE-8D00-4933-B9F3-42184C8BA808");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

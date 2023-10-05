@@ -106,8 +106,8 @@ public sealed partial class ISO9660
 
     sealed class Iso9660DirNode : IDirNode
     {
-        internal DecodedDirectoryEntry[] _entries;
-        internal int                     _position;
+        internal DecodedDirectoryEntry[] Entries;
+        internal int                     Position;
 
     #region IDirNode Members
 
@@ -123,7 +123,7 @@ public sealed partial class ISO9660
 
     sealed class Iso9660FileNode : IFileNode
     {
-        internal DecodedDirectoryEntry _dentry;
+        internal DecodedDirectoryEntry Dentry;
 
     #region IFileNode Members
 

@@ -57,7 +57,7 @@ public sealed class DragonFlyBSD : IPartition
     public Guid Id => new("D49E41A6-D952-4760-9D94-03DAE2450C5F");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

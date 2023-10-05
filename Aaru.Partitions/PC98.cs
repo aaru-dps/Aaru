@@ -57,7 +57,7 @@ public sealed class PC98 : IPartition
     public Guid Id => new("27333401-C7C2-447D-961C-22AD0641A09A");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)

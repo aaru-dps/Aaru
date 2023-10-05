@@ -51,9 +51,9 @@ public sealed partial class XboxFatPlugin
         {
             node = new FatxDirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = _rootDirectory.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = _rootDirectory.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -65,9 +65,9 @@ public sealed partial class XboxFatPlugin
         {
             node = new FatxDirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = currentDirectory.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = currentDirectory.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -159,9 +159,9 @@ public sealed partial class XboxFatPlugin
 
         node = new FatxDirNode
         {
-            Path      = path,
-            _position = 0,
-            _entries  = currentDirectory.Values.ToArray()
+            Path     = path,
+            Position = 0,
+            Entries  = currentDirectory.Values.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -178,16 +178,16 @@ public sealed partial class XboxFatPlugin
         if(node is not FatxDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._entries.Length)
+        if(mynode.Position >= mynode.Entries.Length)
             return ErrorNumber.NoError;
 
-        filename = _encoding.GetString(mynode._entries[mynode._position].filename, 0,
-                                       mynode._entries[mynode._position].filenameSize);
+        filename = _encoding.GetString(mynode.Entries[mynode.Position].filename, 0,
+                                       mynode.Entries[mynode.Position].filenameSize);
 
-        mynode._position++;
+        mynode.Position++;
 
         return ErrorNumber.NoError;
     }
@@ -198,8 +198,8 @@ public sealed partial class XboxFatPlugin
         if(node is not FatxDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._entries  = null;
+        mynode.Position = -1;
+        mynode.Entries  = null;
 
         return ErrorNumber.NoError;
     }

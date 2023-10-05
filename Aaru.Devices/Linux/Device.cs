@@ -126,49 +126,49 @@ partial class Device : Devices.Device
 
                 if(File.Exists("/sys/block/" + devPath + "/device/csd"))
                 {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out dev._cachedCsd);
+                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out dev.CachedCsd);
 
                     if(len == 0)
-                        dev._cachedCsd = null;
+                        dev.CachedCsd = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/cid"))
                 {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out dev._cachedCid);
+                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out dev.CachedCid);
 
                     if(len == 0)
-                        dev._cachedCid = null;
+                        dev.CachedCid = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/scr"))
                 {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out dev._cachedScr);
+                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out dev.CachedScr);
 
                     if(len == 0)
-                        dev._cachedScr = null;
+                        dev.CachedScr = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
                 {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out dev._cachedOcr);
+                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out dev.CachedOcr);
 
                     if(len == 0)
-                        dev._cachedOcr = null;
+                        dev.CachedOcr = null;
                 }
             }
         }
 
     #region SecureDigital / MultiMediaCard
 
-        if(dev._cachedCid != null)
+        if(dev.CachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
             dev.IsRemovable = false;
 
-            if(dev._cachedScr != null)
+            if(dev.CachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -180,7 +180,7 @@ partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -234,7 +234,7 @@ partial class Device : Devices.Device
                         string usbTemp = usbSr.ReadToEnd();
 
                         ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                        out dev._usbProduct);
+                                        out dev.UsbProduct);
 
                         usbSr.Close();
 
@@ -242,7 +242,7 @@ partial class Device : Devices.Device
                         usbTemp = usbSr.ReadToEnd();
 
                         ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                        out dev._usbVendor);
+                                        out dev.UsbVendor);
 
                         usbSr.Close();
 
@@ -305,7 +305,7 @@ partial class Device : Devices.Device
                         string fwTemp = fwSr.ReadToEnd();
 
                         uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                      out dev._firewireModel);
+                                      out dev.FirewireModel);
 
                         fwSr.Close();
 
@@ -313,7 +313,7 @@ partial class Device : Devices.Device
                         fwTemp = fwSr.ReadToEnd();
 
                         uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                      out dev._firewireVendor);
+                                      out dev.FirewireVendor);
 
                         fwSr.Close();
 
@@ -321,7 +321,7 @@ partial class Device : Devices.Device
                         fwTemp = fwSr.ReadToEnd();
 
                         ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                       out dev._firewireGuid);
+                                       out dev.FirewireGuid);
 
                         fwSr.Close();
 

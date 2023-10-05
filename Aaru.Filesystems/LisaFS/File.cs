@@ -81,10 +81,10 @@ public sealed partial class LisaFS
 
         node = new LisaFileNode
         {
-            Path    = path,
-            Length  = stat.Length,
-            Offset  = 0,
-            _fileId = fileId
+            Path   = path,
+            Length = stat.Length,
+            Offset = 0,
+            FileId = fileId
         };
 
         return ErrorNumber.NoError;
@@ -126,7 +126,7 @@ public sealed partial class LisaFS
 
         if(_debug)
         {
-            switch(mynode._fileId)
+            switch(mynode.FileId)
             {
                 case FILEID_BOOT_SIGNED:
                 case FILEID_LOADER_SIGNED:
@@ -134,17 +134,17 @@ public sealed partial class LisaFS
                 case (short)FILEID_BITMAP:
                 case (short)FILEID_SRECORD:
                 case (short)FILEID_CATALOG:
-                    error = ReadSystemFile(mynode._fileId, out tmp);
+                    error = ReadSystemFile(mynode.FileId, out tmp);
 
                     break;
                 default:
-                    error = ReadFile(mynode._fileId, out tmp);
+                    error = ReadFile(mynode.FileId, out tmp);
 
                     break;
             }
         }
         else
-            error = ReadFile(mynode._fileId, out tmp);
+            error = ReadFile(mynode.FileId, out tmp);
 
         if(error != ErrorNumber.NoError)
         {

@@ -203,8 +203,8 @@ partial class Device : Devices.Device
 
             if(!sense)
             {
-                dev._cachedCsd = new byte[16];
-                Array.Copy(sdBuffer, 0, dev._cachedCsd, 0, 16);
+                dev.CachedCsd = new byte[16];
+                Array.Copy(sdBuffer, 0, dev.CachedCsd, 0, 16);
             }
 
             sdBuffer = new byte[16];
@@ -215,8 +215,8 @@ partial class Device : Devices.Device
 
             if(!sense)
             {
-                dev._cachedCid = new byte[16];
-                Array.Copy(sdBuffer, 0, dev._cachedCid, 0, 16);
+                dev.CachedCid = new byte[16];
+                Array.Copy(sdBuffer, 0, dev.CachedCid, 0, 16);
             }
 
             sdBuffer = new byte[8];
@@ -227,35 +227,35 @@ partial class Device : Devices.Device
 
             if(!sense)
             {
-                dev._cachedScr = new byte[8];
-                Array.Copy(sdBuffer, 0, dev._cachedScr, 0, 8);
+                dev.CachedScr = new byte[8];
+                Array.Copy(sdBuffer, 0, dev.CachedScr, 0, 8);
             }
 
             sdBuffer = new byte[4];
 
             dev.LastError =
-                dev.SendMmcCommand(dev._cachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
+                dev.SendMmcCommand(dev.CachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
                                    false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
                                    4, 1, ref sdBuffer, out _, out _, out sense);
 
             if(!sense)
             {
-                dev._cachedScr = new byte[4];
-                Array.Copy(sdBuffer, 0, dev._cachedScr, 0, 4);
+                dev.CachedScr = new byte[4];
+                Array.Copy(sdBuffer, 0, dev.CachedScr, 0, 4);
             }
         }
 
     #region SecureDigital / MultiMediaCard
 
-        if(dev._cachedCid != null)
+        if(dev.CachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
             dev.IsRemovable = false;
 
-            if(dev._cachedScr != null)
+            if(dev.CachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -267,7 +267,7 @@ partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -302,8 +302,8 @@ partial class Device : Devices.Device
         if(usbDevice != null)
         {
             dev.UsbDescriptors        = usbDevice.BinaryDescriptors;
-            dev._usbVendor            = (ushort)usbDevice._deviceDescriptor.idVendor;
-            dev._usbProduct           = (ushort)usbDevice._deviceDescriptor.idProduct;
+            dev.UsbVendor             = (ushort)usbDevice.DeviceDescriptor.idVendor;
+            dev.UsbProduct            = (ushort)usbDevice.DeviceDescriptor.idProduct;
             dev.UsbManufacturerString = usbDevice.Manufacturer;
             dev.UsbProductString      = usbDevice.Product;
 

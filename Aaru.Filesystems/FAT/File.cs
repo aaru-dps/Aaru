@@ -83,10 +83,10 @@ public sealed partial class FAT
 
         node = new FatFileNode
         {
-            Path      = path,
-            Length    = stat.Length,
-            Offset    = 0,
-            _clusters = clusters
+            Path     = path,
+            Length   = stat.Length,
+            Offset   = 0,
+            Clusters = clusters
         };
 
         return ErrorNumber.NoError;
@@ -101,7 +101,7 @@ public sealed partial class FAT
         if(node is not FatFileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._clusters = null;
+        mynode.Clusters = null;
 
         return ErrorNumber.NoError;
     }
@@ -136,11 +136,11 @@ public sealed partial class FAT
 
         for(var i = 0; i < sizeInClusters; i++)
         {
-            if(i + firstCluster >= mynode._clusters.Length)
+            if(i + firstCluster >= mynode.Clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
-                _image.ReadSectors(_firstClusterSector + mynode._clusters[i + firstCluster] * _sectorsPerCluster,
+                _image.ReadSectors(_firstClusterSector + mynode.Clusters[i + firstCluster] * _sectorsPerCluster,
                                    _sectorsPerCluster, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)

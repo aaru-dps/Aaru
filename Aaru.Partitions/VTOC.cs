@@ -66,7 +66,7 @@ public sealed class VTOC : IPartition
     public Guid Id => new("6D35A66F-8D77-426F-A562-D88F6A1F1702");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

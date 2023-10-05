@@ -47,6 +47,7 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     ushort                                    _blockSize;
     bool                                      _cdi;
     bool                                      _debug;
+    Encoding                                  _encoding;
     bool                                      _highSierra;
     IMediaImage                               _image;
     bool                                      _joliet;
@@ -58,7 +59,6 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     bool                                      _useEvd;
     bool                                      _usePathTable;
     bool                                      _useTransTbl;
-    Encoding                                  Encoding;
 
 #region IReadOnlyFilesystem Members
 

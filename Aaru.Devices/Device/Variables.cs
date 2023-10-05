@@ -38,24 +38,24 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
-    const             string ATA_MODULE_NAME  = "ATA Device";
-    const             string SCSI_MODULE_NAME = "SCSI Device";
-    const             string SD_MODULE_NAME   = "SecureDigital Device";
-    const             string MMC_MODULE_NAME  = "MultiMediaCard Device";
-    private protected byte[] _cachedCid;
+    const string ATA_MODULE_NAME  = "ATA Device";
+    const string SCSI_MODULE_NAME = "SCSI Device";
+    const string SD_MODULE_NAME   = "SecureDigital Device";
+    const string MMC_MODULE_NAME  = "MultiMediaCard Device";
 
     // MMC and SecureDigital, values that need to be get with card idle, something that may
     // not be possible to do but usually is already done by the SDHCI driver.
-    private protected byte[] _cachedCsd;
-    private protected byte[] _cachedOcr;
-    private protected byte[] _cachedScr;
+    private protected byte[] CachedCid;
+    private protected byte[] CachedCsd;
+    private protected byte[] CachedOcr;
+    private protected byte[] CachedScr;
 
-    private protected string _devicePath;
-    private protected ulong  _firewireGuid;
-    private protected uint   _firewireModel;
-    private protected uint   _firewireVendor;
-    private protected ushort _usbProduct;
-    private protected ushort _usbVendor;
+    private protected string DevicePath;
+    private protected ulong  FirewireGuid;
+    private protected uint   FirewireModel;
+    private protected uint   FirewireVendor;
+    private protected ushort UsbProduct;
+    private protected ushort UsbVendor;
 
     /// <summary>Gets the Platform ID for this device</summary>
     /// <value>The Platform ID</value>
@@ -107,11 +107,11 @@ public partial class Device
 
     /// <summary>Gets the USB vendor ID.</summary>
     /// <value>The USB vendor ID.</value>
-    public ushort UsbVendorId => _usbVendor;
+    public ushort UsbVendorId => UsbVendor;
 
     /// <summary>Gets the USB product ID.</summary>
     /// <value>The USB product ID.</value>
-    public ushort UsbProductId => _usbProduct;
+    public ushort UsbProductId => UsbProduct;
 
     /// <summary>Gets the USB descriptors.</summary>
     /// <value>The USB descriptors.</value>
@@ -135,11 +135,11 @@ public partial class Device
 
     /// <summary>Gets the FireWire GUID</summary>
     /// <value>The FireWire GUID.</value>
-    public ulong FireWireGuid => _firewireGuid;
+    public ulong FireWireGuid => FirewireGuid;
 
     /// <summary>Gets the FireWire model number</summary>
     /// <value>The FireWire model.</value>
-    public uint FireWireModel => _firewireModel;
+    public uint FireWireModel => FirewireModel;
 
     /// <summary>Gets the FireWire model name.</summary>
     /// <value>The FireWire model name.</value>
@@ -147,7 +147,7 @@ public partial class Device
 
     /// <summary>Gets the FireWire vendor number.</summary>
     /// <value>The FireWire vendor number.</value>
-    public uint FireWireVendor => _firewireVendor;
+    public uint FireWireVendor => FirewireVendor;
 
     /// <summary>Gets the FireWire vendor name.</summary>
     /// <value>The FireWire vendor name.</value>

@@ -37,8 +37,8 @@ public sealed partial class AppleDOS
 
     sealed class AppleDosDirNode : IDirNode
     {
-        internal string[] _contents;
-        internal int      _position;
+        internal string[] Contents;
+        internal int      Position;
 
     #region IDirNode Members
 
@@ -54,7 +54,7 @@ public sealed partial class AppleDOS
 
     sealed class AppleDosFileNode : IFileNode
     {
-        internal byte[] _cache;
+        internal byte[] Cache;
 
     #region IFileNode Members
 

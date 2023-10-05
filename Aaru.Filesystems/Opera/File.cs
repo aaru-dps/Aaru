@@ -79,10 +79,10 @@ public sealed partial class OperaFS
 
         node = new OperaFileNode
         {
-            Path    = path,
-            Length  = entry.Entry.byte_count,
-            Offset  = 0,
-            _dentry = entry
+            Path   = path,
+            Length = entry.Entry.byte_count,
+            Offset = 0,
+            Dentry = entry
         };
 
         return ErrorNumber.NoError;
@@ -119,21 +119,21 @@ public sealed partial class OperaFS
         if(length + mynode.Offset >= mynode.Length)
             read = mynode.Length - mynode.Offset;
 
-        long firstBlock    = mynode.Offset          / mynode._dentry.Entry.block_size;
-        long offsetInBlock = mynode.Offset          % mynode._dentry.Entry.block_size;
-        long sizeInBlocks  = (read + offsetInBlock) / mynode._dentry.Entry.block_size;
+        long firstBlock    = mynode.Offset          / mynode.Dentry.Entry.block_size;
+        long offsetInBlock = mynode.Offset          % mynode.Dentry.Entry.block_size;
+        long sizeInBlocks  = (read + offsetInBlock) / mynode.Dentry.Entry.block_size;
 
-        if((read + offsetInBlock) % mynode._dentry.Entry.block_size > 0)
+        if((read + offsetInBlock) % mynode.Dentry.Entry.block_size > 0)
             sizeInBlocks++;
 
         uint fileBlockSizeRatio;
 
         if(_image.Info.SectorSize is 2336 or 2352 or 2448)
-            fileBlockSizeRatio = mynode._dentry.Entry.block_size / 2048;
+            fileBlockSizeRatio = mynode.Dentry.Entry.block_size / 2048;
         else
-            fileBlockSizeRatio = mynode._dentry.Entry.block_size / _image.Info.SectorSize;
+            fileBlockSizeRatio = mynode.Dentry.Entry.block_size / _image.Info.SectorSize;
 
-        ErrorNumber errno = _image.ReadSectors((ulong)(mynode._dentry.Pointers[0] + firstBlock * fileBlockSizeRatio),
+        ErrorNumber errno = _image.ReadSectors((ulong)(mynode.Dentry.Pointers[0] + firstBlock * fileBlockSizeRatio),
                                                (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buf);
 
         if(errno != ErrorNumber.NoError)

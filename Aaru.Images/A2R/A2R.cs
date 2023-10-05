@@ -48,9 +48,9 @@ namespace Aaru.DiscImages;
 public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWritableFluxImage
 {
     const string        MODULE_NAME = "A2R plugin";
-    List<StreamCapture> _a2rCaptures;
-    IFilter             _a2rFilter;
-    Stream              _a2rStream;
+    List<StreamCapture> _a2RCaptures;
+    IFilter             _a2RFilter;
+    Stream              _a2RStream;
 
     // Offset from the start of the current RWCP to the next capture
     uint _currentCaptureOffset = 16;
@@ -58,12 +58,12 @@ public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWrit
 
     // 53 = A2R header, INFO header, INFO data
     long                       _currentRwcpStart = 53;
+    A2RHeader                  _header;
     ImageInfo                  _imageInfo;
     InfoChunkV2                _infoChunkV2;
     InfoChunkV3                _infoChunkV3;
+    Dictionary<string, string> _meta;
     FileStream                 _writingStream;
-    A2rHeader                  Header;
-    Dictionary<string, string> Meta;
 
     public A2R() =>
         _imageInfo = new ImageInfo

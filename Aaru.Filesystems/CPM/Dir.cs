@@ -55,9 +55,9 @@ public sealed partial class CPM
 
         node = new CpmDirNode
         {
-            Path      = path,
-            _position = 0,
-            _contents = _dirList.ToArray()
+            Path     = path,
+            Position = 0,
+            Contents = _dirList.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -74,13 +74,13 @@ public sealed partial class CPM
         if(node is not CpmDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._contents.Length)
+        if(mynode.Position >= mynode.Contents.Length)
             return ErrorNumber.NoError;
 
-        filename = mynode._contents[mynode._position++];
+        filename = mynode.Contents[mynode.Position++];
 
         return ErrorNumber.NoError;
     }
@@ -91,8 +91,8 @@ public sealed partial class CPM
         if(node is not CpmDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._contents = null;
+        mynode.Position = -1;
+        mynode.Contents = null;
 
         return ErrorNumber.NoError;
     }

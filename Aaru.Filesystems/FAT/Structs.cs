@@ -860,8 +860,8 @@ public sealed partial class FAT
 
     sealed class FatDirNode : IDirNode
     {
-        internal CompleteDirectoryEntry[] _entries;
-        internal int                      _position;
+        internal CompleteDirectoryEntry[] Entries;
+        internal int                      Position;
 
     #region IDirNode Members
 
@@ -877,7 +877,7 @@ public sealed partial class FAT
 
     sealed class FatFileNode : IFileNode
     {
-        internal uint[] _clusters;
+        internal uint[] Clusters;
 
     #region IFileNode Members
 

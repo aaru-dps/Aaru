@@ -70,7 +70,7 @@ public sealed class AppleMap : IPartition
     public Guid Id => new("36405F8D-4F1A-07F5-209C-223D735D6D22");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

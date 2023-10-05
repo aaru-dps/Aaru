@@ -370,11 +370,11 @@ partial class Device
 
         switch(command)
         {
-            case MmcCommands.SendCid when _cachedCid != null:
+            case MmcCommands.SendCid when CachedCid != null:
             {
                 cmdStopwatch.Restart();
-                buffer = new byte[_cachedCid.Length];
-                Array.Copy(_cachedCid, buffer, buffer.Length);
+                buffer = new byte[CachedCid.Length];
+                Array.Copy(CachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
                 cmdStopwatch.Stop();
@@ -382,11 +382,11 @@ partial class Device
 
                 return 0;
             }
-            case MmcCommands.SendCsd when _cachedCid != null:
+            case MmcCommands.SendCsd when CachedCid != null:
             {
                 cmdStopwatch.Restart();
-                buffer = new byte[_cachedCsd.Length];
-                Array.Copy(_cachedCsd, buffer, buffer.Length);
+                buffer = new byte[CachedCsd.Length];
+                Array.Copy(CachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
                 cmdStopwatch.Stop();
@@ -394,11 +394,11 @@ partial class Device
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
+            case (MmcCommands)SecureDigitalCommands.SendScr when CachedScr != null:
             {
                 cmdStopwatch.Restart();
-                buffer = new byte[_cachedScr.Length];
-                Array.Copy(_cachedScr, buffer, buffer.Length);
+                buffer = new byte[CachedScr.Length];
+                Array.Copy(CachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
                 cmdStopwatch.Stop();
@@ -406,12 +406,12 @@ partial class Device
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
-            case MmcCommands.SendOpCond when _cachedOcr                                    != null:
+            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when CachedOcr != null:
+            case MmcCommands.SendOpCond when CachedOcr                                    != null:
             {
                 cmdStopwatch.Restart();
-                buffer = new byte[_cachedOcr.Length];
-                Array.Copy(_cachedOcr, buffer, buffer.Length);
+                buffer = new byte[CachedOcr.Length];
+                Array.Copy(CachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
                 cmdStopwatch.Stop();
@@ -594,7 +594,7 @@ partial class Device
             return true;
         }
 
-        int newFd = Extern.open(_devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+        int newFd = Extern.open(DevicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
 
         if(newFd >= 0)
         {
@@ -614,7 +614,7 @@ partial class Device
             return true;
         }
 
-        newFd = Extern.open(_devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+        newFd = Extern.open(DevicePath, FileFlags.Readonly | FileFlags.NonBlocking);
 
         if(newFd < 0)
         {

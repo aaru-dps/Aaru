@@ -793,11 +793,11 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public string SCSILabel               => UI.Title_SCSI;
     public string ATA_ATAPILabel          => UI.Title_ATA_ATAPI;
     public string CompactDiscLabel        => Localization.Core.Title_CompactDisc;
-    public string DVD_HD_DVDLabel         => Localization.Core.Title_DVD_HD_DVD;
-    public string DVD_R_WLabel            => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string Dvd_Hd_DvdLabel         => Localization.Core.Title_DVD_HD_DVD;
+    public string Dvd_R_WLabel            => Localization.Core.Title_DVD_Plus_Dash_R_W;
     public string BluRayLabel             => Localization.Core.Title_Blu_ray;
-    public string PCMCIALabel             => UI.Title_PCMCIA;
-    public string SD_MMCLabel             => UI.Title_SD_MMC;
+    public string PcmciaLabel             => UI.Title_PCMCIA;
+    public string Sd_MMCLabel             => UI.Title_SD_MMC;
     public string XboxLabel               => Localization.Core.Title_Xbox;
     public string EntropyLabel            => UI.ButtonLabel_Calculate_entropy;
     public string VerifyLabel             => UI.ButtonLabel_Verify;

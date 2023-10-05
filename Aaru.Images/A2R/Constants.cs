@@ -37,12 +37,12 @@ namespace Aaru.DiscImages;
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
-    readonly byte[] _a2rV2Signature =
+    readonly byte[] _a2RV2Signature =
     {
         0x41, 0x32, 0x52, 0x32 // A2R2
     };
 
-    readonly byte[] _a2rV3Signature =
+    readonly byte[] _a2RV3Signature =
     {
         0x41, 0x32, 0x52, 0x33 // A2R3
     };

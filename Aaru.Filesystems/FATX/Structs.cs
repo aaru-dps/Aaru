@@ -58,8 +58,8 @@ public sealed partial class XboxFatPlugin
 
     sealed class FatxDirNode : IDirNode
     {
-        internal DirectoryEntry[] _entries;
-        internal int              _position;
+        internal DirectoryEntry[] Entries;
+        internal int              Position;
 
     #region IDirNode Members
 
@@ -75,7 +75,7 @@ public sealed partial class XboxFatPlugin
 
     sealed class FatxFileNode : IFileNode
     {
-        internal uint[] _clusters;
+        internal uint[] Clusters;
 
     #region IFileNode Members
 

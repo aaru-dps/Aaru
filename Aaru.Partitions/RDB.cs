@@ -187,7 +187,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
     public Guid Id => new("8D72ED97-1854-4170-9CE4-6E8446FD9863");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

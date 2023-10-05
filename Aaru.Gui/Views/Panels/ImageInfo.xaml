@@ -181,13 +181,13 @@
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding DVD_HD_DVDLabel}" />
+                    <TextBlock Text="{Binding Dvd_Hd_DvdLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdWritableInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding DVD_R_WLabel}" />
+                    <TextBlock Text="{Binding Dvd_R_WLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdWritableInfo}" />
             </TabItem>
@@ -199,13 +199,13 @@
             </TabItem>
             <TabItem IsVisible="{Binding !!PcmciaInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding PCMCIALabel}" />
+                    <TextBlock Text="{Binding PcmciaLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding PcmciaInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!SdMmcInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="{Binding SD_MMCLabel}" />
+                    <TextBlock Text="{Binding Sd_MMCLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding SdMmcInfo}" />
             </TabItem>

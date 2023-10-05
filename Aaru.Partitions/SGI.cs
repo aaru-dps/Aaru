@@ -62,7 +62,7 @@ public sealed class SGI : IPartition
     public Guid Id => new("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)

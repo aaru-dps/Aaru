@@ -56,7 +56,7 @@ public sealed class DEC : IPartition
     public Guid Id => new("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)

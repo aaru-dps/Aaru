@@ -224,8 +224,8 @@ public sealed partial class LisaFS
 
     sealed class LisaDirNode : IDirNode
     {
-        internal string[] _contents;
-        internal int      _position;
+        internal string[] Contents;
+        internal int      Position;
 
     #region IDirNode Members
 
@@ -241,7 +241,7 @@ public sealed partial class LisaFS
 
     sealed class LisaFileNode : IFileNode
     {
-        internal short _fileId;
+        internal short FileId;
 
     #region IFileNode Members
 

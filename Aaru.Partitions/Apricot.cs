@@ -95,7 +95,7 @@ public sealed class Apricot : IPartition
     public Guid Id => new("8CBF5864-7B5A-47A0-8CEB-199C74FA22DE");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

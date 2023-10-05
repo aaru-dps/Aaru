@@ -80,10 +80,10 @@ public sealed partial class XboxFatPlugin
 
         node = new FatxFileNode
         {
-            Path      = path,
-            Length    = stat.Length,
-            Offset    = 0,
-            _clusters = clusters
+            Path     = path,
+            Length   = stat.Length,
+            Offset   = 0,
+            Clusters = clusters
         };
 
         return ErrorNumber.NoError;
@@ -98,7 +98,7 @@ public sealed partial class XboxFatPlugin
         if(node is not FatxFileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._clusters = null;
+        mynode.Clusters = null;
 
         return ErrorNumber.NoError;
     }
@@ -133,12 +133,12 @@ public sealed partial class XboxFatPlugin
 
         for(var i = 0; i < sizeInClusters; i++)
         {
-            if(i + firstCluster >= mynode._clusters.Length)
+            if(i + firstCluster >= mynode.Clusters.Length)
                 return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
                 _imagePlugin.
-                    ReadSectors(_firstClusterSector + (mynode._clusters[i + firstCluster] - 1) * _sectorsPerCluster,
+                    ReadSectors(_firstClusterSector + (mynode.Clusters[i + firstCluster] - 1) * _sectorsPerCluster,
                                 _sectorsPerCluster, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)

@@ -204,7 +204,7 @@ public partial class Device
                 dev.Model = dev.FireWireModelName;
 
             if(string.IsNullOrEmpty(dev.Serial))
-                dev.Serial = $"{dev._firewireGuid:X16}";
+                dev.Serial = $"{dev.FirewireGuid:X16}";
             else
             {
                 foreach(char c in dev.Serial.Where(c => !char.IsControl(c)))

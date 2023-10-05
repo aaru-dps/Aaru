@@ -312,7 +312,7 @@ public sealed class MBR : IPartition
     public Guid Id => new("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]

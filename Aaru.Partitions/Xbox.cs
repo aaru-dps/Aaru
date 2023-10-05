@@ -73,7 +73,7 @@ public sealed class Xbox : IPartition
     public Guid Id => new("E3F6FB91-D358-4F22-A550-81E92D50EB78");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

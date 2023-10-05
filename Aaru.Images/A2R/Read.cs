@@ -52,40 +52,40 @@ public sealed partial class A2R
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        _a2rStream = imageFilter.GetDataForkStream();
-        _a2rStream.Seek(0, SeekOrigin.Begin);
+        _a2RStream = imageFilter.GetDataForkStream();
+        _a2RStream.Seek(0, SeekOrigin.Begin);
 
-        _a2rFilter = imageFilter;
+        _a2RFilter = imageFilter;
 
-        var hdr = new byte[Marshal.SizeOf<A2rHeader>()];
-        _a2rStream.EnsureRead(hdr, 0, Marshal.SizeOf<A2rHeader>());
+        var hdr = new byte[Marshal.SizeOf<A2RHeader>()];
+        _a2RStream.EnsureRead(hdr, 0, Marshal.SizeOf<A2RHeader>());
 
-        Header = Marshal.ByteArrayToStructureLittleEndian<A2rHeader>(hdr);
+        _header = Marshal.ByteArrayToStructureLittleEndian<A2RHeader>(hdr);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = \"{0}\"",
-                                   StringHandlers.CToString(Header.signature));
+                                   StringHandlers.CToString(_header.signature));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}",        Header.version);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.highBitTest = {0:X2}", Header.highBitTest);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}",        _header.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.highBitTest = {0:X2}", _header.highBitTest);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.lineTest = {0:X2} {1:X2} {2:X2}", Header.lineTest[0],
-                                   Header.lineTest[1], Header.lineTest[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.lineTest = {0:X2} {1:X2} {2:X2}", _header.lineTest[0],
+                                   _header.lineTest[1], _header.lineTest[2]);
 
         var infoMagic = new byte[4];
-        _a2rStream.EnsureRead(infoMagic, 0, 4);
+        _a2RStream.EnsureRead(infoMagic, 0, 4);
 
         // There must be an INFO chunk after the header (at byte 16)
         if(!_infoChunkSignature.SequenceEqual(infoMagic))
             return ErrorNumber.UnrecognizedFormat;
 
-        _a2rStream.Seek(-4, SeekOrigin.Current);
+        _a2RStream.Seek(-4, SeekOrigin.Current);
 
-        switch(Header.version)
+        switch(_header.version)
         {
             case 0x32:
             {
                 var infoChnk = new byte[Marshal.SizeOf<InfoChunkV2>()];
-                _a2rStream.EnsureRead(infoChnk, 0, Marshal.SizeOf<InfoChunkV2>());
+                _a2RStream.EnsureRead(infoChnk, 0, Marshal.SizeOf<InfoChunkV2>());
                 _infoChunkV2 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV2>(infoChnk);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
@@ -109,14 +109,14 @@ public sealed partial class A2R
 
                 switch(_infoChunkV2.diskType)
                 {
-                    case A2rDiskType._35:
+                    case A2RDiskType._35:
                         _imageInfo.Heads           = 2;
                         _imageInfo.Cylinders       = 80;
                         _imageInfo.MediaType       = MediaType.AppleSonyDS;
                         _imageInfo.SectorsPerTrack = 10;
 
                         break;
-                    case A2rDiskType._525:
+                    case A2RDiskType._525:
                         _imageInfo.Heads     = 1;
                         _imageInfo.Cylinders = 40;
                         _imageInfo.MediaType = MediaType.Apple32SS;
@@ -131,7 +131,7 @@ public sealed partial class A2R
             case 0x33:
             {
                 var infoChk = new byte[Marshal.SizeOf<InfoChunkV3>()];
-                _a2rStream.EnsureRead(infoChk, 0, Marshal.SizeOf<InfoChunkV3>());
+                _a2RStream.EnsureRead(infoChk, 0, Marshal.SizeOf<InfoChunkV3>());
                 _infoChunkV3 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV3>(infoChk);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
@@ -204,35 +204,35 @@ public sealed partial class A2R
             }
         }
 
-        _a2rCaptures = new List<StreamCapture>();
+        _a2RCaptures = new List<StreamCapture>();
 
-        while(_a2rStream.Position < _a2rStream.Length)
+        while(_a2RStream.Position < _a2RStream.Length)
         {
             var chunkHdr = new byte[Marshal.SizeOf<ChunkHeader>()];
-            _a2rStream.EnsureRead(chunkHdr, 0, Marshal.SizeOf<ChunkHeader>());
+            _a2RStream.EnsureRead(chunkHdr, 0, Marshal.SizeOf<ChunkHeader>());
             ChunkHeader chunkHeader = Marshal.ByteArrayToStructureLittleEndian<ChunkHeader>(chunkHdr);
-            _a2rStream.Seek(-Marshal.SizeOf<ChunkHeader>(), SeekOrigin.Current);
+            _a2RStream.Seek(-Marshal.SizeOf<ChunkHeader>(), SeekOrigin.Current);
 
             switch(chunkHeader.chunkId)
             {
                 case var rwcp when rwcp.SequenceEqual(_rwcpChunkSignature):
                     var rwcpBuffer = new byte[Marshal.SizeOf<RwcpChunkHeader>()];
-                    _a2rStream.EnsureRead(rwcpBuffer, 0, Marshal.SizeOf<RwcpChunkHeader>());
+                    _a2RStream.EnsureRead(rwcpBuffer, 0, Marshal.SizeOf<RwcpChunkHeader>());
                     RwcpChunkHeader rwcpChunk = Marshal.ByteArrayToStructureLittleEndian<RwcpChunkHeader>(rwcpBuffer);
 
-                    while(_a2rStream.ReadByte() == 0x43)
+                    while(_a2RStream.ReadByte() == 0x43)
                     {
                         var capture = new StreamCapture
                         {
                             mark        = 0x43,
-                            captureType = (byte)_a2rStream.ReadByte()
+                            captureType = (byte)_a2RStream.ReadByte()
                         };
 
                         var location = new byte[2];
-                        _a2rStream.EnsureRead(location, 0, 2);
+                        _a2RStream.EnsureRead(location, 0, 2);
                         capture.location = BitConverter.ToUInt16(location);
 
-                        A2rLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
+                        A2RLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
                                                   out capture.track, out capture.subTrack);
 
                         if(capture.head + 1 > _imageInfo.Heads)
@@ -241,37 +241,37 @@ public sealed partial class A2R
                         if(capture.track + 1 > _imageInfo.Cylinders)
                             _imageInfo.Cylinders = (uint)(capture.track + 1);
 
-                        capture.numberOfIndexSignals = (byte)_a2rStream.ReadByte();
+                        capture.numberOfIndexSignals = (byte)_a2RStream.ReadByte();
                         capture.indexSignals         = new uint[capture.numberOfIndexSignals];
 
                         for(var i = 0; capture.numberOfIndexSignals > i; i++)
                         {
                             var index = new byte[4];
-                            _a2rStream.EnsureRead(index, 0, 4);
+                            _a2RStream.EnsureRead(index, 0, 4);
                             capture.indexSignals[i] = BitConverter.ToUInt32(index);
                         }
 
                         var dataSize = new byte[4];
-                        _a2rStream.EnsureRead(dataSize, 0, 4);
+                        _a2RStream.EnsureRead(dataSize, 0, 4);
                         capture.captureDataSize = BitConverter.ToUInt32(dataSize);
 
-                        capture.dataOffset = _a2rStream.Position;
+                        capture.dataOffset = _a2RStream.Position;
 
                         capture.resolution = rwcpChunk.resolution;
 
-                        _a2rCaptures.Add(capture);
+                        _a2RCaptures.Add(capture);
 
-                        _a2rStream.Seek(capture.captureDataSize, SeekOrigin.Current);
+                        _a2RStream.Seek(capture.captureDataSize, SeekOrigin.Current);
                     }
 
                     break;
                 case var meta when meta.SequenceEqual(_metaChunkSignature):
-                    Meta = new Dictionary<string, string>();
+                    _meta = new Dictionary<string, string>();
 
-                    _a2rStream.Seek(Marshal.SizeOf<ChunkHeader>(), SeekOrigin.Current);
+                    _a2RStream.Seek(Marshal.SizeOf<ChunkHeader>(), SeekOrigin.Current);
 
                     var metadataBuffer = new byte[chunkHeader.chunkSize];
-                    _a2rStream.EnsureRead(metadataBuffer, 0, (int)chunkHeader.chunkSize);
+                    _a2RStream.EnsureRead(metadataBuffer, 0, (int)chunkHeader.chunkSize);
 
                     string metaData = Encoding.UTF8.GetString(metadataBuffer);
 
@@ -279,12 +279,12 @@ public sealed partial class A2R
 
                     foreach(string[] keyValue in metaFields.Select(field => field.Split('\t')).
                                                             Where(keyValue => keyValue.Length == 2))
-                        Meta.Add(keyValue[0], keyValue[1]);
+                        _meta.Add(keyValue[0], keyValue[1]);
 
-                    if(Meta.TryGetValue("image_date", out string imageDate))
+                    if(_meta.TryGetValue("image_date", out string imageDate))
                         _imageInfo.CreationTime = DateTime.Parse(imageDate);
 
-                    if(Meta.TryGetValue("title", out string title))
+                    if(_meta.TryGetValue("title", out string title))
                         _imageInfo.MediaTitle = title;
 
                     break;
@@ -292,23 +292,23 @@ public sealed partial class A2R
                     return ErrorNumber.NotImplemented;
                 case var strm when strm.SequenceEqual(_strmChunkSignature):
                     var strmBuffer = new byte[Marshal.SizeOf<ChunkHeader>()];
-                    _a2rStream.EnsureRead(strmBuffer, 0, Marshal.SizeOf<ChunkHeader>());
+                    _a2RStream.EnsureRead(strmBuffer, 0, Marshal.SizeOf<ChunkHeader>());
                     ChunkHeader strmChunk = Marshal.ByteArrayToStructureLittleEndian<ChunkHeader>(strmBuffer);
 
-                    long end = strmChunk.chunkSize + _a2rStream.Position - 1;
+                    long end = strmChunk.chunkSize + _a2RStream.Position - 1;
 
-                    while(_a2rStream.Position < end)
+                    while(_a2RStream.Position < end)
                     {
                         var capture = new StreamCapture
                         {
                             indexSignals         = new uint[1],
-                            location             = (byte)_a2rStream.ReadByte(),
-                            captureType          = (byte)_a2rStream.ReadByte(),
+                            location             = (byte)_a2RStream.ReadByte(),
+                            captureType          = (byte)_a2RStream.ReadByte(),
                             resolution           = 125000,
                             numberOfIndexSignals = 1
                         };
 
-                        A2rLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
+                        A2RLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
                                                   out capture.track, out capture.subTrack);
 
                         if(capture.head + 1 > _imageInfo.Heads)
@@ -318,21 +318,21 @@ public sealed partial class A2R
                             _imageInfo.Cylinders = (uint)(capture.track + 1);
 
                         var dataSize = new byte[4];
-                        _a2rStream.EnsureRead(dataSize, 0, 4);
+                        _a2RStream.EnsureRead(dataSize, 0, 4);
                         capture.captureDataSize = BitConverter.ToUInt32(dataSize);
 
                         var index = new byte[4];
-                        _a2rStream.EnsureRead(index, 0, 4);
+                        _a2RStream.EnsureRead(index, 0, 4);
                         capture.indexSignals[0] = BitConverter.ToUInt32(index);
 
-                        capture.dataOffset = _a2rStream.Position;
+                        capture.dataOffset = _a2RStream.Position;
 
-                        _a2rCaptures.Add(capture);
+                        _a2RCaptures.Add(capture);
 
-                        _a2rStream.Seek(capture.captureDataSize, SeekOrigin.Current);
+                        _a2RStream.Seek(capture.captureDataSize, SeekOrigin.Current);
                     }
 
-                    _a2rStream.ReadByte();
+                    _a2RStream.ReadByte();
 
                     break;
             }
@@ -344,9 +344,9 @@ public sealed partial class A2R
     /// <inheritdoc />
     public ErrorNumber CapturesLength(uint head, ushort track, byte subTrack, out uint length)
     {
-        long index = HeadTrackSubToA2rLocation(head, track, subTrack, _imageInfo.MediaType);
+        long index = HeadTrackSubToA2RLocation(head, track, subTrack, _imageInfo.MediaType);
 
-        length = (uint)_a2rCaptures.FindAll(capture => index == capture.location).Count;
+        length = (uint)_a2RCaptures.FindAll(capture => index == capture.location).Count;
 
         return ErrorNumber.NoError;
     }
@@ -440,7 +440,7 @@ public sealed partial class A2R
         if(capture.captureType == 2)
             return ErrorNumber.NotImplemented;
 
-        Stream stream = _a2rFilter.GetDataForkStream();
+        Stream stream = _a2RFilter.GetDataForkStream();
         var    br     = new BinaryReader(stream);
 
         br.BaseStream.Seek(capture.dataOffset, SeekOrigin.Begin);
@@ -454,7 +454,7 @@ public sealed partial class A2R
     {
         length = 0;
 
-        List<StreamCapture> captures = _a2rCaptures.FindAll(c => c.head == head && c.track == track);
+        List<StreamCapture> captures = _a2RCaptures.FindAll(c => c.head == head && c.track == track);
 
         if(captures.Count <= 0)
             return ErrorNumber.OutOfRange;
@@ -497,8 +497,8 @@ public sealed partial class A2R
 
     StreamCapture StreamCaptureAtIndex(uint head, ushort track, byte subTrack, uint captureIndex)
     {
-        long index = HeadTrackSubToA2rLocation(head, track, subTrack, _imageInfo.MediaType);
+        long index = HeadTrackSubToA2RLocation(head, track, subTrack, _imageInfo.MediaType);
 
-        return _a2rCaptures.FindAll(capture => index == capture.location)[(int)captureIndex];
+        return _a2RCaptures.FindAll(capture => index == capture.location)[(int)captureIndex];
     }
 }

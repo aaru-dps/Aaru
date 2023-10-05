@@ -61,7 +61,7 @@ public sealed partial class ISO9660
 
             off += Marshal.SizeOf<PathTableEntry>();
 
-            string name = Encoding.GetString(data, off, entry.name_len);
+            string name = _encoding.GetString(data, off, entry.name_len);
 
             table.Add(new PathTableEntryInternal
             {
@@ -102,7 +102,7 @@ public sealed partial class ISO9660
 
             off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
-            string name = Encoding.GetString(data, off, entry.name_len);
+            string name = _encoding.GetString(data, off, entry.name_len);
 
             table.Add(new PathTableEntryInternal
             {

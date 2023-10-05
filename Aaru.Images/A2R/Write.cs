@@ -87,19 +87,19 @@ public sealed partial class A2R
         _writingStream.WriteByte(IsCaptureTypeTiming(dataResolution, dataBuffer) ? (byte)1 : (byte)3);
 
         _writingStream.
-            Write(BitConverter.GetBytes((ushort)HeadTrackSubToA2rLocation(head, track, subTrack, _infoChunkV3.driveType)),
+            Write(BitConverter.GetBytes((ushort)HeadTrackSubToA2RLocation(head, track, subTrack, _infoChunkV3.driveType)),
                   0, 2);
 
-        List<uint> a2rIndices = FluxRepresentationsToUInt32List(indexBuffer);
+        List<uint> a2RIndices = FluxRepresentationsToUInt32List(indexBuffer);
 
-        if(a2rIndices[0] == 0)
-            a2rIndices.RemoveAt(0);
+        if(a2RIndices[0] == 0)
+            a2RIndices.RemoveAt(0);
 
-        _writingStream.WriteByte((byte)a2rIndices.Count);
+        _writingStream.WriteByte((byte)a2RIndices.Count);
 
         long previousIndex = 0;
 
-        foreach(uint index in a2rIndices)
+        foreach(uint index in a2RIndices)
         {
             _writingStream.Write(BitConverter.GetBytes(index + previousIndex), 0, 4);
             previousIndex += index;
@@ -108,7 +108,7 @@ public sealed partial class A2R
         _writingStream.Write(BitConverter.GetBytes(dataBuffer.Length), 0, 4);
         _writingStream.Write(dataBuffer,                               0, dataBuffer.Length);
 
-        _currentCaptureOffset += (uint)(9 + a2rIndices.Count * 4 + dataBuffer.Length);
+        _currentCaptureOffset += (uint)(9 + a2RIndices.Count * 4 + dataBuffer.Length);
 
         return ErrorNumber.NoError;
     }
@@ -143,10 +143,10 @@ public sealed partial class A2R
         IsWriting    = true;
         ErrorMessage = null;
 
-        Header.signature   = "A2R"u8.ToArray();
-        Header.version     = 0x33;
-        Header.highBitTest = 0xFF;
-        Header.lineTest    = "\n\r\n"u8.ToArray();
+        _header.signature   = "A2R"u8.ToArray();
+        _header.version     = 0x33;
+        _header.highBitTest = 0xFF;
+        _header.lineTest    = "\n\r\n"u8.ToArray();
 
         _infoChunkV3.driveType = mediaType switch
                                  {
@@ -171,10 +171,10 @@ public sealed partial class A2R
 
         _writingStream.Seek(0, SeekOrigin.Begin);
 
-        _writingStream.Write(Header.signature, 0, 3);
-        _writingStream.WriteByte(Header.version);
-        _writingStream.WriteByte(Header.highBitTest);
-        _writingStream.Write(Header.lineTest, 0, 3);
+        _writingStream.Write(_header.signature, 0, 3);
+        _writingStream.WriteByte(_header.version);
+        _writingStream.WriteByte(_header.highBitTest);
+        _writingStream.Write(_header.lineTest, 0, 3);
 
         // First chunk needs to be an INFO chunk
         WriteInfoChunk();
@@ -200,7 +200,7 @@ public sealed partial class A2R
     /// <inheritdoc />
     public bool SetImageInfo(ImageInfo imageInfo)
     {
-        Meta = new Dictionary<string, string>();
+        _meta = new Dictionary<string, string>();
 
         _infoChunkV3.header.chunkId   = _infoChunkSignature;
         _infoChunkV3.header.chunkSize = 37;
@@ -213,8 +213,8 @@ public sealed partial class A2R
         _infoChunkV3.synchronized    = 1;
         _infoChunkV3.hardSectorCount = 0;
 
-        Meta.Add("image_date", DateTime.Now.ToString("O"));
-        Meta.Add("title",      imageInfo.MediaTitle);
+        _meta.Add("image_date", DateTime.Now.ToString("O"));
+        _meta.Add("title",      imageInfo.MediaTitle);
 
         return true;
     }
@@ -319,8 +319,8 @@ public sealed partial class A2R
 
         _writingStream.Write(_metaChunkSignature, 0, 4);
 
-        byte[] metaString = Encoding.UTF8.GetBytes(Meta.Select(static m => $"{m.Key}\t{m.Value}").
-                                                        Aggregate(static (concat, str) => $"{concat}\n{str}") +
+        byte[] metaString = Encoding.UTF8.GetBytes(_meta.Select(static m => $"{m.Key}\t{m.Value}").
+                                                         Aggregate(static (concat, str) => $"{concat}\n{str}") +
                                                    '\n');
 
         _writingStream.Write(BitConverter.GetBytes((uint)metaString.Length), 0, 4);

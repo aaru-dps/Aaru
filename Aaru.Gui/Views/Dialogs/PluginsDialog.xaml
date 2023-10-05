@@ -53,7 +53,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                             IsReadOnly="True" />
-                        <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                        <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                             IsReadOnly="True" />
                         <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}" Width="Auto"
                                             IsReadOnly="True" />
@@ -70,7 +70,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                             IsReadOnly="True" />
-                        <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                        <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                             IsReadOnly="True" />
                         <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}" Width="Auto"
                                             IsReadOnly="True" />
@@ -93,7 +93,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />
@@ -107,7 +107,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />
@@ -131,7 +131,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />
@@ -145,7 +145,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />
@@ -169,7 +169,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />
@@ -183,7 +183,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding UUIDLabel}" Binding="{Binding Uuid}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding UuidLabel}" Binding="{Binding Uuid}" Width="Auto"
                                                 IsReadOnly="True" />
                             <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding Version}"
                                                 Width="Auto" IsReadOnly="True" />

@@ -85,10 +85,10 @@ public sealed partial class ISO9660
 
         node = new Iso9660FileNode
         {
-            Path    = path,
-            Length  = (long)entry.Size,
-            Offset  = 0,
-            _dentry = entry
+            Path   = path,
+            Length = (long)entry.Size,
+            Offset = 0,
+            Dentry = entry
         };
 
         return ErrorNumber.NoError;
@@ -103,7 +103,7 @@ public sealed partial class ISO9660
         if(node is not Iso9660FileNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._dentry = null;
+        mynode.Dentry = null;
 
         return ErrorNumber.NoError;
     }
@@ -128,15 +128,15 @@ public sealed partial class ISO9660
         if(length + mynode.Offset >= mynode.Length)
             read = mynode.Length - mynode.Offset;
 
-        long offset = mynode.Offset + mynode._dentry.XattrLength * _blockSize;
+        long offset = mynode.Offset + mynode.Dentry.XattrLength * _blockSize;
 
-        if(mynode._dentry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
-           mynode._dentry.Extents.Count                                                 != 1)
+        if(mynode.Dentry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
+           mynode.Dentry.Extents.Count                                                 != 1)
         {
-            ErrorNumber err = ReadWithExtents(offset, read, mynode._dentry.Extents,
-                                              mynode._dentry.XA?.signature == XA_MAGIC &&
-                                              mynode._dentry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                              mynode._dentry.XA?.filenumber ?? 0, out byte[] buf);
+            ErrorNumber err = ReadWithExtents(offset, read, mynode.Dentry.Extents,
+                                              mynode.Dentry.XA?.signature == XA_MAGIC &&
+                                              mynode.Dentry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                              mynode.Dentry.XA?.filenumber ?? 0, out byte[] buf);
 
             if(err != ErrorNumber.NoError)
             {
@@ -161,7 +161,7 @@ public sealed partial class ISO9660
             if((read + offsetInSector) % 2352 > 0)
                 sizeInSectors++;
 
-            ErrorNumber errno = _image.ReadSectorsLong((ulong)(mynode._dentry.Extents[0].extent + firstSector),
+            ErrorNumber errno = _image.ReadSectorsLong((ulong)(mynode.Dentry.Extents[0].extent + firstSector),
                                                        (uint)sizeInSectors, out byte[] buf);
 
             if(errno != ErrorNumber.NoError)

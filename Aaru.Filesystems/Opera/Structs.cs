@@ -96,8 +96,8 @@ public sealed partial class OperaFS
 
     sealed class OperaDirNode : IDirNode
     {
-        internal string[] _contents;
-        internal int      _position;
+        internal string[] Contents;
+        internal int      Position;
 
     #region IDirNode Members
 
@@ -113,7 +113,7 @@ public sealed partial class OperaFS
 
     sealed class OperaFileNode : IFileNode
     {
-        internal DirectoryEntryWithPointers _dentry;
+        internal DirectoryEntryWithPointers Dentry;
 
     #region IFileNode Members
 

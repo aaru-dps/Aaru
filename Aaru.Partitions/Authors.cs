@@ -30,5 +30,5 @@ namespace Aaru.Partitions;
 
 static class Authors
 {
-    internal const string NataliaPortillo = "Natalia Portillo";
+    internal const string NATALIA_PORTILLO = "Natalia Portillo";
 }

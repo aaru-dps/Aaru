@@ -61,7 +61,7 @@ public sealed class GuidPartitionTable : IPartition
     public Guid Id => new("CBC9D281-C1D0-44E8-9038-4D66FD2678AB");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

@@ -50,7 +50,7 @@ public sealed partial class A2R
     /// <param name="subTrack">The sub-track number</param>
     /// <param name="mediaType">The media type of the image</param>
     /// <returns>A2R format location</returns>
-    static long HeadTrackSubToA2rLocation(uint head, ushort track, byte subTrack, MediaType mediaType)
+    static long HeadTrackSubToA2RLocation(uint head, ushort track, byte subTrack, MediaType mediaType)
     {
         if(mediaType == MediaType.Apple32SS)
             return head + track * 4 + subTrack;
@@ -67,7 +67,7 @@ public sealed partial class A2R
     /// <param name="subTrack">The sub-track number</param>
     /// <param name="driveType">The drive type enum of the A2R image</param>
     /// <returns>A2R format location</returns>
-    static long HeadTrackSubToA2rLocation(uint head, ushort track, byte subTrack, A2rDriveType driveType)
+    static long HeadTrackSubToA2RLocation(uint head, ushort track, byte subTrack, A2rDriveType driveType)
     {
         if(driveType == A2rDriveType.SS_525_40trk_quarterStep)
             return head + track * 4 + subTrack;
@@ -85,7 +85,7 @@ public sealed partial class A2R
     /// <param name="head">The head number</param>
     /// <param name="track">The track number</param>
     /// <param name="subTrack">The sub-track number</param>
-    static void A2rLocationToHeadTrackSub(uint     location, MediaType mediaType, out uint head, out ushort track,
+    static void A2RLocationToHeadTrackSub(uint     location, MediaType mediaType, out uint head, out ushort track,
                                           out byte subTrack)
     {
         if(mediaType == MediaType.Apple32SS)

@@ -206,7 +206,7 @@ public sealed class PluginsViewModel : ViewModelBase
     public string CloseLabel => UI.ButtonLabel_Close;
 
     public string NameLabel    => UI.Title_Name;
-    public string UUIDLabel    => UI.Title_UUID;
+    public string UuidLabel    => UI.Title_UUID;
     public string VersionLabel => UI.Title_Version;
     public string AuthorLabel  => UI.Title_Author;
 

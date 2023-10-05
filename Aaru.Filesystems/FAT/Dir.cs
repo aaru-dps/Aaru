@@ -65,9 +65,9 @@ public sealed partial class FAT
         {
             node = new FatDirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = _rootDirectoryCache.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = _rootDirectoryCache.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -81,9 +81,9 @@ public sealed partial class FAT
         {
             node = new FatDirNode
             {
-                Path      = path,
-                _position = 0,
-                _entries  = currentDirectory.Values.ToArray()
+                Path     = path,
+                Position = 0,
+                Entries  = currentDirectory.Values.ToArray()
             };
 
             return ErrorNumber.NoError;
@@ -133,9 +133,9 @@ public sealed partial class FAT
 
                 node = new FatDirNode
                 {
-                    Path      = path,
-                    _position = 0,
-                    _entries  = Array.Empty<CompleteDirectoryEntry>()
+                    Path     = path,
+                    Position = 0,
+                    Entries  = Array.Empty<CompleteDirectoryEntry>()
                 };
 
                 return ErrorNumber.NoError;
@@ -400,9 +400,9 @@ public sealed partial class FAT
 
         node = new FatDirNode
         {
-            Path      = path,
-            _position = 0,
-            _entries  = currentDirectory.Values.ToArray()
+            Path     = path,
+            Position = 0,
+            Entries  = currentDirectory.Values.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -419,13 +419,13 @@ public sealed partial class FAT
         if(node is not FatDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
+        if(mynode.Position < 0)
             return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._entries.Length)
+        if(mynode.Position >= mynode.Entries.Length)
             return ErrorNumber.NoError;
 
-        CompleteDirectoryEntry entry = mynode._entries[mynode._position];
+        CompleteDirectoryEntry entry = mynode.Entries[mynode.Position];
 
         filename = _namespace switch
                    {
@@ -437,7 +437,7 @@ public sealed partial class FAT
                        _                                                                  => entry.Shortname
                    };
 
-        mynode._position++;
+        mynode.Position++;
 
         return ErrorNumber.NoError;
     }
@@ -448,8 +448,8 @@ public sealed partial class FAT
         if(node is not FatDirNode mynode)
             return ErrorNumber.InvalidArgument;
 
-        mynode._position = -1;
-        mynode._entries  = null;
+        mynode.Position = -1;
+        mynode.Entries  = null;
 
         return ErrorNumber.NoError;
     }

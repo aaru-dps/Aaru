@@ -58,7 +58,7 @@ public sealed class Plan9 : IPartition
     public Guid Id => new("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
 
     /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)

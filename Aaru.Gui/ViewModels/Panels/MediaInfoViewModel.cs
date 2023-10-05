@@ -342,14 +342,14 @@ public sealed class MediaInfoViewModel : ViewModelBase
     public string SaveGetConfigurationLabel       => UI.ButtonLabel_Save_GET_CONFIGURATION_response;
     public string SaveRecognizedFormatLayersLabel => UI.ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response;
     public string SaveWriteProtectionStatusLabel  => UI.ButtonLabel_Save_WRITE_PROTECTION_STATUS_response;
-    public string SSCLabel                        => Localization.Core.Title_SSC;
+    public string SscLabel                        => Localization.Core.Title_SSC;
     public string DensitySupportLabel             => UI.Densities_supported_by_currently_inserted_media;
     public string MediumSupportLabel              => UI.Medium_types_currently_inserted_in_device;
     public string SaveDensitySupportLabel         => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response;
     public string SaveMediumSupportLabel          => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response;
     public string CompactDiscLabel                => Localization.Core.Title_CompactDisc;
-    public string DVDLabel                        => Localization.Core.Title_DVD;
-    public string DVD_R_WLabel                    => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string DvdLabel                        => Localization.Core.Title_DVD;
+    public string Dvd_R_WLabel                    => Localization.Core.Title_DVD_Plus_Dash_R_W;
     public string XboxLabel                       => Localization.Core.Title_Xbox;
     public string BluRayLabel                     => Localization.Core.Title_Blu_ray;
     public string DumpLabel                       => UI.ButtonLabel_Dump_media_to_image;

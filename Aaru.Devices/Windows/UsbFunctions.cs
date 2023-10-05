@@ -117,7 +117,7 @@ static partial class Usb
 
                 UsbDevice device = port.GetDevice();
 
-                if(device._deviceDriverKey != driverKeyName)
+                if(device.DeviceDriverKey != driverKeyName)
                     continue;
 
                 foundDevice = device;
