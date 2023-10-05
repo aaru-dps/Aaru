@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Aaru.Helpers;
@@ -39,6 +40,8 @@ namespace Aaru.Helpers;
 ///     Converts base data types to an array of bytes, and an array of bytes to base data types. All info taken from
 ///     the meta data of System.BitConverter. This implementation allows for Endianness consideration.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class BigEndianBitConverter
 {
     /// <summary>Converts the specified double-precision floating point number to a 64-bit signed integer.</summary>

@@ -31,11 +31,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with strings</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class StringHandlers
 {
     /// <summary>Converts a null-terminated (aka C string) ASCII byte array to a C# string</summary>

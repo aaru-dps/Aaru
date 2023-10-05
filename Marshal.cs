@@ -39,6 +39,8 @@ using System.Runtime.InteropServices;
 namespace Aaru.Helpers;
 
 /// <summary>Provides methods to marshal binary data into C# structs</summary>
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class Marshal
 {
     /// <summary>Returns the size of an unmanaged type in bytes.</summary>

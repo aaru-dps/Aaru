@@ -30,11 +30,13 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with swapping endians</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public static class Swapping
 {
     /// <summary>Gets the PDP endian equivalent of the given little endian unsigned integer</summary>
