@@ -620,11 +620,11 @@ public sealed class Spiral : IMediaGraph
     /// <param name="center">Center of the spiral start</param>
     /// <param name="minRadius">Minimum radius before which the spiral must have no points</param>
     /// <param name="maxRadius">Radius at which the spiral will end</param>
-    /// <param name="a">TODO: Something trigonometry something something...</param>
+    /// <param name="a">A constant that decides the position of a point on the spiral</param>
     /// <returns>List of points to draw the specified spiral</returns>
     static List<SKPoint> GetSpiralPoints(SKPoint center, float minRadius, float maxRadius, float a)
     {
-        // Get the points.
+        // Initialize a list to store the points of the spiral.
         List<SKPoint> points = new();
         const float   dtheta = (float)(0.5f * Math.PI / 180);
 
@@ -636,18 +636,18 @@ public sealed class Spiral : IMediaGraph
             if(r < minRadius)
                 continue;
 
-            // Convert to Cartesian coordinates.
+            // Converts polar coordinates (r,theta) to Cartesian (x,y)
             var x = (float)(r * Math.Cos(theta));
             var y = (float)(r * Math.Sin(theta));
 
-            // Center.
+            // Adjusts x and y by center coordinates
             x += center.X;
             y += center.Y;
 
-            // Create the point.
+            // Adds the newly calculated point to the list
             points.Add(new SKPoint(x, y));
 
-            // If we have gone far enough, stop.
+            // Terminate the loop if we have reached the end of the spiral
             if(r > maxRadius)
                 break;
         }
