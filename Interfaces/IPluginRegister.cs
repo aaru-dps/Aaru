@@ -65,9 +65,11 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterFilterPlugins(IServiceCollection services);
 
-    /// <summary>Gets all floppy image plugins</summary>
-    /// <returns>List of floppy image plugins</returns>
-    List<Type> GetAllFloppyImagePlugins();
+    /// <summary>
+    ///     Registers all floppy image plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterFloppyImagePlugins(IServiceCollection services);
 
     /// <summary>
     ///     Registers all media image plugins in the provided service collection

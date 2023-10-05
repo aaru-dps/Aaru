@@ -47,8 +47,6 @@ public class PluginRegister
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
 
-    /// <summary>List of floppy image plugins</summary>
-    public readonly SortedDictionary<string, Type> FloppyImages;
     /// <summary>List of writable floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
@@ -59,9 +57,21 @@ public class PluginRegister
     PluginRegister()
     {
         WritableImages        = new SortedDictionary<string, Type>();
-        FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of floppy image plugins</summary>
+    public SortedDictionary<string, IFloppyImage> FloppyImages
+    {
+        get
+        {
+            SortedDictionary<string, IFloppyImage> floppyImages = new();
+            foreach(IFloppyImage plugin in _serviceProvider.GetServices<IFloppyImage>())
+                floppyImages[plugin.Name.ToLower()] = plugin;
+
+            return floppyImages;
+        }
     }
 
     /// <summary>List of all media image plugins</summary>
@@ -197,14 +207,7 @@ public class PluginRegister
         pluginRegister.RegisterFilesystemPlugins(_services);
         pluginRegister.RegisterFilterPlugins(_services);
         pluginRegister.RegisterReadOnlyFilesystemPlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IFloppyImage plugin &&
-               !FloppyImages.ContainsKey(plugin.Name.ToLower()))
-                FloppyImages.Add(plugin.Name.ToLower(), type);
-        }
-
+        pluginRegister.RegisterFloppyImagePlugins(_services);
         pluginRegister.RegisterMediaImagePlugins(_services);
         pluginRegister.RegisterPartitionPlugins(_services);
 
