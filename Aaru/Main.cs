@@ -213,6 +213,9 @@ class MainClass
 
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+        // There are too many places that depend on this being inited to be sure all are covered, so init it here.
+        PluginBase.Init();
+
         var rootCommand = new RootCommand();
 
         rootCommand.AddGlobalOption(new Option<bool>(new[]

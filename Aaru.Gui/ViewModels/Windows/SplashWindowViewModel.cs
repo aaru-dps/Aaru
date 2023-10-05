@@ -77,7 +77,7 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
     internal void OnOpened()
     {
         Message         = UI.Welcome_to_Aaru;
-        MaxProgress     = 9;
+        MaxProgress     = 10;
         CurrentProgress = 0;
 
         Dispatcher.UIThread.Post(InitializeConsole);
@@ -268,6 +268,20 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+            Dispatcher.UIThread.Post(RegisterPlugins);
+        });
+    }
+
+    // There are too many places that depend on this being inited to be sure all are covered, so init it here.
+    void RegisterPlugins()
+    {
+        CurrentProgress++;
+        Message = UI.Registering_plugins;
+        AaruConsole.WriteLine(UI.Registering_plugins);
+
+        Task.Run(() =>
+        {
+            PluginBase.Init();
             Dispatcher.UIThread.Post(SaveStatistics);
         });
     }
