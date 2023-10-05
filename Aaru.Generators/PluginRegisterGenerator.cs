@@ -195,16 +195,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(partitionPlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllPartitionPlugins() => new()");
+            sb.AppendLine("    public void RegisterPartitionPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in partitionPlugins)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IPartition, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllPartitionPlugins() => null;");
+            sb.AppendLine("    public void RegisterPartitionPlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

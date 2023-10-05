@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
@@ -63,17 +62,17 @@ public static class Partitions
         {
             foreach(TapeFile tapeFile in tapeImage.Files)
             {
-                foreach(Type pluginType in plugins.Partitions.Values)
+                foreach(IPartition plugin in plugins.Partitions.Values)
                 {
-                    if(Activator.CreateInstance(pluginType) is not IPartition part)
+                    if(plugin is null)
                         continue;
 
-                    if(!part.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
+                    if(!plugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
                         continue;
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
                                                tapeFile.FirstBlock);
                 }
 
@@ -86,17 +85,17 @@ public static class Partitions
         {
             foreach(Partition imagePartition in partitionableImage.Partitions)
             {
-                foreach(Type pluginType in plugins.Partitions.Values)
+                foreach(IPartition plugin in plugins.Partitions.Values)
                 {
-                    if(Activator.CreateInstance(pluginType) is not IPartition part)
+                    if(plugin is null)
                         continue;
 
-                    if(!part.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
+                    if(!plugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
                         continue;
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
                                                imagePartition.Start);
                 }
 
@@ -107,16 +106,16 @@ public static class Partitions
         // Getting all partitions at start of device
         if(!checkedLocations.Contains(0))
         {
-            foreach(Type pluginType in plugins.Partitions.Values)
+            foreach(IPartition plugin in plugins.Partitions.Values)
             {
-                if(Activator.CreateInstance(pluginType) is not IPartition part)
+                if(plugin is null)
                     continue;
 
-                if(!part.GetInformation(image, out List<Partition> partitions, 0))
+                if(!plugin.GetInformation(image, out List<Partition> partitions, 0))
                     continue;
 
                 foundPartitions.AddRange(partitions);
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_zero, part.Name);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_zero, plugin.Name);
             }
 
             checkedLocations.Add(0);
@@ -134,18 +133,18 @@ public static class Partitions
 
             List<Partition> children = new();
 
-            foreach(Type pluginType in plugins.Partitions.Values)
+            foreach(IPartition plugin in plugins.Partitions.Values)
             {
-                if(Activator.CreateInstance(pluginType) is not IPartition part)
+                if(plugin is null)
                     continue;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_0_at_1, part.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_0_at_1, plugin.Name,
                                            foundPartitions[0].Start);
 
-                if(!part.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
+                if(!plugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
                     continue;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, part.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
                                            foundPartitions[0].Start);
 
                 children.AddRange(partitions);

@@ -231,15 +231,15 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Scheme);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.Partitions)
+        foreach(IPartition plugin in plugins.Partitions.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IPartition part)
+            if(plugin is null)
                 continue;
 
             if(verbose)
-                table.AddRow(part.Id.ToString(), Markup.Escape(part.Name));
+                table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
             else
-                table.AddRow(Markup.Escape(part.Name));
+                table.AddRow(Markup.Escape(plugin.Name));
         }
 
         AnsiConsole.Write(table);
