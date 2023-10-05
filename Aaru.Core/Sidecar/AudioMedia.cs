@@ -37,6 +37,8 @@ using System.Text;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
+// ReSharper disable UnusedParameter.Local
+
 namespace Aaru.Core;
 
 public sealed partial class Sidecar

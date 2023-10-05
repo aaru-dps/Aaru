@@ -66,6 +66,7 @@ public sealed partial class SuperCardPro
     /// <param name="track">The track number</param>
     /// <param name="subTrack">The sub-track number</param>
     /// <returns>SCP format track number</returns>
+    // ReSharper disable once UnusedParameter.Local
     static long HeadTrackSubToScpTrack(uint head, ushort track, byte subTrack) =>
 
         // TODO: Support single-sided disks
@@ -76,10 +77,12 @@ public sealed partial class SuperCardPro
         uint over = ticks / 255;
 
         if(over == 0)
+        {
             return new[]
             {
                 (byte)ticks
             };
+        }
 
         var expanded = new byte[over + 1];
 

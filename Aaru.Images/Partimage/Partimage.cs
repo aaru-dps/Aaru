@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -43,6 +44,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading partimage disk images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Partimage : IMediaImage, IVerifiableImage
 {
     const string              MODULE_NAME = "Partimage plugin";

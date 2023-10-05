@@ -31,6 +31,8 @@
 
 using System;
 
+// ReSharper disable UnusedType.Local
+
 namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660

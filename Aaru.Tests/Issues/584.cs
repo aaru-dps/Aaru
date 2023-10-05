@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.Tests.Issues;
@@ -10,6 +11,7 @@ namespace Aaru.Tests.Issues;
  * When performing file extraction, the following exception is raised
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _584 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue584");

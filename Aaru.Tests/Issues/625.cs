@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -6,6 +7,7 @@ using Aaru.Tests.WritableImages;
 
 namespace Aaru.Tests.Issues;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _625 : WritableOpticalMediaImageTest
 {
     public override string         DataFolder      => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue625");

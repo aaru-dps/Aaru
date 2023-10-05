@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -40,6 +41,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableImage" />
 /// <summary>Implements reading Basic Lisa Utility disk images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
 {
     const string MODULE_NAME = "BLU plugin";

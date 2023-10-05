@@ -46,7 +46,6 @@ static class ConsoleHandler
 
     public static bool Debug
     {
-        get => _debug;
         set
         {
             if(_debug == value)
@@ -58,23 +57,6 @@ static class ConsoleHandler
                 AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
             else
                 AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
-        }
-    }
-
-    public static bool Verbose
-    {
-        get => _verbose;
-        set
-        {
-            if(_verbose == value)
-                return;
-
-            _verbose = value;
-
-            if(_verbose)
-                AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
-            else
-                AaruConsole.VerboseWriteLineEvent -= OnVerboseWriteHandler;
         }
     }
 
@@ -111,20 +93,6 @@ static class ConsoleHandler
             Module    = null,
             Timestamp = DateTime.Now,
             Type      = "Error"
-        });
-    }
-
-    static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
-    {
-        if(format == null || arg == null)
-            return;
-
-        Entries.Add(new LogEntry
-        {
-            Message   = string.Format(format, arg),
-            Module    = null,
-            Timestamp = DateTime.Now,
-            Type      = "Verbose"
         });
     }
 

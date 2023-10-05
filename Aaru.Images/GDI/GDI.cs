@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -43,6 +44,7 @@ namespace Aaru.DiscImages;
 // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
 /// <inheritdoc />
 /// <summary>Implements reading Dreamcast GDI disc images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Gdi : IOpticalMediaImage
 {
     const string MODULE_NAME = "GDI plugin";

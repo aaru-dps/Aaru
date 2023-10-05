@@ -154,7 +154,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
+            DataContext = new DvdInfoViewModel(scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
                                                scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
                                                scsiInfo.DecodedPfi, _view)
         };
@@ -167,13 +167,12 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         DvdWritableInfo = new DvdWritableInfo
         {
-            DataContext = new DvdWritableInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdRamDds,
-                                                       scsiInfo.DvdRamCartridgeStatus, scsiInfo.DvdRamSpareArea,
-                                                       scsiInfo.LastBorderOutRmd, scsiInfo.DvdPreRecordedInfo,
-                                                       scsiInfo.DvdrMediaIdentifier, scsiInfo.DvdrPhysicalInformation,
-                                                       scsiInfo.HddvdrMediumStatus, scsiInfo.HddvdrLastRmd,
-                                                       scsiInfo.DvdrLayerCapacity, scsiInfo.DvdrDlMiddleZoneStart,
-                                                       scsiInfo.DvdrDlJumpIntervalSize,
+            DataContext = new DvdWritableInfoViewModel(scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
+                                                       scsiInfo.DvdRamSpareArea, scsiInfo.LastBorderOutRmd,
+                                                       scsiInfo.DvdPreRecordedInfo, scsiInfo.DvdrMediaIdentifier,
+                                                       scsiInfo.DvdrPhysicalInformation, scsiInfo.HddvdrMediumStatus,
+                                                       scsiInfo.HddvdrLastRmd, scsiInfo.DvdrLayerCapacity,
+                                                       scsiInfo.DvdrDlMiddleZoneStart, scsiInfo.DvdrDlJumpIntervalSize,
                                                        scsiInfo.DvdrDlManualLayerJumpStartLba,
                                                        scsiInfo.DvdrDlRemapAnchorPoint, scsiInfo.DvdPlusAdip,
                                                        scsiInfo.DvdPlusDcb, _view)

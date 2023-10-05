@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Partimage
 {
     const int    MAX_DESCRIPTION         = 4096;

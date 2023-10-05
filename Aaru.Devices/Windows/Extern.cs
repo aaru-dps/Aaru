@@ -32,11 +32,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
 namespace Aaru.Devices.Windows;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 static class Extern
 {
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]

@@ -38,7 +38,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Track = Aaru.CommonTypes.AaruMetadata.Track;
 
 namespace Aaru.DiscImages;
 
@@ -257,6 +256,4 @@ public sealed partial class SuperCardPro
     }
 
 #endregion
-
-    public bool SetTracks(List<Track> tracks) => false;
 }

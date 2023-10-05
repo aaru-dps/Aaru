@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
@@ -10,6 +11,7 @@ namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Implements a stream that joins two or more files (sequentially) as a single stream</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class SplitJoinStream : Stream
 {
     readonly Dictionary<long, Stream> _baseStreams;

@@ -26,6 +26,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS

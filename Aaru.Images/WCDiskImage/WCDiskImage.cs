@@ -43,6 +43,7 @@ namespace Aaru.DiscImages;
 /// <summary>Manages floppy disk images created with d2f by DataPackRat</summary>
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage : IMediaImage
 {
     const    string                                                 MODULE_NAME = "d2f plugin";

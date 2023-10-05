@@ -31,9 +31,11 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Blu
 {
 #region IVerifiableSectorsImage Members

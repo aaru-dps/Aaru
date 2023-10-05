@@ -14,6 +14,7 @@ namespace Aaru.Tests.Issues._590;
  */
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class asus_driver_gpu_tweak_v1231_2014 : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue590",

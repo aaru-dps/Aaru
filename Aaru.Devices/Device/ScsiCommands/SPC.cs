@@ -35,9 +35,12 @@ using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public partial class Device
 {
     /// <summary>Sends the SPC INQUIRY command to the device using default device timeout.</summary>

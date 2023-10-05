@@ -38,11 +38,13 @@ public sealed partial class QNX4
 {
 #region Nested type: Extent
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
     struct Extent
     {
         public uint Block;
         public uint Length;
     }
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
 #endregion
 

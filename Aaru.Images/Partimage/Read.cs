@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -43,6 +44,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Partimage
 {
 #region IMediaImage Members

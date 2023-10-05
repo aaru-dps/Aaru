@@ -59,6 +59,7 @@ public sealed partial class Device : Devices.Device
     }
 
     /// <summary>Current device is remote</summary>
+    // ReSharper disable once UnusedMember.Global
     public bool IsRemote => _remote != null;
 
     /// <summary>Remote application</summary>

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -39,6 +40,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements reading UKV FDI disk images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class UkvFdi : IMediaImage
 {
     const string MODULE_NAME = "UkvFdi plugin";

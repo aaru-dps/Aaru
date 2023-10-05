@@ -14,6 +14,7 @@ namespace Aaru.Tests.Issues._590;
  */
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class win3 : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue590", "win3");

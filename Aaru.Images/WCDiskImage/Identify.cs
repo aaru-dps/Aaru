@@ -31,6 +31,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
@@ -38,6 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage
 {
 #region IMediaImage Members

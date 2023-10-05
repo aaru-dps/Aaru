@@ -30,12 +30,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Aaru.Database;
 
 /// <inheritdoc />
 /// <summary>Database context factory, for design time</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
 {
 #region IDesignTimeDbContextFactory<AaruContext> Members

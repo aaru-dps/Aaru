@@ -26,11 +26,13 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Devices;
 
 namespace Aaru.Tests.Devices;
 
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
 static partial class MainClass
 {
     public static void NVMe(string devPath, Device dev)

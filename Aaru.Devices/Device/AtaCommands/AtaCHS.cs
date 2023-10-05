@@ -31,11 +31,16 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
 public partial class Device
 {
     /// <summary>Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout</summary>

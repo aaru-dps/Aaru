@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
-using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Aaru.Localization;
 using Avalonia.Controls;
@@ -62,12 +61,11 @@ public sealed class DvdWritableInfoViewModel
     readonly byte[] _hddvdrMediumStatus;
     readonly Window _view;
 
-    public DvdWritableInfoViewModel(MediaType mediaType, byte[] dds, byte[] cartridgeStatus, byte[] spareArea,
-                                    byte[]    lastBorderOutRmd, byte[] preRecordedInfo, byte[] mediaIdentifier,
-                                    byte[]    physicalInformation, byte[] mediumStatus, byte[] hdLastRmd,
-                                    byte[]    layerCapacity, byte[] middleZoneStart, byte[] jumpIntervalSize,
-                                    byte[]    manualLayerJumpStartLba, byte[] remapAnchorPoint, byte[] adip, byte[] dcb,
-                                    Window    view)
+    public DvdWritableInfoViewModel(byte[] dds, byte[] cartridgeStatus, byte[] spareArea, byte[] lastBorderOutRmd,
+                                    byte[] preRecordedInfo, byte[] mediaIdentifier, byte[] physicalInformation,
+                                    byte[] mediumStatus, byte[] hdLastRmd, byte[] layerCapacity, byte[] middleZoneStart,
+                                    byte[] jumpIntervalSize, byte[] manualLayerJumpStartLba, byte[] remapAnchorPoint,
+                                    byte[] adip, byte[] dcb, Window view)
     {
         _view                            = view;
         SaveDvdRamDdsCommand             = ReactiveCommand.Create(ExecuteSaveDvdRamDdsCommand);

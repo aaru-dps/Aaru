@@ -30,10 +30,12 @@
 // Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
 #region Nested type: A2rHeader

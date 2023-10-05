@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.Tests.Issues;
@@ -10,6 +11,7 @@ namespace Aaru.Tests.Issues;
  * Trying to extract files from a CDTV image crashes with "Error reading file: Object reference not set to an instance of an object."
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _495 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue495");

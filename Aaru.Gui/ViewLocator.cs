@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Gui.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.Templates;
@@ -38,12 +39,14 @@ using JetBrains.Annotations;
 
 namespace Aaru.Gui;
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class ViewLocator : DataTemplate
 {
     public bool SupportsRecycling => false;
 
     [CanBeNull]
-    public Control Build([NotNull] object data)
+    public Control Build([JetBrains.Annotations.NotNull] object data)
     {
         string name = data.GetType().FullName?.Replace("ViewModel", "View");
 

@@ -34,6 +34,7 @@
 // Version 3 documentation: https://web.archive.org/web/20220526215820/https://applesaucefdc.com/a2r/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -43,6 +44,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading A2R flux images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWritableFluxImage
 {
     const string        MODULE_NAME = "A2R plugin";

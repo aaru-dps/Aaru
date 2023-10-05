@@ -71,16 +71,6 @@ public class DicSettings
     public StatsSettings Stats;
 }
 
-// TODO: Use this
-/// <summary>User settings, for media dumps, completely unused</summary>
-public class UserSettings
-{
-    /// <summary>User email</summary>
-    public string Email;
-    /// <summary>User name or nick</summary>
-    public string Name;
-}
-
 /// <summary>Statistics settings</summary>
 public class StatsSettings
 {

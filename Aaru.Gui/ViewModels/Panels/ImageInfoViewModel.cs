@@ -446,8 +446,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi,
-                                               hddvdCopyrightInformation, dvdBca, null, decodedPfi, view)
+            DataContext = new DvdInfoViewModel(dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca, null,
+                                               decodedPfi, view)
         };
 
         byte[] dvdRamDds                     = null;
@@ -509,12 +509,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdWritableInfo = new DvdWritableInfo
         {
-            DataContext = new DvdWritableInfoViewModel(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus,
-                                                       dvdRamSpareArea, lastBorderOutRmd, dvdPreRecordedInfo,
-                                                       dvdrMediaIdentifier, dvdrPhysicalInformation, hddvdrMediumStatus,
-                                                       null, dvdrLayerCapacity, dvdrDlMiddleZoneStart,
-                                                       dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba, null,
-                                                       dvdPlusAdip, dvdPlusDcb, view)
+            DataContext = new DvdWritableInfoViewModel(dvdRamDds, dvdRamCartridgeStatus, dvdRamSpareArea,
+                                                       lastBorderOutRmd, dvdPreRecordedInfo, dvdrMediaIdentifier,
+                                                       dvdrPhysicalInformation, hddvdrMediumStatus, null,
+                                                       dvdrLayerCapacity, dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize,
+                                                       dvdrDlManualLayerJumpStartLba, null, dvdPlusAdip, dvdPlusDcb,
+                                                       view)
         };
 
         byte[] blurayBurstCuttingArea     = null;

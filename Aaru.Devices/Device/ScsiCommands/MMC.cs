@@ -35,8 +35,11 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public partial class Device
 {
     /// <summary>Sends the MMC GET CONFIGURATION command for all Features</summary>

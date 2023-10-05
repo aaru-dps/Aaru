@@ -158,11 +158,13 @@ public sealed partial class ZFS
 
 #region Nested type: ZIO_Checksum
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
     struct ZIO_Checksum
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public ulong[] word;
     }
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 
 #endregion
 

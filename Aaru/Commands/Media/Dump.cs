@@ -53,7 +53,6 @@ using Aaru.Core;
 using Aaru.Core.Devices.Dumping;
 using Aaru.Core.Logging;
 using Aaru.Localization;
-using Humanizer;
 using Schemas;
 using Spectre.Console;
 using Dump = Aaru.Core.Devices.Dumping.Dump;
@@ -64,10 +63,9 @@ namespace Aaru.Commands.Media;
 // TODO: Add raw dumping
 sealed class DumpMediaCommand : Command
 {
-    const           string       MODULE_NAME = "Dump-Media command";
-    static          ProgressTask _progressTask1;
-    static          ProgressTask _progressTask2;
-    static readonly TimeSpan     OneSecond = 1.Seconds();
+    const  string       MODULE_NAME = "Dump-Media command";
+    static ProgressTask _progressTask1;
+    static ProgressTask _progressTask2;
 
     public DumpMediaCommand() : base("dump", UI.Media_Dump_Command_Description)
     {

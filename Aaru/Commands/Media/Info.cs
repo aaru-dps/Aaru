@@ -186,8 +186,10 @@ sealed class MediaInfoCommand : Command
 
     static void DoAtaMediaInfo() => AaruConsole.ErrorWriteLine(UI.Please_use_device_info_command_for_ATA_devices);
 
+    // ReSharper disable UnusedParameter.Local
     static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
         throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
+    // ReSharper restore UnusedParameter.Local
 
     static void DoSdMediaInfo() => AaruConsole.ErrorWriteLine(UI.Please_use_device_info_command_for_MMC_SD_devices);
 

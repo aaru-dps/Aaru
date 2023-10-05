@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.Devices.Windows;
@@ -43,6 +44,7 @@ namespace Aaru.Devices.Windows;
 //
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 static partial class Usb
 {
     const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;

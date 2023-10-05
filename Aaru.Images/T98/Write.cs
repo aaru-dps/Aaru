@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
@@ -41,6 +42,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class T98
 {
 #region IWritableImage Members

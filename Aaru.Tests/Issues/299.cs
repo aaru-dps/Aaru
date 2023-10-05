@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
@@ -11,6 +12,7 @@ namespace Aaru.Tests.Issues;
  * http://dcevolution.sourceforge.net/index.php?id=house_of_terror can be converted to DICF.
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _299 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();

@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.DiscImages;
 
 [SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Partimage
 {
 #region Nested type: CCheck

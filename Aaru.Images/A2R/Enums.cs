@@ -34,6 +34,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
 #region A2rDiskType enum

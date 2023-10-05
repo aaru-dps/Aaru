@@ -31,10 +31,14 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
+
+// ReSharper disable UnusedMember.Global
 
 namespace Aaru.Devices;
 
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public partial class Device
 {
     /// <summary>Prepares the medium for reading</summary>

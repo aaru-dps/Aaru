@@ -32,10 +32,12 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Devices.Linux;
 
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum FileFlags
 {
     /// <summary>O_RDONLY</summary>
@@ -89,6 +91,7 @@ enum ScsiIoctlDirection
     Unknown = -5
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum LinuxIoctl : uint
 {
     // SCSI IOCtls
@@ -101,6 +104,7 @@ enum LinuxIoctl : uint
 }
 
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SgInfo : uint
 {
     /// <summary>Mask to check OK</summary>
@@ -121,6 +125,7 @@ enum SgInfo : uint
 }
 
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SgFlags : uint
 {
     DirectIo         = 1,
@@ -131,6 +136,7 @@ enum SgFlags : uint
     QAtHead          = 0x20
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SeekWhence
 {
     Begin   = 0,

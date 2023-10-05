@@ -72,6 +72,7 @@ public sealed partial class ZFS
     }
 
     // TODO: Decode native nvlist
+    // ReSharper disable once UnusedParameter.Local
     static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList, bool xdr, bool littleEndian)
     {
         decodedNvList = new Dictionary<string, NVS_Item>();

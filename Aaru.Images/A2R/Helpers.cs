@@ -32,11 +32,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Aaru.CommonTypes;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
     /// <summary>
@@ -111,10 +113,12 @@ public sealed partial class A2R
         uint over = ticks / 255;
 
         if(over == 0)
+        {
             return new[]
             {
                 (byte)ticks
             };
+        }
 
         var expanded = new byte[over + 1];
 

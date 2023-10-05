@@ -37,6 +37,7 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class QNX4 : IFilesystem
 {
+    // ReSharper disable once UnusedMember.Local
     const string MODULE_NAME = "QNX4 plugin";
 
 #region IFilesystem Members

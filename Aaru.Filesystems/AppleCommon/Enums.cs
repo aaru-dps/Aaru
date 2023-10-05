@@ -30,6 +30,8 @@
 
 using System;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh

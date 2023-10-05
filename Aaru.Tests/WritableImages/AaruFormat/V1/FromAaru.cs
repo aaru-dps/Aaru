@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Tests.WritableImages.AaruFormat.V1;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class FromAaru : WritableOpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");

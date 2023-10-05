@@ -48,6 +48,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements support for Sega Mega Drive, 32X, Genesis and Pico cartridge dumps</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SegaMegaDrive : IByteAddressableImage
 {
     byte[]    _data;

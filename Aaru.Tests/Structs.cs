@@ -111,7 +111,6 @@ public class VolumeData
 
 public class BlockPartitionVolumes
 {
-    public ulong        Length;
-    public ulong        Start;
-    public VolumeData[] Volumes;
+    public ulong Length;
+    public ulong Start;
 }

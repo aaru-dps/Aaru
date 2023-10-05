@@ -14,6 +14,7 @@ namespace Aaru.Tests.Issues._542;
  */
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SimsEP : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue542", "exp");

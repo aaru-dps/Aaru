@@ -14,6 +14,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class MasterSystem : IByteAddressableImage
 {
     byte[]    _data;

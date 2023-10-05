@@ -32,6 +32,8 @@
 
 using Aaru.Console;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
 public partial class Device

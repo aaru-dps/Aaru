@@ -30,8 +30,11 @@
 // Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class A2R
 {
     readonly byte[] _a2rV2Signature =

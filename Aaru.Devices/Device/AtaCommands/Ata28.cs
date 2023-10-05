@@ -34,6 +34,8 @@ using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
 public partial class Device

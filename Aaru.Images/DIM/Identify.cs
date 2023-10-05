@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
@@ -37,6 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Dim
 {
 #region IMediaImage Members

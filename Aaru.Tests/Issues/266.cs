@@ -1,6 +1,7 @@
 // ReSharper disable StringLiteralTypo
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.Tests.Issues;
@@ -15,6 +16,7 @@ namespace Aaru.Tests.Issues;
  */
 
 // 20200309 CLAUNIA: Fixed in 3b2bb0ebf0c6c615c5622aebff494ed34b51055d
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _266 : FsExtractHashIssueTest
 {
     protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue266");

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
@@ -42,6 +43,7 @@ namespace Aaru.Filters;
 
 /// <summary>Creates a stream that is a subset of another stream.</summary>
 /// <inheritdoc />
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class OffsetStream : Stream
 {
     readonly Stream _baseStream;

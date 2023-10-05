@@ -31,11 +31,17 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices;
 
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public partial class Device
 {
     /// <summary>Enables media card pass through</summary>

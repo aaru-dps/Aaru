@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
@@ -39,6 +40,7 @@ using Aaru.Devices;
 namespace Aaru.Core.Devices;
 
 /// <summary>Reduces common code used for scanning and dumping</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 sealed partial class Reader
 {
     const    string   ATA_MODULE_NAME  = "ATA Reader";
@@ -146,10 +148,6 @@ sealed partial class Reader
     internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
                             out bool   blankCheck) =>
         ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
-
-    internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                             out bool   blankCheck) => ReadBlocks(out buffer,         block, BlocksToRead, out duration,
-                                                                  out recoveredError, out blankCheck);
 
     internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
                              out bool   blankCheck)

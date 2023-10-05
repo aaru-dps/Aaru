@@ -31,6 +31,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+
 namespace Aaru.Filesystems;
 
 // Information from Apple ProDOS 8 Technical Reference
@@ -38,11 +40,11 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple ProDOS filesystem</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 [SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class ProDOSPlugin
 {
 #region Nested type: DirectoryBlock
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct DirectoryBlock
     {
         /// <summary>Pointer to previous directory block Offset 0x00, 2 bytes</summary>
@@ -57,7 +59,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: DirectoryHeader
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct DirectoryHeader
     {
         /// <summary>Constant 0x0E Offset 0x04, mask 0xF0</summary>
@@ -94,7 +95,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: DirectoryKeyBlock
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct DirectoryKeyBlock
     {
         /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
@@ -112,7 +112,6 @@ public sealed partial class ProDOSPlugin
 #region Nested type: Entry
 
     /// <summary>ProDOS directory entry, decoded structure</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct Entry
     {
         /// <summary>Type of file pointed by this entry Offset 0x00, mask 0xF0</summary>
@@ -152,7 +151,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: IndexBlock
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct IndexBlock
     {
         /// <summary>Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)</summary>
@@ -163,7 +161,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: MasterIndexBlock
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct MasterIndexBlock
     {
         /// <summary>Up to 128 pointers to index blocks</summary>
@@ -174,7 +171,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: RootDirectoryHeader
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct RootDirectoryHeader
     {
         /// <summary>Constant 0x0F Offset 0x04, mask 0xF0</summary>
@@ -212,7 +208,6 @@ public sealed partial class ProDOSPlugin
 
 #region Nested type: RootDirectoryKeyBlock
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct RootDirectoryKeyBlock
     {
         /// <summary>Always 0 Offset 0x00, 2 bytes</summary>

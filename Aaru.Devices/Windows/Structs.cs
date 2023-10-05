@@ -155,6 +155,7 @@ struct StoragePropertyQuery
 
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct StorageDescriptorHeader
 {
     public uint Version;
@@ -206,6 +207,7 @@ struct StorageDeviceNumber
 
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct DeviceInfoData
 {
     public int  cbSize;
@@ -237,6 +239,7 @@ struct UsbSetupPacket
 
 [StructLayout(LayoutKind.Sequential)]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct UsbDescriptorRequest
 {
     public int ConnectionIndex;

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
@@ -11,6 +12,7 @@ namespace Aaru.Tests.Issues._288;
  */
 
 // 20200309 CLAUNIA: Fixed in af0abca12d429276fc864e1de14a7a40f12bde26
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ArcadeHits : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();

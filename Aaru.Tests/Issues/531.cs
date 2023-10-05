@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.Tests.Issues;
@@ -11,6 +12,7 @@ namespace Aaru.Tests.Issues;
  * "Error reading file: Object reference not set to an instance of an object.".
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _531 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue531");

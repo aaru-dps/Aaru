@@ -30,6 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Devices.Remote;
 
 /// <summary>Packet type enumeration</summary>
@@ -73,6 +75,7 @@ public enum AaruPacketType : sbyte
 }
 
 /// <summary>Reasons for non-data request or response</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum AaruNopReason : byte
 {
     /// <summary>Request or response has arrived unexpectedly</summary>

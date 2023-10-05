@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
@@ -10,6 +11,7 @@ namespace Aaru.Tests.Issues;
  * Error converting NRG version 2 to other formats
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _450 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();

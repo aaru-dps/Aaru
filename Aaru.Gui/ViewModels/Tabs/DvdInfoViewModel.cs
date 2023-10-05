@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
-using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Aaru.Localization;
 using Avalonia.Controls;
@@ -53,7 +52,7 @@ public sealed class DvdInfoViewModel
     readonly byte[] _hddvdCopyrightInformation;
     readonly Window _view;
 
-    public DvdInfoViewModel(MediaType mediaType, [CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi, [CanBeNull] byte[] cmi,
+    public DvdInfoViewModel([CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi, [CanBeNull] byte[] cmi,
                             [CanBeNull] byte[] hdCopyrightInformation, [CanBeNull] byte[] bca, [CanBeNull] byte[] aacs,
                             PFI.PhysicalFormatInformation? decodedPfi, Window view)
     {

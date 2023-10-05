@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -40,6 +41,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing T98 disk images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class T98 : IWritableImage
 {
     const string MODULE_NAME = "T98 plugin";

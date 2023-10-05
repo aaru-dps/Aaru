@@ -477,6 +477,7 @@ public sealed class BSD : IPartition
 
     /// <summary>Filesystem type</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal enum fsType : byte
     {
         /// <summary>Unused entry</summary>

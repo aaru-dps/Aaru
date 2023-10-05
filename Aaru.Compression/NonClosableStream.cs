@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.Helpers;
 
@@ -37,6 +38,7 @@ namespace Aaru.Compression;
 
 /// <inheritdoc />
 /// <summary>Creates a MemoryStream that ignores close commands</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 sealed class NonClosableStream : Stream
 {
     readonly MemoryStream _baseStream;

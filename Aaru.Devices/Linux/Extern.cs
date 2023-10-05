@@ -44,9 +44,6 @@ static class Extern
     internal static extern int close(int fd);
 
     [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static extern int ioctlInt(int fd, LinuxIoctl request, out int value);
-
-    [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
     internal static extern int ioctlSg(int fd, LinuxIoctl request, ref SgIoHdrT value);
 
     [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]

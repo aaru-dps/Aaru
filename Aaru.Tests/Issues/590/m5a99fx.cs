@@ -14,6 +14,7 @@ namespace Aaru.Tests.Issues._590;
  */
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class m5a99fx : FsExtractHashIssueTest
 {
     protected override string DataFolder =>

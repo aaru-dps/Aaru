@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.Tests.Issues;
@@ -19,6 +20,7 @@ namespace Aaru.Tests.Issues;
  */
 
 // 20201106 CLAUNIA: Fixed in d30a6d18cd1f6d8b9075f096bd56e23fc5106dbf
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _410 : FsExtractIssueTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue410");

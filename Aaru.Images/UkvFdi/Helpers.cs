@@ -30,8 +30,11 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.DiscImages;
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class UkvFdi
 {
     (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)

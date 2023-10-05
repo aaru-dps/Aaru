@@ -48,6 +48,7 @@ namespace Aaru.DiscImages;
 
 /// <inheritdoc />
 /// <summary>Implements support for Nintendo 64 cartridge dumps</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class Nintendo64 : IByteAddressableImage
 {
     byte[]    _data;

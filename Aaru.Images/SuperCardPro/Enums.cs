@@ -40,6 +40,7 @@ public sealed partial class SuperCardPro
 #region ScpDiskType enum
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public enum ScpDiskType : byte
     {
         Commodore64      = 0x00,
