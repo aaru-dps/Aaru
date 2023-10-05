@@ -38,10 +38,13 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Defines an image that can verify the integrity of the sectors it contains</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public interface IVerifiableSectorsImage
 {
     /// <summary>Verifies a sector.</summary>

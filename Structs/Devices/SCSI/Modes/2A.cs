@@ -47,6 +47,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class ModePage_2A
 {
     /// <summary>Write speed performance descriptors</summary>
@@ -214,6 +215,7 @@ public class ModePage_2A
     /// <summary>Database ID</summary>
     [JsonIgnore]
     [Key]
+    // ReSharper disable once UnusedMember.Global
     public int Id { get; set; }
 
     /// <summary>Decodes the page 2Ah of a MODE SENSE response</summary>

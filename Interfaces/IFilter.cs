@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 
@@ -46,6 +47,9 @@ namespace Aaru.CommonTypes.Interfaces;
 ///     Defines a filter, that is, a transformation of the data from a file, like, for example, a compressor (e.g.
 ///     GZIP), or a container (e.g. AppleDouble)
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IFilter
 {
     /// <summary>Descriptive name of the plugin</summary>

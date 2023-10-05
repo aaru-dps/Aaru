@@ -50,6 +50,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public struct Inquiry
 {
     const string MODULE_NAME = "SCSI INQUIRY decoder";

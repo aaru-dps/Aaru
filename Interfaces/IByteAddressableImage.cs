@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
@@ -44,6 +45,11 @@ namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Interface defining linear media (chips, game carts, etc) images</summary>
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
 public interface IByteAddressableImage : IBaseWritableImage
 {
     /// <summary>Gets or sets the current position</summary>

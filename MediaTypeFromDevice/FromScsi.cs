@@ -68,7 +68,7 @@ public static partial class MediaTypeFromDevice
 
             // Sequential access device
             case 0x01:
-                return GetFromSsc(scsiPeripheralType, vendor, model, mediumType, densityCode, blocks, blockSize);
+                return GetFromSsc(vendor, model, mediumType, densityCode);
 
             // Write-once device
             case 0x04:

@@ -38,12 +38,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Implements extents for <see cref="ulong" /></summary>
-public class ExtentsULong
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+public sealed class ExtentsULong
 {
     List<Tuple<ulong, ulong>> _backend;
 

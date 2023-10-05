@@ -1,5 +1,7 @@
 // ReSharper disable InconsistentNaming
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.CommonTypes.Enums;
 
 public enum NesConsoleType : byte
@@ -10,6 +12,7 @@ public enum NesConsoleType : byte
     Extended   = 3
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum NesTimingMode : byte
 {
     RP2C02   = 0,
@@ -18,6 +21,7 @@ public enum NesTimingMode : byte
     UMC6527P = 3
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum NesVsPpuType : byte
 {
     RP2C03B     = 0,
@@ -35,6 +39,7 @@ public enum NesVsPpuType : byte
     RC2C05_05   = 12
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum NesVsHardwareType : byte
 {
     Normal          = 0,
@@ -46,6 +51,7 @@ public enum NesVsHardwareType : byte
     RaidOnBungeling = 6
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum NesExtendedConsoleType : byte
 {
     Normal          = 0,
@@ -62,6 +68,7 @@ public enum NesExtendedConsoleType : byte
     UM6578          = 11
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum NesDefaultExpansionDevice : byte
 {
     Unspecified                     = 0,

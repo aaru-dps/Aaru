@@ -38,12 +38,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Implements extents for <see cref="long" /></summary>
-public class ExtentsLong
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+public sealed class ExtentsLong
 {
     List<Tuple<long, long>> _backend;
 

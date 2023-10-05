@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
@@ -44,6 +45,9 @@ namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="IMediaImage" />
 /// <summary>Abstract class to implement disk image reading plugins.</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVerifiableSectorsImage
 {
     /// <summary>Gets the disc track extents (start, length).</summary>

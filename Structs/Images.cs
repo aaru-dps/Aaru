@@ -173,6 +173,7 @@ public class Track
 }
 
 /// <summary>Floppy physical characteristics structure.</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public struct FloppyInfo
 {
     /// <summary>Physical floppy type.</summary>

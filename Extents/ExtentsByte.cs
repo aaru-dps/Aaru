@@ -38,12 +38,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Implements extents for <see cref="byte" /></summary>
-public class ExtentsByte
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public sealed class ExtentsByte
 {
     List<Tuple<byte, byte>> _backend;
 

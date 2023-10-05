@@ -36,6 +36,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
@@ -48,6 +49,7 @@ namespace Aaru.CommonTypes.Interfaces;
 ///     interface defined by <see cref="T:Aaru.CommonTypes.Interfaces.IMediaImage" />. All data expected by these methods
 ///     is already decoded from its corresponding bitstream.
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public interface IWritableFloppyImage : IFloppyImage, IWritableImage
 {
     /// <summary>

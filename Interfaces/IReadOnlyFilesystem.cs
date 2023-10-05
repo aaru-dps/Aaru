@@ -39,6 +39,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.AaruMetadata;
@@ -51,6 +52,9 @@ namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Defines the interface to implement reading the contents of a filesystem</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IReadOnlyFilesystem : IFilesystem
 {
     /// <summary>Information about the filesystem as expected by Aaru Metadata</summary>
@@ -179,6 +183,7 @@ public interface IReadOnlyFilesystem : IFilesystem
 }
 
 /// <summary>Represents an opened file from a filesystem</summary>
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IFileNode
 {
     /// <summary>Path to the file</summary>
@@ -192,6 +197,7 @@ public interface IFileNode
 }
 
 /// <summary>Represents an opened directory from a filesystem</summary>
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IDirNode
 {
     /// <summary>Path to the directory</summary>

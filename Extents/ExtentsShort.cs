@@ -38,12 +38,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Aaru.CommonTypes.Extents;
 
 /// <summary>Implements extents for <see cref="short" /></summary>
-public class ExtentsShort
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+public sealed class ExtentsShort
 {
     List<Tuple<short, short>> _backend;
 

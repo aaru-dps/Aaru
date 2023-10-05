@@ -38,6 +38,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
@@ -45,6 +46,7 @@ namespace Aaru.CommonTypes.Structs;
 
 /// <summary>File attributes.</summary>
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum FileAttributes : ulong
 {
     /// <summary>File has no attributes</summary>
@@ -241,6 +243,7 @@ public class FileEntryInfo
 }
 
 /// <summary>Information about a volume</summary>
+[SuppressMessage("ReSharper", "NotAccessedField.Global")]
 public class FileSystemInfo
 {
     /// <summary>Blocks for this filesystem</summary>

@@ -50,21 +50,12 @@ public static class DetectOS
     /// <summary>Are we running under Mono?</summary>
     public static readonly bool IsMono =
         RuntimeInformation.FrameworkDescription.StartsWith("Mono", StringComparison.Ordinal);
-    /// <summary>Are we running under .NET Framework?</summary>
-    public static readonly bool IsNetFramework =
-        RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal);
     /// <summary>Are we running under .NET Core?</summary>
     public static readonly bool IsNetCore =
         RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.Ordinal);
-    /// <summary>Are we running under .NET Native?</summary>
-    public static readonly bool IsNetNative =
-        RuntimeInformation.FrameworkDescription.StartsWith(".NET Native", StringComparison.Ordinal);
 
     /// <summary>Checks if the underlying runtime runs in 64-bit mode</summary>
     public static readonly bool Is64Bit = IntPtr.Size == 8;
-
-    /// <summary>Checks if the underlying runtime runs in 32-bit mode</summary>
-    public static readonly bool Is32Bit = IntPtr.Size == 4;
 
     /// <summary>Are we running under Windows?</summary>
     public static bool IsWindows => GetRealPlatformID() == PlatformID.Win32NT      ||

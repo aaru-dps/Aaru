@@ -30,6 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable UnusedType.Global
+
 namespace Aaru.CommonTypes;
 
 /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>

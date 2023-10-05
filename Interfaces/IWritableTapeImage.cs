@@ -37,12 +37,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.ITapeImage" />
 /// <summary>Defines an image that is writable and can store information about a streaming, digital, tape</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public interface IWritableTapeImage : ITapeImage, IWritableImage
 {
     /// <summary>Registers a new file in the image</summary>

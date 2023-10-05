@@ -36,12 +36,16 @@
 // Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc cref="IWritableImage" />
 /// <summary>Abstract class to implement flux writing plugins.</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public interface IWritableFluxImage : IFluxImage, IWritableImage
 {
     /// <summary>Writes a flux capture.</summary>

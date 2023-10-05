@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.CommonTypes.Structs.Devices.SCSI;
 
 /// <summary>List of known SCSI peripheral qualifiers</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public enum PeripheralQualifiers : byte
 {
     /// <summary>Peripheral qualifier: Device is connected and supported</summary>

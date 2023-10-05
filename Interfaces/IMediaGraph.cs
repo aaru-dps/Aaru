@@ -33,11 +33,14 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Defines the interface to draw the dump or verification status of a media in a picture.</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IMediaGraph
 {
     /// <summary>Paints the specified sector in green</summary>

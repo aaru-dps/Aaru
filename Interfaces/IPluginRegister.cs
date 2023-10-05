@@ -38,10 +38,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Defines a register of all known plugins</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public interface IPluginRegister
 {
     /// <summary>Gets all checksum plugins</summary>

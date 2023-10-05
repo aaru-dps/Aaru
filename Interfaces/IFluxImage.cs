@@ -36,12 +36,15 @@
 // Copyright © 2011-2023 Rebecca Wallander
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <inheritdoc />
 /// <summary>Abstract class to implement flux reading plugins.</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "UnusedMemberInSuper.Global")]
 public interface IFluxImage : IBaseImage
 {
     /// <summary>
