@@ -39,6 +39,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Aaru.CommonTypes.Interfaces;
 
@@ -46,9 +47,11 @@ namespace Aaru.CommonTypes.Interfaces;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public interface IPluginRegister
 {
-    /// <summary>Gets all checksum plugins</summary>
-    /// <returns>List of checksum plugins</returns>
-    List<Type> GetAllChecksumPlugins();
+    /// <summary>
+    ///     Registers all checksum plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterChecksumPlugins(IServiceCollection services);
 
     /// <summary>Gets all filesystem plugins</summary>
     /// <returns>List of filesystem plugins</returns>
