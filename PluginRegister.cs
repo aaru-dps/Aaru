@@ -46,8 +46,6 @@ public class PluginRegister
 
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
-    /// <summary>List of all filesystem plugins</summary>
-    public readonly SortedDictionary<string, Type> Filesystems;
 
     /// <summary>List of floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> FloppyImages;
@@ -65,13 +63,25 @@ public class PluginRegister
 
     PluginRegister()
     {
-        Filesystems           = new SortedDictionary<string, Type>();
         ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
         MediaImages           = new SortedDictionary<string, Type>();
         WritableImages        = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of all filesystem plugins</summary>
+    public SortedDictionary<string, IFilesystem> Filesystems
+    {
+        get
+        {
+            SortedDictionary<string, IFilesystem> filesystems = new();
+            foreach(IFilesystem plugin in _serviceProvider.GetServices<IFilesystem>())
+                filesystems[plugin.Name.ToLower()] = plugin;
+
+            return filesystems;
+        }
     }
 
     /// <summary>List of all archive formats</summary>
@@ -81,7 +91,7 @@ public class PluginRegister
         {
             SortedDictionary<string, IArchive> archives = new();
             foreach(IArchive plugin in _serviceProvider.GetServices<IArchive>())
-                archives.Add(plugin.Name.ToLower(), plugin);
+                archives[plugin.Name.ToLower()] = plugin;
 
             return archives;
         }
@@ -94,7 +104,7 @@ public class PluginRegister
         {
             SortedDictionary<string, IPartition> partitions = new();
             foreach(IPartition plugin in _serviceProvider.GetServices<IPartition>())
-                partitions.Add(plugin.Name.ToLower(), plugin);
+                partitions[plugin.Name.ToLower()] = plugin;
 
             return partitions;
         }
@@ -107,7 +117,7 @@ public class PluginRegister
         {
             SortedDictionary<string, IFilter> filters = new();
             foreach(IFilter plugin in _serviceProvider.GetServices<IFilter>())
-                filters.Add(plugin.Name.ToLower(), plugin);
+                filters[plugin.Name.ToLower()] = plugin;
 
             return filters;
         }
@@ -120,7 +130,7 @@ public class PluginRegister
         {
             SortedDictionary<string, IChecksum> checksums = new();
             foreach(IChecksum plugin in _serviceProvider.GetServices<IChecksum>())
-                checksums.Add(plugin.Name.ToLower(), plugin);
+                checksums[plugin.Name.ToLower()] = plugin;
 
             return checksums;
         }
@@ -165,13 +175,7 @@ public class PluginRegister
     void AddPlugins(IPluginRegister pluginRegister)
     {
         pluginRegister.RegisterChecksumPlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IFilesystem plugin && !Filesystems.ContainsKey(plugin.Name.ToLower()))
-                Filesystems.Add(plugin.Name.ToLower(), type);
-        }
-
+        pluginRegister.RegisterFilesystemPlugins(_services);
         pluginRegister.RegisterFilterPlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())

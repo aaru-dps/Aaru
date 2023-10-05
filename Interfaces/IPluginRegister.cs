@@ -53,9 +53,11 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterChecksumPlugins(IServiceCollection services);
 
-    /// <summary>Gets all filesystem plugins</summary>
-    /// <returns>List of filesystem plugins</returns>
-    List<Type> GetAllFilesystemPlugins();
+    /// <summary>
+    ///     Registers all filesystem plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterFilesystemPlugins(IServiceCollection services);
 
     /// <summary>
     ///     Registers all filter plugins in the provided service collection
