@@ -159,7 +159,7 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(IWritableImage writableImage in PluginRegister.Singleton.WritableImages.Values)
+        foreach(IBaseWritableImage writableImage in PluginRegister.Singleton.WritableImages.Values)
         {
             if(writableImage is null)
                 continue;
