@@ -100,7 +100,7 @@ public static class DetectOS
     }
 
     [DllImport("libc", SetLastError = true)]
-    static extern int uname(out utsname name);
+    static extern int uname(out UtsName name);
 
     [DllImport("libc", SetLastError = true, EntryPoint = "sysctlbyname", CharSet = CharSet.Ansi)]
     static extern int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
@@ -113,7 +113,7 @@ public static class DetectOS
         if((int)Environment.OSVersion.Platform < 4 || (int)Environment.OSVersion.Platform == 5)
             return (PlatformID)(int)Environment.OSVersion.Platform;
 
-        int error = uname(out utsname unixname);
+        int error = uname(out UtsName unixname);
 
         if(error != 0)
         {
@@ -422,11 +422,11 @@ public static class DetectOS
         }
     }
 
-#region Nested type: utsname
+#region Nested type: UtsName
 
     /// <summary>POSIX uname structure, size from OSX, big enough to handle extra fields</summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    struct utsname
+    struct UtsName
     {
         /// <summary>System name</summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
