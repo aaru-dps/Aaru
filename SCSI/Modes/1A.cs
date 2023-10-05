@@ -152,7 +152,7 @@ public static partial class Modes
         if(page.PS)
             sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page is { Standby: true, StandbyTimer: > 0 } || page is { Standby_Y: true, StandbyTimer_Y: > 0 })
+        if(page is { Standby: true, StandbyTimer: > 0 } or { Standby_Y: true, StandbyTimer_Y: > 0 })
         {
             if(page is { Standby: true, StandbyTimer: > 0 })
                 sb.AppendFormat("\t" + "Standby timer Z is set to {0} ms", page.StandbyTimer * 100).AppendLine();
@@ -163,9 +163,7 @@ public static partial class Modes
         else
             sb.AppendLine("\t" + "Drive will not enter standby mode");
 
-        if(page is { Idle  : true, IdleTimer  : > 0 } ||
-           page is { Idle_B: true, IdleTimer_B: > 0 } ||
-           page is { Idle_C: true, IdleTimer_C: > 0 })
+        if(page is { Idle: true, IdleTimer: > 0 } or { Idle_B: true, IdleTimer_B: > 0 } or { Idle_C: true, IdleTimer_C: > 0 })
         {
             if(page is { Idle: true, IdleTimer: > 0 })
                 sb.AppendFormat("\t" + "Idle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
