@@ -978,7 +978,7 @@ public class CSS
             {
                 while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
                 {
-                    if(!entry.ToLower().EndsWith(".vob"))
+                    if(!entry.EndsWith(".vob", StringComparison.InvariantCultureIgnoreCase))
                         continue;
 
                     fs.Stat("VIDEO_TS" + "/" + entry, out FileEntryInfo stat);
