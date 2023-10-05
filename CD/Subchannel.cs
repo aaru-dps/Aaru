@@ -323,7 +323,7 @@ public static class Subchannel
 
     public static string PrettifyQ(byte[] subBuf, bool bcd, long lba, bool corruptedPause, bool pause, bool rwEmpty)
     {
-        CRC16CCITTContext.Data(subBuf, 10, out byte[] crc);
+        CRC16CcittContext.Data(subBuf, 10, out byte[] crc);
 
         bool   crcOk  = crc[0] == subBuf[10] && crc[1] == subBuf[11];
         long   minute = (lba + 150)        / 4500;
@@ -832,7 +832,7 @@ public static class Subchannel
 
         q[9] = (byte)((q[9] / 10 << 4) + q[9] % 10);
 
-        CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
+        CRC16CcittContext.Data(q, 10, out byte[] qCrc);
         q[10] = qCrc[0];
         q[11] = qCrc[1];
 
