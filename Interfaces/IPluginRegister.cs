@@ -71,9 +71,11 @@ public interface IPluginRegister
     /// <returns>List of media image plugins</returns>
     List<Type> GetAllMediaImagePlugins();
 
-    /// <summary>Gets all partition plugins</summary>
-    /// <returns>List of partition plugins</returns>
-    List<Type> GetAllPartitionPlugins();
+    /// <summary>
+    ///     Registers all partition plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterPartitionPlugins(IServiceCollection services);
 
     /// <summary>Gets all read-only filesystem plugins</summary>
     /// <returns>List of read-only filesystem plugins</returns>

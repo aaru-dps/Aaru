@@ -54,8 +54,7 @@ public class PluginRegister
     public readonly SortedDictionary<string, Type> FloppyImages;
     /// <summary>List of all media image plugins</summary>
     public readonly SortedDictionary<string, Type> MediaImages;
-    /// <summary>List of all partition plugins</summary>
-    public readonly SortedDictionary<string, Type> Partitions;
+
     /// <summary>List of read-only filesystem plugins</summary>
     public readonly SortedDictionary<string, Type> ReadOnlyFilesystems;
     /// <summary>List of writable floppy image plugins</summary>
@@ -69,13 +68,25 @@ public class PluginRegister
     {
         Filesystems           = new SortedDictionary<string, Type>();
         ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
-        Partitions            = new SortedDictionary<string, Type>();
         MediaImages           = new SortedDictionary<string, Type>();
         WritableImages        = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         Archives              = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of all partition plugins</summary>
+    public SortedDictionary<string, IPartition> Partitions
+    {
+        get
+        {
+            SortedDictionary<string, IPartition> partitions = new();
+            foreach(IPartition plugin in _serviceProvider.GetServices<IPartition>())
+                partitions.Add(plugin.Name.ToLower(), plugin);
+
+            return partitions;
+        }
     }
 
     /// <summary>List of filter plugins</summary>
@@ -165,11 +176,7 @@ public class PluginRegister
                 MediaImages.Add(plugin.Name.ToLower(), type);
         }
 
-        foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IPartition plugin && !Partitions.ContainsKey(plugin.Name.ToLower()))
-                Partitions.Add(plugin.Name.ToLower(), type);
-        }
+        pluginRegister.RegisterPartitionPlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
         {
