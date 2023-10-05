@@ -110,10 +110,8 @@ public sealed partial class LisaFS
         if(extTag.FileId != (short)(-1 * fileId))
             return ErrorNumber.NoSuchFile;
 
-        byte[] sector;
-
         errno = _mddf.fsversion == LISA_V1
-                    ? _device.ReadSectors(ptr, 2, out sector)
+                    ? _device.ReadSectors(ptr, 2, out byte[] sector)
                     : _device.ReadSector(ptr, out sector);
 
         if(errno != ErrorNumber.NoError)

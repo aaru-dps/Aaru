@@ -311,10 +311,8 @@ public sealed partial class LisaFS
             if(sysTag.FileId != fileId)
                 continue;
 
-            byte[] sector;
-
             errno = !tags
-                        ? _device.ReadSector(i, out sector)
+                        ? _device.ReadSector(i, out byte[] sector)
                         : _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out sector);
 
             if(errno != ErrorNumber.NoError)
@@ -462,12 +460,10 @@ public sealed partial class LisaFS
 
         for(var i = 0; i < file.extents.Length; i++)
         {
-            byte[] sector;
-
             ErrorNumber errno = !tags
                                     ? _device.
                                         ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
-                                                    (uint)file.extents[i].length, out sector)
+                                                    (uint)file.extents[i].length, out byte[] sector)
                                     : _device.
                                         ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
                                                        (uint)file.extents[i].length, SectorTagType.AppleSectorTag,
