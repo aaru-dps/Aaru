@@ -49,8 +49,6 @@ public class PluginRegister
 
     /// <summary>List of floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> FloppyImages;
-    /// <summary>List of all media image plugins</summary>
-    public readonly SortedDictionary<string, Type> MediaImages;
     /// <summary>List of writable floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
@@ -60,11 +58,23 @@ public class PluginRegister
 
     PluginRegister()
     {
-        MediaImages           = new SortedDictionary<string, Type>();
         WritableImages        = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of all media image plugins</summary>
+    public SortedDictionary<string, IMediaImage> MediaImages
+    {
+        get
+        {
+            SortedDictionary<string, IMediaImage> mediaImages = new();
+            foreach(IMediaImage plugin in _serviceProvider.GetServices<IMediaImage>())
+                mediaImages[plugin.Name.ToLower()] = plugin;
+
+            return mediaImages;
+        }
     }
 
     /// <summary>List of read-only filesystem plugins</summary>
@@ -195,12 +205,7 @@ public class PluginRegister
                 FloppyImages.Add(plugin.Name.ToLower(), type);
         }
 
-        foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IMediaImage plugin && !MediaImages.ContainsKey(plugin.Name.ToLower()))
-                MediaImages.Add(plugin.Name.ToLower(), type);
-        }
-
+        pluginRegister.RegisterMediaImagePlugins(_services);
         pluginRegister.RegisterPartitionPlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())

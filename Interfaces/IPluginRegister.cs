@@ -69,9 +69,11 @@ public interface IPluginRegister
     /// <returns>List of floppy image plugins</returns>
     List<Type> GetAllFloppyImagePlugins();
 
-    /// <summary>Gets all media image plugins</summary>
-    /// <returns>List of media image plugins</returns>
-    List<Type> GetAllMediaImagePlugins();
+    /// <summary>
+    ///     Registers all media image plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterMediaImagePlugins(IServiceCollection services);
 
     /// <summary>
     ///     Registers all partition plugins in the provided service collection
