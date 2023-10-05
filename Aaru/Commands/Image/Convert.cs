@@ -449,9 +449,10 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.FileExists;
         }
 
-        PluginBase  plugins     = PluginBase.Singleton;
-        IMediaImage inputFormat = null;
-        IBaseImage  baseImage   = null;
+        PluginBase.Init();
+        PluginRegister plugins     = PluginRegister.Singleton;
+        IMediaImage    inputFormat = null;
+        IBaseImage     baseImage   = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 
@@ -53,7 +54,7 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+    static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
                            List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar,
                            Encoding encoding)
     {

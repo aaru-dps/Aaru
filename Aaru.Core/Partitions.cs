@@ -50,7 +50,8 @@ public static class Partitions
     /// <returns>List of found partitions</returns>
     public static List<Partition> GetAll(IMediaImage image)
     {
-        PluginBase      plugins          = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister  plugins          = PluginRegister.Singleton;
         List<Partition> foundPartitions  = new();
         List<Partition> childPartitions  = new();
         List<ulong>     checkedLocations = new();

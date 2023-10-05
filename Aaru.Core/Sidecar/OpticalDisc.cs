@@ -61,7 +61,7 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    void OpticalDisc(IOpticalMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+    void OpticalDisc(IOpticalMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
                      List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
         if(_aborted)

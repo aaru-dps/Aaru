@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -52,7 +53,7 @@ public sealed partial class Sidecar
     readonly IBaseImage                              _image;
     readonly string                                  _imagePath;
     readonly Checksum                                _imgChkWorker;
-    readonly PluginBase                              _plugins;
+    readonly PluginRegister                          _plugins;
     bool                                             _aborted;
     FileStream                                       _fs;
     Metadata                                         _sidecar;
@@ -60,7 +61,8 @@ public sealed partial class Sidecar
     /// <summary>Initializes a new instance of this class</summary>
     public Sidecar()
     {
-        _plugins      = PluginBase.Singleton;
+        PluginBase.Init();
+        _plugins      = PluginRegister.Singleton;
         _imgChkWorker = new Checksum();
         _aborted      = false;
 
@@ -75,12 +77,14 @@ public sealed partial class Sidecar
     /// <param name="encoding">Encoding for analysis</param>
     public Sidecar(IBaseImage image, string imagePath, Guid filterId, Encoding encoding)
     {
+        PluginBase.Init();
+
         _image        = image;
         _imagePath    = imagePath;
         _filterId     = filterId;
         _encoding     = encoding;
         _sidecar      = image.AaruMetadata ?? new Metadata();
-        _plugins      = PluginBase.Singleton;
+        _plugins      = PluginRegister.Singleton;
         _fi           = new FileInfo(imagePath);
         _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
         _imgChkWorker = new Checksum();

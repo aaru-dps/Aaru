@@ -41,6 +41,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -172,7 +173,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
         DriveSerialNumberVisible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
         DriveFirmwareRevisionVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveFirmwareRevision);
 
-        PluginBase plugins = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         foreach(Type pluginType in plugins.WritableImages.Values)
         {
@@ -1385,10 +1387,12 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 if(trackFlags.Count > 0)
                 {
                     foreach(KeyValuePair<byte, byte> flags in trackFlags)
+                    {
                         outputOptical.WriteSectorTag(new[]
                         {
                             flags.Value
                         }, flags.Key, SectorTagType.CdTrackFlags);
+                    }
                 }
 
                 if(mcn != null)

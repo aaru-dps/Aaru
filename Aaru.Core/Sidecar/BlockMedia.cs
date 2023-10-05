@@ -35,10 +35,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
@@ -47,10 +47,9 @@ using Aaru.Filters;
 using Aaru.Helpers;
 using Directory = System.IO.Directory;
 using File = System.IO.File;
+using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Partition = Aaru.CommonTypes.Partition;
-using Pcmcia = Aaru.CommonTypes.AaruMetadata.Pcmcia;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
-using Usb = Aaru.CommonTypes.AaruMetadata.Usb;
 
 namespace Aaru.Core;
 
@@ -65,7 +64,7 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
+    void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
                     List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
         if(_aborted)

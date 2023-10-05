@@ -154,7 +154,8 @@ sealed class FilesystemInfoCommand : Command
             }
         }
 
-        PluginBase plugins = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         var checkRaw = false;
 

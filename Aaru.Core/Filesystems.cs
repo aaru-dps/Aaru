@@ -51,7 +51,8 @@ public static class Filesystems
     public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition,
                                 bool        getGuid = false)
     {
-        PluginBase plugins = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         idPlugins = new List<string>();
 

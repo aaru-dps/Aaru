@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
@@ -87,7 +88,8 @@ sealed class ListOptionsCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-options");
 
-        PluginBase plugins = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         AaruConsole.WriteLine(UI.Read_only_filesystems_options);
 

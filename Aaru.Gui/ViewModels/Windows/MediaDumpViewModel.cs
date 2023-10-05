@@ -42,6 +42,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -167,7 +168,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
             }
         }
 
-        PluginBase plugins = PluginBase.Singleton;
+        PluginBase.Init();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         foreach(Type pluginType in plugins.WritableImages.Values)
         {
