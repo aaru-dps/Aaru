@@ -115,7 +115,8 @@ sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
-                                                 plugins.MediaImages.Count(t => !t.Value.GetInterfaces().
+                                                 plugins.MediaImages.Count(t => !t.Value.GetType().
+                                                                               GetInterfaces().
                                                                                Contains(typeof(IWritableImage)))))
         };
 
@@ -124,12 +125,12 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.MediaImages.Where(t => !t.Value.GetInterfaces().
-                                                                                Contains(typeof(IWritableImage))))
+        foreach(IMediaImage imagePlugin in plugins.MediaImages.Values.
+                                                   Where(t => !t.GetType().
+                                                                 GetInterfaces().
+                                                                 Contains(typeof(IWritableImage))).
+                                                   Where(t => t is not null))
         {
-            if(Activator.CreateInstance(kvp.Value) is not IMediaImage imagePlugin)
-                continue;
-
             if(verbose)
                 table.AddRow(imagePlugin.Id.ToString(), Markup.Escape(imagePlugin.Name));
             else

@@ -176,16 +176,16 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(mediaImagePlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllMediaImagePlugins() => new()");
+            sb.AppendLine("    public void RegisterMediaImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
             foreach(string plugin in mediaImagePlugins)
-                sb.AppendLine($"        typeof({plugin}),");
+                sb.AppendLine($"        services.AddTransient<IMediaImage, {plugin}>();");
 
-            sb.AppendLine("    };");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllMediaImagePlugins() => null;");
+            sb.AppendLine("    public void RegisterMediaImagePlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 
@@ -394,7 +394,7 @@ public class PluginRegisterGenerator : ISourceGenerator
                     ByteAddressableImagePlugins.Add(plugin.Identifier.Text);
             }
 
-            MediaImagePlugins.AddRange(WritableImagePlugins);
+            MediaImagePlugins.AddRange(WritableImagePlugins.Where(t => !ByteAddressableImagePlugins.Contains(t)));
             FileSystems.AddRange(ReadOnlyFileSystems);
         }
 

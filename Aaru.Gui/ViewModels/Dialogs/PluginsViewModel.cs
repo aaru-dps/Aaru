@@ -62,16 +62,16 @@ public sealed class PluginsViewModel : ViewModelBase
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
 
         // TODO: Takes too much time
-        foreach(Type filterType in PluginRegister.Singleton.Filters.Values)
+        foreach(IFilter filter in PluginRegister.Singleton.Filters.Values)
         {
-            if(Activator.CreateInstance(filterType) is not IFilter filter)
+            if(filter is null)
                 continue;
 
             Filters.Add(new PluginModel
             {
                 Name    = filter.Name,
                 Uuid    = filter.Id,
-                Version = Assembly.GetAssembly(filterType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(filter.GetType())?.GetName().Version?.ToString(),
                 Author  = filter.Author
             });
         }
@@ -90,30 +90,30 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in PluginRegister.Singleton.MediaImages.Values)
+        foreach(IMediaImage mediaImage in PluginRegister.Singleton.MediaImages.Values)
         {
-            if(Activator.CreateInstance(imageType) is not IMediaImage mediaImage)
+            if(mediaImage is null)
                 continue;
 
             Images.Add(new PluginModel
             {
                 Name    = mediaImage.Name,
                 Uuid    = mediaImage.Id,
-                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(mediaImage.GetType())?.GetName().Version?.ToString(),
                 Author  = mediaImage.Author
             });
         }
 
-        foreach(Type partitionType in PluginRegister.Singleton.Partitions.Values)
+        foreach(IPartition partition in PluginRegister.Singleton.Partitions.Values)
         {
-            if(Activator.CreateInstance(partitionType) is not IPartition partition)
+            if(partition is null)
                 continue;
 
             PartitionSchemes.Add(new PluginModel
             {
                 Name    = partition.Name,
                 Uuid    = partition.Id,
-                Version = Assembly.GetAssembly(partitionType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(partition.GetType())?.GetName().Version?.ToString(),
                 Author  = partition.Author
             });
         }

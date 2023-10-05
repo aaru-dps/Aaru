@@ -54,9 +54,9 @@ public static class ImageFormat
             IBaseImage imageFormat = null;
 
             // Check all but RAW plugin
-            foreach(Type pluginType in plugins.MediaImages.Values)
+            foreach(IMediaImage imagePlugin in plugins.MediaImages.Values)
             {
-                if(Activator.CreateInstance(pluginType) is not IMediaImage imagePlugin)
+                if(imagePlugin is null)
                     continue;
 
                 if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
@@ -114,9 +114,9 @@ public static class ImageFormat
                 return imageFormat;
 
             // Check only RAW plugin
-            foreach(Type pluginType in plugins.MediaImages.Values)
+            foreach(IMediaImage imagePlugin in plugins.MediaImages.Values)
             {
-                if(Activator.CreateInstance(pluginType) is not IMediaImage imagePlugin)
+                if(imagePlugin is null)
                     continue;
 
                 if(imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
