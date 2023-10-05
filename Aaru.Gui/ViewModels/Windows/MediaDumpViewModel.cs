@@ -170,9 +170,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         PluginRegister plugins = PluginRegister.Singleton;
 
-        foreach(Type pluginType in plugins.WritableImages.Values)
+        foreach(IWritableImage plugin in plugins.WritableImages.Values)
         {
-            if(Activator.CreateInstance(pluginType) is not IWritableImage plugin)
+            if(plugin is null)
                 continue;
 
             if(plugin.SupportedMediaTypes.Contains(mediaType))

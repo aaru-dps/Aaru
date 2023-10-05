@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -92,9 +91,9 @@ sealed class ListOptionsCommand : Command
 
         AaruConsole.WriteLine(UI.Read_Write_media_images_options);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.WritableImages)
+        foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IBaseWritableImage plugin)
+            if(plugin is null)
                 continue;
 
             var options = plugin.SupportedOptions.ToList();

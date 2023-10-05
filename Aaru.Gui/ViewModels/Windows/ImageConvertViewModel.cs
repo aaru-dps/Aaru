@@ -175,9 +175,9 @@ public sealed class ImageConvertViewModel : ViewModelBase
 
         PluginRegister plugins = PluginRegister.Singleton;
 
-        foreach(Type pluginType in plugins.WritableImages.Values)
+        foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
         {
-            if(Activator.CreateInstance(pluginType) is not IWritableImage plugin)
+            if(plugin is null)
                 continue;
 
             if(plugin.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))

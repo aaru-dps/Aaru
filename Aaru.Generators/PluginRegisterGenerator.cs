@@ -232,16 +232,16 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(writableImagePlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllWritableImagePlugins() => new()");
+            sb.AppendLine("    public void RegisterWritableImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
             foreach(string plugin in writableImagePlugins)
-                sb.AppendLine($"        typeof({plugin}),");
+                sb.AppendLine($"        services.AddTransient<IBaseWritableImage, {plugin}>();");
 
-            sb.AppendLine("    };");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllWritableImagePlugins() => null;");
+            sb.AppendLine("    public void RegisterWritableImagePlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

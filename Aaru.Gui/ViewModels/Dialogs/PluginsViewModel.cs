@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reflection;
@@ -160,16 +159,16 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type baseWritableImageType in PluginRegister.Singleton.WritableImages.Values)
+        foreach(IWritableImage writableImage in PluginRegister.Singleton.WritableImages.Values)
         {
-            if(Activator.CreateInstance(baseWritableImageType) is not IWritableImage writableImage)
+            if(writableImage is null)
                 continue;
 
             WritableImages.Add(new PluginModel
             {
                 Name    = writableImage.Name,
                 Uuid    = writableImage.Id,
-                Version = Assembly.GetAssembly(baseWritableImageType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version?.ToString(),
                 Author  = writableImage.Author
             });
         }

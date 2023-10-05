@@ -377,9 +377,7 @@ sealed class DumpMediaCommand : Command
         // Try extension
         if(string.IsNullOrEmpty(format))
         {
-            candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                into plugin
+            candidates.AddRange(from plugin in plugins.WritableImages.Values
                                 where plugin is not null
                                 where plugin.KnownExtensions.Contains(extension)
                                 select plugin);
@@ -388,9 +386,7 @@ sealed class DumpMediaCommand : Command
         // Try Id
         else if(Guid.TryParse(format, out Guid outId))
         {
-            candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                into plugin
+            candidates.AddRange(from plugin in plugins.WritableImages.Values
                                 where plugin is not null
                                 where plugin.Id.Equals(outId)
                                 select plugin);
@@ -399,9 +395,7 @@ sealed class DumpMediaCommand : Command
         // Try name
         else
         {
-            candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                into plugin
+            candidates.AddRange(from plugin in plugins.WritableImages.Values
                                 where plugin is not null
                                 where plugin.Name.Equals(format, StringComparison.InvariantCultureIgnoreCase)
                                 select plugin);
@@ -645,9 +639,7 @@ sealed class DumpMediaCommand : Command
             // Try extension
             if(string.IsNullOrEmpty(format))
             {
-                candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                    into plugin
+                candidates.AddRange(from plugin in plugins.WritableImages.Values
                                     where plugin is not null
                                     where plugin.KnownExtensions.Contains(Path.GetExtension(outputPath))
                                     select plugin);
@@ -656,9 +648,7 @@ sealed class DumpMediaCommand : Command
             // Try Id
             else if(Guid.TryParse(format, out Guid outId))
             {
-                candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                    into plugin
+                candidates.AddRange(from plugin in plugins.WritableImages.Values
                                     where plugin is not null
                                     where plugin.Id.Equals(outId)
                                     select plugin);
@@ -667,9 +657,7 @@ sealed class DumpMediaCommand : Command
             // Try name
             else
             {
-                candidates.AddRange(from pluginType in plugins.WritableImages.Values
-                                    select Activator.CreateInstance(pluginType) as IBaseWritableImage
-                                    into plugin
+                candidates.AddRange(from plugin in plugins.WritableImages.Values
                                     where plugin is not null
                                     where plugin.Name.Equals(format, StringComparison.InvariantCultureIgnoreCase)
                                     select plugin);

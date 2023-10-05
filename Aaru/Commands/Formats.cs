@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -115,9 +114,8 @@ sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
-                                                 plugins.MediaImages.Count(t => !t.Value.GetType().
-                                                                               GetInterfaces().
-                                                                               Contains(typeof(IWritableImage)))))
+                                                 plugins.MediaImages.Count(t => !plugins.WritableImages.
+                                                                               ContainsKey(t.Key))))
         };
 
         if(verbose)
@@ -125,11 +123,8 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(IMediaImage imagePlugin in plugins.MediaImages.Values.
-                                                   Where(t => !t.GetType().
-                                                                 GetInterfaces().
-                                                                 Contains(typeof(IWritableImage))).
-                                                   Where(t => t is not null))
+        foreach(IMediaImage imagePlugin in
+            plugins.MediaImages.Values.Where(t => !plugins.WritableImages.ContainsKey(t.Name)))
         {
             if(verbose)
                 table.AddRow(imagePlugin.Id.ToString(), Markup.Escape(imagePlugin.Name));
@@ -151,9 +146,9 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.WritableImages)
+        foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IBaseWritableImage plugin)
+            if(plugin is null)
                 continue;
 
             if(verbose)

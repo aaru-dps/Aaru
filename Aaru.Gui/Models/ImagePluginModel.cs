@@ -36,6 +36,6 @@ namespace Aaru.Gui.Models;
 
 public sealed class ImagePluginModel
 {
-    public string         Name   => Plugin.Name;
-    public IWritableImage Plugin { get; set; }
+    public string             Name   => Plugin.Name;
+    public IBaseWritableImage Plugin { get; set; }
 }
