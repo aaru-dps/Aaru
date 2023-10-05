@@ -165,6 +165,8 @@ public partial class Dump
     /// <param name="storeEncrypted">Store encrypted data as is</param>
     /// <param name="titleKeys">Dump DVD CSS title keys</param>
     /// <param name="ignoreCdrRunOuts">How many CD-R(W) run end sectors to ignore and regenerate</param>
+    /// <param name="createGraph">If set to <c>true</c> creates a graph of the dump.</param>
+    /// <param name="dimensions">Dimensions of graph in pixels for a square</param>
     public Dump(bool     doResume, Device dev, string devicePath, IBaseWritableImage outputPlugin, ushort retryPasses,
                 bool     force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                 Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,

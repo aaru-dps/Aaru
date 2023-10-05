@@ -64,6 +64,10 @@ public static class CompactDisc
     /// <param name="updateStatus">Status update callback</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest known pregap per track</param>
     /// <param name="dumping">Set if we are dumping, otherwise converting</param>
+    /// <param name="newPregapSectors">
+    ///     Gets a list of the new sectors that should be considered part of a pregap, and then
+    ///     re-read
+    /// </param>
     /// <returns><c>true</c> if indexes have changed, <c>false</c> otherwise</returns>
     public static bool WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel,
                                               byte[] sub, ulong sectorAddress, uint length, SubchannelLog subLog,
@@ -304,6 +308,11 @@ public static class CompactDisc
     /// <param name="updateStatus">Status update callback</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest known pregap per track</param>
     /// <param name="dumping">Set if we are dumping, otherwise converting</param>
+    /// <param name="newPregapSectors">
+    ///     Gets a list of the new sectors that should be considered part of a pregap, and then
+    ///     re-read
+    /// </param>
+    /// <param name="sectorAddress">Sector address the subchannel was read from</param>
     /// <returns><c>true</c> if indexes have changed, <c>false</c> otherwise</returns>
     static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrackNumber,
                                            ref string mcn, Track[] tracks, DumpLog dumpLog,

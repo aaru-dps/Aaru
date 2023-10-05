@@ -231,6 +231,10 @@ public class SplitJoinStream : Stream
     /// <param name="basePath">Base file path, directory path only</param>
     /// <param name="counterFormat">Counter format, includes filename and a formatting string</param>
     /// <param name="counterStart">Counter start, defaults to 0</param>
+    /// <param name="access">
+    ///     A bitwise combination of the enumeration values that determines how the file can be accessed by a
+    ///     <see cref="FileStream" /> object.
+    /// </param>
     public void AddRange(string     basePath, string counterFormat = "{0:D3}", int counterStart = 0,
                          FileAccess access = FileAccess.Read)
     {

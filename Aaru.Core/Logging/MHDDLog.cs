@@ -56,6 +56,7 @@ sealed class MhddLog
     /// <param name="blockSize">Bytes per block</param>
     /// <param name="blocksToRead">How many blocks read at once</param>
     /// <param name="private">Disable saving paths or serial numbers in log</param>
+    /// <param name="mediaGraphDimensions">Dimensions in pixel for a square that would contain the block map graph</param>
     internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private,
                      uint   mediaGraphDimensions = 0)
     {
@@ -154,6 +155,7 @@ sealed class MhddLog
     /// <summary>Logs a new read</summary>
     /// <param name="sector">Starting sector</param>
     /// <param name="duration">Duration in milliseconds</param>
+    /// <param name="length">How many sectors where read at once</param>
     internal void Write(ulong sector, double duration, uint length = 1)
     {
         if(_logFile == null)
