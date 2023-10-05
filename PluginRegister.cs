@@ -47,15 +47,22 @@ public class PluginRegister
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
 
-    /// <summary>List of writable media image plugins</summary>
-    public readonly SortedDictionary<string, Type> WritableImages;
     IServiceProvider   _serviceProvider;
     IServiceCollection _services;
 
-    PluginRegister()
+    PluginRegister() => ByteAddressableImages = new SortedDictionary<string, Type>();
+
+    /// <summary>List of writable media image plugins</summary>
+    public SortedDictionary<string, IBaseWritableImage> WritableImages
     {
-        WritableImages        = new SortedDictionary<string, Type>();
-        ByteAddressableImages = new SortedDictionary<string, Type>();
+        get
+        {
+            SortedDictionary<string, IBaseWritableImage> mediaImages = new();
+            foreach(IBaseWritableImage plugin in _serviceProvider.GetServices<IBaseWritableImage>())
+                mediaImages[plugin.Name.ToLower()] = plugin;
+
+            return mediaImages;
+        }
     }
 
     /// <summary>List of writable floppy image plugins</summary>
@@ -221,14 +228,7 @@ public class PluginRegister
         pluginRegister.RegisterMediaImagePlugins(_services);
         pluginRegister.RegisterPartitionPlugins(_services);
         pluginRegister.RegisterWritableFloppyImagePlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IBaseWritableImage plugin &&
-               !WritableImages.ContainsKey(plugin.Name.ToLower()))
-                WritableImages.Add(plugin.Name.ToLower(), type);
-        }
-
+        pluginRegister.RegisterWritableImagePlugins(_services);
         pluginRegister.RegisterArchivePlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())

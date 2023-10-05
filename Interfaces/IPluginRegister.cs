@@ -95,9 +95,11 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterWritableFloppyImagePlugins(IServiceCollection services);
 
-    /// <summary>Gets all writable media image plugins</summary>
-    /// <returns>List of writable media image plugins</returns>
-    List<Type> GetAllWritableImagePlugins();
+    /// <summary>
+    ///     Registers all writable media image plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterWritableImagePlugins(IServiceCollection services);
 
     /// <summary>
     ///     Registers all archive plugins in the provided service collection
