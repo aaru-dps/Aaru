@@ -176,15 +176,15 @@ partial class Dump
 
                 if(decMode.HasValue)
                 {
-                    scsiMediumType = (byte)decMode.Value.Header.MediumType;
+                    scsiMediumType = (byte)(decMode?.Header.MediumType ?? default(MediumTypes));
 
-                    if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                        scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                    if(decMode?.Header.BlockDescriptors?.Length > 0)
+                        scsiDensityCode = (byte)(decMode?.Header.BlockDescriptors[0].Density ?? default(DensityType));
 
                     // TODO: Fix this
-                    containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,
-                                                                        (current, modePage) =>
-                                                                            current | modePage.Page == 0x05) ==
+                    containsFloppyPage = decMode?.Pages?.Aggregate(containsFloppyPage,
+                                                                   (current, modePage) =>
+                                                                       current | modePage.Page == 0x05) ==
                                          true;
                 }
             }

@@ -109,7 +109,7 @@ public abstract class FsExtractIssueTest
 
                 var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
-                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, fs.Name));
+                Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, fs?.Name));
 
                 filesystemFound = true;
 

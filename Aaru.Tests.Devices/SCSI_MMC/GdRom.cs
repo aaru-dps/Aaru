@@ -42,10 +42,10 @@ static partial class ScsiMmc
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense.Value.ASC != 0x04)
+            if(decodedSense?.ASC != 0x04)
                 break;
 
-            if(decodedSense.Value.ASCQ != 0x01)
+            if(decodedSense?.ASCQ != 0x01)
                 break;
 
             Thread.Sleep(2000);
@@ -74,7 +74,8 @@ static partial class ScsiMmc
             return;
         }
 
-        FullTOC.CDFullTOC toc = decodedToc.Value;
+        // Guaranteed to never fall into default
+        FullTOC.CDFullTOC toc = decodedToc ?? default(FullTOC.CDFullTOC);
 
         FullTOC.TrackDataDescriptor leadOutTrack = toc.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA2);
 
@@ -153,10 +154,10 @@ static partial class ScsiMmc
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense.Value.ASC != 0x04)
+            if(decodedSense?.ASC != 0x04)
                 break;
 
-            if(decodedSense.Value.ASCQ != 0x01)
+            if(decodedSense?.ASCQ != 0x01)
                 break;
         } while(retries < 25);
 
@@ -181,7 +182,8 @@ static partial class ScsiMmc
             return;
         }
 
-        toc = decodedToc.Value;
+        // Guaranteed to never fall into default
+        toc = decodedToc ?? default;
 
         FullTOC.TrackDataDescriptor newLeadOutTrack = toc.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA2);
 

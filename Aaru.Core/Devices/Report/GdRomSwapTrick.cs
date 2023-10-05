@@ -126,7 +126,8 @@ public sealed partial class DeviceReport
             return;
         }
 
-        FullTOC.CDFullTOC toc = decodedToc.Value;
+        // Guaranteed to never fall into default
+        FullTOC.CDFullTOC toc = decodedToc ?? default(FullTOC.CDFullTOC);
 
         FullTOC.TrackDataDescriptor leadOutTrack = toc.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA2);
 
@@ -241,7 +242,8 @@ public sealed partial class DeviceReport
             return;
         }
 
-        toc = decodedToc.Value;
+        // Guaranteed to never fall into default
+        toc = decodedToc ?? default(FullTOC.CDFullTOC);
 
         FullTOC.TrackDataDescriptor newLeadOutTrack = toc.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA2);
 

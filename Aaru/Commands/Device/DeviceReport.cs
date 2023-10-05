@@ -895,7 +895,7 @@ sealed class DeviceReportCommand : Command
 
                                                         task.MaxValue = ushort.MaxValue;
 
-                                                        for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                        for(var i = (ushort)(mediaTest.BlockSize ?? 0);; i++)
                                                         {
                                                             task.Description =
                                                                 string.
@@ -933,7 +933,9 @@ sealed class DeviceReportCommand : Command
                                             ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
 
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                                                   (ushort)(mediaTest.LongBlockSize ??
+                                                                            mediaTest.BlockSize ?? 0), dev.Timeout,
+                                                                   out _);
                                         });
 
                                         if(!sense)
@@ -948,7 +950,8 @@ sealed class DeviceReportCommand : Command
                                             ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
 
                                             sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                   mediaTest.LongBlockSize.Value, dev.Timeout, out _);
+                                                                   mediaTest.LongBlockSize ?? mediaTest.BlockSize ?? 0,
+                                                                   dev.Timeout, out _);
                                         });
 
                                         if(!sense)
@@ -1270,7 +1273,7 @@ sealed class DeviceReportCommand : Command
 
                                                     task.MaxValue = ushort.MaxValue;
 
-                                                    for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                    for(var i = (ushort)(mediaTest.BlockSize ?? 0);; i++)
                                                     {
                                                         task.Value = i;
 
@@ -1309,7 +1312,8 @@ sealed class DeviceReportCommand : Command
                                         ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
 
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                                               (ushort)(mediaTest.LongBlockSize ??
+                                                                        mediaTest.BlockSize ?? 0), dev.Timeout, out _);
                                     });
 
                                     if(!sense)
@@ -1324,7 +1328,8 @@ sealed class DeviceReportCommand : Command
                                         ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
 
                                         sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                                               (ushort)(mediaTest.LongBlockSize ??
+                                                                        mediaTest.BlockSize ?? 0), dev.Timeout, out _);
                                     });
 
                                     if(!sense)
@@ -1464,7 +1469,7 @@ sealed class DeviceReportCommand : Command
 
                                                         task.MaxValue = ushort.MaxValue;
 
-                                                        for(var i = (ushort)mediaTest.BlockSize;; i++)
+                                                        for(var i = (ushort)(mediaTest.BlockSize ?? 0);; i++)
                                                         {
                                                             task.Value = i;
 
@@ -1504,7 +1509,9 @@ sealed class DeviceReportCommand : Command
                                             ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
 
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                                                   (ushort)(mediaTest.LongBlockSize ??
+                                                                            mediaTest.BlockSize ?? 0), dev.Timeout,
+                                                                   out _);
                                         });
 
                                         if(!sense)
@@ -1519,7 +1526,9 @@ sealed class DeviceReportCommand : Command
                                             ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
 
                                             sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                                                   (ushort)(mediaTest.LongBlockSize ??
+                                                                            mediaTest.BlockSize ?? 0), dev.Timeout,
+                                                                   out _);
                                         });
 
                                         if(!sense)
@@ -1562,7 +1571,8 @@ sealed class DeviceReportCommand : Command
 
                                                     task.MaxValue = ushort.MaxValue;
 
-                                                    for(var i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
+                                                    for(var i = (ushort)(report.SCSI.ReadCapabilities.BlockSize ?? 0);;
+                                                        i++)
                                                     {
                                                         task.Value = i;
 
@@ -1603,7 +1613,8 @@ sealed class DeviceReportCommand : Command
                                     ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
 
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                           (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
+                                                           (ushort)(report.SCSI.ReadCapabilities.LongBlockSize ??
+                                                                    report.SCSI.ReadCapabilities.BlockSize ?? 0),
                                                            dev.Timeout, out _);
                                 });
 
@@ -1619,8 +1630,9 @@ sealed class DeviceReportCommand : Command
                                     ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
 
                                     sense = dev.ReadLong16(out buffer, out senseBuffer, false, 0,
-                                                           report.SCSI.ReadCapabilities.LongBlockSize.Value,
-                                                           dev.Timeout, out _);
+                                                           report.SCSI.ReadCapabilities.LongBlockSize ??
+                                                           report.SCSI.ReadCapabilities.BlockSize ?? 0, dev.Timeout,
+                                                           out _);
                                 });
 
                                 if(!sense)

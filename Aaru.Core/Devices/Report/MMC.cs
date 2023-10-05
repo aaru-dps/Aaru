@@ -1373,7 +1373,7 @@ public sealed partial class DeviceReport
                     if(mediaType == "Audio CD")
                     {
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                (uint)(mediaTest.Blocks + 1), 2352, 1,
+                                                                (uint)((mediaTest.Blocks ?? 0) + 1), 2352, 1,
                                                                 MmcSectorTypes.Cdda, false, false, false,
                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                 MmcSubchannel.None, _dev.Timeout, out _);
@@ -1381,7 +1381,7 @@ public sealed partial class DeviceReport
                     else
                     {
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                (uint)(mediaTest.Blocks + 1), 2352, 1,
+                                                                (uint)((mediaTest.Blocks ?? 0) + 1), 2352, 1,
                                                                 MmcSectorTypes.AllTypes, false, false, true,
                                                                 MmcHeaderCodes.AllHeaders, true, true,
                                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,

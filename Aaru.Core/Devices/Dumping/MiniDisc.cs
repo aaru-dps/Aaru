@@ -93,7 +93,7 @@ partial class Dump
             decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
 
         if(decMode.HasValue)
-            scsiMediumType = (byte)decMode.Value.Header.MediumType;
+            scsiMediumType = (byte)(decMode?.Header.MediumType ?? default(MediumTypes));
 
         if(blockSize != 2048)
         {

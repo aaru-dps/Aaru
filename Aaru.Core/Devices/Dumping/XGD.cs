@@ -356,7 +356,8 @@ partial class Dump
             return;
         }
 
-        PFI.PhysicalFormatInformation wxRipperPfi = wxRipperPfiNullable.Value;
+        // Guaranteed to never fall into default
+        PFI.PhysicalFormatInformation wxRipperPfi = wxRipperPfiNullable ?? default(PFI.PhysicalFormatInformation);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.WxRipper_PFI_Data_Area_Start_PSN_0_sectors,
                                            wxRipperPfi.DataAreaStartPSN));

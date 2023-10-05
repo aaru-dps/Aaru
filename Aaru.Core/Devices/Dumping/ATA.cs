@@ -96,7 +96,8 @@ public partial class Dump
 
             if(ataIdNullable != null)
             {
-                Identify.IdentifyDevice ataId         = ataIdNullable.Value;
+                // Guaranteed to never fall into default
+                Identify.IdentifyDevice ataId         = ataIdNullable ?? default(Identify.IdentifyDevice);
                 byte[]                  ataIdentify   = cmdBuf;
                 double                  totalDuration = 0;
                 double                  currentSpeed  = 0;

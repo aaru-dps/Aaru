@@ -78,23 +78,23 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        if(decSense.HasValue && decSense.Value.SenseKey != SenseKeys.NoSense)
+        if(decSense.HasValue && decSense?.SenseKey != SenseKeys.NoSense)
         {
-            _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey, decSense.Value.ASC,
-                               decSense.Value.ASCQ);
+            _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense?.SenseKey, decSense?.ASC,
+                               decSense?.ASCQ);
 
             StoppingErrorMessage?.Invoke(Localization.Core.Drive_has_status_error_please_correct_Sense_follows +
                                          Environment.NewLine                                                   +
-                                         decSense.Value.Description);
+                                         decSense?.Description);
 
             return;
         }
 
         // Not in BOM/P
-        if(decSense is { ASC: 0x00 }       &&
-           decSense.Value.ASCQ     != 0x00 &&
-           decSense.Value.ASCQ     != 0x04 &&
-           decSense.Value.SenseKey != SenseKeys.IllegalRequest)
+        if(decSense is { ASC: 0x00 }  &&
+           decSense?.ASCQ     != 0x00 &&
+           decSense?.ASCQ     != 0x04 &&
+           decSense?.SenseKey != SenseKeys.IllegalRequest)
         {
             _dumpLog.WriteLine(Localization.Core.Rewinding_please_wait);
             PulseProgress?.Invoke(Localization.Core.Rewinding_please_wait);
@@ -116,17 +116,16 @@ partial class Dump
 
             // And yet, did not rewind!
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
-                decSense.Value.ASC != 0x00))
+               (decSense?.ASC == 0x00 && decSense?.ASCQ != 0x04 && decSense?.ASCQ != 0x00 || decSense?.ASC != 0x00))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
                                              Environment.NewLine                                                   +
-                                             decSense.Value.Description);
+                                             decSense?.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
-                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                   decSense.Value.ASC, decSense.Value.ASCQ);
+                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense?.SenseKey, decSense?.ASC,
+                                   decSense?.ASCQ);
 
                 return;
             }
@@ -142,17 +141,17 @@ partial class Dump
             decSense = Sense.Decode(senseBuf);
 
             if(decSense.HasValue &&
-               (decSense.Value.ASC == 0x20 && decSense.Value.ASCQ     != 0x00 ||
-                decSense.Value.ASC != 0x20 && decSense.Value.SenseKey != SenseKeys.IllegalRequest))
+               (decSense?.ASC == 0x20 && decSense?.ASCQ     != 0x00 ||
+                decSense?.ASC != 0x20 && decSense?.SenseKey != SenseKeys.IllegalRequest))
             {
                 StoppingErrorMessage?.Invoke(Localization.Core.Could_not_get_position_Sense_follows +
                                              Environment.NewLine                                    +
-                                             decSense.Value.Description);
+                                             decSense?.Description);
 
                 _dumpLog.WriteLine(Localization.Core.Could_not_get_position_Sense_follows);
 
-                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                   decSense.Value.ASC, decSense.Value.ASCQ);
+                _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense?.SenseKey, decSense?.ASC,
+                                   decSense?.ASCQ);
 
                 return;
             }
@@ -194,17 +193,16 @@ partial class Dump
 
                 // And yet, did not rewind!
                 if(decSense.HasValue &&
-                   (decSense.Value.ASC == 0x00 && decSense.Value.ASCQ != 0x04 && decSense.Value.ASCQ != 0x00 ||
-                    decSense.Value.ASC != 0x00))
+                   (decSense?.ASC == 0x00 && decSense?.ASCQ != 0x04 && decSense?.ASCQ != 0x00 || decSense?.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows +
                                                  Environment.NewLine                                                   +
-                                                 decSense.Value.Description);
+                                                 decSense?.Description);
 
                     _dumpLog.WriteLine(Localization.Core.Drive_could_not_rewind_please_correct_Sense_follows);
 
-                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                       decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense?.SenseKey, decSense?.ASC,
+                                       decSense?.ASCQ);
 
                     return;
                 }
@@ -289,12 +287,12 @@ partial class Dump
         // TODO: Check partitions page
         if(decMode.HasValue)
         {
-            scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
+            scsiMediumTypeTape = (byte)(decMode?.Header.MediumType ?? default(MediumTypes));
 
-            if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+            if(decMode?.Header.BlockDescriptors?.Length > 0)
+                scsiDensityCodeTape = (byte)(decMode?.Header.BlockDescriptors[0].Density ?? default(DensityType));
 
-            blockSize = decMode.Value.Header.BlockDescriptors?[0].BlockLength ?? 0;
+            blockSize = decMode?.Header.BlockDescriptors?[0].BlockLength ?? 0;
 
             UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks, blocks));
         }
