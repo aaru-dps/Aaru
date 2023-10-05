@@ -74,6 +74,15 @@ public sealed class Fletcher32Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.Fletcher32_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("0E51B39F-C5E6-4CED-9E59-BA5A42B3B2F4");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>
@@ -441,6 +450,15 @@ public sealed class Fletcher16Context : IChecksum
     }
 
 #region IChecksum Members
+
+    /// <inheritdoc />
+    public string Name => Localization.Fletcher16_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("80C51F1D-71F8-4741-A0CF-18FA8102EE4B");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>

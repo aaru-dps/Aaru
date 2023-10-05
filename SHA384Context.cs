@@ -55,6 +55,15 @@ public sealed class Sha384Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.SHA384_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("4A2A1820-E157-4842-B1E2-0E629FA60DDD");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

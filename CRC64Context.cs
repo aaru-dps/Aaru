@@ -320,6 +320,15 @@ public sealed class Crc64Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.CRC64_ECMA_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("D0C0D902-420A-45DA-A235-9D48BEE4B1CE");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

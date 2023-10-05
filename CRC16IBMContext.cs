@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Checksums;
@@ -235,6 +236,15 @@ public sealed class CRC16IbmContext : Crc16Context
     /// <summary>Initializes an instance of the CRC16 with IBM polynomial and seed.</summary>
     /// <inheritdoc />
     public CRC16IbmContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
+
+    /// <inheritdoc />
+    public string Name => Localization.CRC16_IBM_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("0470433E-0C78-4C37-8C9F-BD8E72340E78");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

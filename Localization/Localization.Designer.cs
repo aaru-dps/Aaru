@@ -60,6 +60,15 @@ namespace Aaru.Checksums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adler-32.
+        /// </summary>
+        internal static string Adler32_Name {
+            get {
+                return ResourceManager.GetString("Adler32_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assertion failed.
         /// </summary>
         internal static string Assertion_failed {
@@ -101,6 +110,42 @@ namespace Aaru.Checksums {
         internal static string CD_Text_Pack_two_CRC_0_expected_1 {
             get {
                 return ResourceManager.GetString("CD_Text_Pack_two_CRC_0_expected_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CRC-16 (CCITT).
+        /// </summary>
+        internal static string CRC16_CCITT_Name {
+            get {
+                return ResourceManager.GetString("CRC16_CCITT_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CRC-16 (IBM).
+        /// </summary>
+        internal static string CRC16_IBM_Name {
+            get {
+                return ResourceManager.GetString("CRC16_IBM_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CRC-32.
+        /// </summary>
+        internal static string CRC32_Name {
+            get {
+                return ResourceManager.GetString("CRC32_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CRC-64 (ECMA).
+        /// </summary>
+        internal static string CRC64_ECMA_Name {
+            get {
+                return ResourceManager.GetString("CRC64_ECMA_Name", resourceCulture);
             }
         }
         
@@ -236,6 +281,24 @@ namespace Aaru.Checksums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fletcher-16.
+        /// </summary>
+        internal static string Fletcher16_Name {
+            get {
+                return ResourceManager.GetString("Fletcher16_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fletcher-32.
+        /// </summary>
+        internal static string Fletcher32_Name {
+            get {
+                return ResourceManager.GetString("Fletcher32_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 
         /// lambda(x) is WRONG
         ///.
@@ -252,6 +315,15 @@ namespace Aaru.Checksums {
         internal static string m_must_be_between_2_and_16_inclusive {
             get {
                 return ResourceManager.GetString("m_must_be_between_2_and_16_inclusive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MD5.
+        /// </summary>
+        internal static string MD5_Name {
+            get {
+                return ResourceManager.GetString("MD5_Name", resourceCulture);
             }
         }
         
@@ -274,11 +346,56 @@ namespace Aaru.Checksums {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SHA1.
+        /// </summary>
+        internal static string SHA1_Name {
+            get {
+                return ResourceManager.GetString("SHA1_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SHA256.
+        /// </summary>
+        internal static string SHA256_Name {
+            get {
+                return ResourceManager.GetString("SHA256_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SHA384.
+        /// </summary>
+        internal static string SHA384_Name {
+            get {
+                return ResourceManager.GetString("SHA384_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SHA512.
+        /// </summary>
+        internal static string SHA512_Name {
+            get {
+                return ResourceManager.GetString("SHA512_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SpamSum does not have a binary representation..
         /// </summary>
         internal static string SpamSum_does_not_have_a_binary_representation {
             get {
                 return ResourceManager.GetString("SpamSum_does_not_have_a_binary_representation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SpamSum.
+        /// </summary>
+        internal static string SpamSum_Name {
+            get {
+                return ResourceManager.GetString("SpamSum_Name", resourceCulture);
             }
         }
         

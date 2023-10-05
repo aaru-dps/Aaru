@@ -108,4 +108,43 @@
     <data name="Not_yet_implemented" xml:space="preserve">
     <value>Not yet implemented.</value>
   </data>
+    <data name="Adler32_Name" xml:space="preserve">
+        <value>Adler-32</value>
+    </data>
+    <data name="CRC16_CCITT_Name" xml:space="preserve">
+        <value>CRC-16 (CCITT)</value>
+    </data>
+    <data name="CRC16_IBM_Name" xml:space="preserve">
+        <value>CRC-16 (IBM)</value>
+    </data>
+    <data name="CRC32_Name" xml:space="preserve">
+        <value>CRC-32</value>
+    </data>
+    <data name="CRC64_ECMA_Name" xml:space="preserve">
+        <value>CRC-64 (ECMA)</value>
+    </data>
+    <data name="Fletcher32_Name" xml:space="preserve">
+        <value>Fletcher-32</value>
+    </data>
+    <data name="Fletcher16_Name" xml:space="preserve">
+        <value>Fletcher-16</value>
+    </data>
+    <data name="MD5_Name" xml:space="preserve">
+        <value>MD5</value>
+    </data>
+    <data name="SHA1_Name" xml:space="preserve">
+        <value>SHA1</value>
+    </data>
+    <data name="SHA256_Name" xml:space="preserve">
+        <value>SHA256</value>
+    </data>
+    <data name="SHA384_Name" xml:space="preserve">
+        <value>SHA384</value>
+    </data>
+    <data name="SHA512_Name" xml:space="preserve">
+        <value>SHA512</value>
+    </data>
+    <data name="SpamSum_Name" xml:space="preserve">
+        <value>SpamSum</value>
+    </data>
 </root>

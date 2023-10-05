@@ -50,6 +50,15 @@ public sealed class Md5Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.MD5_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("C78674C4-F699-4FAB-A618-1661AF659A7C");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

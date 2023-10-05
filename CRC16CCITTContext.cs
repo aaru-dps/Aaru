@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Checksums;
@@ -234,6 +235,10 @@ public sealed class CRC16CcittContext : Crc16Context
     /// <summary>Initializes an instance of the CRC16 with CCITT polynomial and seed.</summary>
     /// <inheritdoc />
     public CRC16CcittContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
+
+    public string Name   => Localization.CRC16_CCITT_Name;
+    public Guid   Id     => new("4C3BD0D5-24BD-4D45-BC19-A90A5AA5CC9D");
+    public string Author => Authors.NataliaPortillo;
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

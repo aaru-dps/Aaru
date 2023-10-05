@@ -54,6 +54,15 @@ public sealed class Sha1Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.SHA1_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("5C28939D-DCBB-4C6E-8498-C509ABD99FC2");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

@@ -76,6 +76,15 @@ public sealed class Adler32Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.Adler32_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("D69CF1E7-4A7B-4605-9291-3A1BE4C2951F");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

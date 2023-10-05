@@ -93,6 +93,15 @@ public sealed class SpamSumContext : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.SpamSum_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("DA692981-3291-47D8-B8B9-A87F0605F6E9");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>

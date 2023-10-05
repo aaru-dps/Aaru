@@ -355,6 +355,15 @@ public sealed class Crc32Context : IChecksum
 #region IChecksum Members
 
     /// <inheritdoc />
+    public string Name => Localization.CRC32_Name;
+
+    /// <inheritdoc />
+    public Guid Id => new("BCC4E18A-79CD-4B52-8A57-2B599E5176B3");
+
+    /// <inheritdoc />
+    public string Author => Authors.NataliaPortillo;
+
+    /// <inheritdoc />
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>
