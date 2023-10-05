@@ -817,8 +817,6 @@ public class CSS
                                out byte[] key)
     {
         var  buffer = new byte[10];
-        long oLfsr1;
-        long oLfsr0;
         long iTry;
         uint i;
         int  exit = -1;
@@ -835,6 +833,8 @@ public class CSS
             long combined = 0;
 
             // Iterate cipher 4 times to reconstruct LFSR2
+            long oLfsr1;
+            long oLfsr0;
             for(i = 0; i < 4; i++)
             {
                 // Advance LFSR1 normally 
