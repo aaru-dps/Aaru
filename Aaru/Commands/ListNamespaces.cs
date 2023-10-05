@@ -89,12 +89,9 @@ sealed class ListNamespacesCommand : Command
 
         PluginRegister plugins = PluginRegister.Singleton;
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
+        foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
-                continue;
-
-            if(fs.Namespaces is null)
+            if(fs?.Namespaces is null)
                 continue;
 
             Table table = new()

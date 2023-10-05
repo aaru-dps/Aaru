@@ -83,12 +83,8 @@ public abstract class FsExtractIssueTest
             {
                 foreach(string pluginName in idPlugins)
                 {
-                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                         continue;
-
-                    Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
-
-                    var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
                     Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
@@ -104,12 +100,7 @@ public abstract class FsExtractIssueTest
             }
             else
             {
-                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
-
-                if(pluginType is null)
-                    continue;
-
-                var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
+                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
                 Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, fs?.Name));
 

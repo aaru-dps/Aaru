@@ -321,14 +321,14 @@ sealed class ExtractFilesCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                                 continue;
 
-                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, pluginType.Name)
+                            if(fs is null)
+                                continue;
+
+                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
                             }[/]");
-
-                            if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
-                                continue;
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
@@ -353,12 +353,12 @@ sealed class ExtractFilesCommand : Command
                     }
                     else
                     {
-                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                        if(pluginType == null || Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                        if(fs is null)
                             continue;
 
-                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, pluginType.Name)}[/]");
+                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {

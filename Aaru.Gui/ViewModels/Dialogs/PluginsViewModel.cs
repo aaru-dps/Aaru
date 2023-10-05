@@ -132,16 +132,16 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type readOnlyFilesystem in PluginRegister.Singleton.ReadOnlyFilesystems.Values)
+        foreach(IReadOnlyFilesystem fs in PluginRegister.Singleton.ReadOnlyFilesystems.Values)
         {
-            if(Activator.CreateInstance(readOnlyFilesystem) is not IReadOnlyFilesystem fs)
+            if(fs is null)
                 continue;
 
             ReadOnlyFilesystems.Add(new PluginModel
             {
                 Name    = fs.Name,
                 Uuid    = fs.Id,
-                Version = Assembly.GetAssembly(readOnlyFilesystem)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(fs.GetType())?.GetName().Version?.ToString(),
                 Author  = fs.Author
             });
         }

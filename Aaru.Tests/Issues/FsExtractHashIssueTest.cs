@@ -124,12 +124,8 @@ public abstract class FsExtractHashIssueTest
             {
                 string pluginName = idPlugins[j];
 
-                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out Type pluginType))
+                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                     continue;
-
-                Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
-
-                var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
                 Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 

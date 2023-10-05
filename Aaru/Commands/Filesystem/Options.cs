@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -92,9 +91,9 @@ sealed class ListOptionsCommand : Command
 
         AaruConsole.WriteLine(UI.Read_only_filesystems_options);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
+        foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
+            if(fs is null)
                 continue;
 
             var options = fs.SupportedOptions.ToList();

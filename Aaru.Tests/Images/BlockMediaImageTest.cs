@@ -282,12 +282,8 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             {
                                 string pluginName = idPlugins[j];
 
-                                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out Type pluginType))
+                                if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                                     continue;
-
-                                Assert.IsNotNull(pluginType, Localization.Could_not_instantiate_filesystem_plugin);
-
-                                var fs = Activator.CreateInstance(pluginType) as IReadOnlyFilesystem;
 
                                 Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName} in {testFile}");
 

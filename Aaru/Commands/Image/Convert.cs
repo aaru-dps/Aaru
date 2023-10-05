@@ -944,7 +944,7 @@ sealed class ConvertImageCommand : Command
 
                                                             if(plugins.ReadOnlyFilesystems.
                                                                        TryGetValue("iso9660 filesystem",
-                                                                           out Type pluginType))
+                                                                           out IReadOnlyFilesystem rofs))
                                                             {
                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
@@ -952,7 +952,7 @@ sealed class ConvertImageCommand : Command
                                                                 generatedTitleKeys =
                                                                     CSS.GenerateTitleKeys(inputOptical, partitions,
                                                                         trackSectors,
-                                                                        pluginType);
+                                                                        rofs);
                                                             }
                                                         }
 
@@ -999,7 +999,7 @@ sealed class ConvertImageCommand : Command
 
                                                             if(plugins.ReadOnlyFilesystems.
                                                                        TryGetValue("iso9660 filesystem",
-                                                                           out Type pluginType))
+                                                                           out IReadOnlyFilesystem rofs))
                                                             {
                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
@@ -1007,7 +1007,7 @@ sealed class ConvertImageCommand : Command
                                                                 generatedTitleKeys =
                                                                     CSS.GenerateTitleKeys(inputOptical, partitions,
                                                                         trackSectors,
-                                                                        pluginType);
+                                                                        rofs);
                                                             }
                                                         }
 

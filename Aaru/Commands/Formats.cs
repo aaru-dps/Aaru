@@ -181,7 +181,6 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filesystem);
 
-
         foreach(IFilesystem fs in idOnlyFilesystems)
         {
             if(verbose)
@@ -205,9 +204,9 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filesystem);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)
+        foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(Activator.CreateInstance(kvp.Value) is not IReadOnlyFilesystem fs)
+            if(fs is null)
                 continue;
 
             if(verbose)

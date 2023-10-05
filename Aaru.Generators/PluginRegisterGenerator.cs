@@ -204,16 +204,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(readOnlyFileSystems?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllReadOnlyFilesystemPlugins() => new()");
+            sb.AppendLine("    public void RegisterReadOnlyFilesystemPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in readOnlyFileSystems)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IReadOnlyFilesystem, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllReadOnlyFilesystemPlugins() => null;");
+            sb.AppendLine("    public void RegisterReadOnlyFilesystemPlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

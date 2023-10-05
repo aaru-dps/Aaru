@@ -294,9 +294,9 @@ sealed class LsCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                                 continue;
-                            if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                            if(fs is null)
                                 continue;
 
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
@@ -320,9 +320,9 @@ sealed class LsCommand : Command
                     }
                     else
                     {
-                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out pluginType);
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                        if(Activator.CreateInstance(pluginType) is not IReadOnlyFilesystem fs)
+                        if(fs is null)
                             continue;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
