@@ -304,7 +304,8 @@ public sealed partial class Vhdx
 
                     try
                     {
-                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
+                        parentFilter =
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                         if(parentFilter != null && _parentImage.Open(parentFilter) == ErrorNumber.NoError)
                         {
@@ -322,7 +323,8 @@ public sealed partial class Vhdx
 
                     try
                     {
-                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
+                        parentFilter =
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
                         if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                             continue;
@@ -346,7 +348,8 @@ public sealed partial class Vhdx
 
                     try
                     {
-                        parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
+                        parentFilter =
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
                         if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
                             continue;

@@ -170,7 +170,6 @@ public sealed partial class CdrWin
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             _cueStream = new StreamReader(imageFilter.GetDataForkStream());
 
-            var filtersList           = new FiltersList();
             var inTruripDiscHash      = false;
             var inTruripTrackHash     = false;
             var firstTrackInSession   = false;
@@ -539,7 +538,6 @@ public sealed partial class CdrWin
                             inTrack                              = false;
                             currentTrack                         = new CdrWinTrack();
                             currentFile                          = new CdrWinTrackFile();
-                            filtersList                          = new FiltersList();
                         }
 
                         string datafile = matchFile.Groups[1].Value;
@@ -549,7 +547,7 @@ public sealed partial class CdrWin
                         if(datafile[0] == '"' && datafile[^1] == '"')
                             datafile = datafile.Substring(1, datafile.Length - 2); // Unquote it
 
-                        currentFile.DataFilter = filtersList.GetFilter(datafile);
+                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(datafile);
 
                         // Check if file exists
                         if(currentFile.DataFilter == null)
@@ -561,7 +559,8 @@ public sealed partial class CdrWin
 
                                 if(unixPathMatch.Success)
                                 {
-                                    currentFile.DataFilter = filtersList.GetFilter(unixPathMatch.Groups[1].Value);
+                                    currentFile.DataFilter =
+                                        PluginRegister.Singleton.GetFilter(unixPathMatch.Groups[1].Value);
 
                                     if(currentFile.DataFilter == null)
                                     {
@@ -569,7 +568,7 @@ public sealed partial class CdrWin
                                                       Path.PathSeparator       +
                                                       unixPathMatch.Groups[1].Value;
 
-                                        currentFile.DataFilter = filtersList.GetFilter(path);
+                                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
 
                                         if(currentFile.DataFilter == null)
                                         {
@@ -600,7 +599,8 @@ public sealed partial class CdrWin
 
                                 if(winPathMatch.Success)
                                 {
-                                    currentFile.DataFilter = filtersList.GetFilter(winPathMatch.Groups[1].Value);
+                                    currentFile.DataFilter =
+                                        PluginRegister.Singleton.GetFilter(winPathMatch.Groups[1].Value);
 
                                     if(currentFile.DataFilter == null)
                                     {
@@ -608,7 +608,7 @@ public sealed partial class CdrWin
                                                       Path.PathSeparator       +
                                                       winPathMatch.Groups[1].Value;
 
-                                        currentFile.DataFilter = filtersList.GetFilter(path);
+                                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
 
                                         if(currentFile.DataFilter == null)
                                         {
@@ -630,7 +630,7 @@ public sealed partial class CdrWin
                             else
                             {
                                 string path = imageFilter.ParentFolder + Path.PathSeparator + datafile;
-                                currentFile.DataFilter = filtersList.GetFilter(path);
+                                currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
 
                                 if(currentFile.DataFilter == null)
                                 {

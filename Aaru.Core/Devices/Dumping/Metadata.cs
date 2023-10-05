@@ -60,8 +60,7 @@ partial class Dump
                              int? discOffset)
     {
         _dumpLog.WriteLine(Localization.Core.Creating_sidecar);
-        var     filters = new FiltersList();
-        IFilter filter  = filters.GetFilter(_outputPath);
+        IFilter filter = PluginRegister.Singleton.GetFilter(_outputPath);
         totalChkDuration = 0;
 
         if(ImageFormat.Detect(filter) is not IMediaImage inputPlugin)

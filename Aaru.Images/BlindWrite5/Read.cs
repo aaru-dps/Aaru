@@ -295,16 +295,12 @@ public sealed partial class BlindWrite5
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.length = {0}",    dataFile.Length);
 
             for(var i = 0; i < dataFile.Unknown1.Length; i++)
-            {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown1[{1}] = {0}", dataFile.Unknown1[i], i);
-            }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.offset = {0}", dataFile.Offset);
 
             for(var i = 0; i < dataFile.Unknown2.Length; i++)
-            {
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown2[{1}] = {0}", dataFile.Unknown2[i], i);
-            }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.startLba = {0}",    dataFile.StartLba);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.sectors = {0}",     dataFile.Sectors);
@@ -470,40 +466,41 @@ public sealed partial class BlindWrite5
 
         foreach(DataFile dataFile in _dataFiles)
         {
-            var    chars       = new DataFileCharacteristics();
-            string path        = Path.Combine(_dataPath, dataFile.Filename);
-            var    filtersList = new FiltersList();
+            var    chars = new DataFileCharacteristics();
+            string path  = Path.Combine(_dataPath, dataFile.Filename);
 
-            if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
+            if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
             {
-                chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
+                chars.FileFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
                 chars.FilePath   = path;
             }
             else
             {
                 path = Path.Combine(_dataPath, dataFile.Filename.ToLower(CultureInfo.CurrentCulture));
 
-                if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
+                if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                 {
-                    chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
+                    chars.FileFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
                     chars.FilePath   = path;
                 }
                 else
                 {
                     path = Path.Combine(_dataPath, dataFile.Filename.ToUpper(CultureInfo.CurrentCulture));
 
-                    if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
+                    if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                     {
-                        chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
-                        chars.FilePath   = path;
+                        chars.FileFilter =
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
+                        chars.FilePath = path;
                     }
                     else
                     {
                         path = Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture), dataFile.Filename);
 
-                        if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
+                        if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                         {
-                            chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
+                            chars.FileFilter =
+                                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
 
                             chars.FilePath = path;
                         }
@@ -511,9 +508,10 @@ public sealed partial class BlindWrite5
                         {
                             path = Path.Combine(_dataPath.ToUpper(CultureInfo.CurrentCulture), dataFile.Filename);
 
-                            if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
+                            if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path)) != null)
                             {
-                                chars.FileFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
+                                chars.FileFilter =
+                                    PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, path));
 
                                 chars.FilePath = path;
                             }
@@ -521,59 +519,67 @@ public sealed partial class BlindWrite5
                             {
                                 path = Path.Combine(_dataPath, dataFile.Filename);
 
-                                if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                      path.ToLower(CultureInfo.CurrentCulture))) !=
+                                if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                          path.ToLower(CultureInfo.
+                                                                              CurrentCulture))) !=
                                    null)
                                 {
                                     chars.FilePath = path.ToLower(CultureInfo.CurrentCulture);
 
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           path.ToLower(CultureInfo.CurrentCulture)));
+                                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               path.ToLower(CultureInfo.
+                                                                                   CurrentCulture)));
                                 }
-                                else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           path.ToUpper(CultureInfo.CurrentCulture))) !=
+                                else if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               path.ToUpper(CultureInfo.
+                                                                                   CurrentCulture))) !=
                                         null)
                                 {
                                     chars.FilePath = path.ToUpper(CultureInfo.CurrentCulture);
 
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           path.ToUpper(CultureInfo.CurrentCulture)));
+                                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               path.ToUpper(CultureInfo.
+                                                                                   CurrentCulture)));
                                 }
-                                else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename.ToLower(CultureInfo.
-                                                                               CurrentCulture))) !=
+                                else if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename.
+                                                                                   ToLower(CultureInfo.
+                                                                                       CurrentCulture))) !=
                                         null)
                                 {
                                     chars.FilePath = dataFile.Filename.ToLower(CultureInfo.CurrentCulture);
 
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename.ToLower(CultureInfo.
-                                                                               CurrentCulture)));
+                                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename.
+                                                                                   ToLower(CultureInfo.
+                                                                                       CurrentCulture)));
                                 }
-                                else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename.ToUpper(CultureInfo.
-                                                                               CurrentCulture))) !=
+                                else if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename.
+                                                                                   ToUpper(CultureInfo.
+                                                                                       CurrentCulture))) !=
                                         null)
                                 {
                                     chars.FilePath = dataFile.Filename.ToUpper(CultureInfo.CurrentCulture);
 
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename.ToUpper(CultureInfo.
-                                                                               CurrentCulture)));
+                                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename.
+                                                                                   ToUpper(CultureInfo.
+                                                                                       CurrentCulture)));
                                 }
-                                else if(filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename)) !=
+                                else if(PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename)) !=
                                         null)
                                 {
                                     chars.FilePath = dataFile.Filename;
 
                                     chars.FileFilter =
-                                        filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                           dataFile.Filename));
+                                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                               dataFile.Filename));
                                 }
                                 else
                                 {
@@ -978,9 +984,7 @@ public sealed partial class BlindWrite5
                     track.File   = $"{filename}.{extension}";
 
                     if(trk.startLba >= 0)
-                    {
                         track.FileOffset = (ulong)(trk.startLba * splitStartChars.SectorSize + splitStartChars.Offset);
-                    }
                     else
                         track.FileOffset = (ulong)(trk.startLba * -1 * splitStartChars.SectorSize);
 

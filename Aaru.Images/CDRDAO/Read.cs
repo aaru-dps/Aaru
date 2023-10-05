@@ -390,20 +390,18 @@ public sealed partial class Cdrdao
                 }
                 else
                 {
-                    FiltersList filtersList;
-
                     if(matchAudioFile.Success)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_AUDIOFILE_1_at_line_0, lineNumber,
                                                    matchAudioFile.Groups["filename"].Value);
 
-                        filtersList = new FiltersList();
 
                         currentTrack.Trackfile = new CdrdaoTrackFile
                         {
                             Datafilter =
-                                filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                   matchAudioFile.Groups["filename"].Value)),
+                                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                                    matchAudioFile.Groups["filename"].
+                                                                                        Value)),
                             Datafile = matchAudioFile.Groups["filename"].Value,
                             Offset = matchAudioFile.Groups["base_offset"].Value != ""
                                          ? ulong.Parse(matchAudioFile.Groups["base_offset"].Value)
@@ -446,13 +444,12 @@ public sealed partial class Cdrdao
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_DATAFILE_1_at_line_0, lineNumber,
                                                    matchFile.Groups["filename"].Value);
 
-                        filtersList = new FiltersList();
-
                         currentTrack.Trackfile = new CdrdaoTrackFile
                         {
                             Datafilter =
-                                filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                   matchFile.Groups["filename"].Value)),
+                                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                                    matchFile.Groups["filename"].
+                                                                                        Value)),
                             Datafile = matchAudioFile.Groups["filename"].Value,
                             Offset = matchFile.Groups["base_offset"].Value != ""
                                          ? ulong.Parse(matchFile.Groups["base_offset"].Value)

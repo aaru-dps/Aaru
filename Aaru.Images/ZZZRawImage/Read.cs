@@ -410,8 +410,7 @@ public sealed partial class ZZZRawImage
         {
             try
             {
-                var     filters = new FiltersList();
-                IFilter filter  = filters.GetFilter(basename + sidecar.name);
+                IFilter filter = PluginRegister.Singleton.GetFilter(basename + sidecar.name);
 
                 if(filter is null)
                     continue;

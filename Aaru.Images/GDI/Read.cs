@@ -112,7 +112,6 @@ public sealed partial class Gdi
                                            trackMatch.Groups["filename"].Value, trackMatch.Groups["offset"].Value,
                                            lineNumber);
 
-                var filtersList = new FiltersList();
 
                 var currentTrack = new GdiTrack
                 {
@@ -121,10 +120,10 @@ public sealed partial class Gdi
                     Offset      = long.Parse(trackMatch.Groups["offset"].Value),
                     Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
                     StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                    TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                     trackMatch.Groups["filename"].
-                                                                         Value.Replace("\\\"", "\"").
-                                                                         Trim('"')))
+                    TrackFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                         trackMatch.Groups["filename"].
+                                                                             Value.Replace("\\\"", "\"").
+                                                                             Trim('"')))
                 };
 
                 currentTrack.TrackFile = currentTrack.TrackFilter.Filename;

@@ -152,16 +152,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(filters?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllFilterPlugins() => new()");
+            sb.AppendLine("    public void RegisterFilterPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in filters)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IFilter, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllFilterPlugins() => null;");
+            sb.AppendLine("    public void RegisterFilterPlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

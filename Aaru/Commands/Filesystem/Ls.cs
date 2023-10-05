@@ -125,13 +125,12 @@ sealed class LsCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
         Statistics.AddCommand("ls");
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
@@ -168,7 +167,6 @@ sealed class LsCommand : Command
             }
         }
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         try

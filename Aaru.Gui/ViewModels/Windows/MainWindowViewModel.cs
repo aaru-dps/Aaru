@@ -543,8 +543,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         if(result?.Length != 1)
             return;
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(result[0]);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(result[0]);
 
         if(inputFilter == null)
         {
@@ -606,10 +605,9 @@ public sealed class MainWindowViewModel : ViewModelBase
                 List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
                 Core.Partitions.AddSchemesToStats(partitions);
 
-                var          checkRaw = false;
-                List<string> idPlugins;
-                Type         pluginType;
-                PluginBase.Init();
+                var            checkRaw = false;
+                List<string>   idPlugins;
+                Type           pluginType;
                 PluginRegister plugins = PluginRegister.Singleton;
 
                 if(partitions.Count == 0)

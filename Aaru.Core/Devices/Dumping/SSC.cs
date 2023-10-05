@@ -1375,8 +1375,7 @@ partial class Dump
         {
             UpdateStatus?.Invoke(Localization.Core.Creating_sidecar);
             _dumpLog.WriteLine(Localization.Core.Creating_sidecar);
-            var         filters     = new FiltersList();
-            IFilter     filter      = filters.GetFilter(_outputPath);
+            IFilter     filter      = PluginRegister.Singleton.GetFilter(_outputPath);
             var         inputPlugin = ImageFormat.Detect(filter) as IMediaImage;
             ErrorNumber opened      = inputPlugin.Open(filter);
 

@@ -112,22 +112,19 @@ sealed class CompareCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}",  imagePath2);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        var     filtersList  = new FiltersList();
         IFilter inputFilter1 = null;
         IFilter inputFilter2 = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_first_file_filter).IsIndeterminate();
-            inputFilter1 = filtersList.GetFilter(imagePath1);
+            inputFilter1 = PluginRegister.Singleton.GetFilter(imagePath1);
         });
-
-        filtersList = new FiltersList();
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_second_file_filter).IsIndeterminate();
-            inputFilter2 = filtersList.GetFilter(imagePath2);
+            inputFilter2 = PluginRegister.Singleton.GetFilter(imagePath2);
         });
 
         if(inputFilter1 == null)

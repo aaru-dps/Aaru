@@ -5628,6 +5628,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registering plugins....
+        /// </summary>
+        public static string Registering_plugins {
+            get {
+                return ResourceManager.GetString("Registering_plugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tests connection to a Aaru Remote Server..
         /// </summary>
         public static string Remote_Command_Description {

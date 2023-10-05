@@ -119,13 +119,12 @@ sealed class FilesystemInfoCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}",  partitions);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
@@ -154,7 +153,6 @@ sealed class FilesystemInfoCommand : Command
             }
         }
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         var checkRaw = false;

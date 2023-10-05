@@ -602,7 +602,7 @@ public sealed partial class Vhd
                         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Possible_parent_path_0, parentPath);
 
                         IFilter parentFilter =
-                            new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                         if(parentFilter != null)
                             locatorFound = true;
@@ -626,7 +626,7 @@ public sealed partial class Vhd
                     _parentImage = new Vhd();
 
                     IFilter parentFilter =
-                        new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
+                        PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                     if(parentFilter == null)
                     {

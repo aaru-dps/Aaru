@@ -144,7 +144,7 @@ public sealed partial class VMware
                 if(!File.Exists(curPath))
                     break;
 
-                IFilter extentFilter = new FiltersList().GetFilter(curPath);
+                IFilter extentFilter = PluginRegister.Singleton.GetFilter(curPath);
                 Stream  extentStream = extentFilter.GetDataForkStream();
 
                 if(stream.Length > Marshal.SizeOf<CowHeader>())
@@ -241,8 +241,8 @@ public sealed partial class VMware
                     if(!embedded)
                     {
                         newExtent.Filter =
-                            new FiltersList().GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.BasePath),
-                                                                     matchExtent.Groups["filename"].Value));
+                            PluginRegister.Singleton.GetFilter(Path.Combine(Path.GetDirectoryName(imageFilter.BasePath),
+                                                                            matchExtent.Groups["filename"].Value));
                     }
                     else
                         newExtent.Filter = imageFilter;
@@ -529,7 +529,8 @@ public sealed partial class VMware
 
         if(_hasParent)
         {
-            IFilter parentFilter = new FiltersList().GetFilter(Path.Combine(imageFilter.ParentFolder, _parentName));
+            IFilter parentFilter =
+                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, _parentName));
 
             if(parentFilter == null)
             {

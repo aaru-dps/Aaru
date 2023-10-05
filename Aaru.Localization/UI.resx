@@ -3011,4 +3011,7 @@ Do you want to continue?</value>
     <data name="Generating_decryption_keys" xml:space="preserve">
     <value>Decryption keys not found. Trying to generate keys.</value>
   </data>
+    <data name="Registering_plugins" xml:space="preserve">
+        <value>Registering plugins...</value>
+    </data>
 </root>

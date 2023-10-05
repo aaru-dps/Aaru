@@ -2936,4 +2936,7 @@ Probadores:
     <data name="_From_image_" xml:space="preserve">
     <value>&lt;De la imagen&gt;</value>
   </data>
+    <data name="Registering_plugins" xml:space="preserve">
+        <value>Registrando extensiones...</value>
+    </data>
 </root>

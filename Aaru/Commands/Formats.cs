@@ -88,13 +88,11 @@ sealed class FormatsCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        PluginBase.Init();
-        PluginRegister plugins     = PluginRegister.Singleton;
-        var            filtersList = new FiltersList();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         Table table = new()
         {
-            Title = new TableTitle(string.Format(UI.Supported_filters_0, filtersList.Filters.Count))
+            Title = new TableTitle(string.Format(UI.Supported_filters_0, PluginRegister.Singleton.Filters.Count))
         };
 
         if(verbose)
@@ -102,7 +100,7 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filter);
 
-        foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
+        foreach(KeyValuePair<string, IFilter> kvp in PluginRegister.Singleton.Filters)
         {
             if(verbose)
                 table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));

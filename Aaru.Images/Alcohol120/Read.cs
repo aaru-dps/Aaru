@@ -72,30 +72,22 @@ public sealed partial class Alcohol120
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessions = {0}", _header.sessions);
 
         for(var i = 0; i < _header.unknown1.Length; i++)
-        {
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown1[{1}] = 0x{0:X4}", _header.unknown1[i], i);
-        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.bcaLength = {0}", _header.bcaLength);
 
         for(var i = 0; i < _header.unknown2.Length; i++)
-        {
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i], i);
-        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.bcaOffset = {0}", _header.bcaOffset);
 
         for(var i = 0; i < _header.unknown3.Length; i++)
-        {
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown3[{1}] = 0x{0:X8}", _header.unknown3[i], i);
-        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.structuresOffset = {0}", _header.structuresOffset);
 
         for(var i = 0; i < _header.unknown4.Length; i++)
-        {
             AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
-        }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.dpmOffset = {0}",     _header.dpmOffset);
@@ -625,8 +617,7 @@ public sealed partial class Alcohol120
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Data_filename_0, alcFile);
 
-        var filtersList = new FiltersList();
-        _alcImage = filtersList.GetFilter(alcFile);
+        _alcImage = PluginRegister.Singleton.GetFilter(alcFile);
 
         if(_alcImage == null)
         {

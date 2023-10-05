@@ -136,13 +136,12 @@ sealed class ExtractFilesCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--xattrs={0}",   xattrs);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
@@ -179,7 +178,6 @@ sealed class ExtractFilesCommand : Command
             }
         }
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         try

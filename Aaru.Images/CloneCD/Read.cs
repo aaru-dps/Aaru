@@ -423,8 +423,7 @@ public sealed partial class CloneCd
             string dataFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".img";
             string subFile  = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".sub";
 
-            var filtersList = new FiltersList();
-            _dataFilter = filtersList.GetFilter(dataFile);
+            _dataFilter = PluginRegister.Singleton.GetFilter(dataFile);
 
             if(_dataFilter == null)
             {
@@ -433,8 +432,7 @@ public sealed partial class CloneCd
                 return ErrorNumber.NoSuchFile;
             }
 
-            filtersList = new FiltersList();
-            _subFilter  = filtersList.GetFilter(subFile);
+            _subFilter = PluginRegister.Singleton.GetFilter(subFile);
 
             var curSessionNo        = 0;
             var currentTrack        = new Track();

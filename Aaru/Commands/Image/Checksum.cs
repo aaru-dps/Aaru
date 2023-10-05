@@ -166,13 +166,12 @@ sealed class ChecksumCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",          verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--whole-disc={0}",       wholeDisc);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         if(inputFilter == null)

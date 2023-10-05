@@ -426,13 +426,12 @@ sealed class ConvertImageCommand : Command
             }
         }
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
         Core.Spectre.ProgressSingleSpinner(ctx =>
         {
             ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
-            inputFilter = filtersList.GetFilter(inputPath);
+            inputFilter = PluginRegister.Singleton.GetFilter(inputPath);
         });
 
         if(inputFilter == null)
@@ -449,7 +448,6 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.FileExists;
         }
 
-        PluginBase.Init();
         PluginRegister plugins     = PluginRegister.Singleton;
         IMediaImage    inputFormat = null;
         IBaseImage     baseImage   = null;
