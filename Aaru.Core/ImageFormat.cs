@@ -84,11 +84,11 @@ public static class ImageFormat
                 return imageFormat;
 
             // Check all but RAW plugin
-            foreach(Type pluginType in plugins.ByteAddressableImages.Values)
+            foreach(IByteAddressableImage imagePlugin in plugins.ByteAddressableImages.Values)
             {
                 try
                 {
-                    if(Activator.CreateInstance(pluginType) is not IByteAddressableImage imagePlugin)
+                    if(imagePlugin is null)
                         continue;
 
                     if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))

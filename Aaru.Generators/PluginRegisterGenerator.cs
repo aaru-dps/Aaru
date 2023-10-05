@@ -247,16 +247,16 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(byteAddressableImagePlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllByteAddressablePlugins() => new()");
+            sb.AppendLine("    public void RegisterByteAddressablePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
             foreach(string plugin in byteAddressableImagePlugins)
-                sb.AppendLine($"        typeof({plugin}),");
+                sb.AppendLine($"        services.AddTransient<IByteAddressableImage, {plugin}>();");
 
-            sb.AppendLine("    };");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllByteAddressablePlugins() => null;");
+            sb.AppendLine("    public void RegisterByteAddressablePlugins(IServiceCollection services) {}");
 
         sb.AppendLine("}");
 

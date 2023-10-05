@@ -284,7 +284,6 @@ sealed class LsCommand : Command
                     AaruConsole.WriteLine(UI.Filesystem_not_identified);
                 else
                 {
-                    Type        pluginType;
                     ErrorNumber error = ErrorNumber.InvalidArgument;
 
                     if(idPlugins.Count > 1)

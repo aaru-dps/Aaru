@@ -76,7 +76,6 @@ public abstract class FsExtractIssueTest
             if(idPlugins.Count == 0)
                 continue;
 
-            Type        pluginType;
             ErrorNumber error;
 
             if(idPlugins.Count > 1)

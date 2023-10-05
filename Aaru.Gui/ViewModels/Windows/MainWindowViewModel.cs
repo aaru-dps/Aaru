@@ -607,7 +607,6 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 var            checkRaw = false;
                 List<string>   idPlugins;
-                Type           pluginType;
                 PluginRegister plugins = PluginRegister.Singleton;
 
                 if(partitions.Count == 0)
