@@ -122,8 +122,6 @@ public static class PMA
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
     #endif
 
-        List<string> tracks;
-
         foreach(CDPMADescriptors descriptor in response.PMADescriptors)
         {
         #if DEBUG
@@ -131,6 +129,7 @@ public static class PMA
                 sb.AppendFormat(Localization.Reserved_equals_0_X2, descriptor.Reserved).AppendLine();
         #endif
 
+            List<string> tracks;
             switch(descriptor.ADR)
             {
                 case 1:
