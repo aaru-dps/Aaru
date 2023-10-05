@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
@@ -50,6 +51,7 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the Adler-32 algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public sealed class Adler32Context : IChecksum
 {
     internal const ushort ADLER_MODULE = 65521;

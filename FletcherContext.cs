@@ -33,6 +33,7 @@
 // Disabled because the speed is abnormally slow
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
@@ -46,6 +47,9 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the Fletcher-32 algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class Fletcher32Context : IChecksum
 {
     internal const ushort FLETCHER_MODULE = 0xFFFF;
@@ -411,6 +415,9 @@ public sealed class Fletcher32Context : IChecksum
 
 /// <inheritdoc />
 /// <summary>Implements the Fletcher-16 algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public sealed class Fletcher16Context : IChecksum
 {
     const byte FLETCHER_MODULE = 0xFF;

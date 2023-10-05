@@ -58,11 +58,14 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 
 namespace Aaru.Checksums;
 
 /// <summary>Implements the Reed-Solomon algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class ReedSolomon
 {
     /// <summary>Alpha exponent for the first root of the generator polynomial</summary>

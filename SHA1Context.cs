@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,6 +41,9 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.</summary>
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public sealed class Sha1Context : IChecksum
 {
     readonly SHA1 _provider;
@@ -89,6 +93,7 @@ public sealed class Sha1Context : IChecksum
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
         var    localSha1Provider = SHA1.Create();

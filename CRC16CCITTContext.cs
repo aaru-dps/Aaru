@@ -30,10 +30,13 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the CRC16 algorithm with CCITT polynomial and seed</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public sealed class CRC16CCITTContext : Crc16Context
 {
     /// <summary>CCITT CRC16 polynomial</summary>

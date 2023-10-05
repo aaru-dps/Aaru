@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
@@ -44,6 +45,10 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements a CRC32 algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public sealed class Crc32Context : IChecksum
 {
     const uint CRC32_ISO_POLY = 0xEDB88320;
@@ -524,6 +529,7 @@ public sealed class Crc32Context : IChecksum
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
         File(filename, out byte[] hash);

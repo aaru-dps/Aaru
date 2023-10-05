@@ -40,6 +40,7 @@
 //      http://ssdeep.sf.net/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
@@ -48,6 +49,11 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
 public sealed class SpamSumContext : IChecksum
 {
     const uint ROLLING_WINDOW   = 7;

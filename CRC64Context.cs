@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
@@ -43,12 +44,16 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements a CRC64 algorithm</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public sealed class Crc64Context : IChecksum
 {
     /// <summary>ECMA CRC64 polynomial</summary>
-    public const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
+    const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
     /// <summary>ECMA CRC64 seed</summary>
-    public const ulong CRC64_ECMA_SEED = 0xFFFFFFFFFFFFFFFF;
+    const ulong CRC64_ECMA_SEED = 0xFFFFFFFFFFFFFFFF;
 
     static readonly ulong[][] _ecmaCrc64Table =
     {
@@ -465,6 +470,7 @@ public sealed class Crc64Context : IChecksum
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
         File(filename, out byte[] localHash);

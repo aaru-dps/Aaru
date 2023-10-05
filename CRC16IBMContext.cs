@@ -30,10 +30,15 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the CRC16 algorithm with IBM polynomial and seed</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public sealed class CRC16IBMContext : Crc16Context
 {
     internal const ushort CRC16_IBM_POLY = 0xA001;
@@ -233,6 +238,7 @@ public sealed class CRC16IBMContext : Crc16Context
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
         File(filename, out byte[] hash);

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,6 +41,10 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class Sha512Context : IChecksum
 {
     readonly SHA512 _provider;

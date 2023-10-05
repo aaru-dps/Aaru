@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,6 +41,10 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Wraps up .NET SHA384 implementation to a Init(), Update(), Final() context.</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class Sha384Context : IChecksum
 {
     readonly SHA384 _provider;
@@ -89,6 +94,7 @@ public sealed class Sha384Context : IChecksum
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+    // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
         var    localSha384Provider = SHA384.Create();
