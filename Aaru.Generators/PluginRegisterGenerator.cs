@@ -111,7 +111,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterArchivePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in archives)
+            foreach(string plugin in archives.Distinct())
                 sb.AppendLine($"        services.AddTransient<IArchive, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -124,7 +124,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterChecksumPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in checksums)
+            foreach(string plugin in checksums.Distinct())
                 sb.AppendLine($"        services.AddTransient<IChecksum, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -137,7 +137,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterFilesystemPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in fileSystems)
+            foreach(string plugin in fileSystems.Distinct())
                 sb.AppendLine($"        services.AddTransient<IFilesystem, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -150,7 +150,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterFilterPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in filters)
+            foreach(string plugin in filters.Distinct())
                 sb.AppendLine($"        services.AddTransient<IFilter, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -164,7 +164,7 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public void RegisterFloppyImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
-            foreach(string plugin in floppyImagePlugins)
+            foreach(string plugin in floppyImagePlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IFloppyImage, {plugin}>();");
 
             sb.AppendLine("    }");
@@ -179,7 +179,7 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public void RegisterMediaImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
-            foreach(string plugin in mediaImagePlugins)
+            foreach(string plugin in mediaImagePlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IMediaImage, {plugin}>();");
 
             sb.AppendLine("    }");
@@ -193,7 +193,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterPartitionPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in partitionPlugins)
+            foreach(string plugin in partitionPlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IPartition, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -206,7 +206,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         {
             sb.AppendLine("    public void RegisterReadOnlyFilesystemPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-            foreach(string plugin in readOnlyFileSystems)
+            foreach(string plugin in readOnlyFileSystems.Distinct())
                 sb.AppendLine($"        services.AddTransient<IReadOnlyFilesystem, {plugin}>();");
             sb.AppendLine("    }");
         }
@@ -220,7 +220,7 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public void RegisterWritableFloppyImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
-            foreach(string plugin in writableFloppyImagePlugins)
+            foreach(string plugin in writableFloppyImagePlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IWritableFloppyImage, {plugin}>();");
 
             sb.AppendLine("    }");
@@ -235,7 +235,7 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public void RegisterWritableImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
-            foreach(string plugin in writableImagePlugins)
+            foreach(string plugin in writableImagePlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IBaseWritableImage, {plugin}>();");
 
             sb.AppendLine("    }");
@@ -250,7 +250,7 @@ public class PluginRegisterGenerator : ISourceGenerator
             sb.AppendLine("    public void RegisterByteAddressablePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
-            foreach(string plugin in byteAddressableImagePlugins)
+            foreach(string plugin in byteAddressableImagePlugins.Distinct())
                 sb.AppendLine($"        services.AddTransient<IByteAddressableImage, {plugin}>();");
 
             sb.AppendLine("    }");
