@@ -146,16 +146,16 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type imageType in PluginRegister.Singleton.WritableFloppyImages.Values)
+        foreach(IWritableFloppyImage writableFloppyImage in PluginRegister.Singleton.WritableFloppyImages.Values)
         {
-            if(Activator.CreateInstance(imageType) is not IWritableFloppyImage writableFloppyImage)
+            if(writableFloppyImage is null)
                 continue;
 
             WritableFloppyImages.Add(new PluginModel
             {
                 Name    = writableFloppyImage.Name,
                 Uuid    = writableFloppyImage.Id,
-                Version = Assembly.GetAssembly(imageType)?.GetName().Version?.ToString(),
+                Version = Assembly.GetAssembly(writableFloppyImage.GetType())?.GetName().Version?.ToString(),
                 Author  = writableFloppyImage.Author
             });
         }

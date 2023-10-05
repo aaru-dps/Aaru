@@ -217,16 +217,16 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(writableFloppyImagePlugins?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllWritableFloppyImagePlugins() => new()");
+            sb.AppendLine("    public void RegisterWritableFloppyImagePlugins(IServiceCollection services)");
             sb.AppendLine("    {");
 
             foreach(string plugin in writableFloppyImagePlugins)
-                sb.AppendLine($"        typeof({plugin}),");
+                sb.AppendLine($"        services.AddTransient<IWritableFloppyImage, {plugin}>();");
 
-            sb.AppendLine("    };");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllWritableFloppyImagePlugins() => null;");
+            sb.AppendLine("    public void RegisterWritableFloppyImagePlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 
