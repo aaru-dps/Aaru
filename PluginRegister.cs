@@ -51,9 +51,6 @@ public class PluginRegister
     public readonly SortedDictionary<string, Type> FloppyImages;
     /// <summary>List of all media image plugins</summary>
     public readonly SortedDictionary<string, Type> MediaImages;
-
-    /// <summary>List of read-only filesystem plugins</summary>
-    public readonly SortedDictionary<string, Type> ReadOnlyFilesystems;
     /// <summary>List of writable floppy image plugins</summary>
     public readonly SortedDictionary<string, Type> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
@@ -63,12 +60,24 @@ public class PluginRegister
 
     PluginRegister()
     {
-        ReadOnlyFilesystems   = new SortedDictionary<string, Type>();
         MediaImages           = new SortedDictionary<string, Type>();
         WritableImages        = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of read-only filesystem plugins</summary>
+    public SortedDictionary<string, IReadOnlyFilesystem> ReadOnlyFilesystems
+    {
+        get
+        {
+            SortedDictionary<string, IReadOnlyFilesystem> readOnlyFilesystems = new();
+            foreach(IReadOnlyFilesystem plugin in _serviceProvider.GetServices<IReadOnlyFilesystem>())
+                readOnlyFilesystems[plugin.Name.ToLower()] = plugin;
+
+            return readOnlyFilesystems;
+        }
     }
 
     /// <summary>List of all filesystem plugins</summary>
@@ -177,6 +186,7 @@ public class PluginRegister
         pluginRegister.RegisterChecksumPlugins(_services);
         pluginRegister.RegisterFilesystemPlugins(_services);
         pluginRegister.RegisterFilterPlugins(_services);
+        pluginRegister.RegisterReadOnlyFilesystemPlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
         {
@@ -192,13 +202,6 @@ public class PluginRegister
         }
 
         pluginRegister.RegisterPartitionPlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IReadOnlyFilesystem plugin &&
-               !ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
-                ReadOnlyFilesystems.Add(plugin.Name.ToLower(), type);
-        }
 
         foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
         {

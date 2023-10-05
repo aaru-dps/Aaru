@@ -79,9 +79,11 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterPartitionPlugins(IServiceCollection services);
 
-    /// <summary>Gets all read-only filesystem plugins</summary>
-    /// <returns>List of read-only filesystem plugins</returns>
-    List<Type> GetAllReadOnlyFilesystemPlugins();
+    /// <summary>
+    ///     Registers all read-only filesystem plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterReadOnlyFilesystemPlugins(IServiceCollection services);
 
     /// <summary>Gets all writable floppy image plugins</summary>
     /// <returns>List of writable floppy image plugins</returns>
