@@ -130,7 +130,7 @@ public sealed class Checksum
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
         {
-            _crc16Ctx = new CRC16IBMContext();
+            _crc16Ctx = new CRC16IbmContext();
 
             _crc16Pkt = new HashPacket
             {
@@ -539,7 +539,7 @@ public sealed class Checksum
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
         {
-            crc16CtxData = new CRC16IBMContext();
+            crc16CtxData = new CRC16IbmContext();
 
             var crc16PktData = new HashPacket
             {

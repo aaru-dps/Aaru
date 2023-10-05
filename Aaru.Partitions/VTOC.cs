@@ -172,8 +172,8 @@ public sealed class VTOC : IPartition
         if(errno != ErrorNumber.NoError)
             return false;
 
-        var vtoc    = new vtoc();
-        var vtocOld = new vtocold();
+        var vtoc    = new Vtoc();
+        var vtocOld = new VTocOld();
         magic = BitConverter.ToUInt32(vtocsector, 0);
 
         if(magic is VTOC_SANE or VTOC_ENAS)
@@ -182,10 +182,10 @@ public sealed class VTOC : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.New_VTOC_found_at_0, pdloc + sectorOffset + 1);
 
             if(magic == VTOC_SANE)
-                vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
+                vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocsector);
             else
             {
-                vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                vtoc = Marshal.ByteArrayToStructureBigEndian<Vtoc>(vtocsector);
 
                 for(var i = 0; i < vtoc.v_part.Length; i++)
                 {
@@ -209,10 +209,10 @@ public sealed class VTOC : IPartition
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Old_VTOC_found_at_0, pdloc + sectorOffset + 1);
 
                 if(magic == VTOC_SANE)
-                    vtocOld = Marshal.ByteArrayToStructureLittleEndian<vtocold>(vtocsector);
+                    vtocOld = Marshal.ByteArrayToStructureLittleEndian<VTocOld>(vtocsector);
                 else
                 {
-                    vtocOld = Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
+                    vtocOld = Marshal.ByteArrayToStructureBigEndian<VTocOld>(vtocsector);
 
                     for(var i = 0; i < vtocOld.v_part.Length; i++)
                     {
@@ -262,10 +262,10 @@ public sealed class VTOC : IPartition
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.New_VTOC_found);
 
                 if(magic == VTOC_SANE)
-                    vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
+                    vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocsector);
                 else
                 {
-                    vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                    vtoc = Marshal.ByteArrayToStructureBigEndian<Vtoc>(vtocsector);
 
                     for(var i = 0; i < vtoc.v_part.Length; i++)
                     {
@@ -346,9 +346,9 @@ public sealed class VTOC : IPartition
             }
         }
 
-        uint        bps;
-        partition[] parts;
-        int[]       timestamps;
+        uint            bps;
+        VtocPartition[] parts;
+        int[]           timestamps;
 
         if(useOld)
         {
@@ -458,21 +458,6 @@ public sealed class VTOC : IPartition
                                                                   volume_mgt_private_partition,
                                                               _ => string.Format(Localization.Unknown_TAG_0, type)
                                                           };
-
-#region Nested type: partition
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-
-    // ReSharper disable once InconsistentNaming
-    struct partition
-    {
-        public pTag  p_tag;   /*ID tag of partition*/
-        public pFlag p_flag;  /*permision flags*/
-        public int   p_start; /*start sector no of partition*/
-        public int   p_size;  /*# of blocks in partition*/
-    }
-
-#endregion
 
 #region Nested type: PDInfo
 
@@ -625,12 +610,12 @@ public sealed class VTOC : IPartition
 
 #endregion
 
-#region Nested type: vtoc
+#region Nested type: Vtoc
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
 
     // ReSharper disable once InconsistentNaming
-    struct vtoc
+    struct Vtoc
     {
         public readonly uint v_sanity;  /*to verify vtoc sanity*/
         public readonly uint v_version; /*layout version*/
@@ -641,19 +626,19 @@ public sealed class VTOC : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public readonly uint[] v_reserved; /*free space*/
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly partition[] v_part; /*partition headers*/
+        public readonly VtocPartition[] v_part; /*partition headers*/
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
         public readonly int[] timestamp; /* SCSI time stamp */
     }
 
 #endregion
 
-#region Nested type: vtocold
+#region Nested type: VTocOld
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
 
     // ReSharper disable once InconsistentNaming
-    struct vtocold
+    struct VTocOld
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly uint[] v_bootinfo; /*info needed by mboot*/
@@ -666,9 +651,24 @@ public sealed class VTOC : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public readonly uint[] v_reserved; /*free space*/
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
-        public readonly partition[] v_part; /*partition headers*/
+        public readonly VtocPartition[] v_part; /*partition headers*/
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = V_NUMPAR)]
         public readonly int[] timestamp; /* SCSI time stamp */
+    }
+
+#endregion
+
+#region Nested type: VtocPartition
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+    // ReSharper disable once InconsistentNaming
+    struct VtocPartition
+    {
+        public pTag  p_tag;   /*ID tag of partition*/
+        public pFlag p_flag;  /*permision flags*/
+        public int   p_start; /*start sector no of partition*/
+        public int   p_size;  /*# of blocks in partition*/
     }
 
 #endregion

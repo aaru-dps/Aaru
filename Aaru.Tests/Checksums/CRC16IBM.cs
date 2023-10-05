@@ -75,14 +75,14 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
-        CRC16IBMContext.Data(data, out byte[] result);
+        CRC16IbmContext.Data(data, out byte[] result);
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
 
     [Test]
     public void EmptyFile()
     {
-        byte[] result = CRC16IBMContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
+        byte[] result = CRC16IbmContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
 
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
@@ -98,7 +98,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedEmpty);
@@ -115,7 +115,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 15);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom15);
@@ -132,7 +132,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 2352);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom2352);
@@ -149,7 +149,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 31);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom31);
@@ -166,7 +166,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 63);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom63);
@@ -183,14 +183,14 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
-        CRC16IBMContext.Data(data, out byte[] result);
+        CRC16IbmContext.Data(data, out byte[] result);
         result.Should().BeEquivalentTo(_expectedRandom);
     }
 
     [Test]
     public void RandomFile()
     {
-        byte[] result = CRC16IBMContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
+        byte[] result = CRC16IbmContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
 
         result.Should().BeEquivalentTo(_expectedRandom);
     }
@@ -206,7 +206,7 @@ public class Crc16Ibm
         fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
-        IChecksum ctx = new CRC16IBMContext();
+        IChecksum ctx = new CRC16IbmContext();
         ctx.Update(data);
         byte[] result = ctx.Final();
         result.Should().BeEquivalentTo(_expectedRandom);

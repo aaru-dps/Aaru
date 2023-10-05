@@ -40,12 +40,12 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
-public sealed partial class dump
+public sealed partial class Dump
 {
-#region Nested type: dinode
+#region Nested type: DInode
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct dinode
+    readonly struct DInode
     {
         public readonly ushort di_mode;      /*   0: IFMT, permissions; see below. */
         public readonly short  di_nlink;     /*   2: File link count. */
@@ -85,7 +85,7 @@ public sealed partial class dump
         public readonly uint   c_inumber;  /* number of inode */
         public readonly int    c_magic;    /* magic number (see above) */
         public readonly int    c_checksum; /* record checksum */
-        public readonly dinode c_dinode;   /* ownership and mode of inode */
+        public readonly DInode c_dinode;   /* ownership and mode of inode */
         public readonly int    c_count;    /* number of valid c_addr entries */
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = TP_NINDIR)]
         public readonly byte[] c_addr; /* 1 => data; 0 => hole in inode */

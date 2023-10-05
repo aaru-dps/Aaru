@@ -109,7 +109,7 @@ public static class CompactDisc
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
             // Check Q CRC
-            CRC16CCITTContext.Data(q, 10, out byte[] crc);
+            CRC16CcittContext.Data(q, 10, out byte[] crc);
             bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
             // Start considering P to be OK
@@ -320,7 +320,7 @@ public static class CompactDisc
             var q = new byte[12];
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
-            CRC16CCITTContext.Data(q, 10, out byte[] crc);
+            CRC16CcittContext.Data(q, 10, out byte[] crc);
             bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
             switch(q[0] & 0x3)
@@ -806,7 +806,7 @@ public static class CompactDisc
             var cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
             var cdTextPack1ForCrc = new byte[16];
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
-            ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
+            ushort calculatedCdtp1Crc = CRC16CcittContext.Calculate(cdTextPack1ForCrc);
 
             if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0)
                 status = false;
@@ -817,7 +817,7 @@ public static class CompactDisc
             var cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
             var cdTextPack2ForCrc = new byte[16];
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
-            ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
+            ushort calculatedCdtp2Crc = CRC16CcittContext.Calculate(cdTextPack2ForCrc);
 
             if(cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0)
                 status = false;
@@ -828,7 +828,7 @@ public static class CompactDisc
             var cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
             var cdTextPack3ForCrc = new byte[16];
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
-            ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
+            ushort calculatedCdtp3Crc = CRC16CcittContext.Calculate(cdTextPack3ForCrc);
 
             if(cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0)
                 status = false;
@@ -840,7 +840,7 @@ public static class CompactDisc
         var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
         var cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
-        ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
+        ushort calculatedCdtp4Crc = CRC16CcittContext.Calculate(cdTextPack4ForCrc);
 
         if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0)
             return status;
@@ -888,10 +888,10 @@ public static class CompactDisc
         Array.Copy(deSub, subPos + 12 - 96,      preQ,  0, 12);
         Array.Copy(deSub, subPos      + 12 + 96, nextQ, 0, 12);
 
-        CRC16CCITTContext.Data(preQ, 10, out byte[] preCrc);
+        CRC16CcittContext.Data(preQ, 10, out byte[] preCrc);
         bool preCrcOk = preCrc[0] == preQ[10] && preCrc[1] == preQ[11];
 
-        CRC16CCITTContext.Data(nextQ, 10, out byte[] nextCrc);
+        CRC16CcittContext.Data(nextQ, 10, out byte[] nextCrc);
         bool nextCrcOk = nextCrc[0] == nextQ[10] && nextCrc[1] == nextQ[11];
 
         fixedAdr = false;
@@ -903,7 +903,7 @@ public static class CompactDisc
             fixedAdr =  true;
         }
 
-        CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
+        CRC16CcittContext.Data(q, 10, out byte[] qCrc);
         bool status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(fixedAdr && status)
@@ -913,7 +913,7 @@ public static class CompactDisc
 
         // Try Q-Mode 1
         q[0] = (byte)((q[0] & 0xF0) + 1);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -925,7 +925,7 @@ public static class CompactDisc
 
         // Try Q-Mode 2
         q[0] = (byte)((q[0] & 0xF0) + 2);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -937,7 +937,7 @@ public static class CompactDisc
 
         // Try Q-Mode 3
         q[0] = (byte)((q[0] & 0xF0) + 3);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -956,7 +956,7 @@ public static class CompactDisc
         {
             q[0] = (byte)((q[0] & 0x03) + (preQ[0] & 0xF0));
 
-            CRC16CCITTContext.Data(q, 10, out qCrc);
+            CRC16CcittContext.Data(q, 10, out qCrc);
             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
             if(status)
@@ -974,7 +974,7 @@ public static class CompactDisc
         {
             q[0] = (byte)((q[0] & 0x03) + (nextQ[0] & 0xF0));
 
-            CRC16CCITTContext.Data(q, 10, out qCrc);
+            CRC16CcittContext.Data(q, 10, out qCrc);
             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
             if(status)
@@ -1005,7 +1005,7 @@ public static class CompactDisc
                     q[6]      = 0;
                     fixedZero = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                     if(status)
@@ -1019,7 +1019,7 @@ public static class CompactDisc
                         q[1]     = preQ[1];
                         fixedTno = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1034,7 +1034,7 @@ public static class CompactDisc
                         q[2]       = preQ[2];
                         fixedIndex = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1111,7 +1111,7 @@ public static class CompactDisc
 
                             fixedRelPos = true;
 
-                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                             if(status)
@@ -1170,7 +1170,7 @@ public static class CompactDisc
 
                             fixedRelPos = true;
 
-                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                             if(status)
@@ -1226,7 +1226,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1285,7 +1285,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1293,7 +1293,7 @@ public static class CompactDisc
                     }
                 }
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                 // Game Over
@@ -1324,7 +1324,7 @@ public static class CompactDisc
                     if(q[0] != preQ[0] || q[1] != preQ[1] || q[2] != preQ[2] || q[6] != 0 || !absOk || !relOk)
                         return false;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     q[10] = qCrc[0];
                     q[11] = qCrc[1];
 
@@ -1357,7 +1357,7 @@ public static class CompactDisc
                     if(q[0] != nextQ[0] || q[1] != nextQ[1] || q[2] != nextQ[2] || q[6] != 0 || !absOk || !relOk)
                         return false;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     q[10] = qCrc[0];
                     q[11] = qCrc[1];
 
@@ -1393,7 +1393,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1420,7 +1420,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1442,7 +1442,7 @@ public static class CompactDisc
 
                     fixedMcn = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                     if(status)
@@ -1452,7 +1452,7 @@ public static class CompactDisc
                 if(!fixCrc || !nextCrcOk || !preCrcOk)
                     return false;
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
                 q[11] = qCrc[1];
 
@@ -1484,7 +1484,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1511,7 +1511,7 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                         if(status)
@@ -1539,7 +1539,7 @@ public static class CompactDisc
 
                     fixedIsrc = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                     if(status)
@@ -1549,7 +1549,7 @@ public static class CompactDisc
                 if(!fixCrc || !nextCrcOk || !preCrcOk)
                     return false;
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
                 q[11] = qCrc[1];
 

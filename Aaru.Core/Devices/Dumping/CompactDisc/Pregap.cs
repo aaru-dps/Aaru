@@ -264,7 +264,7 @@ partial class Dump
                 if(bcd == false)
                     BinaryToBcdQ(subBuf);
 
-                CRC16CCITTContext.Data(subBuf, 10, out crc);
+                CRC16CcittContext.Data(subBuf, 10, out crc);
 
                 AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                            Localization.Core.
@@ -302,7 +302,7 @@ partial class Dump
                         }
                     }
 
-                    CRC16CCITTContext.Data(subBuf, 10, out crc);
+                    CRC16CcittContext.Data(subBuf, 10, out crc);
 
                     crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
@@ -365,7 +365,7 @@ partial class Dump
                     if(bcd == false)
                         BinaryToBcdQ(subBuf);
 
-                    CRC16CCITTContext.Data(subBuf, 10, out crc);
+                    CRC16CcittContext.Data(subBuf, 10, out crc);
 
                     AaruConsole.DebugWriteLine(PREGAP_MODULE_NAME,
                                                Localization.Core.
@@ -403,7 +403,7 @@ partial class Dump
                             }
                         }
 
-                        CRC16CCITTContext.Data(subBuf, 10, out crc);
+                        CRC16CcittContext.Data(subBuf, 10, out crc);
 
                         crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 

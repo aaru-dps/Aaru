@@ -232,7 +232,7 @@ public sealed partial class Cpcdsk
                     amForCrc[6] = trackInfo.sectorsInfo[k - 1].id;
                     amForCrc[7] = (byte)trackInfo.sectorsInfo[k - 1].size;
 
-                    CRC16IBMContext.Data(amForCrc, 8, out byte[] amCrc);
+                    CRC16IbmContext.Data(amForCrc, 8, out byte[] amCrc);
 
                     var addressMark = new byte[22];
                     Array.Copy(amForCrc, 0, addressMark, 12, 8);

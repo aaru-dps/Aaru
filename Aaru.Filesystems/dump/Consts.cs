@@ -39,7 +39,7 @@ namespace Aaru.Filesystems;
 /// <summary>Implements identification of a dump(8) image (virtual filesystem on a file)</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
-public sealed partial class dump
+public sealed partial class Dump
 {
     /// <summary>Magic number for old dump</summary>
     const ushort OFS_MAGIC = 60011;

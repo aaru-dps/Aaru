@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.cdrdao.cooked;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class nosub : OpticalMediaImageTest
+public class NoSub : OpticalMediaImageTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "cdrdao", "cooked", "nosub");

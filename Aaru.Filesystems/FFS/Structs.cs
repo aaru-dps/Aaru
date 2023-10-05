@@ -39,10 +39,10 @@ namespace Aaru.Filesystems;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class FFSPlugin
 {
-#region Nested type: csum
+#region Nested type: Checksum
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct csum
+    struct Checksum
     {
         /// <summary>number of directories</summary>
         public int cs_ndir;
@@ -190,7 +190,7 @@ public sealed partial class FFSPlugin
         public readonly int fs_fpg;
         /* this data must be re-computed after crashes */
         /// <summary>cylinder summary information</summary>
-        public csum fs_old_cstotal;
+        public Checksum fs_old_cstotal;
         /* these fields are cleared at mount time */
         /// <summary>super block modified flag</summary>
         public readonly sbyte fs_fmod;

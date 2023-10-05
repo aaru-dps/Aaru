@@ -56,7 +56,7 @@ public sealed partial class A2R
 
         stream.EnsureRead(hdr, 0, 4);
 
-        return _a2RV2Signature.SequenceEqual(hdr) || _a2RV3Signature.SequenceEqual(hdr);
+        return _a2Rv2Signature.SequenceEqual(hdr) || _a2Rv3Signature.SequenceEqual(hdr);
     }
 
 #endregion
