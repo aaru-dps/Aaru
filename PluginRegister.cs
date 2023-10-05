@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,13 +43,24 @@ public class PluginRegister
 {
     static PluginRegister _instance;
 
-    /// <summary>List of byte addressable image plugins</summary>
-    public readonly SortedDictionary<string, Type> ByteAddressableImages;
 
     IServiceProvider   _serviceProvider;
     IServiceCollection _services;
 
-    PluginRegister() => ByteAddressableImages = new SortedDictionary<string, Type>();
+    PluginRegister() {}
+
+    /// <summary>List of byte addressable image plugins</summary>
+    public SortedDictionary<string, IByteAddressableImage> ByteAddressableImages
+    {
+        get
+        {
+            SortedDictionary<string, IByteAddressableImage> byteAddressableImages = new();
+            foreach(IByteAddressableImage plugin in _serviceProvider.GetServices<IByteAddressableImage>())
+                byteAddressableImages[plugin.Name.ToLower()] = plugin;
+
+            return byteAddressableImages;
+        }
+    }
 
     /// <summary>List of writable media image plugins</summary>
     public SortedDictionary<string, IBaseWritableImage> WritableImages
@@ -230,13 +240,7 @@ public class PluginRegister
         pluginRegister.RegisterWritableFloppyImagePlugins(_services);
         pluginRegister.RegisterWritableImagePlugins(_services);
         pluginRegister.RegisterArchivePlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IByteAddressableImage plugin &&
-               !ByteAddressableImages.ContainsKey(plugin.Name.ToLower()))
-                ByteAddressableImages.Add(plugin.Name.ToLower(), type);
-        }
+        pluginRegister.RegisterByteAddressablePlugins(_services);
     }
 
     /// <summary>Gets the filter that allows to read the specified path</summary>

@@ -36,8 +36,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -107,7 +105,9 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterArchivePlugins(IServiceCollection services);
 
-    /// <summary>Gets all byte addressable plugins</summary>
-    /// <returns>List of byte addressable plugins</returns>
-    List<Type> GetAllByteAddressablePlugins();
+    /// <summary>
+    ///     Registers all byte addressable media image plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterByteAddressablePlugins(IServiceCollection services);
 }
