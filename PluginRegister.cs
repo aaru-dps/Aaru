@@ -43,8 +43,7 @@ namespace Aaru.CommonTypes;
 public class PluginRegister
 {
     static PluginRegister _instance;
-    /// <summary>List of all archive formats</summary>
-    public readonly SortedDictionary<string, Type> Archives;
+
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
     /// <summary>List of all filesystem plugins</summary>
@@ -72,8 +71,20 @@ public class PluginRegister
         WritableImages        = new SortedDictionary<string, Type>();
         FloppyImages          = new SortedDictionary<string, Type>();
         WritableFloppyImages  = new SortedDictionary<string, Type>();
-        Archives              = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of all archive formats</summary>
+    public SortedDictionary<string, IArchive> Archives
+    {
+        get
+        {
+            SortedDictionary<string, IArchive> archives = new();
+            foreach(IArchive plugin in _serviceProvider.GetServices<IArchive>())
+                archives.Add(plugin.Name.ToLower(), plugin);
+
+            return archives;
+        }
     }
 
     /// <summary>List of all partition plugins</summary>
@@ -199,11 +210,7 @@ public class PluginRegister
                 WritableImages.Add(plugin.Name.ToLower(), type);
         }
 
-        foreach(Type type in pluginRegister.GetAllArchivePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IArchive plugin && !Archives.ContainsKey(plugin.Name.ToLower()))
-                Archives.Add(plugin.Name.ToLower(), type);
-        }
+        pluginRegister.RegisterArchivePlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllByteAddressablePlugins() ?? Enumerable.Empty<Type>())
         {

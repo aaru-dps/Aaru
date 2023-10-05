@@ -89,9 +89,11 @@ public interface IPluginRegister
     /// <returns>List of writable media image plugins</returns>
     List<Type> GetAllWritableImagePlugins();
 
-    /// <summary>Gets all archive plugins</summary>
-    /// <returns>List of archive plugins</returns>
-    List<Type> GetAllArchivePlugins();
+    /// <summary>
+    ///     Registers all archive plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterArchivePlugins(IServiceCollection services);
 
     /// <summary>Gets all byte addressable plugins</summary>
     /// <returns>List of byte addressable plugins</returns>
