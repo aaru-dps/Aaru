@@ -36,11 +36,22 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 namespace Aaru.CommonTypes.Interfaces;
 
 /// <summary>Defines the interface to implement a checksum or hashing algorithm</summary>
 public interface IChecksum
 {
+    /// <summary>Plugin author</summary>
+    string Author { get; }
+
+    /// <summary>Plugin name.</summary>
+    string Name { get; }
+
+    /// <summary>Plugin UUID.</summary>
+    Guid Id { get; }
+
     /// <summary>Updates the hash with data.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of buffer to hash.</param>
