@@ -89,9 +89,11 @@ public interface IPluginRegister
     /// <param name="services">Service collection</param>
     void RegisterReadOnlyFilesystemPlugins(IServiceCollection services);
 
-    /// <summary>Gets all writable floppy image plugins</summary>
-    /// <returns>List of writable floppy image plugins</returns>
-    List<Type> GetAllWritableFloppyImagePlugins();
+    /// <summary>
+    ///     Registers all writable floppy image plugins in the provided service collection
+    /// </summary>
+    /// <param name="services">Service collection</param>
+    void RegisterWritableFloppyImagePlugins(IServiceCollection services);
 
     /// <summary>Gets all writable media image plugins</summary>
     /// <returns>List of writable media image plugins</returns>

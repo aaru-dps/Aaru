@@ -47,8 +47,6 @@ public class PluginRegister
     /// <summary>List of byte addressable image plugins</summary>
     public readonly SortedDictionary<string, Type> ByteAddressableImages;
 
-    /// <summary>List of writable floppy image plugins</summary>
-    public readonly SortedDictionary<string, Type> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
     public readonly SortedDictionary<string, Type> WritableImages;
     IServiceProvider   _serviceProvider;
@@ -57,8 +55,20 @@ public class PluginRegister
     PluginRegister()
     {
         WritableImages        = new SortedDictionary<string, Type>();
-        WritableFloppyImages  = new SortedDictionary<string, Type>();
         ByteAddressableImages = new SortedDictionary<string, Type>();
+    }
+
+    /// <summary>List of writable floppy image plugins</summary>
+    public SortedDictionary<string, IWritableFloppyImage> WritableFloppyImages
+    {
+        get
+        {
+            SortedDictionary<string, IWritableFloppyImage> floppyImages = new();
+            foreach(IWritableFloppyImage plugin in _serviceProvider.GetServices<IWritableFloppyImage>())
+                floppyImages[plugin.Name.ToLower()] = plugin;
+
+            return floppyImages;
+        }
     }
 
     /// <summary>List of floppy image plugins</summary>
@@ -210,13 +220,7 @@ public class PluginRegister
         pluginRegister.RegisterFloppyImagePlugins(_services);
         pluginRegister.RegisterMediaImagePlugins(_services);
         pluginRegister.RegisterPartitionPlugins(_services);
-
-        foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
-        {
-            if(Activator.CreateInstance(type) is IWritableFloppyImage plugin &&
-               !WritableFloppyImages.ContainsKey(plugin.Name.ToLower()))
-                WritableFloppyImages.Add(plugin.Name.ToLower(), type);
-        }
+        pluginRegister.RegisterWritableFloppyImagePlugins(_services);
 
         foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
         {
