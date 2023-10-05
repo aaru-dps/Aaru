@@ -32,13 +32,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Aaru.Core;
 
 /// <summary>Plugin base operations</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class PluginBase
 {
     static PluginBase _instance;
@@ -63,6 +66,8 @@ public sealed class PluginBase
     public readonly SortedDictionary<string, Type> WritableFloppyImages;
     /// <summary>List of writable media image plugins</summary>
     public readonly SortedDictionary<string, Type> WritableImages;
+    IServiceProvider   _serviceProvider;
+    IServiceCollection _services;
 
     PluginBase()
     {
@@ -78,6 +83,19 @@ public sealed class PluginBase
         ByteAddressableImages = new SortedDictionary<string, Type>();
     }
 
+    /// <summary>List of all checksums formats</summary>
+    public SortedDictionary<string, IChecksum> Checksums
+    {
+        get
+        {
+            SortedDictionary<string, IChecksum> checksums = new();
+            foreach(IChecksum plugin in _serviceProvider.GetServices<IChecksum>())
+                checksums.Add(plugin.Name.ToLower(), plugin);
+
+            return checksums;
+        }
+    }
+
     /// <summary>Gets a singleton with all the known plugins</summary>
     public static PluginBase Singleton
     {
@@ -86,21 +104,25 @@ public sealed class PluginBase
             if(_instance != null)
                 return _instance;
 
-            _instance = new PluginBase();
+            _instance = new PluginBase
+            {
+                _services = new ServiceCollection()
+            };
 
-            IPluginRegister checksumRegister    = new Register();
-            IPluginRegister imagesRegister      = new DiscImages.Register();
+            IPluginRegister imagesRegister      = new Register();
             IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
             IPluginRegister filtersRegister     = new Filters.Register();
             IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
             IPluginRegister archiveRegister     = new Archives.Register();
 
-            _instance.AddPlugins(checksumRegister);
+            _instance.AddPlugins(new Checksums.Register());
             _instance.AddPlugins(imagesRegister);
             _instance.AddPlugins(filesystemsRegister);
             _instance.AddPlugins(filtersRegister);
             _instance.AddPlugins(partitionsRegister);
             _instance.AddPlugins(archiveRegister);
+
+            _instance._serviceProvider = _instance._services.BuildServiceProvider();
 
             return _instance;
         }
@@ -110,6 +132,8 @@ public sealed class PluginBase
     /// <param name="pluginRegister">Plugin register</param>
     void AddPlugins(IPluginRegister pluginRegister)
     {
+        pluginRegister.RegisterChecksumPlugins(_services);
+
         foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
         {
             if(Activator.CreateInstance(type) is IFilesystem plugin && !Filesystems.ContainsKey(plugin.Name.ToLower()))

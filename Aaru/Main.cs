@@ -240,7 +240,6 @@ class MainClass
         rootCommand.AddCommand(new ImageFamily());
         rootCommand.AddCommand(new MediaFamily());
         rootCommand.AddCommand(new ArchiveFamily());
-
         rootCommand.AddCommand(new ConfigureCommand());
         rootCommand.AddCommand(new FormatsCommand());
         rootCommand.AddCommand(new ListEncodingsCommand());

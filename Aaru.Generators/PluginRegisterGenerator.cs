@@ -100,6 +100,7 @@ public class PluginRegisterGenerator : ISourceGenerator
         sb.AppendLine("using System;");
         sb.AppendLine("using System.Collections.Generic;");
         sb.AppendLine("using Aaru.CommonTypes.Interfaces;");
+        sb.AppendLine("using Microsoft.Extensions.DependencyInjection;");
         sb.AppendLine();
         sb.AppendLine($"namespace {@namespace};");
         sb.AppendLine();
@@ -123,16 +124,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(checksums?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllChecksumPlugins() => new()");
+            sb.AppendLine("    public void RegisterChecksumPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in checksums)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IChecksum, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllChecksumPlugins() => null;");
+            sb.AppendLine("    public void RegisterChecksumPlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 
