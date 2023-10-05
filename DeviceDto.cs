@@ -33,11 +33,13 @@
 // ReSharper disable VirtualMemberCallInConstructor
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Dto;
 
 /// <summary>DTO for known device</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class DeviceDto : DeviceReport
 {
     /// <summary>Build an empty DTO</summary>

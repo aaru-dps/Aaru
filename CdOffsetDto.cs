@@ -30,12 +30,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
 namespace Aaru.Dto;
 
 /// <inheritdoc />
 /// <summary>DTO from a CD drive read offset</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class CdOffsetDto : CdOffset
 {
     /// <summary>Build an empty DTO</summary>

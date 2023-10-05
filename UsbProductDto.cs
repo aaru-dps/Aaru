@@ -30,9 +30,12 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Dto;
 
 /// <summary>DTO for USB product field</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class UsbProductDto
 {
     /// <summary>Database ID</summary>
