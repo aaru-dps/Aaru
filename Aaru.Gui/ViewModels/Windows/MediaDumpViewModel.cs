@@ -168,7 +168,6 @@ public sealed class MediaDumpViewModel : ViewModelBase
             }
         }
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         foreach(Type pluginType in plugins.WritableImages.Values)

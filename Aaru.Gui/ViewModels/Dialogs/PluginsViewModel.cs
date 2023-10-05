@@ -36,7 +36,6 @@ using System.Reactive;
 using System.Reflection;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Core;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Localization;
@@ -61,7 +60,6 @@ public sealed class PluginsViewModel : ViewModelBase
         FloppyImages         = new ObservableCollection<PluginModel>();
         WritableFloppyImages = new ObservableCollection<PluginModel>();
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
-        PluginBase.Init();
 
         // TODO: Takes too much time
         foreach(Type filterType in PluginRegister.Singleton.Filters.Values)

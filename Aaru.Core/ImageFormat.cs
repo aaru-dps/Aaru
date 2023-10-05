@@ -49,7 +49,6 @@ public static class ImageFormat
     {
         try
         {
-            PluginBase.Init();
             PluginRegister plugins = PluginRegister.Singleton;
 
             IBaseImage imageFormat = null;

@@ -87,7 +87,6 @@ sealed class ListNamespacesCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-namespaces");
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         foreach(KeyValuePair<string, Type> kvp in plugins.ReadOnlyFilesystems)

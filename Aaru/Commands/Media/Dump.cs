@@ -370,7 +370,6 @@ sealed class DumpMediaCommand : Command
         if(isResponse)
             eject = true;
 
-        PluginBase.Init();
         PluginRegister           plugins    = PluginRegister.Singleton;
         List<IBaseWritableImage> candidates = new();
         string                   extension  = Path.GetExtension(outputPath);

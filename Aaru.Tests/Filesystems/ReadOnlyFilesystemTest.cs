@@ -43,8 +43,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(testFile);
+                IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
                 Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 
@@ -183,8 +182,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             if(!exists)
                 continue;
 
-            var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(testFile);
+            IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
             if(ImageFormat.Detect(inputFilter) is not IMediaImage image)
                 continue;

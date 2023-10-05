@@ -18,6 +18,9 @@ public abstract class OpticalImageReadIssueTest
     public abstract string DataFolder { get; }
     public abstract string TestFile   { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Test()
     {
@@ -26,8 +29,7 @@ public abstract class OpticalImageReadIssueTest
         bool exists = File.Exists(TestFile);
         Assert.True(exists, Localization.Test_file_not_found);
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(TestFile);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(TestFile);
 
         Assert.IsNotNull(inputFilter, Localization.Filter_for_test_file_is_not_detected);
 

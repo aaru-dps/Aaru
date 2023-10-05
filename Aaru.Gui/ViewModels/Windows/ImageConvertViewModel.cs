@@ -173,7 +173,6 @@ public sealed class ImageConvertViewModel : ViewModelBase
         DriveSerialNumberVisible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
         DriveFirmwareRevisionVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveFirmwareRevision);
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         foreach(Type pluginType in plugins.WritableImages.Values)

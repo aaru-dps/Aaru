@@ -28,13 +28,16 @@ public abstract class FsExtractHashIssueTest
     protected abstract bool                       ExpectPartitions { get; }
     protected abstract string                     Namespace        { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
+
     [Test]
     public void Test()
     {
         Environment.CurrentDirectory = DataFolder;
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(TestFile);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(TestFile);
 
         Dictionary<string, string> options = ParsedOptions;
         options["debug"] = Debug.ToString();
@@ -46,7 +49,6 @@ public abstract class FsExtractHashIssueTest
         if(Encoding != null)
             encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;

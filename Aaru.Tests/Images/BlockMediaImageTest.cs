@@ -20,6 +20,9 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
     const           uint                     SECTORS_TO_READ = 256;
     public abstract BlockImageTestExpected[] Tests { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Info()
     {
@@ -39,8 +42,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
@@ -90,8 +92,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
@@ -135,7 +136,6 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
     public void Contents()
     {
         Environment.CurrentDirectory = DataFolder;
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         Assert.Multiple(() =>
@@ -155,8 +155,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;

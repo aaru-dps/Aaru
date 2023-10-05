@@ -38,6 +38,9 @@ public abstract class OpticalImageConvertIssueTest
     public abstract string                     Md5                     { get; }
     public abstract bool                       UseLong                 { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Convert()
     {
@@ -47,8 +50,7 @@ public abstract class OpticalImageConvertIssueTest
         Metadata    sidecar = null;
         ErrorNumber errno;
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(InputPath);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(InputPath);
 
         Assert.IsNotNull(inputFilter, Localization.Cannot_open_specified_file);
 
@@ -368,10 +370,12 @@ public abstract class OpticalImageConvertIssueTest
         if(trackFlags.Count > 0)
         {
             foreach((byte track, byte flags) in trackFlags)
+            {
                 outputOptical.WriteSectorTag(new[]
                 {
                     flags
                 }, track, SectorTagType.CdTrackFlags);
+            }
         }
 
         if(mcn != null)

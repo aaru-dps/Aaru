@@ -8,6 +8,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core;
 using Aaru.Core.Media;
 using Aaru.Devices;
 using FluentAssertions;
@@ -20,6 +21,9 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
 {
     const           uint                       SECTORS_TO_READ = 256;
     public abstract OpticalImageTestExpected[] Tests { get; }
+
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
 
     [Test]
     public void Info()
@@ -41,8 +45,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(InputPlugin.GetType()) as IOpticalMediaImage;
@@ -151,8 +154,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var inputFormat = Activator.CreateInstance(InputPlugin.GetType()) as IOpticalMediaImage;
@@ -464,10 +466,12 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 if(trackFlags.Count > 0)
                 {
                     foreach((byte track, byte flags) in trackFlags)
+                    {
                         outputFormat.WriteSectorTag(new[]
                         {
                             flags
                         }, track, SectorTagType.CdTrackFlags);
+                    }
                 }
 
                 if(mcn != null)
@@ -496,8 +500,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                               string.Format(Localization.Error_0_closing_output_image_Contents_are_not_correct,
                                             outputFormat.ErrorMessage));
 
-                filtersList = new FiltersList();
-                filter      = filtersList.GetFilter(outputPath);
+                filter = PluginRegister.Singleton.GetFilter(outputPath);
                 filter.Open(outputPath);
 
                 string tmpFolder = Path.GetDirectoryName(outputPath);

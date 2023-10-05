@@ -61,7 +61,6 @@ public sealed partial class Sidecar
     /// <summary>Initializes a new instance of this class</summary>
     public Sidecar()
     {
-        PluginBase.Init();
         _plugins      = PluginRegister.Singleton;
         _imgChkWorker = new Checksum();
         _aborted      = false;
@@ -77,8 +76,6 @@ public sealed partial class Sidecar
     /// <param name="encoding">Encoding for analysis</param>
     public Sidecar(IBaseImage image, string imagePath, Guid filterId, Encoding encoding)
     {
-        PluginBase.Init();
-
         _image        = image;
         _imagePath    = imagePath;
         _filterId     = filterId;

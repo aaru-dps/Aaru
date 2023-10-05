@@ -21,6 +21,10 @@ public abstract class FilesystemTest(string fileSystemType)
 
     public abstract FileSystemTest[] Tests { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
+
     [Test]
     public void Detect()
     {
@@ -40,8 +44,7 @@ public abstract class FilesystemTest(string fileSystemType)
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(testFile);
+                IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
                 Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 
@@ -120,8 +123,7 @@ public abstract class FilesystemTest(string fileSystemType)
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(testFile);
+                IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
                 Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 
@@ -160,8 +162,7 @@ public abstract class FilesystemTest(string fileSystemType)
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter inputFilter = filtersList.GetFilter(testFile);
+                IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
                 Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 

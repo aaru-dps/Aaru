@@ -88,7 +88,6 @@ sealed class ListOptionsCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-options");
 
-        PluginBase.Init();
         PluginRegister plugins = PluginRegister.Singleton;
 
         AaruConsole.WriteLine(UI.Read_Write_media_images_options);

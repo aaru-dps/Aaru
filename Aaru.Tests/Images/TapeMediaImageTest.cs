@@ -4,6 +4,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Core;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
@@ -16,6 +17,10 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
     const uint SECTORS_TO_READ = 256;
 
     public abstract TapeImageTestExpected[] Tests { get; }
+
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
 
     [Test]
     public void Tape()
@@ -36,8 +41,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as ITapeImage;
@@ -85,8 +89,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
@@ -136,8 +139,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;

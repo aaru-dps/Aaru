@@ -15,6 +15,9 @@ public abstract class PartitionSchemeTest
     public abstract string          DataFolder { get; }
     public abstract PartitionTest[] Tests      { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Test()
     {
@@ -33,8 +36,7 @@ public abstract class PartitionSchemeTest
                 // ReSharper disable once HeuristicUnreachableCode
                 continue;
 
-            var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(testFile);
+            IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
             Assert.IsNotNull(inputFilter, string.Format(Localization.Filter_0, testFile));
 

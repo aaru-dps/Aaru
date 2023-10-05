@@ -27,6 +27,10 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
     const           uint                       SECTORS_TO_READ = 256;
     public abstract OpticalImageTestExpected[] Tests { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
+
     [Test]
     public void Info()
     {
@@ -46,8 +50,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
@@ -158,8 +161,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
@@ -199,7 +201,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             for(var i = 0; i < track.FileSystems.Length; i++)
                             {
-                                PluginBase.Init();
                                 PluginRegister plugins = PluginRegister.Singleton;
                                 bool found = plugins.Filesystems.TryGetValue(idPlugins[i], out Type pluginType);
 
@@ -361,8 +362,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 if(!exists)
                     return;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
