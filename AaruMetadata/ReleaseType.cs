@@ -39,11 +39,13 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum ReleaseType
 {
     Retail,
