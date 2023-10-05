@@ -565,7 +565,7 @@ public static class CdChecksums
         var qSubChannelCrc    = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
         var qSubChannelForCrc = new byte[10];
         Array.Copy(qSubChannel, 0, qSubChannelForCrc, 0, 10);
-        ushort calculatedQcrc = CRC16CCITTContext.Calculate(qSubChannelForCrc);
+        ushort calculatedQcrc = CRC16CcittContext.Calculate(qSubChannelForCrc);
 
         if(qSubChannelCrc != calculatedQcrc)
         {
@@ -580,7 +580,7 @@ public static class CdChecksums
             var cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
             var cdTextPack1ForCrc = new byte[16];
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
-            ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
+            ushort calculatedCdtp1Crc = CRC16CcittContext.Calculate(cdTextPack1ForCrc);
 
             if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0)
             {
@@ -596,7 +596,7 @@ public static class CdChecksums
             var cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
             var cdTextPack2ForCrc = new byte[16];
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
-            ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
+            ushort calculatedCdtp2Crc = CRC16CcittContext.Calculate(cdTextPack2ForCrc);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP2_0_Calc_CDTP2_1, cdTextPack2Crc,
                                        calculatedCdtp2Crc);
@@ -615,7 +615,7 @@ public static class CdChecksums
             var cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
             var cdTextPack3ForCrc = new byte[16];
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
-            ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
+            ushort calculatedCdtp3Crc = CRC16CcittContext.Calculate(cdTextPack3ForCrc);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP3_0_Calc_CDTP3_1, cdTextPack3Crc,
                                        calculatedCdtp3Crc);
@@ -635,7 +635,7 @@ public static class CdChecksums
         var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
         var cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
-        ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
+        ushort calculatedCdtp4Crc = CRC16CcittContext.Calculate(cdTextPack4ForCrc);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cyclic_CDTP4_0_Calc_CDTP4_1, cdTextPack4Crc,
                                    calculatedCdtp4Crc);

@@ -39,7 +39,7 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-public sealed class CRC16IBMContext : Crc16Context
+public sealed class CRC16IbmContext : Crc16Context
 {
     internal const ushort CRC16_IBM_POLY = 0xA001;
     internal const ushort CRC16_IBM_SEED = 0x0000;
@@ -234,7 +234,7 @@ public sealed class CRC16IBMContext : Crc16Context
 
     /// <summary>Initializes an instance of the CRC16 with IBM polynomial and seed.</summary>
     /// <inheritdoc />
-    public CRC16IBMContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
+    public CRC16IbmContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

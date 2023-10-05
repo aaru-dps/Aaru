@@ -37,7 +37,7 @@ namespace Aaru.Checksums;
 /// <inheritdoc />
 /// <summary>Implements the CRC16 algorithm with CCITT polynomial and seed</summary>
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
-public sealed class CRC16CCITTContext : Crc16Context
+public sealed class CRC16CcittContext : Crc16Context
 {
     /// <summary>CCITT CRC16 polynomial</summary>
     public const ushort CRC16_CCITT_POLY = 0x8408;
@@ -233,7 +233,7 @@ public sealed class CRC16CCITTContext : Crc16Context
 
     /// <summary>Initializes an instance of the CRC16 with CCITT polynomial and seed.</summary>
     /// <inheritdoc />
-    public CRC16CCITTContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
+    public CRC16CcittContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>

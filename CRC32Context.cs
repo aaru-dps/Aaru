@@ -54,7 +54,7 @@ public sealed class Crc32Context : IChecksum
     const uint CRC32_ISO_POLY = 0xEDB88320;
     const uint CRC32_ISO_SEED = 0xFFFFFFFF;
 
-    internal static readonly uint[][] _isoCrc32Table =
+    internal static readonly uint[][] ISOCrc32Table =
     {
         new uint[]
         {
@@ -326,7 +326,7 @@ public sealed class Crc32Context : IChecksum
     {
         _hashInt   = CRC32_ISO_SEED;
         _finalSeed = CRC32_ISO_SEED;
-        _table     = _isoCrc32Table;
+        _table     = ISOCrc32Table;
         _useIso    = true;
 
         if(!Native.IsSupported)

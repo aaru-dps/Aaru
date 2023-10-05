@@ -62,13 +62,13 @@ static class Ssse3
         /*
          * Process the data in blocks.
          */
-        uint BLOCK_SIZE = 1 << 5;
-        uint blocks     = len / BLOCK_SIZE;
-        len -= blocks * BLOCK_SIZE;
+        uint block_Size = 1 << 5;
+        uint blocks     = len / block_Size;
+        len -= blocks * block_Size;
 
         while(blocks != 0)
         {
-            uint n = Fletcher32Context.NMAX / BLOCK_SIZE; /* The NMAX constraint. */
+            uint n = Fletcher32Context.NMAX / block_Size; /* The NMAX constraint. */
 
             if(n > blocks)
                 n = blocks;
@@ -85,9 +85,9 @@ static class Ssse3
              * Process n blocks of data. At most NMAX data bytes can be
              * processed before s2 must be reduced modulo BASE.
              */
-            var v_ps = Vector128.Create(s1 * n, 0, 0, 0);
-            var v_s2 = Vector128.Create(s2,     0, 0, 0);
-            var v_s1 = Vector128.Create(0u,     0, 0, 0);
+            var v_Ps = Vector128.Create(s1 * n, 0, 0, 0);
+            var v_S2 = Vector128.Create(s2,     0, 0, 0);
+            var v_S1 = Vector128.Create(0u,     0, 0, 0);
 
             do
             {
@@ -111,35 +111,35 @@ static class Ssse3
                 /*
                  * Add previous block byte sum to v_ps.
                  */
-                v_ps = Sse2.Add(v_ps, v_s1);
+                v_Ps = Sse2.Add(v_Ps, v_S1);
                 /*
                  * Horizontally add the bytes for s1, multiply-adds the
                  * bytes by [ 32, 31, 30, ... ] for s2.
                  */
-                v_s1 = Sse2.Add(v_s1, Sse2.SumAbsoluteDifferences(bytes1.AsByte(), zero).AsUInt32());
+                v_S1 = Sse2.Add(v_S1, Sse2.SumAbsoluteDifferences(bytes1.AsByte(), zero).AsUInt32());
 
                 Vector128<short> mad1 =
                     System.Runtime.Intrinsics.X86.Ssse3.MultiplyAddAdjacent(bytes1.AsByte(), tap1.AsSByte());
 
-                v_s2 = Sse2.Add(v_s2, Sse2.MultiplyAddAdjacent(mad1.AsInt16(), ones.AsInt16()).AsUInt32());
-                v_s1 = Sse2.Add(v_s1, Sse2.SumAbsoluteDifferences(bytes2.AsByte(), zero).AsUInt32());
+                v_S2 = Sse2.Add(v_S2, Sse2.MultiplyAddAdjacent(mad1.AsInt16(), ones.AsInt16()).AsUInt32());
+                v_S1 = Sse2.Add(v_S1, Sse2.SumAbsoluteDifferences(bytes2.AsByte(), zero).AsUInt32());
 
                 Vector128<short> mad2 =
                     System.Runtime.Intrinsics.X86.Ssse3.MultiplyAddAdjacent(bytes2.AsByte(), tap2.AsSByte());
 
-                v_s2 = Sse2.Add(v_s2, Sse2.MultiplyAddAdjacent(mad2.AsInt16(), ones.AsInt16()).AsUInt32());
+                v_S2 = Sse2.Add(v_S2, Sse2.MultiplyAddAdjacent(mad2.AsInt16(), ones.AsInt16()).AsUInt32());
             } while(--n != 0);
 
-            v_s2 = Sse2.Add(v_s2, Sse2.ShiftLeftLogical(v_ps, 5));
+            v_S2 = Sse2.Add(v_S2, Sse2.ShiftLeftLogical(v_Ps, 5));
             /*
              * Sum epi32 ints v_s1(s2) and accumulate in s1(s2).
              */
-            v_s1 =  Sse2.Add(v_s1, Sse2.Shuffle(v_s1, 177));
-            v_s1 =  Sse2.Add(v_s1, Sse2.Shuffle(v_s1, 78));
-            s1   += (uint)Sse2.ConvertToInt32(v_s1.AsInt32());
-            v_s2 =  Sse2.Add(v_s2, Sse2.Shuffle(v_s2, 177));
-            v_s2 =  Sse2.Add(v_s2, Sse2.Shuffle(v_s2, 78));
-            s2   =  (uint)Sse2.ConvertToInt32(v_s2.AsInt32());
+            v_S1 =  Sse2.Add(v_S1, Sse2.Shuffle(v_S1, 177));
+            v_S1 =  Sse2.Add(v_S1, Sse2.Shuffle(v_S1, 78));
+            s1   += (uint)Sse2.ConvertToInt32(v_S1.AsInt32());
+            v_S2 =  Sse2.Add(v_S2, Sse2.Shuffle(v_S2, 177));
+            v_S2 =  Sse2.Add(v_S2, Sse2.Shuffle(v_S2, 78));
+            s2   =  (uint)Sse2.ConvertToInt32(v_S2.AsInt32());
             /*
              * Reduce.
              */
