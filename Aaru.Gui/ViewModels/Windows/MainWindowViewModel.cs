@@ -651,9 +651,9 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs))
                                         continue;
-                                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                    if(fs is null)
                                         continue;
 
                                     fs.GetInformation(imageFormat, partition, null, out string information,
@@ -726,9 +726,9 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs))
                                 continue;
-                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                            if(fs is null)
                                 continue;
 
                             fs.GetInformation(imageFormat, wholePart, null, out string information,

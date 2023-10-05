@@ -118,17 +118,17 @@ public sealed class PluginsViewModel : ViewModelBase
             });
         }
 
-        foreach(Type filesystem in PluginRegister.Singleton.Filesystems.Values)
+        foreach(IFilesystem filesystem in PluginRegister.Singleton.Filesystems.Values)
         {
-            if(Activator.CreateInstance(filesystem) is not IFilesystem fs)
+            if(filesystem is null)
                 continue;
 
             Filesystems.Add(new PluginModel
             {
-                Name    = fs.Name,
-                Uuid    = fs.Id,
-                Version = Assembly.GetAssembly(filesystem)?.GetName().Version?.ToString(),
-                Author  = fs.Author
+                Name    = filesystem.Name,
+                Uuid    = filesystem.Id,
+                Version = Assembly.GetAssembly(filesystem.GetType())?.GetName().Version?.ToString(),
+                Author  = filesystem.Author
             });
         }
 

@@ -135,16 +135,14 @@ public class PluginRegisterGenerator : ISourceGenerator
 
         if(fileSystems?.Count > 0)
         {
-            sb.AppendLine("    public List<Type> GetAllFilesystemPlugins() => new()");
+            sb.AppendLine("    public void RegisterFilesystemPlugins(IServiceCollection services)");
             sb.AppendLine("    {");
-
             foreach(string plugin in fileSystems)
-                sb.AppendLine($"        typeof({plugin}),");
-
-            sb.AppendLine("    };");
+                sb.AppendLine($"        services.AddTransient<IFilesystem, {plugin}>();");
+            sb.AppendLine("    }");
         }
         else
-            sb.AppendLine("    public List<Type> GetAllFilesystemPlugins() => null;");
+            sb.AppendLine("    public void RegisterFilesystemPlugins(IServiceCollection services) {}");
 
         sb.AppendLine();
 

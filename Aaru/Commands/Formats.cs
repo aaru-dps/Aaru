@@ -165,12 +165,15 @@ sealed class FormatsCommand : Command
 
         AaruConsole.WriteLine();
 
+        var idOnlyFilesystems = plugins.Filesystems.Where(t => !plugins.ReadOnlyFilesystems.ContainsKey(t.Key)).
+                                        Select(t => t.Value).
+                                        Where(t => t is not null).
+                                        ToList();
+
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
-                                                 plugins.Filesystems.Count(t => !t.Value.GetInterfaces().
-                                                                               Contains(typeof(
-                                                                                   IReadOnlyFilesystem)))))
+                                                 idOnlyFilesystems.Count))
         };
 
         if(verbose)
@@ -178,13 +181,9 @@ sealed class FormatsCommand : Command
 
         table.AddColumn(UI.Title_Filesystem);
 
-        foreach(KeyValuePair<string, Type> kvp in plugins.Filesystems.Where(t => !t.Value.GetInterfaces().
-                                                                                Contains(typeof(
-                                                                                    IReadOnlyFilesystem))))
-        {
-            if(Activator.CreateInstance(kvp.Value) is not IFilesystem fs)
-                continue;
 
+        foreach(IFilesystem fs in idOnlyFilesystems)
+        {
             if(verbose)
                 table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
             else

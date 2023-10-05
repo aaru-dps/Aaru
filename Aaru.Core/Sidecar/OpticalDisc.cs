@@ -527,7 +527,7 @@ public sealed partial class Sidecar
 
                     List<FileSystem> lstFs = new();
 
-                    foreach(Type pluginType in plugins.Filesystems.Values)
+                    foreach(IFilesystem fs in plugins.Filesystems.Values)
                     {
                         try
                         {
@@ -538,7 +538,7 @@ public sealed partial class Sidecar
                                 return;
                             }
 
-                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                            if(fs is null)
                                 continue;
 
                             if(!fs.Identify(image, partition))
@@ -590,7 +590,7 @@ public sealed partial class Sidecar
                     Sequence = xmlTrk.Sequence.Number
                 };
 
-                foreach(Type pluginType in plugins.Filesystems.Values)
+                foreach(IFilesystem fs in plugins.Filesystems.Values)
                 {
                     try
                     {
@@ -601,7 +601,7 @@ public sealed partial class Sidecar
                             return;
                         }
 
-                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                        if(fs is null)
                             continue;
 
                         if(!fs.Identify(image, xmlPart))

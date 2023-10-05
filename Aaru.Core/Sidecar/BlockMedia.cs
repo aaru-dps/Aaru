@@ -709,14 +709,14 @@ public sealed partial class Sidecar
 
                 List<FileSystem> lstFs = new();
 
-                foreach(Type pluginType in plugins.Filesystems.Values)
+                foreach(IFilesystem fs in plugins.Filesystems.Values)
                 {
                     try
                     {
                         if(_aborted)
                             return;
 
-                        if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                        if(fs is null)
                             continue;
 
                         if(!fs.Identify(image, partition))
@@ -776,14 +776,14 @@ public sealed partial class Sidecar
 
             List<FileSystem> lstFs = new();
 
-            foreach(Type pluginType in plugins.Filesystems.Values)
+            foreach(IFilesystem fs in plugins.Filesystems.Values)
             {
                 try
                 {
                     if(_aborted)
                         return;
 
-                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                    if(fs is null)
                         continue;
 
                     if(!fs.Identify(image, wholePart))

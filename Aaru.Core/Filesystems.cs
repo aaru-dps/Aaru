@@ -30,8 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 
@@ -53,15 +53,9 @@ public static class Filesystems
     {
         PluginRegister plugins = PluginRegister.Singleton;
 
-        idPlugins = new List<string>();
-
-        foreach(Type plugin in plugins.Filesystems.Values)
-        {
-            if(Activator.CreateInstance(plugin) is not IFilesystem fs)
-                continue;
-
-            if(fs.Identify(imagePlugin, partition))
-                idPlugins.Add(getGuid ? fs.Id.ToString() : fs.Name.ToLower());
-        }
+        idPlugins = (from plugin in plugins.Filesystems.Values
+                     where plugin is not null
+                     where plugin.Identify(imagePlugin, partition)
+                     select getGuid ? plugin.Id.ToString() : plugin.Name.ToLower()).ToList();
     }
 }

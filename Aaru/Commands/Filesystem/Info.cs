@@ -228,7 +228,7 @@ sealed class FilesystemInfoCommand : Command
             }
 
             List<string> idPlugins = null;
-            Type         pluginType;
+            IFilesystem  fs;
             string       information;
 
             if(partitions)
@@ -309,9 +309,9 @@ sealed class FilesystemInfoCommand : Command
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out fs))
                                         continue;
-                                    if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                    if(fs is null)
                                         continue;
 
                                     AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
@@ -328,9 +328,9 @@ sealed class FilesystemInfoCommand : Command
                             }
                             default:
                             {
-                                plugins.Filesystems.TryGetValue(idPlugins[0], out pluginType);
+                                plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
 
-                                if(pluginType == null || Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                                if(fs is null)
                                     continue;
 
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
@@ -378,9 +378,9 @@ sealed class FilesystemInfoCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.Filesystems.TryGetValue(pluginName, out pluginType))
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out fs))
                                 continue;
-                            if(Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                            if(fs is null)
                                 continue;
 
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
@@ -396,9 +396,9 @@ sealed class FilesystemInfoCommand : Command
                     }
                     default:
                     {
-                        plugins.Filesystems.TryGetValue(idPlugins[0], out pluginType);
+                        plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
 
-                        if(pluginType == null || Activator.CreateInstance(pluginType) is not IFilesystem fs)
+                        if(fs is null)
                             break;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
@@ -416,7 +416,7 @@ sealed class FilesystemInfoCommand : Command
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
+            AaruConsole.ErrorWriteLine(Markup.Escape(string.Format(UI.Error_reading_file_0, ex.Message)));
             AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
 
             return (int)ErrorNumber.UnexpectedException;
