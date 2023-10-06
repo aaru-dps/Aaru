@@ -77,6 +77,7 @@ public partial class Symbian
             uint comp_name_ptr;
             byte[] ComponentName_b;
             string ComponentName = "";
+    public void GetInformation(IFilter filter, Encoding encoding, out string information)
 
             SymbianHeader sh = new SymbianHeader();
             BinaryReader br = new BinaryReader(fileStream);
