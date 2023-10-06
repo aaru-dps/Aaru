@@ -46,13 +46,7 @@ public partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public ErrorNumber Open(string path) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public ErrorNumber Open(Stream stream) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public ErrorNumber Open(byte[] buffer) => throw new NotImplementedException();
 
     /// <inheritdoc />
     public bool IsOpened() => throw new NotImplementedException();

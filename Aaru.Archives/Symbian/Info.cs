@@ -40,13 +40,7 @@ public partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public bool Identify(string path) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public bool Identify(Stream stream) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public bool Identify(byte[] buffer) => throw new NotImplementedException();
 
 #endregion
 
