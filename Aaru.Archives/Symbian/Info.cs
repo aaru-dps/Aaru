@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.IO;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
 namespace Aaru.Archives;
@@ -39,29 +40,17 @@ public partial class Symbian
 {
 #region IArchive Members
 
-    public bool Identify(byte[] buffer)
-    {
-        if(buffer.Length < Marshal.SizeOf<SymbianHeader>())
-            return false;
-
-        SymbianHeader header = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(buffer);
-
-        if(header.uid1 == SYMBIAN9_MAGIC)
-            return true;
-
-        if(header.uid3 != SYMBIAN_MAGIC)
-            return false;
-
-        return header.uid2 is EPOC_MAGIC or EPOC6_MAGIC;
-    }
-
     /// <inheritdoc />
-    public bool Identify(Stream stream)
+    public bool Identify(IFilter filter)
     {
-        if(stream.Length < Marshal.SizeOf<SymbianHeader>())
+        if(filter.DataForkLength < Marshal.SizeOf<SymbianHeader>())
             return false;
+
+        Stream stream = filter.GetDataForkStream();
 
         var hdr = new byte[Marshal.SizeOf<SymbianHeader>()];
+
+        stream.EnsureRead(hdr, 0, hdr.Length);
 
         SymbianHeader header = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(hdr);
 
