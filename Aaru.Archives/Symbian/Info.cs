@@ -30,8 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
+using Aaru.Helpers;
 
 namespace Aaru.Archives;
 
@@ -39,36 +39,44 @@ public partial class Symbian
 {
 #region IArchive Members
 
+    public bool Identify(byte[] buffer)
+    {
+        if(buffer.Length < Marshal.SizeOf<SymbianHeader>())
+            return false;
+
+        SymbianHeader header = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(buffer);
+
+        if(header.uid1 == SYMBIAN9_MAGIC)
+            return true;
+
+        if(header.uid3 != SYMBIAN_MAGIC)
+            return false;
+
+        return header.uid2 is EPOC_MAGIC or EPOC6_MAGIC;
+    }
+
     /// <inheritdoc />
-    public bool Identify(Stream stream) => throw new NotImplementedException();
+    public bool Identify(Stream stream)
+    {
+        if(stream.Length < Marshal.SizeOf<SymbianHeader>())
+            return false;
+
+        var hdr = new byte[Marshal.SizeOf<SymbianHeader>()];
+
+        SymbianHeader header = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(hdr);
+
+        if(header.uid1 == SYMBIAN9_MAGIC)
+            return true;
+
+        if(header.uid3 != SYMBIAN_MAGIC)
+            return false;
+
+        return header.uid2 is EPOC_MAGIC or EPOC6_MAGIC;
+    }
 
 #endregion
 
     /*
-        public override bool Identify(FileStream fileStream, long offset)
-        {
-            uint uid1, uid2, uid3;
-            BinaryReader br = new BinaryReader(fileStream);
-
-            br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
-
-            uid1 = br.Readuint();
-            uid2 = br.Readuint();
-            uid3 = br.Readuint();
-
-            if(uid1 == Symbian9Magic)
-                return true;
-            else if(uid3 == SymbianMagic)
-            {
-                if(uid2 == EPOCMagic || uid2 == EPOC6Magic)
-                    return true;
-                else
-                    return false;
-            }
-
-            return false;
-        }
-
         public override void GetInformation (FileStream fileStream, long offset, out string information)
         {
             information = "";
