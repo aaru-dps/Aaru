@@ -30,10 +30,26 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.IO;
+
 namespace Aaru.Archives;
 
 public partial class Symbian
 {
+#region IArchive Members
+
+    /// <inheritdoc />
+    public bool Identify(string path) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public bool Identify(Stream stream) => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public bool Identify(byte[] buffer) => throw new NotImplementedException();
+
+#endregion
+
     /*
         public override bool Identify(FileStream fileStream, long offset)
         {

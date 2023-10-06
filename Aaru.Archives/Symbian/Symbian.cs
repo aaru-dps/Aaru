@@ -31,14 +31,20 @@
 // ****************************************************************************/
 
 using System;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Archives;
 
 // Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
-public partial class Symbian
+public partial class Symbian : IArchive
 {
     const  string MODULE_NAME = "Symbian Installation File Plugin";
-    public string Name   => Filters.Localization.Symbian_Name;
-    public Guid   Id     => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
     public string Author => Authors.NataliaPortillo;
+
+#region IArchive Members
+
+    public string Name => Filters.Localization.Symbian_Name;
+    public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
+
+#endregion
 }
