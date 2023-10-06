@@ -2,14 +2,10 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Symbian.cs
+// Filename       : Authors.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Symbian plugin.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies Symbian installer (.sis) packages and shows information.
+// Component      : Aaru.Filesystems.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,15 +26,12 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Archives;
 
-// Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
-public partial class Symbian
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+static class Authors
 {
-    const  string MODULE_NAME = "Symbian Installation File Plugin";
-    public string Name   => Filters.Localization.Symbian_Name;
-    public Guid   Id     => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
-    public string Author => Authors.NataliaPortillo;
+    internal const string NataliaPortillo = "Natalia Portillo";
 }

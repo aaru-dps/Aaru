@@ -30,15 +30,17 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Archives;
 
-// Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
+[SuppressMessage("ReSharper", "UnusedType.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public partial class Symbian
 {
-    const  string MODULE_NAME = "Symbian Installation File Plugin";
-    public string Name   => Filters.Localization.Symbian_Name;
-    public Guid   Id     => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
-    public string Author => Authors.NataliaPortillo;
+    // Magics
+    const uint SYMBIAN_MAGIC  = 0x10000419;
+    const uint EPOC_MAGIC     = 0x1000006D;
+    const uint EPOC6_MAGIC    = 0x10003A12;
+    const uint SYMBIAN9_MAGIC = 0x10201A7A;
 }

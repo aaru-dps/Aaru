@@ -46,6 +46,10 @@
     <EmbeddedResource Include="..\LICENSE.LGPL">
       <Link>LICENSE.LGPL</Link>
     </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
