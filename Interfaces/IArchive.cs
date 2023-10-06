@@ -82,31 +82,13 @@ public interface IArchive
     /// <summary>Plugin author</summary>
     string Author { get; }
 
-    /// <summary>Identifies if the specified path contains data recognizable by this archive instance</summary>
-    /// <param name="path">Path.</param>
-    bool Identify(string path) => File.Exists(path) && Identify(new FileStream(path, FileMode.Open, FileAccess.Read));
-
-    /// <summary>Identifies if the specified stream contains data recognizable by this archive instance</summary>
-    /// <param name="stream">Stream.</param>
-    bool Identify(Stream stream);
-
-    /// <summary>Identifies if the specified buffer contains data recognizable by this archive instance</summary>
-    /// <param name="buffer">Buffer.</param>
-    bool Identify(byte[] buffer) => Identify(new MemoryStream(buffer));
-
-    /// <summary>Opens the specified path with this archive instance</summary>
-    /// <param name="path">Path.</param>
-    ErrorNumber Open(string path) => !File.Exists(path)
-                                         ? ErrorNumber.NoSuchFile
-                                         : Open(new FileStream(path, FileMode.Open, FileAccess.Read));
+    /// <summary>Identifies if the specified filter contains data recognizable by this archive instance</summary>
+    /// <param name="filter">Filter that contains the archive. This allows use to handle .tar.gz and similars.</param>
+    bool Identify(IFilter filter);
 
     /// <summary>Opens the specified stream with this archive instance</summary>
-    /// <param name="stream">Stream.</param>
-    ErrorNumber Open(Stream stream);
-
-    /// <summary>Opens the specified buffer with this archive instance</summary>
-    /// <param name="buffer">Buffer.</param>
-    ErrorNumber Open(byte[] buffer) => Open(new MemoryStream(buffer));
+    /// <param name="filter">Filter that contains the archive. This allows use to handle .tar.gz and similars.</param>
+    ErrorNumber Open(IFilter filter);
 
     /// <summary>
     ///     Returns true if the archive has a file/stream/buffer currently opened and no
