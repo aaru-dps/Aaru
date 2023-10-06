@@ -67,7 +67,7 @@ public partial class Symbian
 
     public void GetInformation(IFilter filter, Encoding encoding, out string information)
     {
-        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        encoding    ??= Encoding.GetEncoding("windows-1252");
         information =   "";
         var    description   = new StringBuilder();
         var    languages     = new List<string>();
