@@ -26,4 +26,46 @@
     <data name="Symbian_Name" xml:space="preserve">
         <value>Symbian Installation File</value>
     </data>
+    <data name="Symbian_Installation_File" xml:space="preserve">
+        <value>Symbian Installation File</value>
+    </data>
+    <data name="Symbian_9_1_or_later" xml:space="preserve">
+        <value>SymbianOS 9.1 or later</value>
+    </data>
+    <data name="Application_ID_0" xml:space="preserve">
+        <value>Application ID: 0x{0:X8}</value>
+    </data>
+    <data name="UIDs_checksum_0" xml:space="preserve">
+        <value>UIDs checksum: 0x{0:X8}</value>
+    </data>
+    <data name="Symbian_3_or_later" xml:space="preserve">
+        <value>SymbianOS 3 or later</value>
+    </data>
+    <data name="Symbian_6_or_later" xml:space="preserve">
+        <value>SymbianOS 6 or later</value>
+    </data>
+    <data name="Unknown_EPOC_magic_0" xml:space="preserve">
+        <value>Unknown EPOC magic 0x{0:X8}</value>
+    </data>
+    <data name="CRC16_of_header_0" xml:space="preserve">
+        <value>CRC16 of header: 0x{0:X4}</value>
+    </data>
+    <data name="SIS_contains_an_application" xml:space="preserve">
+        <value>SIS contains an application</value>
+    </data>
+    <data name="Component_0_v1_2" xml:space="preserve">
+        <value>Component: {0} v{1}.{2}</value>
+    </data>
+    <data name="File_contains_0_languages" xml:space="preserve">
+        <value>Archive contains {0} languages:</value>
+    </data>
+    <data name="File_contains_0_files_pointer_1" xml:space="preserve">
+        <value>Archive contains {0} files (pointer: {1})</value>
+    </data>
+    <data name="File_contains_0_requisites" xml:space="preserve">
+        <value>Archive contains {0} requisites</value>
+    </data>
+    <data name="Capabilities" xml:space="preserve">
+        <value>Capabilities:</value>
+    </data>
 </root>

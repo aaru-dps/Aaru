@@ -44,7 +44,7 @@ public partial class Symbian : IArchive
 
     public string Author => Authors.NataliaPortillo;
 
-    public string Name => Filters.Localization.Symbian_Name;
+    public string Name => Localization.Symbian_Name;
     public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
 
 #endregion

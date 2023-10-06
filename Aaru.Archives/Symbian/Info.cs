@@ -30,7 +30,9 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
@@ -63,143 +65,116 @@ public partial class Symbian
         return header.uid2 is EPOC_MAGIC or EPOC6_MAGIC;
     }
 
-#endregion
-
-    /*
-        public override void GetInformation (FileStream fileStream, long offset, out string information)
-        {
-            information = "";
-            StringBuilder description = new StringBuilder();
-            List<string> languages = new List<string>();
-            Dictionary<uint, uint> capabilities = new Dictionary<uint, uint>();
-            int ENpos = 0;
-            uint comp_len;
-            uint comp_name_ptr;
-            byte[] ComponentName_b;
-            string ComponentName = "";
     public void GetInformation(IFilter filter, Encoding encoding, out string information)
+    {
+        encoding    ??= Encoding.GetEncoding("iso-8859-15");
+        information =   "";
+        var    description   = new StringBuilder();
+        var    languages     = new List<string>();
+        var    capabilities  = new Dictionary<uint, uint>();
+        var    en_Pos        = 0;
+        var    componentName = "";
+        Stream stream        = filter.GetDataForkStream();
 
-            SymbianHeader sh = new SymbianHeader();
-            BinaryReader br = new BinaryReader(fileStream);
+        if(stream.Length < Marshal.SizeOf<SymbianHeader>())
+            return;
 
-            br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
+        var buffer = new byte[Marshal.SizeOf<SymbianHeader>()];
 
-            sh.uid1 = br.Readuint();
-            sh.uid2 = br.Readuint();
-            sh.uid3 = br.Readuint();
-            sh.uid4 = br.Readuint();
-            sh.crc16 = br.Readushort();
-            sh.languages = br.Readushort();
-            sh.files = br.Readushort();
-            sh.requisites = br.Readushort();
-            sh.inst_lang = br.Readushort();
-            sh.inst_files = br.Readushort();
-            sh.inst_drive = br.Readushort();
-            sh.capabilities = br.Readushort();
-            sh.inst_version = br.Readuint();
-            sh.options = br.Readushort();
-            sh.type = br.Readushort();
-            sh.major = br.Readushort();
-            sh.minor = br.Readushort();
-            sh.variant = br.Readuint();
-            sh.lang_ptr = br.Readuint();
-            sh.files_ptr = br.Readuint();
-            sh.reqs_ptr = br.Readuint();
-            sh.certs_ptr = br.Readuint();
-            sh.comp_ptr = br.Readuint();
-            sh.sig_ptr = br.Readuint();
-            sh.caps_ptr = br.Readuint();
-            sh.instspace = br.Readuint();
-            sh.maxinsspc = br.Readuint();
-            sh.reserved1 = br.Readulong();
-            sh.reserved2 = br.Readulong();
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.EnsureRead(buffer, 0, buffer.Length);
+        SymbianHeader sh = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(buffer);
 
-            // Go to enumerate languages
-            br.BaseStream.Seek(sh.lang_ptr + offset, SeekOrigin.Begin);
-            for(int i = 0; i < sh.languages; i++)
-            {
-                ushort language = br.Readushort();
-                if(language == 0x0001)
-                    ENpos = i;
-                languages.Add(((LanguageCodes)language).ToString("G"));
-            }
+        var br = new BinaryReader(stream);
 
-            // Go to component record
-            br.BaseStream.Seek(sh.comp_ptr + offset, SeekOrigin.Begin);
-            for(int i = 0; i < sh.languages; i++)
-            {
-                comp_len = br.Readuint();
-                comp_name_ptr = br.Readuint();
-                if(i == ENpos)
-                {
-                    br.BaseStream.Seek(comp_name_ptr + offset, SeekOrigin.Begin);
-                    ComponentName_b = new byte[comp_len];
-                    ComponentName_b = br.ReadBytes((int)comp_len);
-                    ComponentName = Encoding.ASCII.GetString(ComponentName_b);
-                    break;
-                }
-            }
-
-            // Go to capabilities (???)
-            br.BaseStream.Seek(sh.caps_ptr + offset, SeekOrigin.Begin);
-            for(int i = 0; i < sh.capabilities; i++)
-            {
-                uint cap_key = br.Readuint();
-                uint cap_value = br.Readuint();
-                capabilities.Add(cap_key, cap_value);
-            }
-
-            if(sh.uid1 == Symbian9Magic)
-            {
-                description.AppendLine("Symbian Installation File");
-                description.AppendLine("SymbianOS 9.1 or later");
-                description.AppendFormat("Application ID: 0x{0:X8}", sh.uid3).AppendLine();
-                description.AppendFormat("UIDs checksum: 0x{0:X8}", sh.uid4).AppendLine();
-            }
-            else if(sh.uid3 == SymbianMagic)
-            {
-                description.AppendLine("Symbian Installation File");
-
-                if(sh.uid2 == EPOCMagic)
-                    description.AppendLine("SymbianOS 3 or later");
-                else if (sh.uid2 == EPOC6Magic)
-                    description.AppendLine("SymbianOS 6 or later");
-                else
-                    description.AppendFormat("Unknown EPOC magic 0x{0:X8}", sh.uid2).AppendLine();
-
-                description.AppendFormat("Application ID: 0x{0:X8}", sh.uid1).AppendLine();
-                description.AppendFormat("UIDs checksum: 0x{0:X8}", sh.uid4).AppendLine();
-                description.AppendFormat("CRC16 of header: 0x{0:X4}", sh.crc16).AppendLine();
-                description.AppendLine();
-
-                switch(sh.type)
-                {
-                    case SISApp:
-                        description.AppendLine("SIS contains an application");
-                        break;
-                }
-
-                description.AppendFormat("Component: {0} v{1}.{2}", ComponentName, sh.major, sh.minor).AppendLine();
-
-                description.AppendFormat("File contains {0} languages:", sh.languages).AppendLine();
-                for(int i = 0; i < languages.Count; i++)
-                {
-                    if(i>0)
-                        description.Append(", ");
-                    description.AppendFormat("{0}", languages[i]);
-                }
-                description.AppendLine();
-
-                description.AppendFormat("File contains {0} files (pointer: {1})", sh.files, sh.files_ptr).AppendLine();
-                description.AppendFormat("File contains {0} requisites", sh.requisites).AppendLine();
-//				description.AppendLine("Capabilities:");
-//				foreach(KeyValuePair<uint, uint> kvp in capabilities)
-//					description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
-            }
-
-            information = description.ToString();
+        // Go to enumerate languages
+        br.BaseStream.Seek(sh.lang_ptr, SeekOrigin.Begin);
+        for(var i = 0; i < sh.languages; i++)
+        {
+            ushort language = br.ReadUInt16();
+            if(language == 0x0001)
+                en_Pos = i;
+            languages.Add(((LanguageCodes)language).ToString("G"));
         }
 
+        // Go to component record
+        br.BaseStream.Seek(sh.comp_ptr, SeekOrigin.Begin);
+        for(var i = 0; i < sh.languages; i++)
+        {
+            uint comp_Len      = br.ReadUInt32();
+            uint comp_Name_Ptr = br.ReadUInt32();
 
-*/
+            if(i != en_Pos)
+                continue;
+
+            br.BaseStream.Seek(comp_Name_Ptr, SeekOrigin.Begin);
+            byte[] componentName_B = br.ReadBytes((int)comp_Len);
+            componentName = encoding.GetString(componentName_B);
+            break;
+        }
+
+        // Go to capabilities (???)
+        br.BaseStream.Seek(sh.caps_ptr, SeekOrigin.Begin);
+        for(var i = 0; i < sh.capabilities; i++)
+        {
+            uint cap_Key   = br.ReadUInt32();
+            uint cap_Value = br.ReadUInt32();
+            capabilities.Add(cap_Key, cap_Value);
+        }
+
+        if(sh.uid1 == SYMBIAN9_MAGIC)
+        {
+            description.AppendLine(Localization.Symbian_Installation_File);
+            description.AppendLine(Localization.Symbian_9_1_or_later);
+            description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
+            description.AppendFormat(Localization.UIDs_checksum_0,  sh.uid4).AppendLine();
+        }
+        else if(sh.uid3 == SYMBIAN_MAGIC)
+        {
+            description.AppendLine(Localization.Symbian_Installation_File);
+
+            if(sh.uid2 == EPOC_MAGIC)
+                description.AppendLine(Localization.Symbian_3_or_later);
+            else if(sh.uid2 == EPOC6_MAGIC)
+                description.AppendLine(Localization.Symbian_6_or_later);
+            else
+                description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
+
+            description.AppendFormat(Localization.Application_ID_0,  sh.uid1).AppendLine();
+            description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();
+            description.AppendFormat(Localization.CRC16_of_header_0, sh.crc16).AppendLine();
+            description.AppendLine();
+
+            switch(sh.type)
+            {
+                case SymbianType.Application:
+                    description.AppendLine(Localization.SIS_contains_an_application);
+                    break;
+            }
+
+            description.AppendFormat(Localization.Component_0_v1_2, componentName, sh.major, sh.minor).AppendLine();
+
+            description.AppendFormat(Localization.File_contains_0_languages, sh.languages).AppendLine();
+
+            for(var i = 0; i < languages.Count; i++)
+            {
+                if(i > 0)
+                    description.Append(", ");
+                description.Append($"{languages[i]}");
+            }
+
+            description.AppendLine();
+
+            description.AppendFormat(Localization.File_contains_0_files_pointer_1, sh.files, sh.files_ptr).AppendLine();
+            description.AppendFormat(Localization.File_contains_0_requisites,      sh.requisites).AppendLine();
+
+//          description.AppendLine(Localization.Capabilities);
+//          foreach(KeyValuePair<uint, uint> kvp in capabilities)
+//          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
+        }
+
+        information = description.ToString();
+    }
+
+#endregion
 }
