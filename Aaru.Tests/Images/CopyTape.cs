@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images;
 public class CopyTape : TapeMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "copytape");
-    public override IMediaImage Plugin     => new DiscImages.CopyTape();
+    public override IMediaImage Plugin     => new Aaru.Images.CopyTape();
 
     public override TapeImageTestExpected[] Tests => new[]
     {

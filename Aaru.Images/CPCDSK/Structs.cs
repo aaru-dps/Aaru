@@ -33,7 +33,7 @@
 using System.Runtime.InteropServices;
 using Aaru.Decoders.Floppy;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Cpcdsk
 {

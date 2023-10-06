@@ -42,7 +42,7 @@ using Aaru.Decoders.CD;
 #pragma warning disable 414
 #pragma warning disable 169
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading Nero Burning ROM disc images</summary>

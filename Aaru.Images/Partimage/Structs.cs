@@ -34,7 +34,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]

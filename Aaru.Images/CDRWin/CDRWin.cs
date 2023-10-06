@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // TODO: Implement track flags
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableOpticalImage" />

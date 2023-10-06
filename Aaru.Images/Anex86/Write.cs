@@ -40,7 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Anex86
 {

@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /* This is a very simple format created by a German application called CisCopy, aka CCOPY.EXE, with extension .DCF.
  * First byte indicates the floppy type, limited to standard formats.

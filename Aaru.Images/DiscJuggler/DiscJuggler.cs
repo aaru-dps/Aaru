@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // Support separate data files? Never seen a DiscJuggler image using them anyways...
 // TODO: Too many unknowns to make this writable

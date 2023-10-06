@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing T98 disk images</summary>

@@ -44,7 +44,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Cdrdao
 {

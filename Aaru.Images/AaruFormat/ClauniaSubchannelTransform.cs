@@ -34,7 +34,7 @@ using System;
 using System.Diagnostics;
 using Aaru.Console;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class AaruFormat
 {

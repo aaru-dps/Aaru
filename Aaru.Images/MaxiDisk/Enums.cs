@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class MaxiDisk

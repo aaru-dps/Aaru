@@ -30,8 +30,8 @@ using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.DiscImages;
 using Aaru.Filters;
+using Aaru.Images;
 using FluentAssertions.Execution;
 using NUnit.Framework;
 

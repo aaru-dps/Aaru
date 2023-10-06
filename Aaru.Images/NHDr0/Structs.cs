@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Nhdr0
 {

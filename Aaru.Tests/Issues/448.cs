@@ -3,7 +3,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Tests.Images;
-using BlindWrite5 = Aaru.DiscImages.BlindWrite5;
+using BlindWrite5 = Aaru.Images.BlindWrite5;
 
 namespace Aaru.Tests.Issues;
 

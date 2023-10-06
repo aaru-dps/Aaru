@@ -32,7 +32,7 @@
 
 using Aaru.CommonTypes;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Apple2Mg
 {

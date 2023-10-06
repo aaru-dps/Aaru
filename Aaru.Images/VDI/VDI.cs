@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // TODO: Support version 0
 // TODO: Support fixed images

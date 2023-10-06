@@ -34,7 +34,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage

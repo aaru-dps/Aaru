@@ -33,7 +33,7 @@
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Cdrdao
 {

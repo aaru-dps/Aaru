@@ -37,7 +37,7 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage

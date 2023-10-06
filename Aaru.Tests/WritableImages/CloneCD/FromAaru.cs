@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 
 namespace Aaru.Tests.WritableImages.CloneCD;
 
@@ -10,7 +10,7 @@ namespace Aaru.Tests.WritableImages.CloneCD;
 public class FromAaru : WritableOpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage InputPlugin => new DiscImages.AaruFormat();
+    public override IMediaImage InputPlugin => new Aaru.Images.AaruFormat();
     public override IWritableImage OutputPlugin => new CloneCd();
     public override string OutputExtension => "ccd";
 

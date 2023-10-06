@@ -33,7 +33,7 @@
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class VMware
 {

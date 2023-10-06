@@ -33,7 +33,7 @@
 using Aaru.CommonTypes;
 using Aaru.Decoders.SCSI.MMC;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class BlindWrite5
 {

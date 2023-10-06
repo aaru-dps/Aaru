@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // TODO: Doesn't support compositing from several files
 // TODO: Doesn't support silences that are not in files

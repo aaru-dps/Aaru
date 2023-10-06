@@ -82,9 +82,9 @@ Aaru is intentionally very modular. Here's a list of them:
   has high-level calls in its own folder. Device commands are separated by protocol standard, or vendor name.
 * [Aaru.Device.Report](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Device.Report) - This is a separate application
   in C89 designed to create device reports on environments where you can't run .NET or Mono but can run Linux.
-* [Aaru.DiscImages](https://github.com/aaru-dps/Aaru/tree/master/Aaru.DiscImages) - This module provides reading
+* [Aaru.Images](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Images) - This module provides reading
   capabilities for the disk/disc images, one per file.
-* [Aaru.DiscImages](https://github.com/aaru-dps/Aaru.Dto) - This module provides common structures between Aaru and
+* [Aaru.Dto](https://github.com/aaru-dps/Aaru.Dto) - This module provides common structures between Aaru and
   Aaru.Server.
 * [Aaru.Filesystems](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Filesystems) - This module provides the
   filesystem support. If only identification is implemented a single file should be used. For full read-only support, a

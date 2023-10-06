@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.MagicISO;
 public class Nero : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MagicISO", "Nero");
-    public override IMediaImage Plugin => new DiscImages.Nero();
+    public override IMediaImage Plugin => new Aaru.Images.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

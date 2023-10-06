@@ -48,7 +48,7 @@ using Version = Resources.Version;
 
 #pragma warning disable 612
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Udif
 {

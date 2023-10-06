@@ -38,7 +38,7 @@
 
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // Needs to have the interface here so the source generator knows THIS IS the class
 // ReSharper disable once RedundantExtendsListEntry

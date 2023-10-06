@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing raw (sector by sector) images</summary>

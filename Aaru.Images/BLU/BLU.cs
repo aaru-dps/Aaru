@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableImage" />
 /// <summary>Implements reading Basic Lisa Utility disk images</summary>

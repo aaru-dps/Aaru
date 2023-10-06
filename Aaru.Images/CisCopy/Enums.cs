@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class CisCopy
 {

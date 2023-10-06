@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class Apridisk : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apridisk");
-    public override IMediaImage Plugin     => new DiscImages.Apridisk();
+    public override IMediaImage Plugin     => new Aaru.Images.Apridisk();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

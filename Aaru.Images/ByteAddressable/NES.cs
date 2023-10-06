@@ -15,7 +15,7 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public class Nes : IByteAddressableImage

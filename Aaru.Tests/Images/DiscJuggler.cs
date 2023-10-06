@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class DiscJuggler : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiscJuggler");
-    public override IMediaImage Plugin     => new DiscImages.DiscJuggler();
+    public override IMediaImage Plugin     => new Aaru.Images.DiscJuggler();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

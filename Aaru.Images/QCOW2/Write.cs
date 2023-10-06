@@ -42,7 +42,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Qcow2
 {

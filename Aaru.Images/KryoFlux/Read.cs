@@ -41,7 +41,7 @@ using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class KryoFlux
 {

@@ -40,7 +40,7 @@ using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Apple2Mg
 {
@@ -146,9 +146,7 @@ public sealed partial class Apple2Mg
                 for(var t = 0; t < 35; t++)
                 {
                     for(var s = 0; s < 16; s++)
-                    {
                         Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
-                    }
                 }
 
                 _imageInfo.Sectors    = 560;
@@ -165,9 +163,7 @@ public sealed partial class Apple2Mg
                 for(var t = 0; t < 200; t++)
                 {
                     for(var s = 0; s < 16; s++)
-                    {
                         Array.Copy(tmp, t * 16 * 256 + s * 256, _decodedImage, t * 16 * 256 + offsets[s] * 256, 256);
-                    }
                 }
 
                 _imageInfo.Sectors    = 1600;

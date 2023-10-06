@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class AppleDos
 {
@@ -77,9 +77,7 @@ public sealed partial class AppleDos
             for(var t = 0; t < 35; t++)
             {
                 for(var s = 0; s < 16; s++)
-                {
                     Array.Copy(tmp, t * 16 * 256 + s * 256, _deinterleaved, t * 16 * 256 + offsets[s] * 256, 256);
-                }
             }
         }
 

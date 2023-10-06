@@ -42,7 +42,7 @@ using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class RsIde
 {

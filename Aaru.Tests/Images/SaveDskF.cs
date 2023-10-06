@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class SaveDskF : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "SaveDskF");
-    public override IMediaImage Plugin     => new DiscImages.SaveDskF();
+    public override IMediaImage Plugin     => new Aaru.Images.SaveDskF();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

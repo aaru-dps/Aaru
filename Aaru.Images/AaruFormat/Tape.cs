@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class AaruFormat
 {

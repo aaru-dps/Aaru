@@ -43,7 +43,7 @@ using Aaru.Helpers;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = System.Version;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Vhd
 {

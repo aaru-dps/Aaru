@@ -41,7 +41,7 @@ using Aaru.CommonTypes.Structs;
 using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
 using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class CopyTape
 {

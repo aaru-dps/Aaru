@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class Virtual98 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Virtual98");
-    public override IMediaImage Plugin     => new DiscImages.Virtual98();
+    public override IMediaImage Plugin     => new Aaru.Images.Virtual98();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

@@ -36,7 +36,7 @@ using System.Linq;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class DiskDupe
 {

@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 
 #pragma warning disable 612
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing Apple's Universal Disk Image Format disk images</summary>

@@ -44,7 +44,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements support for Nintendo 64 cartridge dumps</summary>

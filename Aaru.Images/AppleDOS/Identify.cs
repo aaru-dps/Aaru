@@ -33,7 +33,7 @@
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class AppleDos
 {

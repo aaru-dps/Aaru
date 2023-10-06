@@ -44,7 +44,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements support for Sega Mega Drive, 32X, Genesis and Pico cartridge dumps</summary>

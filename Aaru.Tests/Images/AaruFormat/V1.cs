@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.AaruFormat;
 public class V1 : OpticalMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage Plugin => new DiscImages.AaruFormat();
+    public override IMediaImage Plugin => new Aaru.Images.AaruFormat();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

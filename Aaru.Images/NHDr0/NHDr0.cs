@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // Info from http://www.geocities.jp/t98next/nhdr0.txt
 /// <inheritdoc />

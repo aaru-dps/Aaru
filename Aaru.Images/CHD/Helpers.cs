@@ -41,7 +41,7 @@ using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Chd
 {

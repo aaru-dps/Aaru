@@ -36,7 +36,7 @@ using System.IO;
 using System.Text;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class SuperCardPro
 {

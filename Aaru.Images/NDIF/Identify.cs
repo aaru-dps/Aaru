@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Claunia.RsrcFork;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Ndif
 {

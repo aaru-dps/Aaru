@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.Encoding;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class DiskCopy42
 {

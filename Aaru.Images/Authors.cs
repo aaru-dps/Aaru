@@ -28,7 +28,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 static class Authors

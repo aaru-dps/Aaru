@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Aaru.DiscImages</RootNamespace>
+    <RootNamespace>Aaru.Images</RootNamespace>
     <AssemblyName>Aaru.Images</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -12,7 +12,7 @@
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
-    <Title>Aaru.DiscImages</Title>
+    <Title>Aaru.Images</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <TargetFramework>net8.0</TargetFramework>
     <NoWarn>CS0649</NoWarn>

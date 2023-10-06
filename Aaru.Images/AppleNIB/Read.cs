@@ -40,7 +40,7 @@ using Aaru.Console;
 using Aaru.Decoders.Floppy;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class AppleNib
 {

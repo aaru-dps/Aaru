@@ -44,7 +44,7 @@ using Aaru.Decoders;
 using Aaru.Helpers;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Blu

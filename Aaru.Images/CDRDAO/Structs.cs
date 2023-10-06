@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Cdrdao
 {

@@ -38,7 +38,7 @@ public class Uncompressed : BlockMediaImageTest
 {
     // TODO: Support compression
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CisCopy");
-    public override IMediaImage Plugin     => new DiscImages.CisCopy();
+    public override IMediaImage Plugin     => new Aaru.Images.CisCopy();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

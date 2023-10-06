@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class Dart : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DART");
-    public override IMediaImage Plugin     => new DiscImages.Dart();
+    public override IMediaImage Plugin     => new Aaru.Images.Dart();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

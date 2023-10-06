@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class DiskCopy42 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2");
-    public override IMediaImage Plugin     => new DiscImages.DiskCopy42();
+    public override IMediaImage Plugin     => new Aaru.Images.DiskCopy42();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

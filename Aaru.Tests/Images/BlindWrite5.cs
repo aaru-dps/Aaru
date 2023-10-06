@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class BlindWrite5 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "BlindWrite 5");
-    public override IMediaImage Plugin     => new DiscImages.BlindWrite5();
+    public override IMediaImage Plugin     => new Aaru.Images.BlindWrite5();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

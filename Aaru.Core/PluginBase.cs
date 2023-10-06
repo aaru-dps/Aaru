@@ -48,7 +48,7 @@ public static class PluginBase
         {
             new Register(),
             new Filters.Register(),
-            new DiscImages.Register(),
+            new Images.Register(),
             new Aaru.Filesystems.Register(),
             new Aaru.Partitions.Register(),
             new Archives.Register()

@@ -32,7 +32,7 @@
 
 using System;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class RsIde
 {

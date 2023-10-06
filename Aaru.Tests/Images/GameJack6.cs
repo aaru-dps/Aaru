@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class GameJack6 : OpticalMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "GameJack 6");
-    public override IMediaImage Plugin     => new DiscImages.Alcohol120();
+    public override IMediaImage Plugin     => new Aaru.Images.Alcohol120();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

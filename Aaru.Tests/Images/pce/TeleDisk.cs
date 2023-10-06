@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images.pce;
 public class TeleDisk : BlockMediaImageTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "TeleDisk");
-    public override IMediaImage Plugin => new DiscImages.TeleDisk();
+    public override IMediaImage Plugin => new Aaru.Images.TeleDisk();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

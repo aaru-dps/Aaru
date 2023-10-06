@@ -40,7 +40,7 @@ using Aaru.CommonTypes.Structs;
 
 #pragma warning disable 649
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading partimage disk images</summary>

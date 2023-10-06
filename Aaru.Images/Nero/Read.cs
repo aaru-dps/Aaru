@@ -43,7 +43,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Nero
 {

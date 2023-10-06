@@ -48,7 +48,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class CdrWin
 {

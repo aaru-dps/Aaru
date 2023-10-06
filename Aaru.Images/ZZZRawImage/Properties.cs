@@ -41,7 +41,7 @@ using Partition = Aaru.CommonTypes.Partition;
 using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class ZZZRawImage
 {

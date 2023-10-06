@@ -30,7 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class DiskCopy42
 {

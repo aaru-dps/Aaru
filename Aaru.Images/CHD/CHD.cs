@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // TODO: Implement PCMCIA support
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IOpticalMediaImage" />

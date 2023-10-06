@@ -52,7 +52,7 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 using Sector = Aaru.Decoders.CD.Sector;
 using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class BlindWrite5
 {

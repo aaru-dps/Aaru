@@ -43,7 +43,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.PropertyList;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Udif
 {

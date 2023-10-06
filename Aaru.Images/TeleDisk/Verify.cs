@@ -32,7 +32,7 @@
 
 using System.Collections.Generic;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class TeleDisk
 {

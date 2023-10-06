@@ -43,7 +43,7 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {

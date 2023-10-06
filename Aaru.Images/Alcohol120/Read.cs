@@ -44,7 +44,7 @@ using Aaru.Helpers;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Sector = Aaru.Decoders.CD.Sector;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {

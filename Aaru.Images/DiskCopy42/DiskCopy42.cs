@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 // Checked using several images and strings inside Apple's DiskImages.framework
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableImage" />

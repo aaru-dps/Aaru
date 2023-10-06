@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Partition = Aaru.CommonTypes.Partition;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {

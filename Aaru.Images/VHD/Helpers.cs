@@ -33,7 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Vhd
 {

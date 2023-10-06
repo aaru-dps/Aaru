@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class CopyQm : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CopyQM");
-    public override IMediaImage Plugin     => new DiscImages.CopyQm();
+    public override IMediaImage Plugin     => new Aaru.Images.CopyQm();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

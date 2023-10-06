@@ -39,7 +39,7 @@ public class V2 : OpticalMediaImageTest
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Media image formats", "Nero Burning ROM", "V2");
 
-    public override IMediaImage Plugin => new DiscImages.Nero();
+    public override IMediaImage Plugin => new Aaru.Images.Nero();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {

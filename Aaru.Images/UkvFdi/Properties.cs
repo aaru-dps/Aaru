@@ -36,7 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class UkvFdi

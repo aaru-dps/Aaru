@@ -37,7 +37,7 @@ namespace Aaru.Tests.Images;
 public class Anex86 : BlockMediaImageTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Anex86");
-    public override IMediaImage Plugin     => new DiscImages.Anex86();
+    public override IMediaImage Plugin     => new Aaru.Images.Anex86();
 
     public override BlockImageTestExpected[] Tests => new[]
     {

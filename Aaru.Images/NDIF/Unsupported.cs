@@ -32,7 +32,7 @@
 
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class Ndif
 {

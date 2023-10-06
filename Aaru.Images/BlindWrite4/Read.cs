@@ -45,7 +45,7 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class BlindWrite4
 {

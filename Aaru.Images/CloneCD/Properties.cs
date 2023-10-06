@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 using Partition = Aaru.CommonTypes.Partition;
 using Track = Aaru.CommonTypes.Structs.Track;
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class CloneCd
 {
