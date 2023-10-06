@@ -36,6 +36,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Aaru.CommonTypes.Enums;
 
 namespace Aaru.CommonTypes.Interfaces;
@@ -187,4 +188,6 @@ public interface IArchive
     /// <param name="entryNumber">The entry for which the Filter should be returned.</param>
     /// <returns>The Filter for the given entry.</returns>
     IFilter GetEntry(int entryNumber);
+
+    void GetInformation(IFilter filter, Encoding encoding, out string information);
 }
