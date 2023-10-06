@@ -348,6 +348,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [bold]Archive information:[/].
+        /// </summary>
+        public static string Archive_Information_With_Markup {
+            get {
+                return ResourceManager.GetString("Archive_Information_With_Markup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ASCII implemented operating definitions: {0}.
         /// </summary>
         public static string ASCII_implemented_operating_definitions_0 {

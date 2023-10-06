@@ -3475,4 +3475,7 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
     <data name="_GENERATED" xml:space="preserve">
     <value> (GENERADO)</value>
   </data>
+    <data name="Archive_Information_With_Markup" xml:space="preserve">
+        <value>[bold]Información del archivo[/]</value>
+    </data>
 </root>

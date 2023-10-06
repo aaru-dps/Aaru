@@ -3493,4 +3493,7 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Image_flux_captures" xml:space="preserve">
     <value>This image contains low-level flux captures.</value>
   </data>
+    <data name="Archive_Information_With_Markup" xml:space="preserve">
+        <value>[bold]Archive information:[/]</value>
+    </data>
 </root>
