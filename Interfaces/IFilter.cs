@@ -128,7 +128,7 @@ public interface IFilter
 
     /// <summary>Identifies if the specified path contains data recognizable by this filter instance</summary>
     /// <param name="path">Path.</param>
-    bool Identify(string path);
+    bool Identify(string path) => File.Exists(path) && Identify(new FileStream(path, FileMode.Open, FileAccess.Read));
 
     /// <summary>Identifies if the specified stream contains data recognizable by this filter instance</summary>
     /// <param name="stream">Stream.</param>
@@ -136,11 +136,13 @@ public interface IFilter
 
     /// <summary>Identifies if the specified buffer contains data recognizable by this filter instance</summary>
     /// <param name="buffer">Buffer.</param>
-    bool Identify(byte[] buffer);
+    bool Identify(byte[] buffer) => Identify(new MemoryStream(buffer));
 
     /// <summary>Opens the specified path with this filter instance</summary>
     /// <param name="path">Path.</param>
-    ErrorNumber Open(string path);
+    ErrorNumber Open(string path) => !File.Exists(path)
+                                         ? ErrorNumber.NoSuchFile
+                                         : Open(new FileStream(path, FileMode.Open, FileAccess.Read));
 
     /// <summary>Opens the specified stream with this filter instance</summary>
     /// <param name="stream">Stream.</param>
@@ -148,5 +150,5 @@ public interface IFilter
 
     /// <summary>Opens the specified buffer with this filter instance</summary>
     /// <param name="buffer">Buffer.</param>
-    ErrorNumber Open(byte[] buffer);
+    ErrorNumber Open(byte[] buffer) => Open(new MemoryStream(buffer));
 }
