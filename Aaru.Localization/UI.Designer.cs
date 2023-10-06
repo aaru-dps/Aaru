@@ -168,6 +168,24 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive format identified by {0} ({1})..
+        /// </summary>
+        public static string Archive_format_identified_by_0_1 {
+            get {
+                return ResourceManager.GetString("Archive_format_identified_by_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive format not identified..
+        /// </summary>
+        public static string Archive_format_not_identified {
+            get {
+                return ResourceManager.GetString("Archive_format_not_identified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifies an archive file and shows information about it..
         /// </summary>
         public static string Archive_Info_Command_Description {
@@ -3818,6 +3836,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Identifying archive format....
+        /// </summary>
+        public static string Identifying_archive_format {
+            get {
+                return ResourceManager.GetString("Identifying_archive_format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identifying file filter....
         /// </summary>
         public static string Identifying_file_filter {
@@ -5156,6 +5183,15 @@ namespace Aaru.Localization {
         public static string Number_in_sequence_for_media_by_image {
             get {
                 return ResourceManager.GetString("Number_in_sequence_for_media_by_image", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Obtaining archive information....
+        /// </summary>
+        public static string Obtaining_archive_information {
+            get {
+                return ResourceManager.GetString("Obtaining_archive_information", resourceCulture);
             }
         }
         
@@ -8344,6 +8380,15 @@ namespace Aaru.Localization {
         public static string TypeToString_uuid {
             get {
                 return ResourceManager.GetString("TypeToString_uuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to get information about archive....
+        /// </summary>
+        public static string Unable_to_get_information_about_archive {
+            get {
+                return ResourceManager.GetString("Unable_to_get_information_about_archive", resourceCulture);
             }
         }
         

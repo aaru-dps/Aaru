@@ -34,7 +34,10 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
+using System.Text;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Localization;
@@ -55,10 +58,16 @@ sealed class ArchiveInfoCommand : Command
             Name        = "archive-path"
         });
 
+        Add(new Option<string>(new[]
+        {
+            "--encoding", "-e"
+        }, () => null, UI.Name_of_character_encoding_to_use));
+
+
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
-    public static int Invoke(bool debug, bool verbose, string imagePath)
+    public static int Invoke(bool debug, bool verbose, string archivePath, string encoding)
     {
         MainClass.PrintCopyright();
 
@@ -91,11 +100,93 @@ sealed class ArchiveInfoCommand : Command
 
         Statistics.AddCommand("archive-info");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",   imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    archivePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
 
-        /* TODO: This is just a stub for now */
+        IFilter inputFilter = null;
+
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = PluginRegister.Singleton.GetFilter(archivePath);
+        });
+
+        if(inputFilter == null)
+        {
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
+
+            return (int)ErrorNumber.CannotOpenFile;
+        }
+
+        Encoding encodingClass = null;
+
+        if(encoding != null)
+        {
+            try
+            {
+                encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
+
+                if(verbose)
+                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+            }
+            catch(ArgumentException)
+            {
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
+
+                return (int)ErrorNumber.EncodingUnknown;
+            }
+        }
+
+        try
+        {
+            IArchive archiveFormat = null;
+
+            Core.Spectre.ProgressSingleSpinner(ctx =>
+            {
+                ctx.AddTask(UI.Identifying_archive_format).IsIndeterminate();
+                archiveFormat = ArchiveFormat.Detect(inputFilter);
+            });
+
+            if(archiveFormat == null)
+            {
+                AaruConsole.WriteLine(UI.Archive_format_not_identified);
+
+                return (int)ErrorNumber.UnrecognizedFormat;
+            }
+
+            AaruConsole.WriteLine(UI.Archive_format_identified_by_0_1, archiveFormat.Name, archiveFormat.Id);
+            AaruConsole.WriteLine();
+
+            try
+            {
+                Core.Spectre.ProgressSingleSpinner(ctx =>
+                {
+                    ctx.AddTask(UI.Obtaining_archive_information).IsIndeterminate();
+                    ArchiveInfo.PrintArchiveInfo(archiveFormat, inputFilter, encodingClass);
+                });
+
+                // TODO: Implement
+                //Statistics.AddArchiveFormat(archiveFormat.Format);
+                Statistics.AddFilter(inputFilter.Name);
+            }
+            catch(Exception ex)
+            {
+                AaruConsole.ErrorWriteLine(UI.Unable_to_get_information_about_archive);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
+
+                return (int)ErrorNumber.CannotOpenFormat;
+            }
+        }
+        catch(Exception ex)
+        {
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
+            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
+
+            return (int)ErrorNumber.UnexpectedException;
+        }
 
         return (int)ErrorNumber.NoError;
     }

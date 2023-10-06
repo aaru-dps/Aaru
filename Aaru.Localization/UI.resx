@@ -3014,4 +3014,19 @@ Do you want to continue?</value>
     <data name="Registering_plugins" xml:space="preserve">
         <value>Registering plugins...</value>
     </data>
+    <data name="Identifying_archive_format" xml:space="preserve">
+        <value>Identifying archive format...</value>
+    </data>
+    <data name="Archive_format_not_identified" xml:space="preserve">
+        <value>Archive format not identified.</value>
+    </data>
+    <data name="Archive_format_identified_by_0_1" xml:space="preserve">
+        <value>Archive format identified by {0} ({1}).</value>
+    </data>
+    <data name="Obtaining_archive_information" xml:space="preserve">
+        <value>Obtaining archive information...</value>
+    </data>
+    <data name="Unable_to_get_information_about_archive" xml:space="preserve">
+        <value>Unable to get information about archive...</value>
+    </data>
 </root>
