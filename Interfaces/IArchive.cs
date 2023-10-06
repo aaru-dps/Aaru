@@ -79,6 +79,9 @@ public interface IArchive
     /// <summary>Unique UUID of the plugin</summary>
     Guid Id { get; }
 
+    /// <summary>Plugin author</summary>
+    string Author { get; }
+
     /// <summary>Identifies if the specified path contains data recognizable by this archive instance</summary>
     /// <param name="path">Path.</param>
     bool Identify(string path);
