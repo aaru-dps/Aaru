@@ -39,5 +39,17 @@ public sealed partial class Symbian
     /// <inheritdoc />
     public int GetNumberOfEntries() => _opened ? -1 : _files.Count;
 
+    /// <inheritdoc />
+    public string GetFilename(int entryNumber)
+    {
+        if(_opened)
+            return null;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return null;
+
+        return _files[entryNumber].destinationName;
+    }
+
 #endregion
 }
