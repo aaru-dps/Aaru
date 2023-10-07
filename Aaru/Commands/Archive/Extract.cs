@@ -258,6 +258,9 @@ sealed class ArchiveExtractCommand : Command
                                         Replace('/',  '\\');
                 }
 
+                // Prevent absolute path attack
+                fileName = fileName.TrimStart('\\').TrimStart('/');
+
                 string outputPath     = Path.Combine(outputDir, fileName);
                 string destinationDir = Path.GetDirectoryName(outputPath);
                 if(destinationDir is not null)
