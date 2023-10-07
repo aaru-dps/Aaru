@@ -43,5 +43,6 @@ sealed class ArchiveFamily : Command
         AddAlias("arc");
 
         AddCommand(new ArchiveInfoCommand());
+        AddCommand(new ArchiveListCommand());
     }
 }
