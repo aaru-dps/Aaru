@@ -144,63 +144,69 @@ public partial class Symbian
             description.AppendLine(Localization.Symbian_Installation_File);
             description.AppendLine(Localization.Symbian_9_1_or_later);
             description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
-            description.AppendFormat(Localization.UIDs_checksum_0,  sh.uid4).AppendLine();
         }
         else if(sh.uid3 == SYMBIAN_MAGIC)
         {
             description.AppendLine(Localization.Symbian_Installation_File);
 
-            if(sh.uid2 == EPOC_MAGIC)
-                description.AppendLine(Localization.Symbian_3_or_later);
-            else if(sh.uid2 == EPOC6_MAGIC)
-                description.AppendLine(Localization.Symbian_6_or_later);
-            else
-                description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
-
-            description.AppendFormat(Localization.Application_ID_0,  sh.uid1).AppendLine();
-            description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();
-            description.AppendFormat(Localization.CRC16_of_header_0, sh.crc16).AppendLine();
-            description.AppendLine();
-
-            switch(sh.type)
+            switch(sh.uid2)
             {
-                case SymbianType.Application:
-                    description.AppendLine(Localization.SIS_contains_an_application);
+                case EPOC_MAGIC:
+                    description.AppendLine(Localization.Symbian_3_or_later);
+                    break;
+                case EPOC6_MAGIC:
+                    description.AppendLine(Localization.Symbian_6_or_later);
+                    break;
+                default:
+                    description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
                     break;
             }
 
-            description.AppendFormat(Localization.Component_version_0_1, sh.major, sh.minor).AppendLine();
+            description.AppendFormat(Localization.Application_ID_0, sh.uid1).AppendLine();
+        }
 
-            description.AppendLine();
+        description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();
+        description.AppendFormat(Localization.CRC16_of_header_0, sh.crc16).AppendLine();
+        description.AppendLine();
 
-            description.AppendFormat(Localization.File_contains_0_languages, sh.languages).AppendLine();
+        switch(sh.type)
+        {
+            case SymbianType.Application:
+                description.AppendLine(Localization.SIS_contains_an_application);
+                break;
+        }
 
-            for(var i = 0; i < languages.Count; i++)
-            {
-                if(i > 0)
-                    description.Append(", ");
-                description.Append($"{languages[i]}");
-            }
+        description.AppendFormat(Localization.Component_version_0_1, sh.major, sh.minor).AppendLine();
 
-            description.AppendLine();
-            description.AppendLine();
+        description.AppendLine();
 
-            for(var i = 0; i < languages.Count; i++)
-            {
-                description.AppendFormat(Localization.Component_name_for_language_with_code_0_1, languages[i],
-                                         componentRecord.names[i]).
-                            AppendLine();
-            }
+        description.AppendFormat(Localization.File_contains_0_languages, sh.languages).AppendLine();
 
-            description.AppendLine();
+        for(var i = 0; i < languages.Count; i++)
+        {
+            if(i > 0)
+                description.Append(", ");
+            description.Append($"{languages[i]}");
+        }
 
-            description.AppendFormat(Localization.File_contains_0_files_pointer_1, sh.files, sh.files_ptr).AppendLine();
-            description.AppendFormat(Localization.File_contains_0_requisites,      sh.requisites).AppendLine();
+        description.AppendLine();
+        description.AppendLine();
+
+        for(var i = 0; i < languages.Count; i++)
+        {
+            description.AppendFormat(Localization.Component_name_for_language_with_code_0_1, languages[i],
+                                     componentRecord.names[i]).
+                        AppendLine();
+        }
+
+        description.AppendLine();
+
+        description.AppendFormat(Localization.File_contains_0_files_pointer_1, sh.files, sh.files_ptr).AppendLine();
+        description.AppendFormat(Localization.File_contains_0_requisites,      sh.requisites).AppendLine();
 
 //          description.AppendLine(Localization.Capabilities);
 //          foreach(KeyValuePair<uint, uint> kvp in capabilities)
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
-        }
 
         information = description.ToString();
     }
