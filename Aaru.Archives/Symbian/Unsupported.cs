@@ -46,9 +46,6 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public int GetEntryNumber(string fileName, bool caseInsensitiveMatch) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public long GetCompressedSize(int entryNumber) => throw new NotImplementedException();
 
     /// <inheritdoc />

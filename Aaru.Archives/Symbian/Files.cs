@@ -30,6 +30,8 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 namespace Aaru.Archives;
 
 public sealed partial class Symbian
@@ -37,18 +39,32 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public int GetNumberOfEntries() => _opened ? -1 : _files.Count;
+    public int GetNumberOfEntries() => _opened ? _files.Count : -1;
 
     /// <inheritdoc />
     public string GetFilename(int entryNumber)
     {
-        if(_opened)
+        if(!_opened)
             return null;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
             return null;
 
         return _files[entryNumber].destinationName;
+    }
+
+    /// <inheritdoc />
+    public int GetEntryNumber(string fileName, bool caseInsensitiveMatch)
+    {
+        if(!_opened)
+            return -1;
+
+        if(string.IsNullOrEmpty(fileName))
+            return -1;
+
+        return _files.FindIndex(x => caseInsensitiveMatch
+                                         ? x.destinationName.Equals(fileName, StringComparison.CurrentCultureIgnoreCase)
+                                         : x.destinationName.Equals(fileName, StringComparison.CurrentCulture));
     }
 
 #endregion
