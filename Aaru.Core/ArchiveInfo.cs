@@ -33,6 +33,7 @@
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Spectre.Console;
 
 namespace Aaru.Core;
 
@@ -49,7 +50,7 @@ public static class ArchiveInfo
 
         imageFormat.GetInformation(filter, encoding, out string information);
 
-        AaruConsole.WriteLine(information);
+        AaruConsole.WriteLine(Markup.Escape(information));
 
         AaruConsole.WriteLine();
     }
