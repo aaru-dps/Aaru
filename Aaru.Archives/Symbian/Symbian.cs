@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
@@ -45,6 +46,7 @@ public sealed partial class Symbian : IArchive
     List<DecodedFileRecord> _files;
     bool                    _opened;
     bool                    _release6;
+    Stream                  _stream;
 
 #region IArchive Members
 
