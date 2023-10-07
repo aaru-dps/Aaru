@@ -174,8 +174,16 @@ public sealed partial class Symbian
             description.AppendLine(Localization.Symbian_9_1_or_later);
             description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
             _release6 = true;
+
+            description.AppendLine();
+            description.AppendLine("This file format is not yet implemented, no more information can be decoded.");
+
+            information = description.ToString();
+
+            return;
         }
-        else if(sh.uid3 == SYMBIAN_MAGIC)
+
+        if(sh.uid3 == SYMBIAN_MAGIC)
         {
             description.AppendLine(Localization.Symbian_Installation_File);
 
