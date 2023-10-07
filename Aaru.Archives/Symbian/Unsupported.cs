@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 
@@ -46,7 +47,7 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public ErrorNumber Open(IFilter filter) => throw new NotImplementedException();
+    public ErrorNumber Open(IFilter filter, Encoding encoding) => throw new NotImplementedException();
 
     /// <inheritdoc />
     public void Close()
