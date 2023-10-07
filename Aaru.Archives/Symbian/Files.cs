@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 
 namespace Aaru.Archives;
 
@@ -89,6 +90,18 @@ public sealed partial class Symbian
             return -1;
 
         return _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length;
+    }
+
+    /// <inheritdoc />
+    public FileAttributes GetAttributes(int entryNumber)
+    {
+        if(!_opened)
+            return (FileAttributes)(-1);
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return (FileAttributes)(-1);
+
+        return FileAttributes.Normal;
     }
 
 #endregion

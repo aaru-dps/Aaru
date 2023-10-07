@@ -46,9 +46,6 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public FileAttributes GetAttributes(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public List<string> GetXAttrs(int entryNumber) => throw new NotImplementedException();
 
     /// <inheritdoc />
