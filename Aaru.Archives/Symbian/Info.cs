@@ -103,7 +103,10 @@ public partial class Symbian
 
         // Go to component record
         br.BaseStream.Seek(sh.comp_ptr, SeekOrigin.Begin);
-        var componentRecord = new ComponentRecord();
+        var componentRecord = new ComponentRecord
+        {
+            names = new string[languages.Count]
+        };
         buffer = new byte[sizeof(uint) * languages.Count];
 
         // Read the component string lenghts
@@ -122,13 +125,9 @@ public partial class Symbian
                                        "Found component name for language {0} at {1} with a length of {2} bytes",
                                        languages[i], componentRecord.namesPointers[i], componentRecord.namesLengths[i]);
 
-            if(i != en_Pos)
-                continue;
-
             br.BaseStream.Seek(componentRecord.namesPointers[i], SeekOrigin.Begin);
-            byte[] componentName_B = br.ReadBytes((int)componentRecord.namesLengths[i]);
-            componentName = encoding.GetString(componentName_B);
-            break;
+            buffer                   = br.ReadBytes((int)componentRecord.namesLengths[i]);
+            componentRecord.names[i] = encoding.GetString(buffer);
         }
 
         // Go to capabilities (???)
@@ -170,7 +169,9 @@ public partial class Symbian
                     break;
             }
 
-            description.AppendFormat(Localization.Component_0_v1_2, componentName, sh.major, sh.minor).AppendLine();
+            description.AppendFormat(Localization.Component_version_0_1, sh.major, sh.minor).AppendLine();
+
+            description.AppendLine();
 
             description.AppendFormat(Localization.File_contains_0_languages, sh.languages).AppendLine();
 
@@ -179,6 +180,16 @@ public partial class Symbian
                 if(i > 0)
                     description.Append(", ");
                 description.Append($"{languages[i]}");
+            }
+
+            description.AppendLine();
+            description.AppendLine();
+
+            for(var i = 0; i < languages.Count; i++)
+            {
+                description.AppendFormat(Localization.Component_name_for_language_with_code_0_1, languages[i],
+                                         componentRecord.names[i]).
+                            AppendLine();
             }
 
             description.AppendLine();

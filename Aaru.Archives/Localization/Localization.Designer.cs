@@ -78,11 +78,20 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Component: {0} v{1}.{2}.
+        ///   Looks up a localized string similar to Component name for language with code {0}: {1}.
         /// </summary>
-        internal static string Component_0_v1_2 {
+        internal static string Component_name_for_language_with_code_0_1 {
             get {
-                return ResourceManager.GetString("Component_0_v1_2", resourceCulture);
+                return ResourceManager.GetString("Component_name_for_language_with_code_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Component version: {0}.{1}.
+        /// </summary>
+        internal static string Component_version_0_1 {
+            get {
+                return ResourceManager.GetString("Component_version_0_1", resourceCulture);
             }
         }
         

@@ -146,6 +146,10 @@ public partial class Symbian
         ///     Pointers to the component names, array sorted as language records
         /// </summary>
         public uint[] namesPointers;
+        /// <summary>
+        ///     Decoded names, not on-disk
+        /// </summary>
+        public string[] names;
     }
 
 #endregion

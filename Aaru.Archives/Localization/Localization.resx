@@ -53,9 +53,6 @@
     <data name="SIS_contains_an_application" xml:space="preserve">
         <value>SIS contains an application</value>
     </data>
-    <data name="Component_0_v1_2" xml:space="preserve">
-        <value>Component: {0} v{1}.{2}</value>
-    </data>
     <data name="File_contains_0_languages" xml:space="preserve">
         <value>Archive contains {0} languages:</value>
     </data>
@@ -67,5 +64,11 @@
     </data>
     <data name="Capabilities" xml:space="preserve">
         <value>Capabilities:</value>
+    </data>
+    <data name="Component_version_0_1" xml:space="preserve">
+        <value>Component version: {0}.{1}</value>
+    </data>
+    <data name="Component_name_for_language_with_code_0_1" xml:space="preserve">
+        <value>Component name for language with code {0}: {1}</value>
     </data>
 </root>

@@ -24,9 +24,6 @@
     <data name="Capabilities" xml:space="preserve">
         <value>Capacidades:</value>
     </data>
-    <data name="Component_0_v1_2" xml:space="preserve">
-        <value>Componente: {0} v{1}.{2}</value>
-    </data>
     <data name="CRC16_of_header_0" xml:space="preserve">
         <value>CRC16 de la cabecera: 0x{0:X4}</value>
     </data>
@@ -59,5 +56,11 @@
     </data>
     <data name="Unknown_EPOC_magic_0" xml:space="preserve">
         <value>Mágica EPOC 0x{0:X8} desconocida</value>
+    </data>
+    <data name="Component_name_for_language_with_code_0_1" xml:space="preserve">
+        <value>Nombre del componente para el idioma con código {0}: {1}</value>
+    </data>
+    <data name="Component_version_0_1" xml:space="preserve">
+        <value>Versión del componente: {0}.{1}</value>
     </data>
 </root>
