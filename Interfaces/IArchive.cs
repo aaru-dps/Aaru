@@ -89,7 +89,7 @@ public interface IArchive
 
     /// <summary>Opens the specified stream with this archive instance</summary>
     /// <param name="filter">Filter that contains the archive. This allows use to handle .tar.gz and similars.</param>
-    ErrorNumber Open(IFilter filter);
+    ErrorNumber Open(IFilter filter, Encoding encoding);
 
     /// <summary>
     ///     Returns true if the archive has a file/stream/buffer currently opened and no
