@@ -72,7 +72,6 @@ public sealed partial class Symbian
 
     public void GetInformation(IFilter filter, Encoding encoding, out string information)
     {
-        _encoding   = encoding ?? Encoding.GetEncoding("windows-1252");
         information = "";
         var    description  = new StringBuilder();
         var    languages    = new List<string>();
@@ -118,8 +117,48 @@ public sealed partial class Symbian
         AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved1 = {0}",    sh.reserved1);
         AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved2 = {0}",    sh.reserved2);
 
+        _release6 = false;
+
+        if(sh.uid1 == SYMBIAN9_MAGIC)
+        {
+            description.AppendLine(Localization.Symbian_Installation_File);
+            description.AppendLine(Localization.Symbian_9_1_or_later);
+            description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
+            _release6 = true;
+
+            description.AppendLine();
+            description.AppendLine("This file format is not yet implemented, no more information can be decoded.");
+
+            information = description.ToString();
+
+            return;
+        }
+
+        if(sh.uid3 == SYMBIAN_MAGIC)
+        {
+            description.AppendLine(Localization.Symbian_Installation_File);
+
+            switch(sh.uid2)
+            {
+                case EPOC_MAGIC:
+                    description.AppendLine(Localization.Symbian_3_or_later);
+                    break;
+                case EPOC6_MAGIC:
+                    description.AppendLine(Localization.Symbian_6_or_later);
+                    _release6 = true;
+                    break;
+                default:
+                    description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
+                    break;
+            }
+
+            description.AppendFormat(Localization.Application_ID_0, sh.uid1).AppendLine();
+        }
+
         if(sh.options.HasFlag(SymbianOptions.IsUnicode))
             _encoding = Encoding.Unicode;
+        else
+            _encoding = encoding ?? Encoding.GetEncoding("windows-1252");
 
         var br = new BinaryReader(stream);
 
@@ -164,44 +203,6 @@ public sealed partial class Symbian
             uint cap_Key   = br.ReadUInt32();
             uint cap_Value = br.ReadUInt32();
             capabilities.Add(cap_Key, cap_Value);
-        }
-
-        _release6 = false;
-
-        if(sh.uid1 == SYMBIAN9_MAGIC)
-        {
-            description.AppendLine(Localization.Symbian_Installation_File);
-            description.AppendLine(Localization.Symbian_9_1_or_later);
-            description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
-            _release6 = true;
-
-            description.AppendLine();
-            description.AppendLine("This file format is not yet implemented, no more information can be decoded.");
-
-            information = description.ToString();
-
-            return;
-        }
-
-        if(sh.uid3 == SYMBIAN_MAGIC)
-        {
-            description.AppendLine(Localization.Symbian_Installation_File);
-
-            switch(sh.uid2)
-            {
-                case EPOC_MAGIC:
-                    description.AppendLine(Localization.Symbian_3_or_later);
-                    break;
-                case EPOC6_MAGIC:
-                    description.AppendLine(Localization.Symbian_6_or_later);
-                    _release6 = true;
-                    break;
-                default:
-                    description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
-                    break;
-            }
-
-            description.AppendFormat(Localization.Application_ID_0, sh.uid1).AppendLine();
         }
 
         description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();
