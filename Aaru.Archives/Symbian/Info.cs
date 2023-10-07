@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Archives;
 
-public partial class Symbian
+public sealed partial class Symbian
 {
 #region IArchive Members
 
@@ -72,14 +72,12 @@ public partial class Symbian
 
     public void GetInformation(IFilter filter, Encoding encoding, out string information)
     {
-        _encoding= encoding    ?? Encoding.GetEncoding("windows-1252");
-        information =   "";
-        var    description   = new StringBuilder();
-        var    languages     = new List<string>();
-        var    capabilities  = new Dictionary<uint, uint>();
-        var    en_Pos        = 0;
-        var    componentName = "";
-        Stream stream        = filter.GetDataForkStream();
+        _encoding   = encoding ?? Encoding.GetEncoding("windows-1252");
+        information = "";
+        var    description  = new StringBuilder();
+        var    languages    = new List<string>();
+        var    capabilities = new Dictionary<uint, uint>();
+        Stream stream       = filter.GetDataForkStream();
 
         if(stream.Length < Marshal.SizeOf<SymbianHeader>())
             return;
@@ -237,15 +235,59 @@ public partial class Symbian
         description.AppendFormat(Localization.File_contains_0_files_pointer_1, sh.files, sh.files_ptr).AppendLine();
         description.AppendFormat(Localization.File_contains_0_requisites,      sh.requisites).AppendLine();
 
+        uint offset = sh.reqs_ptr;
+
+        if(sh.requisites > 0)
+        {
+            for(var r = 0; r < sh.requisites; r++)
+            {
+                br.BaseStream.Seek(offset, SeekOrigin.Begin);
+                var requisiteRecord = new RequisiteRecord
+                {
+                    uid          = br.ReadUInt32(),
+                    majorVersion = br.ReadUInt16(),
+                    minorVersion = br.ReadUInt16(),
+                    variant      = br.ReadUInt32()
+                };
+
+                buffer                       = br.ReadBytes(sizeof(uint) * languages.Count);
+                span                         = buffer;
+                requisiteRecord.namesLengths = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                buffer                        = br.ReadBytes(sizeof(uint) * languages.Count);
+                span                          = buffer;
+                requisiteRecord.namesPointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                description.AppendFormat(Localization.Requisite_0, r).AppendLine();
+                description.AppendFormat("\t" + Localization.Required_UID_0_version_1_2, requisiteRecord.uid,
+                                         requisiteRecord.majorVersion, requisiteRecord.minorVersion).
+                            AppendLine();
+                description.AppendFormat("\t" + Localization.Required_variant_0, requisiteRecord.variant).AppendLine();
+
+                offset = (uint)br.BaseStream.Position;
+
+                for(var i = 0; i < languages.Count; i++)
+                {
+                    br.BaseStream.Seek(requisiteRecord.namesPointers[i], SeekOrigin.Begin);
+                    buffer = br.ReadBytes((int)requisiteRecord.namesLengths[i]);
+                    description.AppendFormat("\t" + Localization.Requisite_for_language_0_1, languages[i],
+                                             _encoding.GetString(buffer)).
+                                AppendLine();
+                }
+
+                description.AppendLine();
+            }
+        }
+
 //          description.AppendLine(Localization.Capabilities);
 //          foreach(KeyValuePair<uint, uint> kvp in capabilities)
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
 
         // Set instance values
-        _files    = new List<DecodedFileRecord>();
+        _files = new List<DecodedFileRecord>();
 
         uint currentFile = 0;
-        uint offset      = sh.files_ptr;
+        offset = sh.files_ptr;
 
         do
         {

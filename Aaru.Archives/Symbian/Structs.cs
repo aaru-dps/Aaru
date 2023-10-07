@@ -43,7 +43,8 @@ namespace Aaru.Archives;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
-public partial class Symbian
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
+public sealed partial class Symbian
 {
 #region Nested type: AttributeConditionalExpression
 

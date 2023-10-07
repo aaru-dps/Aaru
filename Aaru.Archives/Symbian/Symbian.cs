@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Archives;
 
 // Information from https://thoukydides.github.io/riscos-psifs/sis.html
-public partial class Symbian : IArchive
+public sealed partial class Symbian : IArchive
 {
     const string            MODULE_NAME = "Symbian Installation File Plugin";
     Encoding                _encoding;

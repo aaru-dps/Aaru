@@ -39,7 +39,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Archives;
 
-public partial class Symbian
+public sealed partial class Symbian
 {
     void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles, List<string> languages)
     {
@@ -58,8 +58,7 @@ public partial class Symbian
 
         br.BaseStream.Seek(-sizeof(FileRecordType), SeekOrigin.Current);
 
-        byte[]             buffer;
-        ReadOnlySpan<byte> span;
+        byte[] buffer;
 
         switch(recordType)
         {
@@ -112,8 +111,8 @@ public partial class Symbian
                 buffer                    = br.ReadBytes(Marshal.SizeOf<BaseFileRecord>());
                 multipleFileRecord.record = Marshal.ByteArrayToStructureLittleEndian<BaseFileRecord>(buffer);
 
-                buffer                     = br.ReadBytes(sizeof(uint) * languages.Count);
-                span                       = buffer;
+                buffer = br.ReadBytes(sizeof(uint) * languages.Count);
+                ReadOnlySpan<byte> span = buffer;
                 multipleFileRecord.lengths = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
 
                 buffer                      = br.ReadBytes(sizeof(uint) * languages.Count);

@@ -41,7 +41,7 @@ namespace Aaru.Archives;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
-public partial class Symbian
+public sealed partial class Symbian
 {
 #region IArchive Members
 

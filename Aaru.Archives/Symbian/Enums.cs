@@ -39,7 +39,7 @@ namespace Aaru.Archives;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public partial class Symbian
+public sealed partial class Symbian
 {
 #region Nested type: Attribute
 

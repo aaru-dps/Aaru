@@ -150,6 +150,42 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Required UID {0} version {1}.{2}.
+        /// </summary>
+        internal static string Required_UID_0_version_1_2 {
+            get {
+                return ResourceManager.GetString("Required_UID_0_version_1_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required variant: {0}.
+        /// </summary>
+        internal static string Required_variant_0 {
+            get {
+                return ResourceManager.GetString("Required_variant_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requisite #{0}:.
+        /// </summary>
+        internal static string Requisite_0 {
+            get {
+                return ResourceManager.GetString("Requisite_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requisite for language {0}: {1}.
+        /// </summary>
+        internal static string Requisite_for_language_0_1 {
+            get {
+                return ResourceManager.GetString("Requisite_for_language_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SIS contains an application.
         /// </summary>
         internal static string SIS_contains_an_application {

@@ -77,4 +77,16 @@
     <data name="Files_for_0_language" xml:space="preserve">
         <value>Files for `{0}` language:</value>
     </data>
+    <data name="Requisite_0" xml:space="preserve">
+        <value>Requisite #{0}:</value>
+    </data>
+    <data name="Required_UID_0_version_1_2" xml:space="preserve">
+        <value>Required UID {0} version {1}.{2}</value>
+    </data>
+    <data name="Required_variant_0" xml:space="preserve">
+        <value>Required variant: {0}</value>
+    </data>
+    <data name="Requisite_for_language_0_1" xml:space="preserve">
+        <value>Requisite for language {0}: {1}</value>
+    </data>
 </root>
