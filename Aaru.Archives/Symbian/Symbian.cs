@@ -43,6 +43,7 @@ public sealed partial class Symbian : IArchive
 {
     const string            MODULE_NAME = "Symbian Installation File Plugin";
     Encoding                _encoding;
+    ArchiveSupportedFeature _features;
     List<DecodedFileRecord> _files;
     bool                    _opened;
     bool                    _release6;
@@ -56,9 +57,13 @@ public sealed partial class Symbian : IArchive
     public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
 
     /// <inheritdoc />
-    public ArchiveSupportedFeature GetArchiveFeatures() => ArchiveSupportedFeature.SupportsFilenames   |
-                                                           ArchiveSupportedFeature.SupportsCompression |
-                                                           ArchiveSupportedFeature.SupportsSubdirectories;
+    public ArchiveSupportedFeature GetArchiveFeatures() =>
+        !_opened
+            ? ArchiveSupportedFeature.SupportsFilenames      |
+              ArchiveSupportedFeature.SupportsCompression    |
+              ArchiveSupportedFeature.SupportsSubdirectories |
+              ArchiveSupportedFeature.SupportsXAttrs
+            : _features;
 
 #endregion
 }

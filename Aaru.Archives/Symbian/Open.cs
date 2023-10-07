@@ -32,6 +32,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -159,6 +160,12 @@ public sealed partial class Symbian
         }
 
         _files = filesWithFixedFilenames;
+
+        _features = ArchiveSupportedFeature.SupportsFilenames | ArchiveSupportedFeature.SupportsSubdirectories;
+        if(_release6 && !sh.options.HasFlag(SymbianOptions.NoCompress))
+            _features |= ArchiveSupportedFeature.SupportsCompression;
+        if(_files.Any(t => t.mime is not null))
+            _features |= ArchiveSupportedFeature.SupportsXAttrs;
 
         return ErrorNumber.NoError;
     }
