@@ -197,6 +197,7 @@ public sealed partial class Symbian
         }
 
         description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();
+        description.AppendFormat(Localization.Archive_options_0, sh.options).AppendLine();
         description.AppendFormat(Localization.CRC16_of_header_0, sh.crc16).AppendLine();
         description.AppendLine();
 

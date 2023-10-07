@@ -69,6 +69,15 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive options: {0}.
+        /// </summary>
+        internal static string Archive_options_0 {
+            get {
+                return ResourceManager.GetString("Archive_options_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Capabilities:.
         /// </summary>
         internal static string Capabilities {

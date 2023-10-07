@@ -120,4 +120,7 @@
     <data name="SIS_Platform_UID_0" xml:space="preserve">
         <value>UID 0x{0:X8}</value>
     </data>
+    <data name="Archive_options_0" xml:space="preserve">
+        <value>Opciones del archivo: {0}</value>
+    </data>
 </root>
