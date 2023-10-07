@@ -53,5 +53,10 @@ public sealed partial class Symbian : IArchive
     public string Name => Localization.Symbian_Name;
     public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
 
+    /// <inheritdoc />
+    public ArchiveSupportedFeature GetArchiveFeatures() => ArchiveSupportedFeature.SupportsFilenames   |
+                                                           ArchiveSupportedFeature.SupportsCompression |
+                                                           ArchiveSupportedFeature.SupportsSubdirectories;
+
 #endregion
 }

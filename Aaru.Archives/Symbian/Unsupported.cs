@@ -58,9 +58,6 @@ public sealed partial class Symbian
     }
 
     /// <inheritdoc />
-    public ArchiveSupportedFeature GetArchiveFeatures() => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public int GetNumberOfEntries() => throw new NotImplementedException();
 
     /// <inheritdoc />
