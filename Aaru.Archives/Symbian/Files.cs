@@ -163,7 +163,7 @@ public sealed partial class Symbian
         if(_compressed)
             return ErrorNumber.NotSupported;
 
-        var offsetStream = new OffsetStream(_stream, _files[entryNumber].pointer,
+        var offsetStream = new OffsetStream(new NonClosableStream(_stream), _files[entryNumber].pointer,
                                             _files[entryNumber].pointer + _files[entryNumber].length);
         filter = new ZZZNoFilter();
         ErrorNumber errno = filter.Open(offsetStream);
