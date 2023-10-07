@@ -103,8 +103,8 @@ public interface IArchive
     /// <summary>Return a bitfield indicating the features supported by this archive type.</summary>
     /// <returns>The <c>ArchiveSupportedFeature</c> bitfield.</returns>
     /// <remarks>
-    ///     This should be a constant, tied to the archive type, not to the particular features used by the
-    ///     currently-opened archive file.
+    ///     If the archive is not opened, this returns the capabilities of the archive format, otherwise it returns the
+    ///     capabilities in use by the currently opened archive.
     /// </remarks>
     ArchiveSupportedFeature GetArchiveFeatures();
 
