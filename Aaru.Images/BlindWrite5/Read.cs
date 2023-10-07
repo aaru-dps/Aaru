@@ -48,6 +48,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Filters;
 using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Sector = Aaru.Decoders.CD.Sector;
 using Session = Aaru.CommonTypes.Structs.Session;
@@ -980,8 +981,9 @@ public sealed partial class BlindWrite5
                         return ErrorNumber.NoSuchFile;
                     }
 
-                    track.Filter = splitStream.Filter;
-                    track.File   = $"{filename}.{extension}";
+                    track.Filter = new ZZZNoFilter();
+                    track.Filter.Open(splitStream);
+                    track.File = $"{filename}.{extension}";
 
                     if(trk.startLba >= 0)
                         track.FileOffset = (ulong)(trk.startLba * splitStartChars.SectorSize + splitStartChars.Offset);
@@ -1001,9 +1003,10 @@ public sealed partial class BlindWrite5
                             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                     }
 
-                    splitStartChars.FileFilter = splitStream.Filter;
-                    splitStartChars.Sectors    = trk.sectors;
-                    splitStartChars.StartLba   = trk.startLba;
+                    splitStartChars.FileFilter = new ZZZNoFilter();
+                    splitStartChars.FileFilter.Open(splitStream);
+                    splitStartChars.Sectors  = trk.sectors;
+                    splitStartChars.StartLba = trk.startLba;
                     _filePaths.Clear();
                     _filePaths.Add(splitStartChars);
                 }

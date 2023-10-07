@@ -35,6 +35,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Filters;
+using Aaru.Helpers.IO;
 using FileAttributes = System.IO.FileAttributes;
 
 namespace Aaru.Archives;

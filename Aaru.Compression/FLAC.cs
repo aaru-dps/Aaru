@@ -28,6 +28,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+using Aaru.Helpers.IO;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 

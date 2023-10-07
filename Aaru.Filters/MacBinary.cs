@@ -37,6 +37,7 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filters;

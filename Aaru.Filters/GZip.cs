@@ -36,6 +36,7 @@ using System.IO.Compression;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Helpers.IO;
 
 namespace Aaru.Filters;
 

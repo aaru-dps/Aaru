@@ -35,6 +35,7 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 

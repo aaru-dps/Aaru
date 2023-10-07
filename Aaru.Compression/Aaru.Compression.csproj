@@ -58,7 +58,6 @@
     <Compile Include="LZIP.cs"/>
     <Compile Include="LZMA.cs"/>
     <Compile Include="Native.cs"/>
-    <Compile Include="NonClosableStream.cs"/>
     <Compile Include="TeleDiskLzh.cs"/>
     <Compile Include="cuetools.net/CUETools.Codecs/*.cs"/>
     <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs"/>

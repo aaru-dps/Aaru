@@ -78,92 +78,11 @@ namespace Aaru.Filters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Asynchronous I/O is not supported..
-        /// </summary>
-        internal static string Asynchronous_IO_is_not_supported {
-            get {
-                return ResourceManager.GetString("Asynchronous_IO_is_not_supported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to BZip2.
         /// </summary>
         internal static string BZip2_Name {
             get {
                 return ResourceManager.GetString("BZip2_Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot read past stream end..
-        /// </summary>
-        internal static string Cannot_read_past_stream_end {
-            get {
-                return ResourceManager.GetString("Cannot_read_past_stream_end", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot seek after stream end..
-        /// </summary>
-        internal static string Cannot_seek_after_stream_end {
-            get {
-                return ResourceManager.GetString("Cannot_seek_after_stream_end", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot seek before stream start..
-        /// </summary>
-        internal static string Cannot_seek_before_stream_start {
-            get {
-                return ResourceManager.GetString("Cannot_seek_before_stream_start", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot set position past stream end..
-        /// </summary>
-        internal static string Cannot_set_position_past_stream_end {
-            get {
-                return ResourceManager.GetString("Cannot_set_position_past_stream_end", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot write past stream end..
-        /// </summary>
-        internal static string Cannot_write_past_stream_end {
-            get {
-                return ResourceManager.GetString("Cannot_write_past_stream_end", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to End can&apos;t be a negative number..
-        /// </summary>
-        internal static string End_cant_be_a_negative_number {
-            get {
-                return ResourceManager.GetString("End_cant_be_a_negative_number", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to End is after stream end..
-        /// </summary>
-        internal static string End_is_after_stream_end {
-            get {
-                return ResourceManager.GetString("End_is_after_stream_end", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Growing OffsetStream is not supported..
-        /// </summary>
-        internal static string Growing_OffsetStream_is_not_supported {
-            get {
-                return ResourceManager.GetString("Growing_OffsetStream_is_not_supported", resourceCulture);
             }
         }
         
@@ -195,47 +114,11 @@ namespace Aaru.Filters {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Non-readable streams are not supported.
-        /// </summary>
-        internal static string Non_readable_streams_are_not_supported {
-            get {
-                return ResourceManager.GetString("Non_readable_streams_are_not_supported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Non-seekable streams are not supported.
-        /// </summary>
-        internal static string Non_seekable_streams_are_not_supported {
-            get {
-                return ResourceManager.GetString("Non_seekable_streams_are_not_supported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to PCExchange.
         /// </summary>
         internal static string PcExchange_Name {
             get {
                 return ResourceManager.GetString("PcExchange_Name", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Start can&apos;t be a negative number..
-        /// </summary>
-        internal static string Start_cant_be_a_negative_number {
-            get {
-                return ResourceManager.GetString("Start_cant_be_a_negative_number", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This stream is read-only.
-        /// </summary>
-        internal static string This_stream_is_read_only {
-            get {
-                return ResourceManager.GetString("This_stream_is_read_only", resourceCulture);
             }
         }
         
