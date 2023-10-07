@@ -33,7 +33,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Archives;
@@ -43,10 +42,6 @@ namespace Aaru.Archives;
 public sealed partial class Symbian
 {
 #region IArchive Members
-
-    /// <inheritdoc />
-    public ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer) =>
-        throw new NotImplementedException();
 
     /// <inheritdoc />
     public FileSystemInfo Stat(int entryNumber) => throw new NotImplementedException();

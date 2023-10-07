@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Text;
+using Aaru.CommonTypes.Enums;
 
 namespace Aaru.Archives;
 
@@ -54,6 +56,25 @@ public sealed partial class Symbian
         {
             "org.iana.mime_type"
         };
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer)
+    {
+        buffer = null;
+
+        if(!_opened)
+            return ErrorNumber.NotOpened;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return ErrorNumber.OutOfRange;
+
+        if(xattr != "org.iana.mime_type" || _files[entryNumber].mime is null)
+            return ErrorNumber.NoSuchExtendedAttribute;
+
+        buffer = Encoding.ASCII.GetBytes(_files[entryNumber].mime);
+
+        return ErrorNumber.NoError;
     }
 
 #endregion
