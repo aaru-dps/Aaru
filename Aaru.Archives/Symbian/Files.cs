@@ -79,5 +79,17 @@ public sealed partial class Symbian
         return _files[entryNumber].length;
     }
 
+    /// <inheritdoc />
+    public long GetUncompressedSize(int entryNumber)
+    {
+        if(!_opened)
+            return -1;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return -1;
+
+        return _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length;
+    }
+
 #endregion
 }

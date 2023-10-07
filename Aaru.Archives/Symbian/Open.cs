@@ -162,8 +162,13 @@ public sealed partial class Symbian
         _files = filesWithFixedFilenames;
 
         _features = ArchiveSupportedFeature.SupportsFilenames | ArchiveSupportedFeature.SupportsSubdirectories;
+
         if(_release6 && !sh.options.HasFlag(SymbianOptions.NoCompress))
-            _features |= ArchiveSupportedFeature.SupportsCompression;
+        {
+            _features   |= ArchiveSupportedFeature.SupportsCompression;
+            _compressed =  true;
+        }
+
         if(_files.Any(t => t.mime is not null))
             _features |= ArchiveSupportedFeature.SupportsXAttrs;
 
