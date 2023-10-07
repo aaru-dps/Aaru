@@ -49,9 +49,6 @@ public sealed partial class Symbian
     public ErrorNumber Open(IFilter filter) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public bool IsOpened() => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public void Close()
     {
         throw new NotImplementedException();

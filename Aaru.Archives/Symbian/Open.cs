@@ -30,33 +30,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Aaru.CommonTypes.Interfaces;
-
 namespace Aaru.Archives;
 
-// Information from https://thoukydides.github.io/riscos-psifs/sis.html
-public sealed partial class Symbian : IArchive
+public sealed partial class Symbian
 {
-    const string            MODULE_NAME = "Symbian Installation File Plugin";
-    Encoding                _encoding;
-    List<DecodedFileRecord> _files;
-    bool                    _opened;
-    bool                    _release6;
-
 #region IArchive Members
 
-    public string Author => Authors.NataliaPortillo;
-
-    public string Name => Localization.Symbian_Name;
-    public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
-
     /// <inheritdoc />
-    public ArchiveSupportedFeature GetArchiveFeatures() => ArchiveSupportedFeature.SupportsFilenames   |
-                                                           ArchiveSupportedFeature.SupportsCompression |
-                                                           ArchiveSupportedFeature.SupportsSubdirectories;
+    public bool IsOpened() => _opened;
 
 #endregion
 }
