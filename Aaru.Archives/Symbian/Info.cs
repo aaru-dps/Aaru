@@ -94,12 +94,7 @@ public partial class Symbian
         // Go to enumerate languages
         br.BaseStream.Seek(sh.lang_ptr, SeekOrigin.Begin);
         for(var i = 0; i < sh.languages; i++)
-        {
-            ushort language = br.ReadUInt16();
-            if(language == 0x0001)
-                en_Pos = i;
-            languages.Add(((LanguageCodes)language).ToString("G"));
-        }
+            languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
 
         // Go to component record
         br.BaseStream.Seek(sh.comp_ptr, SeekOrigin.Begin);
