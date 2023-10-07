@@ -150,7 +150,7 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Required UID {0} version {1}.{2}.
+        ///   Looks up a localized string similar to Required {0} version {1}.{2}.
         /// </summary>
         internal static string Required_UID_0_version_1_2 {
             get {
@@ -191,6 +191,123 @@ namespace Aaru.Archives {
         internal static string SIS_contains_an_application {
             get {
                 return ResourceManager.GetString("SIS_contains_an_application", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UID 0x{0:X8}.
+        /// </summary>
+        internal static string SIS_Platform_UID_0 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia Belle.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_Belle {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_Belle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 1st Edition.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_1st_Edition {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_1st_Edition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 1st Edition, Feature Pack 1.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_1st_Edition_Feature_Pack_1 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_1st_Edition_Feature_Pack_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 2nd Edition.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_2nd_Edition {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_2nd_Edition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 2nd Edition, Feature Pack 1.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_1 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 2nd Edition, Feature Pack 2.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_2 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 2nd Edition, Feature Pack 3.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_3 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 3rd Edition.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_3rd_Edition {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_3rd_Edition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 3rd Edition, Feature Pack 1.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_1 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 3rd Edition, Feature Pack 2.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_2 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 5th Edition.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_5th_Edition {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_5th_Edition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Symbian^3.
+        /// </summary>
+        internal static string SIS_Platform_UID_Symbian_3 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Symbian_3", resourceCulture);
             }
         }
         

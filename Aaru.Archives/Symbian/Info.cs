@@ -259,8 +259,9 @@ public sealed partial class Symbian
                 requisiteRecord.namesPointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
 
                 description.AppendFormat(Localization.Requisite_0, r).AppendLine();
-                description.AppendFormat("\t" + Localization.Required_UID_0_version_1_2, requisiteRecord.uid,
-                                         requisiteRecord.majorVersion, requisiteRecord.minorVersion).
+                description.AppendFormat("\t" + Localization.Required_UID_0_version_1_2,
+                                         DecodePlatformUid(requisiteRecord.uid), requisiteRecord.majorVersion,
+                                         requisiteRecord.minorVersion).
                             AppendLine();
                 description.AppendFormat("\t" + Localization.Required_variant_0, requisiteRecord.variant).AppendLine();
 

@@ -81,12 +81,51 @@
         <value>Requisite #{0}:</value>
     </data>
     <data name="Required_UID_0_version_1_2" xml:space="preserve">
-        <value>Required UID {0} version {1}.{2}</value>
+        <value>Required {0} version {1}.{2}</value>
     </data>
     <data name="Required_variant_0" xml:space="preserve">
         <value>Required variant: {0}</value>
     </data>
     <data name="Requisite_for_language_0_1" xml:space="preserve">
         <value>Requisite for language {0}: {1}</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_1st_Edition" xml:space="preserve">
+        <value>Series 60 1st Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_1st_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 1st Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition" xml:space="preserve">
+        <value>Series 60 2nd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_2" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 2</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_3" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 3</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition" xml:space="preserve">
+        <value>Series 60 3rd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 3rd Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_2" xml:space="preserve">
+        <value>Series 60 3rd Edition, Feature Pack 2</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_5th_Edition" xml:space="preserve">
+        <value>Series 60 5th Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Symbian_3" xml:space="preserve">
+        <value>Symbian^3</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_Belle" xml:space="preserve">
+        <value>Nokia Belle</value>
+    </data>
+    <data name="SIS_Platform_UID_0" xml:space="preserve">
+        <value>UID 0x{0:X8}</value>
     </data>
 </root>
