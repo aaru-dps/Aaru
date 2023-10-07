@@ -210,8 +210,7 @@ sealed class ArchiveListCommand : Command
                     // Ignore that file
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} getting filename for archive entry #{1}",
-                                                   errno, i);
+                        AaruConsole.ErrorWriteLine("Error {0} getting filename for archive entry #{1}", errno, i);
                         continue;
                     }
 
@@ -292,8 +291,7 @@ sealed class ArchiveListCommand : Command
                                 errno = archive.Stat(i, out FileEntryInfo stat);
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} retrieving stat for file #{1}.",
-                                                               errno, i);
+                                    AaruConsole.ErrorWriteLine("Error {0} retrieving stat for file #{1}.", errno, i);
                                     continue;
                                 }
 

@@ -221,30 +221,28 @@ sealed class ArchiveExtractCommand : Command
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} getting filename for archive entry #{1}", errno,
-                                               i);
+                    AaruConsole.ErrorWriteLine("Error {0} getting filename for archive entry #{1}", errno, i);
                     continue;
                 }
 
                 errno = archive.Stat(i, out FileEntryInfo stat);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} retrieving stat for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine("Error {0} retrieving stat for file #{1}.", errno, i);
                     continue;
                 }
 
                 errno = archive.GetUncompressedSize(i, out long uncompressedSize);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} getting uncompressed size for file #{1}.", errno,
-                                               i);
+                    AaruConsole.ErrorWriteLine("Error {0} getting uncompressed size for file #{1}.", errno, i);
                     continue;
                 }
 
                 errno = archive.GetEntry(i, out IFilter filter);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} getting filter for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine("Error {0} getting filter for file #{1}.", errno, i);
                     continue;
                 }
 
@@ -351,8 +349,7 @@ sealed class ArchiveExtractCommand : Command
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "Error {0} listing extended attributes for file #{1}.",
-                                               errno, i);
+                    AaruConsole.ErrorWriteLine("Error {0} listing extended attributes for file #{1}.", errno, i);
                     continue;
                 }
 
