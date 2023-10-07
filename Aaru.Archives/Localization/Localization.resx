@@ -131,4 +131,112 @@
     <data name="Archive_options_0" xml:space="preserve">
         <value>Archive options: {0}</value>
     </data>
+    <data name="SIS_Platform_UID_UIQ_21" xml:space="preserve">
+        <value>UIQ v2.1</value>
+    </data>
+    <data name="SIS_Platform_UID_UIQ_30" xml:space="preserve">
+        <value>UIQ v3.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7650" xml:space="preserve">
+        <value>Nokia 7650</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_v1_0" xml:space="preserve">
+        <value>Series 60 v1.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3650" xml:space="preserve">
+        <value>Nokia 3650</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6600" xml:space="preserve">
+        <value>Nokia 6600</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6630" xml:space="preserve">
+        <value>Nokia 6630</value>
+    </data>
+    <data name="SIS_Platform_UID_SonyEricsson_P80x" xml:space="preserve">
+        <value>SonyEricsson P80x</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_v1_1" xml:space="preserve">
+        <value>Series 60 v1.1</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N_Gage" xml:space="preserve">
+        <value>Nokia N-Gage</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_9500" xml:space="preserve">
+        <value>Nokia 9500</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_9300" xml:space="preserve">
+        <value>Nokia 9300</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_80_2nd_edition" xml:space="preserve">
+        <value>Series 80 2nd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Siemens_SX1" xml:space="preserve">
+        <value>Siemens SX1</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6260" xml:space="preserve">
+        <value>Nokia 6260</value>
+    </data>
+    <data name="SIS_Platform_UID_SonyEricsson_P90x" xml:space="preserve">
+        <value>SonyEricsson P90x</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7710_Series_90" xml:space="preserve">
+        <value>Nokia 7710 (Series 90)</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7610" xml:space="preserve">
+        <value>Nokia 7610</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6670" xml:space="preserve">
+        <value>Nokia 6670</value>
+    </data>
+    <data name="SIS_Platform_UID_UIQ_20" xml:space="preserve">
+        <value>UIQ v2.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3230" xml:space="preserve">
+        <value>Nokia 3230</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N90" xml:space="preserve">
+        <value>Nokia N90</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N70" xml:space="preserve">
+        <value>Nokia N70</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6680" xml:space="preserve">
+        <value>Nokia 6680</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6620" xml:space="preserve">
+        <value>Nokia 6620</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6682" xml:space="preserve">
+        <value>Nokia 6682</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6681" xml:space="preserve">
+        <value>Nokia 6681</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3250" xml:space="preserve">
+        <value>Nokia 3250</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N80" xml:space="preserve">
+        <value>Nokia N80</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N92" xml:space="preserve">
+        <value>Nokia N92</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N73" xml:space="preserve">
+        <value>Nokia N73</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N91" xml:space="preserve">
+        <value>Nokia N91</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N71" xml:space="preserve">
+        <value>Nokia N71</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E60" xml:space="preserve">
+        <value>Nokia E60</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E70" xml:space="preserve">
+        <value>Nokia E70</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E61" xml:space="preserve">
+        <value>Nokia E61</value>
+    </data>
 </root>

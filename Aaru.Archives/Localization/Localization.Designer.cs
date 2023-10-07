@@ -213,11 +213,254 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nokia 3230.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_3230 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_3230", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 3250.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_3250 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_3250", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 3650.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_3650 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_3650", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6260.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6260 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6260", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6600.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6600 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6600", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6620.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6620 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6620", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6630.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6630 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6630", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6670.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6670 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6670", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6680.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6680 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6680", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6681.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6681 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6681", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 6682.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_6682 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_6682", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 7610.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_7610 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_7610", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 7650.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_7650 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_7650", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 7710 (Series 90).
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_7710_Series_90 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_7710_Series_90", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 9300.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_9300 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_9300", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia 9500.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_9500 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_9500", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nokia Belle.
         /// </summary>
         internal static string SIS_Platform_UID_Nokia_Belle {
             get {
                 return ResourceManager.GetString("SIS_Platform_UID_Nokia_Belle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia E60.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_E60 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_E60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia E61.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_E61 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_E61", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia E70.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_E70 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_E70", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N-Gage.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N_Gage {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N_Gage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N70.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N70 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N70", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N71.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N71 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N71", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N73.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N73 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N73", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N80.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N80 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N80", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N90.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N90 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N90", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N91.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N91 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N91", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nokia N92.
+        /// </summary>
+        internal static string SIS_Platform_UID_Nokia_N92 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Nokia_N92", resourceCulture);
             }
         }
         
@@ -312,11 +555,92 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Series 60 v1.0.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_v1_0 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_v1_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 60 v1.1.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_60_v1_1 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_60_v1_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series 80 2nd Edition.
+        /// </summary>
+        internal static string SIS_Platform_UID_Series_80_2nd_edition {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Series_80_2nd_edition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Siemens SX1.
+        /// </summary>
+        internal static string SIS_Platform_UID_Siemens_SX1 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_Siemens_SX1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SonyEricsson P80x.
+        /// </summary>
+        internal static string SIS_Platform_UID_SonyEricsson_P80x {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_SonyEricsson_P80x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SonyEricsson P90x.
+        /// </summary>
+        internal static string SIS_Platform_UID_SonyEricsson_P90x {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_SonyEricsson_P90x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Symbian^3.
         /// </summary>
         internal static string SIS_Platform_UID_Symbian_3 {
             get {
                 return ResourceManager.GetString("SIS_Platform_UID_Symbian_3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UIQ v2.0.
+        /// </summary>
+        internal static string SIS_Platform_UID_UIQ_20 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_UIQ_20", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UIQ v2.1.
+        /// </summary>
+        internal static string SIS_Platform_UID_UIQ_21 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_UIQ_21", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UIQ v3.0.
+        /// </summary>
+        internal static string SIS_Platform_UID_UIQ_30 {
+            get {
+                return ResourceManager.GetString("SIS_Platform_UID_UIQ_30", resourceCulture);
             }
         }
         
