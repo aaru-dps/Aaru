@@ -31,15 +31,17 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using Aaru.Console;
-using Aaru.Helpers;
+using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Archives;
 
 public partial class Symbian
 {
-    void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles)
+    void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles, List<string> languages)
     {
         currentFile++;
 
@@ -56,7 +58,8 @@ public partial class Symbian
 
         br.BaseStream.Seek(-sizeof(FileRecordType), SeekOrigin.Current);
 
-        byte[] buffer;
+        byte[]             buffer;
+        ReadOnlySpan<byte> span;
 
         switch(recordType)
         {
@@ -103,7 +106,69 @@ public partial class Symbian
 
                 break;
             case FileRecordType.MultipleLanguageFiles:
-                throw new NotImplementedException();
+                MultipleFileRecord multipleFileRecord = new();
+
+                // Read common file record fields
+                buffer                    = br.ReadBytes(Marshal.SizeOf<BaseFileRecord>());
+                multipleFileRecord.record = Marshal.ByteArrayToStructureLittleEndian<BaseFileRecord>(buffer);
+
+                buffer                     = br.ReadBytes(sizeof(uint) * languages.Count);
+                span                       = buffer;
+                multipleFileRecord.lengths = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                buffer                      = br.ReadBytes(sizeof(uint) * languages.Count);
+                span                        = buffer;
+                multipleFileRecord.pointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                if(_release6)
+                {
+                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
+                    span   = buffer;
+                    multipleFileRecord.originalLengths =
+                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+                    multipleFileRecord.mimeLen = br.ReadUInt32();
+                    multipleFileRecord.mimePtr = br.ReadUInt32();
+                }
+                else
+                    multipleFileRecord.originalLengths = multipleFileRecord.lengths;
+
+                offset = (uint)br.BaseStream.Position;
+
+                br.BaseStream.Seek(multipleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
+                buffer = br.ReadBytes((int)multipleFileRecord.record.sourceNameLen);
+                string sourceName = _encoding.GetString(buffer);
+
+                br.BaseStream.Seek(multipleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
+                buffer = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
+                string destinationName = _encoding.GetString(buffer);
+
+                string mimeType = null;
+
+                if(_release6)
+                {
+                    br.BaseStream.Seek(multipleFileRecord.mimePtr, SeekOrigin.Begin);
+                    buffer   = br.ReadBytes((int)multipleFileRecord.mimeLen);
+                    mimeType = _encoding.GetString(buffer);
+                }
+
+                var decodedFileRecords = new DecodedFileRecord[languages.Count];
+
+                for(var i = 0; i < languages.Count; i++)
+                {
+                    decodedFileRecords[i].type            = multipleFileRecord.record.type;
+                    decodedFileRecords[i].details         = multipleFileRecord.record.details;
+                    decodedFileRecords[i].sourceName      = sourceName;
+                    decodedFileRecords[i].destinationName = destinationName;
+                    decodedFileRecords[i].length          = multipleFileRecord.lengths[i];
+                    decodedFileRecords[i].pointer         = multipleFileRecord.pointers[i];
+                    decodedFileRecords[i].originalLength  = multipleFileRecord.originalLengths[i];
+                    decodedFileRecords[i].mime            = mimeType;
+                    decodedFileRecords[i].language        = languages[i];
+                }
+
+                _files.AddRange(decodedFileRecords);
+
+                break;
             case FileRecordType.Options:
                 throw new NotImplementedException();
             case FileRecordType.If:

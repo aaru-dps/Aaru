@@ -217,7 +217,7 @@ public partial class Symbian
 
         do
         {
-            Parse(br, ref offset, ref currentFile, sh.files);
+            Parse(br, ref offset, ref currentFile, sh.files, languages);
         } while(currentFile < sh.files);
 
         // Files appear on .sis in the reverse order they should be processed
@@ -239,6 +239,7 @@ public partial class Symbian
             description.AppendFormat(Localization.Files_for_0_language, lang).AppendLine();
             foreach(DecodedFileRecord file in _files.Where(t => t.language == lang))
                 description.AppendLine($"{file.destinationName}");
+            description.AppendLine();
         }
 
         information = description.ToString();
