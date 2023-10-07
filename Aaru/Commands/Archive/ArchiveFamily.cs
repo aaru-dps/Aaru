@@ -44,5 +44,6 @@ sealed class ArchiveFamily : Command
 
         AddCommand(new ArchiveInfoCommand());
         AddCommand(new ArchiveListCommand());
+        AddCommand(new ArchiveExtractCommand());
     }
 }

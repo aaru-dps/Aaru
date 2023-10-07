@@ -195,7 +195,7 @@ sealed class ArchiveListCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
+                AaruConsole.ErrorWriteLine("Unable to open archive format");
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
 
                 return (int)ErrorNumber.CannotOpenFormat;
