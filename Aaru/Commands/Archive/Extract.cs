@@ -266,7 +266,7 @@ sealed class ArchiveExtractCommand : Command
                 if(destinationDir is not null)
                     Directory.CreateDirectory(destinationDir);
 
-                if(!File.Exists(outputPath))
+                if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                 {
                     AnsiConsole.Progress().
                                 AutoClear(true).
@@ -391,7 +391,7 @@ sealed class ArchiveExtractCommand : Command
                     if(destinationDir is not null)
                         Directory.CreateDirectory(destinationDir);
 
-                    if(!File.Exists(outputPath))
+                    if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                     {
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {

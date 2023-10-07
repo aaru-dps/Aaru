@@ -540,7 +540,7 @@ sealed class ExtractFilesCommand : Command
                                                         Replace('/',  '\\');
                             }
 
-                            if(!File.Exists(outputPath))
+                            if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                             {
                                 Core.Spectre.ProgressSingleSpinner(ctx =>
                                 {
@@ -626,7 +626,7 @@ sealed class ExtractFilesCommand : Command
                                             Replace('/',  '\\');
                 }
 
-                if(!File.Exists(outputPath))
+                if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                 {
                     long position = 0;
 
