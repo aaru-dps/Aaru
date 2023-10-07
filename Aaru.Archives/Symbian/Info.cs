@@ -30,11 +30,15 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Aaru.Helpers;
+using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Archives;
 
@@ -99,16 +103,30 @@ public partial class Symbian
 
         // Go to component record
         br.BaseStream.Seek(sh.comp_ptr, SeekOrigin.Begin);
+        var componentRecord = new ComponentRecord();
+        buffer = new byte[sizeof(uint) * languages.Count];
+
+        // Read the component string lenghts
+        stream.EnsureRead(buffer, 0, buffer.Length);
+        ReadOnlySpan<byte> span = buffer;
+        componentRecord.namesLengths = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+        // Read the component string pointers
+        stream.EnsureRead(buffer, 0, buffer.Length);
+        span                          = buffer;
+        componentRecord.namesPointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
         for(var i = 0; i < sh.languages; i++)
         {
-            uint comp_Len      = br.ReadUInt32();
-            uint comp_Name_Ptr = br.ReadUInt32();
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "Found component name for language {0} at {1} with a length of {2} bytes",
+                                       languages[i], componentRecord.namesPointers[i], componentRecord.namesLengths[i]);
 
             if(i != en_Pos)
                 continue;
 
-            br.BaseStream.Seek(comp_Name_Ptr, SeekOrigin.Begin);
-            byte[] componentName_B = br.ReadBytes((int)comp_Len);
+            br.BaseStream.Seek(componentRecord.namesPointers[i], SeekOrigin.Begin);
+            byte[] componentName_B = br.ReadBytes((int)componentRecord.namesLengths[i]);
             componentName = encoding.GetString(componentName_B);
             break;
         }
