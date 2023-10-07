@@ -72,7 +72,7 @@ public partial class Symbian
 
     public void GetInformation(IFilter filter, Encoding encoding, out string information)
     {
-        encoding    ??= Encoding.GetEncoding("windows-1252");
+        _encoding= encoding    ?? Encoding.GetEncoding("windows-1252");
         information =   "";
         var    description   = new StringBuilder();
         var    languages     = new List<string>();
@@ -120,6 +120,9 @@ public partial class Symbian
         AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved1 = {0}",    sh.reserved1);
         AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved2 = {0}",    sh.reserved2);
 
+        if(sh.options.HasFlag(SymbianOptions.IsUnicode))
+            _encoding = Encoding.Unicode;
+
         var br = new BinaryReader(stream);
 
         // Go to enumerate languages
@@ -153,7 +156,7 @@ public partial class Symbian
 
             br.BaseStream.Seek(componentRecord.namesPointers[i], SeekOrigin.Begin);
             buffer                   = br.ReadBytes((int)componentRecord.namesLengths[i]);
-            componentRecord.names[i] = encoding.GetString(buffer);
+            componentRecord.names[i] = _encoding.GetString(buffer);
         }
 
         // Go to capabilities (???)
@@ -239,7 +242,6 @@ public partial class Symbian
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
 
         // Set instance values
-        _encoding = encoding;
         _files    = new List<DecodedFileRecord>();
 
         uint currentFile = 0;
@@ -249,6 +251,8 @@ public partial class Symbian
         {
             Parse(br, ref offset, ref currentFile, sh.files, languages);
         } while(currentFile < sh.files);
+
+        description.AppendLine();
 
         // Files appear on .sis in the reverse order they should be processed
         _files.Reverse();
