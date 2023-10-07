@@ -30,29 +30,31 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
+using System.Collections.Generic;
 
 namespace Aaru.Archives;
 
-[SuppressMessage("ReSharper", "UnusedType.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Symbian
 {
 #region IArchive Members
 
     /// <inheritdoc />
-    public ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer) =>
-        throw new NotImplementedException();
+    public List<string> GetXAttrs(int entryNumber)
+    {
+        if(!_opened)
+            return null;
 
-    /// <inheritdoc />
-    public FileSystemInfo Stat(int entryNumber) => throw new NotImplementedException();
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return null;
 
-    /// <inheritdoc />
-    public IFilter GetEntry(int entryNumber) => throw new NotImplementedException();
+        if(_files[entryNumber].mime is null)
+            return new List<string>();
+
+        return new List<string>
+        {
+            "org.iana.mime_type"
+        };
+    }
 
 #endregion
 }
