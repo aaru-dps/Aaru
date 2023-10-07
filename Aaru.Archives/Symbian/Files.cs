@@ -32,7 +32,9 @@
 
 using System;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Filters;
 using FileAttributes = System.IO.FileAttributes;
 
 namespace Aaru.Archives;
@@ -144,6 +146,32 @@ public sealed partial class Symbian
         };
 
         return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber GetEntry(int entryNumber, out IFilter filter)
+    {
+        filter = null;
+        if(!Opened)
+            return ErrorNumber.NotOpened;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return ErrorNumber.OutOfRange;
+
+        // TODO: Implement
+        if(_compressed)
+            return ErrorNumber.NotSupported;
+
+        var offsetStream = new OffsetStream(_stream, _files[entryNumber].pointer,
+                                            _files[entryNumber].pointer + _files[entryNumber].length);
+        filter = new ZZZNoFilter();
+        ErrorNumber errno = filter.Open(offsetStream);
+
+        if(errno == ErrorNumber.NoError)
+            return ErrorNumber.NoError;
+
+        offsetStream.Close();
+        return errno;
     }
 
 #endregion
