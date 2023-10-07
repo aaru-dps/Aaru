@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Archives;
@@ -38,7 +40,11 @@ namespace Aaru.Archives;
 // Information from https://thoukydides.github.io/riscos-psifs/sis.html
 public partial class Symbian : IArchive
 {
-    const string MODULE_NAME = "Symbian Installation File Plugin";
+    const string            MODULE_NAME = "Symbian Installation File Plugin";
+    Encoding                _encoding;
+    List<DecodedFileRecord> _files;
+
+    bool _release6;
 
 #region IArchive Members
 

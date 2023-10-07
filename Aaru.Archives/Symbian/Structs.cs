@@ -207,6 +207,54 @@ public partial class Symbian
 
 #endregion
 
+#region Nested type: DecodedFileRecord
+
+    /// <summary>
+    ///     On-memory structure
+    /// </summary>
+    struct DecodedFileRecord
+    {
+        /// <summary>
+        ///     File type <see cref="FileType" />
+        /// </summary>
+        public FileType type;
+        /// <summary>
+        ///     File details <see cref="FileDetails" />
+        /// </summary>
+        public FileDetails details;
+        /// <summary>
+        ///     Source name (filename on the machine that built the SIS)
+        /// </summary>
+        public string sourceName;
+        /// <summary>
+        ///     Destination name (filename+path it will be installed to. '!:' for drive means allow the user
+        ///     to pick destination drive)
+        /// </summary>
+        public string destinationName;
+        /// <summary>
+        ///     Length in bytes of the (compressed or uncompressed) file
+        /// </summary>
+        public uint length;
+        /// <summary>
+        ///     Pointer to the (compressed or uncompressed) file data
+        /// </summary>
+        public uint pointer;
+        /// <summary>
+        ///     EPOC Release >= 6, uncompressed file length
+        /// </summary>
+        public uint originalLength;
+        /// <summary>
+        ///     EPOC Release >= 6, MIME type string
+        /// </summary>
+        public string mime;
+        /// <summary>
+        ///     Language, or null for no language
+        /// </summary>
+        public string language;
+    }
+
+#endregion
+
 #region Nested type: MultipleFileRecord
 
     /// <summary>
@@ -217,7 +265,7 @@ public partial class Symbian
         /// <summary>
         ///     Common fields to simple file record and multiple file record
         /// </summary>
-        BaseFileRecord record;
+        public BaseFileRecord record;
         /// <summary>
         ///     Lengths in bytes of the (compressed or uncompressed) files, array sorted as language records
         /// </summary>
@@ -339,7 +387,7 @@ public partial class Symbian
         /// <summary>
         ///     Common fields to simple file record and multiple file record
         /// </summary>
-        BaseFileRecord record;
+        public BaseFileRecord record;
         /// <summary>
         ///     Length in bytes of the (compressed or uncompressed) file
         /// </summary>

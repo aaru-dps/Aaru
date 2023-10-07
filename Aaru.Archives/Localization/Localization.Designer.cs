@@ -132,6 +132,24 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Files for `{0}` language:.
+        /// </summary>
+        internal static string Files_for_0_language {
+            get {
+                return ResourceManager.GetString("Files_for_0_language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files for all languages:.
+        /// </summary>
+        internal static string Files_for_all_languages {
+            get {
+                return ResourceManager.GetString("Files_for_all_languages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SIS contains an application.
         /// </summary>
         internal static string SIS_contains_an_application {

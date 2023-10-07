@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
@@ -134,11 +135,14 @@ public partial class Symbian
             capabilities.Add(cap_Key, cap_Value);
         }
 
+        _release6 = false;
+
         if(sh.uid1 == SYMBIAN9_MAGIC)
         {
             description.AppendLine(Localization.Symbian_Installation_File);
             description.AppendLine(Localization.Symbian_9_1_or_later);
             description.AppendFormat(Localization.Application_ID_0, sh.uid3).AppendLine();
+            _release6 = true;
         }
         else if(sh.uid3 == SYMBIAN_MAGIC)
         {
@@ -151,6 +155,7 @@ public partial class Symbian
                     break;
                 case EPOC6_MAGIC:
                     description.AppendLine(Localization.Symbian_6_or_later);
+                    _release6 = true;
                     break;
                 default:
                     description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
@@ -202,6 +207,39 @@ public partial class Symbian
 //          description.AppendLine(Localization.Capabilities);
 //          foreach(KeyValuePair<uint, uint> kvp in capabilities)
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
+
+        // Set instance values
+        _encoding = encoding;
+        _files    = new List<DecodedFileRecord>();
+
+        uint currentFile = 0;
+        uint offset      = sh.files_ptr;
+
+        do
+        {
+            Parse(br, ref offset, ref currentFile, sh.files);
+        } while(currentFile < sh.files);
+
+        // Files appear on .sis in the reverse order they should be processed
+        _files.Reverse();
+
+        if(_files.Any(t => t.language is null))
+        {
+            description.AppendLine(Localization.Files_for_all_languages);
+            foreach(DecodedFileRecord file in _files.Where(t => t.language is null))
+                description.AppendLine($"{file.destinationName}");
+            description.AppendLine();
+        }
+
+        foreach(string lang in languages)
+        {
+            if(_files.All(t => t.language != lang))
+                continue;
+
+            description.AppendFormat(Localization.Files_for_0_language, lang).AppendLine();
+            foreach(DecodedFileRecord file in _files.Where(t => t.language == lang))
+                description.AppendLine($"{file.destinationName}");
+        }
 
         information = description.ToString();
     }

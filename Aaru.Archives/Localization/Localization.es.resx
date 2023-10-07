@@ -63,4 +63,10 @@
     <data name="Component_version_0_1" xml:space="preserve">
         <value>Versión del componente: {0}.{1}</value>
     </data>
+    <data name="Files_for_0_language" xml:space="preserve">
+        <value>Ficheros para el idioma `{0}`:</value>
+    </data>
+    <data name="Files_for_all_languages" xml:space="preserve">
+        <value>Ficheros para todos los idiomas:</value>
+    </data>
 </root>
