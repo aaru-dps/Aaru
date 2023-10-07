@@ -34,7 +34,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Archives;
 
@@ -43,9 +42,6 @@ namespace Aaru.Archives;
 public sealed partial class Symbian
 {
 #region IArchive Members
-
-    /// <inheritdoc />
-    public ErrorNumber Stat(int entryNumber, out FileEntryInfo stat) => throw new NotImplementedException();
 
     /// <inheritdoc />
     public ErrorNumber GetEntry(int entryNumber, out IFilter filter) => throw new NotImplementedException();

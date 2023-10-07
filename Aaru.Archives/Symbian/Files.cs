@@ -31,8 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using FileAttributes = System.IO.FileAttributes;
 
 namespace Aaru.Archives;
 
@@ -120,6 +121,27 @@ public sealed partial class Symbian
             return ErrorNumber.OutOfRange;
 
         attributes = FileAttributes.Normal;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber Stat(int entryNumber, out FileEntryInfo stat)
+    {
+        stat = null;
+
+        if(!Opened)
+            return ErrorNumber.NotOpened;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return ErrorNumber.OutOfRange;
+
+        stat = new FileEntryInfo
+        {
+            Length     = _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length,
+            Attributes = CommonTypes.Structs.FileAttributes.File,
+            Inode      = (ulong)entryNumber
+        };
 
         return ErrorNumber.NoError;
     }
