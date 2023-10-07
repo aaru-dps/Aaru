@@ -84,9 +84,15 @@ public sealed partial class Symbian
                 buffer                       = br.ReadBytes((int)simpleFileRecord.record.sourceNameLen);
                 decodedFileRecord.sourceName = _encoding.GetString(buffer);
 
-                br.BaseStream.Seek(simpleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
-                buffer                            = br.ReadBytes((int)simpleFileRecord.record.destinationNameLen);
-                decodedFileRecord.destinationName = _encoding.GetString(buffer);
+                // Files that are not written to disk but shown or installed components do not have a destination name.
+                if(simpleFileRecord.record.destinationNameLen > 0)
+                {
+                    br.BaseStream.Seek(simpleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
+                    buffer                            = br.ReadBytes((int)simpleFileRecord.record.destinationNameLen);
+                    decodedFileRecord.destinationName = _encoding.GetString(buffer);
+                }
+                else
+                    decodedFileRecord.destinationName = decodedFileRecord.sourceName;
 
                 if(_release6)
                 {
@@ -136,10 +142,17 @@ public sealed partial class Symbian
                 br.BaseStream.Seek(multipleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
                 buffer = br.ReadBytes((int)multipleFileRecord.record.sourceNameLen);
                 string sourceName = _encoding.GetString(buffer);
+                string destinationName;
 
-                br.BaseStream.Seek(multipleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
-                buffer = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
-                string destinationName = _encoding.GetString(buffer);
+                // Files that are not written to disk but shown or installed components do not have a destination name.
+                if(multipleFileRecord.record.destinationNameLen > 0)
+                {
+                    br.BaseStream.Seek(multipleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
+                    buffer = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
+                    destinationName = _encoding.GetString(buffer);
+                }
+                else
+                    destinationName = sourceName;
 
                 string mimeType = null;
 
