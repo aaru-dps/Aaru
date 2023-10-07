@@ -90,6 +90,36 @@ public partial class Symbian
         stream.EnsureRead(buffer, 0, buffer.Length);
         SymbianHeader sh = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(buffer);
 
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.uid1 = {0}",         sh.uid1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.uid2 = {0}",         sh.uid2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.uid3 = {0}",         sh.uid3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.uid4 = {0}",         sh.uid4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.crc16 = {0}",        sh.crc16);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.languages = {0}",    sh.languages);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.files = {0}",        sh.files);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.requisites = {0}",   sh.requisites);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.inst_lang = {0}",    sh.inst_lang);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.inst_files = {0}",   sh.inst_files);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.inst_drive = {0}",   sh.inst_drive);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.capabilities = {0}", sh.capabilities);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.inst_version = {0}", sh.inst_version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.options = {0}",      sh.options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.type = {0}",         sh.type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.major = {0}",        sh.major);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.minor = {0}",        sh.minor);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.variant = {0}",      sh.variant);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.lang_ptr = {0}",     sh.lang_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.files_ptr = {0}",    sh.files_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reqs_ptr = {0}",     sh.reqs_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.certs_ptr = {0}",    sh.certs_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.comp_ptr = {0}",     sh.comp_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.sig_ptr = {0}",      sh.sig_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.caps_ptr = {0}",     sh.caps_ptr);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.instspace = {0}",    sh.instspace);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.maxinsspc = {0}",    sh.maxinsspc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved1 = {0}",    sh.reserved1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sh.reserved2 = {0}",    sh.reserved2);
+
         var br = new BinaryReader(stream);
 
         // Go to enumerate languages
