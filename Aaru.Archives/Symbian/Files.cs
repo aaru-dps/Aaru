@@ -30,48 +30,14 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
-
 namespace Aaru.Archives;
 
-[SuppressMessage("ReSharper", "UnusedType.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Symbian
 {
 #region IArchive Members
 
     /// <inheritdoc />
-    public string GetFilename(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public int GetEntryNumber(string fileName, bool caseInsensitiveMatch) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public long GetCompressedSize(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public long GetUncompressedSize(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public FileAttributes GetAttributes(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public List<string> GetXAttrs(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer) =>
-        throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public FileSystemInfo Stat(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public IFilter GetEntry(int entryNumber) => throw new NotImplementedException();
+    public int GetNumberOfEntries() => _opened ? -1 : _files.Count;
 
 #endregion
 }
