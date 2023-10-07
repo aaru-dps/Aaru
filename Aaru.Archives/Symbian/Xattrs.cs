@@ -41,29 +41,30 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public List<string> GetXAttrs(int entryNumber)
+    public ErrorNumber ListXAttr(int entryNumber, out List<string> xattrs)
     {
-        if(!_opened)
-            return null;
+        xattrs = null;
+
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
-            return null;
+            return ErrorNumber.OutOfRange;
 
-        if(_files[entryNumber].mime is null)
-            return new List<string>();
+        xattrs = new List<string>();
 
-        return new List<string>
-        {
-            "org.iana.mime_type"
-        };
+        if(_files[entryNumber].mime is not null)
+            xattrs.Add("org.iana.mime_type");
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public ErrorNumber GetXattr(int entryNumber, string xattr, out byte[] buffer)
+    public ErrorNumber GetXattr(int entryNumber, string xattr, ref byte[] buffer)
     {
         buffer = null;
 
-        if(!_opened)
+        if(!Opened)
             return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)

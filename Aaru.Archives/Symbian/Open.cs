@@ -46,13 +46,10 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public bool IsOpened() => _opened;
-
-    /// <inheritdoc />
     public ErrorNumber Open(IFilter filter, Encoding encoding)
     {
         // Already opened!
-        if(_opened)
+        if(Opened)
             return ErrorNumber.InvalidArgument;
 
         var languages = new List<string>();
@@ -179,13 +176,13 @@ public sealed partial class Symbian
     public void Close()
     {
         // Already closed
-        if(!_opened)
+        if(!Opened)
             return;
 
         _stream?.Close();
 
         _stream = null;
-        _opened = false;
+        Opened  = false;
     }
 
 #endregion

@@ -46,11 +46,13 @@ public sealed partial class Symbian : IArchive
     Encoding                _encoding;
     ArchiveSupportedFeature _features;
     List<DecodedFileRecord> _files;
-    bool                    _opened;
     bool                    _release6;
     Stream                  _stream;
 
 #region IArchive Members
+
+    /// <inheritdoc />
+    public bool Opened { get; private set; }
 
     public string Author => Authors.NataliaPortillo;
 
@@ -58,8 +60,8 @@ public sealed partial class Symbian : IArchive
     public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
 
     /// <inheritdoc />
-    public ArchiveSupportedFeature GetArchiveFeatures() =>
-        !_opened
+    public ArchiveSupportedFeature ArchiveFeatures =>
+        !Opened
             ? ArchiveSupportedFeature.SupportsFilenames      |
               ArchiveSupportedFeature.SupportsCompression    |
               ArchiveSupportedFeature.SupportsSubdirectories |

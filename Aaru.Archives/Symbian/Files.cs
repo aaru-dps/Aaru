@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using Aaru.CommonTypes.Enums;
 
 namespace Aaru.Archives;
 
@@ -40,68 +41,87 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public int GetNumberOfEntries() => _opened ? _files.Count : -1;
+    public int NumberOfEntries => Opened ? _files.Count : -1;
 
     /// <inheritdoc />
-    public string GetFilename(int entryNumber)
+    public ErrorNumber GetFilename(int entryNumber, out string fileName)
     {
-        if(!_opened)
-            return null;
+        fileName = null;
+
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
-            return null;
+            return ErrorNumber.OutOfRange;
 
-        return _files[entryNumber].destinationName;
+        fileName = _files[entryNumber].destinationName;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public int GetEntryNumber(string fileName, bool caseInsensitiveMatch)
+    public ErrorNumber GetEntryNumber(string fileName, bool caseInsensitiveMatch, out int entryNumber)
     {
-        if(!_opened)
-            return -1;
+        entryNumber = -1;
+
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(string.IsNullOrEmpty(fileName))
-            return -1;
+            return ErrorNumber.InvalidArgument;
 
-        return _files.FindIndex(x => caseInsensitiveMatch
-                                         ? x.destinationName.Equals(fileName, StringComparison.CurrentCultureIgnoreCase)
-                                         : x.destinationName.Equals(fileName, StringComparison.CurrentCulture));
+        entryNumber = _files.FindIndex(x => caseInsensitiveMatch
+                                                ? x.destinationName.Equals(fileName,
+                                                                           StringComparison.CurrentCultureIgnoreCase)
+                                                : x.destinationName.Equals(fileName, StringComparison.CurrentCulture));
+
+        return entryNumber < 0 ? ErrorNumber.NoSuchFile : ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public long GetCompressedSize(int entryNumber)
+    public ErrorNumber GetCompressedSize(int entryNumber, out long length)
     {
-        if(!_opened)
-            return -1;
+        length = -1;
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
-            return -1;
+            return ErrorNumber.OutOfRange;
 
-        return _files[entryNumber].length;
+        length = _files[entryNumber].length;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public long GetUncompressedSize(int entryNumber)
+    public ErrorNumber GetUncompressedSize(int entryNumber, out long length)
     {
-        if(!_opened)
-            return -1;
+        length = -1;
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
-            return -1;
+            return ErrorNumber.OutOfRange;
 
-        return _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length;
+        length = _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public FileAttributes GetAttributes(int entryNumber)
+    public ErrorNumber GetAttributes(int entryNumber, out FileAttributes attributes)
     {
-        if(!_opened)
-            return (FileAttributes)(-1);
+        attributes = FileAttributes.None;
+
+        if(!Opened)
+            return ErrorNumber.NotOpened;
 
         if(entryNumber < 0 || entryNumber >= _files.Count)
-            return (FileAttributes)(-1);
+            return ErrorNumber.OutOfRange;
 
-        return FileAttributes.Normal;
+        attributes = FileAttributes.Normal;
+
+        return ErrorNumber.NoError;
     }
 
 #endregion
