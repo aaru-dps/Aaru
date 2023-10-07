@@ -169,6 +169,8 @@ public sealed partial class Symbian
         if(_files.Any(t => t.mime is not null))
             _features |= ArchiveSupportedFeature.SupportsXAttrs;
 
+        Opened = true;
+
         return ErrorNumber.NoError;
     }
 
