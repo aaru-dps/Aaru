@@ -67,5 +67,17 @@ public sealed partial class Symbian
                                          : x.destinationName.Equals(fileName, StringComparison.CurrentCulture));
     }
 
+    /// <inheritdoc />
+    public long GetCompressedSize(int entryNumber)
+    {
+        if(!_opened)
+            return -1;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count)
+            return -1;
+
+        return _files[entryNumber].length;
+    }
+
 #endregion
 }

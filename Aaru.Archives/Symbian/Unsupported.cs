@@ -46,9 +46,6 @@ public sealed partial class Symbian
 #region IArchive Members
 
     /// <inheritdoc />
-    public long GetCompressedSize(int entryNumber) => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public long GetUncompressedSize(int entryNumber) => throw new NotImplementedException();
 
     /// <inheritdoc />
