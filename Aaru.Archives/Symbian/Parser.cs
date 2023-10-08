@@ -126,6 +126,9 @@ public sealed partial class Symbian
                     bool wait, close;
                     switch(decodedFileRecord.type)
                     {
+                        case FileType.File:
+                            _conditions.Add(tabulation + $"InstallFileTo(\"{decodedFileRecord.destinationName}\")");
+                            break;
                         case FileType.FileText:
                             switch((FileDetails)((uint)decodedFileRecord.details & 0xFF))
                             {
