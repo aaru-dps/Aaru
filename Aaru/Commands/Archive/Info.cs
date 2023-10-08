@@ -54,7 +54,7 @@ sealed class ArchiveInfoCommand : Command
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Archive file path",
+            Description = UI.Archive_file_path,
             Name        = "archive-path"
         });
 

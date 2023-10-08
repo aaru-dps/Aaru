@@ -3029,4 +3029,68 @@ Do you want to continue?</value>
     <data name="Unable_to_get_information_about_archive" xml:space="preserve">
         <value>Unable to get information about archive...</value>
     </data>
+    <data name="Archive_file_path" xml:space="preserve">
+        <value>Archive file path</value>
+    </data>
+    <data name="Archive_Extract_Command_Description" xml:space="preserve">
+        <value>Extracts all files in archive.</value>
+    </data>
+    <data name="Archive_format_not_identified_not_proceeding_with_extraction" xml:space="preserve">
+        <value>Archive format not identified, not proceeding with extraction.</value>
+    </data>
+    <data name="Archive_format_identified_by_0" xml:space="preserve">
+        <value>Archive format identified by {0}.</value>
+    </data>
+    <data name="Archive_format_not_identified_not_proceeding_with_listing" xml:space="preserve">
+        <value>Archive format not identified, not proceeding with listing.</value>
+    </data>
+    <data name="Opening_archive" xml:space="preserve">
+        <value>Opening archive...</value>
+    </data>
+    <data name="Unable_to_open_archive_format" xml:space="preserve">
+        <value>Unable to open archive format</value>
+    </data>
+    <data name="Correctly_opened_archive_file" xml:space="preserve">
+        <value>Correctly opened archive file.</value>
+    </data>
+    <data name="Error_0_getting_filename_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} getting filename for archive entry #{1}.</value>
+    </data>
+    <data name="Error_0_retrieving_stat_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} retrieving stat for archive entry #{1}.</value>
+    </data>
+    <data name="Error_0_getting_uncompressed_size_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} getting uncompressed size for archive entry #{1}.</value>
+    </data>
+    <data name="Error_0_getting_filter_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} getting filter for archive entry #{1}.</value>
+    </data>
+    <data name="Error_0_listing_extended_attributes_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} listing extended attributes for archive entry #{1}.</value>
+    </data>
+    <data name="Error_0_reading_extended_attribute_1_for_archive_entry_2" xml:space="preserve">
+        <value>Error {0} reading extended attribute {1} for archive entry #{2}.</value>
+    </data>
+    <data name="Title_Date" xml:space="preserve">
+        <value>Date</value>
+    </data>
+    <data name="Title_Attributes_ABBREVIATED" xml:space="preserve">
+        <value>Attr</value>
+        <comment>"Attributes" abbreviated to the smallest possible size, if allowed by language rules.</comment>
+    </data>
+    <data name="Title_Size" xml:space="preserve">
+        <value>Size</value>
+    </data>
+    <data name="Title_Compressed" xml:space="preserve">
+        <value>Compressed</value>
+    </data>
+    <data name="Error_0_getting_compressed_size_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} getting compressed size for archive entry #{1}.</value>
+    </data>
+    <data name="_0_files_1_folders" xml:space="preserve">
+        <value>{0} files, {1} folders</value>
+    </data>
+    <data name="_0_files" xml:space="preserve">
+        <value>{0} files</value>
+    </data>
 </root>

@@ -66,7 +66,7 @@ sealed class ArchiveListCommand : Command
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Archive file path",
+            Description = UI.Archive_file_path,
             Name        = "archive-path"
         });
 
@@ -153,21 +153,21 @@ sealed class ArchiveListCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                ctx.AddTask(UI.Identifying_archive_format).IsIndeterminate();
                 archive = ArchiveFormat.Detect(inputFilter);
             });
 
             if(archive == null)
             {
-                AaruConsole.WriteLine("Archive format not identified, not proceeding with listing.");
+                AaruConsole.WriteLine(UI.Archive_format_not_identified_not_proceeding_with_listing);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
-                AaruConsole.VerboseWriteLine("Archive format identified by {0} ({1}).", archive.Name, archive.Id);
+                AaruConsole.VerboseWriteLine(UI.Archive_format_identified_by_0_1, archive.Name, archive.Id);
             else
-                AaruConsole.WriteLine("Archive format identified by {0}.", archive.Name);
+                AaruConsole.WriteLine(UI.Archive_format_identified_by_0, archive.Name);
 
             try
             {
@@ -175,19 +175,19 @@ sealed class ArchiveListCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                    ctx.AddTask(UI.Opening_archive).IsIndeterminate();
                     opened = archive.Open(inputFilter, encodingClass);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Unable to open archive format");
+                    AaruConsole.ErrorWriteLine(UI.Unable_to_open_archive_format);
                     AaruConsole.ErrorWriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "Correctly opened archive file.");
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_archive_file);
 
                 // TODO: Implement
                 //Statistics.AddArchiveFormat(archive.Name);
@@ -195,7 +195,7 @@ sealed class ArchiveListCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open archive format");
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_archive_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
 
                 return (int)ErrorNumber.CannotOpenFormat;
@@ -210,7 +210,7 @@ sealed class ArchiveListCommand : Command
                     // Ignore that file
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.ErrorWriteLine("Error {0} getting filename for archive entry #{1}", errno, i);
+                        AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno, i);
                         continue;
                     }
 
@@ -231,28 +231,28 @@ sealed class ArchiveListCommand : Command
                         {
                             table.HideFooters();
 
-                            table.AddColumn(new TableColumn("Date")
+                            table.AddColumn(new TableColumn(UI.Title_Date)
                             {
                                 NoWrap    = true,
                                 Alignment = Justify.Center
                             });
                             ctx.Refresh();
 
-                            table.AddColumn(new TableColumn("Time")
+                            table.AddColumn(new TableColumn(UI.Title_Time)
                             {
                                 NoWrap    = true,
                                 Alignment = Justify.Center
                             });
                             ctx.Refresh();
 
-                            table.AddColumn(new TableColumn("Attr")
+                            table.AddColumn(new TableColumn(UI.Title_Attributes_ABBREVIATED)
                             {
                                 NoWrap    = true,
                                 Alignment = Justify.Right
                             });
                             ctx.Refresh();
 
-                            table.AddColumn(new TableColumn("Size")
+                            table.AddColumn(new TableColumn(UI.Title_Size)
                             {
                                 NoWrap    = true,
                                 Alignment = Justify.Right
@@ -261,7 +261,7 @@ sealed class ArchiveListCommand : Command
 
                             if(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.SupportsCompression))
                             {
-                                table.AddColumn(new TableColumn("Compressed")
+                                table.AddColumn(new TableColumn(UI.Title_Compressed)
                                 {
                                     NoWrap    = true,
                                     Alignment = Justify.Right
@@ -270,7 +270,7 @@ sealed class ArchiveListCommand : Command
 
                             ctx.Refresh();
 
-                            table.AddColumn(new TableColumn("Name")
+                            table.AddColumn(new TableColumn(UI.Title_Name)
                             {
                                 Alignment = Justify.Left
                             });
@@ -282,8 +282,7 @@ sealed class ArchiveListCommand : Command
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               "Error {0} retrieving filename for file #{1}.", errno,
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno,
                                                                i);
                                     continue;
                                 }
@@ -291,7 +290,8 @@ sealed class ArchiveListCommand : Command
                                 errno = archive.Stat(i, out FileEntryInfo stat);
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.ErrorWriteLine("Error {0} retrieving stat for file #{1}.", errno, i);
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_retrieving_stat_for_archive_entry_1, errno,
+                                                               i);
                                     continue;
                                 }
 
@@ -328,7 +328,7 @@ sealed class ArchiveListCommand : Command
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               "Error {0} getting compressed size for file #{1}.",
+                                                               UI.Error_0_getting_compressed_size_for_archive_entry_1,
                                                                errno, i);
                                     continue;
                                 }
@@ -337,7 +337,7 @@ sealed class ArchiveListCommand : Command
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               "Error {0} getting uncompressed size for file #{1}.",
+                                                               UI.Error_0_getting_uncompressed_size_for_archive_entry_1,
                                                                errno, i);
                                     continue;
                                 }
@@ -372,16 +372,16 @@ sealed class ArchiveListCommand : Command
                                 table.Columns[5].
                                       Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.
                                                                                  HasExplicitDirectories)
-                                                 ? $"{files} files, {folders} folders"
-                                                 : $"{files} files");
+                                                 ? string.Format(UI._0_files_1_folders, files, folders)
+                                                 : string.Format(UI._0_files,           files));
                             }
                             else
                             {
                                 table.Columns[4].
                                       Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.
                                                                                  HasExplicitDirectories)
-                                                 ? $"{files} files, {folders} folders"
-                                                 : $"{files} files");
+                                                 ? string.Format(UI._0_files_1_folders, files, folders)
+                                                 : string.Format(UI._0_files,           files));
                             }
 
                             table.ShowFooters();

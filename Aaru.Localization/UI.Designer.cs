@@ -60,6 +60,24 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} files.
+        /// </summary>
+        public static string _0_files {
+            get {
+                return ResourceManager.GetString("_0_files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} files, {1} folders.
+        /// </summary>
+        public static string _0_files_1_folders {
+            get {
+                return ResourceManager.GetString("_0_files_1_folders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} Kb/sec..
         /// </summary>
         public static string _0_Kb_sec {
@@ -168,6 +186,33 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extracts all files in archive..
+        /// </summary>
+        public static string Archive_Extract_Command_Description {
+            get {
+                return ResourceManager.GetString("Archive_Extract_Command_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive file path.
+        /// </summary>
+        public static string Archive_file_path {
+            get {
+                return ResourceManager.GetString("Archive_file_path", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive format identified by {0}..
+        /// </summary>
+        public static string Archive_format_identified_by_0 {
+            get {
+                return ResourceManager.GetString("Archive_format_identified_by_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Archive format identified by {0} ({1})..
         /// </summary>
         public static string Archive_format_identified_by_0_1 {
@@ -182,6 +227,24 @@ namespace Aaru.Localization {
         public static string Archive_format_not_identified {
             get {
                 return ResourceManager.GetString("Archive_format_not_identified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive format not identified, not proceeding with extraction..
+        /// </summary>
+        public static string Archive_format_not_identified_not_proceeding_with_extraction {
+            get {
+                return ResourceManager.GetString("Archive_format_not_identified_not_proceeding_with_extraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive format not identified, not proceeding with listing..
+        /// </summary>
+        public static string Archive_format_not_identified_not_proceeding_with_listing {
+            get {
+                return ResourceManager.GetString("Archive_format_not_identified_not_proceeding_with_listing", resourceCulture);
             }
         }
         
@@ -1773,6 +1836,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Correctly opened archive file..
+        /// </summary>
+        public static string Correctly_opened_archive_file {
+            get {
+                return ResourceManager.GetString("Correctly_opened_archive_file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Correctly opened image file..
         /// </summary>
         public static string Correctly_opened_image_file {
@@ -2684,6 +2756,51 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error {0} getting compressed size for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_getting_compressed_size_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_getting_compressed_size_for_archive_entry_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} getting filename for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_getting_filename_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_getting_filename_for_archive_entry_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} getting filter for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_getting_filter_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_getting_filter_for_archive_entry_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} getting uncompressed size for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_getting_uncompressed_size_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_getting_uncompressed_size_for_archive_entry_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} listing extended attributes for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_listing_extended_attributes_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_listing_extended_attributes_for_archive_entry_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error {0} opening device.
         /// </summary>
         public static string Error_0_opening_device {
@@ -2770,6 +2887,15 @@ namespace Aaru.Localization {
         public static string Error_0_reading_directory_1 {
             get {
                 return ResourceManager.GetString("Error_0_reading_directory_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} reading extended attribute {1} for archive entry #{2}..
+        /// </summary>
+        public static string Error_0_reading_extended_attribute_1_for_archive_entry_2 {
+            get {
+                return ResourceManager.GetString("Error_0_reading_extended_attribute_1_for_archive_entry_2", resourceCulture);
             }
         }
         
@@ -2888,6 +3014,15 @@ namespace Aaru.Localization {
         public static string Error_0_reading_tag_for_sector_1_not_continuing {
             get {
                 return ResourceManager.GetString("Error_0_reading_tag_for_sector_1_not_continuing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error {0} retrieving stat for archive entry #{1}..
+        /// </summary>
+        public static string Error_0_retrieving_stat_for_archive_entry_1 {
+            get {
+                return ResourceManager.GetString("Error_0_retrieving_stat_for_archive_entry_1", resourceCulture);
             }
         }
         
@@ -5196,6 +5331,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening archive....
+        /// </summary>
+        public static string Opening_archive {
+            get {
+                return ResourceManager.GetString("Opening_archive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opening device....
         /// </summary>
         public static string Opening_device {
@@ -6629,6 +6773,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Attr.
+        /// </summary>
+        public static string Title_Attributes_ABBREVIATED {
+            get {
+                return ResourceManager.GetString("Title_Attributes_ABBREVIATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Author.
         /// </summary>
         public static string Title_Author {
@@ -6746,6 +6899,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compressed.
+        /// </summary>
+        public static string Title_Compressed {
+            get {
+                return ResourceManager.GetString("Title_Compressed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connected by USB.
         /// </summary>
         public static string Title_Connected_by_USB {
@@ -6796,6 +6958,15 @@ namespace Aaru.Localization {
         public static string Title_CSD {
             get {
                 return ResourceManager.GetString("Title_CSD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        public static string Title_Date {
+            get {
+                return ResourceManager.GetString("Title_Date", resourceCulture);
             }
         }
         
@@ -8006,6 +8177,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        public static string Title_Size {
+            get {
+                return ResourceManager.GetString("Title_Size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Software.
         /// </summary>
         public static string Title_Software {
@@ -8398,6 +8578,15 @@ namespace Aaru.Localization {
         public static string Unable_to_mount_volume_error_0 {
             get {
                 return ResourceManager.GetString("Unable_to_mount_volume_error_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to open archive format.
+        /// </summary>
+        public static string Unable_to_open_archive_format {
+            get {
+                return ResourceManager.GetString("Unable_to_open_archive_format", resourceCulture);
             }
         }
         

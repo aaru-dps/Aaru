@@ -563,8 +563,8 @@
     <value>Convirtiendo pista</value>
   </data>
     <data name="Correctly_opened_image_file" xml:space="preserve">
-    <value>No se pudo abrir el fichero de imagen.</value>
-  </data>
+        <value>Fichero de imagen abierto correctamente.</value>
+    </data>
     <data name="Could_note_delete_existe_file_continue_Q" xml:space="preserve">
     <value>No se puedo eliminar el fichero existente. ¿Desea continuar?</value>
   </data>
@@ -2938,5 +2938,83 @@ Probadores:
   </data>
     <data name="Registering_plugins" xml:space="preserve">
         <value>Registrando extensiones...</value>
+    </data>
+    <data name="Archive_Extract_Command_Description" xml:space="preserve">
+        <value>Extrae todos los ficheros del archivo</value>
+    </data>
+    <data name="Archive_file_path" xml:space="preserve">
+        <value>Ruta al archivo</value>
+    </data>
+    <data name="Archive_format_identified_by_0" xml:space="preserve">
+        <value>Formato de archivo identificado por {0}.</value>
+    </data>
+    <data name="Archive_format_identified_by_0_1" xml:space="preserve">
+        <value>Format de archivo identificado por {0} ({1}).</value>
+    </data>
+    <data name="Archive_format_not_identified" xml:space="preserve">
+        <value>Formato de archivo no identificado.</value>
+    </data>
+    <data name="Archive_format_not_identified_not_proceeding_with_extraction" xml:space="preserve">
+        <value>Formato de archivo no identificado, no se procederá con la extracción</value>
+    </data>
+    <data name="Archive_format_not_identified_not_proceeding_with_listing" xml:space="preserve">
+        <value>Formato de archivo no identificado, no se procederá con el listado.</value>
+    </data>
+    <data name="Correctly_opened_archive_file" xml:space="preserve">
+        <value>Archivo abierto correctamente.</value>
+    </data>
+    <data name="Error_0_getting_compressed_size_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} obteniendo el tamaño de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Error_0_getting_filename_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} obteniendo el nombre de fichero de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Error_0_getting_filter_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} obteniendo el filtro de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Error_0_getting_uncompressed_size_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} obteniendo el tamaño descomprimido de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Error_0_listing_extended_attributes_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} listando los atributos extendidos de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Error_0_reading_extended_attribute_1_for_archive_entry_2" xml:space="preserve">
+        <value>Error {0} leyendo el atributo extendido {1} de la entrada nº {2} del archivo.</value>
+    </data>
+    <data name="Error_0_retrieving_stat_for_archive_entry_1" xml:space="preserve">
+        <value>Error {0} obteniendo información de la entrada nº {1} del archivo.</value>
+    </data>
+    <data name="Identifying_archive_format" xml:space="preserve">
+        <value>Identificando el formato del archivo...</value>
+    </data>
+    <data name="Obtaining_archive_information" xml:space="preserve">
+        <value>Obteniendo información del archivo...</value>
+    </data>
+    <data name="Opening_archive" xml:space="preserve">
+        <value>Abriendo archivo...</value>
+    </data>
+    <data name="Title_Attributes_ABBREVIATED" xml:space="preserve">
+        <value>Atrib</value>
+    </data>
+    <data name="Title_Compressed" xml:space="preserve">
+        <value>Comprimido</value>
+    </data>
+    <data name="Title_Date" xml:space="preserve">
+        <value>Fecha</value>
+    </data>
+    <data name="Title_Size" xml:space="preserve">
+        <value>Tamaño</value>
+    </data>
+    <data name="Unable_to_get_information_about_archive" xml:space="preserve">
+        <value>No se pudo obtener información sobre el archivo...</value>
+    </data>
+    <data name="Unable_to_open_archive_format" xml:space="preserve">
+        <value>No se pudo abrir el archivo</value>
+    </data>
+    <data name="_0_files" xml:space="preserve">
+        <value>{0} ficheros</value>
+    </data>
+    <data name="_0_files_1_folders" xml:space="preserve">
+        <value>{0} ficheros, {1} carpetas</value>
     </data>
 </root>

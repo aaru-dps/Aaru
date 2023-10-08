@@ -54,7 +54,7 @@ sealed class ArchiveExtractCommand : Command
     const int    BUFFER_SIZE = 16777216;
     const string MODULE_NAME = "Extract-Files command";
 
-    public ArchiveExtractCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
+    public ArchiveExtractCommand() : base("extract", UI.Archive_Extract_Command_Description)
     {
         AddAlias("x");
 
@@ -71,7 +71,7 @@ sealed class ArchiveExtractCommand : Command
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Archive file path",
+            Description = UI.Archive_file_path,
             Name        = "archive-path"
         });
 
@@ -166,21 +166,21 @@ sealed class ArchiveExtractCommand : Command
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
+                ctx.AddTask(UI.Identifying_archive_format).IsIndeterminate();
                 archive = ArchiveFormat.Detect(inputFilter);
             });
 
             if(archive == null)
             {
-                AaruConsole.WriteLine("Archive format not identified, not proceeding with listing.");
+                AaruConsole.WriteLine(UI.Archive_format_not_identified_not_proceeding_with_extraction);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
-                AaruConsole.VerboseWriteLine("Archive format identified by {0} ({1}).", archive.Name, archive.Id);
+                AaruConsole.VerboseWriteLine(UI.Archive_format_identified_by_0_1, archive.Name, archive.Id);
             else
-                AaruConsole.WriteLine("Archive format identified by {0}.", archive.Name);
+                AaruConsole.WriteLine(UI.Archive_format_identified_by_0, archive.Name);
 
             try
             {
@@ -188,19 +188,19 @@ sealed class ArchiveExtractCommand : Command
 
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
+                    ctx.AddTask(UI.Opening_archive).IsIndeterminate();
                     opened = archive.Open(inputFilter, encodingClass);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Unable to open archive format");
+                    AaruConsole.ErrorWriteLine(UI.Unable_to_open_archive_format);
                     AaruConsole.ErrorWriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "Correctly opened archive file.");
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_archive_file);
 
                 // TODO: Implement
                 //Statistics.AddArchiveFormat(archive.Name);
@@ -208,7 +208,7 @@ sealed class ArchiveExtractCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_archive_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
 
                 return (int)ErrorNumber.CannotOpenFormat;
@@ -221,28 +221,28 @@ sealed class ArchiveExtractCommand : Command
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} getting filename for archive entry #{1}", errno, i);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno, i);
                     continue;
                 }
 
                 errno = archive.Stat(i, out FileEntryInfo stat);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} retrieving stat for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_retrieving_stat_for_archive_entry_1, errno, i);
                     continue;
                 }
 
                 errno = archive.GetUncompressedSize(i, out long uncompressedSize);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} getting uncompressed size for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_uncompressed_size_for_archive_entry_1, errno, i);
                     continue;
                 }
 
                 errno = archive.GetEntry(i, out IFilter filter);
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} getting filter for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_filter_for_archive_entry_1, errno, i);
                     continue;
                 }
 
@@ -352,7 +352,7 @@ sealed class ArchiveExtractCommand : Command
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    AaruConsole.ErrorWriteLine("Error {0} listing extended attributes for file #{1}.", errno, i);
+                    AaruConsole.ErrorWriteLine(UI.Error_0_listing_extended_attributes_for_archive_entry_1, errno, i);
                     continue;
                 }
 
@@ -368,7 +368,7 @@ sealed class ArchiveExtractCommand : Command
                     if(errno != ErrorNumber.NoError)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   "Error {0} reading extended attribute {1} for file #{2}.", errno,
+                                                   UI.Error_0_reading_extended_attribute_1_for_archive_entry_2, errno,
                                                    xattrName, i);
                         continue;
                     }
