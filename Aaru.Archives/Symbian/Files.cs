@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
+using System.IO.Compression;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -159,19 +161,28 @@ public sealed partial class Symbian
         if(entryNumber < 0 || entryNumber >= _files.Count)
             return ErrorNumber.OutOfRange;
 
-        // TODO: Implement
-        if(_compressed)
-            return ErrorNumber.NotSupported;
+        Stream stream = new OffsetStream(new NonClosableStream(_stream), _files[entryNumber].pointer,
+                                         _files[entryNumber].pointer + _files[entryNumber].length);
 
-        var offsetStream = new OffsetStream(new NonClosableStream(_stream), _files[entryNumber].pointer,
-                                            _files[entryNumber].pointer + _files[entryNumber].length);
+        ErrorNumber errno;
+        if(_compressed)
+        {
+            if(_files[entryNumber].originalLength == 0)
+                stream = new MemoryStream(Array.Empty<byte>());
+            else
+            {
+                stream = new ForcedSeekStream<ZLibStream>(_files[entryNumber].originalLength, stream,
+                                                          CompressionMode.Decompress);
+            }
+        }
+
         filter = new ZZZNoFilter();
-        ErrorNumber errno = filter.Open(offsetStream);
+        errno  = filter.Open(stream);
 
         if(errno == ErrorNumber.NoError)
             return ErrorNumber.NoError;
 
-        offsetStream.Close();
+        stream.Close();
         return errno;
     }
 
