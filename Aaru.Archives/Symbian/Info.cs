@@ -350,9 +350,10 @@ public sealed partial class Symbian
             {
                 OptionRecord option = _options[i];
 
-                description.AppendFormat("Option {0}:", i + 1).AppendLine();
+                description.AppendFormat(Localization.Option_0, i + 1).AppendLine();
                 foreach(KeyValuePair<string, string> kvp in option.names)
-                    description.AppendFormat("\tName for language {0}: {1}", kvp.Key, kvp.Value).AppendLine();
+                    description.AppendFormat("\t" + Localization.Name_for_language_0_1, kvp.Key, kvp.Value).
+                                AppendLine();
             }
 
             description.AppendLine();

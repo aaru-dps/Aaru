@@ -239,4 +239,10 @@
     <data name="SIS_Platform_UID_Nokia_E61" xml:space="preserve">
         <value>Nokia E61</value>
     </data>
+    <data name="Option_0" xml:space="preserve">
+        <value>Option {0}:</value>
+    </data>
+    <data name="Name_for_language_0_1" xml:space="preserve">
+        <value>Name for language {0}: {1}</value>
+    </data>
 </root>

@@ -159,6 +159,24 @@ namespace Aaru.Archives {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Name for language {0}: {1}.
+        /// </summary>
+        internal static string Name_for_language_0_1 {
+            get {
+                return ResourceManager.GetString("Name_for_language_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Option {0}:.
+        /// </summary>
+        internal static string Option_0 {
+            get {
+                return ResourceManager.GetString("Option_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Required {0} version {1}.{2}.
         /// </summary>
         internal static string Required_UID_0_version_1_2 {
