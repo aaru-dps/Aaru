@@ -564,6 +564,7 @@ public static class Remote
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Core.Exception_0_when_updating_database, ex);
+            AaruConsole.WriteException(ex);
         }
         finally
         {

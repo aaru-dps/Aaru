@@ -788,7 +788,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
+                AaruConsole.WriteException(ex);
             }
         }
         catch(Exception ex)
@@ -797,7 +797,7 @@ public sealed class MainWindowViewModel : ViewModelBase
                                                     Icon.Error);
 
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
+            AaruConsole.WriteException(ex);
         }
 
         Statistics.AddCommand("image-info");
@@ -894,7 +894,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
         catch(InvalidOperationException ex)
         {
-            AaruConsole.ErrorWriteLine(ex.Message);
+            AaruConsole.WriteException(ex);
         }
     }
 }

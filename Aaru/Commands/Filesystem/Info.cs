@@ -97,6 +97,8 @@ sealed class FilesystemInfoCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
@@ -222,7 +224,7 @@ sealed class FilesystemInfoCommand : Command
             {
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
@@ -417,7 +419,7 @@ sealed class FilesystemInfoCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Markup.Escape(string.Format(UI.Error_reading_file_0, ex.Message)));
-            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
         }

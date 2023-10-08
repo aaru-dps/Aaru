@@ -90,8 +90,7 @@ public sealed partial class CloneCd
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, _ccdFilter);
-            AaruConsole.ErrorWriteLine(Localization.Exception_0,                               ex.Message);
-            AaruConsole.ErrorWriteLine(Localization.Stack_trace_0,                             ex.StackTrace);
+            AaruConsole.WriteException(ex);
 
             return false;
         }

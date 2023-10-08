@@ -3017,4 +3017,13 @@ Probadores:
     <data name="_0_files_1_folders" xml:space="preserve">
         <value>{0} ficheros, {1} carpetas</value>
     </data>
+    <data name="LogEntry_Type_Debug" xml:space="preserve">
+        <value>Depuración</value>
+    </data>
+    <data name="LogEntry_Type_Error" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="LogEntry_Type_Exception" xml:space="preserve">
+        <value>Excepción</value>
+    </data>
 </root>

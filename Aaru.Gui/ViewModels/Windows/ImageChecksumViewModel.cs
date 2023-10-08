@@ -675,6 +675,7 @@ public sealed class ImageChecksumViewModel : ViewModelBase
             {
                 AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
                 AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
+                AaruConsole.WriteException(ex);
             }
         }
         else

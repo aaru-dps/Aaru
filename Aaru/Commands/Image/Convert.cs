@@ -200,6 +200,8 @@ sealed class ConvertImageCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
@@ -328,7 +330,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
+                    AaruConsole.WriteException(ex);
 
                     return (int)ErrorNumber.InvalidSidecar;
                 }
@@ -364,7 +366,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_metadata_sidecar_file_not_continuing);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
+                    AaruConsole.WriteException(ex);
 
                     return (int)ErrorNumber.InvalidSidecar;
                 }
@@ -413,7 +415,7 @@ sealed class ConvertImageCommand : Command
                 catch(Exception ex)
                 {
                     AaruConsole.ErrorWriteLine(UI.Incorrect_resume_file_not_continuing);
-                    AaruConsole.DebugWriteLine(MODULE_NAME, $"{ex}");
+                    AaruConsole.WriteException(ex);
 
                     return (int)ErrorNumber.InvalidResume;
                 }
@@ -526,7 +528,7 @@ sealed class ConvertImageCommand : Command
         {
             AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
             AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Stack_trace_0, ex.StackTrace);
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.CannotOpenFormat;
         }

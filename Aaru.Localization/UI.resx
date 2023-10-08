@@ -3093,4 +3093,13 @@ Do you want to continue?</value>
     <data name="_0_files" xml:space="preserve">
         <value>{0} files</value>
     </data>
+    <data name="LogEntry_Type_Exception" xml:space="preserve">
+        <value>Exception</value>
+    </data>
+    <data name="LogEntry_Type_Error" xml:space="preserve">
+        <value>Error</value>
+    </data>
+    <data name="LogEntry_Type_Debug" xml:space="preserve">
+        <value>Debug</value>
+    </data>
 </root>

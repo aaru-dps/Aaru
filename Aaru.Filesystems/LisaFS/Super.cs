@@ -348,7 +348,7 @@ public sealed partial class LisaFS
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine(Localization.Exception_0_1_2, ex.Message, ex.InnerException, ex.StackTrace);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.InOutError;
         }

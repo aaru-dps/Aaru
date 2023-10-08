@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Track = Aaru.CommonTypes.Structs.Track;
@@ -77,9 +78,10 @@ public sealed partial class CloneCd
             _dataStream = new FileStream(_writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                          FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -476,10 +478,11 @@ public sealed partial class CloneCd
                         _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
                                                     FileAccess.ReadWrite, FileShare.None);
                     }
-                    catch(IOException e)
+                    catch(IOException ex)
                     {
                         ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
-                                                     e.Message);
+                                                     ex.Message);
+                        AaruConsole.WriteException(ex);
 
                         return false;
                     }
@@ -548,10 +551,11 @@ public sealed partial class CloneCd
                         _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
                                                     FileAccess.ReadWrite, FileShare.None);
                     }
-                    catch(IOException e)
+                    catch(IOException ex)
                     {
                         ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
-                                                     e.Message);
+                                                     ex.Message);
+                        AaruConsole.WriteException(ex);
 
                         return false;
                     }

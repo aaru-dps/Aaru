@@ -4746,6 +4746,33 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debug.
+        /// </summary>
+        public static string LogEntry_Type_Debug {
+            get {
+                return ResourceManager.GetString("LogEntry_Type_Debug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string LogEntry_Type_Error {
+            get {
+                return ResourceManager.GetString("LogEntry_Type_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception.
+        /// </summary>
+        public static string LogEntry_Type_Exception {
+            get {
+                return ResourceManager.GetString("LogEntry_Type_Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Info.
         /// </summary>
         public static string LogEntry_Type_Info {

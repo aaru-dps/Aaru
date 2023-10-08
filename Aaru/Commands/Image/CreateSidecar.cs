@@ -103,6 +103,8 @@ sealed class CreateSidecarCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
@@ -214,6 +216,7 @@ sealed class CreateSidecarCommand : Command
                 {
                     AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                     AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                    AaruConsole.WriteException(ex);
 
                     return (int)ErrorNumber.CannotOpenFormat;
                 }
@@ -296,7 +299,7 @@ sealed class CreateSidecarCommand : Command
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-                AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.UnexpectedException;
             }

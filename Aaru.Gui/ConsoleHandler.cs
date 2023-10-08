@@ -54,13 +54,28 @@ static class ConsoleHandler
             _debug = value;
 
             if(_debug)
+            {
                 AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
+                AaruConsole.WriteExceptionEvent           += OnWriteExceptionEvent;
+            }
             else
+            {
                 AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
+                AaruConsole.WriteExceptionEvent           -= OnWriteExceptionEvent;
+            }
         }
     }
 
     public static ObservableCollection<LogEntry> Entries { get; } = new();
+
+    static void OnWriteExceptionEvent([NotNull] Exception ex) =>
+        Entries.Add(new LogEntry
+        {
+            Message   = ex.ToString(),
+            Module    = null,
+            Timestamp = DateTime.Now,
+            Type      = UI.LogEntry_Type_Exception
+        });
 
     internal static void Init()
     {
@@ -92,7 +107,7 @@ static class ConsoleHandler
             Message   = string.Format(format, arg),
             Module    = null,
             Timestamp = DateTime.Now,
-            Type      = "Error"
+            Type      = UI.LogEntry_Type_Error
         });
     }
 
@@ -106,7 +121,7 @@ static class ConsoleHandler
             Message   = string.Format(format, arg),
             Module    = module,
             Timestamp = DateTime.Now,
-            Type      = "Debug"
+            Type      = UI.LogEntry_Type_Debug
         });
     }
 }

@@ -166,7 +166,10 @@ public sealed class Entropy
         catch(Exception ex)
         {
             if(_debug)
+            {
                 AaruConsole.DebugWriteLine(Localization.Core.Could_not_get_tracks_because_0, ex.Message);
+                AaruConsole.WriteException(ex);
+            }
             else
             {
                 AaruConsole.ErrorWriteLine(Localization.Core.

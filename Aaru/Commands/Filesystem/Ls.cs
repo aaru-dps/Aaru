@@ -105,6 +105,8 @@ sealed class LsCommand : Command
                 else
                     stderrConsole.MarkupLine(Markup.Escape(format), objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
@@ -236,6 +238,7 @@ sealed class LsCommand : Command
             {
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                 AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
@@ -347,7 +350,7 @@ sealed class LsCommand : Command
         catch(Exception ex)
         {
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
-            AaruConsole.DebugWriteLine(MODULE_NAME, ex.StackTrace);
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
         }

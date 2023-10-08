@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Images;
@@ -94,9 +95,10 @@ public sealed partial class CdrWin
 
             _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, e.Message);
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
