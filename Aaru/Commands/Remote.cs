@@ -95,9 +95,9 @@ sealed class RemoteCommand : Command
 
         Statistics.AddCommand("remote");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--host={0}",    host);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "host={0}",    Markup.Escape(host ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "verbose={0}", verbose);
 
         try
         {

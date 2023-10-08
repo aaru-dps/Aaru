@@ -95,7 +95,7 @@ sealed class ImageInfoCommand : Command
         Statistics.AddCommand("image-info");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",   imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",   Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         IFilter inputFilter = null;

@@ -114,7 +114,7 @@ sealed class EntropyCommand : Command
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",              debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--duplicated-sectors={0}", duplicatedSectors);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",              imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",              Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--separated-tracks={0}",   separatedTracks);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--whole-disc={0}",         wholeDisc);

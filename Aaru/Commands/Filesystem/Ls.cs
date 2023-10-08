@@ -121,9 +121,9 @@ sealed class LsCommand : Command
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",  options);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", Markup.Escape(encoding  ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",  Markup.Escape(options   ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
         Statistics.AddCommand("ls");
 

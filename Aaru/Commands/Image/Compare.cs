@@ -110,8 +110,8 @@ sealed class CompareCommand : Command
         Statistics.AddCommand("compare");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input1={0}",  imagePath1);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}",  imagePath2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input1={0}",  Markup.Escape(imagePath1 ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input2={0}",  Markup.Escape(imagePath2 ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         IFilter inputFilter1 = null;

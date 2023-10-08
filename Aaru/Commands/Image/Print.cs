@@ -117,7 +117,7 @@ sealed class PrintHexCommand : Command
         Statistics.AddCommand("print-hex");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",        debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",        imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",        Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}",       length);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--long-sectors={0}", longSectors);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}",        start);

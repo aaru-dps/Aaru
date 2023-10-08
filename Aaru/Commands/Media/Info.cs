@@ -119,10 +119,10 @@ sealed class MediaInfoCommand : Command
 
         Statistics.AddCommand("media-info");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",         debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",        devicePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--output-prefix={0}", outputPrefix);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",       verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "debug={0}",         debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "device={0}",        Markup.Escape(devicePath   ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "output-prefix={0}", Markup.Escape(outputPrefix ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "verbose={0}",       verbose);
 
         if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';

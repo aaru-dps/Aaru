@@ -114,9 +114,9 @@ sealed class MediaScanCommand : Command
         Statistics.AddCommand("media-scan");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",              debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",             devicePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}",            ibgLog);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}",           mhddLog);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",             Markup.Escape(devicePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}",            Markup.Escape(ibgLog     ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}",           Markup.Escape(mhddLog    ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--use-buffered-reads={0}", useBufferedReads);
 

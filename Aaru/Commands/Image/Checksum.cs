@@ -157,7 +157,7 @@ sealed class ChecksumCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",            debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--fletcher16={0}",       fletcher16);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--fletcher32={0}",       fletcher32);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",            imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",            Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--md5={0}",              md5);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--separated-tracks={0}", separatedTracks);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--sha1={0}",             sha1);

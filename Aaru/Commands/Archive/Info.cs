@@ -102,10 +102,10 @@ sealed class ArchiveInfoCommand : Command
 
         Statistics.AddCommand("archive-info");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    archivePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "debug={0}",    debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "input={0}",    Markup.Escape(archivePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "verbose={0}",  verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "encoding={0}", Markup.Escape(encoding ?? ""));
 
         IFilter inputFilter = null;
 

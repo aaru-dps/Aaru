@@ -123,7 +123,7 @@ sealed class VerifyCommand : Command
         Statistics.AddCommand("verify");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",          debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",          imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",          Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",        verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-disc={0}",    verifyDisc);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verify-sectors={0}", verifySectors);

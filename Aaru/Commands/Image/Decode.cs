@@ -121,8 +121,8 @@ sealed class DecodeCommand : Command
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",       debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--disk-tags={0}",   diskTags);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       imagePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}",      length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--length={0}",      Markup.Escape(length    ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--sector-tags={0}", sectorTags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--start={0}",       startSector);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);

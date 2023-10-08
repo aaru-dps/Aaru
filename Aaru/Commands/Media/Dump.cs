@@ -274,17 +274,17 @@ sealed class DumpMediaCommand : Command
 
         Statistics.AddCommand("dump-media");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--cicm-xml={0}",                cicmXml);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--cicm-xml={0}",                Markup.Escape(cicmXml ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",                   debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",                  devicePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",                encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",                  Markup.Escape(devicePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",                Markup.Escape(encoding   ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--first-pregap={0}",            firstPregap);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-offset={0}",              fixOffset);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--force={0}",                   force);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--format={0}",                  format);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--format={0}",                  Markup.Escape(format ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--metadata={0}",                metadata);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",                 options);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}",                  outputPath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",                 Markup.Escape(options    ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}",                  Markup.Escape(outputPath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--persistent={0}",              persistent);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--resume={0}",                  resume);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--retry-passes={0}",            retryPasses);
@@ -292,8 +292,8 @@ sealed class DumpMediaCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--stop-on-error={0}",           stopOnError);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--trim={0}",                    trim);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",                 verbose);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--subchannel={0}",              subchannel);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--private={0}",                 @private);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--subchannel={0}",              Markup.Escape(subchannel ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "----private={0}",               @private);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-subchannel-position={0}", fixSubchannelPosition);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--retry-subchannel={0}",        retrySubchannel);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--fix-subchannel={0}",          fixSubchannel);
@@ -308,10 +308,10 @@ sealed class DumpMediaCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--ignore-cdr-runouts={0}",      ignoreCdrRunOuts);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--create-graph={0}",            createGraph);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--dimensions={0}",              dimensions);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--aaru-metadata={0}",           aaruMetadata);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--aaru-metadata={0}",           Markup.Escape(aaruMetadata ?? ""));
 
         // TODO: Disabled temporarily
-        //AaruConsole.DebugWriteLine(MODULE_NAME, "--raw={0}", raw);
+        //AaruConsole.DebugWriteLine(MODULE_NAME, "--raw={0}", Markup.Escape(raw ?? ""));
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
         AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);

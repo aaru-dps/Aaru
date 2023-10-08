@@ -122,8 +122,8 @@ sealed class CreateSidecarCommand : Command
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--block-size={0}", blockSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",      debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",   encodingName);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",      imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",   Markup.Escape(encodingName ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",      Markup.Escape(imagePath    ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--tape={0}",       tape);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",    verbose);
 

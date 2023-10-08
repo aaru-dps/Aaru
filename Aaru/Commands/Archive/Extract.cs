@@ -122,9 +122,9 @@ sealed class ArchiveExtractCommand : Command
         Statistics.AddCommand("archive-extract");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    archivePath);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}",   outputDir);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", Markup.Escape(encoding    ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    Markup.Escape(archivePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--output={0}",   Markup.Escape(outputDir   ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--xattrs={0}",   xattrs);
 

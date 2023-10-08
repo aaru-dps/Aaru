@@ -115,9 +115,9 @@ sealed class FilesystemInfoCommand : Command
         Statistics.AddCommand("fs-info");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",       debug);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",    encoding);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",    Markup.Escape(encoding ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--filesystems={0}", filesystems);
-        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       imagePath);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       Markup.Escape(imagePath ?? ""));
         AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}",  partitions);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);
 
