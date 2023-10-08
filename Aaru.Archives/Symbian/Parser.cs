@@ -554,6 +554,11 @@ public sealed partial class Symbian
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
 
                 break;
+            case FileRecordType.Skip:
+                offset = (uint)br.BaseStream.Seek(sizeof(FileRecordType), SeekOrigin.Current);
+                currentFile--;
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }

@@ -420,7 +420,11 @@ public sealed partial class Symbian
         If     = 3,
         ElseIf = 4,
         Else   = 5,
-        EndIf  = 6
+        EndIf  = 6,
+        /// <summary>
+        ///     Found in the wild, doesn't seem to contain any data, and doesn't count like a file entry either
+        /// </summary>
+        Skip = 0xFFFFFFFF
     }
 
 #endregion
