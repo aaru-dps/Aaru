@@ -47,6 +47,7 @@ Features
   filesystems inside them
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
 * Can compare two disk images, even different formats, for different sectors and/or metadata
+* Can list and extract contents from supported archives
 * Can list and extract contents from supported filesystems
 * Can read several disk image formats.
 * Can read several known sector by sector formats with variable bytes per sector.
@@ -123,6 +124,10 @@ Supported disk image formats (read and write)
 * Virtual PC fixed size, dynamic size and differencing (undo) disk images
 * VMware VMDK and COWD images
 * XDF disk images (as created by IBM's XDFCOPY)
+
+Supported disk image formats (read-only)
+========================================
+* Symbian Installation File (.SIS)
 
 Supported partitioning schemes
 ==============================
