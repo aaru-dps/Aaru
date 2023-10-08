@@ -595,7 +595,7 @@ public sealed class OffsetStream : Stream
     public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
         if(_baseStream.Position + count > _streamEnd)
-            throw new IOException(Localization.Cannot_read_past_stream_end);
+            count = (int)(_streamEnd - _baseStream.Position);
 
         return _baseStream.BeginRead(buffer, offset, count, callback, state);
     }
@@ -637,7 +637,7 @@ public sealed class OffsetStream : Stream
     public override int Read(byte[] buffer, int offset, int count)
     {
         if(_baseStream.Position + count > _streamEnd + 1)
-            throw new IOException(Localization.Cannot_read_past_stream_end);
+            count = (int)(_streamEnd - _baseStream.Position);
 
         return _baseStream.EnsureRead(buffer, offset, count);
     }
