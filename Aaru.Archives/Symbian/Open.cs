@@ -126,7 +126,8 @@ public sealed partial class Symbian
         for(var i = 0; i < sh.languages; i++)
             languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
 
-        _files = new List<DecodedFileRecord>();
+        _files      = new List<DecodedFileRecord>();
+        _conditions = new List<string>();
 
         uint currentFile    = 0;
         uint offset         = sh.files_ptr;
