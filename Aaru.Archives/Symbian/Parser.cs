@@ -516,10 +516,8 @@ public sealed partial class Symbian
 
                 break;
             case FileRecordType.ElseIf:
-                conditionLevel--;
-
-                tabulationChars = new char[conditionLevel];
-                for(var i = 0; i < conditionLevel; i++)
+                tabulationChars = new char[conditionLevel - 1];
+                for(var i = 0; i < conditionLevel - 1; i++)
                     tabulationChars[i] = '\t';
                 tabulation = new string(tabulationChars);
 
