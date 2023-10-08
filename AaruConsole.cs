@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Console;
@@ -108,6 +109,12 @@ public delegate void DebugWriteHandler(string format, params object[] arg);
 public delegate void DebugWithModuleWriteLineHandler(string module, string format, params object[] arg);
 
 /// <summary>
+///     Writes the exception to the debug output console.
+/// </summary>
+/// <param name="ex">Exception.</param>
+public delegate void WriteExceptionHandler(Exception ex);
+
+/// <summary>
 ///     Implements a console abstraction that defines four level of messages that can be routed to different consoles:
 ///     standard, error, verbose and debug.
 /// </summary>
@@ -140,6 +147,9 @@ public static class AaruConsole
 
     /// <summary>Event to receive writings to the debug output console.</summary>
     public static event DebugWriteHandler DebugWriteEvent;
+
+    /// <summary>Event to receive exceptions to write to the debug output console.</summary>
+    public static event WriteExceptionHandler WriteExceptionEvent;
 
     /// <summary>
     ///     Writes the text representation of the specified array of objects, followed by the current line terminator, to
@@ -242,4 +252,11 @@ public static class AaruConsole
     /// <param name="value">The value to write.</param>
     public static void DebugWriteLine(string module, string value) =>
         DebugWriteLineEvent?.Invoke("{0}", "DEBUG (" + module + "): " + value);
+
+    /// <summary>
+    ///     Writes the exception to the debug output console.
+    /// </summary>
+    /// <param name="ex">Exception.</param>
+    public static void WriteException(Exception ex) =>
+        WriteExceptionEvent?.Invoke(ex);
 }
