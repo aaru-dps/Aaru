@@ -320,6 +320,9 @@ public sealed partial class Symbian
                     bool wait, close;
                     switch(decodedFileRecords[0].type)
                     {
+                        case FileType.File:
+                            _conditions.Add(tabulation + $"InstallFileTo(\"{decodedFileRecords[0].destinationName}\")");
+                            break;
                         case FileType.FileText:
                             switch((FileDetails)((uint)decodedFileRecords[0].details & 0xFF))
                             {
@@ -444,7 +447,46 @@ public sealed partial class Symbian
 
                 break;
             case FileRecordType.Options:
-                throw new NotImplementedException();
+                OptionsLineRecord optionsLineRecord = new()
+                {
+                    recordType      = (FileRecordType)br.ReadUInt32(),
+                    numberOfOptions = br.ReadUInt32()
+                };
+
+                optionsLineRecord.options = new OptionRecord[(int)optionsLineRecord.numberOfOptions];
+
+                for(var i = 0; i < optionsLineRecord.numberOfOptions; i++)
+                {
+                    optionsLineRecord.options[i] = new OptionRecord();
+
+                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
+                    span   = buffer;
+                    optionsLineRecord.options[i].lengths =
+                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
+                    span   = buffer;
+                    optionsLineRecord.options[i].pointers =
+                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
+                    optionsLineRecord.options[i].names = new Dictionary<string, string>();
+
+                    offset = (uint)br.BaseStream.Position;
+
+                    for(var j = 0; j < languages.Count; j++)
+                    {
+                        br.BaseStream.Seek(optionsLineRecord.options[i].pointers[j], SeekOrigin.Begin);
+                        buffer = br.ReadBytes((int)optionsLineRecord.options[i].lengths[j]);
+                        optionsLineRecord.options[i].names.Add(languages[j], _encoding.GetString(buffer));
+                    }
+
+                    br.BaseStream.Seek(offset, SeekOrigin.Begin);
+
+                    _options.Add(optionsLineRecord.options[i]);
+                }
+
+                offset = (uint)br.BaseStream.Position;
+                break;
             case FileRecordType.If:
                 conditionLevel--;
 

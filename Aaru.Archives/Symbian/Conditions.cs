@@ -171,7 +171,10 @@ public sealed partial class Symbian
                     unused    = br.ReadUInt32()
                 };
 
-                sb.Append($"{attributeExpression.attribute}");
+                if((int)attributeExpression.attribute > 0x2000)
+                    sb.Append($"option({attributeExpression.attribute - 0x2000}, ENABLED)");
+                else
+                    sb.Append($"{attributeExpression.attribute}");
 
                 attribute = attributeExpression.attribute;
 
@@ -184,83 +187,90 @@ public sealed partial class Symbian
                     unused = br.ReadUInt32()
                 };
 
-                switch(attribute)
+                if(attribute is null)
+                    sb.Append($"0x{numberExpression.number:X8}");
+                else if((uint)attribute.Value < 0x2000)
                 {
-                    case Attribute.Manufacturer:
-                        sb.Append($"{(ManufacturerCode)numberExpression.number}");
-                        break;
-                    case Attribute.ManufacturerHardwareRev:
-                    case Attribute.ManufacturerSoftwareRev:
-                    case Attribute.DeviceFamilyRev:
-                        sb.Append($"{numberExpression.number >> 8}.{numberExpression.number & 0xFF}");
-                        break;
-                    case Attribute.MachineUid:
-                        sb.Append($"{DecodeMachineUid(numberExpression.number)}");
+                    switch(attribute)
+                    {
+                        case Attribute.Manufacturer:
+                            sb.Append($"{(ManufacturerCode)numberExpression.number}");
+                            break;
+                        case Attribute.ManufacturerHardwareRev:
+                        case Attribute.ManufacturerSoftwareRev:
+                        case Attribute.DeviceFamilyRev:
+                            sb.Append($"{numberExpression.number >> 8}.{numberExpression.number & 0xFF}");
+                            break;
+                        case Attribute.MachineUid:
+                            sb.Append($"{DecodeMachineUid(numberExpression.number)}");
 
-                        break;
-                    case Attribute.DeviceFamily:
-                        sb.Append($"{(DeviceFamilyCode)numberExpression.number}");
-                        break;
-                    case Attribute.CPU:
-                        sb.Append($"{(CpuCode)numberExpression.number}");
-                        break;
-                    case Attribute.CPUArch:
-                        sb.Append($"{(CpuArchitecture)numberExpression.number}");
-                        break;
-                    case Attribute.CPUABI:
-                        sb.Append($"{(CpuAbiCode)numberExpression.number}");
-                        break;
-                    case Attribute.CPUSpeed:
-                        sb.Append($"{numberExpression.number / 1024}MHz");
-                        break;
-                    case Attribute.SystemTickPeriod:
-                        sb.Append($"{numberExpression.number}μs");
+                            break;
+                        case Attribute.DeviceFamily:
+                            sb.Append($"{(DeviceFamilyCode)numberExpression.number}");
+                            break;
+                        case Attribute.CPU:
+                            sb.Append($"{(CpuCode)numberExpression.number}");
+                            break;
+                        case Attribute.CPUArch:
+                            sb.Append($"{(CpuArchitecture)numberExpression.number}");
+                            break;
+                        case Attribute.CPUABI:
+                            sb.Append($"{(CpuAbiCode)numberExpression.number}");
+                            break;
+                        case Attribute.CPUSpeed:
+                            sb.Append($"{numberExpression.number / 1024}MHz");
+                            break;
+                        case Attribute.SystemTickPeriod:
+                            sb.Append($"{numberExpression.number}μs");
 
-                        break;
-                    case Attribute.MemoryRAM:
-                    case Attribute.MemoryRAMFree:
-                    case Attribute.MemoryROM:
-                    case Attribute.MemoryPageSize:
-                    case Attribute.Keyboard:
-                    case Attribute.KeyboardDeviceKeys:
-                    case Attribute.KeyboardAppKeys:
-                    case Attribute.KeyboardClickVolumeMax:
-                    case Attribute.DisplayXPixels:
-                    case Attribute.DisplayYPixels:
-                    case Attribute.DisplayXTwips:
-                    case Attribute.DisplayYTwips:
-                    case Attribute.DisplayColors:
-                    case Attribute.DisplayContrastMax:
-                    case Attribute.PenX:
-                    case Attribute.PenY:
-                    case Attribute.PenClickVolumeMax:
-                    case Attribute.MouseX:
-                    case Attribute.MouseY:
-                    case Attribute.MouseButtons:
-                    case Attribute.LEDs:
-                    case Attribute.DisplayBrightnessMax:
-                    case Attribute.KeyboardBacklightState:
-                    case Attribute.AccessoryPower:
-                    case Attribute.NumHalAttributes:
-                    case Attribute.Language:
-                        sb.Append($"{numberExpression.number}");
-                        break;
-                    case Attribute.PowerBackup:
-                    case Attribute.KeyboardClick:
-                    case Attribute.Backlight:
-                    case Attribute.Pen:
-                    case Attribute.PenDisplayOn:
-                    case Attribute.PenClick:
-                    case Attribute.Mouse:
-                    case Attribute.CaseSwitch:
-                    case Attribute.IntegratedPhone:
-                    case Attribute.RemoteInstall:
-                        sb.Append(numberExpression.number == 0 ? "false" : "true");
-                        break;
-                    default:
-                        sb.Append($"0x{numberExpression.number:X8}");
-                        break;
+                            break;
+                        case Attribute.MemoryRAM:
+                        case Attribute.MemoryRAMFree:
+                        case Attribute.MemoryROM:
+                        case Attribute.MemoryPageSize:
+                        case Attribute.Keyboard:
+                        case Attribute.KeyboardDeviceKeys:
+                        case Attribute.KeyboardAppKeys:
+                        case Attribute.KeyboardClickVolumeMax:
+                        case Attribute.DisplayXPixels:
+                        case Attribute.DisplayYPixels:
+                        case Attribute.DisplayXTwips:
+                        case Attribute.DisplayYTwips:
+                        case Attribute.DisplayColors:
+                        case Attribute.DisplayContrastMax:
+                        case Attribute.PenX:
+                        case Attribute.PenY:
+                        case Attribute.PenClickVolumeMax:
+                        case Attribute.MouseX:
+                        case Attribute.MouseY:
+                        case Attribute.MouseButtons:
+                        case Attribute.LEDs:
+                        case Attribute.DisplayBrightnessMax:
+                        case Attribute.KeyboardBacklightState:
+                        case Attribute.AccessoryPower:
+                        case Attribute.NumHalAttributes:
+                        case Attribute.Language:
+                            sb.Append($"{numberExpression.number}");
+                            break;
+                        case Attribute.PowerBackup:
+                        case Attribute.KeyboardClick:
+                        case Attribute.Backlight:
+                        case Attribute.Pen:
+                        case Attribute.PenDisplayOn:
+                        case Attribute.PenClick:
+                        case Attribute.Mouse:
+                        case Attribute.CaseSwitch:
+                        case Attribute.IntegratedPhone:
+                        case Attribute.RemoteInstall:
+                            sb.Append(numberExpression.number == 0 ? "false" : "true");
+                            break;
+                        default:
+                            sb.Append($"0x{numberExpression.number:X8}");
+                            break;
+                    }
                 }
+                else
+                    sb.Append($"option({attribute.Value - 0x2000}, {(numberExpression.number > 0 ? "ENABLED" : "DISABLED")})");
 
                 attribute = null;
 

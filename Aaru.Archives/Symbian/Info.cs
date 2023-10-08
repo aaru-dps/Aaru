@@ -301,6 +301,7 @@ public sealed partial class Symbian
         uint currentFile = 0;
         offset = sh.files_ptr;
         var conditionLevel = 0;
+        _options = new List<OptionRecord>();
 
         do
         {
@@ -330,6 +331,20 @@ public sealed partial class Symbian
             description.AppendFormat(Localization.Files_for_0_language, lang).AppendLine();
             foreach(DecodedFileRecord file in _files.Where(t => t.language == lang))
                 description.AppendLine($"{file.destinationName}");
+            description.AppendLine();
+        }
+
+        if(_options.Count > 0)
+        {
+            for(var i = 0; i < _options.Count; i++)
+            {
+                OptionRecord option = _options[i];
+
+                description.AppendFormat("Option {0}:", i + 1).AppendLine();
+                foreach(KeyValuePair<string, string> kvp in option.names)
+                    description.AppendFormat("\tName for language {0}: {1}", kvp.Key, kvp.Value).AppendLine();
+            }
+
             description.AppendLine();
         }
 

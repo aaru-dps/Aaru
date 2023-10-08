@@ -30,6 +30,7 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
@@ -316,7 +317,8 @@ public sealed partial class Symbian
         /// <summary>
         ///     Pointer to the option names, array sorted as language records
         /// </summary>
-        public uint[] strings;
+        public uint[] pointers;
+        public Dictionary<string, string> names;
     }
 
 #endregion

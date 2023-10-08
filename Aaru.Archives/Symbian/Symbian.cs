@@ -47,6 +47,7 @@ public sealed partial class Symbian : IArchive
     Encoding                _encoding;
     ArchiveSupportedFeature _features;
     List<DecodedFileRecord> _files;
+    List<OptionRecord>      _options;
     bool                    _release6;
     Stream                  _stream;
 
