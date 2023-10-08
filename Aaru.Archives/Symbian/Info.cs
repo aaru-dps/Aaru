@@ -295,20 +295,24 @@ public sealed partial class Symbian
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
 
         // Set instance values
-        _files = new List<DecodedFileRecord>();
+        _files      = new List<DecodedFileRecord>();
+        _conditions = new List<string>();
 
         uint currentFile = 0;
         offset = sh.files_ptr;
+        var conditionLevel = 0;
 
         do
         {
-            Parse(br, ref offset, ref currentFile, sh.files, languages);
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel);
         } while(currentFile < sh.files);
 
         description.AppendLine();
 
         // Files appear on .sis in the reverse order they should be processed
         _files.Reverse();
+        // Conditions do as well
+        _conditions.Reverse();
 
         if(_files.Any(t => t.language is null))
         {
@@ -327,6 +331,13 @@ public sealed partial class Symbian
             foreach(DecodedFileRecord file in _files.Where(t => t.language == lang))
                 description.AppendLine($"{file.destinationName}");
             description.AppendLine();
+        }
+
+        if(_conditions.Count > 0)
+        {
+            description.AppendLine("Conditions:");
+            foreach(string condition in _conditions)
+                description.AppendLine(condition);
         }
 
         information = description.ToString();

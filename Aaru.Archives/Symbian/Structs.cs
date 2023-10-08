@@ -44,6 +44,7 @@ namespace Aaru.Archives;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [SuppressMessage("ReSharper", "InheritdocConsiderUsage")]
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "ClassCanBeSealed.Local")]
 public sealed partial class Symbian
 {
 #region Nested type: AttributeConditionalExpression
@@ -420,8 +421,9 @@ public sealed partial class Symbian
     /// </summary>
     class StringConditionalExpression : ConditionalExpression
     {
-        public uint length;
-        public uint pointer;
+        public uint   length;
+        public uint   pointer;
+        public string @string;
     }
 
 #endregion

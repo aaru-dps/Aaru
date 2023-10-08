@@ -128,12 +128,13 @@ public sealed partial class Symbian
 
         _files = new List<DecodedFileRecord>();
 
-        uint currentFile = 0;
-        uint offset      = sh.files_ptr;
+        uint currentFile    = 0;
+        uint offset         = sh.files_ptr;
+        var  conditionLevel = 0;
 
         do
         {
-            Parse(br, ref offset, ref currentFile, sh.files, languages);
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel);
         } while(currentFile < sh.files);
 
         // Files appear on .sis in the reverse order they should be processed

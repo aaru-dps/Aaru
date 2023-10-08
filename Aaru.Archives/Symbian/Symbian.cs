@@ -43,6 +43,7 @@ public sealed partial class Symbian : IArchive
 {
     const string            MODULE_NAME = "Symbian Installation File Plugin";
     bool                    _compressed;
+    List<string>            _conditions;
     Encoding                _encoding;
     ArchiveSupportedFeature _features;
     List<DecodedFileRecord> _files;

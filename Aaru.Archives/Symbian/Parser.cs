@@ -32,21 +32,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using Aaru.Console;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Archives;
 
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Symbian
 {
-    void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles, List<string> languages)
+    void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles, List<string> languages,
+               ref int      conditionLevel)
     {
         currentFile++;
 
         if(currentFile > maxFiles)
             return;
+
+        var tabulationChars = new char[conditionLevel];
+        for(var i = 0; i < conditionLevel; i++)
+            tabulationChars[i] = '\t';
+        string tabulation = new(tabulationChars);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "Seeking to {0} for parsing of file {1} of {2}", offset, currentFile,
                                    maxFiles);
@@ -58,8 +67,11 @@ public sealed partial class Symbian
 
         br.BaseStream.Seek(-sizeof(FileRecordType), SeekOrigin.Current);
 
-        byte[] buffer;
+        byte[]            buffer;
+        ConditionalRecord conditionalRecord;
 
+        StringBuilder conditionSb;
+        Attribute?    nullAttribute;
         switch(recordType)
         {
             case FileRecordType.SimpleFile:
@@ -109,6 +121,129 @@ public sealed partial class Symbian
 
                 _files.Add(decodedFileRecord);
 
+                if(conditionLevel > 0)
+                {
+                    bool wait, close;
+                    switch(decodedFileRecord.type)
+                    {
+                        case FileType.FileText:
+                            switch((FileDetails)((uint)decodedFileRecord.details & 0xFF))
+                            {
+                                case FileDetails.TextContinue:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_CONTINUE, ACTION_CONTINUE)");
+                                    break;
+                                case FileDetails.TextSkip:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_SKIP)");
+                                    break;
+                                case FileDetails.TextAbort:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_ABORT)");
+                                    break;
+                                case FileDetails.TextExit:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_EXIT)");
+                                    break;
+                            }
+
+                            break;
+                        case FileType.FileRun:
+                            // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
+                            wait  = (decodedFileRecord.details & FileDetails.RunWait) != 0;
+                            close = (decodedFileRecord.details & FileDetails.RunsEnd) != 0;
+                            // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+                            switch((FileDetails)((uint)decodedFileRecord.details & 0xFF))
+                            {
+                                case FileDetails.RunInstall:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL, 0)");
+                                    }
+
+                                    break;
+                                case FileDetails.RunRemove:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_REMOVE, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_REMOVE, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_REMOVE, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_REMOVE, 0)");
+                                    }
+
+                                    break;
+                                case FileDetails.RunBoth:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL | ON_REMOVE, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL | ON_REMOVE, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL | ON_REMOVE, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecord.sourceName}\", ON_INSTALL | ON_REMOVE, 0)");
+                                    }
+
+                                    break;
+                            }
+
+                            break;
+                        case FileType.FileMime:
+                            // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
+                            wait  = (decodedFileRecord.details & FileDetails.RunWait) != 0;
+                            close = (decodedFileRecord.details & FileDetails.RunsEnd) != 0;
+                            // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+                            if(wait && close)
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", WAIT | CLOSE)");
+                            else if(close)
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", CLOSE)");
+                            else if(wait)
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", WAIT)");
+                            else
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", 0)");
+                            break;
+                    }
+                }
+
                 break;
             case FileRecordType.MultipleLanguageFiles:
                 MultipleFileRecord multipleFileRecord = new();
@@ -148,7 +283,7 @@ public sealed partial class Symbian
                 if(multipleFileRecord.record.destinationNameLen > 0)
                 {
                     br.BaseStream.Seek(multipleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
-                    buffer = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
+                    buffer          = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
                     destinationName = _encoding.GetString(buffer);
                 }
                 else
@@ -180,17 +315,202 @@ public sealed partial class Symbian
 
                 _files.AddRange(decodedFileRecords);
 
+                if(conditionLevel > 0)
+                {
+                    bool wait, close;
+                    switch(decodedFileRecords[0].type)
+                    {
+                        case FileType.FileText:
+                            switch((FileDetails)((uint)decodedFileRecords[0].details & 0xFF))
+                            {
+                                case FileDetails.TextContinue:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_CONTINUE, ACTION_CONTINUE)");
+                                    break;
+                                case FileDetails.TextSkip:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_SKIP)");
+                                    break;
+                                case FileDetails.TextAbort:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_ABORT)");
+                                    break;
+                                case FileDetails.TextExit:
+                                    _conditions.Add(tabulation +
+                                                    $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_EXIT)");
+                                    break;
+                            }
+
+                            break;
+                        case FileType.FileRun:
+                            // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
+                            wait  = (decodedFileRecords[0].details & FileDetails.RunWait) != 0;
+                            close = (decodedFileRecords[0].details & FileDetails.RunsEnd) != 0;
+                            // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+                            switch((FileDetails)((uint)decodedFileRecords[0].details & 0xFF))
+                            {
+                                case FileDetails.RunInstall:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL, 0)");
+                                    }
+
+                                    break;
+                                case FileDetails.RunRemove:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_REMOVE, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_REMOVE, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_REMOVE, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_REMOVE, 0)");
+                                    }
+
+                                    break;
+                                case FileDetails.RunBoth:
+                                    if(wait && close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL | ON_REMOVE, WAIT | CLOSE)");
+                                    }
+                                    else if(close)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL | ON_REMOVE, CLOSE)");
+                                    }
+                                    else if(wait)
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL | ON_REMOVE, WAIT)");
+                                    }
+                                    else
+                                    {
+                                        _conditions.Add(tabulation +
+                                                        $"Run(\"{decodedFileRecords[0].sourceName}\", ON_INSTALL | ON_REMOVE, 0)");
+                                    }
+
+                                    break;
+                            }
+
+                            break;
+                        case FileType.FileMime:
+                            // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
+                            wait  = (decodedFileRecords[0].details & FileDetails.RunWait) != 0;
+                            close = (decodedFileRecords[0].details & FileDetails.RunsEnd) != 0;
+                            // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+                            if(wait && close)
+                            {
+                                _conditions.Add(tabulation +
+                                                $"Open(\"{decodedFileRecords[0].sourceName}\", WAIT | CLOSE)");
+                            }
+                            else if(close)
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecords[0].sourceName}\", CLOSE)");
+                            else if(wait)
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecords[0].sourceName}\", WAIT)");
+                            else
+                                _conditions.Add(tabulation + $"Open(\"{decodedFileRecords[0].sourceName}\", 0)");
+
+                            break;
+                    }
+                }
+
                 break;
             case FileRecordType.Options:
                 throw new NotImplementedException();
             case FileRecordType.If:
-                throw new NotImplementedException();
+                conditionLevel--;
+
+                tabulationChars = new char[conditionLevel];
+                for(var i = 0; i < conditionLevel; i++)
+                    tabulationChars[i] = '\t';
+                tabulation = new string(tabulationChars);
+
+                conditionalRecord = new ConditionalRecord
+                {
+                    recordType = (FileRecordType)br.ReadUInt32(),
+                    length     = br.ReadUInt32()
+                };
+
+                offset        = (uint)(br.BaseStream.Position + conditionalRecord.length);
+                conditionSb   = new StringBuilder();
+                nullAttribute = null;
+
+                conditionSb.Append(tabulation + "if(");
+                ParseConditionalExpression(br, offset, conditionSb, ref nullAttribute);
+                conditionSb.Append(")");
+
+                _conditions.Add(conditionSb.ToString());
+
+                break;
             case FileRecordType.ElseIf:
-                throw new NotImplementedException();
+                conditionLevel--;
+
+                tabulationChars = new char[conditionLevel];
+                for(var i = 0; i < conditionLevel; i++)
+                    tabulationChars[i] = '\t';
+                tabulation = new string(tabulationChars);
+
+                conditionalRecord = new ConditionalRecord
+                {
+                    recordType = (FileRecordType)br.ReadUInt32(),
+                    length     = br.ReadUInt32()
+                };
+
+                offset        = (uint)(br.BaseStream.Position + conditionalRecord.length);
+                conditionSb   = new StringBuilder();
+                nullAttribute = null;
+
+                conditionSb.Append(tabulation + "else if(");
+                ParseConditionalExpression(br, offset, conditionSb, ref nullAttribute);
+                conditionSb.Append(")");
+
+                _conditions.Add(conditionSb.ToString());
+
+                break;
             case FileRecordType.Else:
-                throw new NotImplementedException();
+                tabulationChars = new char[conditionLevel - 1];
+                for(var i = 0; i < conditionLevel - 1; i++)
+                    tabulationChars[i] = '\t';
+                tabulation = new string(tabulationChars);
+
+                _conditions.Add(tabulation             + "else");
+                offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
+
+                break;
             case FileRecordType.EndIf:
-                throw new NotImplementedException();
+                conditionLevel++;
+                _conditions.Add(tabulation             + "endif()" + Environment.NewLine);
+                offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
+
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
