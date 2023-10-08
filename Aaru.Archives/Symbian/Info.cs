@@ -303,9 +303,19 @@ public sealed partial class Symbian
         var conditionLevel = 0;
         _options = new List<OptionRecord>();
 
+        // Get only the options records
         do
         {
-            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel);
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, true);
+        } while(currentFile < sh.files);
+
+        // Get all other records
+        offset         = sh.files_ptr;
+        currentFile    = 0;
+        conditionLevel = 0;
+        do
+        {
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, false);
         } while(currentFile < sh.files);
 
         description.AppendLine();

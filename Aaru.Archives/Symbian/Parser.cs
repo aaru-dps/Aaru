@@ -45,7 +45,7 @@ namespace Aaru.Archives;
 public sealed partial class Symbian
 {
     void Parse(BinaryReader br, ref uint offset, ref uint currentFile, uint maxFiles, List<string> languages,
-               ref int      conditionLevel)
+               ref int      conditionLevel, bool optionsOnly)
     {
         currentFile++;
 
@@ -83,6 +83,9 @@ public sealed partial class Symbian
                 // Remove the 3 fields that exist only on >= ER6
                 if(!_release6)
                     offset -= sizeof(uint) * 3;
+
+                if(optionsOnly)
+                    break;
 
                 var decodedFileRecord = new DecodedFileRecord
                 {
@@ -276,6 +279,8 @@ public sealed partial class Symbian
                     multipleFileRecord.originalLengths = multipleFileRecord.lengths;
 
                 offset = (uint)br.BaseStream.Position;
+                if(optionsOnly)
+                    break;
 
                 br.BaseStream.Seek(multipleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
                 buffer = br.ReadBytes((int)multipleFileRecord.record.sourceNameLen);
@@ -485,7 +490,8 @@ public sealed partial class Symbian
 
                     br.BaseStream.Seek(offset, SeekOrigin.Begin);
 
-                    _options.Add(optionsLineRecord.options[i]);
+                    if(optionsOnly)
+                        _options.Add(optionsLineRecord.options[i]);
                 }
 
                 offset = (uint)br.BaseStream.Position;
@@ -504,7 +510,11 @@ public sealed partial class Symbian
                     length     = br.ReadUInt32()
                 };
 
-                offset        = (uint)(br.BaseStream.Position + conditionalRecord.length);
+                offset = (uint)(br.BaseStream.Position + conditionalRecord.length);
+
+                if(optionsOnly)
+                    break;
+
                 conditionSb   = new StringBuilder();
                 nullAttribute = null;
 
@@ -527,7 +537,11 @@ public sealed partial class Symbian
                     length     = br.ReadUInt32()
                 };
 
-                offset        = (uint)(br.BaseStream.Position + conditionalRecord.length);
+                offset = (uint)(br.BaseStream.Position + conditionalRecord.length);
+
+                if(optionsOnly)
+                    break;
+
                 conditionSb   = new StringBuilder();
                 nullAttribute = null;
 
@@ -544,14 +558,22 @@ public sealed partial class Symbian
                     tabulationChars[i] = '\t';
                 tabulation = new string(tabulationChars);
 
-                _conditions.Add(tabulation             + "else");
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
+
+                if(optionsOnly)
+                    break;
+
+                _conditions.Add(tabulation + "else");
 
                 break;
             case FileRecordType.EndIf:
                 conditionLevel++;
-                _conditions.Add(tabulation             + "endif()" + Environment.NewLine);
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
+
+                if(optionsOnly)
+                    break;
+
+                _conditions.Add(tabulation + "endif()" + Environment.NewLine);
 
                 break;
             case FileRecordType.Skip:

@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Aaru.Archives;
@@ -172,7 +173,19 @@ public sealed partial class Symbian
                 };
 
                 if((int)attributeExpression.attribute > 0x2000)
-                    sb.Append($"option({attributeExpression.attribute - 0x2000}, ENABLED)");
+                {
+                    int optionIndex = (int)attributeExpression.attribute - 0x2000;
+
+                    if(optionIndex <= _options.Count)
+                    {
+                        OptionRecord option = _options[optionIndex - 1];
+                        option.names.TryGetValue("EN", out string optionName);
+                        optionName ??= option.names.Values.FirstOrDefault() ?? optionIndex.ToString();
+                        sb.Append($"option(\"{optionName}\", ENABLED)");
+                    }
+                    else
+                        sb.Append($"option({optionIndex}, ENABLED");
+                }
                 else
                     sb.Append($"{attributeExpression.attribute}");
 
@@ -270,7 +283,19 @@ public sealed partial class Symbian
                     }
                 }
                 else
-                    sb.Append($"option({attribute.Value - 0x2000}, {(numberExpression.number > 0 ? "ENABLED" : "DISABLED")})");
+                {
+                    int optionIndex = (int)attribute - 0x2000;
+
+                    if(optionIndex <= _options.Count)
+                    {
+                        OptionRecord option = _options[optionIndex - 1];
+                        option.names.TryGetValue("EN", out string optionName);
+                        optionName ??= option.names.Values.FirstOrDefault() ?? optionIndex.ToString();
+                        sb.Append($"option(\"{optionName}\", {(numberExpression.number == 0 ? "DISABLED" : "ENABLED")})");
+                    }
+                    else
+                        sb.Append($"option({optionIndex}, {(numberExpression.number == 0 ? "DISABLED" : "ENABLED")}");
+                }
 
                 attribute = null;
 

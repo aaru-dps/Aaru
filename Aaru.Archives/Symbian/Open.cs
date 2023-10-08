@@ -132,9 +132,19 @@ public sealed partial class Symbian
         uint offset         = sh.files_ptr;
         var  conditionLevel = 0;
 
+        // Get only the options records
         do
         {
-            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel);
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, true);
+        } while(currentFile < sh.files);
+
+        // Get all other records
+        offset         = sh.files_ptr;
+        currentFile    = 0;
+        conditionLevel = 0;
+        do
+        {
+            Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, false);
         } while(currentFile < sh.files);
 
         // Files appear on .sis in the reverse order they should be processed
