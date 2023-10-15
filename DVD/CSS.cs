@@ -662,6 +662,46 @@ public class CSS
         return decryptedBuffer;
     }
 
+    /// <summary>Takes a sector and a decrypted title key and returns the decrypted sector.</summary>
+    /// <param name="sectorData">Encrypted sector data.</param>
+    /// <param name="cmiData">The Copyright Management Information.</param>
+    /// <param name="keyData">The encryption keys.</param>
+    /// <param name="blocks">Number of sectors in <c>sectorData</c>.</param>
+    /// <param name="blockSize">Size of one sector.</param>
+    /// <returns>The decrypted sector.</returns>
+    public static byte[] DecryptSectorLong(byte[] sectorData, byte[] keyData, byte[]? cmiData, uint blocks = 1,
+                                           uint   blockSize = 2048)
+    {
+        // None of the sectors are encrypted
+        if(cmiData != null && cmiData.All(static cmi => (cmi & 0x80) >> 7 == 0) || keyData.All(static k => k == 0))
+            return sectorData;
+
+        var decryptedBuffer = new byte[sectorData.Length];
+
+        for(uint i = 0; i < blocks; i++)
+        {
+            byte[] currentKey    = keyData.Skip((int)(i * 5)).Take(5).ToArray();
+            byte[] currentPrefix = sectorData.Skip((int)(i * 2064)).Take(12).ToArray();
+            byte[] currentSuffix = sectorData.Skip((int)(2060 + i * 2064)).Take(4).ToArray();
+            byte[] currentSector = sectorData.Skip((int)(12 + i * blockSize + (16 * i))).Take((int)blockSize).ToArray();
+
+            Array.Copy(currentPrefix, 0, decryptedBuffer, (int)(i * 2064),        12);
+            Array.Copy(currentSuffix, 0, decryptedBuffer, (int)(2060 + i * 2064), 4);
+
+            if(!IsEncrypted(cmiData?[i], currentKey, currentSector))
+            {
+                Array.Copy(currentSector, 0, decryptedBuffer, (int)(12 + i * blockSize + (16 * i)), blockSize);
+
+                continue;
+            }
+
+            Array.Copy(UnscrambleSector(currentKey, currentSector), 0, decryptedBuffer,
+                       (int)(12 + i * blockSize + (16 * i)), blockSize);
+        }
+
+        return decryptedBuffer;
+    }
+
     /// <summary>
     ///     Unscrambles a DVD sector with a title key.
     /// </summary>
