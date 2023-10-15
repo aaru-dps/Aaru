@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
 namespace Aaru.Decoders.DVD;
@@ -204,38 +205,50 @@ public sealed class Sector
     /// </summary>
     /// <param name="sector">Buffer of the scrambled sector</param>
     /// <param name="cipher">Buffer of the scrambling cipher</param>
-    /// <returns>The unscrambled sector.</returns>
-    static byte[] UnscrambleSector(byte[] sector, IReadOnlyList<byte> cipher)
+    /// <param name="scrambled">Buffer of unscrambled sector data</param>
+    /// <returns>The Error.</returns>
+    static ErrorNumber UnscrambleSector(byte[] sector, IReadOnlyList<byte> cipher, out byte[] scrambled)
     {
-        var scrambled = new byte[sector.Length];
+        scrambled = new byte[sector.Length];
         Array.Copy(sector, 0, scrambled, 0, sector.Length);
 
         for(var i = 0; i < 2048; i++)
             scrambled[i + 12] = (byte)(sector[i + 12] ^ cipher[i]);
 
-        return ComputeEdc(0, scrambled, 2060) != BigEndianBitConverter.ToUInt32(sector, 2060) ? sector : scrambled;
+        return ComputeEdc(0, scrambled, 2060) != BigEndianBitConverter.ToUInt32(sector, 2060)
+                   ? ErrorNumber.NotVerifiable
+                   : ErrorNumber.NoError;
     }
 
-    public byte[] Scramble(byte[] sector)
+    public ErrorNumber Scramble(byte[] sector, out byte[] scrambled)
     {
+        scrambled = new byte[sector.Length];
+
         if(sector is not { Length: 2064 })
-            return sector;
+            return ErrorNumber.NotSupported;
 
         byte[]? cipher = GetSeed(sector);
 
-        return cipher == null ? sector : UnscrambleSector(sector, cipher);
+        return cipher == null ? ErrorNumber.UnrecognizedFormat : UnscrambleSector(sector, cipher, out scrambled);
     }
 
-    public byte[] Scramble(byte[] sector, uint transferLength)
+    public ErrorNumber Scramble(byte[] sector, uint transferLength, out byte[] scrambled)
     {
-        var scrambled = new byte[sector.Length];
+        scrambled = new byte[sector.Length];
 
         if(sector.Length % 2064 != 0 || sector.Length / 2064 != transferLength)
-            return sector;
+            return ErrorNumber.NotSupported;
 
         for(uint i = 0; i < transferLength; i++)
-            Array.Copy(Scramble(sector.Skip((int)(i * 2064)).Take(2064).ToArray()), 0, scrambled, i * 2064, 2064);
+        {
+            ErrorNumber error = Scramble(sector.Skip((int)(i * 2064)).Take(2064).ToArray(), out byte[]? currentSector);
 
-        return scrambled;
+            if(error != ErrorNumber.NoError)
+                return error;
+
+            Array.Copy(currentSector, 0, scrambled, i * 2064, 2064);
+        }
+
+        return ErrorNumber.NoError;
     }
 }
