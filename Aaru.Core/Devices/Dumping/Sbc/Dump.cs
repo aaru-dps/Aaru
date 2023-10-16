@@ -776,10 +776,19 @@ partial class Dump
         }
         else
         {
-            ReadSbcData(blocks,       blocksToRead,      blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
-                        ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                        ref newTrim,  ref dvdDecrypt,
-                        mediaTags.TryGetValue(MediaTagType.DVD_DiscKey_Decrypted, out byte[] tag) ? tag : null);
+            mediaTags.TryGetValue(MediaTagType.DVD_DiscKey_Decrypted, out byte[] discKey);
+            if(scsiReader.HldtstReadRaw)
+            {
+                ReadCacheData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+                              ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
+                              ref newTrim, discKey ?? null);
+            }
+            else
+            {
+                ReadSbcData(blocks,       blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+                            ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
+                            ref newTrim,  ref dvdDecrypt, discKey ?? null);
+            }
         }
 
         _dumpStopwatch.Stop();

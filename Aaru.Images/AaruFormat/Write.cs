@@ -578,6 +578,39 @@ public sealed partial class AaruFormat
                                                            GC.GetTotalMemory(false));
 
                                 break;
+                            case DataType.DvdSectorId:
+                                _sectorId = data;
+
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorInformation))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorInformation);
+
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorNumber))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorNumber);
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                           GC.GetTotalMemory(false));
+
+                                break;
+                            case DataType.DvdSectorIed:
+                                _sectorIed = data;
+
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorIed))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorIed);
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                           GC.GetTotalMemory(false));
+
+                                break;
+                            case DataType.DvdSectorEdc:
+                                _sectorEdc = data;
+
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorEdc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", Localization.Memory_snapshot_0_bytes,
+                                                           GC.GetTotalMemory(false));
+
+                                break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
 
@@ -2025,7 +2058,23 @@ public sealed partial class AaruFormat
                 if(track.Sequence == 0 && track.StartSector == 0 && track.EndSector == 0)
                     track.Type = TrackType.Data;
 
-                if(data.Length == 2064 && _imageInfo.MediaType == MediaType.DVDROM)
+                if(data.Length          == 2064 &&
+                   (_imageInfo.MediaType == MediaType.DVDROM      ||
+                   _imageInfo.MediaType  == MediaType.PS2DVD      ||
+                   _imageInfo.MediaType  == MediaType.SACD        ||
+                   _imageInfo.MediaType  == MediaType.PS3DVD      ||
+                   _imageInfo.MediaType  == MediaType.DVDR        ||
+                   _imageInfo.MediaType  == MediaType.DVDRW       ||
+                   _imageInfo.MediaType  == MediaType.DVDPR       ||
+                   _imageInfo.MediaType  == MediaType.DVDPRW      ||
+                   _imageInfo.MediaType  == MediaType.DVDPRWDL    ||
+                   _imageInfo.MediaType  == MediaType.DVDRDL      ||
+                   _imageInfo.MediaType  == MediaType.DVDPRDL     ||
+                   _imageInfo.MediaType  == MediaType.DVDRAM      ||
+                   _imageInfo.MediaType  == MediaType.DVDRWDL     ||
+                   _imageInfo.MediaType  == MediaType.DVDDownload ||
+                   _imageInfo.MediaType  == MediaType.Nuon
+                   ))
                 {
                     sector        =   new byte[2048];
                     _sectorId     ??= new byte[_imageInfo.Sectors * 4];
@@ -2444,6 +2493,21 @@ public sealed partial class AaruFormat
                 switch(_imageInfo.MediaType)
                 {
                     case MediaType.DVDROM:
+                    case MediaType.PS2DVD:
+                    case MediaType.SACD:
+                    case MediaType.DVDROM:
+                    case MediaType.DVDR:
+                    case MediaType.DVDRW:
+                    case MediaType.DVDPR:
+                    case MediaType.DVDPRW:
+                    case MediaType.DVDPRWDL:
+                    case MediaType.DVDRDL:
+                    case MediaType.DVDPRDL:
+                    case MediaType.DVDRAM:
+                    case MediaType.DVDRWDL:
+                    case MediaType.DVDDownload:
+                    case MediaType.PS3DVD:
+                    case MediaType.Nuon:
                         if(data.Length % 2064 != 0)
                         {
                             ErrorMessage = Localization.Incorrect_data_size;

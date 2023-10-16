@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
@@ -40,7 +41,7 @@ namespace Aaru.Core.Devices;
 sealed partial class Reader
 {
     // TODO: Raw reading
-    bool _hldtstReadRaw;
+    public bool HldtstReadRaw;
     bool _plextorReadRaw;
     bool _read10;
     bool _read12;
@@ -478,7 +479,7 @@ sealed partial class Reader
                 switch(_dev.Manufacturer)
                 {
                     case "HL-DT-ST":
-                        _hldtstReadRaw = !_dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
+                        HldtstReadRaw = !_dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
 
                         break;
                     case "PLEXTOR":
@@ -487,7 +488,7 @@ sealed partial class Reader
                         break;
                 }
 
-                if(_hldtstReadRaw || _plextorReadRaw)
+                if(HldtstReadRaw || _plextorReadRaw)
                 {
                     CanReadRaw    = true;
                     LongBlockSize = 2064;
@@ -518,7 +519,7 @@ sealed partial class Reader
                 AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_10_command);
             else if(_syqReadLong6)
                 AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_6_command);
-            else if(_hldtstReadRaw)
+            else if(HldtstReadRaw)
                 AaruConsole.WriteLine(Localization.Core.Using_HL_DT_ST_raw_DVD_reading);
             else if(_plextorReadRaw)
                 AaruConsole.WriteLine(Localization.Core.Using_Plextor_raw_DVD_reading);
@@ -584,7 +585,11 @@ sealed partial class Reader
 
         while(true)
         {
-            if(_read6)
+            if(HldtstReadRaw)
+            {
+                BlocksToRead = 1;
+            }
+            else if(_read6)
             {
                 _dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, _timeout, out _);
 
@@ -668,10 +673,13 @@ sealed partial class Reader
                 sense = _dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                               out duration);
             }
-            else if(_hldtstReadRaw)
+            else if(HldtstReadRaw)
             {
-                sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
-                                              out duration);
+                // We need to fill the buffer before reading it with the HL-DT-ST command. We don't care about sense,
+                // because the data can be wrong anyway, so we need to check the buffer data instead.
+                _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)(block), LogicalBlockSize, 0,
+                            16, false, _timeout, out duration);
+                sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, count, _timeout, out duration);
             }
             else if(_plextorReadRaw)
             {

@@ -1341,9 +1341,13 @@ public sealed partial class ZZZRawImage
             {
                 if(_rawDvd)
                 {
-                    byte[] sector = br.ReadBytes((int)(sectorSize + sectorSkip + sectorOffset));
-                    sector = _decoding.Scramble(sector);
-                    Array.Copy(sector, sectorOffset, buffer, i * sectorSize, sectorSize);
+                    byte[]      sector = br.ReadBytes((int)(sectorSize + sectorSkip + sectorOffset));
+                    ErrorNumber error  = _decoding.Scramble(sector, out byte[] scrambled);
+
+                    if(error != ErrorNumber.NoError)
+                        return error;
+
+                    Array.Copy(scrambled, sectorOffset, buffer, i * sectorSize, sectorSize);
                 }
                 else
                 {
@@ -1741,9 +1745,13 @@ public sealed partial class ZZZRawImage
         {
             for(var i = 0; i < length; i++)
             {
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                sector = _decoding.Scramble(sector);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                byte[]      sector = br.ReadBytes((int)sectorSize);
+                ErrorNumber error  = _decoding.Scramble(sector, out byte[] scrambled);
+
+                if(error != ErrorNumber.NoError)
+                    return error;
+
+                Array.Copy(scrambled, 0, buffer, i * sectorSize, sectorSize);
             }
         }
         else if(sectorSkip == 0)
