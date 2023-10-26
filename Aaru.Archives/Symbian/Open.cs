@@ -128,6 +128,7 @@ public sealed partial class Symbian
 
         _files      = new List<DecodedFileRecord>();
         _conditions = new List<string>();
+        _options    = new List<OptionRecord>();
 
         uint currentFile    = 0;
         uint offset         = sh.files_ptr;
