@@ -227,7 +227,7 @@ public static class Sense
     {
         var decoded = new DecodedSense();
 
-        switch(sense[0])
+        switch(sense[0] & 0x7F)
         {
             case 0x70:
             case 0x71:
