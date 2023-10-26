@@ -349,7 +349,7 @@ sealed class LsCommand : Command
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, Markup.Escape(ex.Message)));
             AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
