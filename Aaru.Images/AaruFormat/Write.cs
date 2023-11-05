@@ -2495,7 +2495,6 @@ public sealed partial class AaruFormat
                     case MediaType.DVDROM:
                     case MediaType.PS2DVD:
                     case MediaType.SACD:
-                    case MediaType.DVDROM:
                     case MediaType.DVDR:
                     case MediaType.DVDRW:
                     case MediaType.DVDPR:
