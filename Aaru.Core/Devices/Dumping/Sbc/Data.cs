@@ -138,25 +138,6 @@ partial class Dump
                         else
                             continue;
 
-                        // If the CMI bit is 1, the sector is using copy protection, else it is not
-                        if((titleKey.Value.CMI & 0x80) >> 7 == 0)
-                        {
-                            // The CMI indicates this sector is not encrypted.
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdSectorTitleKey);
-
-                            outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
-
-                            _resume.MissingTitleKeys.Remove(i + j);
-
-                            continue;
-                        }
-
                         // According to libdvdcss, if the key is all zeroes, the sector is actually
                         // not encrypted even if the CMI says it is.
                         if(titleKey.Value.Key.All(static k => k == 0))
