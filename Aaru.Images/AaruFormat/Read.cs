@@ -405,7 +405,7 @@ public sealed partial class AaruFormat
 
                             break;
                         case DataType.DvdSectorIed:
-                            _sectorDecryptedTitleKey = data;
+                            _sectorIed = data;
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorIed))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorIed);
@@ -415,7 +415,7 @@ public sealed partial class AaruFormat
 
                             break;
                         case DataType.DvdSectorEdc:
-                            _sectorDecryptedTitleKey = data;
+                            _sectorEdc = data;
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorEdc))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
