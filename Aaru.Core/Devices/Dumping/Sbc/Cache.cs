@@ -131,14 +131,14 @@ partial class Dump
                             0, 0, 0, 0, 0
                         }, i + j, SectorTagType.DvdTitleKeyDecrypted);
 
-                        _resume.MissingTitleKeys.Remove(i + j);
+                        _resume.MissingTitleKeys?.Remove(i + j);
 
                         continue;
                     }
 
                     CSS.DecryptTitleKey(discKey, key, out tmpBuf);
                     outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
-                    _resume.MissingTitleKeys.Remove(i     + j);
+                    _resume.MissingTitleKeys?.Remove(i    + j);
 
                     if(_storeEncrypted)
                         continue;
