@@ -30,10 +30,12 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 
 namespace Aaru.Core;
 
@@ -53,9 +55,22 @@ public static class Filesystems
     {
         PluginRegister plugins = PluginRegister.Singleton;
 
-        idPlugins = (from plugin in plugins.Filesystems.Values
-                     where plugin is not null
-                     where plugin.Identify(imagePlugin, partition)
-                     select getGuid ? plugin.Id.ToString() : plugin.Name.ToLower()).ToList();
+        idPlugins = [];
+
+        foreach(IFilesystem plugin in plugins.Filesystems.Values.Where(p => p is not null))
+        {
+            try
+            {
+                if(plugin.Identify(imagePlugin, partition))
+                    idPlugins.Add(getGuid ? plugin.Id.ToString() : plugin.Name.ToLower());
+            }
+            catch(Exception ex)
+            {
+                AaruConsole.
+                    ErrorWriteLine("Error identifying filesystem {0}. Please open a report with the following line in a Github issue.",
+                                   plugin.Name);
+                AaruConsole.WriteException(ex);
+            }
+        }
     }
 }
