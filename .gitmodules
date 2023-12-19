@@ -1,6 +1,3 @@
 [submodule "Aaru.Dto"]
 	path = Aaru.Dto
 	url = https://github.com/aaru-dps/Aaru.Dto
-[submodule "Aaru.Decryption"]
-	path = Aaru.Decryption
-	url = https://github.com/aaru-dps/Aaru.Decryption
