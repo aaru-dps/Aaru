@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
+    <value>REPORT ASF (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.</value>
+  </data>
+    <data name="INVALIDATE_AGID_AGID_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
+    <value>INVALIDATE AGID (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.</value>
+  </data>
+    <data name="REPORT_AGID_CSS_CPPM_AGID_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
+    <value>REPORT AGID CSS/CPPM (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.</value>
+  </data>
+    <data name="REPORT_KEY1_AGID_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
+    <value>REPORT KEY1 (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.</value>
+  </data>
+    <data name="REPORT_CHALLENGE_AGID_1_Sense_2_Last_Error_3_took_0_ms" xml:space="preserve">
+    <value>REPORT CHALLENGE (AGID: {1}, Sense: {2}, Last Error: {3}) took {0} ms.</value>
+  </data>
+    <data name="SEND_CHALLENGE_AGID_1_Challenge_2_Sense_3_Last_Error_4_took_0_ms" xml:space="preserve">
+    <value>SEND CHALLENGE (AGID: {1}, Challenge {2}, Sense: {3}, Last Error: {4}) took {0} ms.</value>
+  </data>
+    <data name="SEND_CHALLENGE_AGID_1_KEY2_2_Sense_3_Last_Error_4_took_0_ms" xml:space="preserve">
+    <value>SEND CHALLENGE (AGID: {1}, KEY2 {2}, Sense: {3}, Last Error: {4}) took {0} ms.</value>
+  </data>
+    <data name="GET_TITLE_KEY_AGID_1_LBA_2_Sense_3_took_0_ms" xml:space="preserve">
+    <value>GET TITLE KEY (AGID: {1}, LBA: {2}, Sense: {3}) took {0} ms.</value>
+  </data>
+</root>
