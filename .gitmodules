@@ -1,6 +1,3 @@
-[submodule "Aaru.CommonTypes"]
-	path = Aaru.CommonTypes
-	url = https://github.com/aaru-dps/Aaru.CommonTypes
 [submodule "Aaru.Console"]
 	path = Aaru.Console
 	url = https://github.com/aaru-dps/Aaru.Console
