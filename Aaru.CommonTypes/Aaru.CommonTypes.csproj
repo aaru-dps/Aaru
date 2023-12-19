@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F2B84194-26EB-4227-B1C5-6602517E85AE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.CommonTypes</RootNamespace>
+    <AssemblyName>Aaru.CommonTypes</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2023 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.CommonTypes</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Description>Contains common types defined by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru.CommonTypes</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Macross.Json.Extensions" Version="3.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7"/>
+    <PackageReference Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5"/>
+    <PackageReference Include="System.Text.Json" Version="8.0.0-rc.1.23419.4"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

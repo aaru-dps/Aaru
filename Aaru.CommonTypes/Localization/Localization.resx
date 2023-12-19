@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Unhandled_exception_calling_uname_0" xml:space="preserve">
+    <value>Unhandled exception calling uname: {0}</value>
+  </data>
+    <data name="Drive_manufacturer_is_SyQuest_media_has_1961069_blocks_of_512_bytes_setting_media_type_to_SparQ"
+          xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 1961069 blocks of 512 bytes, setting media type to SparQ.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_WORM_PD_650"
+          xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to WORM PD-650.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to PD-650.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to Compact Disc.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_ROM" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to CD-ROM.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc_Digital_Audio" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to Compact Disc Digital Audio.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CD_Plus" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to CD+.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_Photo_CD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to Photo CD.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CDR" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to CD-R.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_CDRW" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to CD-RW.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_and_device_is_USB_setting_media_type_to_Flash_Drive" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h and device is USB, setting media type to Flash Drive.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO2"
+          xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive starts with "ult", setting media type to LTO-2.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO3"
+          xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive starts with "ult", setting media type to LTO-3.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO4"
+          xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive starts with "ult", setting media type to LTO-4.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO5"
+          xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive starts with "ult", setting media type to LTO-5.</value>
+  </data>
+    <data name="SCSI_medium_type_is_0_setting_media_type_to_unknown_magneto_optical" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, setting media type to unknown magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA154" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-154 / ISO 10090 conforming 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA201_embossed" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-201 / ISO 13963 conforming 3½" embossed magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA201" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-201 / ISO 13963 conforming 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA223" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-223 conforming 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA183" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-183 / ISO 13481 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ISO15041" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15041 conforming 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA184" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-184 / ISO 13549 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA195" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-195 / ISO 13842 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ISO14517" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Unknown_MO" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to unknown magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ISO10089" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 10089 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA238" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-238 / ISO 15486 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ISO15286" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA322" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-322 / ISO 22092 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA260" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-260 / ISO 15898 conforming 356mm magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA239" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-239 / ISO 15498 conforming 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_GigaMO" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to GigaMO 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_GigaMO2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to GigaMO 2 3½" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA280" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-280 / ISO 18093 conforming 5¼" magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA317" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-317 / ISO 20162 conforming 300mm magneto-optical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_UDO" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to UDO.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_UDO2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to WORM UDO2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_UDO2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to UDO2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA54" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-54 formatted 8" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA59" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-59 formatted 8" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA69" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-69 formatted 8" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Unknown" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to unknown.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA66" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-66 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA70" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-70 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA78" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-78 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA99" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-99 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_REV120" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 120Gb REV.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_REV70" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 70Gb REV.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_REV35" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 35Gb REV.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_PC98_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to PC-98 formatted 3½" high density floppy (15 sectors).</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Atari_MD1SD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Atari formatted 5¼" single density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Atari_MD1DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Atari formatted 5¼" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_33FD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 8" (33FD) floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_43FD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 8" (43FD) floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ECMA56" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-56 formatted 5¼" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Acorn_MD1SD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 5¼" single density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apple_DOS32" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apple DOS 3.2 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apple_DOS33" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apple DOS 3.3 formatted 5¼" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Acorn_MD1DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 5¼" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apple_DOS32_DS" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apple DOS 3.2 formatted 5¼" double sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apple_DOS33_DS" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apple DOS 3.3 formatted 5¼" double sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MetaFloppy" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to MetaFloppy formatted 5¼" double density single sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Acorn_MD1DD_80" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 5¼" double density floppy with 80 tracks.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DEC_RX02" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to DEC RX02 floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_53FD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 8" (53FD) floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Bernoulli10" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, media has {0} blocks of 256 bytes, setting media type to 10Mb Bernoulli Box.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_23FD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 8" (23FD) floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MD1DD_8" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 5¼" double density single sided floppy (8 sectors).</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MD1DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 5¼" double density single sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apricot_MF2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apricot formatted 3½" floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF1DD_8" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" double density single sided floppy (8 sectors).</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MD2DD_8" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 5¼" double density floppy (8 sectors).</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF1DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" double density single sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MD2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 5¼" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Apple_MF1DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Apple formatted 3½" double density single sided floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF2DD_8" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" double density floppy (8 sectors).</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MF2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to FDFORMAT formatted 3½" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Amiga_MF2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Amiga formatted 3½" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MD2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 5¼" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MD2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to FDFORMAT formatted 5¼" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DMF_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Microsoft DMF formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_FDFORMAT_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to FDFORMAT formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Amiga_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Amiga formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM_MF2ED" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to IBM formatted 3½" extra density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Floptical" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Floptical.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_FD32MB" xml:space="preserve">
+    <value>Drive model is LS (SuperDisk), media has 65536 blocks of 512 bytes, setting media type to FD32MB.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_PocketZIP" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, media has 78882 blocks of 512 bytes, setting media type to PocketZIP.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SQ400" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 86700 blocks of 512 bytes, setting media type to SQ400.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Bernoulli2_44" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, media has 87040 blocks of 512 bytes, setting media type to 44Mb Bernoulli Box II.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SQ800" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 173456 blocks of 512 bytes, setting media type to SQ800.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Bernoulli2_90" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, media has 175856 blocks of 512 bytes, setting media type to 90Mb Bernoulli Box II.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ZIP100" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, drive model is ZIP, media has 196608 blocks of 512 bytes, setting media type to 100Mb ZIP.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SQ310" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 215440 blocks of 512 bytes, setting media type to SQ310.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LS120" xml:space="preserve">
+    <value>Drive model is LS (SuperDisk), media has 246528 blocks of 512 bytes, setting media type to LS-120.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_EZ135" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 262144 blocks of 512 bytes, setting media type to EZ135.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Bernoulli2_150" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, media has 294918 blocks of 512 bytes, setting media type to 150Mb Bernoulli Box II.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SQ2000" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 390696 blocks of 512 bytes, setting media type to SQ2000.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_HiFD" xml:space="preserve">
+    <value>Drive model is HiFD, media has 393380 blocks of 512 bytes, setting media type to HiFD.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_EZ230" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 450560 blocks of 512 bytes, setting media type to EZ230.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LS240" xml:space="preserve">
+    <value>Drive model is LS (SuperDisk), media has 469504 blocks of 512 bytes, setting media type to LS-240.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ZIP250" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, drive model is ZIP, media has 489532 blocks of 512 bytes, setting media type to 250Mb ZIP.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SQ327" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 524288 blocks of 512 bytes, setting media type to SQ327.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_JAZ" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, drive model is JAZ, media has 2091050 blocks of 512 bytes, setting media type to 1Gb JAZ.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SyJet" xml:space="preserve">
+    <value>Drive manufacturer is SyQuest, media has 2929800 blocks of 512 bytes, setting media type to SyJet.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_JAZ2" xml:space="preserve">
+    <value>Drive manufacturer is IOMEGA, drive model is JAZ, media has 3915600 blocks of 512 bytes, setting media type to 2Gb JAZ.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Orb" xml:space="preserve">
+    <value>Drive model is Castlewood Orb, media has 4307184 blocks of 512 bytes, setting media type to Orb.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_RDX320" xml:space="preserve">
+    <value>Drive model is RDX, media has {0} blocks of {1} bytes, setting media type to RDX320.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Acorn_MF2DD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 3½" double density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LS_PC98_MF2HD" xml:space="preserve">
+    <value>Drive model is LS (SuperDisk), media has 2880 blocks of 512 bytes, setting media type to PC-98 formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Sharp_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Sharp formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_PC98_MD2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to PC-98 formatted 5¼" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Acorn_MF2HD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Acorn formatted 3½" high density floppy.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD60" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 60 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD74" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 74 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD80" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 80 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_HiMD" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to Sony HiMD.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MDDATA" xml:space="preserve">
+    <value>SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to MiniDisc for Data.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD60_MDDATA" xml:space="preserve">
+    <value>SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 60 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD74_MDDATA" xml:space="preserve">
+    <value>SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 74 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_MD80_MDDATA" xml:space="preserve">
+    <value>SCSI peripheral type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to 80 minute MiniDisc.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_ZBC_Host_Managed" xml:space="preserve">
+    <value>SCSI peripheral type is {0:X2}h, setting media type to host managed zoned block device.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_QIC11" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to QIC-11.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_QIC24" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to QIC-24.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM3490" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to IBM 3490.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_QIC120" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to QIC-120.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_QIC150" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to QIC-150.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to DDS.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to DDS-2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS3" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to DDS-3.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS4" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to DDS-4.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM3490E" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to IBM 3490E.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SAIT" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "sdz" setting media type to Super AIT.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO2_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T9840A" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T9840A.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T9940A" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T9940A.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO3" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-3.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T9940B" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T9940B.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T9940C" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T9840C.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO4" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-4.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T9840D" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T9840D.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T10000A" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T10000A.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T10000B" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T10000B.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T10000C" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T10000C.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_T10000D" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is StorageTek, setting media type to T10000D.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO5" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-5.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_LTO3" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to WORM LTO-3.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_LTO4" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to WORM LTO-4.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_LTO5" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to WORM LTO-5.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to LTO.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to LTO-2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS3_dat" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dat" setting media type to DDS-3.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS4_alt" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dat" setting media type to DDS-4.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DAT72_dat" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dat" setting media type to DAT72.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DDS2_dat" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dat" setting media type to DDS-2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO6_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-6.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_LTO6_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to WORM LTO-6.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_LTO7_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to LTO-7.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_WORM_LTO7_ult" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "ult" setting media type to WORM LTO-7.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_15m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 15m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_IBM3592" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive manufacturer is IBM, setting media type to IBM 3592.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_VXA" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "vxa" setting media type to VXA.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_28m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 28m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_CompactTape" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to CompactTape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_CompactTapeII" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to CompactTape II.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_VXA2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "vxa" setting media type to VXA 2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_VXA3" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "vxa" setting media type to VXA 3.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_54m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 54m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DLTtapeIII" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to DLTtape III.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DLTtapeIIIxt" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to DLTtape IIIxt.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_106m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 106m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_DLTtapeIV" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to DLTtape IV.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Travan5_stt" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "stt" setting media type to Travan 5.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_160m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 160m Exatape XL.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SDLT" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to SuperDLT.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_SDLT2" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to SuperDLT 2.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_VStape" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "dlt" setting media type to VStape I.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Travan7" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "stt" setting media type to Travan 7.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Travan4" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to Travan 4.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Travan5" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, setting media type to Travan 5.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_22m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 22m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_40m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 40m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_76m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 76m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_112m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 112m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_22m_AME" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 22m Exatape AME.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_170m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 170m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_125m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 125m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_45m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 45m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_225m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 225m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_150m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 150m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_75m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 75m Exatape.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_Exatape_80m" xml:space="preserve">
+    <value>SCSI medium type is {0:X2}h, density code is {1:X2}h, drive model starts with "exb" setting media type to 80m Exatape.</value>
+  </data>
+    <data name="IDENTIFY_response_is_different_than_512_bytes_not_decoding" xml:space="preserve">
+    <value>IDENTIFY response is different than 512 bytes, not decoding.</value>
+  </data>
+    <data name="INQUIRY_response_is_0_bytes_less_than_minimum_of_36_bytes" xml:space="preserve">
+    <value>INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.</value>
+  </data>
+    <data name="INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field" xml:space="preserve">
+    <value>INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.</value>
+  </data>
+    <data name="Exception_0" xml:space="preserve">
+    <value>Exception {0}</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_HF12" xml:space="preserve">
+    <value>Media has 46956 blocks of 256 bytes, setting media type to 12Mb HyperFlex.</value>
+  </data>
+    <data name="SCSI_Media_Type_Description_HF24" xml:space="preserve">
+    <value>Media has 78936 blocks of 256 bytes, setting media type to 24Mb HyperFlex.</value>
+  </data>
+</root>
