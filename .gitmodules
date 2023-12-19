@@ -13,9 +13,6 @@
 [submodule "Aaru.Dto"]
 	path = Aaru.Dto
 	url = https://github.com/aaru-dps/Aaru.Dto
-[submodule "Aaru.Helpers"]
-	path = Aaru.Helpers
-	url = https://github.com/aaru-dps/Aaru.Helpers
 [submodule "Aaru.Decryption"]
 	path = Aaru.Decryption
 	url = https://github.com/aaru-dps/Aaru.Decryption
