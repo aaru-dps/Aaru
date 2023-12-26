@@ -407,7 +407,7 @@
     <value>Contiene un medio de tipo {0} y tipo XML {1}</value>
   </data>
     <data name="Contains_a_media_of_type_0_and_XML_type_1_WithMarkup" xml:space="preserve">
-    <value>Contiene un medio de tipo [italic]{0}[/italic] y tipo XML [italic]{1}[/]</value>
+    <value>Contiene un medio de tipo [italic]{0}[/] y tipo XML [italic]{1}[/]</value>
   </data>
     <data name="Continuing_dumping_cooked_data" xml:space="preserve">
     <value>Continuando volcando datos procesados.</value>
