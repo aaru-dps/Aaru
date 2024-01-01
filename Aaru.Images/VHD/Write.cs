@@ -51,6 +51,7 @@ public sealed partial class Vhd
 #region IWritableImage Members
 
     /// <inheritdoc />
+    /// TODO: Resume writing
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                        uint   sectorSize)
     {
@@ -70,14 +71,12 @@ public sealed partial class Vhd
 
         _imageInfo = new ImageInfo
         {
-            MediaType  = mediaType,
-            SectorSize = sectorSize,
-            Sectors    = sectors
+            MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
         };
 
         try
         {
-            _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            _writingStream = new FileStream(path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
         }
         catch(IOException ex)
         {
@@ -89,6 +88,29 @@ public sealed partial class Vhd
 
         IsWriting    = true;
         ErrorMessage = null;
+
+        Version thisVersion = GetType().Assembly.GetName().Version ?? new Version();
+
+        _thisFooter = new HardDiskFooter
+        {
+            Cookie = IMAGE_COOKIE,
+            Features = FEATURES_RESERVED,
+            Version = VERSION1,
+            Timestamp = (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+            CreatorApplication = CREATOR_AARU,
+            CreatorVersion =
+                (uint)(((thisVersion.Major & 0xFF) << 24) +
+                       ((thisVersion.Minor & 0xFF) << 16) +
+                       ((thisVersion.Build & 0xFF) << 8)  +
+                       (thisVersion.Revision & 0xFF)),
+            CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
+            DiskType      = _dynamic ? TYPE_DYNAMIC : TYPE_FIXED,
+            UniqueId      = Guid.NewGuid(),
+            OriginalSize  = _imageInfo.Sectors * 512,
+            CurrentSize   = _imageInfo.Sectors * 512
+        };
+
+        SetChsInFooter();
 
         return true;
     }
@@ -192,74 +214,7 @@ public sealed partial class Vhd
             return false;
         }
 
-        Version thisVersion = GetType().Assembly.GetName().Version ?? new Version();
-
-        if(_imageInfo.Cylinders == 0)
-        {
-            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
-            _imageInfo.Heads           = 16;
-            _imageInfo.SectorsPerTrack = 63;
-
-            while(_imageInfo.Cylinders == 0)
-            {
-                _imageInfo.Heads--;
-
-                if(_imageInfo.Heads == 0)
-                {
-                    _imageInfo.SectorsPerTrack--;
-                    _imageInfo.Heads = 16;
-                }
-
-                _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
-
-                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                    break;
-            }
-        }
-
-        var footer = new HardDiskFooter
-        {
-            Cookie = IMAGE_COOKIE,
-            Features = FEATURES_RESERVED,
-            Version = VERSION1,
-            Timestamp = (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
-            CreatorApplication = CREATOR_AARU,
-            CreatorVersion = (uint)(((thisVersion.Major & 0xFF) << 24) +
-                                    ((thisVersion.Minor & 0xFF) << 16) +
-                                    ((thisVersion.Build & 0xFF) << 8)  +
-                                    (thisVersion.Revision & 0xFF)),
-            CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
-            DiskType      = TYPE_FIXED,
-            UniqueId      = Guid.NewGuid(),
-            DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) +
-                           ((_imageInfo.Heads     & 0xFF)   << 8)  +
-                           (_imageInfo.SectorsPerTrack & 0xFF),
-            OriginalSize = _imageInfo.Sectors * 512,
-            CurrentSize  = _imageInfo.Sectors * 512
-        };
-
-        footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
-
-        var footerBytes = new byte[512];
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Cookie),             0, footerBytes, 0x00, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Features),           0, footerBytes, 0x08, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Version),            0, footerBytes, 0x0C, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Offset),             0, footerBytes, 0x10, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Timestamp),          0, footerBytes, 0x18, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorApplication), 0, footerBytes, 0x1C, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorVersion),     0, footerBytes, 0x20, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CreatorHostOs),      0, footerBytes, 0x24, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.OriginalSize),       0, footerBytes, 0x28, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.CurrentSize),        0, footerBytes, 0x30, 8);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskGeometry),       0, footerBytes, 0x38, 4);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.DiskType),           0, footerBytes, 0x3C, 4);
-        Array.Copy(footer.UniqueId.ToByteArray(),                             0, footerBytes, 0x44, 4);
-
-        footer.Checksum = VhdChecksum(footerBytes);
-        Array.Copy(BigEndianBitConverter.GetBytes(footer.Checksum), 0, footerBytes, 0x40, 4);
-
-        _writingStream.Seek((long)(footer.DiskType == TYPE_FIXED ? footer.OriginalSize : 0), SeekOrigin.Begin);
-        _writingStream.Write(footerBytes, 0, 512);
+        Flush();
 
         _writingStream.Flush();
         _writingStream.Close();
@@ -301,6 +256,8 @@ public sealed partial class Vhd
         _imageInfo.Heads           = heads;
         _imageInfo.Cylinders       = cylinders;
 
+        SetChsInFooter();
+
         return true;
     }
 
@@ -327,4 +284,62 @@ public sealed partial class Vhd
     public bool SetMetadata(Metadata metadata) => false;
 
 #endregion
+
+    void SetChsInFooter()
+    {
+        if(_imageInfo.Cylinders == 0)
+        {
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
+
+            while(_imageInfo.Cylinders == 0)
+            {
+                _imageInfo.Heads--;
+
+                if(_imageInfo.Heads == 0)
+                {
+                    _imageInfo.SectorsPerTrack--;
+                    _imageInfo.Heads = 16;
+                }
+
+                _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
+
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
+                    break;
+            }
+        }
+
+        _thisFooter.DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) +
+                                   ((_imageInfo.Heads     & 0xFF)   << 8)  +
+                                   (_imageInfo.SectorsPerTrack & 0xFF);
+    }
+
+    void Flush()
+    {
+        _thisFooter.Offset = _thisFooter.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
+
+        var footerBytes = new byte[512];
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Cookie),             0, footerBytes, 0x00, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Features),           0, footerBytes, 0x08, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Version),            0, footerBytes, 0x0C, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Offset),             0, footerBytes, 0x10, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Timestamp),          0, footerBytes, 0x18, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.CreatorApplication), 0, footerBytes, 0x1C, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.CreatorVersion),     0, footerBytes, 0x20, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.CreatorHostOs),      0, footerBytes, 0x24, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.OriginalSize),       0, footerBytes, 0x28, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.CurrentSize),        0, footerBytes, 0x30, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.DiskGeometry),       0, footerBytes, 0x38, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.DiskType),           0, footerBytes, 0x3C, 4);
+        Array.Copy(_thisFooter.UniqueId.ToByteArray(),                             0, footerBytes, 0x44, 4);
+
+        _thisFooter.Checksum = VhdChecksum(footerBytes);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Checksum), 0, footerBytes, 0x40, 4);
+
+        _writingStream.Seek((long)(_thisFooter.DiskType == TYPE_FIXED ? _thisFooter.OriginalSize : 0),
+                            SeekOrigin.Begin);
+        _writingStream.Write(footerBytes, 0, 512);
+        _writingStream.Flush();
+    }
 }

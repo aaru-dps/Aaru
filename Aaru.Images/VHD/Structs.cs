@@ -50,7 +50,7 @@ public sealed partial class Vhd
         public uint HeaderVersion;
         /// <summary>Offset 0x1C, Maximum entries present in the BAT</summary>
         public uint MaxTableEntries;
-        /// <summary>Offset 0x20, Size of a block in bytes Should always be a power of two of 512</summary>
+        /// <summary>Offset 0x20, Size of a block in bytes Should always be a power of two</summary>
         public uint BlockSize;
         /// <summary>Offset 0x24, Checksum of this header</summary>
         public uint Checksum;
