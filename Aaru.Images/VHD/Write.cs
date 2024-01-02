@@ -495,25 +495,47 @@ public sealed partial class Vhd
     {
         if(_imageInfo.Cylinders == 0)
         {
-            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
-            _imageInfo.Heads           = 16;
-            _imageInfo.SectorsPerTrack = 63;
+            ulong cylinderTimesHeads;
 
-            while(_imageInfo.Cylinders == 0)
+            if(_imageInfo.Sectors > 65535 * 16 * 255)
             {
-                _imageInfo.Heads--;
+                _imageInfo.Cylinders       = 65535;
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 255;
+            }
 
-                if(_imageInfo.Heads == 0)
+            if(_imageInfo.Sectors >= 65535 * 16 * 63)
+            {
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 255;
+                cylinderTimesHeads         = _imageInfo.Sectors / _imageInfo.SectorsPerTrack;
+            }
+            else
+            {
+                _imageInfo.SectorsPerTrack = 17;
+                cylinderTimesHeads         = _imageInfo.Sectors / _imageInfo.SectorsPerTrack;
+
+                _imageInfo.Heads = (uint)((cylinderTimesHeads + 1023) / 1024);
+
+                if(_imageInfo.Heads < 4)
+                    _imageInfo.Heads = 4;
+
+                if(cylinderTimesHeads >= _imageInfo.Heads * 1024 || _imageInfo.Heads > 16)
                 {
-                    _imageInfo.SectorsPerTrack--;
-                    _imageInfo.Heads = 16;
+                    _imageInfo.SectorsPerTrack = 31;
+                    _imageInfo.Heads           = 16;
+                    cylinderTimesHeads         = _imageInfo.Sectors / _imageInfo.SectorsPerTrack;
                 }
 
-                _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
-
-                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                    break;
+                if(cylinderTimesHeads >= _imageInfo.Heads * 1024)
+                {
+                    _imageInfo.SectorsPerTrack = 63;
+                    _imageInfo.Heads           = 16;
+                    cylinderTimesHeads         = _imageInfo.Sectors / _imageInfo.SectorsPerTrack;
+                }
             }
+
+            _imageInfo.Cylinders = (uint)(cylinderTimesHeads / _imageInfo.Heads);
         }
 
         _thisFooter.DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) +
