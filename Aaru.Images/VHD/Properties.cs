@@ -85,10 +85,13 @@ public sealed partial class Vhd
         MediaType.PCCardTypeIV
     };
 
-    // TODO: Support dynamic images
     /// <inheritdoc />
-    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-        Array.Empty<(string name, Type type, string description, object @default)>();
+    public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
+    {
+        ("dynamic", typeof(bool), "Create a dynamic image, empty sectors are ignored", (object)true),
+        ("block_size", typeof(uint),
+         "Block size. Must be a power of 2. Only 2MiB and 512KiB are supported by VirtualPC", 2097152)
+    };
 
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]

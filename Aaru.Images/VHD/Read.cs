@@ -379,8 +379,7 @@ public sealed partial class Vhd
 
             _thisDynamic = new DynamicDiskHeader
             {
-                LocatorEntries = new ParentLocatorEntry[8],
-                Reserved2      = new byte[256]
+                LocatorEntries = new ParentLocatorEntry[8], Reserved2 = new byte[256]
             };
 
             for(var i = 0; i < 8; i++)
@@ -475,8 +474,6 @@ public sealed partial class Vhd
             var batStopwatch = new Stopwatch();
             batStopwatch.Start();
 
-            _blockAllocationTable = new uint[_thisDynamic.MaxTableEntries];
-
             var bat = new byte[_thisDynamic.MaxTableEntries * 4];
             imageStream.Seek((long)_thisDynamic.TableOffset, SeekOrigin.Begin);
             imageStream.EnsureRead(bat, 0, bat.Length);
@@ -484,9 +481,6 @@ public sealed partial class Vhd
             ReadOnlySpan<byte> span = bat;
 
             _blockAllocationTable = MemoryMarshal.Cast<byte, uint>(span)[..(int)_thisDynamic.MaxTableEntries].ToArray();
-
-            for(var i = 0; i < _blockAllocationTable.Length; i++)
-                _blockAllocationTable[i] = Swapping.Swap(_blockAllocationTable[i]);
 
             batStopwatch.Stop();
 
@@ -704,7 +698,9 @@ public sealed partial class Vhd
                 // Sector number inside of block
                 var sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
 
-                if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
+                uint blockPosition = Swapping.Swap(_blockAllocationTable[blockNumber]);
+
+                if(blockPosition == 0xFFFFFFFF)
                 {
                     buffer = new byte[512];
 
@@ -714,7 +710,7 @@ public sealed partial class Vhd
                 var bitmap = new byte[_bitmapSize * 512];
 
                 // Offset of block in file
-                long blockOffset = _blockAllocationTable[blockNumber] * 512L;
+                long blockOffset = blockPosition * 512L;
 
                 var bitmapByte = (int)Math.Floor((double)sectorInBlock / 8);
                 var bitmapBit  = (int)(sectorInBlock % 8);
@@ -748,7 +744,7 @@ public sealed partial class Vhd
                     */
 
                 buffer = new byte[512];
-                uint sectorOffset = _blockAllocationTable[blockNumber] + _bitmapSize + sectorInBlock;
+                uint sectorOffset = blockPosition + _bitmapSize + sectorInBlock;
                 thisStream = _thisFilter.GetDataForkStream();
 
                 thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);
@@ -821,14 +817,17 @@ public sealed partial class Vhd
                 else
                     sectorsToReadHere = length;
 
+                // Keep the BAT in memory in big endian
+                uint blockPosition = Swapping.Swap(_blockAllocationTable[blockNumber]);
+
                 // Offset of sector in file
-                uint sectorOffset = _blockAllocationTable[blockNumber] + _bitmapSize + sectorInBlock;
+                uint sectorOffset = blockPosition + _bitmapSize + sectorInBlock;
 
                 // Data that can be read in this block
                 var prefix = new byte[sectorsToReadHere * 512];
 
                 // 0xFFFFFFFF means unallocated
-                if(_blockAllocationTable[blockNumber] != 0xFFFFFFFF)
+                if(blockPosition != 0xFFFFFFFF)
                 {
                     Stream thisStream = _thisFilter.GetDataForkStream();
                     thisStream.Seek(sectorOffset * 512, SeekOrigin.Begin);

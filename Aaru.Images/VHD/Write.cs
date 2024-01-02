@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -55,6 +56,38 @@ public sealed partial class Vhd
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                        uint   sectorSize)
     {
+        if(options != null)
+        {
+            if(options.TryGetValue("block_size", out string tmpValue))
+            {
+                if(!uint.TryParse(tmpValue, out _blockSize))
+                {
+                    ErrorMessage = "Invalid block size.";
+
+                    return false;
+                }
+            }
+            else
+                _blockSize = 2097152;
+
+            if(options.TryGetValue("dynamic", out tmpValue))
+            {
+                if(!bool.TryParse(tmpValue, out _dynamic))
+                {
+                    ErrorMessage = "Invalid option for dynamic image.";
+
+                    return false;
+                }
+            }
+            else
+                _dynamic = true;
+        }
+        else
+        {
+            _blockSize = 2097152;
+            _dynamic   = true;
+        }
+
         if(sectorSize != 512)
         {
             ErrorMessage = Localization.Unsupported_sector_size;
@@ -112,6 +145,52 @@ public sealed partial class Vhd
 
         SetChsInFooter();
 
+        if(!_dynamic)
+            return true;
+
+        ulong numberOfBlocks = _thisFooter.CurrentSize / _blockSize;
+
+        if(_thisFooter.CurrentSize % _blockSize != 0)
+            numberOfBlocks++;
+
+        if(numberOfBlocks > uint.MaxValue)
+        {
+            ErrorMessage = "Block size too small for number of sectors, try with a bigger value.";
+            return false;
+        }
+
+        _thisDynamic = new DynamicDiskHeader
+        {
+            Cookie          = DYNAMIC_COOKIE,
+            DataOffset      = 0xFFFFFFFF,
+            TableOffset     = 512 + 1024,
+            HeaderVersion   = VERSION1,
+            MaxTableEntries = (uint)numberOfBlocks,
+            BlockSize       = _blockSize
+        };
+
+        _blockAllocationTable = new uint[numberOfBlocks];
+        for(uint i = 0; i < numberOfBlocks; i++)
+            _blockAllocationTable[i] = 0xFFFFFFFF;
+
+        _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize /
+                                         512
+
+                                         // 1 bit per sector on the bitmap
+                                        /
+                                         8
+
+                                         // and aligned to 512 byte boundary
+                                        /
+                                         512);
+
+        _currentFooterPosition = (long)(512 + 1024 + sizeof(uint) * numberOfBlocks);
+        if(_currentFooterPosition % 512 != 0)
+            _currentFooterPosition += 512 - _currentFooterPosition % 512;
+
+        // Write empty image
+        Flush();
+
         return true;
     }
 
@@ -147,18 +226,145 @@ public sealed partial class Vhd
             return false;
         }
 
-        _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
-        _writingStream.Write(data, 0, data.Length);
+        if(!_dynamic)
+        {
+            _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
-        ErrorMessage = "";
+            ErrorMessage = "";
+
+            return true;
+        }
+
+        // Block number for BAT searching
+        var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
+
+        // If there's a cached block and it's the one we're looking for, flush cached data (clears cache)
+        if(_blockInCache && _cachedBlockNumber != blockNumber)
+            Flush();
+
+        // If there is no block in cache, load or create it
+        if(!_blockInCache)
+        {
+            _cachedBlock = new byte[_thisDynamic.BlockSize + _bitmapSize * 512];
+
+            // If the block is not allocated, allocate it
+            if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
+            {
+                // If there's no data in sector, bail out happily writing nothing
+                if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                    return true;
+
+                _blockAllocationTable[blockNumber] =  Swapping.Swap((uint)_currentFooterPosition / 512);
+                _cachedBlockPosition               =  _currentFooterPosition;
+                _currentFooterPosition             += _thisDynamic.BlockSize + _bitmapSize * 512;
+                _writingStream.Position            =  _cachedBlockPosition;
+            }
+            else
+            {
+                _cachedBlockPosition    = Swapping.Swap(_blockAllocationTable[blockNumber]) * 512;
+                _writingStream.Position = _cachedBlockPosition;
+                _writingStream.EnsureRead(_cachedBlock, 0, _cachedBlock.Length);
+            }
+
+            _blockInCache      = true;
+            _cachedBlockNumber = blockNumber;
+        }
+
+        // Sector number inside of block
+        var  sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
+        var  bitmapByte    = (int)Math.Floor((double)sectorInBlock          / 8);
+        var  bitmapBit     = (int)(sectorInBlock % 8);
+        var  mask          = (byte)(1 << 7 - bitmapBit);
+        bool dirty         = (_cachedBlock[bitmapByte] & mask) == mask;
+
+        // If there's no data in sector...
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+        {
+            // ...but there's in the image
+            if(!dirty)
+                return true;
+
+            // Clear bitmap
+            _cachedBlock[bitmapByte] &= (byte)~mask;
+
+            // A for loop allows the compiler to optimize to SIMD automatically
+            for(long j = _bitmapSize * 512 + sectorInBlock * 512;
+                j < _bitmapSize * 512 + sectorInBlock * 512 + 512;
+                j++)
+                _cachedBlock[j] = 0;
+
+            Array.Copy(data, 0, _cachedBlock, (int)(_bitmapSize * 512 + sectorInBlock * 512), 512);
+        }
+        // Set bitmap bit and data
+        else
+        {
+            _cachedBlock[bitmapByte] |= mask;
+            Array.Copy(data, 0, _cachedBlock, (int)(_bitmapSize * 512 + sectorInBlock * 512), 512);
+        }
 
         return true;
     }
 
-    // TODO: Implement dynamic
     /// <inheritdoc />
     public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
     {
+        if(_dynamic)
+        {
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+            {
+                for(var i = 0; i < length; i++)
+                {
+                    // Block number for BAT searching
+                    var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
+
+                    // Block not allocated, bail out
+                    if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
+                        continue;
+
+                    if(_blockInCache && _cachedBlockNumber != blockNumber)
+                    {
+                        Flush();
+
+                        _cachedBlockPosition    = Swapping.Swap(_blockAllocationTable[blockNumber]) * 512;
+                        _writingStream.Position = _cachedBlockPosition;
+                        _writingStream.EnsureRead(_cachedBlock, 0, _cachedBlock.Length);
+                        _blockInCache      = true;
+                        _cachedBlockNumber = blockNumber;
+                    }
+
+                    // Sector number inside of block
+                    var  sectorInBlock = (uint)(sectorAddress % (_thisDynamic.BlockSize / 512));
+                    var  bitmapByte    = (int)Math.Floor((double)sectorInBlock          / 8);
+                    var  bitmapBit     = (int)(sectorInBlock % 8);
+                    var  mask          = (byte)(1 << 7 - bitmapBit);
+                    bool dirty         = (_cachedBlock[bitmapByte] & mask) == mask;
+
+                    if(!dirty)
+                        continue;
+
+                    //Clear bitmap
+                    _cachedBlock[bitmapByte] &= (byte)~mask;
+
+                    // A for loop allows the compiler to optimize to SIMD automatically
+                    for(long j = _bitmapSize * 512 + sectorInBlock * 512;
+                        j < _bitmapSize * 512 + sectorInBlock * 512 + 512;
+                        j++)
+                        _cachedBlock[j] = 0;
+                }
+
+                return true;
+            }
+
+            for(var i = 0; i < length; i++)
+            {
+                if(!WriteSector(data[(i * 512)..(i * 512 + 512)], sectorAddress + (ulong)i))
+                    return false;
+            }
+
+            return true;
+        }
+
         if(!IsWriting)
         {
             ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
@@ -337,9 +543,47 @@ public sealed partial class Vhd
         _thisFooter.Checksum = VhdChecksum(footerBytes);
         Array.Copy(BigEndianBitConverter.GetBytes(_thisFooter.Checksum), 0, footerBytes, 0x40, 4);
 
-        _writingStream.Seek((long)(_thisFooter.DiskType == TYPE_FIXED ? _thisFooter.OriginalSize : 0),
-                            SeekOrigin.Begin);
+        if(!_dynamic)
+        {
+            _writingStream.Seek((long)_thisFooter.OriginalSize, SeekOrigin.Begin);
+            _writingStream.Write(footerBytes, 0, 512);
+
+            _writingStream.Flush();
+            return;
+        }
+
+        if(_blockInCache)
+        {
+            _writingStream.Position = _cachedBlockPosition;
+            _writingStream.Write(_cachedBlock, 0, _cachedBlock.Length);
+            _cachedBlock  = null;
+            _blockInCache = false;
+        }
+
+        _writingStream.Position = (long)_thisDynamic.TableOffset;
+        ReadOnlySpan<uint> span = _blockAllocationTable;
+        byte[] bat = MemoryMarshal.Cast<uint, byte>(span)[..(int)(_thisDynamic.MaxTableEntries * sizeof(uint))].
+                                   ToArray();
+        _writingStream.Write(bat, 0, bat.Length);
+
+        var dynamicBytes = new byte[1024];
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.Cookie),          0, dynamicBytes, 0x00, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.DataOffset),      0, dynamicBytes, 0x08, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.TableOffset),     0, dynamicBytes, 0x10, 8);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.HeaderVersion),   0, dynamicBytes, 0x18, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.MaxTableEntries), 0, dynamicBytes, 0x1C, 4);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.BlockSize),       0, dynamicBytes, 0x20, 4);
+
+        _thisDynamic.Checksum = VhdChecksum(dynamicBytes);
+        Array.Copy(BigEndianBitConverter.GetBytes(_thisDynamic.Checksum), 0, dynamicBytes, 0x24, 4);
+
+        _writingStream.Position = 0;
         _writingStream.Write(footerBytes, 0, 512);
+        _writingStream.Position = 512;
+        _writingStream.Write(dynamicBytes, 0, 1024);
+        _writingStream.Position = _currentFooterPosition;
+        _writingStream.Write(footerBytes, 0, 512);
+
         _writingStream.Flush();
     }
 }

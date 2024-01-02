@@ -50,6 +50,13 @@ public sealed partial class Vhd : IWritableImage
     const string      MODULE_NAME = "Virtual PC plugin";
     uint              _bitmapSize;
     uint[]            _blockAllocationTable;
+    bool              _blockInCache;
+    uint              _blockSize;
+    byte[]            _cachedBlock;
+    uint              _cachedBlockNumber;
+    long              _cachedBlockPosition;
+    long              _currentFooterPosition;
+    bool              _dynamic;
     ImageInfo         _imageInfo;
     byte[][]          _locatorEntriesData;
     DateTime          _parentDateTime;
