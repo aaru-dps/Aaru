@@ -62,7 +62,7 @@ public sealed partial class Vhd
             {
                 if(!uint.TryParse(tmpValue, out _blockSize))
                 {
-                    ErrorMessage = "Invalid block size.";
+                    ErrorMessage = Localization.Invalid_block_size;
 
                     return false;
                 }
@@ -74,7 +74,7 @@ public sealed partial class Vhd
             {
                 if(!bool.TryParse(tmpValue, out _dynamic))
                 {
-                    ErrorMessage = "Invalid option for dynamic image.";
+                    ErrorMessage = Localization.Invalid_value_for_dynamic_option;
 
                     return false;
                 }
@@ -155,7 +155,7 @@ public sealed partial class Vhd
 
         if(numberOfBlocks > uint.MaxValue)
         {
-            ErrorMessage = "Block size too small for number of sectors, try with a bigger value.";
+            ErrorMessage = Localization.Block_size_too_small_for_number_of_sectors;
             return false;
         }
 
@@ -231,7 +231,7 @@ public sealed partial class Vhd
             _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
             _writingStream.Write(data, 0, data.Length);
 
-            ErrorMessage = "";
+            ErrorMessage = string.Empty;
 
             return true;
         }
@@ -389,7 +389,7 @@ public sealed partial class Vhd
         _writingStream.Seek((long)(0 + sectorAddress * 512), SeekOrigin.Begin);
         _writingStream.Write(data, 0, data.Length);
 
-        ErrorMessage = "";
+        ErrorMessage = string.Empty;
 
         return true;
     }
@@ -426,7 +426,7 @@ public sealed partial class Vhd
         _writingStream.Close();
 
         IsWriting    = false;
-        ErrorMessage = "";
+        ErrorMessage = string.Empty;
 
         return true;
     }

@@ -2944,4 +2944,19 @@
     <data name="A2R_Name" xml:space="preserve">
     <value>A2R</value>
   </data>
+    <data name="Invalid_block_size" xml:space="preserve">
+        <value>Invalid block size.</value>
+    </data>
+    <data name="Invalid_value_for_dynamic_option" xml:space="preserve">
+        <value>Invalid value for dynamic option.</value>
+    </data>
+    <data name="Block_size_too_small_for_number_of_sectors" xml:space="preserve">
+        <value>Block size too small for number of sectors, try with a bigger value.</value>
+    </data>
+    <data name="Create_a_dynamic_image" xml:space="preserve">
+        <value>Create a dynamic image, empty sectors are ignored</value>
+    </data>
+    <data name="Vhd_Block_size_Must_be_a_power_of_2" xml:space="preserve">
+        <value>Block size. Must be a power of 2. Only 2MiB and 512KiB are supported by VirtualPC</value>
+    </data>
 </root>

@@ -2934,4 +2934,19 @@
     <data name="_5_6_or_7" xml:space="preserve">
     <value>5, 6 ó 7</value>
   </data>
+    <data name="Block_size_too_small_for_number_of_sectors" xml:space="preserve">
+        <value>Tamaño del bloque demasiado pequeño para el número de sectores, intenta uno mayor.</value>
+    </data>
+    <data name="Invalid_block_size" xml:space="preserve">
+        <value>Tamaño de bloque no válido.</value>
+    </data>
+    <data name="Invalid_value_for_dynamic_option" xml:space="preserve">
+        <value>Valor no válido para opción dinámica.</value>
+    </data>
+    <data name="Vhd_Block_size_Must_be_a_power_of_2" xml:space="preserve">
+        <value>Tamaño de bloque. Debe ser potencia de 2. VirtualPC sólo soporta 2MiB y 512KiB</value>
+    </data>
+    <data name="Create_a_dynamic_image" xml:space="preserve">
+        <value>Crear una imagen dinámica, los sectores vacíos se ignoran</value>
+    </data>
 </root>

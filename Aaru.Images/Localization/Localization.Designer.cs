@@ -505,6 +505,15 @@ namespace Aaru.Images {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Block size too small for number of sectors, try with a bigger value..
+        /// </summary>
+        internal static string Block_size_too_small_for_number_of_sectors {
+            get {
+                return ResourceManager.GetString("Block_size_too_small_for_number_of_sectors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Block type {0} with data type {1} is indexed to be at {2}.
         /// </summary>
         internal static string Block_type_0_with_data_type_1_is_indexed_to_be_at_2 {
@@ -1599,6 +1608,15 @@ namespace Aaru.Images {
         internal static string CRC2_0 {
             get {
                 return ResourceManager.GetString("CRC2_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create a dynamic image, empty sectors are ignored.
+        /// </summary>
+        internal static string Create_a_dynamic_image {
+            get {
+                return ResourceManager.GetString("Create_a_dynamic_image", resourceCulture);
             }
         }
         
@@ -4700,6 +4718,15 @@ namespace Aaru.Images {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid block size..
+        /// </summary>
+        internal static string Invalid_block_size {
+            get {
+                return ResourceManager.GetString("Invalid_block_size", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid compression type {0} for block with data type {1}, continuing....
         /// </summary>
         internal static string Invalid_compression_type_0_for_block_with_data_type_1_continuing {
@@ -4804,6 +4831,15 @@ namespace Aaru.Images {
         internal static string Invalid_value_for_dictionary_option {
             get {
                 return ResourceManager.GetString("Invalid_value_for_dictionary_option", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid value for dynamic option..
+        /// </summary>
+        internal static string Invalid_value_for_dynamic_option {
+            get {
+                return ResourceManager.GetString("Invalid_value_for_dynamic_option", resourceCulture);
             }
         }
         
@@ -8232,6 +8268,15 @@ namespace Aaru.Images {
         internal static string Version_0_1 {
             get {
                 return ResourceManager.GetString("Version_0_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Block size. Must be a power of 2. Only 2MiB and 512KiB are supported by VirtualPC.
+        /// </summary>
+        internal static string Vhd_Block_size_Must_be_a_power_of_2 {
+            get {
+                return ResourceManager.GetString("Vhd_Block_size_Must_be_a_power_of_2", resourceCulture);
             }
         }
         

@@ -88,9 +88,8 @@ public sealed partial class Vhd
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("dynamic", typeof(bool), "Create a dynamic image, empty sectors are ignored", (object)true),
-        ("block_size", typeof(uint),
-         "Block size. Must be a power of 2. Only 2MiB and 512KiB are supported by VirtualPC", 2097152)
+        ("dynamic", typeof(bool), Localization.Create_a_dynamic_image, (object)true),
+        ("block_size", typeof(uint), Localization.Vhd_Block_size_Must_be_a_power_of_2, 2097152)
     };
 
     /// <inheritdoc />
