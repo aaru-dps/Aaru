@@ -289,14 +289,14 @@ public sealed partial class CBM
             if((dirEntry.fileType & 7) == 2)
                 attributes |= FileAttributes.Executable;
 
-            _cache.Add(name, new CachedFile
+            _cache[name] = new CachedFile
             {
                 attributes = attributes,
                 length     = (ulong)data.Length,
                 data       = data.ToArray(),
                 blocks     = dirEntry.blocks,
                 id         = fileId++
-            });
+            };
 
             offset += 32;
         }
