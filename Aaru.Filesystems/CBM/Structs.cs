@@ -27,6 +27,8 @@
 // ****************************************************************************/
 
 using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems;
 
@@ -77,6 +79,81 @@ public sealed partial class CBM
         /// <summary>Free sector count for second side in 1571</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
         public readonly byte[] freeCount;
+    }
+
+#endregion
+
+#region Nested type: CachedFile
+
+    struct CachedFile
+    {
+        public byte[]         data;
+        public ulong          length;
+        public FileAttributes attributes;
+        public int            blocks;
+        public ulong          id;
+    }
+
+#endregion
+
+#region Nested type: CbmDirNode
+
+    sealed class CbmDirNode : IDirNode
+    {
+        internal string[] Contents;
+        internal int      Position;
+
+    #region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: CbmFileNode
+
+    sealed class CbmFileNode : IFileNode
+    {
+        internal byte[] Cache;
+
+    #region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+    #endregion
+    }
+
+#endregion
+
+#region Nested type: DirectoryEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DirectoryEntry
+    {
+        public readonly byte nextDirBlockTrack;
+        public readonly byte nextDirBlockSector;
+        public readonly byte fileType;
+        public readonly byte firstFileBlockTrack;
+        public readonly byte firstFileBlockSector;
+        /// <summary>Filename</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] name;
+        public readonly byte  firstSideBlockTrack;
+        public readonly byte  firstSideBlockSector;
+        public readonly ulong unused;
+        public readonly byte  replacementTrack;
+        public readonly byte  replacementSector;
+        public readonly short blocks;
     }
 
 #endregion

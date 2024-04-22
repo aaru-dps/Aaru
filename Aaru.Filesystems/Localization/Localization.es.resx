@@ -3680,4 +3680,7 @@
     <data name="_512_bytes_per_block" xml:space="preserve">
     <value>512 bytes por bloque</value>
   </data>
+    <data name="CBM_Mount_REL_file_warning" xml:space="preserve">
+        <value>Este disco contiene un fichero relativo. Estos no han sido totalmente probados, por favor abra un reporte de errores y adjunte esta imagen de disco.</value>
+    </data>
 </root>

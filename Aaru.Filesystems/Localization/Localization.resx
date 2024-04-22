@@ -3689,4 +3689,7 @@
     <data name="_0_equals_unknown_data_type_1" xml:space="preserve">
     <value>{0} = Unknown data type {1}</value>
   </data>
+    <data name="CBM_Mount_REL_file_warning" xml:space="preserve">
+        <value>This disk contains a relative file. These have not been fully tested, please open a bug report and include this disk image.</value>
+    </data>
 </root>

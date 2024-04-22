@@ -2518,6 +2518,15 @@ namespace Aaru.Filesystems {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This disk contains a relative file. These have not been fully tested, please open a bug report and include this disk image..
+        /// </summary>
+        internal static string CBM_Mount_REL_file_warning {
+            get {
+                return ResourceManager.GetString("CBM_Mount_REL_file_warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Commodore file system.
         /// </summary>
         internal static string CBM_Name {

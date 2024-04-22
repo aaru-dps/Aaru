@@ -127,6 +127,7 @@ Supported disk image formats (read and write)
 
 Supported disk image formats (read-only)
 ========================================
+
 * Symbian Installation File (.SIS)
 
 Supported partitioning schemes
@@ -165,6 +166,7 @@ Supported file systems for read-only operations
 * Apple Lisa file system
 * Apple Macintosh File System (MFS)
 * CD-i file system
+* Commodore 1540/1541/1571/1581 filesystems
 * CP/M file system
 * High Sierra Format
 * ISO9660, including Apple, Amiga, Rock Ridge, Joliet and Romeo extensions
@@ -192,7 +194,6 @@ Supported file systems for identification and information only
 * BSD Unix File System 2 (UFS2)
 * B-tree file system (btrfs)
 * Coherent UNIX file system
-* Commodore 1540/1541/1571/1581 filesystems
 * Cram file system
 * DEC Files-11 (only checked with On Disk Structure 2, ODS-2)
 * DEC RT-11 file system

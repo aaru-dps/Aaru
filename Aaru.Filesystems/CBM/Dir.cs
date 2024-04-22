@@ -27,72 +27,74 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using Aaru.CommonTypes.AaruMetadata;
+using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
-public sealed partial class CBM : IReadOnlyFilesystem
+public sealed partial class CBM
 {
-    byte[]                         _bam;
-    Dictionary<string, CachedFile> _cache;
-    bool                           _debug;
-    byte[]                         _diskHeader;
-    bool                           _mounted;
-    byte[]                         _root;
-    FileSystemInfo                 _statfs;
-
 #region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
-    public string Name => Localization.CBM_Name;
-
-    /// <inheritdoc />
-    public Guid Id => new("D104744E-A376-450C-BAC0-1347C93F983B");
-
-    /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
-
-    /// <inheritdoc />
-    public ErrorNumber ListXAttr(string path, out List<string> xattrs)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        xattrs = null;
+        node = null;
 
-        return ErrorNumber.NotSupported;
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
+
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            return ErrorNumber.NotSupported;
+
+        var contents = _cache.Keys.ToList();
+
+        contents.Sort();
+
+        node = new CbmDirNode
+        {
+            Path = path, Position = 0, Contents = contents.ToArray()
+        };
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf) => ErrorNumber.NotSupported;
-
-    /// <inheritdoc />
-    public ErrorNumber ReadLink(string path, out string dest)
+    public ErrorNumber CloseDir(IDirNode node)
     {
-        dest = null;
+        if(node is not CbmDirNode mynode)
+            return ErrorNumber.InvalidArgument;
 
-        return ErrorNumber.NotSupported;
+        mynode.Position = -1;
+        mynode.Contents = null;
+
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
 
-    /// <inheritdoc />
-    public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-        Array.Empty<(string name, Type type, string description)>();
+        if(!_mounted)
+            return ErrorNumber.AccessDenied;
 
-    /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => null;
+        if(node is not CbmDirNode mynode)
+            return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position < 0)
+            return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position >= mynode.Contents.Length)
+            return ErrorNumber.NoError;
+
+        filename = mynode.Contents[mynode.Position++];
+
+        return ErrorNumber.NoError;
+    }
 
 #endregion
-
-    static Dictionary<string, string> GetDefaultOptions() => new()
-    {
-        {
-            "debug", false.ToString()
-        }
-    };
 }
