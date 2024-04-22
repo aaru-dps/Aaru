@@ -33,4 +33,10 @@ namespace Aaru.Filesystems;
 public sealed partial class CBM
 {
     const string FS_TYPE = "cbmfs";
+
+    readonly ulong[] trackStartingLbas =
+    [
+        0, 21, 42, 63, 84, 105, 126, 147, 168, 189, 210, 231, 252, 273, 294, 315, 336, 357, 376, 395, 414, 433, 452,
+        471, 490, 508, 526, 544, 562, 580, 598, 615, 632, 649, 666, 683, 700, 717, 734, 751
+    ];
 }

@@ -43,6 +43,7 @@ public sealed partial class CBM : IReadOnlyFilesystem
     Dictionary<string, CachedFile> _cache;
     bool                           _debug;
     byte[]                         _diskHeader;
+    bool                           _is1581;
     bool                           _mounted;
     byte[]                         _root;
     FileSystemInfo                 _statfs;
@@ -95,4 +96,15 @@ public sealed partial class CBM : IReadOnlyFilesystem
             "debug", false.ToString()
         }
     };
+
+    ulong CbmChsToLba(byte track, byte sector, bool is1581)
+    {
+        if(track == 0 || track > 40)
+            return 0;
+
+        if(is1581)
+            return (ulong)((track - 1) * 40 + sector - 1);
+
+        return trackStartingLbas[track - 1] + sector;
+    }
 }

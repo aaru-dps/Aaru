@@ -115,10 +115,11 @@ public sealed partial class CBM
             if(cbmHdr.directoryTrack == 0)
                 return ErrorNumber.InvalidArgument;
 
-            rootLba               = (ulong)((cbmHdr.directoryTrack - 1) * 40 + cbmHdr.directorySector - 1);
+            rootLba               = CbmChsToLba(cbmHdr.directoryTrack, cbmHdr.directorySector, true);
             serial                = cbmHdr.diskId;
             Metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, encoding);
             Metadata.VolumeSerial = $"{cbmHdr.diskId}";
+            _is1581               = true;
         }
         else
         {
@@ -133,7 +134,7 @@ public sealed partial class CBM
                           and { unused1   : 0x00, directoryTrack: 0x12 }))
                 return ErrorNumber.InvalidArgument;
 
-            rootLba = (ulong)((cbmBam.directoryTrack - 1) * 40 + cbmBam.directorySector - 1);
+            rootLba = CbmChsToLba(cbmBam.directoryTrack, cbmBam.directorySector, false);
             serial  = cbmBam.diskId;
 
             Metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, encoding);
@@ -159,7 +160,7 @@ public sealed partial class CBM
             if(sector[0] == 0)
                 break;
 
-            nextLba = (ulong)((sector[0] - 1) * 40 + sector[1] - 1);
+            nextLba = CbmChsToLba(sector[0], sector[1], _is1581);
         } while(nextLba > 0);
 
         _root = rootMs.ToArray();
@@ -254,7 +255,7 @@ public sealed partial class CBM
 
             var data = new MemoryStream();
 
-            nextLba = (ulong)((dirEntry.firstFileBlockTrack - 1) * 40 + dirEntry.firstFileBlockSector - 1);
+            nextLba = CbmChsToLba(dirEntry.firstFileBlockTrack, dirEntry.firstFileBlockSector, _is1581);
 
             _statfs.FreeBlocks -= (ulong)dirEntry.blocks;
 
@@ -272,7 +273,7 @@ public sealed partial class CBM
                 if(sector[0] == 0)
                     break;
 
-                nextLba = (ulong)((sector[0] - 1) * 40 + sector[1] - 1);
+                nextLba = CbmChsToLba(sector[0], sector[1], _is1581);
             }
 
             FileAttributes attributes = FileAttributes.File;
