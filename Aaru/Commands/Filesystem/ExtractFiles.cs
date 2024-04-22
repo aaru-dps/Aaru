@@ -79,9 +79,7 @@ sealed class ExtractFilesCommand : Command
 
         AddArgument(new Argument<string>
         {
-            Arity       = ArgumentArity.ExactlyOne,
-            Description = UI.Disc_image_path,
-            Name        = "image-path"
+            Arity = ArgumentArity.ExactlyOne, Description = UI.Disc_image_path, Name = "image-path"
         });
 
         AddArgument(new Argument<string>
@@ -414,11 +412,11 @@ sealed class ExtractFilesCommand : Command
         {
             FileEntryInfo stat = new();
 
-            Core.Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
-                error = fs.Stat(path + "/" + entry, out stat);
-            });
+            //    Core.Spectre.ProgressSingleSpinner(ctx =>
+            //  {
+            //    ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
+            error = fs.Stat(path + "/" + entry, out stat);
+            // });
 
             if(error == ErrorNumber.NoError)
             {
@@ -489,11 +487,11 @@ sealed class ExtractFilesCommand : Command
                 {
                     List<string> xattrs = null;
 
-                    Core.Spectre.ProgressSingleSpinner(ctx =>
-                    {
-                        ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
-                        error = fs.ListXAttr(path + "/" + entry, out xattrs);
-                    });
+                    //          Core.Spectre.ProgressSingleSpinner(ctx =>
+                    //        {
+                    //          ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
+                    error = fs.ListXAttr(path + "/" + entry, out xattrs);
+                    //    });
 
                     if(error == ErrorNumber.NoError)
                     {

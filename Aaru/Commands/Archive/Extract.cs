@@ -266,13 +266,13 @@ sealed class ArchiveExtractCommand : Command
 
                 string outputPath     = Path.Combine(outputDir, fileName);
                 string destinationDir = Path.GetDirectoryName(outputPath);
-                
+
                 if(File.Exists(destinationDir))
                 {
                     AaruConsole.ErrorWriteLine(UI.Cannot_write_file_0_output_exists, Markup.Escape(fileName));
                     continue;
                 }
-                
+
                 if(destinationDir is not null)
                     Directory.CreateDirectory(destinationDir);
 

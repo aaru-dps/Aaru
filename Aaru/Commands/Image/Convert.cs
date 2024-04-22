@@ -901,7 +901,7 @@ sealed class ConvertImageCommand : Command
                                                                                sectorsToDo,
                                                                                out sector);
 
-                                        // TODO: Move to generic place when anything but CSS DVDs can be decrypted 
+                                        // TODO: Move to generic place when anything but CSS DVDs can be decrypted
                                         if(inputOptical.Info.MediaType is MediaType.DVDROM or MediaType.DVDR
                                             or MediaType.DVDRDL
                                             or MediaType.DVDPR or MediaType.DVDPRDL &&
