@@ -268,7 +268,11 @@ public sealed partial class CBM
                 if(errno != ErrorNumber.NoError)
                     break;
 
-                data.Write(sector, 2, 254);
+                byte toRead = sector[0] == 0 ? sector[1] : (byte)254;
+                if(toRead == 255)
+                    toRead--;
+
+                data.Write(sector, 2, toRead);
 
                 if(sector[0] == 0)
                     break;
