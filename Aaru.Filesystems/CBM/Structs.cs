@@ -150,7 +150,7 @@ public sealed partial class CBM
         public readonly byte[] name;
         public readonly byte  firstSideBlockTrack;
         public readonly byte  firstSideBlockSector;
-        public readonly ulong unused;
+        public readonly uint  unused;
         public readonly byte  replacementTrack;
         public readonly byte  replacementSector;
         public readonly short blocks;
