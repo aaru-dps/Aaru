@@ -731,22 +731,26 @@ public partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds())));
+                                                    Per(totalDuration.Milliseconds()).
+                                                    Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
                                            ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(imageWriteDuration.Seconds())));
+                                                    Per(imageWriteDuration.Seconds()).
+                                                    Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                          _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(totalDuration.Milliseconds())));
+                                                  Per(totalDuration.Milliseconds()).
+                                                  Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
                                          ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(imageWriteDuration.Seconds())));
+                                                  Per(imageWriteDuration.Seconds()).
+                                                  Humanize()));
 
     #region Trimming
 
@@ -951,7 +955,8 @@ public partial class Dump
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
                                                    ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                            Per(totalChkDuration.Milliseconds())));
+                                                            Per(totalChkDuration.Milliseconds()).
+                                                            Humanize()));
 
                 _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
                                    _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));

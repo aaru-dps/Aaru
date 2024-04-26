@@ -50,6 +50,7 @@ using Aaru.Decoders.PCMCIA;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Helpers;
+using Humanizer;
 using Humanizer.Bytes;
 using Spectre.Console;
 using DDS = Aaru.Decoders.DVD.DDS;
@@ -99,7 +100,7 @@ public static class ImageInfo
 
         AaruConsole.WriteLine(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
                               imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
-                              ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize));
+                              ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize).Humanize());
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
             AaruConsole.WriteLine(Localization.Core.Created_by_0_WithMarkup, Markup.Escape(imageFormat.Info.Creator));

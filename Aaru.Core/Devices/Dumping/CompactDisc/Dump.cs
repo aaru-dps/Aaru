@@ -1307,23 +1307,27 @@ sealed partial class Dump
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds())));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(imageWriteDuration.Seconds())));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(imageWriteDuration.Seconds())
+                                                   .Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                          _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
-                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(totalDuration.Milliseconds())));
+                                         ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                 .Per(totalDuration.Milliseconds())
+                                                 .Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
-                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(imageWriteDuration.Seconds())));
+                                         ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                 .Per(imageWriteDuration.Seconds())
+                                                 .Humanize()));
 
         TrimCdUserData(audioExtents,      blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                        read16,            readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
@@ -1489,9 +1493,9 @@ sealed partial class Dump
                                  _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds()).
-                                                    Humanize()));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
         if(maxSpeed > 0)
         {
