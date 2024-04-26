@@ -76,6 +76,7 @@ partial class Dump
         var    outputFormat = _outputPlugin as IWritableImage;
 
         InitProgress?.Invoke();
+        _speedStopwatch.Reset();
 
         for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
         {
@@ -101,8 +102,10 @@ partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
 
+            _speedStopwatch.Start();
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
+            _speedStopwatch.Stop();
 
             if(!sense && !_dev.Error)
             {
@@ -244,12 +247,12 @@ partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _speedStopwatch.Stop();

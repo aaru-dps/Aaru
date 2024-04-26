@@ -580,7 +580,7 @@ partial class Dump
 
         _dumpLog.WriteLine(Localization.Core.Reading_game_partition);
         UpdateStatus?.Invoke(Localization.Core.Reading_game_partition);
-        _speedStopwatch.Restart();
+        _speedStopwatch.Reset();
         ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
@@ -659,8 +659,10 @@ partial class Dump
                     Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                            (long)i, (long)totalSize);
 
+                _speedStopwatch.Start();
                 sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize, 0,
                                     blocksToRead, false, _dev.Timeout, out cmdDuration);
+                _speedStopwatch.Stop();
 
                 totalDuration += cmdDuration;
 
@@ -723,12 +725,12 @@ partial class Dump
 
                 double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                if(elapsed <= 0)
+                if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                     continue;
 
                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
-                _speedStopwatch.Restart();
+                _speedStopwatch.Reset();
             }
 
             _speedStopwatch.Stop();
@@ -863,8 +865,10 @@ partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, currentSector, totalSize, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)currentSector, (long)totalSize);
 
+            _speedStopwatch.Start();
             sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, blockSize, 0,
                                 blocksToRead, false, _dev.Timeout, out cmdDuration);
+            _speedStopwatch.Stop();
 
             totalDuration += cmdDuration;
 
@@ -919,12 +923,12 @@ partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         EndProgress?.Invoke();

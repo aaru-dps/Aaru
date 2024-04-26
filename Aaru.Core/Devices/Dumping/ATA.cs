@@ -299,7 +299,7 @@ public partial class Dump
                     var newTrim = false;
 
                     _dumpStopwatch.Restart();
-                    _speedStopwatch.Restart();
+                    _speedStopwatch.Reset();
                     ulong sectorSpeedStart = 0;
                     InitProgress?.Invoke();
 
@@ -327,7 +327,9 @@ public partial class Dump
                             Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                                    (long)i, (long)blocks);
 
+                        _speedStopwatch.Start();
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
+                        _speedStopwatch.Stop();
 
                         _writeStopwatch.Restart();
                         if(!error)
@@ -364,12 +366,12 @@ public partial class Dump
 
                         double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                        if(elapsed <= 0)
+                        if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                             continue;
 
                         currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                         sectorSpeedStart = 0;
-                        _speedStopwatch.Restart();
+                        _speedStopwatch.Reset();
                     }
 
                     _speedStopwatch.Stop();
@@ -570,7 +572,7 @@ public partial class Dump
                     ulong currentBlock = 0;
                     blocks = (ulong)(cylinders * heads * sectors);
                     _dumpStopwatch.Restart();
-                    _speedStopwatch.Restart();
+                    _speedStopwatch.Reset();
                     ulong sectorSpeedStart = 0;
                     InitProgress?.Invoke();
 
@@ -601,9 +603,10 @@ public partial class Dump
                                                          ByteSize.FromMegabytes(currentSpeed).
                                                                   Per(_oneSecond).
                                                                   Humanize()));
-
+                                _speedStopwatch.Start();
                                 bool error =
                                     ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out recoveredError);
+                                _speedStopwatch.Stop();
 
                                 totalDuration += duration;
 
@@ -643,12 +646,12 @@ public partial class Dump
 
                                 double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                                if(elapsed <= 0)
+                                if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                                     continue;
 
                                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                                 sectorSpeedStart = 0;
-                                _speedStopwatch.Restart();
+                                _speedStopwatch.Reset();
                             }
                         }
                     }

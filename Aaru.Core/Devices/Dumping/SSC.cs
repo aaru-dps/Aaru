@@ -857,7 +857,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        _speedStopwatch.Restart();
+        _speedStopwatch.Reset();
 
         while(currentPartition < totalPartitions)
         {
@@ -919,9 +919,10 @@ partial class Dump
             PulseProgress?.Invoke(string.Format(Localization.Core.Reading_block_0_1, currentBlock,
                                                 ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()));
 
+            _speedStopwatch.Start();
             sense = _dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, _dev.Timeout,
                                out duration);
-
+            _speedStopwatch.Stop();
             totalDuration += duration;
 
             if(sense && senseBuf?.Length != 0 && !ArrayHelpers.ArrayIsNullOrEmpty(senseBuf))
@@ -1093,12 +1094,12 @@ partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || currentSpeedSize < 524288)
                 continue;
 
             currentSpeed     = currentSpeedSize / (1048576 * elapsed);
             currentSpeedSize = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();

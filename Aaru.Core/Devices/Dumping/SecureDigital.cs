@@ -619,7 +619,7 @@ public partial class Dump
         }
 
         _dumpStopwatch.Restart();
-        _speedStopwatch.Restart();
+        _speedStopwatch.Reset();
         double imageWriteDuration = 0;
         var    newTrim            = false;
         ulong  sectorSpeedStart   = 0;
@@ -650,6 +650,7 @@ public partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
 
+            _speedStopwatch.Start();
             if(blocksToRead == 1)
             {
                 error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
@@ -667,6 +668,8 @@ public partial class Dump
                 error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                      timeout, out duration);
             }
+
+            _speedStopwatch.Stop();
 
             if(!error)
             {
@@ -705,12 +708,12 @@ public partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();

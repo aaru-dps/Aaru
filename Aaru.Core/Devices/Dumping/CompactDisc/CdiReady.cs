@@ -217,13 +217,13 @@ partial class Dump
             UpdateProgress?.
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
-
+            _speedStopwatch.Start();
             sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                 MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
             totalDuration += cmdDuration;
-
+            _speedStopwatch.Stop();
             double elapsed;
 
             // Overcome the track mode change drive error
@@ -234,13 +234,13 @@ partial class Dump
                     UpdateProgress?.
                         Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i + r, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                                (long)i + r, (long)blocks);
-
+                    _speedStopwatch.Start();
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, (uint)sectorsForOffset + 1,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                         true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
-
+                    _speedStopwatch.Stop();
                     if(!sense && !_dev.Error)
                     {
                         mhddLog.Write(i + r, cmdDuration);
@@ -313,16 +313,14 @@ partial class Dump
 
                     elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                    if(elapsed <= 0)
+                    if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                         continue;
 
                     currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
-                    _speedStopwatch.Restart();
+                    _speedStopwatch.Reset();
                 }
             }
-
-            _speedStopwatch.Restart();
 
             if(!sense && !_dev.Error)
             {
@@ -424,12 +422,12 @@ partial class Dump
 
             elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _speedStopwatch.Stop();

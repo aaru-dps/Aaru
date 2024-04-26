@@ -206,7 +206,7 @@ public partial class Dump
 
         var newTrim = false;
 
-        _speedStopwatch.Restart();
+        _speedStopwatch.Reset();
         ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
@@ -234,8 +234,10 @@ public partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, (long)blocks);
 
+            _speedStopwatch.Start();
             sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(umdStart + i * 4),
                                 512, 0, blocksToRead * 4, false, _dev.Timeout, out double cmdDuration);
+            _speedStopwatch.Stop();
 
             totalDuration += cmdDuration;
 
@@ -282,12 +284,12 @@ public partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();

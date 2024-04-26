@@ -212,8 +212,10 @@ public partial class Dump
                 Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
                        (long)i, blocks);
 
+            _speedStopwatch.Start();
             sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
                                 blocksToRead, false, _dev.Timeout, out double cmdDuration);
+            _speedStopwatch.Stop();
 
             totalDuration += cmdDuration;
 
@@ -260,12 +262,12 @@ public partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
                 continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            _speedStopwatch.Restart();
+            _speedStopwatch.Reset();
         }
 
         _speedStopwatch.Stop();
