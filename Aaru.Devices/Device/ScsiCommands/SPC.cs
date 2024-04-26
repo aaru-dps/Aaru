@@ -254,7 +254,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var cdb = new byte[6];
-        buffer = new byte[255];
+        buffer = new byte[254];
 
         cdb[0] = (byte)ScsiCommands.ModeSense;
 
@@ -276,6 +276,9 @@ public partial class Device
             return true;
 
         var modeLength = (byte)(buffer[0] + 1);
+        if(modeLength % 2 != 0)
+            modeLength++;
+
         buffer      = new byte[modeLength];
         cdb[4]      = (byte)buffer.Length;
         senseBuffer = new byte[64];
@@ -360,6 +363,9 @@ public partial class Device
             return true;
 
         var modeLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        if(modeLength % 2 != 0)
+            modeLength++;
+
         buffer      = new byte[modeLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
