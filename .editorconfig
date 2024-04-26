@@ -145,7 +145,7 @@ resharper_space_within_empty_braces                                             
 resharper_toplevel_function_declaration_return_type_style                                         = on_single_line
 resharper_toplevel_function_definition_return_type_style                                          = on_single_line
 resharper_use_indent_from_vs                                                                      = false
-resharper_wrap_after_dot_in_method_calls                                                          = true
+resharper_wrap_after_dot_in_method_calls                                                          = false
 resharper_wrap_base_clause_style                                                                  = chop_if_long
 resharper_wrap_braced_init_list_style                                                             = chop_if_long
 resharper_wrap_chained_binary_expressions                                                         = chop_if_long
