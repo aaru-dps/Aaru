@@ -88,7 +88,7 @@ static partial class Usb
                 // build a Device Interface Detail Data structure
                 var didd = new SpDeviceInterfaceDetailData
                 {
-                    cbSize = 4 + Marshal.SystemDefaultCharSize
+                    cbSize = IntPtr.Size == 8 ? 8 : 4 + Marshal.SystemDefaultCharSize
                 };
 
                 // trust me :)
@@ -915,7 +915,7 @@ static partial class Usb
     {
         internal          int    cbSize;
         internal readonly Guid   ClassGuid;
-        internal readonly IntPtr DevInst;
+        internal readonly uint   DevInst;
         internal readonly IntPtr Reserved;
     }
 

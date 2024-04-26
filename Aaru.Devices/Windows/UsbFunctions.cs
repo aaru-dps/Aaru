@@ -173,10 +173,10 @@ static partial class Usb
     }
 
     [DllImport("setupapi.dll")]
-    static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
+    static extern int CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, int ulFlags);
 
     [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
+    static extern int CM_Get_Device_ID(uint dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
     /// <summary>Find a device based upon a Drive Letter</summary>
     /// <param name="driveLetter">Drive letter</param>
@@ -244,8 +244,8 @@ static partial class Usb
                     // build a Device Interface Detail Data structure
                     var didd = new SpDeviceInterfaceDetailData
                     {
-                        cbSize = 4 + Marshal.SystemDefaultCharSize
-                    }; // trust me :)
+                        cbSize = IntPtr.Size == 8 ? 8 : 4 + Marshal.SystemDefaultCharSize
+                    };
 
                     // now we can get some more detailed information
                     var nRequiredSize = 0;
@@ -256,7 +256,7 @@ static partial class Usb
                         {
                             // current InstanceID is at the "USBSTOR" level, so we
                             // need up "move up" one level to get to the "USB" level
-                            CM_Get_Parent(out IntPtr ptrPrevious, da.DevInst, 0);
+                            CM_Get_Parent(out uint ptrPrevious, da.DevInst, 0);
 
                             // Now we get the InstanceID of the USB level device
                             nint ptrInstanceBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
