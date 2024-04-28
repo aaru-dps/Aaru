@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aaru.Checksums;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -475,8 +476,48 @@ partial class Dump
                             FixOffsetData(offsetBytes,       sectorSize, sectorsForOffset, supportedSubchannel,
                                           ref sectorsForFix, subSize,    ref cmdBuf,       blockSize, false);
 
-                            // TODO: Implement sector validity
+                            // Descramble
                             cmdBuf = Sector.Scramble(cmdBuf);
+
+                            // Check valid sector
+                            CdChecksums.CheckCdSector(cmdBuf, out bool? correctEccP, out bool? correctEccQ,
+                                                      out bool? correctEdc);
+
+                            // Check mode, set sense if EDC/ECC validity is not correct
+                            switch(cmdBuf[15] & 0x03)
+                            {
+                                case 0:
+
+                                    for(var c = 16; c < 2352; c++)
+                                    {
+                                        if(cmdBuf[c] == 0x00)
+                                            continue;
+
+                                        sense = true;
+
+                                        break;
+                                    }
+
+                                    break;
+                                case 1:
+                                    sense = correctEdc != true || correctEccP != true || correctEccQ != true;
+
+                                    break;
+                                case 2:
+                                    if((cmdBuf[18] & 0x20) != 0x20)
+                                    {
+                                        if(correctEccP != true)
+                                            sense = true;
+
+                                        if(correctEccQ != true)
+                                            sense = true;
+                                    }
+
+                                    if(correctEdc != true)
+                                        sense = true;
+
+                                    break;
+                            }
                         }
                     }
                     else if(readcd)
