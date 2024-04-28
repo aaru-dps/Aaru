@@ -1119,12 +1119,6 @@ sealed partial class Dump
             }
         }
 
-        if(!_fixOffset || tracks.All(t => t.Type != TrackType.Audio))
-        {
-            offsetBytes      = 0;
-            sectorsForOffset = 0;
-        }
-
         mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private,
                               _dimensions);
 

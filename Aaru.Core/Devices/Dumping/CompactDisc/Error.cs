@@ -37,6 +37,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.Checksums;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -304,12 +305,79 @@ partial class Dump
                         // Try to workaround firmware
                         if(decSense is { ASC: 0x11, ASCQ: 0x05 } || decSense?.ASC == 0x64)
                         {
-                            sense = _dev.ReadCd(out cmdBuf, out _, badSectorToReRead, blockSize, sectorsToReRead,
-                                                MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                                                false, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                                out double cmdDuration2);
+                            byte scrambledSectorsToReRead   = sectorsToReRead;
+                            uint scrambledBadSectorToReRead = badSectorToReRead;
+
+                            // Contrary to normal read, this must always be offset fixed, because it's data not audio
+                            if(offsetBytes != 0)
+                            {
+                                if(offsetBytes < 0)
+                                {
+                                    if(scrambledBadSectorToReRead == 0)
+                                        scrambledBadSectorToReRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
+                                    else
+                                        scrambledBadSectorToReRead -= (uint)sectorsForOffset;
+                                }
+
+                                scrambledSectorsToReRead += (byte)sectorsForOffset;
+                            }
+
+                            sense = _dev.ReadCd(out cmdBuf, out _, scrambledBadSectorToReRead, blockSize,
+                                                scrambledSectorsToReRead, MmcSectorTypes.Cdda, false, false, false,
+                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                supportedSubchannel, _dev.Timeout, out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
+
+                            if(!sense)
+                            {
+                                uint scrambledBlocksToReRead = scrambledSectorsToReRead;
+                                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
+                                              ref scrambledBlocksToReRead, subSize, ref cmdBuf, blockSize, false);
+
+                                // Descramble
+                                cmdBuf = Sector.Scramble(cmdBuf);
+
+                                // Check valid sector
+                                CdChecksums.CheckCdSector(cmdBuf, out bool? correctEccP, out bool? correctEccQ,
+                                                          out bool? correctEdc);
+
+                                // Check mode, set sense if EDC/ECC validity is not correct
+                                switch(cmdBuf[15] & 0x03)
+                                {
+                                    case 0:
+
+                                        for(var c = 16; c < 2352; c++)
+                                        {
+                                            if(cmdBuf[c] == 0x00)
+                                                continue;
+
+                                            sense = true;
+
+                                            break;
+                                        }
+
+                                        break;
+                                    case 1:
+                                        sense = correctEdc != true || correctEccP != true || correctEccQ != true;
+
+                                        break;
+                                    case 2:
+                                        if((cmdBuf[18] & 0x20) != 0x20)
+                                        {
+                                            if(correctEccP != true)
+                                                sense = true;
+
+                                            if(correctEccQ != true)
+                                                sense = true;
+                                        }
+
+                                        if(correctEdc != true)
+                                            sense = true;
+
+                                        break;
+                                }
+                            }
                         }
                     }
                 }
