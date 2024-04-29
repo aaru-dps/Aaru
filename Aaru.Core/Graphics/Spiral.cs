@@ -43,11 +43,11 @@ public sealed class Spiral : IMediaGraph
         new(120, 15, 33, 46, 50, 116, 45, 46, 360000, new SKColor(0xBD, 0xA0, 0x00));
     static readonly DiscParameters _cdRewritableParameters =
         new(120, 15, 33, 46, 50, 116, 45, 46, 360000, new SKColor(0x50, 0x50, 0x50));
-    static readonly DiscParameters _ddcdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 720000, SKColors.Silver);
+    static readonly DiscParameters _ddcdParameters = new(120, 15, 33, 46, 50, 116, 0, 0, 666000, SKColors.Silver);
     static readonly DiscParameters _ddcdRecordableParameters =
-        new(120, 15, 33, 46, 50, 116, 45, 46, 720000, new SKColor(0xBD, 0xA0, 0x00));
+        new(120, 15, 33, 46, 50, 116, 45, 46, 666000, new SKColor(0xBD, 0xA0, 0x00));
     static readonly DiscParameters _ddcdRewritableParameters =
-        new(120, 15, 33, 46, 50, 116, 45, 46, 720000, new SKColor(0x50, 0x50, 0x50));
+        new(120, 15, 33, 46, 50, 116, 45, 46, 666000, new SKColor(0x50, 0x50, 0x50));
     static readonly DiscParameters _dvdPlusRParameters =
         new(120, 15, 33, 46.8f, 48, 116, 46.586f, 46.8f, 2295104, new SKColor(0x6f, 0x0A, 0xCA));
     static readonly DiscParameters _dvdPlusRParameters80 =
