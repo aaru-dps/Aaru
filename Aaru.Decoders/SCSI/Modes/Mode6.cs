@@ -55,6 +55,11 @@ public static partial class Modes
 
         if(modeResponse[3] > 0)
         {
+            // An incorrect size field, we cannot know if the following bytes are really the pages (probably not),
+            // so consider the MODE SENSE(6) response as invalid
+            if(modeResponse[3] + 4 > modeResponse.Length)
+                return null;
+
             header.BlockDescriptors = new BlockDescriptor[modeResponse[3] / 8];
 
             for(var i = 0; i < header.BlockDescriptors.Length; i++)

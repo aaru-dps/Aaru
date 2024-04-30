@@ -114,7 +114,11 @@ partial class Dump
             sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
                                     out _);
 
-            if(sense)
+            Modes.DecodedMode? dcMode6 = null;
+            if(!sense)
+                dcMode6 = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+
+            if(sense || dcMode6 is null)
             {
                 sense = _dev.ModeSense10(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
                                          out _);
@@ -133,8 +137,6 @@ partial class Dump
             }
             else
             {
-                Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
-
                 if(dcMode6?.Pages != null)
                 {
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage is

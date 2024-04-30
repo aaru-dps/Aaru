@@ -971,9 +971,6 @@ partial class Dump
                                                     Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(imageWriteDuration.Seconds()).
-                                                    Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                          _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
@@ -1071,7 +1068,11 @@ partial class Dump
                 sense = _dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                         _dev.Timeout, out _);
 
-                if(sense)
+                Modes.DecodedMode? dcMode6 = null;
+                if(!sense)
+                    dcMode6 = Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
+
+                if(sense || dcMode6 is null)
                 {
                     sense = _dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                              _dev.Timeout, out _);
@@ -1091,8 +1092,6 @@ partial class Dump
                 }
                 else
                 {
-                    Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
-
                     if(dcMode6.HasValue)
                     {
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>

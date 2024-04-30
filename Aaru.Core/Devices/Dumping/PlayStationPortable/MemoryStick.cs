@@ -373,7 +373,11 @@ public partial class Dump
                 sense = _dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                         _dev.Timeout, out _);
 
-                if(sense)
+                Modes.DecodedMode? dcMode6 = null;
+                if(!sense)
+                    dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
+
+                if(sense || dcMode6 is null)
                 {
                     sense = _dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                              _dev.Timeout, out _);
@@ -392,8 +396,6 @@ public partial class Dump
                 }
                 else
                 {
-                    Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
-
                     if(dcMode6.HasValue)
                     {
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>

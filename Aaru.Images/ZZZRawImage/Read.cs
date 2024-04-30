@@ -986,10 +986,10 @@ public sealed partial class ZZZRawImage
 
             Modes.DecodedMode? decMode = null;
 
-            if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_6, out byte[] mode6))
-                decMode = Modes.DecodeMode6(mode6, devType);
-            else if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_10, out byte[] mode10))
+            if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_10, out byte[] mode10))
                 decMode = Modes.DecodeMode10(mode10, devType);
+            else if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_6, out byte[] mode6))
+                decMode = Modes.DecodeMode6(mode6, devType);
 
             byte mediumType  = 0;
             byte densityCode = 0;
@@ -1067,8 +1067,8 @@ public sealed partial class ZZZRawImage
                 _imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, _imageInfo.DriveManufacturer,
                                                                        _imageInfo.DriveModel, mediumType, densityCode,
                                                                        _imageInfo.Sectors, _imageInfo.SectorSize,
-                                                                       _mediaTags.ContainsKey(MediaTagType.
-                                                                           USB_Descriptors), _rawCompactDisc);
+                                                                       _mediaTags.ContainsKey(MediaTagType
+                                                                          .USB_Descriptors), _rawCompactDisc);
             }
 
             if(_imageInfo.MediaType == MediaType.Unknown)
@@ -1164,8 +1164,8 @@ public sealed partial class ZZZRawImage
                 var fs = new FileStream(basename + ".metadata.json", FileMode.Open);
 
                 AaruMetadata =
-                    (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)?
-                   .AaruMetadata;
+                    (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)
+                  ?.AaruMetadata;
 
                 fs.Close();
             }
