@@ -220,7 +220,7 @@ public static partial class Modes
 
                         break;
                     }
-                    case true when offset + 1 < modeResponse.Length:
+                    case false when offset + 1 < modeResponse.Length:
                     {
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
                         int copyLen = pg.PageResponse.Length;
