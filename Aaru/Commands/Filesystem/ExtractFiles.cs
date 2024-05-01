@@ -400,12 +400,10 @@ sealed class ExtractFilesCommand : Command
 
         while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
-            FileEntryInfo stat = new();
-
             //    Core.Spectre.ProgressSingleSpinner(ctx =>
             //  {
             //    ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
-            error = fs.Stat(path + "/" + entry, out stat);
+            error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
             // });
 
@@ -473,12 +471,10 @@ sealed class ExtractFilesCommand : Command
 
                 if(doXattrs)
                 {
-                    List<string> xattrs = null;
-
                     //          Core.Spectre.ProgressSingleSpinner(ctx =>
                     //        {
                     //          ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
-                    error = fs.ListXAttr(path + "/" + entry, out xattrs);
+                    error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
                     //    });
 
