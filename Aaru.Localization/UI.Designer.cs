@@ -1203,6 +1203,15 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CD PMA:.
+        /// </summary>
+        public static string CD_PMA {
+            get {
+                return ResourceManager.GetString("CD_PMA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CD read speed limited to.
         /// </summary>
         public static string CD_read_speed_limited_to {

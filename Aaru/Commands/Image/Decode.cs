@@ -308,7 +308,7 @@ sealed class DecodeCommand : Command
                                 AaruConsole.WriteLine(UI.Error_0_reading_CD_PMA_from_disc_image, errno);
                             else
                             {
-                                AaruConsole.WriteLine($"[bold]{"CD PMA:"}[/]");
+                                AaruConsole.WriteLine($"[bold]{UI.CD_PMA}[/]");
 
                                 AaruConsole
                                    .WriteLine("================================================================================");
