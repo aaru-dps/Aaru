@@ -87,9 +87,7 @@ public sealed partial class OperaFS
     {
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not OperaFileNode mynode) return ErrorNumber.InvalidArgument;
-
-        return ErrorNumber.NoError;
+        return node is not OperaFileNode ? ErrorNumber.InvalidArgument : ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
