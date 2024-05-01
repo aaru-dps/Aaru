@@ -65,9 +65,8 @@ public sealed partial class Blu
         tmpHdr.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
         for(var i = 0; i < 0xD; i++)
-        {
-            if(tmpHdr.DeviceName[i] < 0x20) return false;
-        }
+            if(tmpHdr.DeviceName[i] < 0x20)
+                return false;
 
         return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;
     }

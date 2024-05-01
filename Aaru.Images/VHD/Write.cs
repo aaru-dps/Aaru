@@ -352,9 +352,8 @@ public sealed partial class Vhd
             }
 
             for(var i = 0; i < length; i++)
-            {
-                if(!WriteSector(data[(i * 512)..(i * 512 + 512)], sectorAddress + (ulong)i)) return false;
-            }
+                if(!WriteSector(data[(i * 512)..(i * 512 + 512)], sectorAddress + (ulong)i))
+                    return false;
 
             return true;
         }

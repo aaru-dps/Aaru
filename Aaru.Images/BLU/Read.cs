@@ -73,9 +73,8 @@ public sealed partial class Blu
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.bytesPerBlock = {0}", _imageHeader.BytesPerBlock);
 
         for(var i = 0; i < 0xD; i++)
-        {
-            if(_imageHeader.DeviceName[i] < 0x20) return ErrorNumber.InvalidArgument;
-        }
+            if(_imageHeader.DeviceName[i] < 0x20)
+                return ErrorNumber.InvalidArgument;
 
         if((_imageHeader.BytesPerBlock & 0xFE00) != 0x200) return ErrorNumber.InvalidArgument;
 

@@ -1433,12 +1433,8 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 }
 
                 if(trackFlags.Count > 0)
-                {
                     foreach(KeyValuePair<byte, byte> flags in trackFlags)
-                    {
                         outputOptical.WriteSectorTag([flags.Value], flags.Key, SectorTagType.CdTrackFlags);
-                    }
-                }
 
                 if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
             }

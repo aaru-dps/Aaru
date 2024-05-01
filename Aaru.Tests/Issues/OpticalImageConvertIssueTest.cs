@@ -406,12 +406,8 @@ public abstract class OpticalImageConvertIssueTest
         }
 
         if(trackFlags.Count > 0)
-        {
             foreach((byte track, byte flags) in trackFlags)
-            {
                 outputOptical.WriteSectorTag([flags], track, SectorTagType.CdTrackFlags);
-            }
-        }
 
         if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 

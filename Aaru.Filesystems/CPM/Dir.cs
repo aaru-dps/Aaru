@@ -115,14 +115,12 @@ public sealed partial class CPM
                 if((entry.statusUser & 0x7F) < 0x20)
                 {
                     for(var f = 0; f < 8; f++)
-                    {
-                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
-                    }
+                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                            return false;
 
                     for(var e = 0; e < 3; e++)
-                    {
-                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
-                    }
+                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                            return false;
 
                     if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                 }
@@ -133,14 +131,12 @@ public sealed partial class CPM
                         case 0x20:
                         {
                             for(var f = 0; f < 8; f++)
-                            {
-                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
-                            }
+                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                                    return false;
 
                             for(var e = 0; e < 3; e++)
-                            {
-                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
-                            }
+                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                                    return false;
 
                             _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
                             _labelCreationDate = new byte[4];

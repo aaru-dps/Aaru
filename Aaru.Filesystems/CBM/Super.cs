@@ -241,9 +241,8 @@ public sealed partial class CBM
             _statfs.FreeFiles--;
 
             for(var i = 0; i < dirEntry.name.Length; i++)
-            {
-                if(dirEntry.name[i] == 0xA0) dirEntry.name[i] = 0;
-            }
+                if(dirEntry.name[i] == 0xA0)
+                    dirEntry.name[i] = 0;
 
             string name = StringHandlers.CToString(dirEntry.name, encoding);
 

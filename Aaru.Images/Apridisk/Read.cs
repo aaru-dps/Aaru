@@ -207,9 +207,8 @@ public sealed partial class Apridisk
         for(ushort cyl = 0; cyl < _imageInfo.Cylinders; cyl++)
         {
             for(ushort head = 0; head < _imageInfo.Heads; head++)
-            {
-                if(spts[cyl][head] < spt) spt = spts[cyl][head];
-            }
+                if(spts[cyl][head] < spt)
+                    spt = spts[cyl][head];
         }
 
         _imageInfo.SectorsPerTrack = spt;

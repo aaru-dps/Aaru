@@ -134,9 +134,7 @@ partial class Dump
                         CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
 
                         if(titleKey.HasValue)
-                        {
                             outputFormat.WriteSectorTag([titleKey.Value.CMI], i + j, SectorTagType.DvdSectorCmi);
-                        }
                         else
                             continue;
 

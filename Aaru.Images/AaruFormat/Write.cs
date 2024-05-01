@@ -1926,9 +1926,8 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                    {
-                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
-                    }
+                        for(var r = 0; r < remaining * 4; r++)
+                            _writingBuffer[_writingBufferPosition + r] = 0;
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,
@@ -2720,9 +2719,8 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                    {
-                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
-                    }
+                        for(var r = 0; r < remaining * 4; r++)
+                            _writingBuffer[_writingBufferPosition + r] = 0;
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,

@@ -82,9 +82,8 @@ public sealed partial class HdCopy
 
         // all other tracks must be either present (=1) or absent (=0)
         for(var i = 0; i < 2 * numTracks; i++)
-        {
-            if(fheader.trackMap[i] > 1) return false;
-        }
+            if(fheader.trackMap[i] > 1)
+                return false;
 
         /* return success */
         fhdr = fheader;

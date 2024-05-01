@@ -506,12 +506,8 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 }
 
                 if(trackFlags.Count > 0)
-                {
                     foreach((byte track, byte flags) in trackFlags)
-                    {
                         outputFormat.WriteSectorTag([flags], track, SectorTagType.CdTrackFlags);
-                    }
-                }
 
                 if(mcn != null) outputFormat.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 

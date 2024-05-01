@@ -52,14 +52,12 @@ public static class DMI
 
         // Catalogue number is two letters, five numbers, one letter
         for(var i = 12; i < 14; i++)
-        {
-            if(dmi[i] < 0x41 || dmi[i] > 0x5A) return false;
-        }
+            if(dmi[i] < 0x41 || dmi[i] > 0x5A)
+                return false;
 
         for(var i = 14; i < 19; i++)
-        {
-            if(dmi[i] < 0x30 || dmi[i] > 0x39) return false;
-        }
+            if(dmi[i] < 0x30 || dmi[i] > 0x39)
+                return false;
 
         if(dmi[19] < 0x41 || dmi[19] > 0x5A) return false;
 

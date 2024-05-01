@@ -188,9 +188,8 @@ public sealed partial class TeleDisk
             for(var i = 0; i < _commentBlock.Length; i++)
 
                 // Replace NULLs, used by TeleDisk as newline markers, with UNIX newline marker
-            {
-                if(_commentBlock[i] == 0x00) _commentBlock[i] = 0x0A;
-            }
+                if(_commentBlock[i] == 0x00)
+                    _commentBlock[i] = 0x0A;
 
             _imageInfo.Comments = Encoding.ASCII.GetString(_commentBlock);
 

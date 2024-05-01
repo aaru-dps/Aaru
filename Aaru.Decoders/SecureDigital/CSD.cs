@@ -290,9 +290,8 @@ public static partial class Decoders
         unit = "";
 
         for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
-        {
-            if((csd.Classes & mask) == mask) unit += $" {cl}";
-        }
+            if((csd.Classes & mask) == mask)
+                unit += $" {cl}";
 
         sb.AppendFormat("\t" + Localization.Device_support_command_classes_0, unit).AppendLine();
 

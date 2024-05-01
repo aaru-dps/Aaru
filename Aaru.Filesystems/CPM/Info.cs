@@ -1025,9 +1025,8 @@ public sealed partial class CPM
 
                         // Complement of the directory bytes if needed
                         if(def.complement)
-                        {
-                            for(var b = 0; b < directory.Length; b++) directory[b] = (byte)(~directory[b] & 0xFF);
-                        }
+                            for(var b = 0; b < directory.Length; b++)
+                                directory[b] = (byte)(~directory[b] & 0xFF);
 
                         // Check the directory
                         if(CheckDir(directory))
