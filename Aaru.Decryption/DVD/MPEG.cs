@@ -31,7 +31,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2023 Rebecca Wallander
+// Copyright © 2023-2024 Rebecca Wallander
 // ****************************************************************************/
 
 // http://www.mpucoder.com/DVD/vobov.html

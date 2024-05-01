@@ -91,7 +91,7 @@ public class PluginRegisterGenerator : ISourceGenerator
                       //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                       //
                       // ----------------------------------------------------------------------------
-                      // Copyright © 2011-2023 Natalia Portillo
+                      // Copyright © 2011-2024 Natalia Portillo
                       // ****************************************************************************/
                       """);
 

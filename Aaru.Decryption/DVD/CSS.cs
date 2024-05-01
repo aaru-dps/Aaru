@@ -31,7 +31,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2020-2023 Rebecca Wallander
+// Copyright © 2020-2024 Rebecca Wallander
 // ****************************************************************************/
 
 // Based on information gathered from:
@@ -872,7 +872,7 @@ public class CSS
 
             for(i = 0; i < 4; i++)
             {
-                // Advance LFSR1 normally 
+                // Advance LFSR1 normally
                 oLfsr1  = _cssTable2[lfsr1Hi] ^ _cssTable3[lfsr1Lo];
                 lfsr1Hi = lfsr1Lo >> 1;
                 lfsr1Lo = (lfsr1Lo & 1) << 8 ^ oLfsr1;

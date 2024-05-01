@@ -34,8 +34,8 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021-2023 Michael Drüing
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2021-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Interfaces;

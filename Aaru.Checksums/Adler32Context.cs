@@ -31,7 +31,7 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // Copyright (C) 1995-2011 Mark Adler
 // Copyright (C) Jean-loup Gailly
 // ****************************************************************************/
