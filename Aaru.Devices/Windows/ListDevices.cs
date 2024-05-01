@@ -197,24 +197,22 @@ static class ListDevices
                 }
             }
 
-            switch(descriptor.BusType)
-            {
-                case StorageBusType.SCSI:
-                case StorageBusType.ATAPI:
-                case StorageBusType.ATA:
-                case StorageBusType.FireWire:
-                case StorageBusType.SSA:
-                case StorageBusType.Fibre:
-                case StorageBusType.USB:
-                case StorageBusType.iSCSI:
-                case StorageBusType.SAS:
-                case StorageBusType.SATA:
-                case StorageBusType.SecureDigital:
-                case StorageBusType.MultiMediaCard:
-                    info.Supported = true;
-
-                    break;
-            }
+            info.Supported = descriptor.BusType switch
+                             {
+                                 StorageBusType.SCSI
+                                  or StorageBusType.ATAPI
+                                  or StorageBusType.ATA
+                                  or StorageBusType.FireWire
+                                  or StorageBusType.SSA
+                                  or StorageBusType.Fibre
+                                  or StorageBusType.USB
+                                  or StorageBusType.iSCSI
+                                  or StorageBusType.SAS
+                                  or StorageBusType.SATA
+                                  or StorageBusType.SecureDigital
+                                  or StorageBusType.MultiMediaCard => true,
+                                 _ => info.Supported
+                             };
 
             Marshal.FreeHGlobal(descriptorPtr);
             devList.Add(info);

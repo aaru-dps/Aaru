@@ -570,28 +570,19 @@ public partial class Device
     public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, SscPositionForms responseForm, uint timeout,
                              out double duration)
     {
-        switch(responseForm)
-        {
-            case SscPositionForms.Long:
-            case SscPositionForms.OldLong:
-            case SscPositionForms.OldLongTclpVendor:
-            case SscPositionForms.OldLongVendor:
-            case SscPositionForms.Extended:
-                buffer = new byte[32];
-
-                break;
-            case SscPositionForms.OldTclp:
-            case SscPositionForms.OldTclpVendor:
-            case SscPositionForms.Short:
-            case SscPositionForms.VendorShort:
-                buffer = new byte[20];
-
-                break;
-            default:
-                buffer = new byte[32]; // Invalid
-
-                break;
-        }
+        buffer = responseForm switch
+                 {
+                     SscPositionForms.Long
+                      or SscPositionForms.OldLong
+                      or SscPositionForms.OldLongTclpVendor
+                      or SscPositionForms.OldLongVendor
+                      or SscPositionForms.Extended => new byte[32],
+                     SscPositionForms.OldTclp
+                      or SscPositionForms.OldTclpVendor
+                      or SscPositionForms.Short
+                      or SscPositionForms.VendorShort => new byte[20],
+                     _ => new byte[32]
+                 };
 
         var cdb = new byte[10];
         senseBuffer = new byte[64];

@@ -81,21 +81,14 @@ public sealed partial class MediaScan
     /// <exception cref="NotSupportedException">Unknown device type</exception>
     public ScanResults Scan()
     {
-        switch(_dev.Type)
-        {
-            case DeviceType.ATA:
-                return Ata();
-            case DeviceType.MMC:
-            case DeviceType.SecureDigital:
-                return SecureDigital();
-            case DeviceType.NVMe:
-                return Nvme();
-            case DeviceType.ATAPI:
-            case DeviceType.SCSI:
-                return Scsi();
-            default:
-                throw new NotSupportedException(Localization.Core.Unknown_device_type);
-        }
+        return _dev.Type switch
+               {
+                   DeviceType.ATA => Ata(),
+                   DeviceType.MMC or DeviceType.SecureDigital => SecureDigital(),
+                   DeviceType.NVMe => Nvme(),
+                   DeviceType.ATAPI or DeviceType.SCSI => Scsi(),
+                   _ => throw new NotSupportedException(Localization.Core.Unknown_device_type)
+               };
     }
 
     /// <summary>Aborts the running media scan</summary>

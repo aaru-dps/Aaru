@@ -748,18 +748,13 @@ public sealed partial class FAT
         Metadata.VolumeName = Metadata.VolumeName?.Trim();
         _statfs.Blocks      = Metadata.Clusters;
 
-        switch(bpbKind)
-        {
-            case BpbKind.ShortFat32:
-            case BpbKind.LongFat32:
-                _statfs.Type = Metadata.Type == FS_TYPE_FAT_PLUS ? FS_TYPE_FAT_PLUS : FS_TYPE_FAT32;
-
-                break;
-            default:
-                _statfs.Type = _fat16 ? FS_TYPE_FAT16 : FS_TYPE_FAT12;
-
-                break;
-        }
+        _statfs.Type = bpbKind switch
+                       {
+                           BpbKind.ShortFat32 or BpbKind.LongFat32 => Metadata.Type == FS_TYPE_FAT_PLUS
+                                                                          ? FS_TYPE_FAT_PLUS
+                                                                          : FS_TYPE_FAT32,
+                           _ => _fat16 ? FS_TYPE_FAT16 : FS_TYPE_FAT12
+                       };
 
         _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 

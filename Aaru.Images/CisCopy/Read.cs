@@ -86,30 +86,13 @@ public sealed partial class CisCopy
             return ErrorNumber.NotImplemented;
         }
 
-        var trackSize = 0;
-
-        switch(type)
-        {
-            case DiskType.MD1DD8:
-            case DiskType.MD2DD8:
-                trackSize = 8 * 512;
-
-                break;
-            case DiskType.MD1DD:
-            case DiskType.MD2DD:
-            case DiskType.MF2DD:
-                trackSize = 9 * 512;
-
-                break;
-            case DiskType.MD2HD:
-                trackSize = 15 * 512;
-
-                break;
-            case DiskType.MF2HD:
-                trackSize = 18 * 512;
-
-                break;
-        }
+        int trackSize = type switch
+                        {
+                            DiskType.MD1DD8 or DiskType.MD2DD8                 => 8  * 512,
+                            DiskType.MD1DD or DiskType.MD2DD or DiskType.MF2DD => 9  * 512,
+                            DiskType.MD2HD                                     => 15 * 512,
+                            DiskType.MF2HD                                     => 18 * 512
+                        };
 
         var headStep = 1;
 

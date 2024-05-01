@@ -140,19 +140,12 @@ static class ListDevices
             else
                 devices[i].Bus = devices[i].Bus.ToUpper();
 
-            switch(devices[i].Bus)
-            {
-                case "ATA":
-                case "ATAPI":
-                case "SCSI":
-                case "USB":
-                case "PCMCIA":
-                case "FireWire":
-                case "MMC/SD":
-                    devices[i].Supported = true;
-
-                    break;
-            }
+            devices[i].Supported = devices[i].Bus switch
+                                   {
+                                       "ATA" or "ATAPI" or "SCSI" or "USB" or "PCMCIA" or "FireWire" or "MMC/SD" =>
+                                           true,
+                                       _ => devices[i].Supported
+                                   };
         }
 
         return devices;

@@ -1183,26 +1183,13 @@ static class Plextor
                         continue;
                     }
 
-                    switch(subchan)
-                    {
-                        case PlextorSubchannel.Q16:
-                            blockSize = 2368;
-
-                            break;
-                        case PlextorSubchannel.Pack:
-                        case PlextorSubchannel.All:
-                            blockSize = 2448;
-
-                            break;
-                        case PlextorSubchannel.RawC2:
-                            blockSize = 2742;
-
-                            break;
-                        default:
-                            blockSize = 2352;
-
-                            break;
-                    }
+                    blockSize = subchan switch
+                                {
+                                    PlextorSubchannel.Q16                           => 2368,
+                                    PlextorSubchannel.Pack or PlextorSubchannel.All => 2448,
+                                    PlextorSubchannel.RawC2                         => 2742,
+                                    _                                               => 2352
+                                };
 
                     break;
                 case 2:

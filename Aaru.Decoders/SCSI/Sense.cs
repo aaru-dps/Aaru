@@ -340,19 +340,15 @@ public static class Sense
     {
         SenseType type = GetType(sense);
 
-        switch(type)
-        {
-            case SenseType.StandardSense:
-                return PrettifySense(DecodeStandard(sense));
-            case SenseType.ExtendedSenseFixedCurrent:
-            case SenseType.ExtendedSenseFixedPast:
-                return PrettifySense(DecodeFixed(sense));
-            case SenseType.ExtendedSenseDescriptorCurrent:
-            case SenseType.ExtendedSenseDescriptorPast:
-                return PrettifySense(DecodeDescriptor(sense));
-            default:
-                return null;
-        }
+        return type switch
+               {
+                   SenseType.StandardSense => PrettifySense(DecodeStandard(sense)),
+                   SenseType.ExtendedSenseFixedCurrent or SenseType.ExtendedSenseFixedPast =>
+                       PrettifySense(DecodeFixed(sense)),
+                   SenseType.ExtendedSenseDescriptorCurrent or SenseType.ExtendedSenseDescriptorPast =>
+                       PrettifySense(DecodeDescriptor(sense)),
+                   _ => null
+               };
     }
 
     public static string PrettifySense(StandardSense? sense)

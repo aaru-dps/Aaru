@@ -865,15 +865,11 @@ public sealed partial class CloneCd
                 // Any non first track is audio
                 audio |= i != 0 && Tracks[i].Type == TrackType.Audio;
 
-                switch(Tracks[i].Type)
-                {
-                    case TrackType.CdMode2Form1:
-                    case TrackType.CdMode2Form2:
-                    case TrackType.CdMode2Formless:
-                        mode2 = true;
-
-                        break;
-                }
+                mode2 = Tracks[i].Type switch
+                        {
+                            TrackType.CdMode2Form1 or TrackType.CdMode2Form2 or TrackType.CdMode2Formless => true,
+                            _                                                                             => mode2
+                        };
             }
 
             // TODO: Check format

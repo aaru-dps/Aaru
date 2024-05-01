@@ -212,25 +212,19 @@ public sealed partial class BlindWrite5
             }
         }
 
-        switch(_header.profile)
-        {
-            case ProfileNumber.CDR:
-            case ProfileNumber.CDROM:
-            case ProfileNumber.CDRW:
-            case ProfileNumber.DDCDR:
-            case ProfileNumber.DDCDROM:
-            case ProfileNumber.DDCDRW:
-            case ProfileNumber.HDBURNROM:
-            case ProfileNumber.HDBURNR:
-            case ProfileNumber.HDBURNRW:
-                _discInformation = new byte[_header.cdInfoLen];
-
-                break;
-            default:
-                _discInformation = new byte[_header.dvdInfoLen];
-
-                break;
-        }
+        _discInformation = _header.profile switch
+                           {
+                               ProfileNumber.CDR
+                                or ProfileNumber.CDROM
+                                or ProfileNumber.CDRW
+                                or ProfileNumber.DDCDR
+                                or ProfileNumber.DDCDROM
+                                or ProfileNumber.DDCDRW
+                                or ProfileNumber.HDBURNROM
+                                or ProfileNumber.HDBURNR
+                                or ProfileNumber.HDBURNRW => new byte[_header.cdInfoLen],
+                               _ => new byte[_header.dvdInfoLen]
+                           };
 
         if(_discInformation.Length > 0)
         {
@@ -1277,15 +1271,13 @@ public sealed partial class BlindWrite5
                 // Any non first track is audio
                 audio |= bwTrack.Sequence != 1 && bwTrack.Type == CommonTypes.Enums.TrackType.Audio;
 
-                switch(bwTrack.Type)
-                {
-                    case CommonTypes.Enums.TrackType.CdMode2Formless:
-                    case CommonTypes.Enums.TrackType.CdMode2Form1:
-                    case CommonTypes.Enums.TrackType.CdMode2Form2:
-                        mode2 = true;
-
-                        break;
-                }
+                mode2 = bwTrack.Type switch
+                        {
+                            CommonTypes.Enums.TrackType.CdMode2Formless
+                             or CommonTypes.Enums.TrackType.CdMode2Form1
+                             or CommonTypes.Enums.TrackType.CdMode2Form2 => true,
+                            _ => mode2
+                        };
             }
 
             if(!data && !firstData)

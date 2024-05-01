@@ -213,27 +213,19 @@ public sealed partial class Vhd
                 _imageInfo.ApplicationVersion = $"{(_thisFooter.CreatorVersion & 0xFFFF0000) >> 16}.{
                     _thisFooter.CreatorVersion & 0x0000FFFF:D2}";
 
-                switch(_thisFooter.CreatorHostOs)
-                {
-                    case CREATOR_MACINTOSH:
-                    case CREATOR_MACINTOSH_OLD:
-                        _imageInfo.Application = "VirtualBox for Mac";
+                _imageInfo.Application = _thisFooter.CreatorHostOs switch
+                                         {
+                                             CREATOR_MACINTOSH or CREATOR_MACINTOSH_OLD => "VirtualBox for Mac",
+                                             CREATOR_WINDOWS =>
 
-                        break;
-                    case CREATOR_WINDOWS:
-                        // VirtualBox uses Windows creator for any other OS
-                        _imageInfo.Application = "VirtualBox";
-
-                        break;
-                    default:
-                        _imageInfo.Application = string.Format(Localization.VirtualBox_for_unknown_OS_0,
-                                                               Encoding.ASCII
-                                                                       .GetString(BigEndianBitConverter
-                                                                           .GetBytes(_thisFooter
-                                                                               .CreatorHostOs)));
-
-                        break;
-                }
+                                                 // VirtualBox uses Windows creator for any other OS
+                                                 "VirtualBox",
+                                             _ => string.Format(Localization.VirtualBox_for_unknown_OS_0,
+                                                                Encoding.ASCII
+                                                                        .GetString(BigEndianBitConverter
+                                                                            .GetBytes(_thisFooter
+                                                                                .CreatorHostOs)))
+                                         };
 
                 break;
             }

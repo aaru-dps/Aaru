@@ -91,15 +91,11 @@ partial class Dump
 
         if(opticalDisc)
         {
-            switch(dskType)
-            {
-                case MediaType.REV35:
-                case MediaType.REV70:
-                case MediaType.REV120:
-                    opticalDisc = false;
-
-                    break;
-            }
+            opticalDisc = dskType switch
+                          {
+                              MediaType.REV35 or MediaType.REV70 or MediaType.REV120 => false,
+                              _                                                      => opticalDisc
+                          };
         }
 
         _dumpLog.WriteLine(Localization.Core.Initializing_reader);

@@ -123,38 +123,17 @@ public sealed partial class Vdi
         _imageInfo.Comments             = _vHdr.comments;
         _imageInfo.Version              = $"{_vHdr.majorVersion}.{_vHdr.minorVersion}";
 
-        switch(_vHdr.creator)
-        {
-            case SUN_VDI:
-                _imageInfo.Application = "Sun VirtualBox";
-
-                break;
-            case SUN_OLD_VDI:
-                _imageInfo.Application = "Sun xVM";
-
-                break;
-            case ORACLE_VDI:
-                _imageInfo.Application = "Oracle VirtualBox";
-
-                break;
-            case QEMUVDI:
-                _imageInfo.Application = "QEMU";
-
-                break;
-            case INNOTEK_VDI:
-            case INNOTEK_OLD_VDI:
-                _imageInfo.Application = "innotek VirtualBox";
-
-                break;
-            case DIC_VDI:
-                _imageInfo.Application = "DiscImageChef";
-
-                break;
-            case DIC_AARU:
-                _imageInfo.Application = "Aaru";
-
-                break;
-        }
+        _imageInfo.Application = _vHdr.creator switch
+                                 {
+                                     SUN_VDI                        => "Sun VirtualBox",
+                                     SUN_OLD_VDI                    => "Sun xVM",
+                                     ORACLE_VDI                     => "Oracle VirtualBox",
+                                     QEMUVDI                        => "QEMU",
+                                     INNOTEK_VDI or INNOTEK_OLD_VDI => "innotek VirtualBox",
+                                     DIC_VDI                        => "DiscImageChef",
+                                     DIC_AARU                       => "Aaru",
+                                     _                              => _imageInfo.Application
+                                 };
 
         _imageStream = stream;
 

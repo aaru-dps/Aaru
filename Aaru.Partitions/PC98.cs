@@ -160,32 +160,20 @@ public sealed class PC98 : IPartition
 
     static string DecodePC98Sid(byte sid)
     {
-        switch(sid & 0x7F)
-        {
-            case 0x01:
-                return Localization.FAT12;
-            case 0x04:
-                return Localization.PC_UX;
-            case 0x06:
-                return Localization.N88_BASIC_86;
+        return (sid & 0x7F) switch
+               {
+                   0x01 => Localization.FAT12,
+                   0x04 => Localization.PC_UX,
+                   0x06 => Localization.N88_BASIC_86,
 
-            // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
-            case 0x11:
-            case 0x21:
-                return Localization.FAT16;
-            case 0x28:
-            case 0x41:
-            case 0x48:
-                return Localization.Windows_Volume_Set;
-            case 0x44:
-                return Localization.FreeBSD;
-            case 0x61:
-                return Localization.FAT32;
-            case 0x62:
-                return Localization.Linux;
-            default:
-                return Localization.Unknown_partition_type;
-        }
+                   // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
+                   0x11 or 0x21         => Localization.FAT16,
+                   0x28 or 0x41 or 0x48 => Localization.Windows_Volume_Set,
+                   0x44                 => Localization.FreeBSD,
+                   0x61                 => Localization.FAT32,
+                   0x62                 => Localization.Linux,
+                   _                    => Localization.Unknown_partition_type
+               };
     }
 
 #region Nested type: Partition

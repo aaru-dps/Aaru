@@ -89,53 +89,47 @@ public sealed partial class Alcohol120
 
         _imageInfo.MediaType = mediaType;
 
-        switch(mediaType)
-        {
-            case MediaType.CD:
-            case MediaType.CDDA:
-            case MediaType.CDEG:
-            case MediaType.CDG:
-            case MediaType.CDI:
-            case MediaType.CDMIDI:
-            case MediaType.CDMRW:
-            case MediaType.CDPLUS:
-            case MediaType.CDR:
-            case MediaType.CDROM:
-            case MediaType.CDROMXA:
-            case MediaType.CDRW:
-            case MediaType.CDV:
-            case MediaType.DTSCD:
-            case MediaType.JaguarCD:
-            case MediaType.MEGACD:
-            case MediaType.PS1CD:
-            case MediaType.PS2CD:
-            case MediaType.SuperCDROM2:
-            case MediaType.SVCD:
-            case MediaType.SATURNCD:
-            case MediaType.ThreeDO:
-            case MediaType.VCD:
-            case MediaType.VCDHD:
-            case MediaType.NeoGeoCD:
-            case MediaType.PCFX:
-            case MediaType.CDTV:
-            case MediaType.CD32:
-            case MediaType.Nuon:
-            case MediaType.Playdia:
-            case MediaType.Pippin:
-            case MediaType.FMTOWNS:
-            case MediaType.MilCD:
-            case MediaType.VideoNow:
-            case MediaType.VideoNowColor:
-            case MediaType.VideoNowXp:
-            case MediaType.CVD:
-                _isDvd = false;
-
-                break;
-            default:
-                _isDvd = true;
-
-                break;
-        }
+        _isDvd = mediaType switch
+                 {
+                     MediaType.CD
+                      or MediaType.CDDA
+                      or MediaType.CDEG
+                      or MediaType.CDG
+                      or MediaType.CDI
+                      or MediaType.CDMIDI
+                      or MediaType.CDMRW
+                      or MediaType.CDPLUS
+                      or MediaType.CDR
+                      or MediaType.CDROM
+                      or MediaType.CDROMXA
+                      or MediaType.CDRW
+                      or MediaType.CDV
+                      or MediaType.DTSCD
+                      or MediaType.JaguarCD
+                      or MediaType.MEGACD
+                      or MediaType.PS1CD
+                      or MediaType.PS2CD
+                      or MediaType.SuperCDROM2
+                      or MediaType.SVCD
+                      or MediaType.SATURNCD
+                      or MediaType.ThreeDO
+                      or MediaType.VCD
+                      or MediaType.VCDHD
+                      or MediaType.NeoGeoCD
+                      or MediaType.PCFX
+                      or MediaType.CDTV
+                      or MediaType.CD32
+                      or MediaType.Nuon
+                      or MediaType.Playdia
+                      or MediaType.Pippin
+                      or MediaType.FMTOWNS
+                      or MediaType.MilCD
+                      or MediaType.VideoNow
+                      or MediaType.VideoNowColor
+                      or MediaType.VideoNowXp
+                      or MediaType.CVD => false,
+                     _ => true
+                 };
 
         _trackFlags = new Dictionary<byte, byte>();
 

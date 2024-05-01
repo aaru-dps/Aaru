@@ -1179,21 +1179,16 @@ public sealed partial class Nero
                 // Flags not set for this track
                 if(!_trackFlags.ContainsKey(track.Sequence))
                 {
-                    switch(track.Type)
-                    {
-                        case TrackType.Audio:
-                            _trackFlags[track.Sequence] = 0;
-
-                            break;
-                        case TrackType.Data:
-                        case TrackType.CdMode1:
-                        case TrackType.CdMode2Formless:
-                        case TrackType.CdMode2Form1:
-                        case TrackType.CdMode2Form2:
-                            _trackFlags[track.Sequence] = 4;
-
-                            break;
-                    }
+                    _trackFlags[track.Sequence] = track.Type switch
+                                                  {
+                                                      TrackType.Audio => 0,
+                                                      TrackType.Data
+                                                       or TrackType.CdMode1
+                                                       or TrackType.CdMode2Formless
+                                                       or TrackType.CdMode2Form1
+                                                       or TrackType.CdMode2Form2 => 4,
+                                                      _ => _trackFlags[track.Sequence]
+                                                  };
                 }
 
                 // If ISRC is not empty
@@ -1586,16 +1581,14 @@ public sealed partial class Nero
                               (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioAlt ||
                               (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
-                    switch((DaoMode)_neroTracks.ElementAt(i).Value.Mode)
-                    {
-                        case DaoMode.DataM2F1:
-                        case DaoMode.DataM2F2:
-                        case DaoMode.DataM2Raw:
-                        case DaoMode.DataM2RawSub:
-                            mode2 = true;
-
-                            break;
-                    }
+                    mode2 = (DaoMode)_neroTracks.ElementAt(i).Value.Mode switch
+                            {
+                                DaoMode.DataM2F1
+                                 or DaoMode.DataM2F2
+                                 or DaoMode.DataM2Raw
+                                 or DaoMode.DataM2RawSub => true,
+                                _ => mode2
+                            };
                 }
 
                 if(!data && !firstData)

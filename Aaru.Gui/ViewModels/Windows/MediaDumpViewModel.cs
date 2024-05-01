@@ -197,59 +197,53 @@ public sealed class MediaDumpViewModel : ViewModelBase
                                        DisplayName = info.DisplayName
                                    }));
 
-        switch(mediaType)
-        {
-            case MediaType.CD:
-            case MediaType.CDDA:
-            case MediaType.CDG:
-            case MediaType.CDEG:
-            case MediaType.CDI:
-            case MediaType.CDROM:
-            case MediaType.CDROMXA:
-            case MediaType.CDPLUS:
-            case MediaType.CDMO:
-            case MediaType.CDR:
-            case MediaType.CDRW:
-            case MediaType.CDMRW:
-            case MediaType.VCD:
-            case MediaType.SVCD:
-            case MediaType.PCD:
-            case MediaType.DDCD:
-            case MediaType.DDCDR:
-            case MediaType.DDCDRW:
-            case MediaType.DTSCD:
-            case MediaType.CDMIDI:
-            case MediaType.CDV:
-            case MediaType.CDIREADY:
-            case MediaType.FMTOWNS:
-            case MediaType.PS1CD:
-            case MediaType.PS2CD:
-            case MediaType.MEGACD:
-            case MediaType.SATURNCD:
-            case MediaType.GDROM:
-            case MediaType.GDR:
-            case MediaType.MilCD:
-            case MediaType.SuperCDROM2:
-            case MediaType.JaguarCD:
-            case MediaType.ThreeDO:
-            case MediaType.PCFX:
-            case MediaType.NeoGeoCD:
-            case MediaType.CDTV:
-            case MediaType.CD32:
-            case MediaType.Playdia:
-            case MediaType.Pippin:
-            case MediaType.VideoNow:
-            case MediaType.VideoNowColor:
-            case MediaType.VideoNowXp:
-            case MediaType.CVD:
-                Track1PregapVisible = true;
-
-                break;
-            default:
-                Track1PregapVisible = false;
-
-                break;
-        }
+        Track1PregapVisible = mediaType switch
+                              {
+                                  MediaType.CD
+                                   or MediaType.CDDA
+                                   or MediaType.CDG
+                                   or MediaType.CDEG
+                                   or MediaType.CDI
+                                   or MediaType.CDROM
+                                   or MediaType.CDROMXA
+                                   or MediaType.CDPLUS
+                                   or MediaType.CDMO
+                                   or MediaType.CDR
+                                   or MediaType.CDRW
+                                   or MediaType.CDMRW
+                                   or MediaType.VCD
+                                   or MediaType.SVCD
+                                   or MediaType.PCD
+                                   or MediaType.DDCD
+                                   or MediaType.DDCDR
+                                   or MediaType.DDCDRW
+                                   or MediaType.DTSCD
+                                   or MediaType.CDMIDI
+                                   or MediaType.CDV
+                                   or MediaType.CDIREADY
+                                   or MediaType.FMTOWNS
+                                   or MediaType.PS1CD
+                                   or MediaType.PS2CD
+                                   or MediaType.MEGACD
+                                   or MediaType.SATURNCD
+                                   or MediaType.GDROM
+                                   or MediaType.GDR
+                                   or MediaType.MilCD
+                                   or MediaType.SuperCDROM2
+                                   or MediaType.JaguarCD
+                                   or MediaType.ThreeDO
+                                   or MediaType.PCFX
+                                   or MediaType.NeoGeoCD
+                                   or MediaType.CDTV
+                                   or MediaType.CD32
+                                   or MediaType.Playdia
+                                   or MediaType.Pippin
+                                   or MediaType.VideoNow
+                                   or MediaType.VideoNowColor
+                                   or MediaType.VideoNowXp
+                                   or MediaType.CVD => true,
+                                  _ => false
+                              };
 
         _devicePath = devicePath;
     }

@@ -682,214 +682,84 @@ public static partial class Modes
                                 break;
                             case MediumTypes.Exatape54m:
                             {
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Ex8200:
-                                        density = Localization.EXB8200;
-
-                                        break;
-                                    case DensityType.Ex8200c:
-                                        density = Localization.EXB8200_compressed;
-
-                                        break;
-                                    case DensityType.Ex8500:
-                                        density = Localization.EXB8500;
-
-                                        break;
-                                    case DensityType.Ex8500c:
-                                        density = Localization.EXB8500_compressed;
-
-                                        break;
-                                    case DensityType.Mammoth:
-                                        density = Localization.TapeName_Mammoth;
-
-                                        break;
-                                    case DensityType.DLT3_42k:
-                                        density = Localization.DLT3_42k;
-
-                                        break;
-                                    case DensityType.DLT3_56t:
-                                        density = Localization.DLT3_56t;
-
-                                        break;
-                                    case DensityType.DLT3_62k:
-                                    case DensityType.DLT3_62kAlt:
-                                        density = Localization.DLT3_62k;
-
-                                        break;
-                                    case DensityType.DLT3c:
-                                        density = Localization.DLT3c;
-
-                                        break;
-                                    default:
-                                        density = string.Format(Localization.unknown_density_code_0,
-                                                                (byte)descriptor.Density);
-
-                                        break;
-                                }
+                                density = descriptor.Density switch
+                                          {
+                                              DensityType.Ex8200 => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500 => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              DensityType.DLT3_42k => Localization.DLT3_42k,
+                                              DensityType.DLT3_56t => Localization.DLT3_56t,
+                                              DensityType.DLT3_62k or DensityType.DLT3_62kAlt => Localization.DLT3_62k,
+                                              DensityType.DLT3c => Localization.DLT3c,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape80m:
                             {
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Ex8200:
-                                        density = Localization.EXB8200;
-
-                                        break;
-                                    case DensityType.Ex8200c:
-                                        density = Localization.EXB8200_compressed;
-
-                                        break;
-                                    case DensityType.Ex8500:
-                                        density = Localization.EXB8500;
-
-                                        break;
-                                    case DensityType.Ex8500c:
-                                        density = Localization.EXB8500_compressed;
-
-                                        break;
-                                    case DensityType.Mammoth:
-                                        density = Localization.TapeName_Mammoth;
-
-                                        break;
-                                    case DensityType.DLT3_62k:
-                                    case DensityType.DLT3_62kAlt:
-                                        density = Localization.DLT3_XT;
-
-                                        break;
-                                    case DensityType.DLT3c:
-                                        density = Localization.DLT3_XT_compressed;
-
-                                        break;
-                                    default:
-                                        density = string.Format(Localization.unknown_density_code_0,
-                                                                (byte)descriptor.Density);
-
-                                        break;
-                                }
+                                density = descriptor.Density switch
+                                          {
+                                              DensityType.Ex8200 => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500 => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              DensityType.DLT3_62k or DensityType.DLT3_62kAlt => Localization.DLT3_XT,
+                                              DensityType.DLT3c => Localization.DLT3_XT_compressed,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape106m:
                             {
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Ex8200:
-                                        density = Localization.EXB8200;
-
-                                        break;
-                                    case DensityType.Ex8200c:
-                                        density = Localization.EXB8200_compressed;
-
-                                        break;
-                                    case DensityType.Ex8500:
-                                        density = Localization.EXB8500;
-
-                                        break;
-                                    case DensityType.Ex8500c:
-                                        density = Localization.EXB8500_compressed;
-
-                                        break;
-                                    case DensityType.Mammoth:
-                                        density = Localization.TapeName_Mammoth;
-
-                                        break;
-                                    case DensityType.DLT4:
-                                    case DensityType.DLT4Alt:
-                                        density = Localization.DLT4;
-
-                                        break;
-                                    case DensityType.DLT4_123k:
-                                    case DensityType.DLT4_123kAlt:
-                                        density = Localization.DLT4_123k;
-
-                                        break;
-                                    case DensityType.DLT4_98k:
-                                        density = Localization.DLT4_98k;
-
-                                        break;
-                                    case DensityType.Travan5:
-                                        density = Localization.Travan5;
-
-                                        break;
-                                    case DensityType.DLT4c:
-                                        density = Localization.DLT4c;
-
-                                        break;
-                                    case DensityType.DLT4_85k:
-                                        density = Localization.DLT4_85k;
-
-                                        break;
-                                    case DensityType.DLT4c_85k:
-                                        density = Localization.DLT4c_85k;
-
-                                        break;
-                                    case DensityType.DLT4c_123k:
-                                        density = Localization.DLT4c_123k;
-
-                                        break;
-                                    case DensityType.DLT4c_98k:
-                                        density = Localization.DLT4c_98k;
-
-                                        break;
-                                    default:
-                                        density = string.Format(Localization.unknown_density_code_0,
-                                                                (byte)descriptor.Density);
-
-                                        break;
-                                }
+                                density = descriptor.Density switch
+                                          {
+                                              DensityType.Ex8200 => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500 => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              DensityType.DLT4 or DensityType.DLT4Alt => Localization.DLT4,
+                                              DensityType.DLT4_123k or DensityType.DLT4_123kAlt => Localization
+                                                 .DLT4_123k,
+                                              DensityType.DLT4_98k   => Localization.DLT4_98k,
+                                              DensityType.Travan5    => Localization.Travan5,
+                                              DensityType.DLT4c      => Localization.DLT4c,
+                                              DensityType.DLT4_85k   => Localization.DLT4_85k,
+                                              DensityType.DLT4c_85k  => Localization.DLT4c_85k,
+                                              DensityType.DLT4c_123k => Localization.DLT4c_123k,
+                                              DensityType.DLT4c_98k  => Localization.DLT4c_98k,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
                             case MediumTypes.Exatape106mXL:
                             {
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.Ex8200:
-                                        density = Localization.EXB8200;
+                                density = descriptor.Density switch
+                                          {
+                                              DensityType.Ex8200  => Localization.EXB8200,
+                                              DensityType.Ex8200c => Localization.EXB8200_compressed,
+                                              DensityType.Ex8500  => Localization.EXB8500,
+                                              DensityType.Ex8500c => Localization.EXB8500_compressed,
+                                              DensityType.Mammoth => Localization.TapeName_Mammoth,
+                                              DensityType.SDLT1_133k or DensityType.SDLT1_133kAlt => Localization
+                                                 .SDLT1_133k,
+                                              DensityType.SDLT1 =>
 
-                                        break;
-                                    case DensityType.Ex8200c:
-                                        density = Localization.EXB8200_compressed;
-
-                                        break;
-                                    case DensityType.Ex8500:
-                                        density = Localization.EXB8500;
-
-                                        break;
-                                    case DensityType.Ex8500c:
-                                        density = Localization.EXB8500_compressed;
-
-                                        break;
-                                    case DensityType.Mammoth:
-                                        density = Localization.TapeName_Mammoth;
-
-                                        break;
-                                    case DensityType.SDLT1_133k:
-                                    case DensityType.SDLT1_133kAlt:
-                                        density = Localization.SDLT1_133k;
-
-                                        break;
-                                    case DensityType.SDLT1:
-                                        //case DensityType.SDLT1Alt:
-                                        density = Localization.SDLT1;
-
-                                        break;
-                                    case DensityType.SDLT1c:
-                                        density = Localization.SDLT1c;
-
-                                        break;
-                                    /*case DensityType.SDLT1_133kAlt:
-                                        density = "Super DLTtape I at 133000 bpi compressed";
-                                        break;*/
-                                    default:
-                                        density = string.Format(Localization.unknown_density_code_0,
-                                                                (byte)descriptor.Density);
-
-                                        break;
-                                }
+                                                  //case DensityType.SDLT1Alt:
+                                                  Localization.SDLT1,
+                                              DensityType.SDLT1c => Localization.SDLT1c,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;
@@ -906,23 +776,14 @@ public static partial class Modes
                                 break;
                             case MediumTypes.VStapeI:
                             {
-                                switch(descriptor.Density)
-                                {
-                                    case DensityType.VStape1:
-                                    case DensityType.VStape1Alt:
-                                        density = Localization.MediumType_VStapeI;
-
-                                        break;
-                                    case DensityType.VStape1c:
-                                        density = Localization.VStape1c;
-
-                                        break;
-                                    default:
-                                        density = string.Format(Localization.unknown_density_code_0,
-                                                                (byte)descriptor.Density);
-
-                                        break;
-                                }
+                                density = descriptor.Density switch
+                                          {
+                                              DensityType.VStape1 or DensityType.VStape1Alt => Localization
+                                                 .MediumType_VStapeI,
+                                              DensityType.VStape1c => Localization.VStape1c,
+                                              _ => string.Format(Localization.unknown_density_code_0,
+                                                                 (byte)descriptor.Density)
+                                          };
                             }
 
                                 break;

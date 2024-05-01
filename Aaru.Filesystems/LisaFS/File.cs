@@ -114,22 +114,16 @@ public sealed partial class LisaFS
 
         if(_debug)
         {
-            switch(mynode.FileId)
-            {
-                case FILEID_BOOT_SIGNED:
-                case FILEID_LOADER_SIGNED:
-                case (short)FILEID_MDDF:
-                case (short)FILEID_BITMAP:
-                case (short)FILEID_SRECORD:
-                case (short)FILEID_CATALOG:
-                    error = ReadSystemFile(mynode.FileId, out tmp);
-
-                    break;
-                default:
-                    error = ReadFile(mynode.FileId, out tmp);
-
-                    break;
-            }
+            error = mynode.FileId switch
+                    {
+                        FILEID_BOOT_SIGNED
+                         or FILEID_LOADER_SIGNED
+                         or (short)FILEID_MDDF
+                         or (short)FILEID_BITMAP
+                         or (short)FILEID_SRECORD
+                         or (short)FILEID_CATALOG => ReadSystemFile(mynode.FileId, out tmp),
+                        _ => ReadFile(mynode.FileId, out tmp)
+                    };
         }
         else
             error = ReadFile(mynode.FileId, out tmp);

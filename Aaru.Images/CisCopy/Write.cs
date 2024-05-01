@@ -122,24 +122,11 @@ public sealed partial class CisCopy
 
         _writingStream.WriteByte((byte)diskType);
 
-        byte tracks = 0;
-
-        switch(diskType)
-        {
-            case DiskType.MD1DD8:
-            case DiskType.MD1DD:
-            case DiskType.MD2DD8:
-            case DiskType.MD2DD:
-                tracks = 80;
-
-                break;
-            case DiskType.MF2DD:
-            case DiskType.MD2HD:
-            case DiskType.MF2HD:
-                tracks = 160;
-
-                break;
-        }
+        byte tracks = diskType switch
+                      {
+                          DiskType.MD1DD8 or DiskType.MD1DD or DiskType.MD2DD8 or DiskType.MD2DD => 80,
+                          DiskType.MF2DD or DiskType.MD2HD or DiskType.MF2HD                     => 160
+                      };
 
         var headStep = 1;
 

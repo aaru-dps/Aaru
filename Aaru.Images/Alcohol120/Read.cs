@@ -504,17 +504,15 @@ public sealed partial class Alcohol120
                 // Any non first track is audio
                 audio |= alcoholTrack.point != 1 && alcoholTrack.mode is TrackMode.Audio or TrackMode.AudioAlt;
 
-                switch(alcoholTrack.mode)
-                {
-                    case TrackMode.Mode2:
-                    case TrackMode.Mode2F1:
-                    case TrackMode.Mode2F2:
-                    case TrackMode.Mode2F1Alt:
-                    case TrackMode.Mode2F2Alt:
-                        mode2 = true;
-
-                        break;
-                }
+                mode2 = alcoholTrack.mode switch
+                        {
+                            TrackMode.Mode2
+                             or TrackMode.Mode2F1
+                             or TrackMode.Mode2F2
+                             or TrackMode.Mode2F1Alt
+                             or TrackMode.Mode2F2Alt => true,
+                            _ => mode2
+                        };
             }
 
             if(!data && !firstData)

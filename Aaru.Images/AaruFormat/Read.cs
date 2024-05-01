@@ -2541,26 +2541,15 @@ public sealed partial class AaruFormat
                     case MediaType.PriamDataTower:
                         if(_sectorSubchannel == null) return ReadSector(sectorAddress, out buffer);
 
-                        uint tagSize = 0;
-
-                        switch(_imageInfo.MediaType)
-                        {
-                            case MediaType.AppleFileWare:
-                            case MediaType.AppleProfile:
-                            case MediaType.AppleWidget:
-                                tagSize = 20;
-
-                                break;
-                            case MediaType.AppleSonySS:
-                            case MediaType.AppleSonyDS:
-                                tagSize = 12;
-
-                                break;
-                            case MediaType.PriamDataTower:
-                                tagSize = 24;
-
-                                break;
-                        }
+                        uint tagSize = _imageInfo.MediaType switch
+                                       {
+                                           MediaType.AppleFileWare
+                                            or MediaType.AppleProfile
+                                            or MediaType.AppleWidget => 20,
+                                           MediaType.AppleSonySS or MediaType.AppleSonyDS => 12,
+                                           MediaType.PriamDataTower                       => 24,
+                                           _                                              => 0
+                                       };
 
                         uint sectorSize = 512 + tagSize;
                         errno = ReadSectors(sectorAddress, length, out data);

@@ -857,47 +857,26 @@ public sealed class MainWindowViewModel : ViewModelBase
                                              remoteDev.RemoteArchitecture);
                     }
 
-                    switch(dev.Type)
-                    {
-                        case DeviceType.ATAPI:
-                        case DeviceType.SCSI:
-                            switch(dev.ScsiType)
-                            {
-                                case PeripheralDeviceTypes.DirectAccess:
-                                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                case PeripheralDeviceTypes.SimplifiedDevice:
-                                    deviceModel.Icon = dev.IsRemovable
+                    deviceModel.Icon = dev.Type switch
+                                       {
+                                           DeviceType.ATAPI or DeviceType.SCSI => dev.ScsiType switch
+                                               {
+                                                   PeripheralDeviceTypes.DirectAccess
+                                                    or PeripheralDeviceTypes.SCSIZonedBlockDevice
+                                                    or PeripheralDeviceTypes.SimplifiedDevice => dev.IsRemovable
                                                            ? dev.IsUsb ? _usbIcon : _removableIcon
-                                                           : _genericHddIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.SequentialAccess:
-                                    deviceModel.Icon = _genericTapeIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.OpticalDevice:
-                                case PeripheralDeviceTypes.WriteOnceDevice:
-                                case PeripheralDeviceTypes.OCRWDevice:
-                                    deviceModel.Icon = _removableIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.MultiMediaDevice:
-                                    deviceModel.Icon = _genericOpticalIcon;
-
-                                    break;
-                            }
-
-                            break;
-                        case DeviceType.SecureDigital:
-                        case DeviceType.MMC:
-                            deviceModel.Icon = _sdIcon;
-
-                            break;
-                        case DeviceType.NVMe:
-                            deviceModel.Icon = null;
-
-                            break;
-                    }
+                                                           : _genericHddIcon,
+                                                   PeripheralDeviceTypes.SequentialAccess => _genericTapeIcon,
+                                                   PeripheralDeviceTypes.OpticalDevice
+                                                    or PeripheralDeviceTypes.WriteOnceDevice
+                                                    or PeripheralDeviceTypes.OCRWDevice => _removableIcon,
+                                                   PeripheralDeviceTypes.MultiMediaDevice => _genericOpticalIcon,
+                                                   _                                      => deviceModel.Icon
+                                               },
+                                           DeviceType.SecureDigital or DeviceType.MMC => _sdIcon,
+                                           DeviceType.NVMe                            => null,
+                                           _                                          => deviceModel.Icon
+                                       };
 
                     dev.Close();
                 }

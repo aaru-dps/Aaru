@@ -150,20 +150,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {
@@ -253,20 +245,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {
@@ -363,20 +347,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {

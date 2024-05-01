@@ -274,124 +274,38 @@ public static class MMC
                                        Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                        ftr.CurrentProfile);
 
-            switch(ftr.CurrentProfile)
-            {
-                case 0x0001:
-                    mediaType = MediaType.GENERIC_HDD;
-
-                    break;
-                case 0x0005:
-                    mediaType = MediaType.CDMO;
-
-                    break;
-                case 0x0008:
-                    mediaType = MediaType.CD;
-
-                    break;
-                case 0x0009:
-                    mediaType = MediaType.CDR;
-
-                    break;
-                case 0x000A:
-                    mediaType = MediaType.CDRW;
-
-                    break;
-                case 0x0010:
-                    mediaType = MediaType.DVDROM;
-
-                    break;
-                case 0x0011:
-                    mediaType = MediaType.DVDR;
-
-                    break;
-                case 0x0012:
-                    mediaType = MediaType.DVDRAM;
-
-                    break;
-                case 0x0013:
-                case 0x0014:
-                    mediaType = MediaType.DVDRW;
-
-                    break;
-                case 0x0015:
-                case 0x0016:
-                    mediaType = MediaType.DVDRDL;
-
-                    break;
-                case 0x0017:
-                    mediaType = MediaType.DVDRWDL;
-
-                    break;
-                case 0x0018:
-                    mediaType = MediaType.DVDDownload;
-
-                    break;
-                case 0x001A:
-                    mediaType = MediaType.DVDPRW;
-
-                    break;
-                case 0x001B:
-                    mediaType = MediaType.DVDPR;
-
-                    break;
-                case 0x0020:
-                    mediaType = MediaType.DDCD;
-
-                    break;
-                case 0x0021:
-                    mediaType = MediaType.DDCDR;
-
-                    break;
-                case 0x0022:
-                    mediaType = MediaType.DDCDRW;
-
-                    break;
-                case 0x002A:
-                    mediaType = MediaType.DVDPRWDL;
-
-                    break;
-                case 0x002B:
-                    mediaType = MediaType.DVDPRDL;
-
-                    break;
-                case 0x0040:
-                    mediaType = MediaType.BDROM;
-
-                    break;
-                case 0x0041:
-                case 0x0042:
-                    mediaType = MediaType.BDR;
-
-                    break;
-                case 0x0043:
-                    mediaType = MediaType.BDRE;
-
-                    break;
-                case 0x0050:
-                    mediaType = MediaType.HDDVDROM;
-
-                    break;
-                case 0x0051:
-                    mediaType = MediaType.HDDVDR;
-
-                    break;
-                case 0x0052:
-                    mediaType = MediaType.HDDVDRAM;
-
-                    break;
-                case 0x0053:
-                    mediaType = MediaType.HDDVDRW;
-
-                    break;
-                case 0x0058:
-                    mediaType = MediaType.HDDVDRDL;
-
-                    break;
-                case 0x005A:
-                    mediaType = MediaType.HDDVDRWDL;
-
-                    break;
-            }
+            mediaType = ftr.CurrentProfile switch
+                        {
+                            0x0001           => MediaType.GENERIC_HDD,
+                            0x0005           => MediaType.CDMO,
+                            0x0008           => MediaType.CD,
+                            0x0009           => MediaType.CDR,
+                            0x000A           => MediaType.CDRW,
+                            0x0010           => MediaType.DVDROM,
+                            0x0011           => MediaType.DVDR,
+                            0x0012           => MediaType.DVDRAM,
+                            0x0013 or 0x0014 => MediaType.DVDRW,
+                            0x0015 or 0x0016 => MediaType.DVDRDL,
+                            0x0017           => MediaType.DVDRWDL,
+                            0x0018           => MediaType.DVDDownload,
+                            0x001A           => MediaType.DVDPRW,
+                            0x001B           => MediaType.DVDPR,
+                            0x0020           => MediaType.DDCD,
+                            0x0021           => MediaType.DDCDR,
+                            0x0022           => MediaType.DDCDRW,
+                            0x002A           => MediaType.DVDPRWDL,
+                            0x002B           => MediaType.DVDPRDL,
+                            0x0040           => MediaType.BDROM,
+                            0x0041 or 0x0042 => MediaType.BDR,
+                            0x0043           => MediaType.BDRE,
+                            0x0050           => MediaType.HDDVDROM,
+                            0x0051           => MediaType.HDDVDR,
+                            0x0052           => MediaType.HDDVDRAM,
+                            0x0053           => MediaType.HDDVDRW,
+                            0x0058           => MediaType.HDDVDRDL,
+                            0x005A           => MediaType.HDDVDRWDL,
+                            _                => mediaType
+                        };
         }
 
         if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == 2) == true)

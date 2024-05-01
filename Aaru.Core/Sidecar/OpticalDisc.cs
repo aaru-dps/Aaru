@@ -414,24 +414,16 @@ public sealed partial class Sidecar
                     Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96
                 };
 
-                switch(trk.SubchannelType)
-                {
-                    case TrackSubchannelType.Packed:
-                    case TrackSubchannelType.PackedInterleaved:
-                        xmlTrk.SubChannel.Image.Format = "rw";
-
-                        break;
-                    case TrackSubchannelType.Raw:
-                    case TrackSubchannelType.RawInterleaved:
-                        xmlTrk.SubChannel.Image.Format = "rw_raw";
-
-                        break;
-                    case TrackSubchannelType.Q16:
-                    case TrackSubchannelType.Q16Interleaved:
-                        xmlTrk.SubChannel.Image.Format = "q16";
-
-                        break;
-                }
+                xmlTrk.SubChannel.Image.Format = trk.SubchannelType switch
+                                                 {
+                                                     TrackSubchannelType.Packed
+                                                      or TrackSubchannelType.PackedInterleaved => "rw",
+                                                     TrackSubchannelType.Raw
+                                                      or TrackSubchannelType.RawInterleaved => "rw_raw",
+                                                     TrackSubchannelType.Q16
+                                                      or TrackSubchannelType.Q16Interleaved => "q16",
+                                                     _ => xmlTrk.SubChannel.Image.Format
+                                                 };
 
                 if(trk.FileOffset > 0) xmlTrk.SubChannel.Image.Offset = trk.SubchannelOffset;
 

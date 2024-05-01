@@ -110,24 +110,18 @@ partial class Device
     /// <returns>SG_IO direction</returns>
     static ScsiDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
     {
-        switch(protocol)
-        {
-            case AtaProtocol.DeviceDiagnostic:
-            case AtaProtocol.DeviceReset:
-            case AtaProtocol.HardReset:
-            case AtaProtocol.NonData:
-            case AtaProtocol.SoftReset:
-            case AtaProtocol.ReturnResponse:
-                return ScsiDirection.None;
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-                return ScsiDirection.In;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                return ScsiDirection.Out;
-            default:
-                return ScsiDirection.Unspecified;
-        }
+        return protocol switch
+               {
+                   AtaProtocol.DeviceDiagnostic
+                    or AtaProtocol.DeviceReset
+                    or AtaProtocol.HardReset
+                    or AtaProtocol.NonData
+                    or AtaProtocol.SoftReset
+                    or AtaProtocol.ReturnResponse => ScsiDirection.None,
+                   AtaProtocol.PioIn or AtaProtocol.UDmaIn   => ScsiDirection.In,
+                   AtaProtocol.PioOut or AtaProtocol.UDmaOut => ScsiDirection.Out,
+                   _                                         => ScsiDirection.Unspecified
+               };
     }
 
     /// <inheritdoc />
@@ -150,18 +144,11 @@ partial class Device
 
         if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
-
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
             if(transferBlocks) cdb[2] |= 0x04;
 
@@ -222,18 +209,11 @@ partial class Device
 
         if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
-
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
             if(transferBlocks) cdb[2] |= 0x04;
 
@@ -295,18 +275,11 @@ partial class Device
 
         if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
-
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
             if(transferBlocks) cdb[2] |= 0x04;
 

@@ -207,68 +207,38 @@ public sealed class BSD : IPartition
 
     internal static string FSTypeToString(fsType typ)
     {
-        switch(typ)
-        {
-            case fsType.Unused:
-                return Localization.Unused_entry;
-            case fsType.Swap:
-                return Localization.Swap_partition;
-            case fsType.V6:
-                return Localization.UNIX_6th_Edition;
-            case fsType.V7:
-                return Localization.UNIX_7th_Edition;
-            case fsType.SystemV:
-                return Localization.UNIX_System_V;
-            case fsType.V7_1K:
-                return Localization.UNIX_7th_Edition_with_1K_blocks;
-            case fsType.V8:
-                return Localization.UNIX_8th_Edition_with_4K_blocks;
-            case fsType.BSDFFS:
-                return Localization._4_2_BSD_Fast_File_System;
-            case fsType.BSDLFS:
-                return Localization._4_4_LFS;
-            case fsType.HPFS:
-                return Localization.HPFS;
-            case fsType.ISO9660:
-                return Localization.ISO9660;
-            case fsType.Boot:
-            case fsType.SysVBoot:
-                return Localization.Boot;
-            case fsType.AFFS:
-                return Localization.Amiga_FFS;
-            case fsType.HFS:
-                return Localization.Apple_HFS;
-            case fsType.ADVfs:
-                return Localization.Digital_Advanced_File_System;
-            case fsType.LSMpublic:
-                return Localization.Digital_LSM_Public_Region;
-            case fsType.LSMprivate:
-                return Localization.Digital_LSM_Private_Region;
-            case fsType.LSMsimple:
-                return Localization.Digital_LSM_Simple_Disk;
-            case fsType.CCD:
-                return Localization.Concatenated_disk;
-            case fsType.JFS2:
-                return Localization.IBM_JFS2;
-            case fsType.HAMMER:
-                return Localization.Hammer;
-            case fsType.HAMMER2:
-                return Localization.Hammer2;
-            case fsType.UDF:
-                return Localization.UDF;
-            case fsType.EFS:
-                return Localization.EFS;
-            case fsType.ZFS:
-                return Localization.ZFS;
-            case fsType.NANDFS:
-                return Localization.FreeBSD_nandfs;
-            case fsType.MSDOS:
-                return Localization.FAT;
-            case fsType.Other:
-                return Localization.Other_or_unknown;
-            default:
-                return Localization.Unknown_partition_type;
-        }
+        return typ switch
+               {
+                   fsType.Unused                  => Localization.Unused_entry,
+                   fsType.Swap                    => Localization.Swap_partition,
+                   fsType.V6                      => Localization.UNIX_6th_Edition,
+                   fsType.V7                      => Localization.UNIX_7th_Edition,
+                   fsType.SystemV                 => Localization.UNIX_System_V,
+                   fsType.V7_1K                   => Localization.UNIX_7th_Edition_with_1K_blocks,
+                   fsType.V8                      => Localization.UNIX_8th_Edition_with_4K_blocks,
+                   fsType.BSDFFS                  => Localization._4_2_BSD_Fast_File_System,
+                   fsType.BSDLFS                  => Localization._4_4_LFS,
+                   fsType.HPFS                    => Localization.HPFS,
+                   fsType.ISO9660                 => Localization.ISO9660,
+                   fsType.Boot or fsType.SysVBoot => Localization.Boot,
+                   fsType.AFFS                    => Localization.Amiga_FFS,
+                   fsType.HFS                     => Localization.Apple_HFS,
+                   fsType.ADVfs                   => Localization.Digital_Advanced_File_System,
+                   fsType.LSMpublic               => Localization.Digital_LSM_Public_Region,
+                   fsType.LSMprivate              => Localization.Digital_LSM_Private_Region,
+                   fsType.LSMsimple               => Localization.Digital_LSM_Simple_Disk,
+                   fsType.CCD                     => Localization.Concatenated_disk,
+                   fsType.JFS2                    => Localization.IBM_JFS2,
+                   fsType.HAMMER                  => Localization.Hammer,
+                   fsType.HAMMER2                 => Localization.Hammer2,
+                   fsType.UDF                     => Localization.UDF,
+                   fsType.EFS                     => Localization.EFS,
+                   fsType.ZFS                     => Localization.ZFS,
+                   fsType.NANDFS                  => Localization.FreeBSD_nandfs,
+                   fsType.MSDOS                   => Localization.FAT,
+                   fsType.Other                   => Localization.Other_or_unknown,
+                   _                              => Localization.Unknown_partition_type
+               };
     }
 
     static DiskLabel SwapDiskLabel(DiskLabel dl)

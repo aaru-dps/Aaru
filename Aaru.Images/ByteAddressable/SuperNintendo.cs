@@ -696,67 +696,42 @@ public class SuperNintendo : IByteAddressableImage
 
     static string DecodeChipset(byte chipset)
     {
-        switch(chipset & 0xF)
-        {
-            case 0:
-                return Localization.ROM;
-            case 1:
-                return Localization.ROM_and_RAM;
-            case 2 when (chipset & 0xF0) == 0:
-                return Localization.ROM_RAM_and_battery;
-            case 3:
-                return Localization.ROM_and_coprocessor;
-            case 4:
-                return Localization.ROM_RAM_and_coprocessor;
-            case 2:
-            case 5:
-                return Localization.ROM_RAM_battery_and_coprocessor;
-            case 6:
-                return Localization.ROM_battery_and_coprocessor;
-            case 9:
-                return Localization.ROM_RAM_battery_coprocessor_and_RTC;
-            case 0xA:
-                return Localization.ROM_RAM_battery_and_coprocessor;
-            default:
-                return Localization.Unknown_chipset;
-        }
+        return (chipset & 0xF) switch
+               {
+                   0                            => Localization.ROM,
+                   1                            => Localization.ROM_and_RAM,
+                   2 when (chipset & 0xF0) == 0 => Localization.ROM_RAM_and_battery,
+                   3                            => Localization.ROM_and_coprocessor,
+                   4                            => Localization.ROM_RAM_and_coprocessor,
+                   2 or 5                       => Localization.ROM_RAM_battery_and_coprocessor,
+                   6                            => Localization.ROM_battery_and_coprocessor,
+                   9                            => Localization.ROM_RAM_battery_coprocessor_and_RTC,
+                   0xA                          => Localization.ROM_RAM_battery_and_coprocessor,
+                   _                            => Localization.Unknown_chipset
+               };
     }
 
     static int DecodeBankSize(byte mode)
     {
-        switch(mode & 0xF)
-        {
-            case 0:
-            case 2:
-            case 3:
-                return 32768;
-            case 1:
-            case 5:
-            case 0xA:
-                return 65536;
-            default:
-                return 0;
-        }
+        return (mode & 0xF) switch
+               {
+                   0 or 2 or 3   => 32768,
+                   1 or 5 or 0xA => 65536,
+                   _             => 0
+               };
     }
 
     static string DecodeRomSpeed(byte mode) => (mode & 0x10) == 0x10 ? "Fast (120ns)" : "Slow (200ns)";
 
     static string DecodeCartType(byte mode)
     {
-        switch(mode & 0xF)
-        {
-            case 0:
-            case 2:
-            case 3:
-                return "LoROM";
-            case 1:
-            case 0xA:
-                return "HiROM";
-            case 5:
-                return "ExHiROM";
-            default:
-                return Localization.Unknown_licensee;
-        }
+        return (mode & 0xF) switch
+               {
+                   0 or 2 or 3 => "LoROM",
+                   1 or 0xA    => "HiROM",
+                   5           => "ExHiROM",
+                   _           => Localization.Unknown_licensee
+               };
     }
 
     static string DecodeRegion(byte headerRegion) => headerRegion switch

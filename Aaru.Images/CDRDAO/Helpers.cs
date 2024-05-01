@@ -39,45 +39,28 @@ public sealed partial class Cdrdao
 {
     static ushort CdrdaoTrackTypeToCookedBytesPerSector(string trackType)
     {
-        switch(trackType)
-        {
-            case CDRDAO_TRACK_TYPE_MODE1:
-            case CDRDAO_TRACK_TYPE_MODE2_FORM1:
-            case CDRDAO_TRACK_TYPE_MODE1_RAW:
-                return 2048;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM2:
-                return 2324;
-            case CDRDAO_TRACK_TYPE_MODE2:
-            case CDRDAO_TRACK_TYPE_MODE2_MIX:
-            case CDRDAO_TRACK_TYPE_MODE2_RAW:
-                return 2336;
-            case CDRDAO_TRACK_TYPE_AUDIO:
-                return 2352;
-            default:
-                return 0;
-        }
+        return trackType switch
+               {
+                   CDRDAO_TRACK_TYPE_MODE1 or CDRDAO_TRACK_TYPE_MODE2_FORM1 or CDRDAO_TRACK_TYPE_MODE1_RAW => 2048,
+                   CDRDAO_TRACK_TYPE_MODE2_FORM2                                                           => 2324,
+                   CDRDAO_TRACK_TYPE_MODE2 or CDRDAO_TRACK_TYPE_MODE2_MIX or CDRDAO_TRACK_TYPE_MODE2_RAW   => 2336,
+                   CDRDAO_TRACK_TYPE_AUDIO                                                                 => 2352,
+                   _                                                                                       => 0
+               };
     }
 
     static TrackType CdrdaoTrackTypeToTrackType(string trackType)
     {
-        switch(trackType)
-        {
-            case CDRDAO_TRACK_TYPE_MODE1:
-            case CDRDAO_TRACK_TYPE_MODE1_RAW:
-                return TrackType.CdMode1;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM1:
-                return TrackType.CdMode2Form1;
-            case CDRDAO_TRACK_TYPE_MODE2_FORM2:
-                return TrackType.CdMode2Form2;
-            case CDRDAO_TRACK_TYPE_MODE2:
-            case CDRDAO_TRACK_TYPE_MODE2_MIX:
-            case CDRDAO_TRACK_TYPE_MODE2_RAW:
-                return TrackType.CdMode2Formless;
-            case CDRDAO_TRACK_TYPE_AUDIO:
-                return TrackType.Audio;
-            default:
-                return TrackType.Data;
-        }
+        return trackType switch
+               {
+                   CDRDAO_TRACK_TYPE_MODE1 or CDRDAO_TRACK_TYPE_MODE1_RAW => TrackType.CdMode1,
+                   CDRDAO_TRACK_TYPE_MODE2_FORM1                          => TrackType.CdMode2Form1,
+                   CDRDAO_TRACK_TYPE_MODE2_FORM2                          => TrackType.CdMode2Form2,
+                   CDRDAO_TRACK_TYPE_MODE2 or CDRDAO_TRACK_TYPE_MODE2_MIX or CDRDAO_TRACK_TYPE_MODE2_RAW => TrackType
+                      .CdMode2Formless,
+                   CDRDAO_TRACK_TYPE_AUDIO => TrackType.Audio,
+                   _                       => TrackType.Data
+               };
     }
 
     static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>

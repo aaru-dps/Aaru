@@ -398,18 +398,11 @@ sealed partial class Dump
                 break;
         }
 
-        switch(desiredSubchannel)
-        {
-            case MmcSubchannel.None:
-                subType = TrackSubchannelType.None;
-
-                break;
-            case MmcSubchannel.Raw:
-            case MmcSubchannel.Q16:
-                subType = TrackSubchannelType.Raw;
-
-                break;
-        }
+        subType = desiredSubchannel switch
+                  {
+                      MmcSubchannel.None                     => TrackSubchannelType.None,
+                      MmcSubchannel.Raw or MmcSubchannel.Q16 => TrackSubchannelType.Raw
+                  };
 
         blockSize = sectorSize + subSize;
 

@@ -103,20 +103,18 @@ public class Nintendo64 : IByteAddressableImage
         stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
-        switch(magic)
-        {
-            case 0x80371240:
-            case 0x80371241:
-            case 0x40123780:
-            case 0x41123780:
-            case 0x12408037:
-            case 0x12418037:
-            case 0x37804012:
-            case 0x37804112:
-                return true;
-            default:
-                return false;
-        }
+        return magic switch
+               {
+                   0x80371240
+                    or 0x80371241
+                    or 0x40123780
+                    or 0x41123780
+                    or 0x12408037
+                    or 0x12418037
+                    or 0x37804012
+                    or 0x37804112 => true,
+                   _ => false
+               };
     }
 
     /// <inheritdoc />

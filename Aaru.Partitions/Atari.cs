@@ -220,54 +220,21 @@ public sealed class AtariPartitions : IPartition
                             Scheme   = Name
                         };
 
-                        switch(type)
-                        {
-                            case TYPE_GEMDOS:
-                                part.Description = Localization.Atari_GEMDOS_partition;
-
-                                break;
-                            case TYPE_BIG_GEMDOS:
-                                part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
-
-                                break;
-                            case TYPE_LINUX:
-                                part.Description = Localization.Linux_partition;
-
-                                break;
-                            case TYPE_SWAP:
-                                part.Description = Localization.Swap_partition;
-
-                                break;
-                            case TYPE_RAW:
-                                part.Description = Localization.RAW_partition;
-
-                                break;
-                            case TYPE_NETBSD:
-                                part.Description = Localization.NetBSD_partition;
-
-                                break;
-                            case TYPE_NETBSD_SWAP:
-                                part.Description = Localization.NetBSD_swap_partition;
-
-                                break;
-                            case TYPE_SYSTEM_V:
-                                part.Description = Localization.Atari_UNIX_partition;
-
-                                break;
-                            case TYPE_MAC:
-                                part.Description = Localization.Macintosh_partition;
-
-                                break;
-                            case TYPE_MINIX:
-                            case TYPE_MINIX2:
-                                part.Description = Localization.MINIX_partition;
-
-                                break;
-                            default:
-                                part.Description = Localization.Unknown_partition_type;
-
-                                break;
-                        }
+                        part.Description = type switch
+                                           {
+                                               TYPE_GEMDOS => Localization.Atari_GEMDOS_partition,
+                                               TYPE_BIG_GEMDOS => Localization
+                                                  .Atari_GEMDOS_partition_bigger_than_32_MiB,
+                                               TYPE_LINUX                => Localization.Linux_partition,
+                                               TYPE_SWAP                 => Localization.Swap_partition,
+                                               TYPE_RAW                  => Localization.RAW_partition,
+                                               TYPE_NETBSD               => Localization.NetBSD_partition,
+                                               TYPE_NETBSD_SWAP          => Localization.NetBSD_swap_partition,
+                                               TYPE_SYSTEM_V             => Localization.Atari_UNIX_partition,
+                                               TYPE_MAC                  => Localization.Macintosh_partition,
+                                               TYPE_MINIX or TYPE_MINIX2 => Localization.MINIX_partition,
+                                               _                         => Localization.Unknown_partition_type
+                                           };
 
                         partitions.Add(part);
                         partitionSequence++;
@@ -344,54 +311,21 @@ public sealed class AtariPartitions : IPartition
                             Scheme   = Name
                         };
 
-                        switch(extendedType)
-                        {
-                            case TYPE_GEMDOS:
-                                part.Description = Localization.Atari_GEMDOS_partition;
-
-                                break;
-                            case TYPE_BIG_GEMDOS:
-                                part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
-
-                                break;
-                            case TYPE_LINUX:
-                                part.Description = Localization.Linux_partition;
-
-                                break;
-                            case TYPE_SWAP:
-                                part.Description = Localization.Swap_partition;
-
-                                break;
-                            case TYPE_RAW:
-                                part.Description = Localization.RAW_partition;
-
-                                break;
-                            case TYPE_NETBSD:
-                                part.Description = Localization.NetBSD_partition;
-
-                                break;
-                            case TYPE_NETBSD_SWAP:
-                                part.Description = Localization.NetBSD_swap_partition;
-
-                                break;
-                            case TYPE_SYSTEM_V:
-                                part.Description = Localization.Atari_UNIX_partition;
-
-                                break;
-                            case TYPE_MAC:
-                                part.Description = Localization.Macintosh_partition;
-
-                                break;
-                            case TYPE_MINIX:
-                            case TYPE_MINIX2:
-                                part.Description = Localization.MINIX_partition;
-
-                                break;
-                            default:
-                                part.Description = Localization.Unknown_partition_type;
-
-                                break;
-                        }
+                        part.Description = extendedType switch
+                                           {
+                                               TYPE_GEMDOS => Localization.Atari_GEMDOS_partition,
+                                               TYPE_BIG_GEMDOS => Localization
+                                                  .Atari_GEMDOS_partition_bigger_than_32_MiB,
+                                               TYPE_LINUX                => Localization.Linux_partition,
+                                               TYPE_SWAP                 => Localization.Swap_partition,
+                                               TYPE_RAW                  => Localization.RAW_partition,
+                                               TYPE_NETBSD               => Localization.NetBSD_partition,
+                                               TYPE_NETBSD_SWAP          => Localization.NetBSD_swap_partition,
+                                               TYPE_SYSTEM_V             => Localization.Atari_UNIX_partition,
+                                               TYPE_MAC                  => Localization.Macintosh_partition,
+                                               TYPE_MINIX or TYPE_MINIX2 => Localization.MINIX_partition,
+                                               _                         => Localization.Unknown_partition_type
+                                           };
 
                         partitions.Add(part);
                         partitionSequence++;
@@ -446,54 +380,20 @@ public sealed class AtariPartitions : IPartition
                 Scheme   = Name
             };
 
-            switch(type)
-            {
-                case TYPE_GEMDOS:
-                    part.Description = Localization.Atari_GEMDOS_partition;
-
-                    break;
-                case TYPE_BIG_GEMDOS:
-                    part.Description = Localization.Atari_GEMDOS_partition_bigger_than_32_MiB;
-
-                    break;
-                case TYPE_LINUX:
-                    part.Description = Localization.Linux_partition;
-
-                    break;
-                case TYPE_SWAP:
-                    part.Description = Localization.Swap_partition;
-
-                    break;
-                case TYPE_RAW:
-                    part.Description = Localization.RAW_partition;
-
-                    break;
-                case TYPE_NETBSD:
-                    part.Description = Localization.NetBSD_partition;
-
-                    break;
-                case TYPE_NETBSD_SWAP:
-                    part.Description = Localization.NetBSD_swap_partition;
-
-                    break;
-                case TYPE_SYSTEM_V:
-                    part.Description = Localization.Atari_UNIX_partition;
-
-                    break;
-                case TYPE_MAC:
-                    part.Description = Localization.Macintosh_partition;
-
-                    break;
-                case TYPE_MINIX:
-                case TYPE_MINIX2:
-                    part.Description = Localization.MINIX_partition;
-
-                    break;
-                default:
-                    part.Description = Localization.Unknown_partition_type;
-
-                    break;
-            }
+            part.Description = type switch
+                               {
+                                   TYPE_GEMDOS               => Localization.Atari_GEMDOS_partition,
+                                   TYPE_BIG_GEMDOS           => Localization.Atari_GEMDOS_partition_bigger_than_32_MiB,
+                                   TYPE_LINUX                => Localization.Linux_partition,
+                                   TYPE_SWAP                 => Localization.Swap_partition,
+                                   TYPE_RAW                  => Localization.RAW_partition,
+                                   TYPE_NETBSD               => Localization.NetBSD_partition,
+                                   TYPE_NETBSD_SWAP          => Localization.NetBSD_swap_partition,
+                                   TYPE_SYSTEM_V             => Localization.Atari_UNIX_partition,
+                                   TYPE_MAC                  => Localization.Macintosh_partition,
+                                   TYPE_MINIX or TYPE_MINIX2 => Localization.MINIX_partition,
+                                   _                         => Localization.Unknown_partition_type
+                               };
 
             partitions.Add(part);
             partitionSequence++;

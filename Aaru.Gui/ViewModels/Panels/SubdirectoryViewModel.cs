@@ -204,56 +204,50 @@ public sealed class SubdirectoryViewModel
 
                     for(var ci = 0; ci < chars.Length; ci++)
                     {
-                        switch(filename[ci])
-                        {
-                            case '<':
-                            case '>':
-                            case ':':
-                            case '\\':
-                            case '/':
-                            case '|':
-                            case '?':
-                            case '*':
-                            case '\u0000':
-                            case '\u0001':
-                            case '\u0002':
-                            case '\u0003':
-                            case '\u0004':
-                            case '\u0005':
-                            case '\u0006':
-                            case '\u0007':
-                            case '\u0008':
-                            case '\u0009':
-                            case '\u000A':
-                            case '\u000B':
-                            case '\u000C':
-                            case '\u000D':
-                            case '\u000E':
-                            case '\u000F':
-                            case '\u0010':
-                            case '\u0011':
-                            case '\u0012':
-                            case '\u0013':
-                            case '\u0014':
-                            case '\u0015':
-                            case '\u0016':
-                            case '\u0017':
-                            case '\u0018':
-                            case '\u0019':
-                            case '\u001A':
-                            case '\u001B':
-                            case '\u001C':
-                            case '\u001D':
-                            case '\u001E':
-                            case '\u001F':
-                                chars[ci] = '_';
-
-                                break;
-                            default:
-                                chars[ci] = filename[ci];
-
-                                break;
-                        }
+                        chars[ci] = filename[ci] switch
+                                    {
+                                        '<'
+                                         or '>'
+                                         or ':'
+                                         or '\\'
+                                         or '/'
+                                         or '|'
+                                         or '?'
+                                         or '*'
+                                         or '\u0000'
+                                         or '\u0001'
+                                         or '\u0002'
+                                         or '\u0003'
+                                         or '\u0004'
+                                         or '\u0005'
+                                         or '\u0006'
+                                         or '\u0007'
+                                         or '\u0008'
+                                         or '\u0009'
+                                         or '\u000A'
+                                         or '\u000B'
+                                         or '\u000C'
+                                         or '\u000D'
+                                         or '\u000E'
+                                         or '\u000F'
+                                         or '\u0010'
+                                         or '\u0011'
+                                         or '\u0012'
+                                         or '\u0013'
+                                         or '\u0014'
+                                         or '\u0015'
+                                         or '\u0016'
+                                         or '\u0017'
+                                         or '\u0018'
+                                         or '\u0019'
+                                         or '\u001A'
+                                         or '\u001B'
+                                         or '\u001C'
+                                         or '\u001D'
+                                         or '\u001E'
+                                         or '\u001F' => '_',
+                                        _ => filename[ci]
+                                    };
                     }
 
                     if(filename.StartsWith("CON", StringComparison.InvariantCultureIgnoreCase) ||

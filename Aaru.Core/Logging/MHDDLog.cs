@@ -68,36 +68,15 @@ sealed class MhddLog
         _mhddFs  = new MemoryStream();
         _logFile = outputFile;
 
-        string mode;
-
-        switch(dev.Type)
-        {
-            case DeviceType.ATA:
-            case DeviceType.ATAPI:
-                mode = "MODE: IDE";
-
-                break;
-            case DeviceType.SCSI:
-                mode = "MODE: SCSI";
-
-                break;
-            case DeviceType.MMC:
-                mode = "MODE: MMC";
-
-                break;
-            case DeviceType.NVMe:
-                mode = "MODE: NVMe";
-
-                break;
-            case DeviceType.SecureDigital:
-                mode = "MODE: SD";
-
-                break;
-            default:
-                mode = "MODE: IDE";
-
-                break;
-        }
+        string mode = dev.Type switch
+                      {
+                          DeviceType.ATA or DeviceType.ATAPI => "MODE: IDE",
+                          DeviceType.SCSI                    => "MODE: SCSI",
+                          DeviceType.MMC                     => "MODE: MMC",
+                          DeviceType.NVMe                    => "MODE: NVMe",
+                          DeviceType.SecureDigital           => "MODE: SD",
+                          _                                  => "MODE: IDE"
+                      };
 
         var device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
         var fw         = $"F/W: {dev.FirmwareRevision}";

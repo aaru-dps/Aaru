@@ -573,25 +573,12 @@ public sealed partial class Cdrdao
             _descriptorStream.WriteLine();
             _descriptorStream.WriteLine("// Track {0}", track.Sequence);
 
-            string subchannelType;
-
-            switch(track.SubchannelType)
-            {
-                case TrackSubchannelType.Packed:
-                case TrackSubchannelType.PackedInterleaved:
-                    subchannelType = " RW";
-
-                    break;
-                case TrackSubchannelType.Raw:
-                case TrackSubchannelType.RawInterleaved:
-                    subchannelType = " RW_RAW";
-
-                    break;
-                default:
-                    subchannelType = "";
-
-                    break;
-            }
+            string subchannelType = track.SubchannelType switch
+                                    {
+                                        TrackSubchannelType.Packed or TrackSubchannelType.PackedInterleaved => " RW",
+                                        TrackSubchannelType.Raw or TrackSubchannelType.RawInterleaved => " RW_RAW",
+                                        _ => ""
+                                    };
 
             _descriptorStream.WriteLine("TRACK {0}{1}", GetTrackMode(track), subchannelType);
 

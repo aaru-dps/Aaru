@@ -309,139 +309,50 @@ public sealed class ScsiInfo
                                            Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                            ftr.CurrentProfile);
 
-                switch(ftr.CurrentProfile)
-                {
-                    case 0x0001:
-                        MediaType = MediaType.GENERIC_HDD;
-
-                        break;
-                    case 0x0002:
-                        MediaType = scsiMediumType switch
-                                    {
-                                        0x01 => MediaType.PD650,
-                                        0x41 => Blocks switch
-                                                {
-                                                    58620544 => MediaType.REV120,
-                                                    17090880 => MediaType.REV35,
-                                                    34185728 => MediaType.REV70,
-                                                    _        => MediaType
-                                                },
-                                        _ => MediaType.Unknown
-                                    };
-
-                        break;
-                    case 0x0005:
-                        MediaType = MediaType.CDMO;
-
-                        break;
-                    case 0x0008:
-                        MediaType = MediaType.CD;
-
-                        break;
-                    case 0x0009:
-                        MediaType = MediaType.CDR;
-
-                        break;
-                    case 0x000A:
-                        MediaType = MediaType.CDRW;
-
-                        break;
-                    case 0x0010:
-                        MediaType = MediaType.DVDROM;
-
-                        break;
-                    case 0x0011:
-                        MediaType = MediaType.DVDR;
-
-                        break;
-                    case 0x0012:
-                        MediaType = MediaType.DVDRAM;
-
-                        break;
-                    case 0x0013:
-                    case 0x0014:
-                        MediaType = MediaType.DVDRW;
-
-                        break;
-                    case 0x0015:
-                    case 0x0016:
-                        MediaType = MediaType.DVDRDL;
-
-                        break;
-                    case 0x0017:
-                        MediaType = MediaType.DVDRWDL;
-
-                        break;
-                    case 0x0018:
-                        MediaType = MediaType.DVDDownload;
-
-                        break;
-                    case 0x001A:
-                        MediaType = MediaType.DVDPRW;
-
-                        break;
-                    case 0x001B:
-                        MediaType = MediaType.DVDPR;
-
-                        break;
-                    case 0x0020:
-                        MediaType = MediaType.DDCD;
-
-                        break;
-                    case 0x0021:
-                        MediaType = MediaType.DDCDR;
-
-                        break;
-                    case 0x0022:
-                        MediaType = MediaType.DDCDRW;
-
-                        break;
-                    case 0x002A:
-                        MediaType = MediaType.DVDPRWDL;
-
-                        break;
-                    case 0x002B:
-                        MediaType = MediaType.DVDPRDL;
-
-                        break;
-                    case 0x0040:
-                        MediaType = MediaType.BDROM;
-
-                        break;
-                    case 0x0041:
-                    case 0x0042:
-                        MediaType = MediaType.BDR;
-
-                        break;
-                    case 0x0043:
-                        MediaType = MediaType.BDRE;
-
-                        break;
-                    case 0x0050:
-                        MediaType = MediaType.HDDVDROM;
-
-                        break;
-                    case 0x0051:
-                        MediaType = MediaType.HDDVDR;
-
-                        break;
-                    case 0x0052:
-                        MediaType = MediaType.HDDVDRAM;
-
-                        break;
-                    case 0x0053:
-                        MediaType = MediaType.HDDVDRW;
-
-                        break;
-                    case 0x0058:
-                        MediaType = MediaType.HDDVDRDL;
-
-                        break;
-                    case 0x005A:
-                        MediaType = MediaType.HDDVDRWDL;
-
-                        break;
-                }
+                MediaType = ftr.CurrentProfile switch
+                            {
+                                0x0001 => MediaType.GENERIC_HDD,
+                                0x0002 => scsiMediumType switch
+                                          {
+                                              0x01 => MediaType.PD650,
+                                              0x41 => Blocks switch
+                                                      {
+                                                          58620544 => MediaType.REV120,
+                                                          17090880 => MediaType.REV35,
+                                                          34185728 => MediaType.REV70,
+                                                          _        => MediaType
+                                                      },
+                                              _ => MediaType.Unknown
+                                          },
+                                0x0005           => MediaType.CDMO,
+                                0x0008           => MediaType.CD,
+                                0x0009           => MediaType.CDR,
+                                0x000A           => MediaType.CDRW,
+                                0x0010           => MediaType.DVDROM,
+                                0x0011           => MediaType.DVDR,
+                                0x0012           => MediaType.DVDRAM,
+                                0x0013 or 0x0014 => MediaType.DVDRW,
+                                0x0015 or 0x0016 => MediaType.DVDRDL,
+                                0x0017           => MediaType.DVDRWDL,
+                                0x0018           => MediaType.DVDDownload,
+                                0x001A           => MediaType.DVDPRW,
+                                0x001B           => MediaType.DVDPR,
+                                0x0020           => MediaType.DDCD,
+                                0x0021           => MediaType.DDCDR,
+                                0x0022           => MediaType.DDCDRW,
+                                0x002A           => MediaType.DVDPRWDL,
+                                0x002B           => MediaType.DVDPRDL,
+                                0x0040           => MediaType.BDROM,
+                                0x0041 or 0x0042 => MediaType.BDR,
+                                0x0043           => MediaType.BDRE,
+                                0x0050           => MediaType.HDDVDROM,
+                                0x0051           => MediaType.HDDVDR,
+                                0x0052           => MediaType.HDDVDRAM,
+                                0x0053           => MediaType.HDDVDRW,
+                                0x0058           => MediaType.HDDVDRDL,
+                                0x005A           => MediaType.HDDVDRWDL,
+                                _                => MediaType
+                            };
             }
 
             if(MediaType == MediaType.PD650 && Blocks == 1281856) MediaType = MediaType.PD650_WORM;

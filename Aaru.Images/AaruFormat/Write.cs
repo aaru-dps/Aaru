@@ -4979,26 +4979,14 @@ public sealed partial class AaruFormat
                                         or MediaType.AppleWidget
                                         or MediaType.PriamDataTower)
                 {
-                    DataType tagType = DataType.NoData;
-
-                    switch(_imageInfo.MediaType)
-                    {
-                        case MediaType.AppleSonySS:
-                        case MediaType.AppleSonyDS:
-                            tagType = DataType.AppleSonyTag;
-
-                            break;
-                        case MediaType.AppleFileWare:
-                        case MediaType.AppleProfile:
-                        case MediaType.AppleWidget:
-                            tagType = DataType.AppleProfileTag;
-
-                            break;
-                        case MediaType.PriamDataTower:
-                            tagType = DataType.PriamDataTowerTag;
-
-                            break;
-                    }
+                    DataType tagType = _imageInfo.MediaType switch
+                                       {
+                                           MediaType.AppleSonySS or MediaType.AppleSonyDS => DataType.AppleSonyTag,
+                                           MediaType.AppleFileWare or MediaType.AppleProfile or MediaType.AppleWidget =>
+                                               DataType.AppleProfileTag,
+                                           MediaType.PriamDataTower => DataType.PriamDataTowerTag,
+                                           _                        => DataType.NoData
+                                       };
 
                     idxEntry = new IndexEntry
                     {
@@ -5021,24 +5009,15 @@ public sealed partial class AaruFormat
                         crc64      = BitConverter.ToUInt64(blockCrc, 0)
                     };
 
-                    switch(_imageInfo.MediaType)
-                    {
-                        case MediaType.AppleSonySS:
-                        case MediaType.AppleSonyDS:
-                            subchannelBlock.sectorSize = 12;
-
-                            break;
-                        case MediaType.AppleFileWare:
-                        case MediaType.AppleProfile:
-                        case MediaType.AppleWidget:
-                            subchannelBlock.sectorSize = 20;
-
-                            break;
-                        case MediaType.PriamDataTower:
-                            subchannelBlock.sectorSize = 24;
-
-                            break;
-                    }
+                    subchannelBlock.sectorSize = _imageInfo.MediaType switch
+                                                 {
+                                                     MediaType.AppleSonySS or MediaType.AppleSonyDS => 12,
+                                                     MediaType.AppleFileWare
+                                                      or MediaType.AppleProfile
+                                                      or MediaType.AppleWidget => 20,
+                                                     MediaType.PriamDataTower => 24,
+                                                     _                        => subchannelBlock.sectorSize
+                                                 };
 
                     byte[] lzmaProperties = null;
 
