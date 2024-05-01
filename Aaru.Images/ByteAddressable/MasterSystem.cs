@@ -92,7 +92,7 @@ public class MasterSystem : IByteAddressableImage
         // Not sure but seems to be a multiple of at least this, maybe more
         if(stream.Length % 8192 != 0) return ErrorNumber.InvalidArgument;
 
-        var headerPosition = 0;
+        int headerPosition;
 
         stream.Position = 0x7ff0;
         var magicBytes = new byte[8];

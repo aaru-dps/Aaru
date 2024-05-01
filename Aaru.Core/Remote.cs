@@ -124,8 +124,10 @@ public static class Remote
             foreach(string migration in mctx.Database.GetPendingMigrations())
             {
                 mctx.Database
+#pragma warning disable EF1002
                     .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
                         migration}', '0.0.0')");
+#pragma warning restore EF1002
             }
         }
         else

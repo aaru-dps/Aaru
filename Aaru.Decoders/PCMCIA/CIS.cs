@@ -251,7 +251,7 @@ public static class CIS
                 continue;
             }
 
-            if(strings == null) strings = [];
+            strings ??= [];
 
             strings.Add(StringHandlers.CToString(buffer.ToArray()));
             buffer = [];

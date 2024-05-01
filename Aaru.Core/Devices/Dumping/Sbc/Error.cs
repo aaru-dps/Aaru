@@ -109,7 +109,7 @@ partial class Dump
             }
             else
             {
-                if(dcMode6?.Pages != null)
+                if(dcMode6.Value.Pages != null)
                 {
                     foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage is
                             {

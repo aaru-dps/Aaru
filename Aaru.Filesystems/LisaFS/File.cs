@@ -219,9 +219,8 @@ public sealed partial class LisaFS
         if(!_mounted || !_debug) return ErrorNumber.AccessDenied;
 
         if(fileId is > 4 or <= 0)
-        {
-            if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED) return ErrorNumber.InvalidArgument;
-        }
+            if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
+                return ErrorNumber.InvalidArgument;
 
         if(_systemFileCache.TryGetValue(fileId, out buf) && !tags) return ErrorNumber.NoError;
 
@@ -306,6 +305,7 @@ public sealed partial class LisaFS
         if(fileId <= 4)
         {
             if(!_debug || fileId == 0) return ErrorNumber.NoSuchFile;
+
             stat = new FileEntryInfo();
 
             error = GetAttributes(fileId, out FileAttributes attrs);
@@ -435,9 +435,8 @@ public sealed partial class LisaFS
         if(!tags)
         {
             if(_fileSizeCache.TryGetValue(fileId, out int realSize))
-            {
-                if(realSize > temp.Length) AaruConsole.ErrorWriteLine(Localization.File_0_gets_truncated, fileId);
-            }
+                if(realSize > temp.Length)
+                    AaruConsole.ErrorWriteLine(Localization.File_0_gets_truncated, fileId);
 
             buf = temp;
 

@@ -3026,4 +3026,7 @@ Probadores:
     <data name="LogEntry_Type_Exception" xml:space="preserve">
         <value>Excepción</value>
     </data>
+    <data name="CD_PMA" xml:space="preserve">
+        <value>CD PMA:</value>
+    </data>
 </root>

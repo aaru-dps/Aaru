@@ -423,9 +423,9 @@ public sealed partial class DiskCopy42
     }
 
     /// <inheritdoc />
-    public bool SetImageInfo(ImageInfo imageInfo)
+    public bool SetImageInfo(ImageInfo info)
     {
-        header.DiskName = imageInfo.MediaTitle ?? "-Aaru converted image-";
+        header.DiskName = info.MediaTitle ?? "-Aaru converted image-";
 
         return true;
     }

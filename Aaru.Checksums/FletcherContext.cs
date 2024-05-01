@@ -52,8 +52,8 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed partial class Fletcher32Context : IChecksum
 {
-    internal const ushort FLETCHER_MODULE = 0xFFFF;
-    internal const uint   NMAX            = 5552;
+    internal const ushort FletcherModule = 0xFFFF;
+    internal const uint   Nmax           = 5552;
     readonly       IntPtr _nativeContext;
     readonly       bool   _useNative;
     ushort                _sum1, _sum2;
@@ -175,11 +175,11 @@ public sealed partial class Fletcher32Context : IChecksum
             {
                 sum1 += data[dataOff];
 
-                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FletcherModule) sum1 -= FletcherModule;
 
                 sum2 += sum1;
 
-                if(sum2 >= FLETCHER_MODULE) sum2 -= FLETCHER_MODULE;
+                if(sum2 >= FletcherModule) sum2 -= FletcherModule;
 
                 previousSum1 = (ushort)(sum1 & 0xFFFF);
                 previousSum2 = (ushort)(sum2 & 0xFFFF);
@@ -195,9 +195,9 @@ public sealed partial class Fletcher32Context : IChecksum
                     sum2 += sum1;
                 }
 
-                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FletcherModule) sum1 -= FletcherModule;
 
-                sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
+                sum2         %= FletcherModule; /* only added so many FLETCHER_MODULE's */
                 previousSum1 =  (ushort)(sum1 & 0xFFFF);
                 previousSum2 =  (ushort)(sum2 & 0xFFFF);
 
@@ -206,10 +206,10 @@ public sealed partial class Fletcher32Context : IChecksum
         }
 
         /* do length NMAX blocks -- requires just one modulo operation */
-        while(len >= NMAX)
+        while(len >= Nmax)
         {
-            len -= NMAX;
-            uint n = NMAX / 16;
+            len -= Nmax;
+            uint n = Nmax / 16;
 
             do
             {
@@ -250,8 +250,8 @@ public sealed partial class Fletcher32Context : IChecksum
                 dataOff += 16;
             } while(--n != 0);
 
-            sum1 %= FLETCHER_MODULE;
-            sum2 %= FLETCHER_MODULE;
+            sum1 %= FletcherModule;
+            sum2 %= FletcherModule;
         }
 
         /* do remaining bytes (less than NMAX, still just one modulo) */
@@ -303,8 +303,8 @@ public sealed partial class Fletcher32Context : IChecksum
                 sum2 += sum1;
             }
 
-            sum1 %= FLETCHER_MODULE;
-            sum2 %= FLETCHER_MODULE;
+            sum1 %= FletcherModule;
+            sum2 %= FletcherModule;
         }
 
         previousSum1 = (ushort)(sum1 & 0xFFFF);

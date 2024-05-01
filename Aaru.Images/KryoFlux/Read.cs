@@ -93,10 +93,9 @@ public sealed partial class KryoFlux
 
             if(!File.Exists(trackfile))
             {
-                if(cylinder == 0)
+                switch(cylinder)
                 {
-                    if(head == 0)
-                    {
+                    case 0 when head == 0:
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization
                                                       .Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
@@ -105,24 +104,21 @@ public sealed partial class KryoFlux
                         heads   = 1;
 
                         continue;
-                    }
+                    case 0:
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization
+                                                      .Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization
-                                                  .Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
+                        heads = 1;
 
-                    heads = 1;
+                        continue;
+                    case 1:
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Cannot_find_cyl_1_supposing_double_stepping);
 
-                    continue;
-                }
+                        step = 2;
 
-                if(cylinder == 1)
-                {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cannot_find_cyl_1_supposing_double_stepping);
-
-                    step = 2;
-
-                    continue;
+                        continue;
                 }
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0, cylinder);

@@ -8330,9 +8330,6 @@
     <data name="Software_write_protect_is_enabled" xml:space="preserve">
     <value>La protección contra escritura está activada</value>
   </data>
-    <data name="Software_write_protect_is_enabled" xml:space="preserve">
-    <value>La protección contra escritura está activada</value>
-  </data>
     <data name="Spare_Area_Full_Flags_0" xml:space="preserve">
     <value>Valores completos del área de reserva: 0x{0:X2}</value>
   </data>

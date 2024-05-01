@@ -68,7 +68,7 @@ static class Ssse3
 
         while(blocks != 0)
         {
-            uint n = Adler32Context.NMAX / blockSize; /* The NMAX constraint. */
+            uint n = Adler32Context.NMax / blockSize; /* The NMAX constraint. */
 
             if(n > blocks) n = blocks;
 
@@ -142,8 +142,8 @@ static class Ssse3
             /*
              * Reduce.
              */
-            s1 %= Adler32Context.ADLER_MODULE;
-            s2 %= Adler32Context.ADLER_MODULE;
+            s1 %= Adler32Context.AdlerModule;
+            s2 %= Adler32Context.AdlerModule;
         }
 
         /*
@@ -174,9 +174,9 @@ static class Ssse3
 
             while(len-- != 0) s2 += s1 += buf[bufPos++];
 
-            if(s1 >= Adler32Context.ADLER_MODULE) s1 -= Adler32Context.ADLER_MODULE;
+            if(s1 >= Adler32Context.AdlerModule) s1 -= Adler32Context.AdlerModule;
 
-            s2 %= Adler32Context.ADLER_MODULE;
+            s2 %= Adler32Context.AdlerModule;
         }
 
         /*

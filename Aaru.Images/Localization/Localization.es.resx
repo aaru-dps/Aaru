@@ -2949,4 +2949,7 @@
     <data name="Create_a_dynamic_image" xml:space="preserve">
         <value>Crear una imagen dinámica, los sectores vacíos se ignoran</value>
     </data>
+    <data name="A2R_Name" xml:space="preserve">
+    <value>A2R</value>
+  </data>
 </root>

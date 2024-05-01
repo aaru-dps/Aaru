@@ -68,7 +68,7 @@ static class Ssse3
 
         while(blocks != 0)
         {
-            uint n = Fletcher32Context.NMAX / block_Size; /* The NMAX constraint. */
+            uint n = Fletcher32Context.Nmax / block_Size; /* The NMAX constraint. */
 
             if(n > blocks) n = blocks;
 
@@ -142,8 +142,8 @@ static class Ssse3
             /*
              * Reduce.
              */
-            s1 %= Fletcher32Context.FLETCHER_MODULE;
-            s2 %= Fletcher32Context.FLETCHER_MODULE;
+            s1 %= Fletcher32Context.FletcherModule;
+            s2 %= Fletcher32Context.FletcherModule;
         }
 
         /*
@@ -174,9 +174,9 @@ static class Ssse3
 
             while(len-- != 0) s2 += s1 += buf[bufPos++];
 
-            if(s1 >= Fletcher32Context.FLETCHER_MODULE) s1 -= Fletcher32Context.FLETCHER_MODULE;
+            if(s1 >= Fletcher32Context.FletcherModule) s1 -= Fletcher32Context.FletcherModule;
 
-            s2 %= Fletcher32Context.FLETCHER_MODULE;
+            s2 %= Fletcher32Context.FletcherModule;
         }
 
         /*

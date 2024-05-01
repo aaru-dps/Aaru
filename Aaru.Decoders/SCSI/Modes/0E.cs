@@ -130,7 +130,7 @@ public static partial class Modes
             double blocks;
 
             if(page.LBAFormat == 8)
-                blocks = page.BlocksPerSecondOfAudio * (1 / 256);
+                blocks = page.BlocksPerSecondOfAudio * (1 / 256f);
             else
                 blocks = page.BlocksPerSecondOfAudio;
 

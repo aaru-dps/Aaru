@@ -94,7 +94,7 @@ partial class Dump
             opticalDisc = dskType switch
                           {
                               MediaType.REV35 or MediaType.REV70 or MediaType.REV120 => false,
-                              _                                                      => opticalDisc
+                              _                                                      => true
                           };
         }
 

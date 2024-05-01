@@ -912,8 +912,8 @@ public class CSS
 
             for(i = 0; i < 4; i++)
             {
-                lfsr1Lo = lfsr0 & 0xff;
-                lfsr0   = lfsr0 >> 8;
+                lfsr1Lo =   lfsr0 & 0xff;
+                lfsr0   >>= 8;
 
                 for(uint j = 0; j < 256; j++)
                 {

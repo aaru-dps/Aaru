@@ -61,11 +61,11 @@ public partial class Crc16Context : IChecksum
 
         _useNative = Native.IsSupported;
 
-        _useCcitt = polynomial == CRC16CcittContext.CRC16_CCITT_POLY &&
-                    seed       == CRC16CcittContext.CRC16_CCITT_SEED &&
+        _useCcitt = polynomial == CRC16CcittContext.CRC16CcittPoly &&
+                    seed       == CRC16CcittContext.CRC16CcittSeed &&
                     inverse;
 
-        _useIbm = polynomial == CRC16IbmContext.CRC16_IBM_POLY && seed == CRC16IbmContext.CRC16_IBM_SEED && !inverse;
+        _useIbm = polynomial == CRC16IbmContext.CRC16IbmPoly && seed == CRC16IbmContext.CRC16IbmSeed && !inverse;
 
         if(_useCcitt && _useNative)
         {
@@ -369,13 +369,11 @@ public partial class Crc16Context : IChecksum
     {
         bool useNative = Native.IsSupported;
 
-        bool useCcitt = polynomial == CRC16CcittContext.CRC16_CCITT_POLY &&
-                        seed       == CRC16CcittContext.CRC16_CCITT_SEED &&
+        bool useCcitt = polynomial == CRC16CcittContext.CRC16CcittPoly &&
+                        seed       == CRC16CcittContext.CRC16CcittSeed &&
                         inverse;
 
-        bool useIbm = polynomial == CRC16IbmContext.CRC16_IBM_POLY &&
-                      seed       == CRC16IbmContext.CRC16_IBM_SEED &&
-                      !inverse;
+        bool useIbm = polynomial == CRC16IbmContext.CRC16IbmPoly && seed == CRC16IbmContext.CRC16IbmSeed && !inverse;
 
         IntPtr nativeContext = IntPtr.Zero;
 
@@ -474,13 +472,11 @@ public partial class Crc16Context : IChecksum
     {
         bool useNative = Native.IsSupported;
 
-        bool useCcitt = polynomial == CRC16CcittContext.CRC16_CCITT_POLY &&
-                        seed       == CRC16CcittContext.CRC16_CCITT_SEED &&
+        bool useCcitt = polynomial == CRC16CcittContext.CRC16CcittPoly &&
+                        seed       == CRC16CcittContext.CRC16CcittSeed &&
                         inverse;
 
-        bool useIbm = polynomial == CRC16IbmContext.CRC16_IBM_POLY &&
-                      seed       == CRC16IbmContext.CRC16_IBM_SEED &&
-                      !inverse;
+        bool useIbm = polynomial == CRC16IbmContext.CRC16IbmPoly && seed == CRC16IbmContext.CRC16IbmSeed && !inverse;
 
         IntPtr nativeContext = IntPtr.Zero;
 
@@ -565,13 +561,11 @@ public partial class Crc16Context : IChecksum
     {
         bool useNative = Native.IsSupported;
 
-        bool useCcitt = polynomial == CRC16CcittContext.CRC16_CCITT_POLY &&
-                        seed       == CRC16CcittContext.CRC16_CCITT_SEED &&
+        bool useCcitt = polynomial == CRC16CcittContext.CRC16CcittPoly &&
+                        seed       == CRC16CcittContext.CRC16CcittSeed &&
                         inverse;
 
-        bool useIbm = polynomial == CRC16IbmContext.CRC16_IBM_POLY &&
-                      seed       == CRC16IbmContext.CRC16_IBM_SEED &&
-                      !inverse;
+        bool useIbm = polynomial == CRC16IbmContext.CRC16IbmPoly && seed == CRC16IbmContext.CRC16IbmSeed && !inverse;
 
         IntPtr nativeContext = IntPtr.Zero;
 

@@ -54,8 +54,8 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public sealed partial class Adler32Context : IChecksum
 {
-    internal const ushort ADLER_MODULE = 65521;
-    internal const uint   NMAX         = 5552;
+    internal const ushort AdlerModule = 65521;
+    internal const uint   NMax        = 5552;
     readonly       IntPtr _nativeContext;
     readonly       bool   _useNative;
     ushort                _sum1, _sum2;
@@ -177,11 +177,11 @@ public sealed partial class Adler32Context : IChecksum
             {
                 sum1 += data[dataOff];
 
-                if(sum1 >= ADLER_MODULE) sum1 -= ADLER_MODULE;
+                if(sum1 >= AdlerModule) sum1 -= AdlerModule;
 
                 sum2 += sum1;
 
-                if(sum2 >= ADLER_MODULE) sum2 -= ADLER_MODULE;
+                if(sum2 >= AdlerModule) sum2 -= AdlerModule;
 
                 preSum1 = (ushort)(sum1 & 0xFFFF);
                 preSum2 = (ushort)(sum2 & 0xFFFF);
@@ -197,9 +197,9 @@ public sealed partial class Adler32Context : IChecksum
                     sum2 += sum1;
                 }
 
-                if(sum1 >= ADLER_MODULE) sum1 -= ADLER_MODULE;
+                if(sum1 >= AdlerModule) sum1 -= AdlerModule;
 
-                sum2    %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
+                sum2    %= AdlerModule; /* only added so many ADLER_MODULE's */
                 preSum1 =  (ushort)(sum1 & 0xFFFF);
                 preSum2 =  (ushort)(sum2 & 0xFFFF);
 
@@ -208,10 +208,10 @@ public sealed partial class Adler32Context : IChecksum
         }
 
         /* do length NMAX blocks -- requires just one modulo operation */
-        while(len >= NMAX)
+        while(len >= NMax)
         {
-            len -= NMAX;
-            uint n = NMAX / 16;
+            len -= NMax;
+            uint n = NMax / 16;
 
             do
             {
@@ -252,8 +252,8 @@ public sealed partial class Adler32Context : IChecksum
                 dataOff += 16;
             } while(--n != 0);
 
-            sum1 %= ADLER_MODULE;
-            sum2 %= ADLER_MODULE;
+            sum1 %= AdlerModule;
+            sum2 %= AdlerModule;
         }
 
         /* do remaining bytes (less than NMAX, still just one modulo) */
@@ -305,8 +305,8 @@ public sealed partial class Adler32Context : IChecksum
                 sum2 += sum1;
             }
 
-            sum1 %= ADLER_MODULE;
-            sum2 %= ADLER_MODULE;
+            sum1 %= AdlerModule;
+            sum2 %= AdlerModule;
         }
 
         preSum1 = (ushort)(sum1 & 0xFFFF);

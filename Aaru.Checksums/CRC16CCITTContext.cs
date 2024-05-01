@@ -41,9 +41,9 @@ namespace Aaru.Checksums;
 public sealed class CRC16CcittContext : Crc16Context
 {
     /// <summary>CCITT CRC16 polynomial</summary>
-    public const ushort CRC16_CCITT_POLY = 0x8408;
+    public const ushort CRC16CcittPoly = 0x8408;
     /// <summary>CCITT CRC16 seed</summary>
-    public const ushort CRC16_CCITT_SEED = 0x0000;
+    public const ushort CRC16CcittSeed = 0x0000;
     static readonly ushort[][] _ccittCrc16Table =
     [
         [
@@ -226,11 +226,11 @@ public sealed class CRC16CcittContext : Crc16Context
 
     /// <summary>Initializes an instance of the CRC16 with CCITT polynomial and seed.</summary>
     /// <inheritdoc />
-    public CRC16CcittContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
+    public CRC16CcittContext() : base(CRC16CcittPoly, CRC16CcittSeed, _ccittCrc16Table, true) {}
 
-    public string Name   => Localization.CRC16_CCITT_Name;
-    public Guid   Id     => new("4C3BD0D5-24BD-4D45-BC19-A90A5AA5CC9D");
-    public string Author => Authors.NataliaPortillo;
+    public new string Name   => Localization.CRC16_CCITT_Name;
+    public new Guid   Id     => new("4C3BD0D5-24BD-4D45-BC19-A90A5AA5CC9D");
+    public new string Author => Authors.NataliaPortillo;
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
@@ -245,14 +245,14 @@ public sealed class CRC16CcittContext : Crc16Context
     /// <param name="filename">File path.</param>
     /// <param name="hash">Byte array of the hash value.</param>
     public static string File(string filename, out byte[] hash) =>
-        File(filename, out hash, CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true);
+        File(filename, out hash, CRC16CcittPoly, CRC16CcittSeed, _ccittCrc16Table, true);
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of the data buffer to hash.</param>
     /// <param name="hash">Byte array of the hash value.</param>
     public static string Data(byte[] data, uint len, out byte[] hash) =>
-        Data(data, len, out hash, CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true);
+        Data(data, len, out hash, CRC16CcittPoly, CRC16CcittSeed, _ccittCrc16Table, true);
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
     /// <param name="data">Data buffer.</param>
@@ -262,5 +262,5 @@ public sealed class CRC16CcittContext : Crc16Context
     /// <summary>Calculates the CCITT CRC16 of the specified buffer with the specified parameters</summary>
     /// <param name="buffer">Buffer</param>
     public static ushort Calculate(byte[] buffer) =>
-        Calculate(buffer, CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true);
+        Calculate(buffer, CRC16CcittPoly, CRC16CcittSeed, _ccittCrc16Table, true);
 }

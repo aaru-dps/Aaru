@@ -1926,9 +1926,8 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                    {
-                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
-                    }
+                        for(var r = 0; r < remaining * 4; r++)
+                            _writingBuffer[_writingBufferPosition + r] = 0;
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,
@@ -2720,9 +2719,8 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                    {
-                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
-                    }
+                        for(var r = 0; r < remaining * 4; r++)
+                            _writingBuffer[_writingBufferPosition + r] = 0;
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,
@@ -5262,8 +5260,7 @@ public sealed partial class AaruFormat
         foreach(IndexEntry entry in _index)
         {
             _structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
-            IndexEntry indexEntry = entry;
-            MemoryMarshal.Write(_structureBytes, in indexEntry);
+            MemoryMarshal.Write(_structureBytes, in entry);
             blockStream.Write(_structureBytes, 0, _structureBytes.Length);
         }
 

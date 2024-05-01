@@ -40,8 +40,6 @@ namespace Aaru.Core;
 /// <summary>Image information operations</summary>
 public static class ArchiveInfo
 {
-    const string MODULE_NAME = "Archive information";
-
     /// <summary>Prints archive information to console</summary>
     /// <param name="imageFormat">Archive</param>
     public static void PrintArchiveInfo(IArchive imageFormat, IFilter filter, Encoding encoding)

@@ -235,8 +235,7 @@ public sealed partial class DiskCopy42
                                         <= 28         => 18,
                                         <= 34         => 17,
                                         <= 41         => 16,
-                                        <= 45         => 15,
-                                        _             => sectorsToCopy
+                                        <= 45         => 15
                                     };
 
                     Array.Copy(data,

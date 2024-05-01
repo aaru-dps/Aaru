@@ -943,9 +943,6 @@
     <data name="Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware" xml:space="preserve">
     <value>Volcar discos de Xbox requiere una unidad con firmware Kreon.</value>
   </data>
-    <data name="Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware" xml:space="preserve">
-    <value>Volcar discos de Xbox requiere una unidad con firmware Kreon.</value>
-  </data>
     <data name="Dump_Ata_Output_format_does_not_support_ATA_IDENTIFY_" xml:space="preserve">
     <value>El formato de salida no soporta ATA IDENTIFY.</value>
   </data>

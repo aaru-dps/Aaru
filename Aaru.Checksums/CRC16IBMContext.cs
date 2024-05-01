@@ -42,8 +42,8 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public sealed class CRC16IbmContext : Crc16Context
 {
-    internal const ushort CRC16_IBM_POLY = 0xA001;
-    internal const ushort CRC16_IBM_SEED = 0x0000;
+    internal const ushort CRC16IbmPoly = 0xA001;
+    internal const ushort CRC16IbmSeed = 0x0000;
 
     static readonly ushort[][] _ibmCrc16Table =
     [
@@ -227,16 +227,11 @@ public sealed class CRC16IbmContext : Crc16Context
 
     /// <summary>Initializes an instance of the CRC16 with IBM polynomial and seed.</summary>
     /// <inheritdoc />
-    public CRC16IbmContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
+    public CRC16IbmContext() : base(CRC16IbmPoly, CRC16IbmSeed, _ibmCrc16Table, false) {}
 
-    /// <inheritdoc />
-    public string Name => Localization.CRC16_IBM_Name;
-
-    /// <inheritdoc />
-    public Guid Id => new("0470433E-0C78-4C37-8C9F-BD8E72340E78");
-
-    /// <inheritdoc />
-    public string Author => Authors.NataliaPortillo;
+    public new string Name   => Localization.CRC16_IBM_Name;
+    public new Guid   Id     => new("0470433E-0C78-4C37-8C9F-BD8E72340E78");
+    public new string Author => Authors.NataliaPortillo;
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
@@ -253,14 +248,14 @@ public sealed class CRC16IbmContext : Crc16Context
     /// <param name="filename">File path.</param>
     /// <param name="hash">Byte array of the hash value.</param>
     public static string File(string filename, out byte[] hash) =>
-        File(filename, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false);
+        File(filename, out hash, CRC16IbmPoly, CRC16IbmSeed, _ibmCrc16Table, false);
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
     /// <param name="data">Data buffer.</param>
     /// <param name="len">Length of the data buffer to hash.</param>
     /// <param name="hash">Byte array of the hash value.</param>
     public static string Data(byte[] data, uint len, out byte[] hash) =>
-        Data(data, len, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false);
+        Data(data, len, out hash, CRC16IbmPoly, CRC16IbmSeed, _ibmCrc16Table, false);
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
     /// <param name="data">Data buffer.</param>

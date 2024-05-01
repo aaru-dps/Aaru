@@ -39,7 +39,7 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
-    protected static bool ReadMultipleBlockCannotSetBlockCount;
+    protected static bool _readMultipleBlockCannotSetBlockCount;
 
     /// <summary>Reads the CSD register from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>
@@ -212,7 +212,7 @@ public partial class Device
         if(transferLength <= 1)
             return ReadSingleBlock(out buffer, out response, lba, blockSize, byteAddressed, timeout, out duration);
 
-        if(!ReadMultipleBlockCannotSetBlockCount)
+        if(!_readMultipleBlockCannotSetBlockCount)
         {
             sense = ReadMultipleBlock(out buffer,
                                       out response,
@@ -224,7 +224,7 @@ public partial class Device
                                       out duration);
         }
 
-        if(ReadMultipleBlockCannotSetBlockCount)
+        if(_readMultipleBlockCannotSetBlockCount)
         {
             return ReadMultipleUsingSingle(out buffer,
                                            out response,

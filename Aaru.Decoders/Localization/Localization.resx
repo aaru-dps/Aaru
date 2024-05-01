@@ -7454,9 +7454,6 @@
     <data name="Port_A_link_is_down" xml:space="preserve">
     <value>Port A link is down</value>
   </data>
-    <data name="Port_A_uses_Parallel_SCSI_Ultra_160_interface" xml:space="preserve">
-    <value>Port A uses Parallel SCSI Ultra-160 interface</value>
-  </data>
     <data name="Unknown_port_A_transport_type_code_0" xml:space="preserve">
     <value>Unknown port A transport type code {0}</value>
   </data>
