@@ -38,7 +38,7 @@ namespace Aaru.Devices.Linux;
 
 [Flags]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-enum FileFlags
+enum FileFlags : uint
 {
     /// <summary>O_RDONLY</summary>
     Readonly = 0x0,

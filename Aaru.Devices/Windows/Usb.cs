@@ -1187,16 +1187,14 @@ static partial class Usb
                                                             ref SpDeviceInterfaceData
                                                                 deviceInterfaceData);
 
-    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetDeviceInterfaceDetailW", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool SetupDiGetDeviceInterfaceDetail(IntPtr deviceInfoSet,
-                                                                ref SpDeviceInterfaceData
-                                                                    deviceInterfaceData,
-                                                                ref SpDeviceInterfaceDetailData
-                                                                    deviceInterfaceDetailData,
-                                                                int               deviceInterfaceDetailDataSize,
-                                                                ref int           requiredSize,
-                                                                ref SpDevinfoData deviceInfoData);
+    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr                    deviceInfoSet,
+                                                       ref SpDeviceInterfaceData deviceInterfaceData,
+                                                       ref SpDeviceInterfaceDetailData
+                                                           deviceInterfaceDetailData,
+                                                       int               deviceInterfaceDetailDataSize,
+                                                       ref int           requiredSize,
+                                                       ref SpDevinfoData deviceInfoData);
 
     [LibraryImport("setupapi.dll",
                    EntryPoint = "SetupDiGetDeviceRegistryPropertyW",
@@ -1216,11 +1214,10 @@ static partial class Usb
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);
 
-    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetDeviceInstanceIdW", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool SetupDiGetDeviceInstanceId(
-        IntPtr deviceInfoSet,        ref SpDevinfoData deviceInfoData, StringBuilder deviceInstanceId,
-        int    deviceInstanceIdSize, out int           requiredSize);
+    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    static extern bool SetupDiGetDeviceInstanceId(IntPtr        deviceInfoSet, ref SpDevinfoData deviceInfoData,
+                                                  StringBuilder deviceInstanceId,
+                                                  int           deviceInstanceIdSize, out int requiredSize);
 
     [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

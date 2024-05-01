@@ -99,8 +99,8 @@ public static partial class DetectOS
         }
     }
 
-    [LibraryImport("libc", SetLastError = true)]
-    private static partial int uname(out UtsName name);
+    [DllImport("libc", SetLastError = true)]
+    static extern int uname(out UtsName name);
 
     [LibraryImport("libc",
                    EntryPoint = "sysctlbyname",

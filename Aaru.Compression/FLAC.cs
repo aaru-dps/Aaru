@@ -45,7 +45,7 @@ public partial class FLAC
     private static partial nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
                                                                  nuint  srcSize);
 
-    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
     private static partial nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
                                                                  nuint srcSize, uint blocksize, int doMidSideStereo,
                                                                  int looseMidSideStereo, string apodization,

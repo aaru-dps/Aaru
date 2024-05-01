@@ -46,20 +46,17 @@ static partial class Extern
                    SetLastError = true,
                    StringMarshalling = StringMarshalling.Utf16)]
     internal static partial SafeFileHandle CreateFile([MarshalAs(UnmanagedType.LPTStr)] string filename,
-                                                      [MarshalAs(UnmanagedType.U4)]     FileAccess access,
-                                                      [MarshalAs(UnmanagedType.U4)]     FileShare share,
+                                                      FileAccess access, FileShare share,
                                                       nint securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
-                                                      [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
-                                                      [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
+                                                      FileMode creationDisposition, FileAttributes flagsAndAttributes,
                                                       nint templateFile);
 
-    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool DeviceIoControlScsi(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                     ref ScsiPassThroughDirectAndSenseBuffer inBuffer,
-                                                     uint nInBufferSize,
-                                                     ref ScsiPassThroughDirectAndSenseBuffer outBuffer,
-                                                     uint nOutBufferSize, ref uint pBytesReturned, nint overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+    internal static extern bool DeviceIoControlScsi(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                    ref ScsiPassThroughDirectAndSenseBuffer inBuffer,
+                                                    uint nInBufferSize,
+                                                    ref ScsiPassThroughDirectAndSenseBuffer outBuffer,
+                                                    uint nOutBufferSize, ref uint pBytesReturned, nint overlapped);
 
     [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -68,19 +65,17 @@ static partial class Extern
                                                     ref AtaPassThroughDirect outBuffer,      uint nOutBufferSize,
                                                     ref uint                 pBytesReturned, nint overlapped);
 
-    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool DeviceIoControlStorageQuery(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                             ref StoragePropertyQuery inBuffer, uint nInBufferSize,
-                                                             nint outBuffer, uint nOutBufferSize,
-                                                             ref uint pBytesReturned, nint overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+    internal static extern bool DeviceIoControlStorageQuery(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                            ref StoragePropertyQuery inBuffer, uint nInBufferSize,
+                                                            nint outBuffer, uint nOutBufferSize,
+                                                            ref uint pBytesReturned, nint overlapped);
 
-    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    internal static partial bool DeviceIoControlIde(SafeFileHandle           hDevice,        WindowsIoctl ioControlCode,
-                                                    ref IdePassThroughDirect inBuffer,       uint nInBufferSize,
-                                                    ref IdePassThroughDirect outBuffer,      uint nOutBufferSize,
-                                                    ref uint                 pBytesReturned, nint overlapped);
+    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
+    internal static extern bool DeviceIoControlIde(SafeFileHandle           hDevice,        WindowsIoctl ioControlCode,
+                                                   ref IdePassThroughDirect inBuffer,       uint         nInBufferSize,
+                                                   ref IdePassThroughDirect outBuffer,      uint         nOutBufferSize,
+                                                   ref uint                 pBytesReturned, nint         overlapped);
 
     [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

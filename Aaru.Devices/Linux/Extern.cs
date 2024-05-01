@@ -42,7 +42,7 @@ static partial class Extern
                    SetLastError = true,
                    StringMarshalling = StringMarshalling.Custom,
                    StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
-    internal static partial int open(string pathname, [MarshalAs(UnmanagedType.U4)] FileFlags flags);
+    internal static partial int open(string pathname, FileFlags flags);
 
     [LibraryImport("libc")]
     internal static partial int close(int fd);
@@ -50,8 +50,8 @@ static partial class Extern
     [LibraryImport("libc", EntryPoint = "ioctl", SetLastError = true)]
     internal static partial int ioctlSg(int fd, LinuxIoctl request, ref SgIoHdrT value);
 
-    [LibraryImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static partial int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
+    [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+    internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
 
     [LibraryImport("libc",
                    SetLastError = true,
