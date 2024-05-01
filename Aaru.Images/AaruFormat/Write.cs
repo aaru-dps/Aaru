@@ -1926,8 +1926,9 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                        for(var r = 0; r < remaining * 4; r++)
-                            _writingBuffer[_writingBufferPosition + r] = 0;
+                    {
+                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
+                    }
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,
@@ -2126,21 +2127,21 @@ public sealed partial class AaruFormat
                 if(track.Sequence == 0 && track.StartSector == 0 && track.EndSector == 0) track.Type = TrackType.Data;
 
                 if(data.Length == 2064 &&
-                   (_imageInfo.MediaType == MediaType.DVDROM      ||
-                    _imageInfo.MediaType == MediaType.PS2DVD      ||
-                    _imageInfo.MediaType == MediaType.SACD        ||
-                    _imageInfo.MediaType == MediaType.PS3DVD      ||
-                    _imageInfo.MediaType == MediaType.DVDR        ||
-                    _imageInfo.MediaType == MediaType.DVDRW       ||
-                    _imageInfo.MediaType == MediaType.DVDPR       ||
-                    _imageInfo.MediaType == MediaType.DVDPRW      ||
-                    _imageInfo.MediaType == MediaType.DVDPRWDL    ||
-                    _imageInfo.MediaType == MediaType.DVDRDL      ||
-                    _imageInfo.MediaType == MediaType.DVDPRDL     ||
-                    _imageInfo.MediaType == MediaType.DVDRAM      ||
-                    _imageInfo.MediaType == MediaType.DVDRWDL     ||
-                    _imageInfo.MediaType == MediaType.DVDDownload ||
-                    _imageInfo.MediaType == MediaType.Nuon))
+                   _imageInfo.MediaType is MediaType.DVDROM
+                                        or MediaType.PS2DVD
+                                        or MediaType.SACD
+                                        or MediaType.PS3DVD
+                                        or MediaType.DVDR
+                                        or MediaType.DVDRW
+                                        or MediaType.DVDPR
+                                        or MediaType.DVDPRW
+                                        or MediaType.DVDPRWDL
+                                        or MediaType.DVDRDL
+                                        or MediaType.DVDPRDL
+                                        or MediaType.DVDRAM
+                                        or MediaType.DVDRWDL
+                                        or MediaType.DVDDownload
+                                        or MediaType.Nuon)
                 {
                     sector        =   new byte[2048];
                     _sectorId     ??= new byte[_imageInfo.Sectors * 4];
@@ -2719,8 +2720,9 @@ public sealed partial class AaruFormat
 
                     // Fill FLAC block
                     if(remaining != 0)
-                        for(var r = 0; r < remaining * 4; r++)
-                            _writingBuffer[_writingBufferPosition + r] = 0;
+                    {
+                        for(var r = 0; r < remaining * 4; r++) _writingBuffer[_writingBufferPosition + r] = 0;
+                    }
 
                     compressedLength = FLAC.EncodeBuffer(_writingBuffer,
                                                          _compressedBuffer,
