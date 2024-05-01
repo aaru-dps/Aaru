@@ -2397,7 +2397,7 @@ Probadores:
     <value>Información</value>
   </data>
     <data name="Title_Inode" xml:space="preserve">
-    <value>Nodo-I</value>
+    <value>inodo</value>
   </data>
     <data name="Title_INQUIRY" xml:space="preserve">
     <value>INQUIRY</value>

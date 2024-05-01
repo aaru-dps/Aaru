@@ -1385,7 +1385,7 @@
     <value>{0} bytes por fragmento</value>
   </data>
     <data name="_0_bytes_per_inode" xml:space="preserve">
-    <value>{0} bytes por nodo-i</value>
+    <value>{0} bytes por inodo</value>
   </data>
     <data name="_0_cylinders_per_group" xml:space="preserve">
     <value>{0} cilindros por grupo</value>

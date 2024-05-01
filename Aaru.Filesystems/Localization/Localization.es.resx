@@ -30,7 +30,7 @@
   </data>
     <data name="Active_snapshot_has_ID_0_on_inode_1_with_2_blocks_reserved_list_starting_on_block_3"
           xml:space="preserve">
-    <value>La instantánea activa tiene el ID {0}, en el nodo-i {1}, con {2} bloques reservados, y la lista empezando en el bloque {3}</value>
+    <value>La instantánea activa tiene el ID {0}, en el inodo {1}, con {2} bloques reservados, y la lista empezando en el bloque {3}</value>
   </data>
     <data name="Admin_space_container_starts_in_block_0" xml:space="preserve">
     <value>El contenedor de espacio administrativo comienza en el bloque {0}</value>
@@ -562,7 +562,7 @@
   </data>
     <data name="Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes"
           xml:space="preserve">
-    <value>El directorio que contiene los nodos-i de los ficheros pendientes de eliminación reside en el bloque {0} del grupo de asignación {1} y ocupa {2} bloques ({3} bytes)</value>
+    <value>El directorio que contiene los inodos de los ficheros pendientes de eliminación reside en el bloque {0} del grupo de asignación {1} y ocupa {2} bloques ({3} bytes)</value>
   </data>
     <data name="Directory_size_0_clusters" xml:space="preserve">
     <value>Tamaño del directorio: {0} clústeres</value>
@@ -769,7 +769,7 @@
     <value>Sistema de ficheros ext4</value>
   </data>
     <data name="Extended_attributes_can_reside_in_inode_ext4" xml:space="preserve">
-    <value>Los atributos extendidos puede residir en el nodo-i (ext4)</value>
+    <value>Los atributos extendidos puede residir en el inodo (ext4)</value>
   </data>
     <data name="Extension_0" xml:space="preserve">
     <value>Extensión: {0}</value>
@@ -823,7 +823,7 @@
     <value>El sistema de ficheros tiene {0} "bloques grandes" libres ({1} bytes)</value>
   </data>
     <data name="Filesystem_has_0_inodes_used" xml:space="preserve">
-    <value>El sistema de ficheros tiene {0} nodos-i sin usar</value>
+    <value>El sistema de ficheros tiene {0} inodos sin usar</value>
   </data>
     <data name="Filesystem_has_been_mounted_by_an_old_IFS" xml:space="preserve">
     <value>El sistema de ficheros ha sido montado por un IFS antigup</value>
@@ -958,7 +958,7 @@
     <value>La primera función fallida es "{0}" y la última es "{1}"</value>
   </data>
     <data name="First_error_inode_is_0_last_is_1" xml:space="preserve">
-    <value>El primer nodo-i erróneo es el {0} y el último es el {1}</value>
+    <value>El primer inodo erróneo es el {0} y el último es el {1}</value>
   </data>
     <data name="First_error_occurred_on_0_last_on_1" xml:space="preserve">
     <value>El primer error ocurrió el {0}, el último el {1}</value>
@@ -970,10 +970,10 @@
     <value>El primer bloque libre es el {0}</value>
   </data>
     <data name="First_free_inode_is_0" xml:space="preserve">
-    <value>El primer nodo-i libre es el {0}</value>
+    <value>El primer inodo libre es el {0}</value>
   </data>
     <data name="First_inode_is_0" xml:space="preserve">
-    <value>El primer nodo-i es el {0}</value>
+    <value>El primer inodo es el {0}</value>
   </data>
     <data name="First_kernel_zone_0" xml:space="preserve">
     <value>Primera zona del núcleo: {0}</value>
@@ -1060,7 +1060,7 @@
     <value>Número de paquete de Sistema de Ficheros Global: {0}</value>
   </data>
     <data name="Group_descriptor_checksums_and_sparse_inode_table_ext4" xml:space="preserve">
-    <value>Tabla de grupo descriptor de checksums y nodos-i dispersos</value>
+    <value>Tabla de grupo descriptor de checksums y inodos dispersos</value>
   </data>
     <data name="Group_descriptor_size_is_0_bytes" xml:space="preserve">
     <value>El descriptor de grupo ocupa {0} bytes</value>
@@ -1192,7 +1192,7 @@
     <value>La imagen usa un tipo de emulación desconocido ({0})</value>
   </data>
     <data name="imagic_inodes__" xml:space="preserve">
-    <value>Tiene un mapa entre nodos-i y AFS (tabla de nodos-i i-mágicos)</value>
+    <value>Tiene un mapa entre inodos y AFS (tabla de inodos i-mágicos)</value>
   </data>
     <data name="Implementation_that_last_mounted_the_volume_0" xml:space="preserve">
     <value>Implementación que montó el volumen por última vez: "{0}".</value>
@@ -1220,22 +1220,22 @@
   </data>
     <data name="Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes"
           xml:space="preserve">
-    <value>Los índices de los nodos-i residen en el bloque {0} del grupo de asignación {1} y ocupan {2} bloques ({3} bytes)</value>
+    <value>Los índices de los inodos residen en el bloque {0} del grupo de asignación {1} y ocupan {2} bloques ({3} bytes)</value>
   </data>
     <data name="Indices_i_node_size_0_blocks_Should_be_one" xml:space="preserve">
-    <value>Tamaño de los índices de nodos-i: {0} bloques (debería ser 1)</value>
+    <value>Tamaño de los índices de inodos: {0} bloques (debería ser 1)</value>
   </data>
     <data name="Initial_entry" xml:space="preserve">
     <value>Entrada inicial:</value>
   </data>
     <data name="inode_block_LBA_0" xml:space="preserve">
-    <value>LBA del bloque de nodo-i: {0}</value>
+    <value>LBA del bloque de inodo: {0}</value>
   </data>
     <data name="inode_cache_is_locked" xml:space="preserve">
-    <value>La caché de nodo-i está bloqueada</value>
+    <value>La caché de inodo está bloqueada</value>
   </data>
     <data name="Inode_list_uses_0_blocks" xml:space="preserve">
-    <value>La lista de nodos-i ocupa {0} bloques</value>
+    <value>La lista de inodos ocupa {0} bloques</value>
   </data>
     <data name="INOPB_0" xml:space="preserve">
     <value>INOPB: 0x{0:X8}</value>
@@ -1280,7 +1280,7 @@
     <value>(journal_data_writeback): Escribir el registro antes que los datos</value>
   </data>
     <data name="Journal_has_inode_0" xml:space="preserve">
-    <value>El registro tiene el nodo-i {0}</value>
+    <value>El registro tiene el inodo {0}</value>
   </data>
     <data name="Journal_is_on_device_0" xml:space="preserve">
     <value>El registro está en el dispositivo {0}</value>
@@ -1325,7 +1325,7 @@
     <value>Fecha de la última comprobación: {0}</value>
   </data>
     <data name="Last_inode_allocated_0" xml:space="preserve">
-    <value>Último nodo-i asignado: {0}</value>
+    <value>Último inodo asignado: {0}</value>
   </data>
     <data name="Last_modification_date_0" xml:space="preserve">
     <value>Fecha de la última modificación: {0}</value>
@@ -1337,7 +1337,7 @@
     <value>Montado por última vez el {0}</value>
   </data>
     <data name="Last_orphaned_inode_is_0" xml:space="preserve">
-    <value>El último nodo-i huérfano es el {0}</value>
+    <value>El último inodo huérfano es el {0}</value>
   </data>
     <data name="Last_root_directory_copy_0" xml:space="preserve">
     <value>Última copia del directorio raíz: {0}</value>
@@ -1553,7 +1553,7 @@
     <value>Siguiente bloque de asignación: {0}.</value>
   </data>
     <data name="Next_free_inode_search_will_start_at_inode_0" xml:space="preserve">
-    <value>La búsqueda del siguiente nodo-i libre comenzará en el nodo-i {0}</value>
+    <value>La búsqueda del siguiente inodo libre comenzará en el inodo {0}</value>
   </data>
     <data name="Next_QID_0" xml:space="preserve">
     <value>Siguiente QID: {0}</value>
@@ -1901,7 +1901,7 @@
     <value>El directorio raíz reside en el bloque {0}</value>
   </data>
     <data name="Root_directory_resides_on_inode_0" xml:space="preserve">
-    <value>El directorio raíz reside en el nodo-i {0}</value>
+    <value>El directorio raíz reside en el inodo {0}</value>
   </data>
     <data name="Root_directory_size_0_blocks_1_bytes" xml:space="preserve">
     <value>Tamaño del directorio raíz: {0} bloques, {1} bytes</value>
@@ -1910,11 +1910,11 @@
     <value>El directorio raíz comienza en el clúster {0}</value>
   </data>
     <data name="Root_folder_i_node_size_0_blocks_Should_be_one" xml:space="preserve">
-    <value>Tamaño del nodo-i de la carpeta raíz: {0} bloques (debería ser 1)</value>
+    <value>Tamaño del inodo de la carpeta raíz: {0} bloques (debería ser 1)</value>
   </data>
     <data name="Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes"
           xml:space="preserve">
-    <value>El nodo-i del directorio raíz reside en el bloque {0} del grupo de asignación {1} y ocupa {2} bloques ({3} bytes)</value>
+    <value>El inodo del directorio raíz reside en el bloque {0} del grupo de asignación {1} y ocupa {2} bloques ({3} bytes)</value>
   </data>
     <data name="Root_node_of_the_extent_B_tree_resides_in_block_0" xml:space="preserve">
     <value>El nodo raíz del árbol-B de extents reside en el bloque {0}</value>
@@ -1926,7 +1926,7 @@
     <value>El contenedor raíz de objetos empieza en el bloque {0}</value>
   </data>
     <data name="Root_resides_on_inode_0" xml:space="preserve">
-    <value>La raíz reside en el nodo-i {0}</value>
+    <value>La raíz reside en el inodo {0}</value>
   </data>
     <data name="Root_starts_at_frag_0" xml:space="preserve">
     <value>La raíz empieza en el fragmento {0}</value>
@@ -2166,7 +2166,7 @@
     <value>Hay {0} bloques reservados antes del volumen</value>
   </data>
     <data name="There_are_an_estimate_of_0_free_inodes_before_next_search_start" xml:space="preserve">
-    <value>Hay un estimado de {0} nodos-i libres antes de comenzar la siguiente búsqueda</value>
+    <value>Hay un estimado de {0} inodos libres antes de comenzar la siguiente búsqueda</value>
   </data>
     <data name="There_are_a_lot_of_variants_of_UFS_using_overlapped_values_on_same_fields" xml:space="preserve">
     <value>Hay muchas variantes de UFS usando valores superpuestos en los mismos campos</value>
@@ -2175,7 +2175,7 @@
     <value>Hay bloques dañados en el archivo de extents.</value>
   </data>
     <data name="There_are_no_orphaned_inodes" xml:space="preserve">
-    <value>No hay nodos-i huérfanos.</value>
+    <value>No hay inodos huérfanos.</value>
   </data>
     <data name="There_are_reused_CNIDs" xml:space="preserve">
     <value>Hay CNIDs reutilizadas.</value>
@@ -2663,16 +2663,16 @@
     <value>El volumen tiene {0} bloques libres</value>
   </data>
     <data name="Volume_has_0_free_inodes" xml:space="preserve">
-    <value>El volumen tiene {0} nodos-i libres</value>
+    <value>El volumen tiene {0} inodos libres</value>
   </data>
     <data name="Volume_has_0_free_sectors_of_1" xml:space="preserve">
     <value>El volumen tiene {0} sectores libres de {1}</value>
   </data>
     <data name="Volume_has_0_inodes" xml:space="preserve">
-    <value>El volumen tiene {0} nodos-i</value>
+    <value>El volumen tiene {0} inodos</value>
   </data>
     <data name="Volume_has_0_inodes_per_block" xml:space="preserve">
-    <value>El volumen tiene {0} nodos-i por bloque</value>
+    <value>El volumen tiene {0} inodos por bloque</value>
   </data>
     <data name="Volume_has_0_sectors_1_bytes" xml:space="preserve">
     <value>El volumen tiene {0} sectores ({1} bytes)</value>
@@ -3174,7 +3174,7 @@
     <value>{0} bloques ({1} bytes) libres de {2} ({3} bytes)</value>
   </data>
     <data name="_0_blocks_1_flags_and_2_inodes_per_group" xml:space="preserve">
-    <value>{0} bloques, {1} banderas y {2} nodos-i por grupo</value>
+    <value>{0} bloques, {1} banderas y {2} inodos por grupo</value>
   </data>
     <data name="_0_blocks_for_bootloader_1_bytes" xml:space="preserve">
     <value>{0} bloques para el cargador de arranque ({1} bytes)</value>
@@ -3222,7 +3222,7 @@
     <value>{0} bloques en la colección sumaria de clústeres</value>
   </data>
     <data name="_0_blocks_on_inode_map_1_bytes" xml:space="preserve">
-    <value>{0} bloques en el mapa de nodos-i ({1} bytes)</value>
+    <value>{0} bloques en el mapa de inodos ({1} bytes)</value>
   </data>
     <data name="_0_blocks_on_zone_map_1_bytes" xml:space="preserve">
     <value>{0} bloques en el mapa de zona ({1} bytes)</value>
@@ -3321,10 +3321,10 @@
     <value>{0} bytes por bloque índice</value>
   </data>
     <data name="_0_bytes_per_inode" xml:space="preserve">
-    <value>{0} bytes por nodo-i</value>
+    <value>{0} bytes por inodo</value>
   </data>
     <data name="_0_bytes_per_i_node" xml:space="preserve">
-    <value>{0} bytes por nodo-i</value>
+    <value>{0} bytes por inodo</value>
   </data>
     <data name="_0_bytes_per_MFT_record" xml:space="preserve">
     <value>{0} bytes por registro MFT</value>
@@ -3465,13 +3465,13 @@
     <value>{0} fragmentos libres</value>
   </data>
     <data name="_0_free_inodes" xml:space="preserve">
-    <value>{0} nodos-i libres</value>
+    <value>{0} inodos libres</value>
   </data>
     <data name="_0_free_inodes_on_list" xml:space="preserve">
-    <value>{0} nodos-i libres en lista</value>
+    <value>{0} inodos libres en lista</value>
   </data>
     <data name="_0_free_inodes_on_volume" xml:space="preserve">
-    <value>{0} nodos-i libres en el volumen</value>
+    <value>{0} inodos libres en el volumen</value>
   </data>
     <data name="_0_free_spare_DNodes" xml:space="preserve">
     <value>{0} nodos-D alternativos libres</value>
@@ -3495,28 +3495,28 @@
     <value>{0} zonas imap ({1} bytes)</value>
   </data>
     <data name="_0_inodes" xml:space="preserve">
-    <value>{0} nodos-i</value>
+    <value>{0} inodos</value>
   </data>
     <data name="_0_inodes_free_of_1" xml:space="preserve">
-    <value>{0} nodos-i libres de {1}</value>
+    <value>{0} inodos libres de {1}</value>
   </data>
     <data name="_0_inodes_in_volume" xml:space="preserve">
-    <value>{0} nodos-i en el volumen</value>
+    <value>{0} inodos en el volumen</value>
   </data>
     <data name="_0_inodes_in_volume_1_free" xml:space="preserve">
-    <value>{0} nodos-i en el volumen, {1} libres</value>
+    <value>{0} inodos en el volumen, {1} libres</value>
   </data>
     <data name="_0_inodes_in_volume_1_free_2" xml:space="preserve">
-    <value>{0} nodos-i en el volumen, {1} libres ({2}%)</value>
+    <value>{0} inodos en el volumen, {1} libres ({2}%)</value>
   </data>
     <data name="_0_inodes_pending_of_being_freed" xml:space="preserve">
-    <value>{0} nodos-i pendientes de liberarse</value>
+    <value>{0} inodos pendientes de liberarse</value>
   </data>
     <data name="_0_inodes_per_cylinder_group" xml:space="preserve">
-    <value>{0} nodos-i por grupo de cilindro</value>
+    <value>{0} inodos por grupo de cilindro</value>
   </data>
     <data name="_0_inodes_with_1_free_inodes_2" xml:space="preserve">
-    <value>{0} nodos-i con {1} libres ({2}%)</value>
+    <value>{0} inodos con {1} libres ({2}%)</value>
   </data>
     <data name="_0_is_first_data_block" xml:space="preserve">
     <value>{0} es el primer bloque de datos</value>
